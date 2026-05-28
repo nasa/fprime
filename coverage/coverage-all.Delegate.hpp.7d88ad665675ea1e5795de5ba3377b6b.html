@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>GCC Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="coverage-all.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>GCC Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>./</td>
+    </tr>
+    <tr>
+      <th scope="row">File:</th>
+      <td>Os/Delegate.hpp</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2026-05-28 22:02:21</td>
+    </tr>
+  </table>
+</div>
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>12</td>
+      <td>12</td>
+      <td class="coverage-high">100.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>30</td>
+      <td>31</td>
+      <td class="coverage-high">96.8%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>7</td>
+      <td>18</td>
+      <td class="coverage-low">38.9%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+<details>
+  <summary>List of functions</summary>
+  <table class="listOfFunctions">
+    <tr>
+      <th>Function (Line)</th>
+      <th>Call count</th>
+      <th>Block coverage</th>
+    </tr>
+    <tr><td><a href="#l89">Os::ConsoleInterface* Os::Delegate::makeDelegate&lt;Os::ConsoleInterface, Os::Posix::Console::PosixConsole, unsigned char [24]&gt;(unsigned char (&amp;) [24], Os::ConsoleInterface const*) (line 89)</a></td><td>called 8 times</td><td>57.0%</td></tr>
+    <tr><td><a href="#l89">Os::ConsoleInterface* Os::Delegate::makeDelegate&lt;Os::ConsoleInterface, Os::Stub::Console::StubConsole, unsigned char [24]&gt;(unsigned char (&amp;) [24], Os::ConsoleInterface const*) (line 89)</a></td><td>called 1 time</td><td>57.0%</td></tr>
+    <tr><td><a href="#l89">Os::ConsoleInterface* Os::Delegate::makeDelegate&lt;Os::ConsoleInterface, Os::Stub::Console::Test::TestConsole, unsigned char [24]&gt;(unsigned char (&amp;) [24], Os::ConsoleInterface const*) (line 89)</a></td><td>called 9 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::CpuInterface* Os::Delegate::makeDelegate&lt;Os::CpuInterface, Os::Linux::Cpu::LinuxCpu, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 5 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::CpuInterface* Os::Delegate::makeDelegate&lt;Os::CpuInterface, Os::Stub::Cpu::StubCpu, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 1 time</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::CpuInterface* Os::Delegate::makeDelegate&lt;Os::CpuInterface, Os::Stub::Cpu::Test::TestCpu, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 5 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::DirectoryInterface* Os::Delegate::makeDelegate&lt;Os::DirectoryInterface, Os::Posix::Directory::PosixDirectory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 605 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::DirectoryInterface* Os::Delegate::makeDelegate&lt;Os::DirectoryInterface, Os::Stub::Directory::StubDirectory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 1 time</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::DirectoryInterface* Os::Delegate::makeDelegate&lt;Os::DirectoryInterface, Os::Stub::Directory::Test::TestDirectory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 6 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Os::Posix::File::PosixFile, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 31070 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Os::Stub::File::StubFile, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 1 time</td><td>57.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Os::Stub::File::Test::TestFile, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 1300 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Svc::CmdSequencerTester::Interceptor::PosixFileInterceptor, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 345 times</td><td>53.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Svc::FileTester, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 16 times</td><td>57.0%</td></tr>
+    <tr><td><a href="#l89">Os::FileInterface* Os::Delegate::makeDelegate&lt;Os::FileInterface, Svc::PrmDbTester::PrmDbTestFile, unsigned char [16]&gt;(unsigned char (&amp;) [16], Os::FileInterface const*) (line 89)</a></td><td>called 47 times</td><td>53.0%</td></tr>
+    <tr><td><a href="#l46">Os::FileSystemInterface* Os::Delegate::makeDelegate&lt;Os::FileSystemInterface, Os::Posix::FileSystem::PosixFileSystem, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 10 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::FileSystemInterface* Os::Delegate::makeDelegate&lt;Os::FileSystemInterface, Os::Stub::FileSystem::StubFileSystem, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 1 time</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::FileSystemInterface* Os::Delegate::makeDelegate&lt;Os::FileSystemInterface, Os::Stub::FileSystem::Test::TestFileSystem, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 2 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::MemoryInterface* Os::Delegate::makeDelegate&lt;Os::MemoryInterface, Os::Linux::Memory::LinuxMemory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 5 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::MemoryInterface* Os::Delegate::makeDelegate&lt;Os::MemoryInterface, Os::Stub::Memory::StubMemory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 1 time</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::MemoryInterface* Os::Delegate::makeDelegate&lt;Os::MemoryInterface, Os::Stub::Memory::Test::TestMemory, unsigned char [16]&gt;(unsigned char (&amp;) [16]) (line 46)</a></td><td>called 4 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::QueueInterface* Os::Delegate::makeDelegate&lt;Os::QueueInterface, Os::Generic::PriorityQueue, unsigned char [368]&gt;(unsigned char (&amp;) [368]) (line 46)</a></td><td>called 1090 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::QueueInterface* Os::Delegate::makeDelegate&lt;Os::QueueInterface, Os::Stub::Queue::StubQueue, unsigned char [368]&gt;(unsigned char (&amp;) [368]) (line 46)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l46">Os::QueueInterface* Os::Delegate::makeDelegate&lt;Os::QueueInterface, Os::Stub::Queue::Test::InjectableStlQueue, unsigned char [368]&gt;(unsigned char (&amp;) [368]) (line 46)</a></td><td>called 30 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l89">Os::RawTimeInterface* Os::Delegate::makeDelegate&lt;Os::RawTimeInterface, Os::Posix::RawTime::PosixRawTime, unsigned char [56]&gt;(unsigned char (&amp;) [56], Os::RawTimeInterface const*) (line 89)</a></td><td>called 101964 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l89">Os::RawTimeInterface* Os::Delegate::makeDelegate&lt;Os::RawTimeInterface, Os::Stub::RawTime::StubRawTime, unsigned char [56]&gt;(unsigned char (&amp;) [56], Os::RawTimeInterface const*) (line 89)</a></td><td>called 1 time</td><td>53.0%</td></tr>
+    <tr><td><a href="#l89">Os::RawTimeInterface* Os::Delegate::makeDelegate&lt;Os::RawTimeInterface, Os::Stub::RawTime::Test::TestRawTime, unsigned char [56]&gt;(unsigned char (&amp;) [56], Os::RawTimeInterface const*) (line 89)</a></td><td>called 9 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l89">Os::RawTimeInterface* Os::Delegate::makeDelegate&lt;Os::RawTimeInterface, Svc::RawTimeTester, unsigned char [56]&gt;(unsigned char (&amp;) [56], Os::RawTimeInterface const*) (line 89)</a></td><td>called 39 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l46">Os::TaskInterface* Os::Delegate::makeDelegate&lt;Os::TaskInterface, Os::Posix::Task::PosixTask, unsigned char [40]&gt;(unsigned char (&amp;) [40]) (line 46)</a></td><td>called 1731 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::TaskInterface* Os::Delegate::makeDelegate&lt;Os::TaskInterface, Os::Stub::Task::StubTask, unsigned char [40]&gt;(unsigned char (&amp;) [40]) (line 46)</a></td><td>called 1 time</td><td>86.0%</td></tr>
+    <tr><td><a href="#l46">Os::TaskInterface* Os::Delegate::makeDelegate&lt;Os::TaskInterface, Os::Stub::Task::Test::TestTask, unsigned char [40]&gt;(unsigned char (&amp;) [40]) (line 46)</a></td><td>called 654 times</td><td>70.0%</td></tr>
+  </table>
+</details>
+
+    </nav>
+    <main>
+<div class="file-source">
+  <table>
+    <tr>
+      <th align="right">Line</th>
+      <th align="right">Branch</th>
+      <th align="right">Exec</th>
+      <th align="left">Source</th>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1" href="#l1">1</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ======================================================================</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l2" href="#l2">2</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// \title Os/Delegate.hpp</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l3" href="#l3">3</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// \brief helper functions to ease correct getDelegate implementations</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l4" href="#l4">4</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ======================================================================</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l5" href="#l5">5</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;new&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l6" href="#l6">6</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;type_traits&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l7" href="#l7">7</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Fw/Types/Assert.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l8" href="#l8">8</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Os/Os.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l9" href="#l9">9</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#ifndef OS_DELEGATE_HPP_</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l10" href="#l10">10</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#define OS_DELEGATE_HPP_</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l11" href="#l11">11</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">namespace</span><span class="w"> </span><span class="nn">Os</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l12" href="#l12">12</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">namespace</span><span class="w"> </span><span class="nn">Delegate</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l13" href="#l13">13</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l14" href="#l14">14</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \brief Make a delegate of type Interface using Implementation without copy-constructor support (generic function)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l15" href="#l15">15</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l16" href="#l16">16</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! This function is a generic implementation of the `getDelegate` functions provided for each function within Os. This</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l17" href="#l17">17</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! is templated over two types: Interface (e.g. TaskInterface) the interface the delegate supports, and Implementation</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l18" href="#l18">18</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! the implementation of the interface. This function takes care of the critical requirements of the getDelegate</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l19" href="#l19">19</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! function:</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l20" href="#l20">20</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   1. Ensure Implementation is derived from Interface</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l21" href="#l21">21</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   2. Ensure Implementation fits within FW_HANDLE_MAX_SIZE</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l22" href="#l22">22</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   3. Ensure Implementation alignment fits within FW_HANDLE_ALIGNMENT</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l23" href="#l23">23</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   4. Performs the correct placement new for normal constructors</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l24" href="#l24">24</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   5. Ensure the returned pointer is not nullptr</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l25" href="#l25">25</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l26" href="#l26">26</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! Implementors of a `getDelegate` function may use this function by calling it and returning the result.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l27" href="#l27">27</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l28" href="#l28">28</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! &gt; Neither Interface nor Implementation is allowed to support copy-constructors</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l29" href="#l29">29</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l30" href="#l30">30</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! Example: TaskInterface getDelegate (Without Copy-Constructor)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l31" href="#l31">31</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l32" href="#l32">32</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! ```c++</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l33" href="#l33">33</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! #include &quot;Os/Delegate.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l34" href="#l34">34</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l35" href="#l35">35</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! namespace Os {</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l36" href="#l36">36</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! TaskInterface* TaskInterface::getDelegate(HandleStorage&amp; aligned_new_memory) {</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l37" href="#l37">37</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   return Os::Delegate::makeDelegate&lt;TaskInterface, Os::Posix::Task::PosixTask&gt;(aligned_new_memory);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l38" href="#l38">38</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! }</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l39" href="#l39">39</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! }</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l40" href="#l40">40</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! ```</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l41" href="#l41">41</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \tparam Interface: interface the delegate supports (e.g. TaskInterface)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l42" href="#l42">42</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \tparam Implementation: implementation class of the delegate (e.g. PosixTask)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l43" href="#l43">43</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \param aligned_new_memory: memory to be filled via placement new call</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l44" href="#l44">44</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \return pointer to implementation result of placement new</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l45" href="#l45">45</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Interface</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Implementation</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">StorageType</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l46" href="#l46">46</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">12355</td>
+      <td class="src coveredLine"><span class="kr">inline</span><span class="w"> </span><span class="n">Interface</span><span class="o">*</span><span class="w"> </span><span class="n">makeDelegate</span><span class="p">(</span><span class="n">StorageType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">aligned_new_memory</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l47" href="#l47">47</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Ensure prerequisites before performing placement new</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l48" href="#l48">48</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_base_of</span><span class="o">&lt;</span><span class="n">Interface</span><span class="p">,</span><span class="w"> </span><span class="n">Implementation</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Implementation must derive from Interface&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l49" href="#l49">49</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Implementation</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">StorageType</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Handle size not large enough&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l50" href="#l50">50</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">((</span><span class="n">FW_HANDLE_ALIGNMENT</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">alignof</span><span class="p">(</span><span class="n">Implementation</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Handle alignment invalid&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l51" href="#l51">51</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Placement new the object and ensure non-null result</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 3 taken 2396 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">12355</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Implementation</span><span class="o">*</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">)</span><span class="w"> </span><span class="n">Implementation</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l53" href="#l53">53</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
+            <div class="takenBranch">&check; Branch 1 taken 4152 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">12355</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">interface</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l54" href="#l54">54</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">12355</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">interface</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l57" href="#l57">57</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \brief Make a delegate of type Interface using Implementation with copy-constructor support (generic function)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l58" href="#l58">58</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! This function is a generic implementation of the `getDelegate` functions provided for each function within Os. This</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! is templated over two types: Interface (e.g. TaskInterface) the interface the delegate supports, and Implementation</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! the implementation of the interface. This function takes care of the critical requirements of the getDelegate</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l62" href="#l62">62</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! function:</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l63" href="#l63">63</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   1. Ensure Implementation is derived from Interface</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l64" href="#l64">64</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   2. Ensure Implementation fits within FW_HANDLE_MAX_SIZE</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l65" href="#l65">65</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   3. Ensure Implementation alignment fits within FW_HANDLE_ALIGNMENT</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l66" href="#l66">66</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   4. Performs the correct placement new for normal and copy constructors</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l67" href="#l67">67</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   5. Ensure the returned pointer is not nullptr</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! Implementors of a `getDelegate` function may use this function by calling it and returning the result.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l70" href="#l70">70</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! Example: FileInterface getDelegate Supporting Copy-Constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l72" href="#l72">72</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l73" href="#l73">73</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! ```c++</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l74" href="#l74">74</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! #include &quot;Os/Delegate.hpp&quot;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l75" href="#l75">75</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! namespace Os {</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! FileInterface* FileInterface::getDelegate(HandleStorage&amp; aligned_new_memory, const FileInterface* to_copy) {</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l78" href="#l78">78</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!   return Os::Delegate::makeDelegate&lt;FileInterface, Os::Posix::File::PosixFile&gt;(aligned_new_memory, to_copy);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! }</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! }</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! ```</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \tparam Interface: interface the delegate supports (e.g. FileInterface)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \tparam Implementation: implementation class of the delegate (e.g. PosixFile)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \param aligned_new_memory: memory to be filled via placement new call</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \return pointer to implementation result of placement new</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \param to_copy: pointer to Interface to be copied by copy constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \return pointer to implementation result of placement new</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Interface</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Implementation</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">StorageType</span><span class="o">&gt;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">134810</td>
+      <td class="src coveredLine"><span class="kr">inline</span><span class="w"> </span><span class="n">Interface</span><span class="o">*</span><span class="w"> </span><span class="n">makeDelegate</span><span class="p">(</span><span class="n">StorageType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">aligned_new_memory</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Interface</span><span class="o">*</span><span class="w"> </span><span class="n">to_copy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">134810</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Implementation</span><span class="o">*</span><span class="w"> </span><span class="n">copy_me</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Implementation</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">to_copy</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Ensure prerequisites before performing placement new</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_base_of</span><span class="o">&lt;</span><span class="n">Interface</span><span class="p">,</span><span class="w"> </span><span class="n">Implementation</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Implementation must derive from Interface&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Implementation</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Handle size not large enough&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">((</span><span class="n">FW_HANDLE_ALIGNMENT</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">alignof</span><span class="p">(</span><span class="n">Implementation</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Handle alignment invalid&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Placement new the object and ensure non-null result</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">134810</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Implementation</span><span class="o">*</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 0 taken 133702 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1108 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">134810</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">to_copy</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 3 taken 102619 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">133702</td>
+      <td class="src partialCoveredLine"><span class="w">        </span><span class="n">interface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">)</span><span class="w"> </span><span class="n">Implementation</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 375 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
+            <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">1108</td>
+      <td class="src partialCoveredLine"><span class="w">        </span><span class="n">interface</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">)</span><span class="w"> </span><span class="n">Implementation</span><span class="p">(</span><span class="o">*</span><span class="n">copy_me</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
+            <div class="takenBranch">&check; Branch 1 taken 134810 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">134810</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">interface</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">134810</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">interface</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Delegate</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Os</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+  </table>
+</div>
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>

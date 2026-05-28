@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>GCC Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="coverage.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>GCC Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>Fw/Log/</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2026-05-28 22:05:12</td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>60</td>
+      <td>84</td>
+      <td class="coverage-low">71.4%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>21</td>
+      <td>29</td>
+      <td class="coverage-low">72.4%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>20</td>
+      <td>58</td>
+      <td class="coverage-low">34.5%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+    </nav>
+    <main>
+<table class="listOfFunctions">
+  <tr>
+    <th>Function (File:Line)</th>
+    <th>Call count</th>
+    <th>Block coverage</th>
+  </tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l11">Fw::LogBuffer::LogBuffer() (Fw/Log/LogBuffer.cpp:11)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l15">Fw::LogBuffer::LogBuffer(Fw::LogBuffer const&amp;) (Fw/Log/LogBuffer.cpp:15)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l6">Fw::LogBuffer::LogBuffer(unsigned char const*, unsigned long) (Fw/Log/LogBuffer.cpp:6)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l42">Fw::LogBuffer::getBuffAddr() (Fw/Log/LogBuffer.cpp:42)</a></td><td>called 25 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l38">Fw::LogBuffer::getBuffAddr() const (Fw/Log/LogBuffer.cpp:38)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l34">Fw::LogBuffer::getBuffCapacity() const (Fw/Log/LogBuffer.cpp:34)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l30">Fw::LogBuffer::getCapacity() const (Fw/Log/LogBuffer.cpp:30)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l20">Fw::LogBuffer::operator=(Fw::LogBuffer const&amp;) (Fw/Log/LogBuffer.cpp:20)</a></td><td>called 2 times</td><td>86.0%</td></tr>
+  <tr><td><a href="coverage.LogBuffer.cpp.ba51d394c0465142d1433133bde120ee.html#l13">Fw::LogBuffer::~LogBuffer() (Fw/Log/LogBuffer.cpp:13)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l13">Fw::LogPacket::LogPacket() (Fw/Log/LogPacket.cpp:13)</a></td><td>called 2 times</td><td>68.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l39">Fw::LogPacket::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (Fw/Log/LogPacket.cpp:39)</a></td><td>called 1 time</td><td>92.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l78">Fw::LogPacket::getId() (Fw/Log/LogPacket.cpp:78)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l86">Fw::LogPacket::getLogBuffer() (Fw/Log/LogPacket.cpp:86)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l82">Fw::LogPacket::getTimeTag() (Fw/Log/LogPacket.cpp:82)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l19">Fw::LogPacket::serializeTo(Fw::SerialBufferBase&amp;, Fw::Endianness) const (Fw/Log/LogPacket.cpp:19)</a></td><td>called 1 time</td><td>96.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l66">Fw::LogPacket::setId(unsigned int) (Fw/Log/LogPacket.cpp:66)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l70">Fw::LogPacket::setLogBuffer(Fw::LogBuffer const&amp;) (Fw/Log/LogPacket.cpp:70)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l74">Fw::LogPacket::setTimeTag(Fw::Time const&amp;) (Fw/Log/LogPacket.cpp:74)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogPacket.cpp.fe80c6ee341322cb5f23743aff8775e0.html#l17">Fw::LogPacket::~LogPacket() (Fw/Log/LogPacket.cpp:17)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogString.hpp.200b9406b2a51199585c2d6dc71300c5.html#l25">Fw::LogStringArg::LogStringArg() (Fw/Log/LogString.hpp:25)</a></td><td>called 2 times</td><td>72.0%</td></tr>
+  <tr><td><a href="coverage.LogString.hpp.200b9406b2a51199585c2d6dc71300c5.html#l52">Fw::LogStringArg::getCapacity() const (Fw/Log/LogString.hpp:52)</a></td><td>called 14 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogString.hpp.200b9406b2a51199585c2d6dc71300c5.html#l45">Fw::LogStringArg::operator=(char const*) (Fw/Log/LogString.hpp:45)</a></td><td>called 3 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogString.hpp.200b9406b2a51199585c2d6dc71300c5.html#l50">Fw::LogStringArg::toChar() const (Fw/Log/LogString.hpp:50)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.LogString.hpp.200b9406b2a51199585c2d6dc71300c5.html#l33">Fw::LogStringArg::~LogStringArg() (Fw/Log/LogString.hpp:33)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.TextLogString.hpp.db38a578d80aa26ef69059ecca1c6bd4.html#l25">Fw::TextLogString::TextLogString() (Fw/Log/TextLogString.hpp:25)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.TextLogString.hpp.db38a578d80aa26ef69059ecca1c6bd4.html#l52">Fw::TextLogString::getCapacity() const (Fw/Log/TextLogString.hpp:52)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.TextLogString.hpp.db38a578d80aa26ef69059ecca1c6bd4.html#l45">Fw::TextLogString::operator=(char const*) (Fw/Log/TextLogString.hpp:45)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.TextLogString.hpp.db38a578d80aa26ef69059ecca1c6bd4.html#l50">Fw::TextLogString::toChar() const (Fw/Log/TextLogString.hpp:50)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.TextLogString.hpp.db38a578d80aa26ef69059ecca1c6bd4.html#l33">Fw::TextLogString::~TextLogString() (Fw/Log/TextLogString.hpp:33)</a></td><td>not called</td><td>0.0%</td></tr>
+</table>
+
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>

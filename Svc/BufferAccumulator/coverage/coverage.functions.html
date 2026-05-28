@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>GCC Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="coverage.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>GCC Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>Svc/BufferAccumulator/</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2026-05-28 22:07:59</td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>132</td>
+      <td>150</td>
+      <td class="coverage-medium">88.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>16</td>
+      <td>17</td>
+      <td class="coverage-high">94.1%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>80</td>
+      <td>146</td>
+      <td class="coverage-low">54.8%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+    </nav>
+    <main>
+<table class="listOfFunctions">
+  <tr>
+    <th>Function (File:Line)</th>
+    <th>Call count</th>
+    <th>Block coverage</th>
+  </tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l24">Svc::BufferAccumulator::ArrayFIFOBuffer::ArrayFIFOBuffer() (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:24)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l63">Svc::BufferAccumulator::ArrayFIFOBuffer::dequeue(Fw::Buffer&amp;) (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:63)</a></td><td>called 64 times</td><td>86.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l43">Svc::BufferAccumulator::ArrayFIFOBuffer::enqueue(Fw::Buffer const&amp;) (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:43)</a></td><td>called 65 times</td><td>88.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l89">Svc::BufferAccumulator::ArrayFIFOBuffer::getCapacity() const (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:89)</a></td><td>not called</td><td>0.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l85">Svc::BufferAccumulator::ArrayFIFOBuffer::getSize() const (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:85)</a></td><td>called 129 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l33">Svc::BufferAccumulator::ArrayFIFOBuffer::init(Fw::Buffer*, unsigned long) (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:33)</a></td><td>called 6 times</td><td>87.0%</td></tr>
+  <tr><td><a href="coverage.ArrayFIFOBuffer.cpp.7497bd9785f2427c4ad59c329d37eeb8.html#l27">Svc::BufferAccumulator::ArrayFIFOBuffer::~ArrayFIFOBuffer() (Svc/BufferAccumulator/ArrayFIFOBuffer.cpp:27)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l131">Svc::BufferAccumulator::BA_DrainBuffers_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::BufferAccumulator_BlockMode) (Svc/BufferAccumulator/BufferAccumulator.cpp:131)</a></td><td>called 24 times</td><td>55.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l107">Svc::BufferAccumulator::BA_SetMode_cmdHandler(unsigned int, unsigned int, Svc::BufferAccumulator_OpState) (Svc/BufferAccumulator/BufferAccumulator.cpp:107)</a></td><td>called 6 times</td><td>56.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l26">Svc::BufferAccumulator::BufferAccumulator(char const*) (Svc/BufferAccumulator/BufferAccumulator.cpp:26)</a></td><td>called 6 times</td><td>82.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l46">Svc::BufferAccumulator::allocateQueue(int, Fw::MemAllocator&amp;, unsigned long) (Svc/BufferAccumulator/BufferAccumulator.cpp:46)</a></td><td>called 6 times</td><td>88.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l68">Svc::BufferAccumulator::bufferSendInFill_handler(short, Fw::Buffer&amp;) (Svc/BufferAccumulator/BufferAccumulator.cpp:68)</a></td><td>called 65 times</td><td>93.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l88">Svc::BufferAccumulator::bufferSendInReturn_handler(short, Fw::Buffer&amp;) (Svc/BufferAccumulator/BufferAccumulator.cpp:88)</a></td><td>called 51 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l60">Svc::BufferAccumulator::deallocateQueue(Fw::MemAllocator&amp;) (Svc/BufferAccumulator/BufferAccumulator.cpp:60)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l99">Svc::BufferAccumulator::pingIn_handler(short, unsigned int) (Svc/BufferAccumulator/BufferAccumulator.cpp:99)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l188">Svc::BufferAccumulator::sendStoredBuffer() (Svc/BufferAccumulator/BufferAccumulator.cpp:188)</a></td><td>called 64 times</td><td>89.0%</td></tr>
+  <tr><td><a href="coverage.BufferAccumulator.cpp.1845990d771cc870468c3c63b797727b.html#l40">Svc::BufferAccumulator::~BufferAccumulator() (Svc/BufferAccumulator/BufferAccumulator.cpp:40)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+</table>
+
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>

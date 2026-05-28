@@ -1,0 +1,40 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Fw/DataStructures/Array.hpp                   42      42   100%
+Fw/DataStructures/ArrayMap.hpp                17      17   100%
+Fw/DataStructures/ArraySet.hpp                17      17   100%
+Fw/DataStructures/ArraySetOrMapImpl.hpp       95      94    98%   170
+Fw/DataStructures/CircularIndex.hpp           36      36   100%
+Fw/DataStructures/ExternalArray.hpp           55      55   100%
+Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
+Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
+Fw/DataStructures/ExternalFifoQueue.hpp       61      61   100%
+Fw/DataStructures/ExternalRedBlackTreeMap.hpp
+                                              32      32   100%
+Fw/DataStructures/ExternalRedBlackTreeSet.hpp
+                                              34      34   100%
+Fw/DataStructures/ExternalStack.hpp           46      46   100%
+Fw/DataStructures/FifoQueue.hpp               15      15   100%
+Fw/DataStructures/FifoQueueBase.hpp           17      17   100%
+Fw/DataStructures/MapBase.hpp                 13      13   100%
+Fw/DataStructures/MapConstIterator.hpp        54      47    87%   78-80,108-110,130
+Fw/DataStructures/MapEntryBase.hpp             2       2   100%
+Fw/DataStructures/RedBlackTreeMap.hpp         19      19   100%
+Fw/DataStructures/RedBlackTreeSet.hpp         17      17   100%
+Fw/DataStructures/RedBlackTreeSetOrMapImpl.hpp
+                                             356     351    98%   321,378,1028,1062-1063
+Fw/DataStructures/SetBase.hpp                 13      13   100%
+Fw/DataStructures/SetConstIterator.hpp        53      46    86%   77-79,107-109,129
+Fw/DataStructures/SetOrMapImplConstIterator.hpp
+                                               2       2   100%
+Fw/DataStructures/SetOrMapImplEntry.hpp       17      17   100%
+Fw/DataStructures/SizedContainer.hpp           4       4   100%
+Fw/DataStructures/Stack.hpp                   15      15   100%
+Fw/DataStructures/StackBase.hpp               17      17   100%
+------------------------------------------------------------------------------
+TOTAL                                       1115    1095    98%
+------------------------------------------------------------------------------

@@ -1,0 +1,1413 @@
+{
+  "schema": 1,
+  "ref": "devel",
+  "ref_type": "branch",
+  "commit": "37931e8ea1ab666a5e948ce21a2ea55082c4b88c",
+  "generated_at": "2026-05-28T22:15:26Z",
+  "overall": {
+    "line_pct": 81.28,
+    "line_covered": 14209,
+    "line_total": 17482,
+    "branch_pct": 48.27,
+    "branch_covered": 9186,
+    "branch_total": 19030,
+    "report": "coverage/coverage-all.html"
+  },
+  "modules": [
+    {
+      "path": "CFDP/Checksum",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "CFDP/Checksum/coverage/index.html",
+      "summary": "CFDP/Checksum/coverage/summary.json",
+      "line_pct": 71.15,
+      "line_covered": 37,
+      "line_total": 52,
+      "branch_pct": 44.44,
+      "branch_covered": 16,
+      "branch_total": 36
+    },
+    {
+      "path": "CFDP/Checksum/GTest",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "CFDP/Checksum/GTest/coverage/index.html"
+    },
+    {
+      "path": "Drv/AsyncByteStreamBufferAdapter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/AsyncByteStreamBufferAdapter/coverage/index.html",
+      "summary": "Drv/AsyncByteStreamBufferAdapter/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 26,
+      "line_total": 26,
+      "branch_pct": 100.0,
+      "branch_covered": 6,
+      "branch_total": 6
+    },
+    {
+      "path": "Drv/ByteStreamBufferAdapter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/ByteStreamBufferAdapter/coverage/index.html",
+      "summary": "Drv/ByteStreamBufferAdapter/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 24,
+      "line_total": 24,
+      "branch_pct": 80.0,
+      "branch_covered": 8,
+      "branch_total": 10
+    },
+    {
+      "path": "Drv/ByteStreamDriverModel",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/ByteStreamDriverModel/coverage/index.html"
+    },
+    {
+      "path": "Drv/Interfaces",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/Interfaces/coverage/index.html"
+    },
+    {
+      "path": "Drv/Ip",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/Ip/coverage/index.html",
+      "summary": "Drv/Ip/coverage/summary.json",
+      "line_pct": 43.88,
+      "line_covered": 226,
+      "line_total": 515,
+      "branch_pct": 20.94,
+      "branch_covered": 116,
+      "branch_total": 554
+    },
+    {
+      "path": "Drv/LinuxGpioDriver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/LinuxGpioDriver/coverage/index.html"
+    },
+    {
+      "path": "Drv/LinuxI2cDriver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/LinuxI2cDriver/coverage/index.html"
+    },
+    {
+      "path": "Drv/LinuxSpiDriver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/LinuxSpiDriver/coverage/index.html"
+    },
+    {
+      "path": "Drv/LinuxUartDriver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/LinuxUartDriver/coverage/index.html"
+    },
+    {
+      "path": "Drv/Ports",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/Ports/coverage/index.html"
+    },
+    {
+      "path": "Drv/Ports/DataTypes",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Drv/Ports/DataTypes/coverage/index.html"
+    },
+    {
+      "path": "Drv/TcpClient",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/TcpClient/coverage/index.html",
+      "summary": "Drv/TcpClient/coverage/summary.json",
+      "line_pct": 75.0,
+      "line_covered": 30,
+      "line_total": 40,
+      "branch_pct": 31.03,
+      "branch_covered": 9,
+      "branch_total": 29
+    },
+    {
+      "path": "Drv/TcpServer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/TcpServer/coverage/index.html",
+      "summary": "Drv/TcpServer/coverage/summary.json",
+      "line_pct": 84.72,
+      "line_covered": 61,
+      "line_total": 72,
+      "branch_pct": 44.26,
+      "branch_covered": 27,
+      "branch_total": 61
+    },
+    {
+      "path": "Drv/Udp",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Drv/Udp/coverage/index.html",
+      "summary": "Drv/Udp/coverage/summary.json",
+      "line_pct": 68.09,
+      "line_covered": 32,
+      "line_total": 47,
+      "branch_pct": 28.12,
+      "branch_covered": 9,
+      "branch_total": 32
+    },
+    {
+      "path": "FppTestProject/FppTest/array",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/array/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/component/active",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/component/active/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/component/empty",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/component/empty/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/component/passive",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/component/passive/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/component/queued",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/component/queued/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/dp",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/dp/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/enum",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/enum/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/interfaces",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/interfaces/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/sizeof",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/sizeof/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/external_instance",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/external_instance/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal/choice",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal/choice/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal/harness",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal/harness/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal/initial",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal/initial/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal/state",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal/state/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal_instance/choice",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal_instance/initial",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/state_machine/internal_instance/state",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/state_machine/internal_instance/state/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/struct",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/struct/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/async",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/async/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/components/Comp",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/components/Comp/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/components/Framework",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/components/Framework/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/components/Receiver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/components/Receiver/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/components/Sender",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/components/Sender/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/guarded",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/guarded/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/main",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/main/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/ports",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/ports/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/special_ports",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/special_ports/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/sync",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/sync/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/top_ports",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/top_ports/coverage/index.html"
+    },
+    {
+      "path": "FppTestProject/FppTest/topology/types",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "FppTestProject/FppTest/topology/types/coverage/index.html"
+    },
+    {
+      "path": "Fw/Buffer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Buffer/coverage/index.html",
+      "summary": "Fw/Buffer/coverage/summary.json",
+      "line_pct": 81.25,
+      "line_covered": 78,
+      "line_total": 96,
+      "branch_pct": 43.75,
+      "branch_covered": 35,
+      "branch_total": 80
+    },
+    {
+      "path": "Fw/Cmd",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Cmd/coverage/index.html"
+    },
+    {
+      "path": "Fw/Com",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Com/coverage/index.html"
+    },
+    {
+      "path": "Fw/Comp",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Comp/coverage/index.html"
+    },
+    {
+      "path": "Fw/DataStructures",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/DataStructures/coverage/index.html",
+      "summary": "Fw/DataStructures/coverage/summary.json",
+      "line_pct": 98.21,
+      "line_covered": 1095,
+      "line_total": 1115,
+      "branch_pct": 57.14,
+      "branch_covered": 500,
+      "branch_total": 875
+    },
+    {
+      "path": "Fw/Dp",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Dp/coverage/index.html",
+      "summary": "Fw/Dp/coverage/summary.json",
+      "line_pct": 94.83,
+      "line_covered": 165,
+      "line_total": 174,
+      "branch_pct": 47.92,
+      "branch_covered": 92,
+      "branch_total": 192
+    },
+    {
+      "path": "Fw/FilePacket",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/FilePacket/coverage/index.html",
+      "summary": "Fw/FilePacket/coverage/summary.json",
+      "line_pct": 75.24,
+      "line_covered": 231,
+      "line_total": 307,
+      "branch_pct": 41.43,
+      "branch_covered": 104,
+      "branch_total": 251
+    },
+    {
+      "path": "Fw/FilePacket/GTest",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/FilePacket/GTest/coverage/index.html"
+    },
+    {
+      "path": "Fw/Fpy",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Fpy/coverage/index.html"
+    },
+    {
+      "path": "Fw/Interfaces",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Interfaces/coverage/index.html"
+    },
+    {
+      "path": "Fw/Log",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Log/coverage/index.html",
+      "summary": "Fw/Log/coverage/summary.json",
+      "line_pct": 71.43,
+      "line_covered": 60,
+      "line_total": 84,
+      "branch_pct": 34.48,
+      "branch_covered": 20,
+      "branch_total": 58
+    },
+    {
+      "path": "Fw/Logger",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Logger/coverage/index.html",
+      "summary": "Fw/Logger/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 16,
+      "line_total": 16,
+      "branch_pct": 62.5,
+      "branch_covered": 5,
+      "branch_total": 8
+    },
+    {
+      "path": "Fw/Obj",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Obj/coverage/index.html"
+    },
+    {
+      "path": "Fw/Port",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Port/coverage/index.html"
+    },
+    {
+      "path": "Fw/Ports/CompletionStatus",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Ports/CompletionStatus/coverage/index.html"
+    },
+    {
+      "path": "Fw/Ports/Ready",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Ports/Ready/coverage/index.html"
+    },
+    {
+      "path": "Fw/Ports/Signal",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Ports/Signal/coverage/index.html"
+    },
+    {
+      "path": "Fw/Ports/SuccessCondition",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Ports/SuccessCondition/coverage/index.html"
+    },
+    {
+      "path": "Fw/Prm",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Prm/coverage/index.html"
+    },
+    {
+      "path": "Fw/SerializableFile",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/SerializableFile/coverage/index.html",
+      "summary": "Fw/SerializableFile/coverage/summary.json",
+      "line_pct": 90.0,
+      "line_covered": 45,
+      "line_total": 50,
+      "branch_pct": 44.44,
+      "branch_covered": 32,
+      "branch_total": 72
+    },
+    {
+      "path": "Fw/SerializableFile/test/TestSerializable",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/SerializableFile/test/TestSerializable/coverage/index.html"
+    },
+    {
+      "path": "Fw/Sm",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Sm/coverage/index.html"
+    },
+    {
+      "path": "Fw/Test",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Test/coverage/index.html"
+    },
+    {
+      "path": "Fw/Time",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Time/coverage/index.html",
+      "summary": "Fw/Time/coverage/summary.json",
+      "line_pct": 88.62,
+      "line_covered": 218,
+      "line_total": 246,
+      "branch_pct": 50.0,
+      "branch_covered": 123,
+      "branch_total": 246
+    },
+    {
+      "path": "Fw/Tlm",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Tlm/coverage/index.html",
+      "summary": "Fw/Tlm/coverage/summary.json",
+      "line_pct": 53.76,
+      "line_covered": 50,
+      "line_total": 93,
+      "branch_pct": 24.29,
+      "branch_covered": 17,
+      "branch_total": 70
+    },
+    {
+      "path": "Fw/Types",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Fw/Types/coverage/index.html",
+      "summary": "Fw/Types/coverage/summary.json",
+      "line_pct": 54.63,
+      "line_covered": 832,
+      "line_total": 1523,
+      "branch_pct": 29.48,
+      "branch_covered": 286,
+      "branch_total": 970
+    },
+    {
+      "path": "Fw/Types/GTest",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Fw/Types/GTest/coverage/index.html"
+    },
+    {
+      "path": "Os",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Os/coverage/index.html",
+      "summary": "Os/coverage/summary.json",
+      "line_pct": 18.88,
+      "line_covered": 440,
+      "line_total": 2331,
+      "branch_pct": 12.7,
+      "branch_covered": 234,
+      "branch_total": 1843
+    },
+    {
+      "path": "Os/Generic",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Os/Generic/coverage/index.html",
+      "summary": "Os/Generic/coverage/summary.json",
+      "line_pct": 89.1,
+      "line_covered": 237,
+      "line_total": 266,
+      "branch_pct": 48.02,
+      "branch_covered": 121,
+      "branch_total": 252
+    },
+    {
+      "path": "Os/Generic/Types",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Os/Generic/Types/coverage/index.html",
+      "summary": "Os/Generic/Types/coverage/summary.json",
+      "line_pct": 92.45,
+      "line_covered": 98,
+      "line_total": 106,
+      "branch_pct": 60.94,
+      "branch_covered": 39,
+      "branch_total": 64
+    },
+    {
+      "path": "Os/Models",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Os/Models/coverage/index.html"
+    },
+    {
+      "path": "Os/Posix",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Os/Posix/coverage/index.html",
+      "summary": "Os/Posix/coverage/summary.json",
+      "line_pct": 60.75,
+      "line_covered": 421,
+      "line_total": 693,
+      "branch_pct": 39.74,
+      "branch_covered": 180,
+      "branch_total": 453
+    },
+    {
+      "path": "Svc/ActiveRateGroup",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ActiveRateGroup/coverage/index.html",
+      "summary": "Svc/ActiveRateGroup/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 48,
+      "line_total": 48,
+      "branch_pct": 60.87,
+      "branch_covered": 28,
+      "branch_total": 46
+    },
+    {
+      "path": "Svc/ActiveTextLogger",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ActiveTextLogger/coverage/index.html",
+      "summary": "Svc/ActiveTextLogger/coverage/summary.json",
+      "line_pct": 79.05,
+      "line_covered": 83,
+      "line_total": 105,
+      "branch_pct": 53.85,
+      "branch_covered": 56,
+      "branch_total": 104
+    },
+    {
+      "path": "Svc/AssertFatalAdapter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/AssertFatalAdapter/coverage/index.html",
+      "summary": "Svc/AssertFatalAdapter/coverage/summary.json",
+      "line_pct": 94.55,
+      "line_covered": 52,
+      "line_total": 55,
+      "branch_pct": 59.09,
+      "branch_covered": 26,
+      "branch_total": 44
+    },
+    {
+      "path": "Svc/BufferAccumulator",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/BufferAccumulator/coverage/index.html",
+      "summary": "Svc/BufferAccumulator/coverage/summary.json",
+      "line_pct": 88.0,
+      "line_covered": 132,
+      "line_total": 150,
+      "branch_pct": 54.79,
+      "branch_covered": 80,
+      "branch_total": 146
+    },
+    {
+      "path": "Svc/BufferLogger",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/BufferLogger/coverage/index.html",
+      "summary": "Svc/BufferLogger/coverage/summary.json",
+      "line_pct": 92.62,
+      "line_covered": 138,
+      "line_total": 149,
+      "branch_pct": 57.46,
+      "branch_covered": 77,
+      "branch_total": 134
+    },
+    {
+      "path": "Svc/BufferManager",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/BufferManager/coverage/index.html",
+      "summary": "Svc/BufferManager/coverage/summary.json",
+      "line_pct": 99.05,
+      "line_covered": 104,
+      "line_total": 105,
+      "branch_pct": 55.93,
+      "branch_covered": 66,
+      "branch_total": 118
+    },
+    {
+      "path": "Svc/BufferRepeater",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/BufferRepeater/coverage/index.html",
+      "summary": "Svc/BufferRepeater/coverage/summary.json",
+      "line_pct": 91.67,
+      "line_covered": 33,
+      "line_total": 36,
+      "branch_pct": 55.56,
+      "branch_covered": 30,
+      "branch_total": 54
+    },
+    {
+      "path": "Svc/ChronoTime",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ChronoTime/coverage/index.html",
+      "summary": "Svc/ChronoTime/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 8,
+      "line_total": 8,
+      "branch_pct": 50.0,
+      "branch_covered": 4,
+      "branch_total": 8
+    },
+    {
+      "path": "Svc/CmdDispatcher",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/CmdDispatcher/coverage/index.html",
+      "summary": "Svc/CmdDispatcher/coverage/summary.json",
+      "line_pct": 96.97,
+      "line_covered": 96,
+      "line_total": 99,
+      "branch_pct": 52.6,
+      "branch_covered": 101,
+      "branch_total": 192
+    },
+    {
+      "path": "Svc/CmdSequencer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/CmdSequencer/coverage/index.html",
+      "summary": "Svc/CmdSequencer/coverage/summary.json",
+      "line_pct": 93.89,
+      "line_covered": 769,
+      "line_total": 819,
+      "branch_pct": 56.64,
+      "branch_covered": 482,
+      "branch_total": 851
+    },
+    {
+      "path": "Svc/CmdSplitter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/CmdSplitter/coverage/index.html",
+      "summary": "Svc/CmdSplitter/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 19,
+      "line_total": 19,
+      "branch_pct": 54.55,
+      "branch_covered": 12,
+      "branch_total": 22
+    },
+    {
+      "path": "Svc/ComLogger",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ComLogger/coverage/index.html",
+      "summary": "Svc/ComLogger/coverage/summary.json",
+      "line_pct": 97.37,
+      "line_covered": 111,
+      "line_total": 114,
+      "branch_pct": 59.15,
+      "branch_covered": 84,
+      "branch_total": 142
+    },
+    {
+      "path": "Svc/ComSplitter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ComSplitter/coverage/index.html",
+      "summary": "Svc/ComSplitter/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 12,
+      "line_total": 12,
+      "branch_pct": 66.67,
+      "branch_covered": 8,
+      "branch_total": 12
+    },
+    {
+      "path": "Svc/ComStub",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/ComStub/coverage/index.html",
+      "summary": "Svc/ComStub/coverage/summary.json",
+      "line_pct": 98.51,
+      "line_covered": 66,
+      "line_total": 67,
+      "branch_pct": 59.76,
+      "branch_covered": 49,
+      "branch_total": 82
+    },
+    {
+      "path": "Svc/Cycle",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Cycle/coverage/index.html"
+    },
+    {
+      "path": "Svc/DpCatalog",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/DpCatalog/coverage/index.html",
+      "summary": "Svc/DpCatalog/coverage/summary.json",
+      "line_pct": 78.0,
+      "line_covered": 351,
+      "line_total": 450,
+      "branch_pct": 42.92,
+      "branch_covered": 300,
+      "branch_total": 699
+    },
+    {
+      "path": "Svc/DpManager",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/DpManager/coverage/index.html",
+      "summary": "Svc/DpManager/coverage/summary.json",
+      "line_pct": 97.44,
+      "line_covered": 38,
+      "line_total": 39,
+      "branch_pct": 52.27,
+      "branch_covered": 23,
+      "branch_total": 44
+    },
+    {
+      "path": "Svc/DpPorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/DpPorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/DpWriter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/DpWriter/coverage/index.html",
+      "summary": "Svc/DpWriter/coverage/summary.json",
+      "line_pct": 97.58,
+      "line_covered": 121,
+      "line_total": 124,
+      "branch_pct": 62.07,
+      "branch_covered": 108,
+      "branch_total": 174
+    },
+    {
+      "path": "Svc/Fatal",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Fatal/coverage/index.html"
+    },
+    {
+      "path": "Svc/FatalHandler",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/FatalHandler/coverage/index.html"
+    },
+    {
+      "path": "Svc/FileDownlink",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FileDownlink/coverage/index.html",
+      "summary": "Svc/FileDownlink/coverage/summary.json",
+      "line_pct": 84.15,
+      "line_covered": 308,
+      "line_total": 366,
+      "branch_pct": 45.29,
+      "branch_covered": 197,
+      "branch_total": 435
+    },
+    {
+      "path": "Svc/FileDownlinkPorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/FileDownlinkPorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/FileManager",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FileManager/coverage/index.html",
+      "summary": "Svc/FileManager/coverage/summary.json",
+      "line_pct": 88.41,
+      "line_covered": 145,
+      "line_total": 164,
+      "branch_pct": 50.45,
+      "branch_covered": 112,
+      "branch_total": 222
+    },
+    {
+      "path": "Svc/FileUplink",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FileUplink/coverage/index.html",
+      "summary": "Svc/FileUplink/coverage/summary.json",
+      "line_pct": 92.78,
+      "line_covered": 180,
+      "line_total": 194,
+      "branch_pct": 54.78,
+      "branch_covered": 86,
+      "branch_total": 157
+    },
+    {
+      "path": "Svc/FileWorker",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FileWorker/coverage/index.html",
+      "summary": "Svc/FileWorker/coverage/summary.json",
+      "line_pct": 92.33,
+      "line_covered": 265,
+      "line_total": 287,
+      "branch_pct": 45.11,
+      "branch_covered": 217,
+      "branch_total": 481
+    },
+    {
+      "path": "Svc/FprimeDeframer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FprimeDeframer/coverage/index.html",
+      "summary": "Svc/FprimeDeframer/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 53,
+      "line_total": 53,
+      "branch_pct": 58.04,
+      "branch_covered": 65,
+      "branch_total": 112
+    },
+    {
+      "path": "Svc/FprimeFramer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FprimeFramer/coverage/index.html",
+      "summary": "Svc/FprimeFramer/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 31,
+      "line_total": 31,
+      "branch_pct": 42.19,
+      "branch_covered": 27,
+      "branch_total": 64
+    },
+    {
+      "path": "Svc/FprimeProtocol",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/FprimeProtocol/coverage/index.html"
+    },
+    {
+      "path": "Svc/FprimeRouter",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FprimeRouter/coverage/index.html",
+      "summary": "Svc/FprimeRouter/coverage/summary.json",
+      "line_pct": 88.89,
+      "line_covered": 32,
+      "line_total": 36,
+      "branch_pct": 48.65,
+      "branch_covered": 18,
+      "branch_total": 37
+    },
+    {
+      "path": "Svc/FpySequencer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/FpySequencer/coverage/index.html",
+      "summary": "Svc/FpySequencer/coverage/summary.json",
+      "line_pct": 86.41,
+      "line_covered": 1748,
+      "line_total": 2023,
+      "branch_pct": 51.67,
+      "branch_covered": 1442,
+      "branch_total": 2791
+    },
+    {
+      "path": "Svc/GenericHub",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/GenericHub/coverage/index.html",
+      "summary": "Svc/GenericHub/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 179,
+      "line_total": 179,
+      "branch_pct": 50.29,
+      "branch_covered": 174,
+      "branch_total": 346
+    },
+    {
+      "path": "Svc/Health",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/Health/coverage/index.html",
+      "summary": "Svc/Health/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 112,
+      "line_total": 112,
+      "branch_pct": 60.0,
+      "branch_covered": 90,
+      "branch_total": 150
+    },
+    {
+      "path": "Svc/Interfaces",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Interfaces/coverage/index.html"
+    },
+    {
+      "path": "Svc/LinuxTimer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/LinuxTimer/coverage/index.html",
+      "summary": "Svc/LinuxTimer/coverage/summary.json",
+      "line_pct": 97.06,
+      "line_covered": 33,
+      "line_total": 34,
+      "branch_pct": 47.06,
+      "branch_covered": 16,
+      "branch_total": 34
+    },
+    {
+      "path": "Svc/OsTime",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/OsTime/coverage/index.html",
+      "summary": "Svc/OsTime/coverage/summary.json",
+      "line_pct": 70.0,
+      "line_covered": 35,
+      "line_total": 50,
+      "branch_pct": 37.8,
+      "branch_covered": 31,
+      "branch_total": 82
+    },
+    {
+      "path": "Svc/PassiveConsoleTextLogger",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/PassiveConsoleTextLogger/coverage/index.html"
+    },
+    {
+      "path": "Svc/PassiveRateGroup",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/PassiveRateGroup/coverage/index.html",
+      "summary": "Svc/PassiveRateGroup/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 26,
+      "line_total": 26,
+      "branch_pct": 52.5,
+      "branch_covered": 21,
+      "branch_total": 40
+    },
+    {
+      "path": "Svc/Ping",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ping/coverage/index.html"
+    },
+    {
+      "path": "Svc/PolyDb",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/PolyDb/coverage/index.html",
+      "summary": "Svc/PolyDb/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 17,
+      "line_total": 17,
+      "branch_pct": 42.5,
+      "branch_covered": 17,
+      "branch_total": 40
+    },
+    {
+      "path": "Svc/PolyIf",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/PolyIf/coverage/index.html"
+    },
+    {
+      "path": "Svc/Ports/CommsPorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ports/CommsPorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/Ports/FilePorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ports/FilePorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/Ports/OsTimeEpoch",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ports/OsTimeEpoch/coverage/index.html"
+    },
+    {
+      "path": "Svc/Ports/TlmPacketizerPorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ports/TlmPacketizerPorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/Ports/VersionPorts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Ports/VersionPorts/coverage/index.html"
+    },
+    {
+      "path": "Svc/PosixTime",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/PosixTime/coverage/index.html",
+      "summary": "Svc/PosixTime/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 7,
+      "line_total": 7,
+      "branch_pct": 50.0,
+      "branch_covered": 3,
+      "branch_total": 6
+    },
+    {
+      "path": "Svc/PrmDb",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/PrmDb/coverage/index.html",
+      "summary": "Svc/PrmDb/coverage/summary.json",
+      "line_pct": 92.2,
+      "line_covered": 319,
+      "line_total": 346,
+      "branch_pct": 51.29,
+      "branch_covered": 359,
+      "branch_total": 700
+    },
+    {
+      "path": "Svc/RateGroupDriver",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/RateGroupDriver/coverage/index.html",
+      "summary": "Svc/RateGroupDriver/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 24,
+      "line_total": 24,
+      "branch_pct": 62.5,
+      "branch_covered": 20,
+      "branch_total": 32
+    },
+    {
+      "path": "Svc/Sched",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Sched/coverage/index.html"
+    },
+    {
+      "path": "Svc/Seq",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Seq/coverage/index.html"
+    },
+    {
+      "path": "Svc/SeqDispatcher",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/SeqDispatcher/coverage/index.html",
+      "summary": "Svc/SeqDispatcher/coverage/summary.json",
+      "line_pct": 73.08,
+      "line_covered": 57,
+      "line_total": 78,
+      "branch_pct": 49.18,
+      "branch_covered": 60,
+      "branch_total": 122
+    },
+    {
+      "path": "Svc/StaticMemory",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/StaticMemory/coverage/index.html",
+      "summary": "Svc/StaticMemory/coverage/summary.json",
+      "line_pct": 100.0,
+      "line_covered": 20,
+      "line_total": 20,
+      "branch_pct": 55.0,
+      "branch_covered": 11,
+      "branch_total": 20
+    },
+    {
+      "path": "Svc/Subtopologies/CdhCore",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/CdhCore/coverage/index.html"
+    },
+    {
+      "path": "Svc/Subtopologies/ComCcsds",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/ComCcsds/coverage/index.html"
+    },
+    {
+      "path": "Svc/Subtopologies/ComFprime",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/ComFprime/coverage/index.html"
+    },
+    {
+      "path": "Svc/Subtopologies/ComLoggerTee",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/ComLoggerTee/coverage/index.html"
+    },
+    {
+      "path": "Svc/Subtopologies/DataProducts",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/DataProducts/coverage/index.html"
+    },
+    {
+      "path": "Svc/Subtopologies/FileHandling",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Subtopologies/FileHandling/coverage/index.html"
+    },
+    {
+      "path": "Svc/SystemResources",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/SystemResources/coverage/index.html",
+      "summary": "Svc/SystemResources/coverage/summary.json",
+      "line_pct": 98.63,
+      "line_covered": 72,
+      "line_total": 73,
+      "branch_pct": 55.0,
+      "branch_covered": 33,
+      "branch_total": 60
+    },
+    {
+      "path": "Svc/TlmChan",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/TlmChan/coverage/index.html",
+      "summary": "Svc/TlmChan/coverage/summary.json",
+      "line_pct": 82.11,
+      "line_covered": 101,
+      "line_total": 123,
+      "branch_pct": 47.83,
+      "branch_covered": 66,
+      "branch_total": 138
+    },
+    {
+      "path": "Svc/TlmPacketizer",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/TlmPacketizer/coverage/index.html",
+      "summary": "Svc/TlmPacketizer/coverage/summary.json",
+      "line_pct": 92.54,
+      "line_covered": 273,
+      "line_total": 295,
+      "branch_pct": 54.3,
+      "branch_covered": 278,
+      "branch_total": 512
+    },
+    {
+      "path": "Svc/Types/TlmPacketizerTypes",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/Types/TlmPacketizerTypes/coverage/index.html"
+    },
+    {
+      "path": "Svc/Version",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Svc/Version/coverage/index.html",
+      "summary": "Svc/Version/coverage/summary.json",
+      "line_pct": 96.1,
+      "line_covered": 148,
+      "line_total": 154,
+      "branch_pct": 54.91,
+      "branch_covered": 123,
+      "branch_total": 224
+    },
+    {
+      "path": "Svc/WatchDog",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Svc/WatchDog/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/BlockDriver",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/BlockDriver/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/PingReceiver",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/PingReceiver/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/RecvBuffApp",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/RecvBuffApp/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/SendBuffApp",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/SendBuffApp/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/SignalGen",
+      "has_ut": true,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/SignalGen/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/Top",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/Top/coverage/index.html"
+    },
+    {
+      "path": "TestDeploymentsProject/Ref/TypeDemo",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "TestDeploymentsProject/Ref/TypeDemo/coverage/index.html"
+    },
+    {
+      "path": "Utils",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Utils/coverage/index.html",
+      "summary": "Utils/coverage/summary.json",
+      "line_pct": 19.93,
+      "line_covered": 111,
+      "line_total": 557,
+      "branch_pct": 14.53,
+      "branch_covered": 77,
+      "branch_total": 530
+    },
+    {
+      "path": "Utils/Hash",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "Utils/Hash/coverage/index.html"
+    },
+    {
+      "path": "Utils/Types",
+      "has_ut": true,
+      "has_coverage": true,
+      "report": "Utils/Types/coverage/index.html",
+      "summary": "Utils/Types/coverage/summary.json",
+      "line_pct": 92.11,
+      "line_covered": 140,
+      "line_total": 152,
+      "branch_pct": 58.45,
+      "branch_covered": 83,
+      "branch_total": 142
+    },
+    {
+      "path": "cmake/test/data/TestDeployment/TestBuildAutocoder",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/coverage/index.html"
+    },
+    {
+      "path": "cmake/test/data/TestDeployment/TestChainedAutocoder",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/TestDeployment/TestChainedAutocoder/coverage/index.html"
+    },
+    {
+      "path": "cmake/test/data/TestDeployment/TestHeaderAutocoder",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/coverage/index.html"
+    },
+    {
+      "path": "cmake/test/data/TestDeployment/TestTargetAutocoder",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/TestDeployment/TestTargetAutocoder/coverage/index.html"
+    },
+    {
+      "path": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/coverage/index.html"
+    },
+    {
+      "path": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent",
+      "has_ut": false,
+      "has_coverage": false,
+      "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/coverage/index.html"
+    }
+  ]
+}

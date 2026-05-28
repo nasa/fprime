@@ -1,0 +1,23 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Fw/FilePacket/CancelPacket.cpp                14      13    92%   35
+Fw/FilePacket/DataPacket.cpp                  41      35    85%   43,48,52,72,77,82
+Fw/FilePacket/EndPacket.cpp                   30      28    93%   58,63
+Fw/FilePacket/FilePacket.cpp                  88      35    39%   29-30,53-56,58-61,63-66,68-71,73-87,91-103,115,131-136
+Fw/FilePacket/FilePacket.hpp                  15      15   100%
+Fw/FilePacket/GTest/CancelPacket.cpp           3       3   100%
+Fw/FilePacket/GTest/DataPacket.cpp             6       6   100%
+Fw/FilePacket/GTest/EndPacket.cpp              8       8   100%
+Fw/FilePacket/GTest/Header.cpp                 3       3   100%
+Fw/FilePacket/GTest/PathName.cpp               5       5   100%
+Fw/FilePacket/GTest/StartPacket.cpp            5       5   100%
+Fw/FilePacket/Header.cpp                      23      20    87%   33,48,53
+Fw/FilePacket/PathName.cpp                    26      22    84%   36,46,60,69
+Fw/FilePacket/StartPacket.cpp                 40      33    82%   44,52,60,74,82,90,98
+------------------------------------------------------------------------------
+TOTAL                                        307     231    75%
+------------------------------------------------------------------------------
