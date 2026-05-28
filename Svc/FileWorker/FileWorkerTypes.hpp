@@ -28,8 +28,6 @@ typedef enum {
     FW_STATUS_START_READ,
     FW_STATUS_DONE_READ,
     FW_STATUS_DONE,
-    // NB: appended at the end (not inserted mid-enum) so the integer values of all
-    // pre-existing statuses are preserved for ground-dictionary compatibility.
     FW_STATUS_INVALID_INPUT
 } FileWorkerStatus;
 

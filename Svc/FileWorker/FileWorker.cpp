@@ -72,7 +72,6 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     Os::FileSystem::Status fsStat = Os::FileSystem::getFileSize(fileName, fileSize);
     if (fsStat != Os::FileSystem::OP_OK) {
         // Path is ground-controlled and the file may change between the CRC check and here
-        // (e.g. a TOCTOU race), so report the failure rather than asserting on external state.
         this->log_WARNING_HI_ReadFailedFileSize(fsStat);
         this->readDoneOut_out(0, FW_STATUS_FAILED_FILE_SIZE, 0);
         this->m_state = FW_STATE_IDLE;
