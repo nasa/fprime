@@ -100,7 +100,8 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bits 7-4: Directive code being acknowledged (4 bits)
     // Bits 3-0: Directive subtype code (4 bits)
     U8 directiveAndSubtype = 0;
-    directiveAndSubtype = static_cast<U8>(directiveAndSubtype | static_cast<U8>((static_cast<U8>(this->m_directiveCode) & 0x0FU) << 4));
+    directiveAndSubtype =
+        static_cast<U8>(directiveAndSubtype | static_cast<U8>((static_cast<U8>(this->m_directiveCode) & 0x0FU) << 4));
     directiveAndSubtype = static_cast<U8>(directiveAndSubtype | (this->m_directiveSubtypeCode & 0x0FU));
 
     status = serialBuffer.serializeFrom(directiveAndSubtype);
