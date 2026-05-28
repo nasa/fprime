@@ -753,10 +753,11 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
 
     // Verify RX counters (cumulative across all transactions on this channel)
     U8 numFileDataPdus = static_cast<U8>(actualFileSize / dataPerPdu);
-    U32 expectedRecvPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData PDUs + EOF + FIN-ACK
-    if (simulateNak) {
-        expectedRecvPdus += 3;  // Add 3 retransmitted FileData PDUs
-    }
+    // Note: expectedRecvPdus calculated for future validation enhancement
+    // U32 expectedRecvPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData PDUs + EOF + FIN-ACK
+    // if (simulateNak) {
+    //     expectedRecvPdus += 3;  // Add 3 retransmitted FileData PDUs
+    // }
     EXPECT_GT(tlm[TEST_CHANNEL_ID_0].get_recvPdu(), numFileDataPdus)
         << "recvPdu should include Metadata + FileData + EOF + FIN-ACK";
     EXPECT_GE(tlm[TEST_CHANNEL_ID_0].get_recvFileDataBytes(), actualFileSize)
@@ -822,7 +823,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
     FwIndexType firstEofIndex = static_cast<FwIndexType>(1 + numFileDataPdus);
-    ASSERT_FROM_PORT_HISTORY_SIZE(firstEofIndex + 1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(static_cast<U32>(firstEofIndex + 1));
 
     Fw::Buffer firstEofPduBuffer = this->getSentPduBuffer(firstEofIndex);
     ASSERT_GT(firstEofPduBuffer.getSize(), 0);
@@ -902,10 +903,8 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
 
     // Verify TX counters (Metadata + FileData PDUs + EOF(s) + FIN-ACK)
     U32 expectedSentPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData + EOF + FIN-ACK
-    U64 expectedSentBytes = fileSize;
     if (simulateNak) {
-        expectedSentPdus += 3;                // Add 2 retransmitted FileData PDUs + second EOF
-        expectedSentBytes += 2 * dataPerPdu;  // Retransmitted bytes for 2 PDUs
+        expectedSentPdus += 3;  // Add 2 retransmitted FileData PDUs + second EOF
     }
     EXPECT_GE(tlm[channelId].get_sentPdu(), expectedSentPdus - 1)
         << "sentPdu should include Metadata + FileData + EOF + FIN-ACK";

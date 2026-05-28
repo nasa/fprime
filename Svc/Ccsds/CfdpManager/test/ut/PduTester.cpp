@@ -77,7 +77,7 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
     }
 
     // Extract buffer from history entry
-    const FromPortEntry_dataOut& entry = this->fromPortHistory_dataOut->at(index);
+    const FromPortEntry_dataOut& entry = this->fromPortHistory_dataOut->at(static_cast<U32>(index));
     return entry.fwBuffer;
 }
 
