@@ -110,32 +110,39 @@ void Engine::armInactTimer(Transaction* txn) {
 }
 
 void Engine::dispatchRecv(Transaction* txn, const Fw::Buffer& buffer) {
-    // Dispatch based on transaction state
-    switch (txn->m_state) {
-        case TXN_STATE_INIT:
-            this->recvInit(txn, buffer);
-            break;
-        case TXN_STATE_R1:
-            txn->r1Recv(buffer);
-            break;
-        case TXN_STATE_S1:
-            txn->s1Recv(buffer);
-            break;
-        case TXN_STATE_R2:
-            txn->r2Recv(buffer);
-            break;
-        case TXN_STATE_S2:
-            txn->s2Recv(buffer);
-            break;
-        case TXN_STATE_DROP:
-            this->recvDrop(txn, buffer);
-            break;
-        case TXN_STATE_HOLD:
-            this->recvHold(txn, buffer);
-            break;
-        default:
-            // Invalid or undefined state
-            break;
+    // Loop to handle state transitions without recursion
+    // The loop allows recvInit to transition to R2 state and re-dispatch
+    bool needsDispatch = true;
+    while (needsDispatch) {
+        needsDispatch = false;  // Assume single dispatch unless state handler requests re-dispatch
+
+        // Dispatch based on transaction state
+        switch (txn->m_state) {
+            case TXN_STATE_INIT:
+                needsDispatch = this->recvInit(txn, buffer);
+                break;
+            case TXN_STATE_R1:
+                txn->r1Recv(buffer);
+                break;
+            case TXN_STATE_S1:
+                txn->s1Recv(buffer);
+                break;
+            case TXN_STATE_R2:
+                txn->r2Recv(buffer);
+                break;
+            case TXN_STATE_S2:
+                txn->s2Recv(buffer);
+                break;
+            case TXN_STATE_DROP:
+                this->recvDrop(txn, buffer);
+                break;
+            case TXN_STATE_HOLD:
+                this->recvHold(txn, buffer);
+                break;
+            default:
+                // Invalid or undefined state
+                break;
+        }
     }
 
     this->armInactTimer(txn);  // whenever a packet was received by the other size, always arm its inactivity timer
@@ -440,7 +447,7 @@ void Engine::recvHold(Transaction* txn, const Fw::Buffer& buffer) {
     }
 }
 
-void Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
+bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
     // Use peekPduType to determine the PDU type before deserializing
     Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
@@ -485,7 +492,7 @@ void Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
                     txn->m_state = TXN_STATE_R2;
                     txn->m_txn_class = Cfdp::Class::CLASS_2;
                     txn->rInit();
-                    this->dispatchRecv(txn, buffer);  // re-dispatch to enter r2
+                    return true;  // Request re-dispatch to enter r2 state handler
                 }
             } else if (pduType == Cfdp::PduTypeEnum::METADATA) {
                 // file directive PDU with metadata - this is the expected case for starting a new RX transaction
@@ -520,6 +527,7 @@ void Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
     } else {
         m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
     }
+    return false;  // No re-dispatch needed
 }
 
 void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {

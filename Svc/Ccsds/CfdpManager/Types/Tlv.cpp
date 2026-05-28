@@ -29,7 +29,7 @@ void TlvData::setEntityId(EntityId eid) {
 }
 
 void TlvData::setData(const U8* data, U8 length) {
-    FW_ASSERT(length <= 255, length);
+    // length is U8 so it's always <= 255, assertion is redundant
     FW_ASSERT(data != nullptr);
 
     memcpy(this->m_rawData, data, length);

@@ -642,8 +642,9 @@ class Engine {
      *
      * @param txn    Pointer to the transaction state
      * @param buffer Buffer containing the PDU to process
+     * @return true if state changed and re-dispatch is needed, false otherwise
      */
-    void recvInit(Transaction* txn, const Fw::Buffer& buffer);
+    bool recvInit(Transaction* txn, const Fw::Buffer& buffer);
 
     // Dispatch
 
