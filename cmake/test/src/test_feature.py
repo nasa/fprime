@@ -18,7 +18,7 @@ FEATURE_BUILD_RESULT = cmake.get_build(
     "FEATURE_BUILD",
     settings.DATA_DIR / "TestDeployment",
     {
-        "FPRIME_FRAMEWORK_PATH": settings.REF_APP_PATH.parent,
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
         "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
         "FPRIME_LIBRARY_LOCATIONS": ";".join(
             [

@@ -5,25 +5,28 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(MOD_DEPS
-    Fw/Com
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TlmString.hpp"
+  DEPENDS
+    Fw_Com
 )
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
-)
-register_fprime_module()
 ### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmTest.cpp"
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmTest.cpp"
+  DEPENDS
+    Fw_Tlm
+    Fw_Com
+    Fw_Obj
+    Fw_Port
+    Fw_Time
+    Fw_Types
 )
-set(UT_MOD_DEPS
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Tlm"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Com"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Obj"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Port"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Time"
-  "${FPRIME_FRAMEWORK_PATH}/Fw/Types"
-)
-register_fprime_ut()

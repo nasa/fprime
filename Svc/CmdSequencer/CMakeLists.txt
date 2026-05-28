@@ -19,7 +19,7 @@ register_fprime_module(
 # ## UTs ###
 register_fprime_ut(
   AUTOCODER_INPUTS
-    "${FPRIME_FRAMEWORK_PATH}/Svc/CmdSequencer/CmdSequencer.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CmdSequencer.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/AMPCS.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/CommandBuffers.cpp"

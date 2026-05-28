@@ -219,6 +219,20 @@ event TooManySequenceDirectives(
     severity warning high \
     format "A sequence specified it had {} directives but the max was {}"
 
+event ArgSizeMismatch(
+    expected: Fpy.StackSizeType
+    actual: FwSizeType
+    filePath: string
+) \
+    severity warning high \
+    format "Expected {} bytes of arguments, but received {} in sequence file {}"
+
+event ArgTotalSizeExceedsStackLimit(
+    argSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arguments of size {} would exceed max stack size."
+
 event SequencePaused(
     stmtIdx: U32
 ) \

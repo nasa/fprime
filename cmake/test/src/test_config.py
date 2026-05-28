@@ -12,7 +12,7 @@ _1 = cmake.get_build(
     "CONFIG_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
-        "FPRIME_FRAMEWORK_PATH": settings.REF_APP_PATH.parent,
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
         "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
         "FPRIME_LIBRARY_LOCATIONS": ";".join(
             [
@@ -33,7 +33,7 @@ _2 = cmake.get_build(
     "CONFIG_FAILED_OVERRIDE_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
-        "FPRIME_FRAMEWORK_PATH": settings.REF_APP_PATH.parent,
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
         "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
         "FPRIME_LIBRARY_LOCATIONS": ";".join(
             [
@@ -49,7 +49,7 @@ _3 = cmake.get_build(
     "CONFIG_FAILED_NEW_FILE_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
-        "FPRIME_FRAMEWORK_PATH": settings.REF_APP_PATH.parent,
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
         "FPRIME_PROJECT_ROOT": settings.DATA_DIR,
         "FPRIME_LIBRARY_LOCATIONS": ";".join(
             [

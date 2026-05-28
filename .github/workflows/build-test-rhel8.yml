@@ -15,10 +15,14 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   Framework:
@@ -58,7 +62,7 @@ jobs:
     - uses: ./.github/actions/setup
     - name: Build Ref
       run: |
-        cd Ref
+        cd TestDeploymentsProject
         fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
         fprime-util build -j4
 

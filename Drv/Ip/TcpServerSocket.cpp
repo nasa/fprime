@@ -96,6 +96,7 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
 }
 
 void TcpServerSocket::terminate(const SocketDescriptor& socketDescriptor) {
+    (void)::shutdown(socketDescriptor.serverFd, SHUT_RDWR);  // Shutdown first to avoid hanging "accept" calls
     (void)::close(socketDescriptor.serverFd);
 }
 
