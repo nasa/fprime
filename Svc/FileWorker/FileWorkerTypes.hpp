@@ -13,7 +13,6 @@ typedef enum { FW_STATE_IDLE = 0, FW_STATE_WRITING, FW_STATE_READING } FileWorke
 
 typedef enum {
     FW_STATUS_NOT_IDLE,
-    FW_STATUS_INVALID_INPUT,
     FW_STATUS_FILE_NOT_OPEN,
     FW_STATUS_FAILED_TO_OPEN,
     FW_STATUS_FAILED_TO_WRITE,
@@ -28,7 +27,10 @@ typedef enum {
     FW_STATUS_DONE_WRITE,
     FW_STATUS_START_READ,
     FW_STATUS_DONE_READ,
-    FW_STATUS_DONE
+    FW_STATUS_DONE,
+    // NB: appended at the end (not inserted mid-enum) so the integer values of all
+    // pre-existing statuses are preserved for ground-dictionary compatibility.
+    FW_STATUS_INVALID_INPUT
 } FileWorkerStatus;
 
 typedef enum { FW_READ_DONE = 0, FW_READ_ERROR, FW_READ_ABORT, FW_READ_TIMEOUT, FW_READ_UNKNOWN } FileWorkerReadStatus;

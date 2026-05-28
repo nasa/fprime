@@ -32,13 +32,13 @@ void FileWorker ::cancelIn_handler(FwIndexType portNum) {
 
 void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path, Fw::Buffer& buffer) {
     // Validate inputs before processing file
-    if (path == nullptr || path.length() == 0) {
-        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("null path"));
+    if (path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("empty path"));
         this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
-    if (buffer.getData() == nullptr) {
-        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("null buffer"));
+    if (!buffer.isValid()) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("readIn"), Fw::LogStringArg("invalid buffer"));
         this->readDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -70,7 +70,14 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 
     // Get filesize
     Os::FileSystem::Status fsStat = Os::FileSystem::getFileSize(fileName, fileSize);
-    FW_ASSERT(fsStat == Os::FileSystem::OP_OK, fsStat);  // file size checked with checksum
+    if (fsStat != Os::FileSystem::OP_OK) {
+        // Path is ground-controlled and the file may change between the CRC check and here
+        // (e.g. a TOCTOU race), so report the failure rather than asserting on external state.
+        this->log_WARNING_HI_ReadFailedFileSize(fsStat);
+        this->readDoneOut_out(0, FW_STATUS_FAILED_FILE_SIZE, 0);
+        this->m_state = FW_STATE_IDLE;
+        return;
+    }
 
     // Start reading
     FileWorkerStatus workerStat = this->readBufferFromFile(buffer, fileName);
@@ -82,8 +89,8 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
 
 void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& path, U32 crc) {
     // Validate inputs before processing file
-    if (path == nullptr || path.length() == 0) {
-        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("verifyIn"), Fw::LogStringArg("null path"));
+    if (path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("verifyIn"), Fw::LogStringArg("empty path"));
         this->verifyDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -122,13 +129,13 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
                                   FwSizeType offsetBytes,
                                   bool append) {
     // Validate inputs before processing file
-    if (path == nullptr || path.length() == 0) {
-        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("null path"));
+    if (path.length() == 0) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("empty path"));
         this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
-    if (buffer.getData() == nullptr) {
-        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("null buffer"));
+    if (!buffer.isValid()) {
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("invalid buffer"));
         this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
         return;
     }
@@ -156,7 +163,13 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     // NB: may count null terminator due to FPRIME/fprime-sw#57, but should still be less than FileNameStringSize in any
     // case
     FwSizeType length = Fw::StringUtils::string_length(path.toChar(), FileNameStringSize);
-    FW_ASSERT(length < FileNameStringSize && length < sizeof(fileName));
+    if (length >= FileNameStringSize || length >= sizeof(fileName)) {
+        // Path length is ground-controlled, so an oversized path is invalid input, not a coding error.
+        this->log_WARNING_HI_InvalidInput(Fw::LogStringArg("writeIn"), Fw::LogStringArg("path too long"));
+        this->writeDoneOut_out(0, FW_STATUS_INVALID_INPUT, 0);
+        this->m_state = FW_STATE_IDLE;
+        return;
+    }
 
     (void)Fw::StringUtils::string_copy(fileName, path.toChar(), sizeof(fileName));
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination

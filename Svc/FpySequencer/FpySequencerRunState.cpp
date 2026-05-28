@@ -179,13 +179,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                 return Fw::Success::FAILURE;
             }
 
-            // Use a runtime check instead of FW_ASSERT
-            if (argBuf.getDeserializeSizeLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
-                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
-                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
-                return Fw::Success::FAILURE;
-            }
+            // now there should be nothing left, otherwise coding err
+            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,
+                      static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
 
             // and set the buf size now that we know it
             deserializedDirective.constCmd.set__argBufSize(cmdArgBufSize);
@@ -314,13 +310,9 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
                 return Fw::Success::FAILURE;
             }
 
-            // use a runtime check instead of FW_ASSERT
-            if (argBuf.getDeserializeSizeLeft() != 0) {
-                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
-                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
-                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
-                return Fw::Success::FAILURE;
-            }
+            // now there should be nothing left, otherwise coding err
+            FW_ASSERT(argBuf.getDeserializeSizeLeft() == 0,
+                      static_cast<FwAssertArgType>(argBuf.getDeserializeSizeLeft()));
 
             // and set the buf size now that we know it
             deserializedDirective.pushVal.set__valSize(bufSize);
