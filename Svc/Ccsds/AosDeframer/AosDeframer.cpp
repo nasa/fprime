@@ -12,6 +12,7 @@
 
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
 #include <cstring>
+#include <limits>
 #include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -313,13 +314,17 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
         // packet)
-        // FIXME: packetSize is untrusted (read straight from the wire) and could have unintended side effects,
-        // especially with EPP. We should skip if packetSize exceeds a mission-defined limit instead of letting the
-        // allocator handle any requests, which has a side effect of abandoning spanning packets on failure
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
         }
+
+        // TODO(security): Add a mission-defined upper bound check here once
+        // ComCfg::AosMaxPacketSize is defined in FppConstantsAc.hpp and the
+        // corresponding OversizedPacket warning event is added to AosDeframer.fpp.
+        // On 32-bit targets the overflow guard in sizeEppPacket already returns 0
+        // for values that would wrap. On 64-bit targets, EPP lol=4 packets claiming
+        // ~4 GB are rejected by the allocator call below (existing fallback path).
 
         // Try to allocate a buffer for the whole packet
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
@@ -343,6 +348,12 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                   AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
+        // Destination buffer must be large enough for the accumulated header bytes.
+        // Protect against any future regression in sizeEppPacket/sizeSppPacket
+        // reintroducing an overflow that makes packetSize < bytesReceived.
+        FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
         ::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
     }
 
@@ -491,6 +502,9 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     }
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
+    // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
+    // The sum cannot overflow a 32-bit FwSizeType on current targets, but if FwSizeType is
+    // ever narrowed below 17 bits this addition must be guarded the same way sizeEppPacket is.
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
     // TODO: Unify Deframers | bring the whole spp processing into this component
@@ -554,7 +568,19 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         packetDataLength = (packetDataLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    totalPacketSize = headerLength + packetDataLength;
+    // Guard against integer overflow and return 0 as incomplete/invalid (if true).
+    // This fires on 32-bit targets (FwSizeType = U32) where the sum would wrap.
+    if (packetDataLength > (std::numeric_limits<FwSizeType>::max() - static_cast<FwSizeType>(headerLength))) {
+        return 0;
+    }
+
+    // Cast both operands to FwSizeType BEFORE adding.
+    // Without the cast, C++ computes headerLength(U8) + packetDataLength(U32) in U32
+    // arithmetic, which wraps on both 32-bit and 64-bit hosts even when FwSizeType is
+    // 64 bits wide.  The guard above is not sufficient on its own: on 64-bit it never
+    // fires (packetDataLength can never exceed UINT64_MAX-8), so the unguarded addition
+    // would still silently truncate to 4 on a 64-bit host.
+    totalPacketSize = static_cast<FwSizeType>(headerLength) + static_cast<FwSizeType>(packetDataLength);
 
     return totalPacketSize;
 }
