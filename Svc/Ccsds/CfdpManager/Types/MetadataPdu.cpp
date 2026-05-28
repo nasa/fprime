@@ -4,9 +4,9 @@
 // \brief  cpp file for CFDP Metadata PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp>
 #include <config/CfdpCfg.hpp>
 
 namespace Svc {
@@ -14,15 +14,15 @@ namespace Ccsds {
 namespace Cfdp {
 
 void MetadataPdu::initialize(PduDirection direction,
-                                   Cfdp::Class::T txmMode,
-                                   EntityId sourceEid,
-                                   TransactionSeq transactionSeq,
-                                   EntityId destEid,
-                                   FileSize fileSize,
-                                   const Fw::String& sourceFilename,
-                                   const Fw::String& destFilename,
-                                   ChecksumType checksumType,
-                                   U8 closureRequested) {
+                             Cfdp::Class::T txmMode,
+                             EntityId sourceEid,
+                             TransactionSeq transactionSeq,
+                             EntityId destEid,
+                             FileSize fileSize,
+                             const Fw::String& sourceFilename,
+                             const Fw::String& destFilename,
+                             ChecksumType checksumType,
+                             U8 closureRequested) {
     this->m_header.initialize(PduTypeEnum::METADATA, direction, txmMode, sourceEid, transactionSeq, destEid);
 
     this->m_fileSize = fileSize;
@@ -58,13 +58,11 @@ U32 MetadataPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus MetadataPdu::serializeTo(Fw::SerialBufferBase& buffer,
-                                               Fw::Endianness mode) const {
+Fw::SerializeStatus MetadataPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
-                                                   Fw::Endianness mode) {
+Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -143,10 +141,8 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
     }
 
     // Serialize source filename bytes without length prefix
-    status = serialBuffer.serializeFrom(
-        reinterpret_cast<const U8*>(this->m_sourceFilename.toChar()),
-        sourceFilenameLength,
-        Fw::Serialization::OMIT_LENGTH);
+    status = serialBuffer.serializeFrom(reinterpret_cast<const U8*>(this->m_sourceFilename.toChar()),
+                                        sourceFilenameLength, Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
@@ -159,10 +155,8 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
     }
 
     // Serialize dest filename bytes without length prefix
-    status = serialBuffer.serializeFrom(
-        reinterpret_cast<const U8*>(this->m_destFilename.toChar()),
-        destFilenameLength,
-        Fw::Serialization::OMIT_LENGTH);
+    status = serialBuffer.serializeFrom(reinterpret_cast<const U8*>(this->m_destFilename.toChar()), destFilenameLength,
+                                        Fw::Serialization::OMIT_LENGTH);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }

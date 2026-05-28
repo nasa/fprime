@@ -133,8 +133,7 @@ class Channel {
      * @returns Pointer to the given transaction if found
      * @retval  NULL if the transaction is not found
      */
-    Transaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number,
-                                                     EntityId src_eid);
+    Transaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number, EntityId src_eid);
 
     /**
      * @brief Traverses all transactions on all active queues and performs an operation on them
@@ -348,7 +347,7 @@ class Channel {
      *
      * @param txn  Pointer to the transaction object
      */
-    void recycleTransaction(Transaction *txn);
+    void recycleTransaction(Transaction* txn);
 
     /**
      * @brief Insert a transaction into a priority sorted transaction queue
@@ -443,32 +442,32 @@ class Channel {
     // Member variables
     // ----------------------------------------------------------------------
 
-    Engine* m_engine;    //!< Parent CFDP engine
+    Engine* m_engine;  //!< Parent CFDP engine
 
-    CListNode* m_qs[QueueId::NUM];    //!< Transaction queues
-    CListNode* m_cs[DIRECTION_NUM];    //!< Command/history lists
+    CListNode* m_qs[QueueId::NUM];   //!< Transaction queues
+    CListNode* m_cs[DIRECTION_NUM];  //!< Command/history lists
 
-    U32 m_numCmdTx;                            //!< Number of commanded TX transactions
+    U32 m_numCmdTx;  //!< Number of commanded TX transactions
 
     Playback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
-    CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                       //!< Polling directory state
+    CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                   //!< Polling directory state
 
-    const Transaction* m_currentTxn;       //!< Current transaction during channel cycle
-    CfdpManager* m_cfdpManager;                //!< Reference to F' component for parameters
+    const Transaction* m_currentTxn;  //!< Current transaction during channel cycle
+    CfdpManager* m_cfdpManager;       //!< Reference to F' component for parameters
 
-    U8 m_tickType;                             //!< Type of tick being processed
-    U8 m_channelId;                            //!< Channel ID (index into engine array)
+    U8 m_tickType;   //!< Type of tick being processed
+    U8 m_channelId;  //!< Channel ID (index into engine array)
 
-    Flow::T m_flowState;                   //!< Channel flow state (normal/frozen)
-    U32 m_outgoingCounter;                     //!< PDU throttling counter
+    Flow::T m_flowState;    //!< Channel flow state (normal/frozen)
+    U32 m_outgoingCounter;  //!< PDU throttling counter
 
     // Per-channel resource arrays (dynamically allocated, moved from Engine)
-    Transaction* m_transactions;           //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
-    History* m_histories;                  //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
-    CfdpChunkWrapper* m_chunks;                //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM
-    Chunk* m_chunkMem;                     //!< Chunk memory backing store
+    Transaction* m_transactions;  //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
+    History* m_histories;         //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
+    CfdpChunkWrapper* m_chunks;   //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM
+    Chunk* m_chunkMem;            //!< Chunk memory backing store
 
-    U32 m_dirMaxChunks[DIRECTION_NUM];    //!< Max chunks per direction (RX/TX) for this channel
+    U32 m_dirMaxChunks[DIRECTION_NUM];  //!< Max chunks per direction (RX/TX) for this channel
 
     // Friend declarations for testing
     friend class CfdpManagerTester;
@@ -478,18 +477,15 @@ class Channel {
 // Inline function implementations
 // ----------------------------------------------------------------------
 
-inline void Channel::removeFromQueue(QueueId::T queueidx, CListNode* node)
-{
+inline void Channel::removeFromQueue(QueueId::T queueidx, CListNode* node) {
     CfdpCListRemove(&m_qs[queueidx], node);
 }
 
-inline void Channel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after)
-{
+inline void Channel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after) {
     CfdpCListInsertAfter(&m_qs[queueidx], start, after);
 }
 
-inline void Channel::insertBackInQueue(QueueId::T queueidx, CListNode* node)
-{
+inline void Channel::insertBackInQueue(QueueId::T queueidx, CListNode* node) {
     CfdpCListInsertBack(&m_qs[queueidx], node);
 }
 
@@ -497,4 +493,4 @@ inline void Channel::insertBackInQueue(QueueId::T queueidx, CListNode* node)
 }  // namespace Ccsds
 }  // namespace Svc
 
-#endif // CFDP_CHANNEL_HPP
+#endif  // CFDP_CHANNEL_HPP

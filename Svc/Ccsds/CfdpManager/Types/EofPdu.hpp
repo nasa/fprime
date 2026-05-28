@@ -8,8 +8,8 @@
 #define Svc_Ccsds_Cfdp_EofPdu_HPP
 
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Tlv.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -36,13 +36,13 @@ class EofPdu : public PduBase {
 
     //! Initialize an EOF PDU
     void initialize(PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid,
-                   ConditionCode conditionCode,
-                   U32 checksum,
-                   FileSize fileSize);
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid,
+                    ConditionCode conditionCode,
+                    U32 checksum,
+                    FileSize fileSize);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;

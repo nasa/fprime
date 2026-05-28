@@ -4,21 +4,21 @@
 // \brief  cpp file for CFDP FIN (Finished) PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/FinPdu.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FinPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 void FinPdu::initialize(PduDirection direction,
-                              Cfdp::Class::T txmMode,
-                              EntityId sourceEid,
-                              TransactionSeq transactionSeq,
-                              EntityId destEid,
-                              ConditionCode conditionCode,
-                              FinDeliveryCode deliveryCode,
-                              FinFileStatus fileStatus) {
+                        Cfdp::Class::T txmMode,
+                        EntityId sourceEid,
+                        TransactionSeq transactionSeq,
+                        EntityId destEid,
+                        ConditionCode conditionCode,
+                        FinDeliveryCode deliveryCode,
+                        FinFileStatus fileStatus) {
     // Initialize header with PduTypeEnum::FINISHED type
     this->m_header.initialize(PduTypeEnum::FINISHED, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -43,13 +43,11 @@ U32 FinPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus FinPdu::serializeTo(Fw::SerialBufferBase& buffer,
-                                         Fw::Endianness mode) const {
+Fw::SerializeStatus FinPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus FinPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
-                                             Fw::Endianness mode) {
+Fw::SerializeStatus FinPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {

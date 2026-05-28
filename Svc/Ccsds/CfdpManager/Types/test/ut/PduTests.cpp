@@ -4,8 +4,8 @@
 // \brief  Unit tests for CFDP PDU classes
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <gtest/gtest.h>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <cstring>
 
 using namespace Svc::Ccsds;
@@ -29,8 +29,7 @@ class PduTest : public ::testing::Test {
 
 TEST_F(PduTest, HeaderBufferSize) {
     PduHeader header;
-    header.initialize(PduTypeEnum::METADATA, DIRECTION_TOWARD_RECEIVER,
-                     Cfdp::Class::CLASS_2, 123, 456, 789);
+    header.initialize(PduTypeEnum::METADATA, DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 123, 456, 789);
 
     // Minimum header size with 1-byte EIDs and TSN
     // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(2) + tsn(2) + destEid(2) = 10
@@ -77,8 +76,7 @@ TEST_F(PduTest, HeaderRoundTrip) {
 
 TEST_F(PduTest, MetadataBufferSize) {
     MetadataPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 1024, "src.txt", "dst.txt",
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 1024, "src.txt", "dst.txt",
                    CHECKSUM_TYPE_MODULAR, 1);
 
     U32 size = pdu.getBufferSize();
@@ -100,8 +98,8 @@ TEST_F(PduTest, MetadataRoundTrip) {
     const ChecksumType checksumType = CHECKSUM_TYPE_MODULAR;
     const U8 closureRequested = 1;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    fileSize, sourceFilename, destFilename, checksumType, closureRequested);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, fileSize, sourceFilename, destFilename,
+                     checksumType, closureRequested);
 
     // Serialize to first buffer
     U8 buffer1[512];
@@ -168,9 +166,7 @@ TEST_F(PduTest, MetadataRoundTrip) {
 
 TEST_F(PduTest, MetadataEmptyFilenames) {
     MetadataPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 0, "", "",
-                   CHECKSUM_TYPE_NULL_CHECKSUM, 0);
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, "", "", CHECKSUM_TYPE_NULL_CHECKSUM, 0);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -185,11 +181,16 @@ TEST_F(PduTest, MetadataEmptyFilenames) {
 TEST_F(PduTest, MetadataLongFilenames) {
     MetadataPdu pdu;
     // Test with maximum allowed filename length (MaxFilePathSize = 200)
-    const char* longSrc = "/very/long/path/to/source/file/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bin";
-    const char* longDst = "/another/very/long/path/to/destination/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.dat";
+    const char* longSrc =
+        "/very/long/path/to/source/file/"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bin";
+    const char* longDst =
+        "/another/very/long/path/to/destination/"
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.dat";
 
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 4096, longSrc, longDst,
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 4096, longSrc, longDst,
                    CHECKSUM_TYPE_MODULAR, 1);
 
     U8 buffer[512];
@@ -214,8 +215,8 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
     const char* destFilename = "test/ut/output/test_dest.bin";
     const U8 closureRequested = 1;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    fileSize, sourceFilename, destFilename, CHECKSUM_TYPE_MODULAR, closureRequested);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, fileSize, sourceFilename, destFilename,
+                     CHECKSUM_TYPE_MODULAR, closureRequested);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -256,8 +257,7 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
 TEST_F(PduTest, FileDataBufferSize) {
     FileDataPdu pdu;
     const U8 testData[] = {0x01, 0x02, 0x03, 0x04, 0x05};
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 100, sizeof(testData), testData);
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 100, sizeof(testData), testData);
 
     U32 size = pdu.getBufferSize();
     // Should include header + offset(4) + data(5)
@@ -279,8 +279,7 @@ TEST_F(PduTest, FileDataRoundTrip) {
     const U8 testData[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xCA, 0xFE, 0xBA, 0xBE};
     const U16 dataSize = sizeof(testData);
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    fileOffset, dataSize, testData);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, fileOffset, dataSize, testData);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -318,8 +317,7 @@ TEST_F(PduTest, FileDataRoundTrip) {
 TEST_F(PduTest, FileDataEmptyPayload) {
     // Test with zero-length data
     FileDataPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 0, 0, nullptr);
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, 0, nullptr);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -341,8 +339,7 @@ TEST_F(PduTest, FileDataLargePayload) {
     }
 
     FileDataPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 999999, largeSize, largeData);
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, 999999, largeSize, largeData);
 
     U8 buffer[2048];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -370,8 +367,7 @@ TEST_F(PduTest, FileDataLargePayload) {
 
 TEST_F(PduTest, EofBufferSize) {
     EofPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
+    pdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
 
     U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + condition(1) + checksum(4) + filesize(sizeof(FileSize))
@@ -392,8 +388,7 @@ TEST_F(PduTest, EofRoundTrip) {
     const U32 checksum = 0xDEADBEEF;
     const FileSize fileSize = 65536;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    conditionCode, checksum, fileSize);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, conditionCode, checksum, fileSize);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -430,8 +425,8 @@ TEST_F(PduTest, EofRoundTrip) {
 TEST_F(PduTest, EofWithError) {
     // Test with error condition code
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0, 0);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0,
+                     0);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -456,8 +451,7 @@ TEST_F(PduTest, EofWithError) {
 TEST_F(PduTest, EofZeroValues) {
     // Test with all zero values
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -482,8 +476,8 @@ TEST_F(PduTest, EofZeroValues) {
 TEST_F(PduTest, EofLargeValues) {
     // Test with maximum U32 values
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0xFFFFFFFF, 0xFFFFFFFF);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0xFFFFFFFF,
+                     0xFFFFFFFF);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -510,8 +504,7 @@ TEST_F(PduTest, EofLargeValues) {
 
 TEST_F(PduTest, FinBufferSize) {
     FinPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
+    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
                    FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
     U32 size = pdu.getBufferSize();
@@ -533,8 +526,7 @@ TEST_F(PduTest, FinRoundTrip) {
     const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_COMPLETE;
     const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    conditionCode, deliveryCode, fileStatus);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, conditionCode, deliveryCode, fileStatus);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -571,9 +563,8 @@ TEST_F(PduTest, FinRoundTrip) {
 TEST_F(PduTest, FinWithError) {
     // Test with error condition code
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
-                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+                     FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -600,9 +591,8 @@ TEST_F(PduTest, FinWithError) {
 TEST_F(PduTest, FinDeliveryIncomplete) {
     // Test with incomplete delivery
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_RETAINED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                     FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_RETAINED);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -627,9 +617,8 @@ TEST_F(PduTest, FinDeliveryIncomplete) {
 TEST_F(PduTest, FinFileStatusDiscarded) {
     // Test with file discarded
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                     FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -653,9 +642,8 @@ TEST_F(PduTest, FinFileStatusDiscarded) {
 TEST_F(PduTest, FinFileStatusDiscardedFilestore) {
     // Test with file discarded by filestore
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
+                     FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -686,29 +674,29 @@ TEST_F(PduTest, FinBitPackingValidation) {
     for (const auto& deliveryCode : deliveryCodes) {
         for (const auto& fileStatus : fileStatuses) {
             FinPdu txPdu;
-            txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                           1, 2, 3, CONDITION_CODE_NO_ERROR, deliveryCode, fileStatus);
+            txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                             deliveryCode, fileStatus);
 
             U8 buffer[512];
             Fw::Buffer txBuffer(buffer, sizeof(buffer));
             // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+            Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
+            txBuffer.setSize(sb_txBuffer.getSize());
 
             FinPdu rxPdu;
             const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
             // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+            Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
+            sb_rxBuffer.setBuffLen(rxBuffer.getSize());
+            ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
             EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode())
-                << "Delivery code mismatch for combination: delivery="
-                << static_cast<int>(deliveryCode) << " fileStatus=" << static_cast<int>(fileStatus);
+                << "Delivery code mismatch for combination: delivery=" << static_cast<int>(deliveryCode)
+                << " fileStatus=" << static_cast<int>(fileStatus);
             EXPECT_EQ(fileStatus, rxPdu.getFileStatus())
-                << "File status mismatch for combination: delivery="
-                << static_cast<int>(deliveryCode) << " fileStatus=" << static_cast<int>(fileStatus);
+                << "File status mismatch for combination: delivery=" << static_cast<int>(deliveryCode)
+                << " fileStatus=" << static_cast<int>(fileStatus);
         }
     }
 }
@@ -719,8 +707,7 @@ TEST_F(PduTest, FinBitPackingValidation) {
 
 TEST_F(PduTest, AckBufferSize) {
     AckPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
                    CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
 
     U32 size = pdu.getBufferSize();
@@ -743,8 +730,8 @@ TEST_F(PduTest, AckRoundTrip) {
     const ConditionCode conditionCode = CONDITION_CODE_NO_ERROR;
     const AckTxnStatus transactionStatus = ACK_TXN_STATUS_ACTIVE;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    directiveCode, directiveSubtypeCode, conditionCode, transactionStatus);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, directiveCode, directiveSubtypeCode,
+                     conditionCode, transactionStatus);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -782,9 +769,8 @@ TEST_F(PduTest, AckRoundTrip) {
 TEST_F(PduTest, AckForEof) {
     // Test ACK for EOF directive
     AckPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
-                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+                     CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -810,9 +796,8 @@ TEST_F(PduTest, AckForEof) {
 TEST_F(PduTest, AckForFin) {
     // Test ACK for FIN directive
     AckPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, FILE_DIRECTIVE_FIN, 0,
-                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_TERMINATED);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, FILE_DIRECTIVE_FIN, 0,
+                     CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_TERMINATED);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -837,9 +822,8 @@ TEST_F(PduTest, AckForFin) {
 TEST_F(PduTest, AckWithError) {
     // Test ACK with error condition code
     AckPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
-                   CONDITION_CODE_FILE_CHECKSUM_FAILURE, ACK_TXN_STATUS_TERMINATED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, FILE_DIRECTIVE_END_OF_FILE, 0,
+                     CONDITION_CODE_FILE_CHECKSUM_FAILURE, ACK_TXN_STATUS_TERMINATED);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -865,9 +849,8 @@ TEST_F(PduTest, AckWithSubtype) {
     // Test ACK with non-zero subtype code
     AckPdu txPdu;
     const U8 subtypeCode = 5;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, FILE_DIRECTIVE_FIN, subtypeCode,
-                   CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, FILE_DIRECTIVE_FIN, subtypeCode,
+                     CONDITION_CODE_NO_ERROR, ACK_TXN_STATUS_ACTIVE);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -890,43 +873,40 @@ TEST_F(PduTest, AckWithSubtype) {
 TEST_F(PduTest, AckBitPackingValidation) {
     // Test various combinations to verify bit packing is correct
     const FileDirective directives[] = {FILE_DIRECTIVE_END_OF_FILE, FILE_DIRECTIVE_FIN};
-    const AckTxnStatus statuses[] = {ACK_TXN_STATUS_UNDEFINED, ACK_TXN_STATUS_ACTIVE,
-                                     ACK_TXN_STATUS_TERMINATED, ACK_TXN_STATUS_UNRECOGNIZED};
+    const AckTxnStatus statuses[] = {ACK_TXN_STATUS_UNDEFINED, ACK_TXN_STATUS_ACTIVE, ACK_TXN_STATUS_TERMINATED,
+                                     ACK_TXN_STATUS_UNRECOGNIZED};
     const ConditionCode conditions[] = {CONDITION_CODE_NO_ERROR, CONDITION_CODE_FILE_CHECKSUM_FAILURE};
 
     for (const auto& directive : directives) {
         for (const auto& status : statuses) {
             for (const auto& condition : conditions) {
                 AckPdu txPdu;
-                txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                               1, 2, 3, directive, 0, condition, status);
+                txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, directive, 0, condition,
+                                 status);
 
                 U8 buffer[512];
                 Fw::Buffer txBuffer(buffer, sizeof(buffer));
                 // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+                Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
+                txBuffer.setSize(sb_txBuffer.getSize());
 
                 AckPdu rxPdu;
                 const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
                 // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+                Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
+                sb_rxBuffer.setBuffLen(rxBuffer.getSize());
+                ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
                 EXPECT_EQ(directive, rxPdu.getDirectiveCode())
-                    << "Directive mismatch for combination: dir="
-                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
-                    << " condition=" << static_cast<int>(condition);
+                    << "Directive mismatch for combination: dir=" << static_cast<int>(directive)
+                    << " status=" << static_cast<int>(status) << " condition=" << static_cast<int>(condition);
                 EXPECT_EQ(status, rxPdu.getTransactionStatus())
-                    << "Status mismatch for combination: dir="
-                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
-                    << " condition=" << static_cast<int>(condition);
+                    << "Status mismatch for combination: dir=" << static_cast<int>(directive)
+                    << " status=" << static_cast<int>(status) << " condition=" << static_cast<int>(condition);
                 EXPECT_EQ(condition, rxPdu.getConditionCode())
-                    << "Condition mismatch for combination: dir="
-                    << static_cast<int>(directive) << " status=" << static_cast<int>(status)
-                    << " condition=" << static_cast<int>(condition);
+                    << "Condition mismatch for combination: dir=" << static_cast<int>(directive)
+                    << " status=" << static_cast<int>(status) << " condition=" << static_cast<int>(condition);
             }
         }
     }
@@ -938,8 +918,7 @@ TEST_F(PduTest, AckBitPackingValidation) {
 
 TEST_F(PduTest, NakBufferSize) {
     NakPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 100, 500);
+    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 100, 500);
 
     U32 size = pdu.getBufferSize();
     // Should include header + directive(1) + scope_start(4) + scope_end(4) = header + 9
@@ -959,8 +938,7 @@ TEST_F(PduTest, NakRoundTrip) {
     const FileSize scopeStart = 1024;
     const FileSize scopeEnd = 8192;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    scopeStart, scopeEnd);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, scopeStart, scopeEnd);
 
     // Serialize to buffer
     U8 buffer1[512];
@@ -996,8 +974,7 @@ TEST_F(PduTest, NakRoundTrip) {
 TEST_F(PduTest, NakZeroScope) {
     // Test NAK with zero scope (start of file)
     NakPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 0, 1024);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, 1024);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -1024,8 +1001,7 @@ TEST_F(PduTest, NakLargeScope) {
     NakPdu txPdu;
     const FileSize largeStart = 0xFFFF0000;
     const FileSize largeEnd = 0xFFFFFFFF;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, largeStart, largeEnd);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, largeStart, largeEnd);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -1050,8 +1026,7 @@ TEST_F(PduTest, NakLargeScope) {
 TEST_F(PduTest, NakSingleByte) {
     // Test NAK for single byte gap
     NakPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, 1000, 1001);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 1000, 1001);
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
@@ -1075,36 +1050,28 @@ TEST_F(PduTest, NakSingleByte) {
 TEST_F(PduTest, NakMultipleCombinations) {
     // Test various scope combinations
     const FileSize testScopes[][2] = {
-        {0, 100},
-        {512, 1024},
-        {4096, 8192},
-        {0x10000, 0x20000},
-        {0x80000000, 0x90000000}
-    };
+        {0, 100}, {512, 1024}, {4096, 8192}, {0x10000, 0x20000}, {0x80000000, 0x90000000}};
 
     for (const auto& scope : testScopes) {
         NakPdu txPdu;
-        txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                       10, 20, 30, scope[0], scope[1]);
+        txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 10, 20, 30, scope[0], scope[1]);
 
         U8 buffer[512];
         Fw::Buffer txBuffer(buffer, sizeof(buffer));
         // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+        Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
+        txBuffer.setSize(sb_txBuffer.getSize());
 
         NakPdu rxPdu;
         const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
         // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+        Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
+        sb_rxBuffer.setBuffLen(rxBuffer.getSize());
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
-        EXPECT_EQ(scope[0], rxPdu.getScopeStart())
-            << "Scope start mismatch for range: " << scope[0] << "-" << scope[1];
-        EXPECT_EQ(scope[1], rxPdu.getScopeEnd())
-            << "Scope end mismatch for range: " << scope[0] << "-" << scope[1];
+        EXPECT_EQ(scope[0], rxPdu.getScopeStart()) << "Scope start mismatch for range: " << scope[0] << "-" << scope[1];
+        EXPECT_EQ(scope[1], rxPdu.getScopeEnd()) << "Scope end mismatch for range: " << scope[0] << "-" << scope[1];
     }
 }
 
@@ -1116,8 +1083,7 @@ TEST_F(PduTest, NakWithSingleSegment) {
     const FileSize segStart = 1024;
     const FileSize segEnd = 2048;
 
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, scopeStart, scopeEnd);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, scopeStart, scopeEnd);
 
     ASSERT_TRUE(txPdu.addSegment(segStart, segEnd));
     EXPECT_EQ(1, txPdu.getNumSegments());
@@ -1150,8 +1116,7 @@ TEST_F(PduTest, NakWithMultipleSegments) {
     const FileSize scopeStart = 0;
     const FileSize scopeEnd = 10000;
 
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, scopeStart, scopeEnd);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, scopeStart, scopeEnd);
 
     // Add 5 segments representing gaps in received data
     ASSERT_TRUE(txPdu.addSegment(100, 200));
@@ -1199,8 +1164,7 @@ TEST_F(PduTest, NakWithMaxSegments) {
     const FileSize scopeStart = 0;
     const FileSize scopeEnd = 100000;
 
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, scopeStart, scopeEnd);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, scopeStart, scopeEnd);
 
     // Add 58 segments (CFDP_NAK_MAX_SEGMENTS)
     for (U8 i = 0; i < 58; i++) {
@@ -1245,8 +1209,7 @@ TEST_F(PduTest, NakWithMaxSegments) {
 TEST_F(PduTest, NakClearSegments) {
     // Test clearSegments() functionality
     NakPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                 1, 2, 3, 0, 4096);
+    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, 4096);
 
     // Add segments
     ASSERT_TRUE(pdu.addSegment(100, 200));
@@ -1265,8 +1228,7 @@ TEST_F(PduTest, NakClearSegments) {
 TEST_F(PduTest, NakBufferSizeWithSegments) {
     // Test that bufferSize() correctly accounts for segments
     NakPdu pdu;
-    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                 1, 2, 3, 0, 4096);
+    pdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, 4096);
 
     U32 baseSizeNoSegments = pdu.getBufferSize();
 
@@ -1517,8 +1479,8 @@ TEST_F(PduTest, TlvListEncodeDecode) {
 TEST_F(PduTest, EofWithNoTlvs) {
     // Verify existing EOF tests work with TLV support (backward compatible)
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678, 4096);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0x12345678,
+                     4096);
 
     EXPECT_EQ(0, txPdu.getNumTlv());
 
@@ -1542,8 +1504,8 @@ TEST_F(PduTest, EofWithNoTlvs) {
 TEST_F(PduTest, EofWithOneTlv) {
     // Test EOF PDU with one TLV
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0, 0);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE, 0,
+                     0);
 
     // Add entity ID TLV
     Tlv tlv;
@@ -1575,8 +1537,8 @@ TEST_F(PduTest, EofWithOneTlv) {
 TEST_F(PduTest, EofWithMultipleTlvs) {
     // Test EOF PDU with multiple TLVs
     EofPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION, 0xABCDEF, 2048);
+    txPdu.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
+                     0xABCDEF, 2048);
 
     // Add entity ID TLV
     Tlv tlv1;
@@ -1614,10 +1576,8 @@ TEST_F(PduTest, EofWithMultipleTlvs) {
 TEST_F(PduTest, EofTlvBufferSize) {
     // Verify buffer size calculation includes TLVs
     EofPdu pdu1, pdu2;
-    pdu1.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
-    pdu2.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+    pdu1.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
+    pdu2.initialize(DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR, 0, 0);
 
     U32 sizeWithoutTlv = pdu1.getBufferSize();
 
@@ -1642,8 +1602,7 @@ TEST_F(PduTest, EofTlvRoundTripComplete) {
     const U32 checksum = 0xDEADBEEF;
     const FileSize fileSize = 8192;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    conditionCode, checksum, fileSize);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, conditionCode, checksum, fileSize);
 
     // Add TLVs
     Tlv tlv1;
@@ -1689,9 +1648,8 @@ TEST_F(PduTest, EofTlvRoundTripComplete) {
 TEST_F(PduTest, FinWithNoTlvs) {
     // Verify existing FIN tests work with TLV support (backward compatible)
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                     FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
     EXPECT_EQ(0, txPdu.getNumTlv());
 
@@ -1715,9 +1673,8 @@ TEST_F(PduTest, FinWithNoTlvs) {
 TEST_F(PduTest, FinWithOneTlv) {
     // Test FIN PDU with one TLV
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
-                   FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILE_CHECKSUM_FAILURE,
+                     FIN_DELIVERY_CODE_INCOMPLETE, FIN_FILE_STATUS_DISCARDED);
 
     // Add entity ID TLV
     Tlv tlv;
@@ -1751,9 +1708,8 @@ TEST_F(PduTest, FinWithOneTlv) {
 TEST_F(PduTest, FinWithMultipleTlvs) {
     // Test FIN PDU with multiple TLVs
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_FILESTORE_REJECTION,
+                     FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_DISCARDED_FILESTORE);
 
     // Add entity ID TLV
     Tlv tlv1;
@@ -1798,12 +1754,10 @@ TEST_F(PduTest, FinWithMultipleTlvs) {
 TEST_F(PduTest, FinTlvBufferSize) {
     // Verify buffer size calculation includes TLVs
     FinPdu pdu1, pdu2;
-    pdu1.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
-    pdu2.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+    pdu1.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                    FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+    pdu2.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                    FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
     U32 sizeWithoutTlv = pdu1.getBufferSize();
 
@@ -1828,8 +1782,7 @@ TEST_F(PduTest, FinTlvRoundTripComplete) {
     const FinDeliveryCode deliveryCode = FIN_DELIVERY_CODE_INCOMPLETE;
     const FinFileStatus fileStatus = FIN_FILE_STATUS_RETAINED;
 
-    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid,
-                    conditionCode, deliveryCode, fileStatus);
+    txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, conditionCode, deliveryCode, fileStatus);
 
     // Add TLVs
     Tlv tlv1;
@@ -1877,9 +1830,8 @@ TEST_F(PduTest, FinTlvRoundTripComplete) {
 TEST_F(PduTest, FinWithMaxTlvs) {
     // Test FIN PDU with maximum number of TLVs (4)
     FinPdu txPdu;
-    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2,
-                   1, 2, 3, CONDITION_CODE_NO_ERROR,
-                   FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
+    txPdu.initialize(DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, CONDITION_CODE_NO_ERROR,
+                     FIN_DELIVERY_CODE_COMPLETE, FIN_FILE_STATUS_RETAINED);
 
     // Add 4 TLVs
     for (U8 i = 0; i < CFDP_MAX_TLV; i++) {

@@ -4,20 +4,20 @@
 // \brief  cpp file for CFDP NAK (Negative Acknowledge) PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/NakPdu.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/NakPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 void NakPdu::initialize(PduDirection direction,
-                              Cfdp::Class::T txmMode,
-                              EntityId sourceEid,
-                              TransactionSeq transactionSeq,
-                              EntityId destEid,
-                              FileSize scopeStart,
-                              FileSize scopeEnd) {
+                        Cfdp::Class::T txmMode,
+                        EntityId sourceEid,
+                        TransactionSeq transactionSeq,
+                        EntityId destEid,
+                        FileSize scopeStart,
+                        FileSize scopeEnd) {
     // Initialize header with PduTypeEnum::NEGATIVE_ACK type
     this->m_header.initialize(PduTypeEnum::NEGATIVE_ACK, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -53,13 +53,11 @@ U32 NakPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus NakPdu::serializeTo(Fw::SerialBufferBase& buffer,
-                                         Fw::Endianness mode) const {
+Fw::SerializeStatus NakPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus NakPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
-                                             Fw::Endianness mode) {
+Fw::SerializeStatus NakPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {

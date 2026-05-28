@@ -4,22 +4,22 @@
 // \brief  cpp file for CFDP ACK (Acknowledge) PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/AckPdu.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/AckPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 void AckPdu::initialize(PduDirection direction,
-                              Cfdp::Class::T txmMode,
-                              EntityId sourceEid,
-                              TransactionSeq transactionSeq,
-                              EntityId destEid,
-                              FileDirective directiveCode,
-                              U8 directiveSubtypeCode,
-                              ConditionCode conditionCode,
-                              AckTxnStatus transactionStatus) {
+                        Cfdp::Class::T txmMode,
+                        EntityId sourceEid,
+                        TransactionSeq transactionSeq,
+                        EntityId destEid,
+                        FileDirective directiveCode,
+                        U8 directiveSubtypeCode,
+                        ConditionCode conditionCode,
+                        AckTxnStatus transactionStatus) {
     // Initialize header with PduTypeEnum::ACKNOWLEDGMENT type
     this->m_header.initialize(PduTypeEnum::ACKNOWLEDGMENT, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -40,13 +40,11 @@ U32 AckPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus AckPdu::serializeTo(Fw::SerialBufferBase& buffer,
-                                         Fw::Endianness mode) const {
+Fw::SerializeStatus AckPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus AckPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
-                                             Fw::Endianness mode) {
+Fw::SerializeStatus AckPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -103,7 +101,7 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bits 3-0: Directive subtype code (4 bits)
     U8 directiveAndSubtype = 0;
     directiveAndSubtype |= (static_cast<U8>(this->m_directiveCode) & 0x0F) << 4;  // Bits 7-4
-    directiveAndSubtype |= (this->m_directiveSubtypeCode & 0x0F);                  // Bits 3-0
+    directiveAndSubtype |= (this->m_directiveSubtypeCode & 0x0F);                 // Bits 3-0
 
     status = serialBuffer.serializeFrom(directiveAndSubtype);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -115,8 +113,8 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bits 3-2: Spare (0)
     // Bits 1-0: Transaction status (2 bits)
     U8 ccAndStatus = 0;
-    ccAndStatus |= (static_cast<U8>(this->m_conditionCode) & 0x0F) << 4;      // Bits 7-4
-    ccAndStatus |= (static_cast<U8>(this->m_transactionStatus) & 0x03);       // Bits 1-0
+    ccAndStatus |= (static_cast<U8>(this->m_conditionCode) & 0x0F) << 4;  // Bits 7-4
+    ccAndStatus |= (static_cast<U8>(this->m_transactionStatus) & 0x03);   // Bits 1-0
 
     status = serialBuffer.serializeFrom(ccAndStatus);
     if (status != Fw::FW_SERIALIZE_OK) {

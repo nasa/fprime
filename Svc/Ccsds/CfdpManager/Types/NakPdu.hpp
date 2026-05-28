@@ -41,12 +41,12 @@ class NakPdu : public PduBase {
 
     //! Initialize a NAK PDU
     void initialize(PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid,
-                   FileSize scopeStart,
-                   FileSize scopeEnd);
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid,
+                    FileSize scopeStart,
+                    FileSize scopeEnd);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;

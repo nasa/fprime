@@ -2,13 +2,13 @@
 // \title  Clist.cpp
 // \brief  CFDP circular list definition source file
 //
-// This file is a port of the cf_clist.c file from the 
+// This file is a port of the cf_clist.c file from the
 // NASA Core Flight System (cFS) CFDP (CF) Application,
 // version 3.0.0, adapted for use within the F-Prime (F') framework.
 //
 // This is a circular doubly-linked list implementation. It is used for
 // multiple data structures in CFDP.
-// 
+//
 // ======================================================================
 //
 // NASA Docket No. GSC-18,447-1
@@ -40,96 +40,81 @@ namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
-void CfdpCListInitNode(CListNode *node)
-{
+void CfdpCListInitNode(CListNode* node) {
     node->next = node;
     node->prev = node;
 }
 
-void CfdpCListInsertFront(CListNode **head, CListNode *node)
-{
-    CListNode *last;
+void CfdpCListInsertFront(CListNode** head, CListNode* node) {
+    CListNode* last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
     FW_ASSERT(node->next == node);
     FW_ASSERT(node->prev == node);
 
-    if (*head)
-    {
+    if (*head) {
         last = (*head)->prev;
 
         node->next = *head;
         node->prev = last;
 
-        last->next    = node;
+        last->next = node;
         (*head)->prev = node;
     }
 
     *head = node;
 }
 
-void CfdpCListInsertBack(CListNode **head, CListNode *node)
-{
-    CListNode *last;
+void CfdpCListInsertBack(CListNode** head, CListNode* node) {
+    CListNode* last;
 
     FW_ASSERT(head);
     FW_ASSERT(node);
     FW_ASSERT(node->next == node);
     FW_ASSERT(node->prev == node);
 
-    if (!*head)
-    {
+    if (!*head) {
         *head = node;
-    }
-    else
-    {
+    } else {
         last = (*head)->prev;
 
-        node->next    = *head;
+        node->next = *head;
         (*head)->prev = node;
-        node->prev    = last;
-        last->next    = node;
+        node->prev = last;
+        last->next = node;
     }
 }
 
-CListNode *CfdpCListPop(CListNode **head)
-{
-    CListNode *ret;
+CListNode* CfdpCListPop(CListNode** head) {
+    CListNode* ret;
 
     FW_ASSERT(head);
 
     ret = *head;
-    if (ret)
-    {
+    if (ret) {
         CfdpCListRemove(head, ret);
     }
 
     return ret;
 }
 
-void CfdpCListRemove(CListNode **head, CListNode *node)
-{
+void CfdpCListRemove(CListNode** head, CListNode* node) {
     FW_ASSERT(head);
     FW_ASSERT(node);
     FW_ASSERT(*head);
 
-    if (node->next == node)
-    {
+    if (node->next == node) {
         /* only node in the list, so this one is easy */
         FW_ASSERT(node == *head); /* sanity check */
         *head = NULL;
-    }
-    else if (*head == node)
-    {
+    } else if (*head == node) {
         /* removing the first node in the list, so make the second node in the list the first */
         (*head)->prev->next = node->next;
-        *head               = node->next;
+        *head = node->next;
 
         (*head)->prev = node->prev;
-    }
-    else
-    {
+    } else {
         node->next->prev = node->prev;
         node->prev->next = node->next;
     }
@@ -137,8 +122,7 @@ void CfdpCListRemove(CListNode **head, CListNode *node)
     CfdpCListInitNode(node);
 }
 
-void CfdpCListInsertAfter(CListNode **head, CListNode *start, CListNode *after)
-{
+void CfdpCListInsertAfter(CListNode** head, CListNode* start, CListNode* after) {
     /* calling insert_after with nothing to insert after (no head) makes no sense */
     FW_ASSERT(head);
     FW_ASSERT(*head);
@@ -146,45 +130,39 @@ void CfdpCListInsertAfter(CListNode **head, CListNode *start, CListNode *after)
     FW_ASSERT(start != after);
 
     /* knowing that head is not empty, and knowing that start is non-zero, this is an easy operation */
-    after->next       = start->next;
-    start->next       = after;
-    after->prev       = start;
+    after->next = start->next;
+    start->next = after;
+    after->prev = start;
     after->next->prev = after;
 }
 
-void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context)
-{
-    CListNode *node = start;
-    CListNode *node_next;
+void CfdpCListTraverse(CListNode* start, CListFunc fn, void* context) {
+    CListNode* node = start;
+    CListNode* node_next;
     bool last = false;
     // Safety bound: maximum possible list size based on transaction pool configuration
     // Prevents infinite loop if list becomes corrupted
-    constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
-                                   CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-                                   (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-                                   (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+    constexpr U32 maxIterations =
+        CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+        (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+        (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
-    if (node)
-    {
+    if (node) {
         U32 i;
-        for (i = 0; i < maxIterations && !last; ++i)
-        {
+        for (i = 0; i < maxIterations && !last; ++i) {
             /* set node_next in case callback removes this node from the list */
             node_next = node->next;
-            if (node_next == start)
-            {
+            if (node_next == start) {
                 last = true;
             }
-            if (!CfdpCListTraverseStatusIsContinue(fn(node, context)))
-            {
+            if (!CfdpCListTraverseStatusIsContinue(fn(node, context))) {
                 break;
             }
             /* list traversal is robust against an item deleting itself during traversal,
              * but there is a special case if that item is the starting node. Since this is
              * a circular list, start is remembered so we know when to stop. Must set start
              * to the next node in this case. */
-            if ((start == node) && (node->next != node_next))
-            {
+            if ((start == node) && (node->next != node_next)) {
                 start = node_next;
             }
             node = node_next;
@@ -193,39 +171,33 @@ void CfdpCListTraverse(CListNode *start, CListFunc fn, void *context)
     }
 }
 
-void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, void *context)
-{
-    CListNode *node = start;
-    CListNode *node_next;
+void CfdpCListTraverse(CListNode* start, const CListTraverseCallback& callback, void* context) {
+    CListNode* node = start;
+    CListNode* node_next;
     bool last = false;
     // Safety bound: maximum possible list size based on transaction pool configuration
     // Prevents infinite loop if list becomes corrupted
-    constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
-                                   CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-                                   (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-                                   (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+    constexpr U32 maxIterations =
+        CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+        (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+        (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
-    if (node)
-    {
+    if (node) {
         U32 i;
-        for (i = 0; i < maxIterations && !last; ++i)
-        {
+        for (i = 0; i < maxIterations && !last; ++i) {
             /* set node_next in case callback removes this node from the list */
             node_next = node->next;
-            if (node_next == start)
-            {
+            if (node_next == start) {
                 last = true;
             }
-            if (!CfdpCListTraverseStatusIsContinue(callback(node, context)))
-            {
+            if (!CfdpCListTraverseStatusIsContinue(callback(node, context))) {
                 break;
             }
             /* list traversal is robust against an item deleting itself during traversal,
              * but there is a special case if that item is the starting node. Since this is
              * a circular list, start is remembered so we know when to stop. Must set start
              * to the next node in this case. */
-            if ((start == node) && (node->next != node_next))
-            {
+            if ((start == node) && (node->next != node_next)) {
                 start = node_next;
             }
             node = node_next;
@@ -234,36 +206,30 @@ void CfdpCListTraverse(CListNode *start, const CListTraverseCallback& callback, 
     }
 }
 
-void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context)
-{
-    if (end)
-    {
-        CListNode *node = end->prev;
-        CListNode *node_next;
+void CfdpCListTraverseR(CListNode* end, CListFunc fn, void* context) {
+    if (end) {
+        CListNode* node = end->prev;
+        CListNode* node_next;
         bool last = false;
         // Safety bound: maximum possible list size based on transaction pool configuration
         // Prevents infinite loop if list becomes corrupted
-        constexpr U32 maxIterations = CFDP_MAX_SIMULTANEOUS_RX +
-                                       CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-                                       (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-                                       (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+        constexpr U32 maxIterations =
+            CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
+            (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
+            (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
 
-        if (node)
-        {
+        if (node) {
             end = node;
             U32 i;
 
-            for (i = 0; i < maxIterations && !last; ++i)
-            {
+            for (i = 0; i < maxIterations && !last; ++i) {
                 /* set node_next in case callback removes this node from the list */
                 node_next = node->prev;
-                if (node_next == end)
-                {
+                if (node_next == end) {
                     last = true;
                 }
 
-                if (!CfdpCListTraverseStatusIsContinue(fn(node, context)))
-                {
+                if (!CfdpCListTraverseStatusIsContinue(fn(node, context))) {
                     break;
                 }
 
@@ -271,8 +237,7 @@ void CfdpCListTraverseR(CListNode *end, CListFunc fn, void *context)
                  * but there is a special case if that item is the starting node. Since this is
                  * a circular list, "end" is remembered so we know when to stop. Must set "end"
                  * to the next node in this case. */
-                if ((end == node) && (node->prev != node_next))
-                {
+                if ((end == node) && (node->prev != node_next)) {
                     end = node_next;
                 }
                 node = node_next;

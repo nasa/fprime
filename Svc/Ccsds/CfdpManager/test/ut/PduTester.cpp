@@ -7,19 +7,19 @@
 // The declarations remain in CfdpManagerTester.hpp.
 // ======================================================================
 
-#include "CfdpManagerTester.hpp"
-#include <Svc/Ccsds/CfdpManager/Engine.hpp>
-#include <Svc/Ccsds/CfdpManager/Clist.hpp>
-#include <Svc/Ccsds/CfdpManager/Utils.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
-#include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Com/ComPacket.hpp>
+#include <Fw/Types/SerialBuffer.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
-#include <cstring>
-#include <iostream>
+#include <Svc/Ccsds/CfdpManager/Clist.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
+#include <iostream>
+#include "CfdpManagerTester.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -29,21 +29,19 @@ namespace Cfdp {
 // PDU Test Helper Implementations
 // ----------------------------------------------------------------------
 
-Transaction* CfdpManagerTester::setupTestTransaction(
-    TxnState state,
-    U8 channelId,
-    const char* srcFilename,
-    const char* dstFilename,
-    U32 fileSize,
-    U32 sequenceId,
-    U32 peerId
-) {
+Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
+                                                     U8 channelId,
+                                                     const char* srcFilename,
+                                                     const char* dstFilename,
+                                                     U32 fileSize,
+                                                     U32 sequenceId,
+                                                     U32 peerId) {
     // For white box testing, directly use the first transaction for the specified channel
     Channel* chan = component.m_engine->m_channels[channelId];
     FW_ASSERT(chan != nullptr);
 
-    Transaction* txn = chan->getTransaction(0);  // Use first transaction for channel
-    Cfdp::History* history = chan->getHistory(0);     // Use first history for channel
+    Transaction* txn = chan->getTransaction(0);    // Use first transaction for channel
+    Cfdp::History* history = chan->getHistory(0);  // Use first history for channel
 
     // Initialize transaction state
     txn->m_state = state;
@@ -79,8 +77,7 @@ const Fw::Buffer& CfdpManagerTester::getSentPduBuffer(FwIndexType index) {
     }
 
     // Extract buffer from history entry
-    const FromPortEntry_dataOut& entry =
-        this->fromPortHistory_dataOut->at(index);
+    const FromPortEntry_dataOut& entry = this->fromPortHistory_dataOut->at(index);
     return entry.fwBuffer;
 }
 
@@ -98,16 +95,14 @@ bool CfdpManagerTester::getPduData(const Fw::Buffer& buffer, const U8*& pduData,
 // PDU Verify Functions
 // ----------------------------------------------------------------------
 
-void CfdpManagerTester::verifyMetadataPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    FileSize expectedFileSize,
-    const char* expectedSourceFilename,
-    const char* expectedDestFilename,
-    Svc::Ccsds::Cfdp::Class::T expectedClass
-) {
+void CfdpManagerTester::verifyMetadataPdu(const Fw::Buffer& pduBuffer,
+                                          U32 expectedSourceEid,
+                                          U32 expectedDestEid,
+                                          U32 expectedTransactionSeq,
+                                          FileSize expectedFileSize,
+                                          const char* expectedSourceFilename,
+                                          const char* expectedDestFilename,
+                                          Svc::Ccsds::Cfdp::Class::T expectedClass) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -158,16 +153,14 @@ void CfdpManagerTester::verifyMetadataPdu(
     EXPECT_EQ(0, memcmp(rxDstFilename, expectedDestFilename, dstLen)) << "Destination filename mismatch";
 }
 
-void CfdpManagerTester::verifyFileDataPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    U32 expectedOffset,
-    U16 expectedDataSize,
-    const char* filename,
-    Svc::Ccsds::Cfdp::Class::T expectedClass
-) {
+void CfdpManagerTester::verifyFileDataPdu(const Fw::Buffer& pduBuffer,
+                                          U32 expectedSourceEid,
+                                          U32 expectedDestEid,
+                                          U32 expectedTransactionSeq,
+                                          U32 expectedOffset,
+                                          U16 expectedDataSize,
+                                          const char* filename,
+                                          Svc::Ccsds::Cfdp::Class::T expectedClass) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -223,21 +216,18 @@ void CfdpManagerTester::verifyFileDataPdu(
     ASSERT_EQ(dataSize, bytesRead) << "Failed to read expected data from file";
 
     // Validate data content
-    EXPECT_EQ(0, memcmp(expectedData, pduData, dataSize))
-        << "Data content mismatch at offset " << offset;
+    EXPECT_EQ(0, memcmp(expectedData, pduData, dataSize)) << "Data content mismatch at offset " << offset;
 
     delete[] expectedData;
 }
 
-void CfdpManagerTester::verifyEofPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    Cfdp::ConditionCode expectedConditionCode,
-    FileSize expectedFileSize,
-    const char* sourceFilename
-) {
+void CfdpManagerTester::verifyEofPdu(const Fw::Buffer& pduBuffer,
+                                     U32 expectedSourceEid,
+                                     U32 expectedDestEid,
+                                     U32 expectedTransactionSeq,
+                                     Cfdp::ConditionCode expectedConditionCode,
+                                     FileSize expectedFileSize,
+                                     const char* sourceFilename) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -300,15 +290,13 @@ void CfdpManagerTester::verifyEofPdu(
     }
 }
 
-void CfdpManagerTester::verifyFinPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    Cfdp::ConditionCode expectedConditionCode,
-    Cfdp::FinDeliveryCode expectedDeliveryCode,
-    Cfdp::FinFileStatus expectedFileStatus
-) {
+void CfdpManagerTester::verifyFinPdu(const Fw::Buffer& pduBuffer,
+                                     U32 expectedSourceEid,
+                                     U32 expectedDestEid,
+                                     U32 expectedTransactionSeq,
+                                     Cfdp::ConditionCode expectedConditionCode,
+                                     Cfdp::FinDeliveryCode expectedDeliveryCode,
+                                     Cfdp::FinFileStatus expectedFileStatus) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -343,16 +331,14 @@ void CfdpManagerTester::verifyFinPdu(
     EXPECT_EQ(expectedFileStatus, finPdu.getFileStatus()) << "File status mismatch";
 }
 
-void CfdpManagerTester::verifyAckPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    Cfdp::FileDirective expectedDirectiveCode,
-    U8 expectedDirectiveSubtypeCode,
-    Cfdp::ConditionCode expectedConditionCode,
-    Cfdp::AckTxnStatus expectedTransactionStatus
-) {
+void CfdpManagerTester::verifyAckPdu(const Fw::Buffer& pduBuffer,
+                                     U32 expectedSourceEid,
+                                     U32 expectedDestEid,
+                                     U32 expectedTransactionSeq,
+                                     Cfdp::FileDirective expectedDirectiveCode,
+                                     U8 expectedDirectiveSubtypeCode,
+                                     Cfdp::ConditionCode expectedConditionCode,
+                                     Cfdp::AckTxnStatus expectedTransactionStatus) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -387,16 +373,14 @@ void CfdpManagerTester::verifyAckPdu(
     EXPECT_EQ(expectedTransactionStatus, ackPdu.getTransactionStatus()) << "Transaction status mismatch";
 }
 
-void CfdpManagerTester::verifyNakPdu(
-    const Fw::Buffer& pduBuffer,
-    U32 expectedSourceEid,
-    U32 expectedDestEid,
-    U32 expectedTransactionSeq,
-    FileSize expectedScopeStart,
-    FileSize expectedScopeEnd,
-    U8 expectedNumSegments,
-    const Cfdp::SegmentRequest* expectedSegments
-) {
+void CfdpManagerTester::verifyNakPdu(const Fw::Buffer& pduBuffer,
+                                     U32 expectedSourceEid,
+                                     U32 expectedDestEid,
+                                     U32 expectedTransactionSeq,
+                                     FileSize expectedScopeStart,
+                                     FileSize expectedScopeEnd,
+                                     U8 expectedNumSegments,
+                                     const Cfdp::SegmentRequest* expectedSegments) {
     // Validate and strip packet descriptor
     ASSERT_GE(pduBuffer.getSize(), sizeof(FwPacketDescriptorType)) << "Buffer too small for packet descriptor";
 
@@ -449,31 +433,19 @@ void CfdpManagerTester::verifyNakPdu(
 // PDU Uplink Helper Functions
 // ----------------------------------------------------------------------
 
-void CfdpManagerTester::sendMetadataPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    FileSize fileSize,
-    const char* sourceFilename,
-    const char* destFilename,
-    Cfdp::Class::T txmMode,
-    U8 closureRequested
-) {
+void CfdpManagerTester::sendMetadataPdu(U8 channelId,
+                                        EntityId sourceEid,
+                                        EntityId destEid,
+                                        TransactionSeq transactionSeq,
+                                        FileSize fileSize,
+                                        const char* sourceFilename,
+                                        const char* destFilename,
+                                        Cfdp::Class::T txmMode,
+                                        U8 closureRequested) {
     // Create and initialize Metadata PDU
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_RECEIVER,
-        txmMode,
-        sourceEid,
-        transactionSeq,
-        destEid,
-        fileSize,
-        sourceFilename,
-        destFilename,
-        Cfdp::CHECKSUM_TYPE_MODULAR,
-        closureRequested
-    );
+    metadataPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, fileSize,
+                           sourceFilename, destFilename, Cfdp::CHECKSUM_TYPE_MODULAR, closureRequested);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -497,28 +469,18 @@ void CfdpManagerTester::sendMetadataPdu(
     invoke_to_dataIn(channelId, pduBuffer);
 }
 
-void CfdpManagerTester::sendFileDataPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    FileSize offset,
-    U16 dataSize,
-    const U8* data,
-    Cfdp::Class::T txmMode
-) {
+void CfdpManagerTester::sendFileDataPdu(U8 channelId,
+                                        EntityId sourceEid,
+                                        EntityId destEid,
+                                        TransactionSeq transactionSeq,
+                                        FileSize offset,
+                                        U16 dataSize,
+                                        const U8* data,
+                                        Cfdp::Class::T txmMode) {
     // Create and initialize File Data PDU
     Cfdp::FileDataPdu fileDataPdu;
-    fileDataPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_RECEIVER,
-        txmMode,
-        sourceEid,
-        transactionSeq,
-        destEid,
-        offset,
-        dataSize,
-        data
-    );
+    fileDataPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, offset,
+                           dataSize, data);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -542,28 +504,18 @@ void CfdpManagerTester::sendFileDataPdu(
     invoke_to_dataIn(channelId, pduBuffer);
 }
 
-void CfdpManagerTester::sendEofPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    Cfdp::ConditionCode conditionCode,
-    U32 checksum,
-    FileSize fileSize,
-    Cfdp::Class::T txmMode
-) {
+void CfdpManagerTester::sendEofPdu(U8 channelId,
+                                   EntityId sourceEid,
+                                   EntityId destEid,
+                                   TransactionSeq transactionSeq,
+                                   Cfdp::ConditionCode conditionCode,
+                                   U32 checksum,
+                                   FileSize fileSize,
+                                   Cfdp::Class::T txmMode) {
     // Create and initialize EOF PDU
     Cfdp::EofPdu eofPdu;
-    eofPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_RECEIVER,
-        txmMode,
-        sourceEid,
-        transactionSeq,
-        destEid,
-        conditionCode,
-        checksum,
-        fileSize
-    );
+    eofPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, conditionCode,
+                      checksum, fileSize);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -587,27 +539,18 @@ void CfdpManagerTester::sendEofPdu(
     invoke_to_dataIn(channelId, pduBuffer);
 }
 
-void CfdpManagerTester::sendFinPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    Cfdp::ConditionCode conditionCode,
-    Cfdp::FinDeliveryCode deliveryCode,
-    Cfdp::FinFileStatus fileStatus
-) {
+void CfdpManagerTester::sendFinPdu(U8 channelId,
+                                   EntityId sourceEid,
+                                   EntityId destEid,
+                                   TransactionSeq transactionSeq,
+                                   Cfdp::ConditionCode conditionCode,
+                                   Cfdp::FinDeliveryCode deliveryCode,
+                                   Cfdp::FinFileStatus fileStatus) {
     // Create and initialize FIN PDU
     Cfdp::FinPdu finPdu;
-    finPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
-        Cfdp::Class::CLASS_2,  // FIN is only used in Class 2
-        sourceEid,
-        transactionSeq,
-        destEid,
-        conditionCode,
-        deliveryCode,
-        fileStatus
-    );
+    finPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,           // FIN is only used in Class 2
+                      sourceEid, transactionSeq, destEid, conditionCode, deliveryCode, fileStatus);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -631,29 +574,20 @@ void CfdpManagerTester::sendFinPdu(
     invoke_to_dataIn(channelId, pduBuffer);
 }
 
-void CfdpManagerTester::sendAckPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    Cfdp::FileDirective directiveCode,
-    U8 directiveSubtypeCode,
-    Cfdp::ConditionCode conditionCode,
-    Cfdp::AckTxnStatus transactionStatus
-) {
+void CfdpManagerTester::sendAckPdu(U8 channelId,
+                                   EntityId sourceEid,
+                                   EntityId destEid,
+                                   TransactionSeq transactionSeq,
+                                   Cfdp::FileDirective directiveCode,
+                                   U8 directiveSubtypeCode,
+                                   Cfdp::ConditionCode conditionCode,
+                                   Cfdp::AckTxnStatus transactionStatus) {
     // Create and initialize ACK PDU
     Cfdp::AckPdu ackPdu;
-    ackPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
-        Cfdp::Class::CLASS_2,  // ACK is only used in Class 2
-        sourceEid,
-        transactionSeq,
-        destEid,
-        directiveCode,
-        directiveSubtypeCode,
-        conditionCode,
-        transactionStatus
-    );
+    ackPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,           // ACK is only used in Class 2
+                      sourceEid, transactionSeq, destEid, directiveCode, directiveSubtypeCode, conditionCode,
+                      transactionStatus);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -677,27 +611,19 @@ void CfdpManagerTester::sendAckPdu(
     invoke_to_dataIn(channelId, pduBuffer);
 }
 
-void CfdpManagerTester::sendNakPdu(
-    U8 channelId,
-    EntityId sourceEid,
-    EntityId destEid,
-    TransactionSeq transactionSeq,
-    FileSize scopeStart,
-    FileSize scopeEnd,
-    U8 numSegments,
-    const Cfdp::SegmentRequest* segments
-) {
+void CfdpManagerTester::sendNakPdu(U8 channelId,
+                                   EntityId sourceEid,
+                                   EntityId destEid,
+                                   TransactionSeq transactionSeq,
+                                   FileSize scopeStart,
+                                   FileSize scopeEnd,
+                                   U8 numSegments,
+                                   const Cfdp::SegmentRequest* segments) {
     // Create and initialize NAK PDU
     Cfdp::NakPdu nakPdu;
-    nakPdu.initialize(
-        Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
-        Cfdp::Class::CLASS_2,  // NAK is only used in Class 2
-        sourceEid,
-        transactionSeq,
-        destEid,
-        scopeStart,
-        scopeEnd
-    );
+    nakPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,           // NAK is only used in Class 2
+                      sourceEid, transactionSeq, destEid, scopeStart, scopeEnd);
 
     // Verify segment count does not exceed maximum
     ASSERT_LE(numSegments, CFDP_NAK_MAX_SEGMENTS) << "Number of segments exceeds CFDP_NAK_MAX_SEGMENTS";
@@ -749,15 +675,8 @@ void CfdpManagerTester::testMetaDataPdu() {
     const U32 testSequenceId = 98;
     const U32 testPeerId = 100;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_S1,  // Sender, class 1
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_S1,  // Sender, class 1
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Clear port history before test
@@ -775,8 +694,8 @@ void CfdpManagerTester::testMetaDataPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Verify Metadata PDU
-    verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1);
+    verifyMetadataPdu(pduBuffer, component.getLocalEidParam(), testPeerId, testSequenceId, fileSize, srcFile, dstFile,
+                      Cfdp::Class::CLASS_1);
 }
 
 void CfdpManagerTester::testFileDataPdu() {
@@ -788,8 +707,8 @@ void CfdpManagerTester::testFileDataPdu() {
 
     // Test file configuration
     const char* testFilePath = "Types/test/ut/data/test_file.bin";
-    const U32 fileOffset = 50;   // Read from offset 50
-    const U16 readSize = 64;     // Read 64 bytes
+    const U32 fileOffset = 50;  // Read from offset 50
+    const U16 readSize = 64;    // Read 64 bytes
 
     // Configure transaction for File Data PDU emission
     const char* srcFile = testFilePath;
@@ -799,15 +718,8 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testSequenceId = 42;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_S1,  // Sender, class 1
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_S1,  // Sender, class 1
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Clear port history before test
@@ -833,15 +745,14 @@ void CfdpManagerTester::testFileDataPdu() {
     Cfdp::FileDataPdu fdPdu;
     Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
 
-    fdPdu.initialize(
-        direction,
-        Cfdp::Class::CLASS_1,  // transmission mode
-        component.getLocalEidParam(),  // source EID
-        testSequenceId,  // transaction sequence number
-        testPeerId,  // destination EID
-        fileOffset,  // file offset
-        readSize,  // data size
-        testData  // data pointer
+    fdPdu.initialize(direction,
+                     Cfdp::Class::CLASS_1,          // transmission mode
+                     component.getLocalEidParam(),  // source EID
+                     testSequenceId,                // transaction sequence number
+                     testPeerId,                    // destination EID
+                     fileOffset,                    // file offset
+                     readSize,                      // data size
+                     testData                       // data pointer
     );
 
     // Invoke sendFd using refactored API
@@ -856,8 +767,8 @@ void CfdpManagerTester::testFileDataPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Verify File Data PDU
-    verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                      testSequenceId, fileOffset, readSize, testFilePath, Cfdp::Class::CLASS_1);
+    verifyFileDataPdu(pduBuffer, component.getLocalEidParam(), testPeerId, testSequenceId, fileOffset, readSize,
+                      testFilePath, Cfdp::Class::CLASS_1);
 }
 
 void CfdpManagerTester::testEofPdu() {
@@ -875,15 +786,8 @@ void CfdpManagerTester::testEofPdu() {
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file transfer complete
@@ -921,8 +825,8 @@ void CfdpManagerTester::testEofPdu() {
     ASSERT_GT(pduBuffer.getSize(), 0) << "PDU size is zero";
 
     // Verify EOF PDU
-    verifyEofPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                 testSequenceId, testConditionCode, fileSize, srcFile);
+    verifyEofPdu(pduBuffer, component.getLocalEidParam(), testPeerId, testSequenceId, testConditionCode, fileSize,
+                 srcFile);
 }
 
 void CfdpManagerTester::testFinPdu() {
@@ -940,15 +844,8 @@ void CfdpManagerTester::testFinPdu() {
     const U32 testSequenceId = 77;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file reception complete
@@ -961,7 +858,7 @@ void CfdpManagerTester::testFinPdu() {
 
     // Invoke receiver to emit FIN PDU using refactored API
     Cfdp::Status::T status = component.m_engine->sendFin(txn, testDeliveryCode, testFileStatus,
-                                                          static_cast<Cfdp::ConditionCode>(testConditionCode));
+                                                         static_cast<Cfdp::ConditionCode>(testConditionCode));
     ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendFin failed";
 
     // Verify PDU was sent through dataOut port
@@ -974,8 +871,7 @@ void CfdpManagerTester::testFinPdu() {
     // Verify FIN PDU
     // FIN PDU is sent from receiver (testPeerId) to sender (component.getLocalEidParam())
     // So source=testPeerId, dest=component.getLocalEidParam()
-    verifyFinPdu(pduBuffer, testPeerId, component.getLocalEidParam(),
-                 testSequenceId,
+    verifyFinPdu(pduBuffer, testPeerId, component.getLocalEidParam(), testSequenceId,
                  static_cast<Cfdp::ConditionCode>(testConditionCode),
                  static_cast<Cfdp::FinDeliveryCode>(testDeliveryCode),
                  static_cast<Cfdp::FinFileStatus>(testFileStatus));
@@ -996,15 +892,8 @@ void CfdpManagerTester::testAckPdu() {
     const U32 testSequenceId = 88;
     const U32 testPeerId = 175;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup test parameters for ACK PDU
@@ -1017,7 +906,7 @@ void CfdpManagerTester::testAckPdu() {
 
     // Invoke sendAck using refactored API
     Cfdp::Status::T status = component.m_engine->sendAck(txn, testTransactionStatus, testDirectiveCode,
-                                                       testConditionCode, testPeerId, testSequenceId);
+                                                         testConditionCode, testPeerId, testSequenceId);
     ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "sendAck failed";
 
     // Verify PDU was sent through dataOut port
@@ -1031,10 +920,8 @@ void CfdpManagerTester::testAckPdu() {
     // ACK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // acknowledging the EOF directive
     const U8 expectedSubtypeCode = 1;
-    verifyAckPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                 testSequenceId,
-                 static_cast<Cfdp::FileDirective>(testDirectiveCode),
-                 expectedSubtypeCode,
+    verifyAckPdu(pduBuffer, component.getLocalEidParam(), testPeerId, testSequenceId,
+                 static_cast<Cfdp::FileDirective>(testDirectiveCode), expectedSubtypeCode,
                  static_cast<Cfdp::ConditionCode>(testConditionCode),
                  static_cast<Cfdp::AckTxnStatus>(testTransactionStatus));
 }
@@ -1054,15 +941,8 @@ void CfdpManagerTester::testNakPdu() {
     const U32 testSequenceId = 99;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(
-        TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        testSequenceId,
-        testPeerId
-    );
+    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+                                            channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Clear port history before test
@@ -1071,20 +951,19 @@ void CfdpManagerTester::testNakPdu() {
     // Create and initialize NAK PDU
     Cfdp::NakPdu nakPdu;
     Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_SENDER;
-    const FileSize testScopeStart = 0;      // Scope covers entire file
-    const FileSize testScopeEnd = fileSize; // Scope covers entire file
-    
+    const FileSize testScopeStart = 0;       // Scope covers entire file
+    const FileSize testScopeEnd = fileSize;  // Scope covers entire file
+
     // NAK PDU is sent from receiver (component.getLocalEidParam()) to sender (testPeerId)
     // requesting retransmission of missing data
 
-    nakPdu.initialize(
-        direction,
-        Cfdp::Class::CLASS_2,              // Class 2 (acknowledged mode)
-        component.getLocalEidParam(),       // source EID (receiver/local)
-        testSequenceId,                     // transaction sequence number
-        testPeerId,                         // destination EID (sender/peer)
-        testScopeStart,                     // scope start
-        testScopeEnd                        // scope end
+    nakPdu.initialize(direction,
+                      Cfdp::Class::CLASS_2,          // Class 2 (acknowledged mode)
+                      component.getLocalEidParam(),  // source EID (receiver/local)
+                      testSequenceId,                // transaction sequence number
+                      testPeerId,                    // destination EID (sender/peer)
+                      testScopeStart,                // scope start
+                      testScopeEnd                   // scope end
     );
 
     // Add segment requests indicating specific missing data ranges
@@ -1122,9 +1001,8 @@ void CfdpManagerTester::testNakPdu() {
     expectedSegments[2].offsetEnd = 4096;
 
     // Verify all fields including segments
-    verifyNakPdu(pduBuffer, component.getLocalEidParam(), testPeerId,
-                 testSequenceId, testScopeStart, testScopeEnd,
-                 3, expectedSegments);
+    verifyNakPdu(pduBuffer, component.getLocalEidParam(), testPeerId, testSequenceId, testScopeStart, testScopeEnd, 3,
+                 expectedSegments);
 }
 
 }  // namespace Cfdp

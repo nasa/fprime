@@ -7,13 +7,13 @@
 #ifndef Svc_Ccsds_Cfdp_PduHeader_HPP
 #define Svc_Ccsds_Cfdp_PduHeader_HPP
 
+#include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
-#include <Fw/Buffer/Buffer.hpp>
-#include <config/EntityIdAliasAc.hpp>
-#include <config/TransactionSeqAliasAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduTypeEnumEnumAc.hpp>
+#include <config/EntityIdAliasAc.hpp>
+#include <config/TransactionSeqAliasAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -42,7 +42,6 @@ enum LargeFileFlag : U8 {
     LARGE_FILE_32_BIT = 0,  // 32-bit file size
     LARGE_FILE_64_BIT = 1   // 64-bit file size
 };
-
 
 //! The type of a PDU header (common to all PDUs)
 class PduHeader {
@@ -88,15 +87,15 @@ class PduHeader {
 
   public:
     //! Header size (variable due to EID/TSN lengths)
-    enum { MIN_HEADERSIZE = 7 }; // Minimum fixed portion
+    enum { MIN_HEADERSIZE = 7 };  // Minimum fixed portion
 
     //! Initialize a PDU header
     void initialize(PduTypeEnum::T type,
-                   PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid);
+                    PduDirection direction,
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid);
 
     //! Compute the buffer size needed to hold this Header
     U32 getBufferSize() const;

@@ -4,8 +4,8 @@
 // \brief  cpp file for CFDP TLV (Type-Length-Value) classes
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/Tlv.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Tlv.hpp>
 #include <cstring>
 
 namespace Svc {

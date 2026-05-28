@@ -4,27 +4,27 @@
 // \brief  cpp file for CFDP PDU Header
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/PduHeader.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduHeader.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 void PduHeader::initialize(PduTypeEnum::T type,
-                              PduDirection direction,
-                              Cfdp::Class::T txmMode,
-                              EntityId sourceEid,
-                              TransactionSeq transactionSeq,
-                              EntityId destEid) {
+                           PduDirection direction,
+                           Cfdp::Class::T txmMode,
+                           EntityId sourceEid,
+                           TransactionSeq transactionSeq,
+                           EntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
     this->m_pduType = (type == PduTypeEnum::FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_class = txmMode;
-    this->m_crcFlag = CRC_NOT_PRESENT;  // CRC not currently supported
+    this->m_crcFlag = CRC_NOT_PRESENT;          // CRC not currently supported
     this->m_largeFileFlag = LARGE_FILE_32_BIT;  // 32-bit file sizes
     this->m_segmentationControl = 0;
     this->m_segmentMetadataFlag = 0;
@@ -36,7 +36,7 @@ void PduHeader::initialize(PduTypeEnum::T type,
 
 // Helper function to calculate minimum bytes needed to encode a value
 U8 PduHeader::getValueEncodedSize(U64 value) {
-    U8  minSize;
+    U8 minSize;
     U64 limit = 0x100;
 
     for (minSize = 1; minSize < 8 && value >= limit; ++minSize) {
@@ -82,13 +82,12 @@ U32 PduHeader::getBufferSize() const {
     U32 size = 4;
 
     // Variable-size entity IDs and transaction sequence number based on actual values
-    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ?
-                                      this->m_sourceEid : this->m_destEid);
+    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ? this->m_sourceEid : this->m_destEid);
     U8 tsnSize = getValueEncodedSize(this->m_transactionSeq);
 
-    size += eidSize;      // source EID
-    size += tsnSize;      // transaction sequence number
-    size += eidSize;      // destination EID
+    size += eidSize;  // source EID
+    size += tsnSize;  // transaction sequence number
+    size += eidSize;  // destination EID
 
     return size;
 }
@@ -97,8 +96,7 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     Fw::SerializeStatus status;
 
     // Variable-size entity IDs and transaction sequence number based on actual values
-    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ?
-                                      this->m_sourceEid : this->m_destEid);
+    U8 eidSize = getValueEncodedSize(this->m_sourceEid > this->m_destEid ? this->m_sourceEid : this->m_destEid);
     U8 tsnSize = getValueEncodedSize(this->m_transactionSeq);
 
     // Byte 0: flags
@@ -244,9 +242,7 @@ PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
 
         if (pduType == PDU_TYPE_FILE_DATA) {
             pduTypeEnum = PduTypeEnum::FILE_DATA;
-        }
-        else
-        {
+        } else {
             // For directive PDUs, we need to read the directive code
             // Parse byte 3 to get EID and TSN lengths
             U8 eidTsnLengths = data[3];

@@ -9,8 +9,8 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
-#include <config/EntityIdAliasAc.hpp>
 #include <config/CfdpCfg.hpp>
+#include <config/EntityIdAliasAc.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -31,10 +31,10 @@ enum TlvType : U8 {
 class TlvData {
   private:
     union {
-        EntityId m_eid;      // Valid when type=ENTITY_ID
-        U8 m_rawData[256];       // Valid for other types (max 255 bytes + null term)
+        EntityId m_eid;     // Valid when type=ENTITY_ID
+        U8 m_rawData[256];  // Valid for other types (max 255 bytes + null term)
     };
-    U8 m_dataLength;             // Actual length of data
+    U8 m_dataLength;  // Actual length of data
 
   public:
     TlvData();

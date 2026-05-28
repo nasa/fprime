@@ -7,8 +7,8 @@
 #ifndef Svc_Ccsds_Cfdp_FileDataPdu_HPP
 #define Svc_Ccsds_Cfdp_FileDataPdu_HPP
 
-#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <Fw/Types/SerialBuffer.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
 #include <config/FileSizeAliasAc.hpp>
 
 namespace Svc {
@@ -33,13 +33,13 @@ class FileDataPdu : public PduBase {
 
     //! Initialize a File Data PDU
     void initialize(PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid,
-                   FileSize offset,
-                   U16 dataSize,
-                   const U8* data);
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid,
+                    FileSize offset,
+                    U16 dataSize,
+                    const U8* data);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;

@@ -24,32 +24,26 @@ Timer ::~Timer() {}
 // Class interfaces
 // ----------------------------------------------------------------------
 
-void Timer ::setTimer(U32 timerDuration)
-{
+void Timer ::setTimer(U32 timerDuration) {
     this->timerStatus = RUNNING;
     this->secondsRemaining = timerDuration;
 }
 
-void Timer ::disableTimer(void)
-{
+void Timer ::disableTimer(void) {
     this->timerStatus = EXPIRED;
     this->secondsRemaining = 0;
 }
 
-Timer::Status Timer ::getStatus(void)
-{
+Timer::Status Timer ::getStatus(void) {
     return this->timerStatus;
 }
 
-void Timer ::run(void)
-{
-    if(this->timerStatus == RUNNING)
-    {
+void Timer ::run(void) {
+    if (this->timerStatus == RUNNING) {
         FW_ASSERT(this->secondsRemaining > 0);
         this->secondsRemaining--;
 
-        if(this->secondsRemaining == 0)
-        {
+        if (this->secondsRemaining == 0) {
             this->timerStatus = EXPIRED;
         }
     }

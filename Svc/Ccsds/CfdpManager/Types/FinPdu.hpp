@@ -8,8 +8,8 @@
 #define Svc_Ccsds_Cfdp_FinPdu_HPP
 
 #include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/Tlv.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
 namespace Svc {
 namespace Ccsds {
@@ -32,19 +32,20 @@ class FinPdu : public PduBase {
 
   public:
     //! Constructor
-    FinPdu() : m_conditionCode(CONDITION_CODE_NO_ERROR),
-               m_deliveryCode(FIN_DELIVERY_CODE_COMPLETE),
-               m_fileStatus(FIN_FILE_STATUS_RETAINED) {}
+    FinPdu()
+        : m_conditionCode(CONDITION_CODE_NO_ERROR),
+          m_deliveryCode(FIN_DELIVERY_CODE_COMPLETE),
+          m_fileStatus(FIN_FILE_STATUS_RETAINED) {}
 
     //! Initialize a Finished PDU
     void initialize(PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid,
-                   ConditionCode conditionCode,
-                   FinDeliveryCode deliveryCode,
-                   FinFileStatus fileStatus);
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid,
+                    ConditionCode conditionCode,
+                    FinDeliveryCode deliveryCode,
+                    FinFileStatus fileStatus);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;

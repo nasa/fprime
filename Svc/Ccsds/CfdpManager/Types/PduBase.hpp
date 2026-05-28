@@ -10,9 +10,9 @@
 #ifndef Svc_Ccsds_Cfdp_PduBase_HPP
 #define Svc_Ccsds_Cfdp_PduBase_HPP
 
-#include <Fw/Types/Serializable.hpp>
 #include <Fw/Buffer/Buffer.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/PduHeader.hpp>
 
 namespace Svc {
@@ -85,11 +85,11 @@ class PduBase : public Fw::Serializable {
 }  // namespace Svc
 
 // Include all concrete PDU types for convenience (umbrella header pattern)
-#include <Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/EofPdu.hpp>
-#include <Svc/Ccsds/CfdpManager/Types/FinPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/AckPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/EofPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/FinPdu.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/NakPdu.hpp>
 
 #endif  // Svc_Ccsds_Cfdp_PduBase_HPP

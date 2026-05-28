@@ -4,21 +4,21 @@
 // \brief  cpp file for CFDP EOF PDU
 // ======================================================================
 
-#include <Svc/Ccsds/CfdpManager/Types/EofPdu.hpp>
 #include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/EofPdu.hpp>
 
 namespace Svc {
 namespace Ccsds {
 namespace Cfdp {
 
 void EofPdu::initialize(PduDirection direction,
-                              Cfdp::Class::T txmMode,
-                              EntityId sourceEid,
-                              TransactionSeq transactionSeq,
-                              EntityId destEid,
-                              ConditionCode conditionCode,
-                              U32 checksum,
-                              FileSize fileSize) {
+                        Cfdp::Class::T txmMode,
+                        EntityId sourceEid,
+                        TransactionSeq transactionSeq,
+                        EntityId destEid,
+                        ConditionCode conditionCode,
+                        U32 checksum,
+                        FileSize fileSize) {
     // Initialize header with PduTypeEnum::END_OF_FILE type
     this->m_header.initialize(PduTypeEnum::END_OF_FILE, direction, txmMode, sourceEid, transactionSeq, destEid);
 
@@ -45,13 +45,11 @@ U32 EofPdu::getBufferSize() const {
     return size;
 }
 
-Fw::SerializeStatus EofPdu::serializeTo(Fw::SerialBufferBase& buffer,
-                                         Fw::Endianness mode) const {
+Fw::SerializeStatus EofPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     return this->toSerialBuffer(buffer);
 }
 
-Fw::SerializeStatus EofPdu::deserializeFrom(Fw::SerialBufferBase& buffer,
-                                             Fw::Endianness mode) {
+Fw::SerializeStatus EofPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
     if (status != Fw::FW_SERIALIZE_OK) {

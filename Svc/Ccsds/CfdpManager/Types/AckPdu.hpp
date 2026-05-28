@@ -31,21 +31,22 @@ class AckPdu : public PduBase {
 
   public:
     //! Constructor
-    AckPdu() : m_directiveCode(FILE_DIRECTIVE_INVALID_MIN),
-               m_directiveSubtypeCode(0),
-               m_conditionCode(CONDITION_CODE_NO_ERROR),
-               m_transactionStatus(ACK_TXN_STATUS_UNDEFINED) {}
+    AckPdu()
+        : m_directiveCode(FILE_DIRECTIVE_INVALID_MIN),
+          m_directiveSubtypeCode(0),
+          m_conditionCode(CONDITION_CODE_NO_ERROR),
+          m_transactionStatus(ACK_TXN_STATUS_UNDEFINED) {}
 
     //! Initialize an ACK PDU
     void initialize(PduDirection direction,
-                   Cfdp::Class::T txmMode,
-                   EntityId sourceEid,
-                   TransactionSeq transactionSeq,
-                   EntityId destEid,
-                   FileDirective directiveCode,
-                   U8 directiveSubtypeCode,
-                   ConditionCode conditionCode,
-                   AckTxnStatus transactionStatus);
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid,
+                    FileDirective directiveCode,
+                    U8 directiveSubtypeCode,
+                    ConditionCode conditionCode,
+                    AckTxnStatus transactionStatus);
 
     //! Compute the buffer size needed
     U32 getBufferSize() const override;

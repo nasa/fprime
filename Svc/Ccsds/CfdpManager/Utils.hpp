@@ -48,11 +48,10 @@ namespace Cfdp {
  * This identifies a specific transaction sequence number and entity ID
  * The transaction pointer is set by the implementation
  */
-struct CfdpTraverseTransSeqArg
-{
+struct CfdpTraverseTransSeqArg {
     TransactionSeq transaction_sequence_number;
-    EntityId       src_eid;
-    Transaction *  txn; /**< \brief output transaction pointer */
+    EntityId src_eid;
+    Transaction* txn; /**< \brief output transaction pointer */
 };
 
 /**
@@ -60,11 +59,10 @@ struct CfdpTraverseTransSeqArg
  *
  * This basically allows for running a traversal on several lists at once
  */
-struct CfdpTraverseAllArg
-{
-    CfdpTraverseAllTransactionsFunc fn;      /**< \brief internal callback to use for each CList_Traverse */
-    void *                          context; /**< \brief opaque object to pass to internal callback */
-    I32                           counter; /**< \brief Running tally of all nodes traversed from all lists */
+struct CfdpTraverseAllArg {
+    CfdpTraverseAllTransactionsFunc fn; /**< \brief internal callback to use for each CList_Traverse */
+    void* context;                      /**< \brief opaque object to pass to internal callback */
+    I32 counter;                        /**< \brief Running tally of all nodes traversed from all lists */
 };
 
 /**
@@ -72,10 +70,9 @@ struct CfdpTraverseAllArg
  *
  * This is for searching for transactions of a specific priority
  */
-struct CfdpTraversePriorityArg
-{
-    Transaction *txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
-    U8             priority; /**< \brief seeking this priority */
+struct CfdpTraversePriorityArg {
+    Transaction* txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
+    U8 priority;      /**< \brief seeking this priority */
 };
 
 /************************************************************************/
@@ -87,7 +84,7 @@ struct CfdpTraversePriorityArg
  * @retval 1 when it's found, which terminates list traversal
  * @retval 0 when it isn't found, which causes list traversal to continue
  */
-CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode *node, void *context);
+CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode* node, void* context);
 
 /************************************************************************/
 /** @brief Searches for the first transaction with a lower priority than given.
@@ -98,7 +95,7 @@ CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode *node, void *c
  * @retval CFDP_CLIST_EXIT when it's found, which terminates list traversal
  * @retval CFDP_CLIST_CONT when it isn't found, which causes list traversal to continue
  */
-CListTraverseStatus PrioSearch(CListNode *node, void *context);
+CListTraverseStatus PrioSearch(CListNode* node, void* context);
 
 /************************************************************************/
 /** @brief Converts the internal transaction status to a CFDP condition code
@@ -137,7 +134,7 @@ bool TxnStatusIsError(TxnStatus txn_stat);
  * @param txn   Transaction
  * @returns AckTxnStatus value corresponding to transaction
  */
-AckTxnStatus GetTxnStatus(Transaction *txn);
+AckTxnStatus GetTxnStatus(Transaction* txn);
 
 }  // namespace Cfdp
 }  // namespace Ccsds
