@@ -7,6 +7,7 @@ supplied. CMake is run as a command line call to the cmake system. Thus CMake mu
 
 @author mstarch
 """
+
 import multiprocessing
 import select
 import shutil
@@ -116,8 +117,7 @@ def assert_process_success(
     if stderr and not errors_ok:
         if warnings_ok:
             has_errors = any(
-                "CMake Error" in line or "CMake Fatal Error" in line
-                for line in stderr
+                "CMake Error" in line or "CMake Fatal Error" in line for line in stderr
             )
             assert not has_errors, f"CMake generated errors:\n{''.join(stderr)}"
         else:
