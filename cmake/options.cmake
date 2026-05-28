@@ -363,21 +363,8 @@ if (DEFINED FPRIME_PROJECT_ROOT)
     # If explicitly defined (CLI or settings.ini), force it to be absolute
     get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     set(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT_ABS}" CACHE PATH "F Prime project location" FORCE)
-elseif (FPRIME_LOADED_VIA_FIND_PACKAGE AND NOT "${PROJECT_SOURCE_DIR}" STREQUAL "")
-    # When loaded via find_package, the project root is always PROJECT_SOURCE_DIR.
-    # This avoids the CMAKE_PROJECT_DIR fallback and the child-of-fprime heuristic.
-    set(FPRIME_PROJECT_ROOT "${PROJECT_SOURCE_DIR}" CACHE PATH "F Prime project location" FORCE)
 else()
-    # Legacy fprime-util flow: use CMAKE_PROJECT_DIR with child-of-fprime heuristic
-    get_filename_component(FULL_PROJECT_PATH "${CMAKE_PROJECT_DIR}" ABSOLUTE)
-    file(RELATIVE_PATH TEMP_PATH "${FPRIME_FRAMEWORK_PATH}" "${FULL_PROJECT_PATH}")
-    # Forces framework path as project root, if a child
-    if( "${TEMP_PATH}" MATCHES "^[^./].*" )
-        set(FPRIME_PROJECT_ROOT "${FPRIME_FRAMEWORK_PATH}" CACHE PATH "F Prime project location" FORCE)
-    # Force PROJECT_ROOT
-    else()
-        set(FPRIME_PROJECT_ROOT "${FULL_PROJECT_PATH}" CACHE PATH "F Prime project location" FORCE)
-    endif()
+    set(FPRIME_PROJECT_ROOT "${PROJECT_SOURCE_DIR}" CACHE PATH "F Prime project location" FORCE)
 endif()
 # Force  FPRIME_LIBRARY_LOCATIONS to be absolute
 set(FPRIME_LIBRARY_LOCATIONS_ABS)
