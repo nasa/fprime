@@ -326,7 +326,7 @@ void CfdpManagerTester::verifyMultipleFileDataPdus(FwIndexType startIndex,
                                                    const char* srcFile,
                                                    Cfdp::Class::T cfdpClass) {
     for (U8 pduIdx = 0; pduIdx < numPdus; pduIdx++) {
-        Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(startIndex + pduIdx);
+        Fw::Buffer fileDataPduBuffer = this->getSentPduBuffer(static_cast<FwIndexType>(startIndex + pduIdx));
         ASSERT_GT(fileDataPduBuffer.getSize(), 0) << "File data PDU " << static_cast<int>(pduIdx) << " should be sent";
         verifyFileDataPdu(fileDataPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID, setup.expectedSeqNum,
                           pduIdx * dataPerPdu, dataPerPdu, srcFile, cfdpClass);
@@ -821,7 +821,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     // Run cycle - EOF PDU
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
-    FwIndexType firstEofIndex = 1 + numFileDataPdus;
+    FwIndexType firstEofIndex = static_cast<FwIndexType>(1 + numFileDataPdus);
     ASSERT_FROM_PORT_HISTORY_SIZE(firstEofIndex + 1);
 
     Fw::Buffer firstEofPduBuffer = this->getSentPduBuffer(firstEofIndex);

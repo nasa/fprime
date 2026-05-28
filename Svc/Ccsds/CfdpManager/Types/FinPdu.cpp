@@ -105,9 +105,9 @@ Fw::SerializeStatus FinPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     // Bit 2: Delivery code (1 bit)
     // Bits 1-0: File status (2 bits)
     U8 flags = 0;
-    flags |= static_cast<U8>((static_cast<U8>(this->m_conditionCode) & 0x0F) << 4);
-    flags |= static_cast<U8>((static_cast<U8>(this->m_deliveryCode) & 0x01) << 2);
-    flags |= (static_cast<U8>(this->m_fileStatus) & 0x03);
+    flags = static_cast<U8>(flags | static_cast<U8>((static_cast<U8>(this->m_conditionCode) & 0x0FU) << 4));
+    flags = static_cast<U8>(flags | static_cast<U8>((static_cast<U8>(this->m_deliveryCode) & 0x01U) << 2));
+    flags = static_cast<U8>(flags | (static_cast<U8>(this->m_fileStatus) & 0x03U));
 
     status = serialBuffer.serializeFrom(flags);
     if (status != Fw::FW_SERIALIZE_OK) {

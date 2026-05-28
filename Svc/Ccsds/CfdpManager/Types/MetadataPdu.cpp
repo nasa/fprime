@@ -119,8 +119,8 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
     // bits 6-4: reserved (000b)
     // bits 3-0: checksum_type
     U8 segmentationControl = 0;
-    segmentationControl |= static_cast<U8>((this->m_closureRequested & 0x01) << 7);
-    segmentationControl |= (static_cast<U8>(this->m_checksumType) & 0x0F);
+    segmentationControl = static_cast<U8>(segmentationControl | static_cast<U8>((this->m_closureRequested & 0x01U) << 7));
+    segmentationControl = static_cast<U8>(segmentationControl | (static_cast<U8>(this->m_checksumType) & 0x0FU));
 
     status = serialBuffer.serializeFrom(segmentationControl);
     if (status != Fw::FW_SERIALIZE_OK) {

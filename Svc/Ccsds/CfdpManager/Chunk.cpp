@@ -186,7 +186,7 @@ ChunkIdx CfdpChunkList::findInsertPosition(const Chunk* chunk) {
 
     while (count > 0) {
         i = first;
-        step = count / 2;
+        step = static_cast<ChunkIdx>(count / 2);
         i = static_cast<ChunkIdx>(i + step);
         if (m_chunks[i].offset < chunk->offset) {
             first = static_cast<ChunkIdx>(i + 1);

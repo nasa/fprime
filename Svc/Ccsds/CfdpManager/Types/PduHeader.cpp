@@ -107,12 +107,12 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     // bit 1: crc_flag (0=not present, 1=present)
     // bit 0: large_file_flag (0=32-bit, 1=64-bit)
     U8 flags = 0;
-    flags |= static_cast<U8>((this->m_version & 0x07) << 5);
-    flags |= static_cast<U8>((this->m_pduType & 0x01) << 4);
-    flags |= static_cast<U8>((this->m_direction & 0x01) << 3);
-    flags |= static_cast<U8>((this->m_class & 0x01) << 2);
-    flags |= static_cast<U8>((this->m_crcFlag & 0x01) << 1);
-    flags |= static_cast<U8>(this->m_largeFileFlag & 0x01);
+    flags = static_cast<U8>(flags | static_cast<U8>((this->m_version & 0x07U) << 5));
+    flags = static_cast<U8>(flags | static_cast<U8>((this->m_pduType & 0x01U) << 4));
+    flags = static_cast<U8>(flags | static_cast<U8>((this->m_direction & 0x01U) << 3));
+    flags = static_cast<U8>(flags | static_cast<U8>((this->m_class & 0x01U) << 2));
+    flags = static_cast<U8>(flags | static_cast<U8>((this->m_crcFlag & 0x01U) << 1));
+    flags = static_cast<U8>(flags | (this->m_largeFileFlag & 0x01U));
 
     status = serialBuffer.serializeFrom(flags);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -131,10 +131,10 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     // bit 3: segment_metadata_flag
     // bits 2-0: tsn_length - 1 (3 bits)
     U8 eidTsnLengths = 0;
-    eidTsnLengths |= static_cast<U8>((this->m_segmentationControl & 0x01) << 7);
-    eidTsnLengths |= static_cast<U8>((static_cast<U8>(eidSize - 1) & 0x07) << 4);
-    eidTsnLengths |= static_cast<U8>((this->m_segmentMetadataFlag & 0x01) << 3);
-    eidTsnLengths |= static_cast<U8>(static_cast<U8>(tsnSize - 1) & 0x07);
+    eidTsnLengths = static_cast<U8>(eidTsnLengths | static_cast<U8>((this->m_segmentationControl & 0x01U) << 7));
+    eidTsnLengths = static_cast<U8>(eidTsnLengths | static_cast<U8>(((eidSize - 1U) & 0x07U) << 4));
+    eidTsnLengths = static_cast<U8>(eidTsnLengths | static_cast<U8>((this->m_segmentMetadataFlag & 0x01U) << 3));
+    eidTsnLengths = static_cast<U8>(eidTsnLengths | ((tsnSize - 1U) & 0x07U));
 
     status = serialBuffer.serializeFrom(eidTsnLengths);
     if (status != Fw::FW_SERIALIZE_OK) {

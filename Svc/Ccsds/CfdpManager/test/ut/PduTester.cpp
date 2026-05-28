@@ -450,7 +450,7 @@ void CfdpManagerTester::sendMetadataPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = metadataPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
@@ -485,7 +485,7 @@ void CfdpManagerTester::sendFileDataPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = fileDataPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
@@ -520,7 +520,7 @@ void CfdpManagerTester::sendEofPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = eofPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
@@ -555,7 +555,7 @@ void CfdpManagerTester::sendFinPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = finPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
@@ -592,7 +592,7 @@ void CfdpManagerTester::sendAckPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = ackPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
@@ -637,7 +637,7 @@ void CfdpManagerTester::sendNakPdu(U8 channelId,
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
     U32 pduSize = nakPdu.getBufferSize();
-    U32 totalSize = descriptorSize + pduSize;
+    U32 totalSize = static_cast<U32>(descriptorSize) + pduSize;
     Fw::Buffer pduBuffer(m_internalDataBuffer, totalSize);
 
     // Write packet descriptor (big-endian U16)
