@@ -541,14 +541,36 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
     if (ret == Cfdp::Status::SUCCESS) {
         if (!this->m_engine->recvEof(this, eof)) {
             /* this function is only entered for PDUs identified as EOF type */
+            ConditionCode cc = eof.getConditionCode();
 
-            /* only check size if MD received, otherwise it's still OK */
-            if (this->m_flags.rx.md_recv && (eof.getFileSize() != this->m_fsize)) {
-                this->m_cfdpManager->log_WARNING_LO_RxFileSizeMismatch(this->getClass(), this->m_history->src_eid,
+            /* Only check size if MD received and EOF doesn't have a non-zero condition code (e.g., don't check size for
+             * canceled transactions) */
+            if (this->m_flags.rx.md_recv && (cc == CONDITION_CODE_NO_ERROR) && (eof.getFileSize() != this->m_fsize)) {
+                this->m_cfdpManager->log_WARNING_HI_RxFileSizeMismatch(this->getClass(), this->m_history->src_eid,
                                                                        this->m_history->seq_num, this->m_fsize,
                                                                        eof.getFileSize());
                 this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
                 ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
+            }
+
+            /* Log condition code if non-zero (cancel or error) - applies to both Class 1 and Class 2 */
+            if (cc != CONDITION_CODE_NO_ERROR) {
+                /* Set transaction status from condition code to prevent completion event */
+                this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(static_cast<I32>(cc)));
+
+                if (cc == CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+                    /* Increment receive EOF cancellation counter (normal operation) */
+                    this->m_cfdpManager->incrementRecvEofCanceled(this->m_chan_num);
+
+                    this->m_cfdpManager->log_ACTIVITY_HI_RxEofCancelReceived(this->getClass(), this->m_history->src_eid,
+                                                                             this->m_history->seq_num);
+                } else {
+                    /* Increment RX EOF error counter (protocol error) */
+                    this->m_cfdpManager->incrementFaultRxEofError(this->m_chan_num);
+
+                    this->m_cfdpManager->log_WARNING_HI_RxEofWithError(this->getClass(), this->m_history->src_eid,
+                                                                       this->m_history->seq_num, cc);
+                }
             }
         } else {
             this->m_cfdpManager->log_WARNING_LO_RxInvalidEofPdu(this->getClass(), this->m_history->src_eid,
@@ -578,18 +600,19 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
     }
 
     Status::T ret = this->rSubstateRecvEof(buffer);
-    U32 crc;
-
-    /* this function is only entered for PDUs identified as EOF type */
-    crc = eof.getChecksum();
+    U32 crc = eof.getChecksum();
+    ConditionCode cc = eof.getConditionCode();
 
     if (ret == Cfdp::Status::SUCCESS) {
-        /* Verify CRC */
-        if (this->rCheckCrc(crc) == Cfdp::Status::SUCCESS) {
-            /* successfully processed the file */
-            this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+        /* Only check CRC if no error condition code */
+        if (cc == CONDITION_CODE_NO_ERROR) {
+            /* Verify CRC */
+            if (this->rCheckCrc(crc) == Cfdp::Status::SUCCESS) {
+                /* successfully processed the file */
+                this->m_keep = Cfdp::Keep::KEEP; /* save the file */
+            }
+            /* if file failed to process, there's nothing to do. CFDP_R_CheckCrc() generates an event on failure */
         }
-        /* if file failed to process, there's nothing to do. CFDP_R_CheckCrc() generates an event on failure */
     }
 
     /* after exit, always reset since we are done */

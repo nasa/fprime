@@ -8,11 +8,12 @@ event InvalidChannel(
     severity warning low \
     format "Invalid channel ID {}, maximum channel ID is {}" 
 
-event SendFileInitiated(
-    sourceFileName: string size MaxFilePathSize @< Source file being sent
+event TxFileQueued(
+    sourceFileName: string size MaxFilePathSize @< Source file to be sent
+    transactionSeq: U32 @< Transaction sequence number
 ) \
     severity activity low \
-    format "Successfully initiated file send transfer for {}" 
+    format "TX file queued for {} (transaction {})" 
 
 event UnsupportedSendFileArguments(
     offset: U32 @< Offset of the send file request
@@ -243,6 +244,23 @@ event RxInvalidEofPdu(
     severity warning low \
     format "RX class {} transaction {}:{} received invalid EOF PDU"
 
+event RxEofCancelReceived(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity activity high \
+    format "RX class {} transaction {}:{} cancelled by sender"
+
+event RxEofWithError(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    conditionCode: U8 @< EOF condition code (checksum failure, file error, etc.)
+) \
+    severity warning high \
+    format "RX class {} transaction {}:{} received EOF with error condition code {}"
+
 event RxSeekCrcFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
@@ -409,6 +427,7 @@ event TxInvalidDirectiveCode(
 
 event TxFileTransferStarted(
     cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
     srcEid: U32 @< Source entity ID
     srcFile: string size MaxFilePathSize @< Source filename
     destEid: U32 @< Destination entity ID
@@ -416,36 +435,39 @@ event TxFileTransferStarted(
     fileSize: U32 @< File size in bytes
 ) \
     severity activity high \
-    format "TX starting class {} transfer {}:{} -> {}:{}, {} bytes"
+    format "TX {} transaction {} transfer started, {}:{} -> {}:{}, {} bytes"
 
 event TxFileTransferCompleted(
     cfdpClass: Cfdp.Class @< CFDP class
-    srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
     srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
     destFile: string size MaxFilePathSize @< Destination filename
     fileSize: U32 @< File size in bytes
 ) \
     severity activity high \
-    format "TX completed class {} transaction {}:{}, {} -> {}, {} bytes"
+    format "TX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
 
 event RxFileTransferCompleted(
     cfdpClass: Cfdp.Class @< CFDP class
-    srcEid: U32 @< Source entity ID
     seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
     srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
     destFile: string size MaxFilePathSize @< Destination filename
     fileSize: U32 @< File size in bytes
 ) \
     severity activity high \
-    format "RX completed class {} transaction {}:{}, {} -> {}, {} bytes"
+    format "RX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
 
 event MetadataReceived(
     srcFile: string size MaxFilePathSize @< Source filename from metadata
     destFile: string size MaxFilePathSize @< Destination filename from metadata
+    transactionSeq: U32 @< Transaction sequence number
 ) \
     severity activity low \
-    format "Metadata received for source: {}, dest: {}"
+    format "Metadata received for source: {}, dest: {} (transaction {})"
 
 event FileDataSegmentMetadata severity warning low \
     format "File data PDU with unsupported segment metadata received"

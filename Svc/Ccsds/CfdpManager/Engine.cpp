@@ -227,6 +227,13 @@ Status::T Engine::sendEof(Transaction* txn) {
     Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
     ConditionCode conditionCode = static_cast<ConditionCode>(TxnStatusToConditionCode(txn->m_history->txn_stat));
 
+    // Increment sent EOF counters based on condition code
+    if (conditionCode == CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+        this->m_manager->incrementSentEofCanceled(txn->getChannelId());
+    } else if (conditionCode != CONDITION_CODE_NO_ERROR) {
+        this->m_manager->incrementFaultTxEofError(txn->getChannelId());
+    }
+
     eof.initialize(direction,
                    txn->getClass(),                // transmission mode
                    m_manager->getLocalEidParam(),  // source EID
@@ -365,7 +372,7 @@ void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
     txn->m_history->fnames.dst_filename = md.getDestFilename();
 
     this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
-                                                      txn->m_history->fnames.dst_filename);
+                                                      txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
 }
 
 Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
@@ -720,6 +727,9 @@ Status::T Engine::txFile(const Fw::String& src_filename,
 
         // Set transaction initiation type
         txn->m_initType = initType;
+
+        // Log transaction queued event
+        this->m_manager->log_ACTIVITY_LO_TxFileQueued(txn->m_history->fnames.src_filename, txn->m_history->seq_num);
     }
 
     return ret;
@@ -945,13 +955,13 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
         if (!TxnStatusIsError(txn->m_history->txn_stat)) {
             if (txn->m_history->dir == Direction::DIRECTION_TX) {
                 this->m_manager->log_ACTIVITY_HI_TxFileTransferCompleted(
-                    txn->m_txn_class, txn->m_history->src_eid, txn->m_history->seq_num,
-                    txn->m_history->fnames.src_filename, txn->m_history->fnames.dst_filename,
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
                     static_cast<U32>(txn->m_fsize));
             } else if (txn->m_history->dir == Direction::DIRECTION_RX) {
                 this->m_manager->log_ACTIVITY_HI_RxFileTransferCompleted(
-                    txn->m_txn_class, txn->m_history->src_eid, txn->m_history->seq_num,
-                    txn->m_history->fnames.src_filename, txn->m_history->fnames.dst_filename,
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
                     static_cast<U32>(txn->m_fsize));
             }
         }

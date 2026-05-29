@@ -101,8 +101,9 @@ Fw::SerializeStatus EofPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
         return status;
     }
 
-    // Condition code
-    U8 conditionCode = static_cast<U8>(this->m_conditionCode);
+    // Condition code (CFDP Blue Book 5.2.6: bits 7-4 = condition code, bits 3-0 = spare/zero)
+    // Note: CFDP uses big-endian bit numbering where bit 0 is MSB
+    U8 conditionCode = (static_cast<U8>(this->m_conditionCode) & 0x0F) << 4;  // Place in upper 4 bits
     status = serialBuffer.serializeFrom(conditionCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
@@ -134,13 +135,15 @@ Fw::SerializeStatus EofPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer)
 
     // Directive code already read by union wrapper
 
-    // Condition code
+    // Condition code (CFDP Blue Book 5.2.6: bits 7-4 = condition code, bits 3-0 = spare)
+    // Note: CFDP uses big-endian bit numbering where bit 0 is MSB
     U8 conditionCodeVal;
     Fw::SerializeStatus status = serialBuffer.deserializeTo(conditionCodeVal);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    this->m_conditionCode = static_cast<ConditionCode>(conditionCodeVal);
+    // Extract upper 4 bits (condition code field)
+    this->m_conditionCode = static_cast<ConditionCode>((conditionCodeVal >> 4) & 0x0F);
 
     // Checksum
     status = serialBuffer.deserializeTo(this->m_checksum);

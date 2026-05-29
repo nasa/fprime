@@ -137,12 +137,30 @@ Fw::SerializeStatus Tlv::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
 
     // Deserialize data
     if (this->m_type == TlvType::TLV_TYPE_ENTITY_ID) {
-        // For Entity ID, deserialize as EntityId
-        EntityId eid;
-        status = serialBuffer.deserializeTo(eid);
-        if (status != Fw::FW_SERIALIZE_OK) {
-            return status;
+        // For Entity ID, read length bytes and convert to EntityId
+        // Per CFDP spec, Entity IDs can be 1, 2, 4, or 8 bytes
+        // We support up to sizeof(EntityId) bytes
+        if (length > sizeof(EntityId)) {
+            return Fw::FW_DESERIALIZE_FORMAT_ERROR;
         }
+
+        // Read length bytes as raw data, then convert to EntityId (big-endian)
+        U8 rawData[sizeof(EntityId)];
+        memset(rawData, 0, sizeof(rawData));  // Zero-pad
+
+        for (U8 i = 0; i < length; i++) {
+            status = serialBuffer.deserializeTo(rawData[i]);
+            if (status != Fw::FW_SERIALIZE_OK) {
+                return status;
+            }
+        }
+
+        // Convert big-endian bytes to EntityId
+        EntityId eid = 0;
+        for (U8 i = 0; i < length; i++) {
+            eid = (eid << 8) | rawData[i];
+        }
+
         this->m_data.setEntityId(eid);
     } else {
         // For other types, deserialize raw data

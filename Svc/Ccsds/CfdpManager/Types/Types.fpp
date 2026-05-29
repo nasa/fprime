@@ -93,11 +93,13 @@ module Cfdp {
         recvFileDataBytes: U64 @< Total file data bytes received
         recvNakSegmentRequests: U32 @< Number of NAK segment requests received from peer
         recvPdu: U32 @< Number of PDUs received with valid headers
+        recvEofCanceled: U32 @< Number of EOF PDUs received with cancellation condition code
 
         # Sent counters
         sentNakSegmentRequests: U32 @< Number of NAK segment requests sent to peer
         sentFileDataBytes: U64 @< Total file data bytes sent
         sentPdu: U32 @< Number of PDUs sent
+        sentEofCanceled: U32 @< Number of EOF PDUs sent with cancellation condition code
 
         # Fault counters
         faultAckLimit: U32 @< Number of transactions abandoned due to ACK limit exceeded
@@ -111,6 +113,8 @@ module Cfdp {
         faultFileSeek: U32 @< Number of file seek failures
         faultFileRename: U32 @< Number of file rename failures
         faultDirectoryRead: U32 @< Number of directory read failures
+        faultRxEofError: U32 @< Number of EOF PDUs received with error condition code (other than cancel)
+        faultTxEofError: U32 @< Number of EOF PDUs sent with error condition code (other than cancel)
 
         # Queue depths
         queueFree: U16 @< Number of transactions in FREE queue
