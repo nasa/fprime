@@ -1,0 +1,32 @@
+name: "Upgrade Package from PR Branch"
+description: "Upgrades a pip package to a version from a PR-matching branch if it exists"
+
+inputs:
+  repository:
+    description: "GitHub repository (owner/repo) to check for matching branch"
+    required: true
+  default-branch:
+    description: "Default branch to use if no PR branch found"
+    required: false
+    default: "devel"
+
+outputs:
+  target-branch:
+    description: "The branch that was used for the upgrade"
+    value: ${{ steps.get_pr_branch.outputs.target-branch }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Get PR target branch"
+      id: get_pr_branch
+      uses: nasa/fprime-actions/get-pr-branch@devel
+      with:
+        target_repository: ${{ inputs.repository }}
+        default_target_ref: ${{ inputs.default-branch }}
+
+    - name: "Upgrade package"
+      if: steps.get_pr_branch.outputs.target-branch != inputs.default-branch
+      shell: bash
+      run: |
+        pip install --upgrade "git+https://github.com/${{ inputs.repository }}.git@${{ steps.get_pr_branch.outputs.target-branch }}"
