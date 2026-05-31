@@ -108,6 +108,55 @@ Describe error handling, failure modes, and recovery behavior across the subsyst
 - **Configuration**: Mention compile-time or runtime configuration options by describing what they control, not by referencing specific config macros.
 - **Numbering**: Use numbered lists for ordered processes (like validation steps). Use bullet lists for unordered items.
 
+## Generate Visualizations
+
+For subtopologies and multi-component capabilities, generate topology diagrams to include in the document.
+
+### When to Generate
+
+Generate visualizations when the capability involves a **subtopology** or a **multi-component data flow** where a diagram would help a systems engineer understand the connections. Skip this step for single-component capabilities where a diagram adds no value.
+
+### How to Generate
+
+1. **Start the visualizer** from the subtopology or deployment directory that contains the topology:
+
+   ```bash
+   cd <path-to-subtopology-or-deployment>
+   fprime-util visualize
+   ```
+
+   This starts a local web server (default port 7000) displaying an interactive topology diagram.
+
+2. **Open the visualization** in a browser by navigating to `http://127.0.0.1:7000`.
+
+3. **Select the view** — the visualizer may offer multiple views (e.g. full topology, downlink path, uplink path). Choose the view that best illustrates the capability being documented.
+
+4. **Export the image** by clicking the **camera icon** in the visualizer toolbar. This downloads a PNG image of the current view.
+
+5. **Save the image** to the document image directory:
+
+   ```
+   docs/reference/system-functional/img/<descriptive-name>.png
+   ```
+
+   Use a descriptive kebab-case filename that matches the document (e.g. `com-fprime-topology.png`, `com-ccsds-downlink.png`).
+
+6. **Stop the visualizer** when finished (kill the process or press Ctrl+C). If you need to visualize a different subtopology, stop the current visualizer first to free the port.
+
+### Embed in the Document
+
+Add the diagram to the appropriate section of the document using standard markdown image syntax:
+
+```markdown
+![<Alt text describing the diagram>](img/<filename>.png)
+```
+
+For subtopologies, consider generating multiple views if they exist:
+- A **full topology** diagram showing all components and connections.
+- **Downlink path** and **uplink path** diagrams if the subtopology has directional data flows.
+
+Place diagrams near the section they illustrate — typically after the Overview or within the relevant functional aspect section.
+
 ## Update the Index
 
 After creating the document, update `docs/reference/system-functional/index.md` to add a link to the new document. Follow the existing format:
