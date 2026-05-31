@@ -29,9 +29,11 @@ The Space Packet layer provides application-level packet framing per CCSDS 133.0
 
 The APID Manager tracks per-APID sequence counts for both outgoing and incoming Space Packets. It provides incrementing sequence counts to the Space Packet Framer for each APID and validates received sequence counts in the Space Packet Deframer to detect packet loss.
 
+By default, APIDs are assigned based on the F Prime data descriptor type (commands, telemetry, events, files, packetized telemetry). Missions requiring custom APID assignments can replace the default APID Manager component with a project-specific implementation.
+
 ### TM Space Data Link Protocol
 
-The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link.
+The TM Framer implements the CCSDS Telemetry (TM) Space Data Link Protocol (132.0-B-3) for downlink. It wraps payload data (such as Space Packets) into TM Transfer Frames for transmission over the space link. The current implementation supports a single Virtual Channel Identifier (VCID).
 
 ### TC Space Data Link Protocol
 
@@ -45,8 +47,14 @@ The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data L
 
 The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → TM Framer → byte stream driver. A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The modular design allows missions to select the specific protocol layers they require.
 
+### Unsupported Features
+
+The current CCSDS implementation does not support:
+
+- Multiple Virtual Channel Identifiers (VCIDs) — only a single VCID is available per TM Framer or TC Deframer instance.
+
 ### Off Nominal
 
 - Malformed frames or packets are rejected with diagnostic events.
-- Sequence count mismatches indicate dropped or reordered packets and are reported via events.
+- Sequence count mismatches indicate dropped or reordered packets and are reported via events. The onboard sequence count is synchronized to the received value and processing continues.
 - CRC or checksum failures cause the affected frame to be dropped.

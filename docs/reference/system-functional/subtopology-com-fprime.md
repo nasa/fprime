@@ -19,6 +19,12 @@ Two variants are available:
 1. **With ComStub** — Includes a ComStub communication adapter and expects to be connected to a byte stream driver (TCP, UDP, UART). This is the simplest option for most deployments.
 2. **With External ComInterface** — Does not include a communication adapter; the deployment provides its own implementation (e.g., a radio driver). This variant is used when the communication hardware requires a custom adapter.
 
+### Topology Diagram
+
+The following diagram shows the ComFprime subtopology topology:
+
+![ComFprime Subtopology](img/com-fprime-topology.png)
+
 ### Included Components
 
 - **F Prime Framer** — Frames outgoing packets using the F Prime protocol (start word, size, payload, CRC).

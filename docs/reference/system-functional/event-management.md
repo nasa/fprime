@@ -20,17 +20,20 @@ The Event Manager is an active component that receives events from all component
 
 Events are categorized by severity to support filtering and prioritization:
 
-- **FATAL** — A condition rendering the software unable to continue
+- **FATAL** — A condition rendering the software unable to continue. Issuing a FATAL event triggers the fatal handler (see Fatal Event Handling below).
 - **WARNING_HI** — A serious failure, but the software can continue
 - **WARNING_LO** — A failure with minimal overall impact
 - **COMMAND** — Activity related to command processing
 - **ACTIVITY_HI** — An important nominal event
-- **ACTIVITY_LO** — A minor nominal event, subset of an important event
+- **ACTIVITY_LO** — A minor nominal event, typically used for background activities
 - **DIAGNOSTIC** — Detailed debugging information, normally suppressed
 
 ### Event Throttling
 
-Events can be configured with a throttle that limits the maximum number of times a specific event can be reported within a time period. This prevents log flooding when a condition triggers the same event repeatedly.
+Events can be configured with throttle limits to prevent log flooding when a condition triggers the same event repeatedly. Throttling is configured on the individual component that emits the event. Two throttling modes are available:
+
+- **Count-based** — Limits the number of times an event can be reported before it is suppressed. A specific clear action resets the throttle counter.
+- **Time-based** — Limits the rate at which an event can be reported based on elapsed time.
 
 ### Text Logging
 

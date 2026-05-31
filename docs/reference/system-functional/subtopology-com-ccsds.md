@@ -17,9 +17,17 @@ The ComCcsds subtopology packages a CCSDS-standard communication stack as a reus
 Two variants are available, mirroring the ComFprime subtopology design:
 
 1. **With ComStub** — Includes a ComStub adapter for connection to a byte stream driver.
-2. **With External ComInterface** — The deployment provides its own communication adapter.
+2. **With External ComInterface** — The deployment provides its own communication adapter, typically used for custom radio implementations.
+
+### Topology Diagram
+
+The following diagram shows the complete ComCcsds subtopology:
+
+![ComCcsds Subtopology](img/com-ccsds-topology.png)
 
 ### Downlink Path
+
+![ComCcsds Downlink Path](img/com-ccsds-downlink.png)
 
 Outgoing data follows a two-stage framing process:
 
@@ -27,6 +35,8 @@ Outgoing data follows a two-stage framing process:
 2. The TM Framer wraps each Space Packet into a CCSDS TM Transfer Frame for transmission over the space link.
 
 ### Uplink Path
+
+![ComCcsds Uplink Path](img/com-ccsds-uplink.png)
 
 Incoming data follows a two-stage deframing process:
 

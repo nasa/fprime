@@ -35,7 +35,7 @@ A deployment selects one time source component and connects it to all components
 
 ### Cycle Source
 
-The Linux Timer provides a periodic tick source on Linux systems. It generates cycle port calls at a configured rate, driving the rate group scheduling chain. On other platforms, the cycle source may be provided by a hardware timer driver or other platform-specific component.
+The Linux Timer provides a periodic tick source on Linux systems. It generates cycle port calls at a configured rate, driving the [rate group scheduling](rate-group-scheduling.md) chain. On other platforms, the cycle source may be provided by a hardware timer driver or other platform-specific component.
 
 ### Off Nominal
 

@@ -9,7 +9,7 @@
 
 ## Overview
 
-Health monitoring verifies that active components in the system are responsive and have not hung or stalled. The Health component periodically pings each monitored component and checks for a response within a configurable timeout. If a component fails to respond, the system issues a FATAL event, indicating a critical software health failure. An optional hardware watchdog stroke ensures the processor resets if the health monitoring task itself becomes unresponsive.
+Health monitoring verifies that active components in the system are responsive and have not hung or stalled. The Health component periodically pings each monitored component and checks for a response within a configurable timeout. If a component fails to respond within a warning threshold, a WARNING event is issued. If the component remains unresponsive past a second (fatal) threshold, a FATAL event is issued, indicating a critical software health failure. An optional hardware watchdog stroke ensures the processor resets if the health monitoring task itself becomes unresponsive.
 
 ### Ping Mechanism
 

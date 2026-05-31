@@ -11,7 +11,7 @@ Command dispatching is the process by which encoded command buffers are received
 
 ### Command Registration
 
-At system startup, each component that implements commands registers its opcodes with the Command Dispatcher. Registration associates each opcode with the specific output port connected to the implementing component. If an opcode is registered more than once on the same port, this is treated as a re-registration and is logged. The registration table is sized at compile time (default: 150 entries) and must be large enough to hold all opcodes in the system.
+At system startup, each component that implements commands registers its opcodes with the Command Dispatcher. Registration associates each opcode with the specific output port connected to the implementing component. If an opcode is registered more than once on the same port, this is treated as a re-registration and is logged. If an opcode is registered from a different port, this is an assertion failure — normal topology generation prevents this condition, so it indicates a configuration error. The registration table is sized at compile time (default: 150 entries) and must be large enough to hold all opcodes in the system.
 
 ### Command Decoding and Routing
 
@@ -48,7 +48,7 @@ When the executing component reports completion, the Command Dispatcher:
 
 ### Queue Overflow Protection
 
-The Command Dispatcher's input queue has a finite depth. If the queue is full when a new command buffer arrives, the command is dropped rather than blocking or asserting. This prevents a denial-of-service condition where a flood of commands could stall the system. Dropped commands are logged and counted via telemetry.
+The Command Dispatcher's input queue has a finite depth. If the queue is full when a new command buffer arrives, the command is dropped rather than blocking or asserting. The Command Dispatcher's queue processing is typically assigned the highest priority in the system, so overflows are most likely during a denial-of-service or command flood situation. Dropped commands are logged and counted via telemetry.
 
 ### Telemetry
 

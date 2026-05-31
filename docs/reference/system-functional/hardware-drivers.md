@@ -20,6 +20,8 @@
 
 The driver layer provides hardware abstraction components that bridge the flight software's port-based communication model to physical hardware interfaces. Drivers implement standardized FPP interfaces so that higher-level components can interact with hardware through typed ports without knowledge of the underlying hardware specifics. The primary driver model is the byte stream interface, which is used for serial, network, and other stream-oriented communication. Additional interfaces cover GPIO, I2C, and SPI peripherals.
 
+The F Prime core framework ships Linux-specific driver implementations. Other operating system and hardware platform support is provided by additional packages outside the core repository.
+
 ### Byte Stream Driver Model
 
 The byte stream model defines a generic interface for drivers that operate with bidirectional byte streams. It provides:

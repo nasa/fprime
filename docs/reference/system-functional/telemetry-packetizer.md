@@ -18,7 +18,7 @@ A packet definition table specifies which channels belong to which packets. Each
 - A packet identifier
 - A send level that determines when the packet is active
 
-The table is provided to the component at initialization via the `setPacketList()` method.
+Users specify packet definitions through FPP modeling in the topology where this component is used.
 
 ### Channel Storage and Packing
 
@@ -39,6 +39,17 @@ Packet groups (sections) can be individually enabled or disabled via command. Th
 ### Send Levels
 
 The packet definition table supports different send levels, allowing packets to be grouped by priority or operational phase. Only packets at or below the current send level are transmitted on each cycle.
+
+### Rate Logic
+
+Each telemetry group can be configured with a rate logic mode that controls when packets are sent:
+
+- **SILENCED** — Packet is never sent.
+- **EVERY_MAX** — Packet is sent every MAX delta schedule ticks, regardless of whether channels have been updated.
+- **ON_CHANGE_MIN** — Packet is sent only when a channel value changes, at a minimum interval of MIN delta schedule ticks.
+- **ON_CHANGE_MIN_OR_EVERY_MAX** — Packet is sent on change (at MIN intervals) or at most every MAX intervals, whichever comes first.
+
+The MIN and MAX delta parameters are configured via the CONFIGURE_GROUP_RATES command. If MAX is less than MIN in the combined mode, MAX takes priority.
 
 ### Telemetry Limits
 

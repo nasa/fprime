@@ -15,13 +15,18 @@
 - [F Prime ComAggregator SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md)
 - [F Prime ComLogger SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md)
 - [F Prime CmdSplitter SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md)
-- [F Prime GenericHub SDD](https://github.com/nasa/fprime/blob/devel/Svc/GenericHub/docs/sdd.md)
 - [F Prime PassThroughRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/PassThroughRouter/docs/sdd.md)
 - [Communication Adapter Interface](https://github.com/nasa/fprime/blob/devel/docs/reference/communication-adapter-interface.md)
 
 ## Overview
 
 The communication stack provides the data path between the flight software and external systems (ground station, other processors, or other deployments). It handles outgoing data (downlink) by queuing, framing, and transmitting packets, and incoming data (uplink) by accumulating byte streams, extracting frames, and routing packets to their destination components. The stack is modular and composed from interchangeable components that implement defined interfaces, allowing different protocol layers to be swapped in depending on mission requirements.
+
+### Communication Stack Topology
+
+The following diagram shows the F Prime communication stack with the default protocol (ComFprime subtopology):
+
+![ComFprime Communication Stack](img/com-fprime-topology.png)
 
 ### Downlink Path
 
@@ -68,9 +73,9 @@ The communication logger records all outgoing data to files on the file system, 
 - **Communication Splitter** — Distributes outgoing communication buffers to multiple output ports.
 - **Communication Aggregator** — Merges data from multiple input sources into a single output stream.
 
-### Hub Pattern (Cross-Deployment Communication)
+### CCSDS Protocol Support
 
-The Generic Hub bridges port calls across address space boundaries between F Prime deployments. It serializes outgoing port calls for transmission to a remote deployment and deserializes incoming calls from the remote side. This enables distributed F Prime systems where components in different processes or on different processors can communicate transparently.
+For missions requiring standards-compliant space communication, the F Prime and CCSDS protocol components can be swapped in the communication stack. CCSDS components provide Space Packet framing, TM/TC Space Data Link framing, and AOS framing at various protocol layers. See the [CCSDS Protocol Functionality](ccsds-protocol.md) document for details.
 
 ### Off Nominal
 
