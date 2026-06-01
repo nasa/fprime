@@ -24,7 +24,7 @@ The communication stack provides the data path between the flight software and e
 
 ### Communication Stack Topology
 
-The following diagram shows the F Prime communication stack with the default protocol (ComFprime subtopology):
+The following diagram shows the F Prime communication stack using the ComFprime subtopology:
 
 ![ComFprime Communication Stack](img/com-fprime-topology.png)
 
@@ -32,46 +32,46 @@ The following diagram shows the F Prime communication stack with the default pro
 
 Outgoing data flows through the following stages:
 
-1. **Queuing** — The Communication Queue receives data from multiple sources (telemetry, events, file packets) and prioritizes them for transmission. The queue supports configurable depth and priority levels, sending the highest-priority data first. Flow control is managed through a ready signal from downstream components — the queue only sends the next item when the downstream path signals readiness.
+1. **Queuing** — [ComQueue](https://github.com/nasa/fprime/blob/devel/Svc/ComQueue/docs/sdd.md) receives data from multiple sources (telemetry, events, file packets) and prioritizes them for transmission. The queue supports configurable depth and priority levels, sending the highest-priority data first. Flow control is managed through a ready signal from downstream components — the queue only sends the next item when the downstream path signals readiness.
 
-2. **Framing** — The framer wraps each outgoing packet in a protocol-specific frame. The default F Prime protocol adds a start word, packet size, and a CRC hash for integrity checking. The framing interface is pluggable, allowing alternative protocols (such as CCSDS) to be substituted.
+2. **Framing** — The framer (e.g. [FprimeFramer](https://github.com/nasa/fprime/blob/devel/Svc/FprimeFramer/docs/sdd.md) or a CCSDS framer) wraps each outgoing packet in a protocol-specific frame. The framing interface is pluggable, allowing different protocols to be selected per mission.
 
-3. **Transmission** — The framed data is sent to a communication adapter (typically a byte stream driver) for physical transmission. The adapter reports success or failure back through the communication status protocol.
+3. **Transmission** — The framed data is passed to [ComStub](https://github.com/nasa/fprime/blob/devel/Svc/ComStub/docs/sdd.md), which delegates to a mission-specific communication adapter for physical transmission. The adapter reports success or failure back through the communication status protocol.
 
 ### Uplink Path
 
 Incoming data flows through the following stages:
 
-1. **Accumulation** — The Frame Accumulator receives a stream of byte buffers (typically from a byte stream driver) and extracts complete frames. It handles the case where frames span multiple incoming buffers or where a single buffer contains multiple frames.
+1. **Accumulation** — [FrameAccumulator](https://github.com/nasa/fprime/blob/devel/Svc/FrameAccumulator/docs/sdd.md) receives a stream of byte buffers from the communication adapter and extracts complete frames.
 
-2. **Deframing** — The deframer validates the frame (checking CRC and structure) and extracts the payload. For the F Prime protocol, this involves verifying the start word, checking the size field, and validating the trailing CRC.
+2. **Deframing** — The deframer (e.g. [FprimeDeframer](https://github.com/nasa/fprime/blob/devel/Svc/FprimeDeframer/docs/sdd.md) or a CCSDS deframer) validates the frame (checking CRC and structure) and extracts the payload.
 
-3. **Routing** — The router examines the extracted packet and forwards it to the appropriate destination. For the F Prime protocol, command packets are sent to the command dispatcher and file packets are sent to file uplink. The routing interface supports both protocol-aware routing (F Prime Router) and simple pass-through routing for single-destination configurations.
+3. **Routing** — [FprimeRouter](https://github.com/nasa/fprime/blob/devel/Svc/FprimeRouter/docs/sdd.md) (or [PassThroughRouter](https://github.com/nasa/fprime/blob/devel/Svc/PassThroughRouter/docs/sdd.md)) examines the extracted packet and forwards it to the appropriate destination. Command packets are sent to the command dispatcher and file packets are sent to file uplink.
 
 ### F Prime Protocol
 
-The default F Prime protocol is a minimal framing protocol consisting of four fields:
+The F Prime protocol is a minimal framing protocol consisting of four fields:
 
 1. Start word — identifies the beginning of a frame
 2. Packet size — the size of the enclosed payload
 3. Payload data — the enclosed packet
 4. CRC hash — integrity check covering the entire frame
 
-This protocol is designed for simplicity and is primarily intended for development and testing with the F Prime GDS. For missions requiring more robust protocols, the CCSDS protocol components can be used instead.
+This protocol is designed for simplicity and is commonly used for development and testing with the F Prime GDS. Missions select the appropriate protocol (F Prime, CCSDS, or custom) based on their communication requirements.
 
 ### Retry Mechanism
 
-The retry component sits in the downlink path before the communication adapter and resends failed transmissions up to a configurable maximum number of retries. After all retries are exhausted, it propagates the failure upstream. This provides resilience against transient communication failures.
+[ComRetry](https://github.com/nasa/fprime/blob/devel/Svc/ComRetry/docs/sdd.md) sits in the downlink path before the communication adapter and resends failed transmissions up to a configurable maximum number of retries. After all retries are exhausted, it propagates the failure upstream. This provides resilience against transient communication failures.
 
 ### Communication Logging
 
-The communication logger records all outgoing data to files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
+[ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md) records all outgoing data to files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
 
 ### Splitting and Aggregation
 
-- **Command Splitter** — Duplicates incoming command buffers to multiple outputs, enabling redundant command processing paths.
-- **Communication Splitter** — Distributes outgoing communication buffers to multiple output ports.
-- **Communication Aggregator** — Merges data from multiple input sources into a single output stream.
+- [CmdSplitter](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md) — Duplicates incoming command buffers to multiple outputs, enabling redundant command processing paths.
+- [ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/docs/sdd.md) — Distributes outgoing communication buffers to multiple output ports.
+- [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) — Merges data from multiple input sources into a single output stream.
 
 ### CCSDS Protocol Support
 
