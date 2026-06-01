@@ -326,7 +326,7 @@ Example:
 | Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
 | JPL Design Principles | 0 | 1 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — Supply Chain / Runner Safety failed: <reason> |
-| **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
+| **Totals** | 5 | 5 | 0 | 1 | 3 | **No-Go** |
 ```
 
 The CI safety row's rationale cites the failure verbatim (e.g.,
