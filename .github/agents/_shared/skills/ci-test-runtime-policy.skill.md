@@ -184,7 +184,7 @@ combination is a strong indicator of an attempted runner compromise.
 The agent emits a runtime-policy `**must fix**` with body:
 
 ```
-**must fix** Multiple runtime-policy indicators introduced into the
+[Security] **must fix** Multiple runtime-policy indicators introduced into the
 CI path: <list the matches>. The combination resembles an attempted
 runner compromise (network egress + sensitive-env read + persistence).
 The agent recommends not running CI on this PR until manually

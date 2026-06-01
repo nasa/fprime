@@ -23,7 +23,7 @@ static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_HASH_BUCKETS,
 static_assert(std::numeric_limits<FwChanIdType>::max() >= TLMCHAN_NUM_TLM_HASH_SLOTS,
               "Cannot have more hash slots than maximum telemetry ids in the system");
 
-TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(0) {
+TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(ActiveBuffer::Buffer_0) {
     // clear slot pointers
     for (FwChanIdType entry = 0; entry < TLMCHAN_NUM_TLM_HASH_SLOTS; entry++) {
         this->m_tlmEntries[0].slots[entry] = nullptr;
@@ -54,11 +54,13 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 }
 
 void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
+    static_assert(NUM_PINGIN_INPUT_PORTS == 1, "pingIn_handler expects exactly one input port");
     // return key
     this->pingOut_out(0, key);
 }
 
 Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+    static_assert(NUM_TLMGET_INPUT_PORTS == 1, "TlmGet_handler expects exactly one input port");
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
@@ -66,7 +68,7 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
     // Search to see if channel has been stored
     // check both buffers
     // don't need to lock because this port is guarded
-    TlmEntry* activeEntry = this->m_tlmEntries[this->m_activeBuffer].slots[index];
+    TlmEntry* activeEntry = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index];
     for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
         if (activeEntry) {  // If bucket exists, check id
             if (activeEntry->id == id) {
@@ -79,7 +81,7 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
         }
     }
 
-    TlmEntry* inactiveEntry = this->m_tlmEntries[1 - this->m_activeBuffer].slots[index];
+    TlmEntry* inactiveEntry = this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].slots[index];
     for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
         if (inactiveEntry) {  // If bucket exists, check id
             if (inactiveEntry->id == id) {
@@ -136,6 +138,7 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
 }
 
 void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
+    static_assert(NUM_TLMRECV_INPUT_PORTS == 1, "TlmRecv_handler expects exactly one input port");
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
@@ -143,8 +146,8 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
     TlmEntry* prevEntry = nullptr;
 
     // Search to see if channel has already been stored or a bucket needs to be added
-    if (this->m_tlmEntries[this->m_activeBuffer].slots[index]) {
-        entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
+    if (this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index]) {
+        entryToUse = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index];
         // Loop one extra time so that we don't inadvertently fall through the end of the loop early.
         for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS + 1; bucket++) {
             if (entryToUse) {
@@ -156,10 +159,10 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
                 }
             } else {
                 // Make sure that we haven't run out of buckets
-                FW_ASSERT(this->m_tlmEntries[this->m_activeBuffer].free < TLMCHAN_HASH_BUCKETS);
+                FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
                 // add new bucket from free list
-                entryToUse =
-                    &this->m_tlmEntries[this->m_activeBuffer].buckets[this->m_tlmEntries[this->m_activeBuffer].free++];
+                entryToUse = &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
+                                  .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
                 FW_ASSERT(prevEntry);
                 prevEntry->next = entryToUse;
                 // clear next pointer
@@ -169,11 +172,12 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
         }
     } else {
         // Make sure that we haven't run out of buckets
-        FW_ASSERT(this->m_tlmEntries[this->m_activeBuffer].free < TLMCHAN_HASH_BUCKETS);
+        FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
         // create new entry at slot head
-        this->m_tlmEntries[this->m_activeBuffer].slots[index] =
-            &this->m_tlmEntries[this->m_activeBuffer].buckets[this->m_tlmEntries[this->m_activeBuffer].free++];
-        entryToUse = this->m_tlmEntries[this->m_activeBuffer].slots[index];
+        this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index] =
+            &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
+                 .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
+        entryToUse = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index];
         entryToUse->next = nullptr;
     }
 
@@ -187,6 +191,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
 }
 
 void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
+    static_assert(NUM_RUN_INPUT_PORTS == 1, "Run_handler expects exactly one input port");
     // Only write packets if connected
     if (not this->isConnected_PktSend_OutputPort(0)) {
         return;
@@ -195,10 +200,11 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     // lock mutex long enough to modify active telemetry buffer
     // so the data can be read without worrying about updates
     this->lock();
-    this->m_activeBuffer = 1 - this->m_activeBuffer;
+    this->m_activeBuffer =
+        (this->m_activeBuffer == ActiveBuffer::Buffer_0) ? ActiveBuffer::Buffer_1 : ActiveBuffer::Buffer_0;
     // set activeBuffer to not updated
     for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        this->m_tlmEntries[this->m_activeBuffer].buckets[entry].updated = false;
+        this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].buckets[entry].updated = false;
     }
     this->unLock();
 
@@ -207,7 +213,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     pkt.resetPktSer();
 
     for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        TlmEntry* p_entry = &this->m_tlmEntries[1 - this->m_activeBuffer].buckets[entry];
+        TlmEntry* p_entry = &this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].buckets[entry];
         if ((p_entry->updated) && (p_entry->used)) {
             Fw::SerializeStatus stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
 

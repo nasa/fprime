@@ -158,8 +158,8 @@ For each `k` in `resolved`:
 
 | `thread.isResolved` | Action |
 |---|---|
-| `false` | **Clean resolution.** Reply `Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
-| `true` | **Acknowledged.** Reply `Fixed in <head-sha>.` only — no need to re-resolve. |
+| `false` | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
+| `true` | **Acknowledged.** Reply `[<review_label>] Fixed in <head-sha>.` only — no need to re-resolve. |
 
 Increment `resolved` in Since-last-run. Decrement `outstanding` (do
 NOT decrement any tag column).
@@ -178,7 +178,7 @@ For each `k` in `new`:
   in the same spot. POST a new inline comment whose body begins:
 
   ```
-  **<tag>** Follow-up to <link to prior comment>: <new issue>
+  [<review_label>] **<tag>** Follow-up to <link to prior comment>: <new issue>
   ```
 
   Then follow the normal fresh-finding body shape from review
@@ -258,8 +258,9 @@ reports the new comment under `newly added`.
 
 This is suboptimal — ideally the comment would re-open the prior
 thread — but GitHub does not support that operation. The agent's
-heuristic is: post a fresh comment and prefix the body with `(This
-issue was previously resolved on <commit-sha> and was re-introduced.)`
+heuristic is: post a fresh comment and prefix the body (after the
+reviewer label) with `(This issue was previously resolved on
+<commit-sha> and was re-introduced.)`
 
 ### 6b. The contributor rewrites history (force-push)
 
