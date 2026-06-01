@@ -289,8 +289,8 @@ current set of finding-keys.
 | present | present | not resolved, no contributor replies | Same finding still applies | **Do nothing.** Leave comment as-is. **Never repost.** |
 | present | present | **resolved by contributor** | **Improperly resolved.** Finding still applies on the new head. | **Un-resolve + reply.** GraphQL `unresolveReviewThread`; reply with the improper-resolution body shape (§9). Append maintainer ping per §4. Increment `improperly resolved` in Since-last-run. |
 | present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
-| present | absent | not resolved | Cleanly fixed | **Resolve:** reply `Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
-| present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `Fixed in <sha>.` (no need to re-resolve). |
+| present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
+| present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
 | absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `Follow-up to <link to prior>: <new issue>`. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
 
@@ -324,7 +324,7 @@ external trigger provides:
 
 - GraphQL `resolveReviewThread` mutation collapses the thread in the
   PR UI.
-- A REST reply `Fixed in <commit-sha>.` keeps an audit trail.
+- A REST reply `[<review_label>] Fixed in <commit-sha>.` keeps an audit trail.
 
 If `resolveReviewThread` fails, the reply alone is acceptable
 degradation; the agent still decrements `outstanding` and increments

@@ -158,8 +158,8 @@ For each `k` in `resolved`:
 
 | `thread.isResolved` | Action |
 |---|---|
-| `false` | **Clean resolution.** Reply `Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
-| `true` | **Acknowledged.** Reply `Fixed in <head-sha>.` only — no need to re-resolve. |
+| `false` | **Clean resolution.** Reply `[<review_label>] Fixed in <head-sha>.` + GraphQL `resolveReviewThread`. |
+| `true` | **Acknowledged.** Reply `[<review_label>] Fixed in <head-sha>.` only — no need to re-resolve. |
 
 Increment `resolved` in Since-last-run. Decrement `outstanding` (do
 NOT decrement any tag column).
