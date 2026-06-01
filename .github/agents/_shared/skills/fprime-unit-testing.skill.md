@@ -164,130 +164,140 @@ void <Component>Tester::testNominal() {
 
 ## 5 — Rules-based testing (preferred for complex components)
 
-Use STest rules-based framework when the component has multiple
-interacting ports or stateful behavior.
+Use rule-based testing when the component has internal state or
+multiple interacting ports. Full guide:
+[`docs/how-to/rule-based-testing.md`](https://github.com/nasa/fprime/blob/devel/docs/how-to/rule-based-testing.md).
 
-### 5.1 — File layout
+### 5.1 — When to use
 
-```
-<Component>/test/ut/
-    <Component>Tester.{hpp,cpp}
-    <Component>TestMain.cpp
-    AbstractState.hpp
-    TestState/TestState.hpp
-    Rules/Rules.hpp
-    Rules/<RuleGroup>.{hpp,cpp}
-    Rules/Testers.{hpp,cpp}
-    Scenarios/Random.{hpp,cpp}
-```
-
-### 5.2 — AbstractState
-
-Model observable component state as a plain C++ struct:
-
-```cpp
-class AbstractState {
-  public:
-    static constexpr FwSizeType MAX_BUFFER_SIZE = 1024;
-    enum class BufferGetStatus { VALID, INVALID };
-    BufferGetStatus bufferGetStatus{BufferGetStatus::VALID};
-    TestUtils::OnChangeChannel<U32> NumSuccessfulAllocations{0};
-};
-```
-
-Store as `AbstractState abstractState;` in the Tester.
-
-### 5.3 — TestState
-
-Extends Tester; declares precondition/action pairs per rule:
-
-```cpp
-#define TEST_STATE_DEF_RULE(GROUP_NAME, RULE_NAME)          \
-    bool precondition__##GROUP_NAME##__##RULE_NAME() const; \
-    void action__##GROUP_NAME##__##RULE_NAME();
-
-class TestState : public <Component>Tester {
-  public:
-    TEST_STATE_DEF_RULE(PortGroupA, NominalCase)
-    TEST_STATE_DEF_RULE(PortGroupA, ErrorCase)
-};
-```
-
-### 5.4 — Rules.hpp
-
-```cpp
-#include "STest/Rule/Rule.hpp"
-#include "<path>/TestState/TestState.hpp"
-
-#define RULES_DEF_RULE(GROUP_NAME, RULE_NAME)                         \
-    namespace GROUP_NAME {                                            \
-    struct RULE_NAME : public STest::Rule<TestState> {                \
-        RULE_NAME() : Rule<TestState>(#GROUP_NAME "." #RULE_NAME) {}  \
-        bool precondition(const TestState& state) {                   \
-            return state.precondition__##GROUP_NAME##__##RULE_NAME(); \
-        }                                                             \
-        void action(TestState& state) {                               \
-            state.action__##GROUP_NAME##__##RULE_NAME();              \
-        }                                                             \
-    };                                                                \
-    }
-
-RULES_DEF_RULE(PortGroupA, NominalCase)
-RULES_DEF_RULE(PortGroupA, ErrorCase)
-```
-
-### 5.5 — Rule implementation
-
-```cpp
-bool TestState::precondition__PortGroupA__NominalCase() const {
-    return this->abstractState.bufferGetStatus ==
-           AbstractState::BufferGetStatus::VALID;
-}
-
-void TestState::action__PortGroupA__NominalCase() {
-    this->clearHistory();
-    const auto portNum = static_cast<FwIndexType>(
-        STest::Pick::startLength(0, NumPorts));
-    this->invoke_to_somePort(portNum, args...);
-    this->doDispatch();
-    ASSERT_EVENTS_SIZE(0);
-    ASSERT_FROM_PORT_HISTORY_SIZE(1);
-    ++this->abstractState.NumSuccessfulOps.value;
-}
-```
-
-### 5.6 — Random scenario
-
-```cpp
-void Tester::run(U32 maxNumSteps) {
-    STest::Rule<TestState>* rules[] = { &ruleA, &ruleB, &ruleC };
-    STest::RandomScenario<TestState> scenario(
-        "Random", rules,
-        sizeof(rules) / sizeof(STest::Rule<TestState>*));
-    STest::BoundedScenario<TestState> bounded(
-        "BoundedRandom", scenario, maxNumSteps);
-    const U32 numSteps = bounded.run(this->testState);
-    printf("Ran %u steps.\n", numSteps);
-}
-```
-
-Register in TestMain:
-```cpp
-TEST(Scenarios, Random) {
-    COMMENT("Random scenario with all rules.");
-    Scenarios::Random::Tester tester;
-    tester.run(10000);
-}
-```
-
-### 5.7 — When to use rules-based vs. simple
-
-| Criteria | Simple | Rules-based |
+| Criteria | Simple tests | Rules-based |
 |---|---|---|
 | Few ports, no state machine | Preferred | Overkill |
 | Multiple interacting ports | Possible | **Preferred** |
-| Stateful behavior | Difficult | **Preferred** |
+| Stateful behavior (counters, modes) | Difficult | **Preferred** |
 | Need random / fuzzing coverage | Not possible | **Required** |
+
+### 5.2 — Scaffold
+
+```bash
+fprime-util new --rule-based-test
+```
+
+This creates `test/ut/TestState/` and `test/ut/Rules/` directories.
+
+### 5.3 — File layout
+
+```
+<Component>/test/ut/
+    <Component>Tester.{hpp,cpp}     # Tester class (includes shadow + rules)
+    <Component>TestMain.cpp         # TEST() macros + scenarios
+    TestState/TestState.{hpp,cpp}   # Shadow state class
+    Rules/<GroupName>.cpp           # Rule implementations per group
+```
+
+### 5.4 — Shadow test state
+
+Mirror the component's internal state in `test/ut/TestState/TestState.hpp`.
+Only mirror what preconditions and assertions need. Update it in
+lockstep with expected component behavior.
+
+```cpp
+class <Component>TestState {
+  public:
+    std::map<U32, U16> shadow_counts;  // mirrors component internal table
+    bool shadow_isTableFull = false;
+
+    // Shadow operations that mirror component behavior
+    U16  shadow_getAndIncrement(U32 id);
+    U32  shadow_getRandomTrackedId() const;
+    U32  shadow_getRandomUntrackedId() const;
+};
+```
+
+Declare it as a member of the Tester: `<Component>TestState shadow;`
+
+### 5.5 — Declare rules in the Tester
+
+Use `FW_RBT_DEFINE_RULE` from `TestUtils/RuleBasedTesting.hpp`. Each
+invocation declares a precondition method, an action method, and a
+rule struct that delegates to them on the Tester (so F Prime assert
+macros like `ASSERT_EVENTS_*` work inside rule bodies via `this`).
+
+```cpp
+#include "TestUtils/RuleBasedTesting.hpp"
+
+class <Component>Tester : public <Component>GTestBase {
+  public:
+    <Component> component;
+    <Component>TestState shadow;
+
+    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, Existing);
+    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, NewOk);
+    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, NewTableFull);
+    FW_RBT_DEFINE_RULE(<Component>Tester, Validate, Ok);
+    FW_RBT_DEFINE_RULE(<Component>Tester, Validate, Failure);
+    // ...
+};
+```
+
+### 5.6 — Implement rules
+
+Create `test/ut/Rules/<GroupName>.cpp` per group. Each rule has two
+methods on the Tester:
+
+```cpp
+// Precondition: side-effect-free, queries shadow state
+bool <Component>Tester::GetCount__Existing__precondition() const {
+    return !this->shadow.shadow_counts.empty();
+}
+
+// Action: drive component, assert results, update shadow
+void <Component>Tester::GetCount__Existing__action() {
+    this->clearHistory();
+    U32 id = this->shadow.shadow_getRandomTrackedId();
+    U16 returned = this->invoke_to_getCountIn(0, id, 0);
+    U16 expected = this->shadow.shadow_getAndIncrement(id);
+    ASSERT_EQ(returned, expected);
+    ASSERT_EVENTS_SIZE(0);
+}
+```
+
+### 5.7 — Test main with scenarios
+
+```cpp
+// Targeted test: fixed sequence for known behavior
+TEST(<Component>, GetCounts) {
+    <Component>Tester tester;
+    <Component>Tester::GetCount__NewOk ruleNewOk;
+    <Component>Tester::GetCount__Existing ruleExisting;
+    ruleNewOk.apply(tester);
+    ruleExisting.apply(tester);
+}
+
+// Randomized test: random rule application for broad coverage
+TEST(<Component>, RandomizedTesting) {
+    <Component>Tester tester;
+    <Component>Tester::GetCount__Existing     ruleGetExisting;
+    <Component>Tester::GetCount__NewOk        ruleGetNewOk;
+    <Component>Tester::GetCount__NewTableFull ruleGetFull;
+    <Component>Tester::Validate__Ok           ruleValOk;
+    <Component>Tester::Validate__Failure      ruleValFail;
+
+    STest::Rule<<Component>Tester>* rules[] = {
+        &ruleGetExisting, &ruleGetNewOk, &ruleGetFull,
+        &ruleValOk, &ruleValFail,
+    };
+    STest::RandomScenario<<Component>Tester> random(
+        "Random", rules, FW_NUM_ARRAY_ELEMENTS(rules));
+    STest::BoundedScenario<<Component>Tester> bounded(
+        "Bounded Random", random, 10000);
+    bounded.run(tester);
+}
+```
+
+Scenario types: `RandomScenario` (picks applicable rule at random),
+`BoundedScenario` (wraps another and stops after N steps),
+`SequenceScenario` (fixed order).
 
 ---
 
@@ -300,7 +310,9 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>TestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>Tester.cpp"
-    # Add Rules/*.cpp and Scenarios/*.cpp for rules-based tests
+    # For rules-based tests, add:
+    #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestState/TestState.cpp"
+    #   "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/<GroupName>.cpp"
   DEPENDS
     STest
   UT_AUTO_HELPERS
