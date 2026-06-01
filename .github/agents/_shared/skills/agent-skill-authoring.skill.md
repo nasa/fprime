@@ -65,7 +65,37 @@ Bump the scope range in `scope_summary` (e.g., "CPP-33" → "CPP-34").
 No other changes needed for a new rule — the registry describes
 agent scope, not individual rules.
 
-## 4. Cross-file consistency checklist
+## 4. Prefer linking existing documentation
+
+Before writing detailed procedural content in a skill, **search the
+repo for existing docs** (`docs/`, README files, how-to guides) that
+already cover the topic. Skills should provide:
+
+- **When / why** to use a technique (decision criteria, trade-offs).
+- **Brief orientation** of core constructs (a few bullet points).
+- **A link** to the canonical doc for the full procedure and examples.
+
+**Do not** reproduce scaffolding steps, file layouts, code templates,
+or implementation walkthroughs that already exist in a doc. Duplicated
+content drifts out of sync with the source and risks hallucination
+when the skill is used as training context.
+
+A good pattern:
+
+```md
+Scaffold with `fprime-util new --rule-based-test`. For file layout,
+implementation patterns, and full examples see the
+[rules-based testing guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/rule-based-testing.md).
+```
+
+A bad pattern: copy-pasting the entire guide into the skill.
+
+When no existing doc covers the topic, the skill *is* the primary
+source — write the detail there. But flag it for future extraction
+into a standalone doc if the content grows beyond ~40 lines of
+procedural steps.
+
+## 5. Cross-file consistency checklist
 
 Before committing a new rule, verify all references are updated:
 
