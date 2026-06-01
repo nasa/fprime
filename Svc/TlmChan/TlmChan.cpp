@@ -161,8 +161,8 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
                 // Make sure that we haven't run out of buckets
                 FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
                 // add new bucket from free list
-                entryToUse =
-                    &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
+                entryToUse = &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
+                                  .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
                 FW_ASSERT(prevEntry);
                 prevEntry->next = entryToUse;
                 // clear next pointer
@@ -175,7 +175,8 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
         FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
         // create new entry at slot head
         this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index] =
-            &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
+            &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
+                 .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
         entryToUse = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index];
         entryToUse->next = nullptr;
     }
@@ -199,7 +200,8 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     // lock mutex long enough to modify active telemetry buffer
     // so the data can be read without worrying about updates
     this->lock();
-    this->m_activeBuffer = (this->m_activeBuffer == ActiveBuffer::Buffer_0) ? ActiveBuffer::Buffer_1 : ActiveBuffer::Buffer_0;
+    this->m_activeBuffer =
+        (this->m_activeBuffer == ActiveBuffer::Buffer_0) ? ActiveBuffer::Buffer_1 : ActiveBuffer::Buffer_0;
     // set activeBuffer to not updated
     for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
         this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].buckets[entry].updated = false;

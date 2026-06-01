@@ -23,7 +23,6 @@ class TlmChan final : public TlmChanComponentBase {
     friend class TlmChanTester;
 
   public:
-
     TlmChan(const char* compName);
     virtual ~TlmChan();
 
@@ -41,10 +40,7 @@ class TlmChan final : public TlmChanComponentBase {
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
     );
-    enum class ActiveBuffer : U8 {
-        Buffer_0 = 0,
-        Buffer_1 = 1
-    };
+    enum class ActiveBuffer : U8 { Buffer_0 = 0, Buffer_1 = 1 };
     struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         bool updated;     //!< set whenever a value has been written. Used to skip if writing out values for downlinking
