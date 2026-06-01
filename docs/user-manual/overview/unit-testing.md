@@ -43,12 +43,10 @@ This produces template files under `test/ut/`:
 |---|---|---|
 | `<Component>Tester.template.hpp` | Tester class header | Rename to `<Component>Tester.hpp` |
 | `<Component>Tester.template.cpp` | Tester class impl | Rename to `<Component>Tester.cpp` |
-| `TestMain.template.cpp` | GTest `main()` entry | Rename to `TestMain.cpp` |
-| `*Ac.*` / `*GTestBase.*` | Auto-generated bases | **Delete** — regenerated at build time |
 
 ### Test framework classes
 
-The *TesterBase* and the *GTestBase* are auto-generated, while
+The below *TesterBase* and the *GTestBase* classes are generated into the build cache, while
 the *Tester* is developer-written from the generated template.
 
 ***TesterBase*** is the base class for testing a component and provides
