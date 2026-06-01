@@ -1,36 +1,35 @@
 ---
 name: fprime-component-integration-test
-description: Integration testing phase of F Prime component development. Guides the agent through writing pytest-based integration tests using the GDS Integration Test API against a running deployment. Trigger when unit tests pass and the component is integrated into a topology. Keywords: F Prime, integration test, pytest, GDS, fprime_test_api, system test, deployment, topology.
+description: Integration testing phase of F Prime component development. Guides the agent through writing reusable pytest-based integration tests in the component's test/int/ folder using the GDS Integration Test API. These tests ship with the component and can be run against any deployment that includes it. Trigger when unit tests pass and the component is ready for integration testing. Keywords: F Prime, integration test, pytest, GDS, fprime_test_api, reusable test, component test.
 ---
 
-# Skill: F Prime Component Integration Testing
+# Skill: F Prime Reusable Component Integration Testing
 
-Integration tests verify that components work correctly **together** in
-a running deployment. They exercise the system through the Ground Data
-System (GDS) — sending commands, checking events, and reading telemetry
-over the actual communication stack.
+Reusable integration tests live in the **component's own
+`test/int/` folder** and verify that the component works correctly
+in a running deployment. They exercise the component through the
+Ground Data System (GDS) — sending commands, checking events, and
+reading telemetry over the actual communication stack.
+
+These tests are **reusable**: they ship with the component and can be
+run against any deployment that integrates it, using a configuration
+file to map qualified names to topology instance names.
+
+> **Note**: This skill covers **component-level** reusable integration
+> tests. System-wide integration tests (testing cross-component
+> workflows across an entire deployment) are a separate concern.
 
 ---
 
-## STOP — Prerequisites and Questions
+## Prerequisites
 
-Before writing integration tests, **ask the user**:
+The component must be added to a topology before integration tests
+can run. If it has not been integrated yet, see
+`docs/user-manual/overview/development-practice.md` § "Assemble
+Topology".
 
-1. Has the component been added to the topology? (If not, it must be
-   integrated first — see `docs/user-manual/overview/development-practice.md`
-   § "Assemble Topology".)
-2. Which **system-level requirements** should integration tests verify?
-   (These are higher-level than unit test requirements.)
-3. What is the deployment name and dictionary location?
-4. Does the deployment need to be running for these tests? (Usually
-   yes — via `fprime-gds`.)
-5. Are there any timing constraints or delays to account for?
-6. Should we use the **reusable integration test** framework (for
-   standard Svc components) or write **custom tests**?
-7. What instance names are used in the topology for this component?
-
-**Do not guess at instance mnemonics, opcode names, or channel
-names.** Look them up in the topology FPP or ask the user.
+The deployment **must be running** (via `fprime-gds`) for integration
+tests to execute.
 
 ---
 
@@ -38,28 +37,35 @@ names.** Look them up in the topology FPP or ask the user.
 
 ### Step 1 — Set Up Test Directory
 
-Create the integration test directory in your deployment:
+Create the integration test directory in the **component's** folder:
 
 ```
-<Deployment>/
-└── test/
-    └── int/
-        ├── test_<deployment>.py
-        └── int_config.json     (if using reusable tests)
+MyComponent/
+├── MyComponent.fpp
+├── MyComponent.hpp
+├── MyComponent.cpp
+├── CMakeLists.txt
+├── test/
+│   ├── ut/           (unit tests)
+│   └── int/
+│       └── test_<ComponentName>.py
 ```
 
-### Step 2 — Write a Basic Integration Test
+### Step 2 — Write Reusable Integration Tests
 
-Integration tests use `pytest` with the `fprime_test_api` fixture:
+Integration tests use `pytest` with the `fprime_test_api` fixture.
+Use `fprime_test_api.get_mnemonic()` to resolve instance names from
+the configuration file, making tests portable across deployments:
 
 ```python
 def test_my_component_nominal(fprime_test_api):
-    """Verify <ComponentInstance> responds to <Command>.
+    """Verify component responds to command.
 
     Covers: REQ-<Component>-001
     """
+    instance = fprime_test_api.get_mnemonic("Module.ComponentName")
     fprime_test_api.send_and_assert_command(
-        "<instanceName>.<COMMAND_MNEMONIC>",
+        f"{instance}.COMMAND_MNEMONIC",
         args=["arg1_value", "arg2_value"],
         max_delay=5,
     )
@@ -69,16 +75,18 @@ def test_my_component_nominal(fprime_test_api):
 
 ```python
 def test_my_component_reports_event(fprime_test_api):
-    """Verify <ComponentInstance> emits <EventName> on <trigger>.
+    """Verify component emits expected event on trigger.
 
     Covers: REQ-<Component>-003
     """
+    instance = fprime_test_api.get_mnemonic("Module.ComponentName")
+
     # Send the triggering command
-    fprime_test_api.send_command("<instanceName>.<COMMAND>", ["arg"])
+    fprime_test_api.send_command(f"{instance}.COMMAND", ["arg"])
 
     # Wait for and assert the expected event
     fprime_test_api.assert_event(
-        "<instanceName>.EventName",
+        f"{instance}.EventName",
         args=[expected_arg],
         start="NOW",
         timeout=5,
@@ -89,17 +97,19 @@ def test_my_component_reports_event(fprime_test_api):
 
 ```python
 def test_my_component_telemetry(fprime_test_api):
-    """Verify <ComponentInstance> updates <Channel> after <action>.
+    """Verify component updates telemetry after action.
 
     Covers: REQ-<Component>-005
     """
+    instance = fprime_test_api.get_mnemonic("Module.ComponentName")
+
     fprime_test_api.send_and_assert_command(
-        "<instanceName>.<COMMAND>",
+        f"{instance}.COMMAND",
         max_delay=5,
     )
 
     result = fprime_test_api.assert_telemetry(
-        "<instanceName>.ChannelName",
+        f"{instance}.ChannelName",
         value=expected_value,
         start="NOW",
         timeout=5,
@@ -112,52 +122,36 @@ For workflows that involve multiple commands or time-ordered events:
 
 ```python
 def test_my_component_sequence(fprime_test_api):
-    """Verify <ComponentInstance> handles a full operational cycle.
+    """Verify component handles a full operational cycle.
 
     Covers: REQ-<Component>-010
     """
+    instance = fprime_test_api.get_mnemonic("Module.ComponentName")
+
     # Step 1: Initialize
     fprime_test_api.send_and_assert_command(
-        "<instanceName>.INIT", max_delay=5
+        f"{instance}.INIT", max_delay=5
     )
 
     # Step 2: Trigger operation
     fprime_test_api.send_and_assert_command(
-        "<instanceName>.START", max_delay=5
+        f"{instance}.START", max_delay=5
     )
 
     # Step 3: Verify telemetry sequence
     ch_seq = [
-        fprime_test_api.get_telemetry_pred("<instanceName>.Status", "RUNNING"),
-        fprime_test_api.get_telemetry_pred("<instanceName>.Progress", 100),
+        fprime_test_api.get_telemetry_pred(f"{instance}.Status", "RUNNING"),
+        fprime_test_api.get_telemetry_pred(f"{instance}.Progress", 100),
     ]
     fprime_test_api.assert_telemetry_sequence(ch_seq, timeout=30)
 ```
 
-### Step 6 — Reusable Tests (for Standard Components)
+### Step 6 — Draft Requirements Coverage
 
-If the component is a standard F Prime service (`Svc/*`), use the
-reusable test framework:
-
-1. Create `int_config.json` mapping qualified names to instance
-   mnemonics:
-
-```json
-{
-    "Svc.CommandDispatcher": "CdhCore.cmdDisp",
-    "Svc.FileDownlink": "FileHandling.fileDownlink"
-}
-```
-
-2. Run existing tests against your deployment:
-
-```bash
-pytest ./lib/fprime/Svc/CmdDispatcher/test/int \
-       --dictionary <path-to-dictionary> \
-       --deployment-config ./test/int/int_config.json
-```
-
-**Ask the user** for the correct instance names for their topology.
+Draft which requirements should be covered by integration tests.
+Aim for reasonable coverage of the component's requirements,
+especially those that exercise inter-component behavior. Map each
+test to a requirement in the docstring (`Covers: REQ-*`).
 
 ### Step 7 — Run Integration Tests
 
@@ -165,18 +159,20 @@ pytest ./lib/fprime/Svc/CmdDispatcher/test/int \
 # Start the deployment + GDS (in separate terminal)
 fprime-gds --dictionary <path-to-dictionary>
 
-# Run tests
-pytest <Deployment>/test/int/ \
-       --dictionary <path-to-dictionary>
+# Run the component's reusable tests against a deployment
+pytest <Component>/test/int/ \
+       --dictionary <path-to-dictionary> \
+       --deployment-config <path>/int_config.json
 ```
 
-### Step 8 — Verify Against System Requirements
+The `int_config.json` maps qualified component names to topology
+instance names:
 
-Map each test to a system-level requirement. Document coverage in test
-docstrings (`Covers: REQ-*`).
-
-**Ask the user** if coverage is sufficient or if additional scenarios
-are needed.
+```json
+{
+    "Module.ComponentName": "topologyInstance"
+}
+```
 
 ---
 
@@ -207,7 +203,7 @@ For automated CI, use the `fprime-actions/run-integration-tests` action:
 - name: "Integration Tests"
   uses: nasa/fprime-actions/run-integration-tests@devel
   with:
-    test-working-directory: "<Deployment>/test/int"
+    test-working-directory: "<Component>/test/int"
     binary: "build-artifacts/*/<Deployment>/bin/<Deployment>"
     gds-args: "--dictionary build-artifacts/*/<Deployment>/dict/<Dict>.json"
     pytest-args: "--deployment-config <path>/int_config.json"
@@ -217,11 +213,9 @@ For automated CI, use the `fprime-actions/run-integration-tests` action:
 
 ## Anti-Patterns
 
-- ❌ Guessing instance mnemonics — look up in topology or ask user
-- ❌ Hardcoding timeout values without asking about system timing
-- ❌ Testing unit-level behavior in integration tests (use unit tests
+- Hardcoding instance mnemonics — use `get_mnemonic()` for portability
+- Writing tests that depend on test execution order
+- Ignoring `max_delay` / `timeout` (tests will hang or be flaky)
+- Not mapping tests to requirements
+- Testing unit-level behavior in integration tests (use unit tests
   for that)
-- ❌ Writing tests that depend on test execution order
-- ❌ Ignoring `max_delay` / `timeout` (tests will hang or be flaky)
-- ❌ Not mapping tests to system-level requirements
-- ❌ Running integration tests without a running deployment

@@ -13,9 +13,12 @@ list that drives all subsequent design and testing.
 
 ## STOP — Ask the User
 
-**You cannot invent requirements.** Requirements come from the user
-(the system engineer, developer, or mission context). If any of the
-following are unclear, **ask before proceeding**:
+You may **draft** requirements based on user input, but you cannot do
+requirements in isolation from the user. Draft requirements must stem
+from user-provided context and **must be reviewed with the user before
+proceeding into development**.
+
+If any of the following are unclear, **ask before proceeding**:
 
 - What is the component's purpose / role in the system?
 - What other components does it interact with (upstream / downstream)?
@@ -23,10 +26,13 @@ following are unclear, **ask before proceeding**:
 - What telemetry should the component report?
 - What events (logs) should it emit and at what severity?
 - What parameters should be configurable at runtime?
-- Are there timing constraints (rate-group driven, event-driven,
-  background)?
+- Is this work event-driven, deadline-driven, or background? (See
+  [Selecting Component, Port, and Command Kinds](docs/user-manual/framework/component-and-port-selection.md)
+  for an explanation of the types of work.)
+- Are there any critical deadlines for this work?
 - Are there fault-handling or off-nominal requirements?
-- What existing F Prime components (Svc/*, Drv/*) should be reused?
+- What existing F Prime components (Svc/*, Drv/*) can be built on top
+  of?
 
 ---
 
@@ -38,19 +44,25 @@ Ask the user for:
 
 1. **Component name and module**: Where does this live in the project
    tree? (e.g., `MyProject/Components/ThermalController`)
-2. **Component kind**: Passive, queued, or active? (See
-   `docs/user-manual/framework/component-and-port-selection.md` for
-   guidance on choosing.)
+2. **Work type**: Event-driven, deadline-driven (cyclic), or
+   background? This determines the component kind (active, passive, or
+   queued). See
+   [Selecting Component, Port, and Command Kinds](docs/user-manual/framework/component-and-port-selection.md).
 3. **High-level purpose**: One-paragraph description of what this
    component does.
 
 ### Step 2 — Define Behavioral Requirements
 
-For each distinct behavior, produce a requirement in the form:
+Requirements are written as **"shall"** or **"should"** statements.
+Each requirement must be something that can be
+**validated/verified/tested**.
 
-```
-REQ-<Component>-<001>: The component shall <behavior>.
-```
+Requirements are typically shipped as a table:
+
+| ID | Shall Statement | Description / Context | Test Method |
+|---|---|---|---|
+| REQ-\<Component\>-001 | The component shall \<behavior\>. | \<Human-readable context\> | \<Unit test / integration test / inspection\> |
+| REQ-\<Component\>-002 | ... | ... | ... |
 
 Categories to cover:
 
@@ -66,19 +78,23 @@ Categories to cover:
 
 ### Step 3 — Define Interface Requirements
 
-For each external connection:
+For each external connection, define what **data** the component
+exchanges — not port types (those are a design decision, not a
+requirement):
 
-- **Input ports**: What data/invocations does the component receive?
-  From whom? Sync/async/guarded?
-- **Output ports**: What does the component send out? To whom?
-- **Port data types**: What arguments cross each port?
+- **Inputs**: What data/invocations does the component receive? From
+  whom?
+- **Outputs**: What data does the component send out? To whom?
+- **Data types**: What are the arguments/payloads crossing each
+  interface?
 
-> **If the port type doesn't already exist**, note it — a new port
-> definition will be needed in the Design phase.
+> Port types (sync/async/guarded) and FPP port definitions are
+> determined during the Design phase based on the work type and timing
+> constraints established here.
 
 ### Step 4 — Confirm with User
 
-Present the full requirements list to the user and **wait for
+Present the full requirements table to the user and **wait for
 confirmation** before proceeding to design. Requirements are the
 contract — everything downstream is verified against them.
 
@@ -89,18 +105,20 @@ contract — everything downstream is verified against them.
 A requirements document (typically captured in the component's
 `docs/sdd.md` or as a structured list in the PR description) with:
 
-- Component name, module, and kind
-- Numbered behavioral requirements (REQ-<Name>-001, etc.)
-- Interface summary (ports, commands, telemetry, events, parameters)
+- Component name, module, and work type
+- Requirements table (ID, shall statement, description, test method)
+- Interface summary (data exchanged, not port types)
 - Any constraints or assumptions noted
 
 ---
 
 ## Anti-Patterns
 
-- ❌ Guessing at what telemetry channels to add
-- ❌ Assuming command arguments without asking
-- ❌ Inventing error-handling behavior
-- ❌ Skipping requirements and jumping to FPP design
-- ❌ Copying another component's requirements without confirming
+- Guessing at what telemetry channels to add
+- Assuming command arguments without asking
+- Inventing error-handling behavior
+- Skipping requirements and jumping to FPP design
+- Copying another component's requirements without confirming
   applicability
+- Specifying port types or FPP constructs in requirements (those
+  belong in the Design phase)

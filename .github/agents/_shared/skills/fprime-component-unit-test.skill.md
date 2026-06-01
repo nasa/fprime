@@ -12,19 +12,17 @@ correct behavior.
 
 ---
 
-## STOP — Confirm Test Scope
+## Goals
 
-Before writing tests, **ask the user**:
-
-1. Which requirements should the tests cover? (Map tests to REQ-*)
-2. Should we use **traditional tests** (simple, one-behavior-per-test)
-   or **rule-based tests** (state-machine components, broad coverage)?
-3. Are there any behaviors that require mocking external dependencies?
-4. What edge cases or off-nominal paths should be exercised?
-5. Is there a target code coverage percentage?
-
-**Do not invent test scenarios.** Tests verify requirements — if a
-behavior isn't in the requirements, ask before testing it.
+- **Verify all requirements** with unit tests if possible.
+- **Verify all interfaces**: ports, events, telemetry, commands.
+- **Prefer rule-based testing** where possible — it provides broader
+  coverage than traditional tests.
+- **Target 95% code coverage.**
+- You should be able to do most of this without user input, since
+  requirements and the FPP model are already defined. However, **ask
+  the user for help** with predicting edge cases you may have missed
+  or for clarification on expected behavior.
 
 ---
 
@@ -85,7 +83,6 @@ TEST(OffNominal, InvalidCommand) {
 ```cpp
 void <Component>Tester::test_increment() {
     // Arrange: set up preconditions
-    // (ask the user if setup is unclear)
 
     // Act: invoke component
     this->invoke_to_myPort(0, args...);
@@ -159,8 +156,6 @@ For every command, test:
 For every port:
 - Out-of-range inputs → expect graceful handling (not FW_ASSERT)
 
-**Ask the user** what constitutes invalid input for each interface.
-
 ### Step 7 — Run Tests
 
 ```bash
@@ -173,14 +168,16 @@ All tests must pass. For coverage analysis:
 fprime-util check --coverage
 ```
 
-Review `*_gcov.txt` files in the component directory.
+Review `*_gcov.txt` files in the component directory. Target 95%
+coverage.
 
 ---
 
-## Rule-Based Testing (for Stateful Components)
+## Rule-Based Testing (Preferred)
 
-Use when the component has internal state that affects behavior (state
-machines, counters, lookup tables, modes).
+Rule-based testing is the preferred approach where possible. It
+provides broader coverage than traditional tests, especially for
+components with internal state.
 
 See `docs/how-to/rule-based-testing.md` for the full walkthrough.
 
@@ -197,7 +194,8 @@ See `docs/how-to/rule-based-testing.md` for the full walkthrough.
    - Manual sequences for targeted tests
    - Random application for broad coverage
 
-**Ask the user** to enumerate the behaviors/transitions to cover.
+Derive the behaviors/transitions to cover from the requirements. Ask
+the user if you are unsure about edge cases.
 
 ---
 
@@ -226,11 +224,10 @@ MyComponent/
 
 ## Anti-Patterns
 
-- ❌ Writing tests without confirmed requirements to verify against
-- ❌ Testing only happy paths — off-nominal coverage is critical
-- ❌ Forgetting `doDispatch()` for async commands/ports
-- ❌ Asserting only on count (`SIZE`) without checking values
-- ❌ Using `DISABLED_` or `GTEST_SKIP` without justification
-- ❌ Modifying component internals directly (test through the
+- Testing only happy paths — off-nominal coverage is critical
+- Forgetting `doDispatch()` for async commands/ports
+- Asserting only on count (`SIZE`) without checking values
+- Using `DISABLED_` or `GTEST_SKIP` without justification
+- Modifying component internals directly (test through the
   interface only)
-- ❌ Guessing expected values — derive from requirements or ask user
+- Guessing expected values — derive from requirements

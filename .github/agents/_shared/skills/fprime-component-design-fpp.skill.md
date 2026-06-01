@@ -10,6 +10,17 @@ single source of truth for the component's interface. The FPP compiler
 generates C++ base classes, test harnesses, and dictionaries from this
 model.
 
+**Reference the F Prime design patterns** where possible — standard
+solutions exist for common needs:
+
+- [Rate Group Pattern](docs/user-manual/design-patterns/rate-group.md)
+- [Health Checking](docs/user-manual/design-patterns/health-checking.md)
+- [Manager-Worker](docs/user-manual/design-patterns/manager-worker.md)
+- [Application-Manager-Driver](docs/user-manual/design-patterns/app-man-drv.md)
+- [Common Port Patterns](docs/user-manual/design-patterns/common-port-patterns.md)
+- [Hub Pattern](docs/user-manual/design-patterns/hub-pattern.md)
+- [Subtopologies](docs/user-manual/design-patterns/subtopologies.md)
+
 ---
 
 ## STOP — Confirm Before Designing
@@ -33,6 +44,11 @@ Before writing any FPP:
 ---
 
 ## Step-by-Step Process
+
+### Step 0 — Scaffold with fprime-util
+
+Start with `fprime-util new --component` for the base structure. This
+generates the initial directory layout, CMakeLists.txt, and FPP stub.
 
 ### Step 1 — Choose Component Kind
 
@@ -75,8 +91,10 @@ Port kinds for input ports:
 | Event logging | `event port eventOut` | (special port) |
 | Telemetry | `telemetry port tlmOut` | (special port) |
 
-> **Ask the user**: "Do you need health-ping support? Rate-group
-> scheduling? What standard services should this component connect to?"
+> If the component is `active`, it probably needs health-ping support.
+> Requirements should imply whether rate-group scheduling is needed.
+> **Ask the user only if unsure** about which standard services to
+> connect to.
 
 ### Step 3 — Define Commands
 
@@ -88,11 +106,10 @@ async command COMMAND_NAME(
 ) opcode 0x00
 ```
 
-For each command, confirm with user:
-- Mnemonic name (UPPER_SNAKE_CASE convention)
-- Arguments and their types
-- Sync/async/guarded kind
-- Any priority (for async commands in queued/active components)
+Follow
+[F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
+for naming conventions. Commands use UPPER_SNAKE_CASE. Confirm with
+user if the command kind (sync/async/guarded) is ambiguous.
 
 ### Step 4 — Define Telemetry Channels
 
@@ -103,11 +120,10 @@ telemetry ChannelName: <Type> \
     update on change  @< or: update always
 ```
 
-Ask the user:
-- Channel name (PascalCase convention)
-- Data type
-- Update semantics (on-change vs. always)
-- Any format string for ground display
+Follow
+[F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
+for naming. Channels use PascalCase. Derive data type and update
+semantics from requirements.
 
 ### Step 5 — Define Events
 
@@ -120,7 +136,7 @@ event EventName(
     format "Event occurred with value {}"
 ```
 
-Severity levels (ask the user which applies):
+Severity levels (ask the user if the appropriate level is unclear):
 - `DIAGNOSTIC` — debug-level, not shown by default
 - `ACTIVITY_LO` — routine activity
 - `ACTIVITY_HI` — notable activity
@@ -136,10 +152,10 @@ param ParamName: <Type> default <value> \
     id 0x00
 ```
 
-Ask the user for:
-- Parameter name and type
-- Default value
-- Valid range (documented in SDD)
+Follow
+[F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
+for naming. Derive parameter names, types, default values, and valid
+ranges from requirements.
 
 ### Step 7 — Assemble the Complete FPP File
 
@@ -229,10 +245,10 @@ module <Module> {
 
 ## Anti-Patterns
 
-- ❌ Guessing port types — always check existing ports first and ask
-- ❌ Using `async` ports for cyclic/deadline work
-- ❌ Omitting time get port when telemetry or events are defined
-- ❌ Hardcoding opcodes/IDs without checking for conflicts (let the
+- Guessing port types — always check existing ports first and ask
+- Using `async` ports for cyclic/deadline work
+- Omitting time get port when telemetry or events are defined
+- Hardcoding opcodes/IDs without checking for conflicts (let the
   build system assign them, or ask the user for the base ID)
-- ❌ Using bare primitive types (`int`, `unsigned`) — use `U32`,
+- Using bare primitive types (`int`, `unsigned`) — use `U32`,
   `FwSizeType`, etc. (CPP-3, CPP-28)

@@ -9,22 +9,27 @@ Implementation fills in the **handler stubs** generated from the FPP
 model. The autocoder produces base classes with pure-virtual handlers;
 you implement the derived class.
 
+**Use F Prime design patterns** where possible — standard solutions
+exist for common needs:
+
+- [Rate Group Pattern](docs/user-manual/design-patterns/rate-group.md)
+- [Health Checking](docs/user-manual/design-patterns/health-checking.md)
+- [Manager-Worker](docs/user-manual/design-patterns/manager-worker.md)
+- [Application-Manager-Driver](docs/user-manual/design-patterns/app-man-drv.md)
+- [Common Port Patterns](docs/user-manual/design-patterns/common-port-patterns.md)
+
+Follow [F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
+for naming and code style.
+
 ---
 
-## STOP — Prerequisites
+## Prerequisites
 
-Before implementing:
-
-1. **FPP model must be confirmed** by the user (see
-   `fprime-component-design-fpp.skill.md`).
-2. **C++ design rules** (`fprime-cpp-design.skill.md`) are mandatory.
-   Review before writing any code.
-3. **Ask the user** if any implementation detail is ambiguous:
-   - Algorithm specifics (control law, filtering, state transitions)
-   - Interaction ordering (what happens first when a command arrives?)
-   - Error-handling strategy (emit event? return error? assert?)
-   - Thread safety considerations for shared state
-   - Any hardware or OS dependencies
+The FPP model must be confirmed (see
+`fprime-component-design-fpp.skill.md`) and C++ design rules
+(`fprime-cpp-design.skill.md`, CPP-1 through CPP-34) are mandatory.
+The confirmed requirements and FPP model should provide all the
+information needed for implementation.
 
 ---
 
@@ -93,9 +98,6 @@ void MyComponent::myPort_handler(FwIndexType portNum, <args>) {
     // Implementation here
 }
 ```
-
-**Ask the user** if the behavior for any handler is not obvious from
-requirements.
 
 ### Step 4 — Implement Command Handlers
 
@@ -189,10 +191,9 @@ The base class provides these protected methods:
 
 ## Anti-Patterns
 
-- ❌ Guessing at algorithm behavior — ask the user
-- ❌ Using `FW_ASSERT` on command arguments or hardware inputs
-- ❌ Forgetting `cmdResponse_out` (command will hang in dispatcher)
-- ❌ Using `new`/`delete` in handler code
-- ❌ Using `std::string`, `std::vector`, or other STL containers
-- ❌ Leaving member variables uninitialized
-- ❌ Implementing behavior not covered by a requirement
+- Using `FW_ASSERT` on command arguments or hardware inputs
+- Forgetting `cmdResponse_out` (command will hang in dispatcher)
+- Using `new`/`delete` in handler code
+- Using `std::string`, `std::vector`, or other STL containers
+- Leaving member variables uninitialized
+- Implementing behavior not covered by a requirement
