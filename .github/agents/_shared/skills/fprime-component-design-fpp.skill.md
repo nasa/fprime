@@ -13,13 +13,13 @@ model.
 **Reference the F Prime design patterns** where possible — standard
 solutions exist for common needs:
 
-- [Rate Group Pattern](docs/user-manual/design-patterns/rate-group.md)
-- [Health Checking](docs/user-manual/design-patterns/health-checking.md)
-- [Manager-Worker](docs/user-manual/design-patterns/manager-worker.md)
-- [Application-Manager-Driver](docs/user-manual/design-patterns/app-man-drv.md)
-- [Common Port Patterns](docs/user-manual/design-patterns/common-port-patterns.md)
-- [Hub Pattern](docs/user-manual/design-patterns/hub-pattern.md)
-- [Subtopologies](docs/user-manual/design-patterns/subtopologies.md)
+- Rate Group Pattern — `docs/user-manual/design-patterns/rate-group.md`
+- Health Checking — `docs/user-manual/design-patterns/health-checking.md`
+- Manager-Worker — `docs/user-manual/design-patterns/manager-worker.md`
+- Application-Manager-Driver — `docs/user-manual/design-patterns/app-man-drv.md`
+- Common Port Patterns — `docs/user-manual/design-patterns/common-port-patterns.md`
+- Hub Pattern — `docs/user-manual/design-patterns/hub-pattern.md`
+- Subtopologies — `docs/user-manual/design-patterns/subtopologies.md`
 
 ---
 

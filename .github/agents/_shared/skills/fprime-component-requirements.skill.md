@@ -27,7 +27,7 @@ If any of the following are unclear, **ask before proceeding**:
 - What events (logs) should it emit and at what severity?
 - What parameters should be configurable at runtime?
 - Is this work event-driven, deadline-driven, or background? (See
-  [Selecting Component, Port, and Command Kinds](docs/user-manual/framework/component-and-port-selection.md)
+  `docs/user-manual/framework/component-and-port-selection.md`
   for an explanation of the types of work.)
 - Are there any critical deadlines for this work?
 - Are there fault-handling or off-nominal requirements?
@@ -47,7 +47,7 @@ Ask the user for:
 2. **Work type**: Event-driven, deadline-driven (cyclic), or
    background? This determines the component kind (active, passive, or
    queued). See
-   [Selecting Component, Port, and Command Kinds](docs/user-manual/framework/component-and-port-selection.md).
+   `docs/user-manual/framework/component-and-port-selection.md`.
 3. **High-level purpose**: One-paragraph description of what this
    component does.
 

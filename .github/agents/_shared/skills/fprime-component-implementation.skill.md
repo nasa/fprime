@@ -12,11 +12,11 @@ you implement the derived class.
 **Use F Prime design patterns** where possible — standard solutions
 exist for common needs:
 
-- [Rate Group Pattern](docs/user-manual/design-patterns/rate-group.md)
-- [Health Checking](docs/user-manual/design-patterns/health-checking.md)
-- [Manager-Worker](docs/user-manual/design-patterns/manager-worker.md)
-- [Application-Manager-Driver](docs/user-manual/design-patterns/app-man-drv.md)
-- [Common Port Patterns](docs/user-manual/design-patterns/common-port-patterns.md)
+- Rate Group Pattern — `docs/user-manual/design-patterns/rate-group.md`
+- Health Checking — `docs/user-manual/design-patterns/health-checking.md`
+- Manager-Worker — `docs/user-manual/design-patterns/manager-worker.md`
+- Application-Manager-Driver — `docs/user-manual/design-patterns/app-man-drv.md`
+- Common Port Patterns — `docs/user-manual/design-patterns/common-port-patterns.md`
 
 Follow [F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
 for naming and code style.
@@ -144,7 +144,7 @@ this->log_ACTIVITY_HI_SomethingHappened(arg1, arg2);
 Override `init()` or add a custom setup method for one-time init:
 
 ```cpp
-void MyComponent::init(FwEnumStoreType queueDepth, FwEnumStoreType instance) {
+void MyComponent::init(FwSizeType queueDepth, FwEnumStoreType instance) {
     MyComponentComponentBase::init(queueDepth, instance);
     // One-time setup here (CPP-1: allocations are allowed here)
 }
