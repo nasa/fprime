@@ -73,8 +73,7 @@ void FprimeFramerTester ::testNominalFraming() {
     outputBuffer.getDeserializer().deserializeTo(outputHeader);
     ASSERT_EQ(outputHeader.get_startWord(), defaultHeader.get_startWord());
     ASSERT_EQ(outputHeader.get_lengthField(), sizeof(bufferData));
-    ASSERT_EQ(outputHeader.get_packetDescriptor(),
-              static_cast<FwPacketDescriptorType>(ComCfg::Apid::FW_PACKET_TELEM));
+    ASSERT_EQ(outputHeader.get_packetDescriptor(), static_cast<FwPacketDescriptorType>(ComCfg::Apid::FW_PACKET_TELEM));
     // Check data starts immediately after the header
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
         ASSERT_EQ(outputBuffer.getData()[i + FprimeProtocol::FrameHeader::SERIALIZED_SIZE], bufferData[i]);
