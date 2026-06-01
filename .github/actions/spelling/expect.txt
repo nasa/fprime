@@ -27,6 +27,7 @@ ARINC
 arpa
 ASize
 ATL
+ATLO
 AUTOBRIEF
 autocode
 autocoded
@@ -43,8 +44,8 @@ bibtex
 Bies
 binaryfile
 BINDIR
-bitfield
 Bitfield
+bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -72,6 +73,7 @@ callergraph
 callgraph
 Campuzano
 carg
+CBEs
 CBF
 CBLOCK
 CCACHE
@@ -114,6 +116,7 @@ COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
 COMLOGGERTEE
+Commandability
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -167,6 +170,7 @@ deframing
 Deinitialization
 deployables
 DEPRECATEDLIST
+descope
 deser
 Deserial
 DEVICESM
@@ -290,6 +294,7 @@ Fregoso
 frsize
 fsblkcnt
 fsw
+FTA
 FWCASSERT
 gcda
 gcgandhi
@@ -393,9 +398,9 @@ jobrestrictions
 jpl
 jplffs
 jre
+kermit
 kessler
 kevin
-kermit
 kubiak
 Lammert
 lammertbies
@@ -538,10 +543,13 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+PDR
 pdu
 Peet
 penv
 PERLMOD
+PFR
+PFRs
 PHASERMEMBEROUT
 PINGENTRIES
 PINGIN
@@ -737,11 +745,11 @@ tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
+timcanham
 timebase
 timerfd
 timetag
 timeval
-timcanham
 Tinternal
 tions
 tjh
