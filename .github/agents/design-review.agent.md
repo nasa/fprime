@@ -405,7 +405,7 @@ outstanding, the design reviewer ensures its inline comment for that
 finding includes the prefix:
 
 ```
-**Human design adjudication required.**
+[Design] **Human design adjudication required.**
 ```
 
 The aggregator picks up this finding from the inline comments and
