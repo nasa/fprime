@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, and test-quality reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, test-quality, and JPL Design Principles compliance reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -108,6 +108,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Documentation Currency | 1 | 2 | 0 | 0 | 1 | No-Go |
 | Design | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
+| JPL Design Principles | 0 | 2 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
 | **Totals** | 10 | 8 | 2 | 1 | 9 | **No-Go** |
 
@@ -122,6 +123,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Documentation Currency | 0 | 0 | 1 | 0 | 0 | 0 |
 | Design | 0 | 1 | 0 | 0 | 0 | 0 |
 | Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
+| JPL Design Principles | 0 | 0 | 0 | 0 | 0 | 0 |
 
 </details>
 
@@ -359,7 +361,8 @@ Runner Safety failed to run.`).
     **both** `CI safety: No-Go` AND `Merge readiness: No-Go`.
   - A failure (or did-not-run) of any **other** reviewer
     (`fprime-code-review`, `stale-documentation-review`,
-    `design-review`, `test-quality-review`) forces only
+    `design-review`, `test-quality-review`,
+    `jpl-dp-compliance-review`) forces only
     `Merge readiness: No-Go`. CI safety is unaffected by those
     failures and is determined solely by the two CI-safety
     reviewers per the first bullet above.

@@ -1,5 +1,5 @@
 ---
-description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, and test-quality reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
+description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, test-quality, and JPL Design Principles compliance reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
 name: "F Prime PR Review Orchestrator"
 tools: [read, search]
 user-invocable: true
@@ -40,11 +40,12 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    - `stale-documentation-review` (`stale-documentation-review.agent.md`)
    - `design-review` (`design-review.agent.md`)
    - `test-quality-review` (`test-quality-review.agent.md`)
+   - `jpl-dp-compliance-review` (`jpl-dp-compliance-review.agent.md`)
 
    Invoke them in the order listed above. Security and supply-chain
    come first because they are the two CI-safety contributors
    (`contributes_to_ci_safety: true` in the registry); the remaining
-   four are merge-readiness contributors only and run after.
+   five are merge-readiness contributors only and run after.
 2. Compute the run ordinal for each reviewer by counting prior
    summary reviews on PR `#N` whose HTML marker matches that
    reviewer's name. The orchestrator's count is independent per
@@ -250,6 +251,26 @@ Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
 ```
 
+### Template — JPL Design Principles compliance reviewer
+
+```
+Thanks for taking this on. You're the JPL Design Principles
+Compliance Reviewer. Please run a full JPL D-17868 compliance
+review of PR #<N> in <owner>/<repo> at head <sha>. This is run
+<jpl-dp-compliance-review-run-ordinal> of your reviews on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from
+`jpl-dp-compliance-review.agent.md` and the distilled principles
+in `_shared/skills/jpl-design-principles.skill.md`.
+Post inline review comments per the contract. Your review body
+contains only the hidden metadata block (§2); no visible summary
+table.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
 ### Template — aggregator
 
 ```
@@ -266,6 +287,7 @@ Per-reviewer status from this run:
 - stale-documentation-review: <completed | FAILED: <reason>>
 - design-review: <completed | FAILED: <reason>>
 - test-quality-review: <completed | FAILED: <reason>>
+- jpl-dp-compliance-review: <completed | FAILED: <reason>>
 
 This is run <aggregator-run-ordinal> of your aggregations on this
 PR.
