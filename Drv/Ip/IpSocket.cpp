@@ -56,9 +56,8 @@ SocketIpStatus IpSocket::configure(const char* const ipv4_address,
     FW_ASSERT(this->isValidPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT(ipv4_address != nullptr);
     // Defense-in-depth: reject inputs that would have been silently truncated by string_copy.
-    FW_ASSERT(Fw::StringUtils::string_length(ipv4_address,
-                                             static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE))
-              < static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
+    FW_ASSERT(Fw::StringUtils::string_length(ipv4_address, static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE)) <
+              static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
     this->m_timeoutSeconds = timeout_seconds;
     this->m_timeoutMicroseconds = timeout_microseconds;
     this->m_port = port;

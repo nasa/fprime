@@ -247,8 +247,8 @@ class IpSocket {
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
-    U16 m_port;                                       //!< IP address port used
-    char m_ipv4_address[SOCKET_MAX_IPV4_ADDRESS_SIZE];//!< IPv4 address (dotted-quad "x.x.x.x")
+    U16 m_port;                                         //!< IP address port used
+    char m_ipv4_address[SOCKET_MAX_IPV4_ADDRESS_SIZE];  //!< IPv4 address (dotted-quad "x.x.x.x")
 };
 }  // namespace Drv
 
