@@ -10,6 +10,7 @@ set(FPRIME__INTERNAL_UTILITY_SUFFIX "fprime-util")
 set(FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE "build-targets.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
 set(FPRIME__INTERNAL_UTILITY_SUBDIRECTORY_FILE "sub-directories.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
 set(FPRIME__INTERNAL_UTILITY_TESTS_FILE "tests.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
+set(FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE "test-dir.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
 
 ####
 # Function `fprime_util_metadata_clear`:
@@ -24,6 +25,7 @@ function(fprime_util_metadata_clear CHILD_DIRECTORY)
     file(WRITE "${CHILD_DIRECTORY}/${FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE}" "")
     file(WRITE "${CHILD_DIRECTORY}/${FPRIME__INTERNAL_UTILITY_SUBDIRECTORY_FILE}" "")
     file(WRITE "${CHILD_DIRECTORY}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}" "")
+    file(REMOVE "${CHILD_DIRECTORY}/${FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE}")
 endfunction()
 
 ####
@@ -64,4 +66,18 @@ endfunction()
 ####
 function(fprime_util_metadata_add_test TEST_NAME)
     file(APPEND "${CMAKE_CURRENT_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TESTS_FILE}" "${TEST_NAME}\n")
+endfunction()
+
+####
+# Function `fprime_util_metadata_set_test_dir`:
+#
+# Sets the CTest test directory for the current build directory. This writes a test-dir.fprime-util file that tells
+# fprime-util where CTest should look for registered tests. Used when the test enumeration directory differs from the
+# CTest test directory (e.g. deployment tests that aggregate component tests from sibling directories).
+#
+# **Parameters:**
+# - `TEST_DIR`: absolute path to use as the CTest --test-dir
+####
+function(fprime_util_metadata_set_test_dir TEST_DIR)
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE}" "${TEST_DIR}")
 endfunction()
