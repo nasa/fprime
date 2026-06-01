@@ -255,7 +255,7 @@ Return when finished. Report `completed` on success, or
 
 ```
 Thanks for taking this on. You're the JPL Design Principles
-Compliance Reviewer. Please run a full JPL D-17868 compliance
+Compliance Reviewer. Please run a full JPL Design Principles (DP10) compliance
 review of PR #<N> in <owner>/<repo> at head <sha>. This is run
 <jpl-dp-compliance-review-run-ordinal> of your reviews on this PR.
 
