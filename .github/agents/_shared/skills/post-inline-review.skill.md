@@ -28,7 +28,7 @@ GitHub renders a fenced block whose info string is exactly
 range the comment is anchored to.
 
 ```markdown
-**must fix** Unbounded copy from ground argument.
+[Security] **must fix** Unbounded copy from ground argument.
 
 Validate `len` against the destination buffer before copying. The
 incoming `len` is ground-controlled and can exceed `sizeof(dst)`.
@@ -71,7 +71,7 @@ Content-Type: application/json
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
       "line": 142,
       "side": "RIGHT",
-      "body": "**must fix** … \n\n<!-- fprime-agent: security-review; finding-key: abc; v1 -->"
+      "body": "[Security] **must fix** … \n\n<!-- fprime-agent: security-review; finding-key: abc; v1 -->"
     },
     {
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
@@ -79,7 +79,7 @@ Content-Type: application/json
       "line": 207,
       "start_side": "RIGHT",
       "side": "RIGHT",
-      "body": "**suggestion** … \n\n```suggestion\n…\n```\n\n<!-- fprime-agent: security-review; finding-key: def; v1 -->"
+      "body": "[Security] **suggestion** … \n\n```suggestion\n…\n```\n\n<!-- fprime-agent: security-review; finding-key: def; v1 -->"
     }
   ]
 }
@@ -122,7 +122,7 @@ Authorization: Bearer ${TOKEN}
 Content-Type: application/json
 
 {
-  "body": "Fixed in <commit-sha>.\n\n<!-- fprime-agent: security-review; v1; reply-kind: resolution -->"
+  "body": "[Security] Fixed in <commit-sha>.\n\n<!-- fprime-agent: security-review; v1; reply-kind: resolution -->"
 }
 ```
 

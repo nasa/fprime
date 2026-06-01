@@ -36,9 +36,15 @@ who authored the PR.
 
 ---
 
-## 1. Triage tags
+## 1. Reviewer label + triage tag
 
-Each inline comment starts with exactly one bolded tag:
+Each inline comment starts with a **reviewer label** in brackets
+(e.g. `[Security]`) followed by exactly one bolded triage tag. The
+label is the `review_label` value from `agent-registry.yml` for the
+posting agent. This lets readers immediately identify which reviewer
+produced the finding without expanding the hidden HTML footer.
+
+The triage tags are:
 
 | Tag | Meaning | Blocking? |
 |---|---|---|
@@ -384,7 +390,7 @@ improper-resolution reply, or a disagreement escalation.
 ### Fresh finding (initial post on a thread)
 
 ```
-**<tag>** <one-line description of the issue>
+[<review_label>] **<tag>** <one-line description of the issue>
 
 <≤ 5 prose lines of why it matters / how to verify>
 
@@ -398,15 +404,20 @@ cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
 <!-- fprime-agent: <name>; finding-key: <key>; v1 -->
 ```
 
-Total prose ≤ 6 lines. Suggestion block, maintainer-ping line, and
-HTML footer don't count toward the line budget.
+`<review_label>` is the agent's `review_label` from
+`agent-registry.yml` (e.g., `Security`, `Supply Chain`,
+`C++ Design`, `Documentation`, `Design`, `Test Quality`).
+
+Total prose ≤ 6 lines. The reviewer-label prefix, suggestion block,
+maintainer-ping line, and HTML footer don't count toward the line
+budget.
 
 ### Improper-resolution reply
 
 Posted by the agent on a thread it un-resolved (see §7, phase C).
 
 ```
-**Improperly resolved.** This finding still applies on <sha>.
+[<review_label>] **Improperly resolved.** This finding still applies on <sha>.
 
 <≤ 3 prose lines: what the agent re-checked and why the finding
 remains live; link to the prior comment if helpful>
@@ -422,7 +433,7 @@ Posted by the agent on a thread where the contributor has pushed back
 and the finding still applies (see §11).
 
 ```
-**Disagreement — escalating.** I still flag this on <sha>; the contributor's response above indicates we disagree.
+[<review_label>] **Disagreement — escalating.** I still flag this on <sha>; the contributor's response above indicates we disagree.
 
 <≤ 3 prose lines: what the agent re-checked; one sentence
 acknowledging the contributor's point and one sentence on why the
