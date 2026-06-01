@@ -7,6 +7,7 @@
 #include <limits>
 #include "STest/Random/Random.hpp"
 #include "Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp"
+#include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 #include "Utils/Types/test/ut/CircularBuffer/CircularBufferTester.hpp"
 #include "gtest/gtest.h"
@@ -29,8 +30,8 @@ bool build_fprime_header(U8* out_bytes, Svc::FprimeProtocol::TokenType length_fi
 //! \note The frame is generated with random data of random size
 //! \return The size of the generated frame
 FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) {
-    constexpr FwSizeType FRAME_HEADER_SIZE = 8;
-    constexpr FwSizeType FRAME_FOOTER_SIZE = 4;
+    constexpr FwSizeType FRAME_HEADER_SIZE = Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    constexpr FwSizeType FRAME_FOOTER_SIZE = Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     // Generate random packet size (1-1024 bytes; because 0 would trigger undefined behavior warnings)
     // 1024 is max length as per FrameAccumulator/FrameDetector/FprimeFrameDetector @ LengthToken::MaximumLength
     U32 packet_size = STest::Random::lowerUpper(1, 1024);
@@ -40,12 +41,14 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     for (FwSizeType i = 0; i < packet_size; i++) {
         packet_data[i] = static_cast<U8>(STest::Random::lowerUpper(0, 255));
     }
-    // Frame header                      |  Start Word 4 bytes  |   Length (4 bytes)   |
-    U8 frame_header[FRAME_HEADER_SIZE] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00};
-    // Serialize actual packet size into header
-    for (FwSizeType i = 0; i < 4; i++) {
-        frame_header[i + 4] = static_cast<U8>(packet_size >> (8 * (3 - i)));
-    }
+    // Build the header using the autocoded FPP type
+    U8 frame_header[FRAME_HEADER_SIZE];
+    Svc::FprimeProtocol::FrameHeader header;
+    header.set_lengthField(static_cast<Svc::FprimeProtocol::TokenType>(packet_size));
+    header.set_packetDescriptor(static_cast<FwPacketDescriptorType>(STest::Random::lowerUpper(0, 0xFF)));
+    Fw::ExternalSerializeBuffer header_ser(frame_header, FRAME_HEADER_SIZE);
+    Fw::SerializeStatus ser_status = header.serializeTo(header_ser);
+    FW_ASSERT(ser_status == Fw::FW_SERIALIZE_OK, ser_status);
 
     // Calculate CRC on header + packet_data
     Utils::Hash crc_calculator;
@@ -53,7 +56,6 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     crc_calculator.update(frame_header, FRAME_HEADER_SIZE);
     crc_calculator.update(packet_data, packet_size);
     crc_calculator.finalize(crc_result);
-    // printf("crc: %08X\n", crc);
 
     // Concatenate all packet_data to create the full frame (byte array)
     FwSizeType fprime_frame_size = FRAME_HEADER_SIZE + packet_size + FRAME_FOOTER_SIZE;
@@ -66,18 +68,11 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
         fprime_frame[i + FRAME_HEADER_SIZE] = packet_data[i];
     }
     for (FwSizeType i = 0; i < static_cast<FwSizeType>(FRAME_FOOTER_SIZE); i++) {
-        // crc is a U32; unpack into 4 bytes (shift by 24->-16->8->0 bits, mask with 0xFF)
         fprime_frame[i + FRAME_HEADER_SIZE + static_cast<FwSizeType>(packet_size)] =
             static_cast<U8>((crc_result.asBigEndianU32() >> (8 * (3 - i))) & 0xFF);
     }
     // Serialize frame into circular buffer
     circular_buffer.serialize(fprime_frame, fprime_frame_size);
-
-    // Uncomment for debugging
-    // printf("Serialized %llu bytes:\n", fprime_frame_size);
-    // for (FwSizeType i = 0; i < static_cast<FwSizeType>(fprime_frame_size); i++) {
-    //     printf("%02X ", fprime_frame[i]);
-    // }
     return fprime_frame_size;
 }
 

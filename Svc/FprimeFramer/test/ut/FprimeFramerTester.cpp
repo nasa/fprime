@@ -64,28 +64,20 @@ void FprimeFramerTester ::testNominalFraming() {
     ASSERT_from_dataReturnOut_SIZE(1);  // Original data buffer ownership returned
 
     Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
-    // Frame layout: header + descriptor (APID) + payload + trailer.
-    // The descriptor is injected from context.apid and forms part of the framed body.
-    const FwSizeType expectedBodySize = sizeof(bufferData) + sizeof(FwPacketDescriptorType);
-    ASSERT_EQ(outputBuffer.getSize(), expectedBodySize + FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
+    // Frame layout: header (startWord + lengthField + packetDescriptor) + payload + trailer.
+    ASSERT_EQ(outputBuffer.getSize(), FprimeProtocol::FrameHeader::SERIALIZED_SIZE + sizeof(bufferData) +
                                           FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Check header
     FprimeProtocol::FrameHeader defaultHeader;
     FprimeProtocol::FrameHeader outputHeader;
     outputBuffer.getDeserializer().deserializeTo(outputHeader);
     ASSERT_EQ(outputHeader.get_startWord(), defaultHeader.get_startWord());
-    ASSERT_EQ(outputHeader.get_lengthField(), expectedBodySize);
-    // Check that the descriptor was injected from context
-    Fw::ExternalSerializeBuffer descriptorView(outputBuffer.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
-                                               sizeof(FwPacketDescriptorType));
-    descriptorView.setBuffLen(sizeof(FwPacketDescriptorType));
-    FwPacketDescriptorType descriptor = 0;
-    descriptorView.deserializeTo(descriptor);
-    ASSERT_EQ(descriptor, static_cast<FwPacketDescriptorType>(ComCfg::Apid::FW_PACKET_TELEM));
-    // Check data starts immediately after the header + descriptor
-    const FwSizeType dataOffset = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType);
+    ASSERT_EQ(outputHeader.get_lengthField(), sizeof(bufferData));
+    ASSERT_EQ(outputHeader.get_packetDescriptor(),
+              static_cast<FwPacketDescriptorType>(ComCfg::Apid::FW_PACKET_TELEM));
+    // Check data starts immediately after the header
     for (U32 i = 0; i < sizeof(bufferData); ++i) {
-        ASSERT_EQ(outputBuffer.getData()[i + dataOffset], bufferData[i]);
+        ASSERT_EQ(outputBuffer.getData()[i + FprimeProtocol::FrameHeader::SERIALIZED_SIZE], bufferData[i]);
     }
 }
 
@@ -125,9 +117,8 @@ void FprimeFramerTester::testOversizedAllocatorBufferIsTrimmed() {
     ASSERT_from_dataReturnOut_SIZE(1);
 
     Fw::Buffer outputBuffer = this->fromPortHistory_dataOut->at(0).data;
-    // Frame layout: header + descriptor (APID, injected from context) + payload + trailer.
-    FwSizeType expectedSize = sizeof(bufferData) + sizeof(FwPacketDescriptorType) +
-                              FprimeProtocol::FrameHeader::SERIALIZED_SIZE +
+    // Frame layout: header (startWord + lengthField + packetDescriptor) + payload + trailer.
+    FwSizeType expectedSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + sizeof(bufferData) +
                               FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     ASSERT_EQ(outputBuffer.getSize(), expectedSize);
 }
