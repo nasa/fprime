@@ -119,7 +119,8 @@ agents:
     path: .github/agents/jpl-dp-compliance-review.agent.md
     invocable_by_humans: true
     scope_summary: >
-      Seven categories derived from JPL D-17868: margin erosion,
+      Seven categories derived from JPL Design Principles
+      (DP10): margin erosion,
       fault-protection gaps, testability regression, unnecessary
       complexity (KISS), traceability gaps, standards deviation,
       and lessons-learned misses. References the distilled

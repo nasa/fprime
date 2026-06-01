@@ -1,201 +1,406 @@
 ---
 name: jpl-design-principles
 description: >
-  Software-relevant distillation of JPL D-17868 "Design, Verification/Validation
-  and Operations Principles for Flight Systems" (Rev 1, Feb 2001). Use as a
-  developer checklist when writing or modifying F Prime flight software, and as
-  a reviewer reference for flagging JPL Design Principle violations in PRs.
-  Keywords: JPL, design principles, D-17868, flight software, margins, fault
-  protection, testability, keep-it-simple, peer review, KISS.
+  Software-relevant distillation of the JPL Design Principles (DP10,
+  External Release V4). Use as a developer checklist when writing or
+  modifying F Prime flight software, and as a reviewer reference for
+  flagging JPL Design Principle violations in PRs.
+  Keywords: JPL, design principles, flight software, margins, fault
+  protection, testability, keep-it-simple, KISS, robustness.
 ---
 
 # Skill: JPL Design Principles — Software Distillation
 
-Source: **JPL D-17868 Rev 1** — "Design, Verification/Validation and Operations
-Principles for Flight Systems." Numbering below mirrors the original document
-sections so every rule is traceable.
+Source: **JPL Design Principles** — "Design, Verification/Validation and
+Operations Principles for Flight Systems" (DP10, External Release V4).
+Numbering below mirrors the original document sections so every rule is
+traceable.
 
 ---
 
-## Section 1 — General Principles (software-relevant subset)
+## Section 2 — Principles (software-relevant subset)
 
-### DP-1.1 Priorities
-1. Safety of people shall be paramount.
-2. Ordered priorities: **safety, reliability, cost, schedule, performance** — sacrifice performance if necessary.
+### P-2.1.1 Enable Anomaly Investigations
 
-### DP-1.5 Modeling / Simulation
-1. Use models/simulations early and often; make them realistic.
-3. Models shall be test-validated.
+Design and operate the mission so that future anomaly investigations
+have the data needed to prevent recurrence — even if the mission is lost.
 
-### DP-1.6 Make Early Design Decisions
-1. Maintain a "top-ten" list of required design decisions.
-   *"Better is the enemy of good."*
+### P-2.2.1 Mission Robustness
 
-### DP-1.7 Design to Requirements / Capability
-2. Consider existing capability and cost-effective reuse of inherited designs (HW, SW, SE).
-3. Use COTS where feasible and cost/risk-reducing.
-5. Consider new technology only when needed to meet priorities or preserve margins.
+Protect threshold mission in the presence of flight system faults,
+mission system faults, and operator errors. Stored critical data shall
+be protected from loss due to credible fault scenarios.
 
-### DP-1.8 Standards
-1. Use industry / JPL standards (HW & SW) — e.g. CCSDS. Document deviations on the risk list.
+### P-2.2.3 Fault Protection Expectations
 
-### DP-1.9 Risk-Based Trade-Offs and Margin
-2. HW/SW trades shall be performed early using risk as a metric.
-3. Establish margin requirements (mass, power, budget, schedule, **memory, throughput**) early.
+Fault protection preserves flight system health, safety, and
+consumables throughout all mission phases, except when completion of
+time-critical events takes priority.
 
-### DP-1.10 Single Failure Tolerance
-1. No credible single failure shall cause loss of mission.
-7. Single-string design allowed only if risk is demonstrably acceptable.
+### P-2.2.5 Escapes
 
-### DP-1.12 Design Fallback Options
-1. Identify descope / fallback options early.
-2. Define trigger-events/dates in advance.
+Take actions during I&T and operations to detect errors and reduce the
+chance of escapes.
 
-### DP-1.13 Safety & Mission Assurance
-2. Assurance engineering shall be integrated and concurrent with design throughout the lifecycle.
+### P-2.2.6 Test As You Fly
 
-### DP-1.14 Design Margins
-1. Margins shall accommodate uncertainties and "don't-know-don't-knows."
-2. Robust enough to enable changes with minimal ripple effects.
+Test systems in conditions that match or exceed flight conditions; fly
+systems within the bounds already tested.
 
-### DP-1.17 Lessons Learned
-1. Review the design against JPL/NASA Lessons Learned and Alerts early and at lifecycle checkpoints.
+### P-2.3.1 Design for Ops
 
-### DP-1.19 Closed-Loop Failure Reporting
-1. Use the electronic PFR system; forward Red Flag PFRs to the flight ops team.
+Develop the project and flight system keeping operational impacts of
+design choices in mind. Encourage approaches that reduce operational
+complexity and interdependencies (fewer calibrations, more on-board
+autonomy, robust margins). Critical flight software parameter updates
+shall have the same rigor as a full FSW update.
 
-### DP-1.20 Peer Reviews
-1. Use independent peer reviews prior to design reviews.
-12. Apply peer review to requirements, designs, code, test plans, test results, and documentation.
+### P-2.3.2 Unambiguous
 
-### DP-1.21 Testability
-2. Enable software testing at unit, module, subsystem-testbed, and system-testbed levels.
-3. Include self-test and built-in-test routines for diagnostics.
-4. Self-test routines shall be removable (or harmless) for flight.
-5. Enable "early and often" testing.
+Design flight and ground systems to set and know the state of the
+flight system unambiguously.
 
-### DP-1.23 Test Beds
-1. Identify SW-only and HW/SW test beds early in the development plan.
-2. Maintain test-bed fidelity; document differences from flight.
+### P-2.3.3 Fault Avoidance
 
-### DP-1.26 Design Verification
-2. "Test as you fly, fly as you test."
-4. Perform stress testing beyond normal verification to determine capability boundaries.
-8. Testing shall be the primary verification method; use analysis/simulation only when testing is impractical.
+Take design action to avoid building-in known vulnerabilities.
 
-### DP-1.33 Keep-It-Simple
-1. Employ "keep-it-simple" (straightforward designs) to reduce risk/cost.
-2. Avoid complex implementations; justify added complexity as essential.
+### P-2.3.6 Graceful Degradation
 
-### DP-1.34 HW/SW System Design & Verification
-2. System requirements traceable to project-level; HW & SW requirements traceable to system requirements.
-4. Minimize the number of interface types in flight software.
-5. Incorporate test/diagnostic code early for rapid problem resolution.
-6. Address fault cases early; fault-protection SW shall handle all credible single-fault scenarios.
-7. Processing resources shall exceed estimated requirements by **at least 4x** at computer selection.
+Build design robustness through graceful degradation following a
+failure — incremental loss of capability such that a reduced set of
+mission requirements is still met.
 
----
+### P-2.3.7 Fault Recovery
 
-## Section 2 — Detailed Principles (software-relevant subset)
+Full mission capability is retained or recovered following faults or
+operator errors.
 
-### DP-2.2 Flight Software Margins
-1. Resource margins at milestones:
-   - Computer selection: **total capability >= 400% of CBE**
-   - Phase C/D start: **>= 60% margin**
-   - Launch: **>= 20% margin**
-2. Design SW to support measurement of throughput and memory.
-3. Track CBEs continuously; review at PDR, CDR, ATLO start, launch.
-5. SW shall handle nominal inputs *and* transient off-nominal inputs.
+### P-2.4.1 Technical Resource Margins for Operations
 
-### DP-2.4 Fault Protection / Commandability
-1. Fault-protection system shall be in-flight-commandable (enable/disable, thresholds, persistence).
+Preserve a portion of technical resource margins (power, memory,
+throughput, bus bandwidth, delta-V) at launch to solve problems after
+launch.
 
-### DP-2.5 Fault Recovery State
-1. After a cruise-phase fault: autonomously configure to safe, quiescent, ground-commandable state.
-2. During critical events: autonomously re-establish needed functionality.
+### P-2.4.2 Reliability through Design Margins
 
-### DP-2.18 Graceful Degradation
-1. Design for graceful degradation under partial failure.
+Margins are established consistent with design maturity and mission
+environments, accommodate "unknown unknowns," and enable changes with
+minimal ripple effects.
+
+### P-2.5.1 Margins for Development
+
+Manage development risk through margin establishment. Margins may
+follow a glide slope (e.g., mass/power decrease over lifecycle) or be
+set once (e.g., pointing/stability).
+
+### P-2.5.2 Avoid Local Optimization
+
+Constrain the number and type of interfaces to avoid duplication of
+design and testing effort at the system level.
+
+### P-2.6.1 Follow Identified Standards
+
+Follow identified standards or practices (possibly with JPL
+exceptions).
+
+### P-2.6.2 Follow Software Best Practices
+
+Follow software best practices as mapped to Design Rules in Section
+4.11.
 
 ---
 
-## Section 3 — Flight Operations Principles (software-relevant subset)
+## Section 4 — Flight System Design Rules (software-relevant subset)
 
-### DP-3.1 Operability
-2. Reduce operational complexity (fewer calibrations, more on-board autonomy, robust margins).
+### DR-4.1.3.1 Single Failure Tolerance
 
-### DP-3.2 Flight Sequences
-1. Operate within ground-tested environments/regimes.
-2. All sequences tested on a high-fidelity test bed; anomalies dispositioned before uplink.
-9. Verify SW loads/updates via memory readout or checksum.
+No single failure of any element shall result in failure to meet
+threshold mission requirements. All single-point failures must be
+identified.
 
-### DP-3.4 Test Bed Fidelity
-1. Post-launch, keep the ground test bed configuration close to spacecraft state (especially flight SW).
+### DR-4.1.3.2 Protection Against Operator Errors
 
-### DP-3.6 Operating Margins
-1. Maintain adequate margins (memory, timing, power) for all sequence-controlled and real-time activities.
+The design shall protect against ground operator errors that could
+result in loss of mission or significant impact.
+
+### DR-4.4.4.4 Assured Commanding
+
+Commanding functions shall be robust to power outages and degraded
+communications (e.g., hardware command decoding, non-volatile memory).
+
+### DR-4.4.4.6 Commanding Reliability
+
+Provide protection against all incorrect commands and against correct
+but untimely commands that risk health/safety, initiate irreversible
+state changes, threaten consumables, or jeopardize commandability.
+
+### DR-4.4.4.8 Onboard Command Processing Approach
+
+Avoid direct memory location manipulation for command processing. Use
+software functions to translate commands into actions.
+
+### DR-4.4.4.9 Two Independent Commands for Hazardous Events
+
+Initiation of hazardous or mission-critical in-flight events shall
+require at least two independent commands or actions.
+
+### DR-4.4.6.1 Visibility of S/C Status
+
+Provide telemetry data to assess spacecraft status under normal,
+stressed, and faulted operations — including health, anomaly
+determination, and state visibility.
+
+### DR-4.4.6.4 Visibility of Spacecraft State
+
+Permit ground operators to rapidly and unambiguously determine
+spacecraft state, particularly fault protection responses, during the
+first part of a tracking pass.
+
+### DR-4.4.6.8 Visibility to Reconstruct Faults
+
+Provide visibility to support post-mortem analysis of activities with
+potential for mission-catastrophic outcome.
+
+### DR-4.4.7.1 Clock and Counter Rollover
+
+Spacecraft shall continue to operate in the event of rollover of
+spacecraft clocks and/or incremental counters (hardware or software).
+
+### DR-4.9.1.2 Protection for Credible Single Faults
+
+Fault protection shall handle all credible single faults within all
+expected environmental conditions.
+
+### DR-4.9.1.5 Tolerance to False Alarms
+
+The spacecraft shall tolerate execution of fault protection in response
+to false alarms at all times throughout the mission.
+
+### DR-4.9.1.6 Variation in FP Behavior
+
+Variations in fault protection behavior shall be based directly on
+system mode or activity, not on individual enable/threshold
+manipulation.
+
+### DR-4.9.1.7 Speed of Fault Detection and Response
+
+Fault protection shall respond in a timely manner to identified threats
+to health, safety, and/or mission success.
+
+### DR-4.9.2.2 Flight System Safing
+
+Following fault conditions, fault protection shall autonomously
+configure the spacecraft to a safe, sustainable, ground-commandable
+mode preserving vital resources and providing at least an RF carrier
+downlink.
+
+### DR-4.9.2.3 Autonomous Completion
+
+For events that must execute without ground intervention, fault
+protection shall endeavor to ensure autonomous, timely completion.
+
+### DR-4.9.3.1 In-Flight Commandability
+
+Fault protection design shall permit ground operators to easily modify
+control settings (enables, thresholds, persistence) in flight.
 
 ---
 
-## Appendix A — Software Principles (complete)
+## Section 4.11 — Flight Software System Design (complete)
 
-### DP-A.3.1 System Definition / System Engineering
-1. All requirements organized, documented, traceable to higher-level requirements.
-2. Requirements shall be prioritized.
-3. All interfaces defined and documented.
-4. Validate functional requirements against a concept of operations early.
-7. Document the mission software architecture before PIP approval.
-8. Software design shall be **simple and modular**: strong cohesion, minimal coupling, encapsulation, ease of testing.
-9. Architecture shall accommodate probable requirements change.
-11. Formal review of software requirements prior to implementation.
+### DR-4.11.1.1.1 Documentation of Architecture Design
 
-### DP-A.3.2 Planning & Monitoring
-3. Use an incremental or iterative approach.
-7. Concurrent HW/SW development shall be jointly planned; integrated peer reviews.
-12. Peer reviews on requirements, designs, code, test plans, test results, documentation.
-13. Track progress and quality with metrics (effort, progress, quality, growth, processor capability).
-14. Document, disposition, and track all anomalies, change requests, and liens.
+Document architectural elements, external interfaces, interfaces
+between elements, element responsibilities, and interaction
+constraints.
 
-### DP-A.3.4 Software Risk Management
-1. Prepare a software risk management plan with risk list, trigger events, descope options.
-3. Validate interfaces, high-risk algorithms, and COTS early; develop in risk order.
+### DR-4.11.1.1.2 Architectural Analysis of Quality Attributes
 
-### DP-A.3.5 Organization & Staffing
-4. Establish a software system architect role with authority for structure, function, and implementation philosophy.
-5. Document the architecture before staffing up implementation.
+Architecture documentation shall include multiple views and support
+evaluation of key quality attributes (performance, availability,
+maintainability, modifiability, security, testability, usability).
 
-### DP-A.3.6 Design & Implementation
-3. Two-way trace: system requirements down, software requirements up.
-4. Logic design based on control-flow/state-transition diagrams, failure analysis, off-nominal HW behavior.
-5. Explore performance issues in design reviews (queue depth, array sizes, task starvation).
-6. Parameter values: specify nominal + allowable range; document derivation.
-7. Validate every parameter against its allowable range; provide fault correction/recovery on violation.
-9. Establish margins early for CPU, memory, cycle rates, bandwidth; track continuously.
-11. Implement core architectural elements early.
-12. Use institutionally supported development tools.
-14. Establish and monitor documented design rules and coding standards.
+### DR-4.11.1.3 Semantics of Data Interfaces
 
-### DP-A.3.7 Integration & Test
-1. Enable testing at unit, module, subsystem-testbed, system-testbed levels.
-2. Focus testing on critical functional areas; monitor coverage.
-4. Comply with I&T requirements; maintain regression suite; use automated testing.
-5. Use independent testers for mission-critical software.
-7. Guide test planning by FMEA/FTA considering SW failure modes and off-nominal HW.
-9. Design tests assuming the software contains serious errors.
-10. Regression test systematically after every change.
-14. Unit testing required for build inclusion; test full operational parameter ranges.
+Semantics of data across public interfaces shall be clearly specified
+and, if possible, verified automatically at build time (range,
+precision, units, coordinate frames).
 
-### DP-A.3.8 Configuration Management
-1. Apply CM to code, build scripts, tools, test products, and documentation.
-3. Audit delivery builds for correct module versions and proper isolation of test SW.
+### DR-4.11.1.4 Compatibility with COTS Tools
 
-### DP-A.4 Flight Software
-5. Accommodate nominal and transient off-nominal inputs.
-6. Use standards (e.g. CCSDS) for ground and subsystem interfaces.
-7. All flight software shall be readily modifiable during flight.
-9. Incorporate fault/failure/anomaly recovery early; handle all credible single faults.
-10. Avoid single-point failures that incapacitate all redundant strings.
-11. Accommodate processor resets during mission-critical events.
-14. Design for testability and operability; include self-test/diagnostic code early.
-18. "Fly as you test, test as you fly" — use the flight version for all critical testing.
-20. When using models in lieu of test, validate model fidelity and bound uncertainty.
+Flight software shall operate on commercial platforms with little
+change, so tests on those platforms are substantially relevant to V&V.
+
+### DR-4.11.1.5 Demonstrable Correctness Properties
+
+Software should have demonstrable correctness properties supported by
+appropriate static analysis techniques.
+
+### DR-4.11.2.1 Nominal Initialization
+
+Flight software shall initialize software and hardware to a known,
+safe, and deliberate state.
+
+### DR-4.11.2.2 Multiple Restart Initialization
+
+Software shall detect off-nominal restarts and successively
+reinitialize with less dependency on preserved state until a fully
+known configuration and stable operation are restored.
+
+### DR-4.11.2.3 Minimalist Boot
+
+Boot implementation shall include a minimalist configuration requiring
+minimum on-board resources for vehicle safety and ground intervention.
+
+### DR-4.11.2.4 System Initialization Trace Telemetry
+
+Flight software shall record and transmit its progress through each
+initialization attempt.
+
+### DR-4.11.3.1 Use of Standards
+
+Flight software shall employ applicable JPL standard products,
+formats, interfaces, and processes.
+
+### DR-4.11.3.3 Parameter and Argument Specification
+
+Parameters and arguments shall be specified in terms of their
+attributes. Physical units and reference frames shall be specified and
+checked for consistency (automatically where possible).
+
+### DR-4.11.4.2 Response to Incorrect Commands/Data/Memory
+
+Flight software shall detect and respond safely to: (a) corrupted
+commands, data, loads, and memory faults; (b) incorrectly formatted
+data including invalid or out-of-range parameters; (c) commands/data
+invalid in the current context.
+
+### DR-4.11.4.3 Protection from Unintended Software Modification
+
+Flight software modifiable during flight shall be protected from
+unintended modifications (operations errors, SEEs, hardware problems).
+
+### DR-4.11.4.5 Response to Resource Over-Subscription
+
+Software shall contain a robust response when computer resources are
+oversubscribed (buffer overflow, rate-group overrun, excessive
+interrupts).
+
+### DR-4.11.4.6 Response to I/O Anomalies
+
+Software shall tolerate and continue functioning when periodic inputs
+are missing or I/O fails/completes unsuccessfully/is invalid.
+
+### DR-4.11.4.7 Use of Time-Outs
+
+Software shall detect and respond appropriately to failures to
+complete required activities on time (e.g., watchdog timers).
+
+### DR-4.11.4.11 Protection Against Incorrect Memory Use
+
+Protect against execution in data areas, using code as data, and
+unintended overwriting of code areas.
+
+### DR-4.11.4.12 Data Set Consistency
+
+Ensure data sets and parameter lists are consistent when passed among
+threads — no danger of using a mixture of old and new data.
+
+### DR-4.11.4.13 Thread-Safe Operations
+
+Software shall be demonstrated free of deadlocks, failures to make
+progress, race conditions, and other threats to multi-threaded
+operations.
+
+### DR-4.11.4.14 Software Managed State Transitions
+
+Avoid uncertain, unsafe, or hazardous consequential states during
+software-managed state transitions. Account for all transition steps
+and their timing; detect incomplete/interrupted transitions and
+reinforce a known configuration.
+
+### DR-4.11.5.2 Design for Incremental Verification
+
+Enable easy software testing at unit, module, subsystem-testbed, and
+system-testbed levels including regression testing.
+
+### DR-4.11.5.4 Stress Testing
+
+Software shall degrade with understandable behavior when stressed
+beyond performance limitations (singularities, capability exceedance,
+identified uncertainties).
+
+### DR-4.11.6.1 Self-Test Capability
+
+Include capabilities to test operation and permit timely fault
+diagnostics. If not removed for flight, test capabilities shall not
+damage hardware or interfere with proper operation.
+
+### DR-4.11.6.2 Fault Diagnostics
+
+Incorporate test/diagnostic code early (by PDR design, by CDR code),
+accessible through flight interfaces for rapid problem resolution.
+
+### DR-4.11.6.3 Measurement of Constrained Resources
+
+Provide easy and timely visibility into computing resource usage
+(throughput, memory, bus utilization, stack headroom, cycle slip
+statistics, fragmentation, memory leaks, allocation latency).
+
+---
+
+## Section 6.3.5 — Flight Software Margins
+
+### DR-6.3.5.1 Margin Definitions
+
+Margin = Capability − CBE. % Margin = 100% × (Margin / Capability).
+
+### DR-6.3.5.3 Margins at Key Milestones
+
+| Milestone | Computer Selection | PDR | CDR | Launch |
+|---|---|---|---|---|
+| % Margin | 75% | 60% | (no spec) | 20% |
+
+Applies to constrained resources: computing capacity, memory,
+throughput, bus bandwidth, etc.
+
+---
+
+## Section 8 — V&V (software-relevant subset)
+
+### DR-8.2.1 Subsystem Pre-Delivery Verification
+
+All flight hardware and software shall be functionally verified to
+conform to all allocated requirements prior to delivery to ATLO.
+
+### DR-8.3.2.2 Software Regression Testing
+
+New flight software versions delivered to ATLO shall undergo
+regression testing on the flight vehicle prior to use in system-level
+verification.
+
+### DR-8.3.3.5 Phasing Test
+
+Phasing tests in final flight configuration shall verify proper
+operation of polarity-sensitive functions, including software.
+
+---
+
+## Section 9 — Flight Operations (software-relevant subset)
+
+### DR-9.2.2 Post-Launch FSW Update Rigor
+
+Post-launch FSW updates shall have the same rigor (review, testing,
+safeguards, procedures) as pre-launch development, including
+functional testing on a testbed.
+
+### DR-9.2.3 In-Flight Parameter Update
+
+Critical on-board parameter updates shall have the same rigor as
+pre-launch parameter selection, including testbed functional testing.
+
+### DR-9.5.1 Operating Margins for Real-Time Operations
+
+Plan, maintain, and monitor operating margins for system resources
+(power, thermal, comms links, computer memory, timing, throughput,
+bus bandwidth, FP thresholds/persistences) in all flight activities.

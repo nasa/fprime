@@ -73,6 +73,7 @@ callergraph
 callgraph
 Campuzano
 carg
+CBE
 CBEs
 CBF
 CBLOCK
@@ -81,6 +82,7 @@ CCB
 CComponent
 ccsds
 ccsparc
+CDR
 cdh
 CDHCORE
 CDHCORESUBTOPOLOGY
@@ -648,6 +650,7 @@ sdiv
 sdls
 searchdata
 SENDPARTIAL
+SEEs
 seqgen
 serializables
 setaffinity
@@ -737,6 +740,7 @@ telem
 TELEMCHANIMPL
 testerbase
 TESTLIST
+testbed
 testmark
 TESTUTILS
 testwrite
