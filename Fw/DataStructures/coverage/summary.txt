@@ -26,7 +26,7 @@ Fw/DataStructures/MapEntryBase.hpp             2       2   100%
 Fw/DataStructures/RedBlackTreeMap.hpp         19      19   100%
 Fw/DataStructures/RedBlackTreeSet.hpp         17      17   100%
 Fw/DataStructures/RedBlackTreeSetOrMapImpl.hpp
-                                             356     350    98%   321,378,1106,1148,1182-1183
+                                             356     354    99%   321,378
 Fw/DataStructures/SetBase.hpp                 13      13   100%
 Fw/DataStructures/SetConstIterator.hpp        53      46    86%   77-79,107-109,129
 Fw/DataStructures/SetOrMapImplConstIterator.hpp
@@ -36,5 +36,5 @@ Fw/DataStructures/SizedContainer.hpp           4       4   100%
 Fw/DataStructures/Stack.hpp                   15      15   100%
 Fw/DataStructures/StackBase.hpp               17      17   100%
 ------------------------------------------------------------------------------
-TOTAL                                       1115    1094    98%
+TOTAL                                       1115    1098    98%
 ------------------------------------------------------------------------------

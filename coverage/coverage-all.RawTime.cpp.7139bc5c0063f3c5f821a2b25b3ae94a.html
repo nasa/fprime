@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-01 22:16:51</td>
+      <td>2026-06-01 23:07:05</td>
     </tr>
   </table>
 </div>
@@ -70,17 +70,17 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l10">Os::RawTime::RawTime() (line 10)</a></td><td>called 101318 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l10">Os::RawTime::RawTime() (line 10)</a></td><td>called 101240 times</td><td>84.0%</td></tr>
     <tr><td><a href="#l19">Os::RawTime::RawTime(Os::RawTime const&amp;) (line 19)</a></td><td>called 1 time</td><td>86.0%</td></tr>
-    <tr><td><a href="#l51">Os::RawTime::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (line 51)</a></td><td>called 770 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l56">Os::RawTime::getDiffUsec(Os::RawTime const&amp;, unsigned int&amp;) const (line 56)</a></td><td>called 2902 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l31">Os::RawTime::getHandle() (line 31)</a></td><td>called 7764 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l41">Os::RawTime::getTimeInterval(Os::RawTime const&amp;, Fw::TimeInterval&amp;) const (line 41)</a></td><td>called 5026 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l36">Os::RawTime::now() (line 36)</a></td><td>called 844 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l24">Os::RawTime::operator=(Os::RawTime const&amp;) (line 24)</a></td><td>called 725 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l80">Os::RawTime::operator==(Os::RawTime const&amp;) const (line 80)</a></td><td>called 1422 times</td><td>84.0%</td></tr>
-    <tr><td><a href="#l46">Os::RawTime::serializeTo(Fw::SerialBufferBase&amp;, Fw::Endianness) const (line 46)</a></td><td>called 791 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l14">Os::RawTime::~RawTime() (line 14)</a></td><td>called 101320 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l51">Os::RawTime::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (line 51)</a></td><td>called 717 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l56">Os::RawTime::getDiffUsec(Os::RawTime const&amp;, unsigned int&amp;) const (line 56)</a></td><td>called 2833 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l31">Os::RawTime::getHandle() (line 31)</a></td><td>called 7808 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l41">Os::RawTime::getTimeInterval(Os::RawTime const&amp;, Fw::TimeInterval&amp;) const (line 41)</a></td><td>called 5034 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l36">Os::RawTime::now() (line 36)</a></td><td>called 849 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l24">Os::RawTime::operator=(Os::RawTime const&amp;) (line 24)</a></td><td>called 738 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l80">Os::RawTime::operator==(Os::RawTime const&amp;) const (line 80)</a></td><td>called 1448 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l46">Os::RawTime::serializeTo(Fw::SerialBufferBase&amp;, Fw::Endianness) const (line 46)</a></td><td>called 738 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l14">Os::RawTime::~RawTime() (line 14)</a></td><td>called 101242 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -163,14 +163,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 5673808 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 101318 times.</div>
-            <div class="takenBranch">&check; Branch 17 taken 101318 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 5669440 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 101240 times.</div>
+            <div class="takenBranch">&check; Branch 17 taken 101240 times.</div>
             <div class="notTakenBranch">&cross; Branch 18 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5775126</td>
+      <td class="linecount partialCoveredLine">5770680</td>
       <td class="src partialCoveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">(),</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -180,20 +180,20 @@
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 101318 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 101240 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">101318</td>
+      <td class="linecount partialCoveredLine">101240</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">101318</td>
+      <td class="linecount coveredLine">101240</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -207,7 +207,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">202640</td>
+      <td class="linecount coveredLine">202484</td>
       <td class="src coveredLine"><span class="n">RawTime</span><span class="o">::~</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -217,25 +217,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 101319 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 101241 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">202638</td>
+      <td class="linecount partialCoveredLine">202482</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">202638</td>
+      <td class="linecount coveredLine">202482</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_delegate</span><span class="p">.</span><span class="o">~</span><span class="n">RawTimeInterface</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">202640</td>
+      <td class="linecount coveredLine">202484</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -302,7 +302,7 @@
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">725</td>
+      <td class="linecount coveredLine">738</td>
       <td class="src coveredLine"><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -311,19 +311,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 725 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 738 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">725</td>
+      <td class="linecount partialCoveredLine">738</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">725</td>
+      <td class="linecount coveredLine">738</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">.</span><span class="n">m_delegate</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -337,7 +337,7 @@
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">725</td>
+      <td class="linecount coveredLine">738</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -358,7 +358,7 @@
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7764</td>
+      <td class="linecount coveredLine">7808</td>
       <td class="src coveredLine"><span class="n">RawTimeHandle</span><span class="o">*</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">getHandle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -368,18 +368,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 7764 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 7808 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">7764</td>
+      <td class="linecount partialCoveredLine">7808</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7764</td>
+      <td class="linecount coveredLine">7808</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">getHandle</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -400,7 +400,7 @@
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">844</td>
+      <td class="linecount coveredLine">849</td>
       <td class="src coveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -410,18 +410,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 844 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 849 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">844</td>
+      <td class="linecount partialCoveredLine">849</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">844</td>
+      <td class="linecount coveredLine">849</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">now</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -442,7 +442,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5026</td>
+      <td class="linecount coveredLine">5034</td>
       <td class="src coveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">getTimeInterval</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -452,18 +452,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 5026 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 5034 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5026</td>
+      <td class="linecount partialCoveredLine">5034</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5026</td>
+      <td class="linecount coveredLine">5034</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">getTimeInterval</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -484,7 +484,7 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">791</td>
+      <td class="linecount coveredLine">738</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">serializeTo</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -494,18 +494,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 791 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 738 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">791</td>
+      <td class="linecount partialCoveredLine">738</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">791</td>
+      <td class="linecount coveredLine">738</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">serializeTo</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -526,7 +526,7 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">770</td>
+      <td class="linecount coveredLine">717</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -536,18 +536,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 770 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 717 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">770</td>
+      <td class="linecount partialCoveredLine">717</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">RawTimeInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">770</td>
+      <td class="linecount coveredLine">717</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -568,7 +568,7 @@
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2902</td>
+      <td class="linecount coveredLine">2833</td>
       <td class="src coveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="n">getDiffUsec</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -577,12 +577,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2902 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2833 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2902</td>
+      <td class="linecount partialCoveredLine">2833</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -591,12 +591,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 2902 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 2833 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2902</td>
+      <td class="linecount partialCoveredLine">2833</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTimeInterval</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -606,11 +606,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2902 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2833 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2902</td>
+      <td class="linecount partialCoveredLine">2833</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -647,12 +647,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2902 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2833 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2902</td>
+      <td class="linecount partialCoveredLine">2833</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -661,12 +661,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2902 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2833 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2902</td>
+      <td class="linecount partialCoveredLine">2833</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">useconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -675,26 +675,26 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 748 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2154 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 710 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2123 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2902</td>
+      <td class="linecount coveredLine">2833</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">seconds</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000000</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">748</td>
+      <td class="linecount coveredLine">710</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">748</td>
+      <td class="linecount coveredLine">710</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OVERFLOW</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -708,7 +708,7 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2154</td>
+      <td class="linecount coveredLine">2123</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">secToUsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">seconds</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000000</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -718,11 +718,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 2154 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 2123 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2154</td>
+      <td class="linecount partialCoveredLine">2123</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">secToUsec</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">useconds</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -757,21 +757,21 @@
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2154</td>
+      <td class="linecount coveredLine">2123</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">secToUsec</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">useconds</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2154</td>
+      <td class="linecount coveredLine">2123</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2902</td>
+      <td class="linecount coveredLine">2833</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -785,7 +785,7 @@
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1422</td>
+      <td class="linecount coveredLine">1448</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">RawTime</span><span class="o">::</span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -794,12 +794,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 1422 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1448 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1422</td>
+      <td class="linecount partialCoveredLine">1448</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -808,12 +808,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 1422 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1448 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1422</td>
+      <td class="linecount partialCoveredLine">1448</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTimeInterval</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">interval</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -843,27 +843,27 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/10</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 1422 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 1448 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1422 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1448 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 711 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 711 times.</div>
-            <div class="takenBranch">&check; Branch 10 taken 711 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 724 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 724 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 724 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 711 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 724 times.</div>
             <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2844</td>
+      <td class="linecount partialCoveredLine">2896</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1422</td>
+      <td class="linecount coveredLine">1448</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
