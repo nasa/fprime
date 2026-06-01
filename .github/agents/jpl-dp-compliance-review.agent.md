@@ -42,8 +42,8 @@ Examples:
 - Adding a large static buffer without noting the memory impact.
 - Increasing interrupt-handler work without cycle-rate analysis.
 
-Severity hint: `important` if margin falls below DP-2.2 milestone
-thresholds; `suggestion` if margin merely shrinks.
+Severity hint: **must fix** if margin falls below DP-2.2 milestone
+thresholds; **suggestion** if margin merely shrinks.
 
 ### 2. Fault-protection gap (`dp-fault-protection-gap`)
 
@@ -57,7 +57,7 @@ Examples:
   check or FW_ASSERT.
 - A new state transition that silently drops data on queue-full.
 
-Severity hint: `important`.
+Severity hint: **must fix**.
 
 ### 3. Testability regression (`dp-testability-regression`)
 
@@ -67,8 +67,8 @@ The PR makes code harder to test, violating DP-1.21 and DP-A.3.7:
   subsystem-testbed level.
 - Adds a code path with no corresponding test.
 
-Severity hint: `suggestion` for missing tests on non-critical paths;
-`important` for mission-critical paths.
+Severity hint: **suggestion** for missing tests on non-critical paths;
+**must fix** for mission-critical paths.
 
 ### 4. Unnecessary complexity (`dp-complexity`)
 
@@ -80,7 +80,7 @@ violating DP-1.33 (keep-it-simple):
 - Introduces a new interface type when an existing one works
   (DP-1.34.4).
 
-Severity hint: `suggestion`.
+Severity hint: **suggestion**.
 
 ### 5. Traceability gap (`dp-traceability-gap`)
 
@@ -91,7 +91,7 @@ DP-A.3.6.3:
   requirement or issue.
 - Changed behavior without updated SDD or design documentation.
 
-Severity hint: `suggestion`.
+Severity hint: **suggestion**.
 
 ### 6. Standards deviation (`dp-standards-deviation`)
 
@@ -100,7 +100,7 @@ without documented rationale:
 - Introduces a non-CCSDS interface on a ground-facing port.
 - Uses a non-standard serialization format where F Prime types exist.
 
-Severity hint: `suggestion`.
+Severity hint: **suggestion**.
 
 ### 7. Lessons-learned miss (`dp-lessons-learned`)
 
@@ -110,7 +110,7 @@ The PR re-introduces a pattern known to have caused past failures
   (e.g., unchecked unit conversions, unprotected shared state,
   race conditions in initialization sequences).
 
-Severity hint: `important`.
+Severity hint: **must fix**.
 
 ---
 
@@ -130,14 +130,17 @@ exclusively on the JPL Design Principles compliance dimension.
 
 ---
 
-## Severity mapping
+## Triage tag mapping
 
-| Severity      | When to use                                                 |
-|---------------|-------------------------------------------------------------|
-| `important`   | Margin below threshold, fault-protection gap on credible fault path, or known lessons-learned repeat. |
-| `suggestion`  | Complexity concern, traceability gap, standards deviation, or testability regression on non-critical path. |
+Apply the full triage decision tree in
+`_shared/skills/triage-classifier.skill.md`. Summary for this agent:
 
-Never use `blocker` — that is reserved for the orchestrator.
+| Tag             | When to use                                                 |
+|-----------------|-------------------------------------------------------------|
+| **must fix**    | Margin below threshold, fault-protection gap on credible fault path, or known lessons-learned repeat. |
+| **suggestion**  | Complexity concern, traceability gap, standards deviation, or testability regression on non-critical path. |
+| **could fix**   | Minor non-blocking nit that improves DP alignment but is not required. |
+| **future work** | Preexisting DP deviation not introduced by this PR. |
 
 ---
 
