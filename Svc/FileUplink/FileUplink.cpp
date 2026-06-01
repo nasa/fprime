@@ -38,8 +38,6 @@ FileUplink::~FileUplink() {}
 
 void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::Apid& packetType) {
     // If packet type is not a file packet, log + deallocate and return.
-    // The buffer no longer carries the descriptor at its head; the APID is now an
-    // explicit port argument.
     if (packetType != ComCfg::Apid::FW_PACKET_FILE) {
         this->log_WARNING_HI_InvalidPacketReceived(static_cast<FwPacketDescriptorType>(packetType.e));
         this->bufferSendOut_out(0, buffer);

@@ -18,9 +18,7 @@ namespace CommandBuffers {
 
 void create(Fw::ComBuffer& comBuff, const FwOpcodeType opcode, const U32 argument) {
     comBuff.resetSer();
-    // After splitting the packet descriptor from the payload, the command buffer
-    // begins directly with the opcode; the descriptor is passed separately on
-    // the port invocation.
+    // Command buffer layout is [opcode][argument]; the APID is passed via the port argument.
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(opcode));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(argument));
 }

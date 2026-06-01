@@ -312,9 +312,8 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
 Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, const Record::CmdLength::t cmdLength) {
     Fw::LinearBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
-    // The packet descriptor is no longer serialized into the buffer body; it is passed
-    // separately as a port argument by the dispatcher. The buffer now begins directly
-    // with the opcode.
+    // The packet descriptor is delivered as a separate port argument by the dispatcher,
+    // so the buffer body begins directly with the opcode.
     // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
     FW_ASSERT(sizeof(FwOpcodeType) >= 2);
     U32 sizeOfZeros = 0;

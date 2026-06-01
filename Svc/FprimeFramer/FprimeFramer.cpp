@@ -27,9 +27,8 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
 
-    // Body on the wire is: [packet descriptor][packet body]. The descriptor is no longer
-    // embedded in the incoming buffer; it is injected here from context.apid so the wire
-    // format remains unchanged.
+    // Body on the wire is [packet descriptor][packet body]. The descriptor is sourced from
+    // context.apid and serialized into the frame between the header and the incoming buffer.
     const FwSizeType bodySize = sizeof(FwPacketDescriptorType) + data.getSize();
     // Full size of the frame will be size of header + body + trailer
     FwSizeType frameSize =

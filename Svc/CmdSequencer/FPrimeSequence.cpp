@@ -302,10 +302,9 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::copyCommand(Fw::
     Fw::LinearBufferBase& buffer = this->m_buffer;
     comBuffer.resetSer();
     // The sequence file format prefixes each command record's body with a packet descriptor.
-    // After splitting the App<->Com interface, the buffer handed to the command dispatcher
-    // must NOT contain the descriptor, so we deserialize and discard it here. The size
-    // check must come first to avoid consuming bytes from the next record on a malformed
-    // file with an undersized recordSize.
+    // The descriptor is read and discarded; only the command bytes are copied into comBuffer.
+    // The lower-bound check on recordSize ensures we don't consume bytes from the next record
+    // when the file is malformed.
     if (recordSize < sizeof(FwPacketDescriptorType)) {
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }

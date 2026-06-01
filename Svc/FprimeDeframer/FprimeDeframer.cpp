@@ -102,12 +102,15 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
 
     // ---------------- Extract payload from frame ----------------
+    // REVIEW NOTE: I think we may want to just add PacketDescriptor to the FrameHeader type def in FPP ???
+    // TODO: trim comments
     // Shift data pointer to remove the header and (if extracted) the packet
     // descriptor.
-    // REVIEW NOTE: I think we may want to just add PacketDescriptor to the FrameHeader type def in FPP ???
+    // The downstream buffer covers the packet body only: the header and (when one was
+    // present) the packet descriptor are skipped at the front, and the trailer is dropped
+    // from the back. The descriptor itself is carried in contextCopy.apid.
     const FwSizeType descriptorBytes = descriptorExtracted ? sizeof(FwPacketDescriptorType) : 0;
     data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + descriptorBytes);
-    // Shrink size to remove header, descriptor (if extracted), and trailer.
     data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - descriptorBytes -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data

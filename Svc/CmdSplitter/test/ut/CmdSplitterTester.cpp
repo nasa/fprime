@@ -31,8 +31,7 @@ CmdSplitterTester ::~CmdSplitterTester() {}
 
 Fw::ComBuffer CmdSplitterTester ::build_command_around_opcode(FwOpcodeType opcode) {
     Fw::ComBuffer comBuffer;
-    // Packet descriptor is no longer serialized into the buffer; it is passed
-    // as the explicit Apid argument on the input port.
+    // Command body is [opcode][args]; the APID is supplied via the port's Apid argument.
     EXPECT_EQ(comBuffer.serializeFrom(opcode), Fw::FW_SERIALIZE_OK);
 
     Fw::CmdArgBuffer args;

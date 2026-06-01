@@ -27,8 +27,8 @@ SpacePacketFramer ::~SpacePacketFramer() {}
 void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     SpacePacketHeader header;
     Fw::SerializeStatus status;
-    // The CCSDS Space Packet primary header already carries the APID, so the SP user data
-    // field on the wire is just the payload (no in-buffer packet descriptor).
+    // The APID is carried by the SP primary header (set from context.apid below);
+    // the SP user data field on the wire is the payload bytes directly.
     const FwSizeType bodySize = data.getSize();
     FwSizeType frameSize = SpacePacketHeader::SERIALIZED_SIZE + bodySize;
     FW_ASSERT(bodySize <= std::numeric_limits<Fw::Buffer::SizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE,
