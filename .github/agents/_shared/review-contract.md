@@ -291,7 +291,7 @@ current set of finding-keys.
 | present | present | not resolved, but contributor has replied | Possible disagreement | **Reply + escalate** per §11. Increment `disagreements escalated` in Since-last-run. |
 | present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
 | present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
-| absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `Follow-up to <link to prior>: <new issue>`. |
+| absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `[<review_label>] **<tag>** Follow-up to <link to prior>: <new issue>`. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
 
 ### Phase D — Update per-agent review metadata

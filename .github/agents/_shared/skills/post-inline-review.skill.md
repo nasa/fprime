@@ -128,7 +128,7 @@ Content-Type: application/json
 
 Replies are used for:
 
-- `Fixed in <sha>.` after a clean resolution.
+- `[<review_label>] Fixed in <sha>.` after a clean resolution.
 - The **Improperly resolved.** reply on an un-resolved thread (see
   the improper-resolution body shape in the review contract §9).
 - The **Disagreement — escalating.** reply when contributor pushback
@@ -238,7 +238,7 @@ The agent uses this to:
 
 | Failure | Fallback |
 |---|---|
-| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
+| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `[<review_label>] Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
 | `unresolveReviewThread` returns `403` | Post the improperly-resolved reply anyway. The thread remains visibly resolved on GitHub but the reply + maintainer ping is visible inline. Increment `improperly resolved` regardless. |
 | Inline-comment POST returns `422 Pull Request Review thread cannot be created on this line of the diff` | The line is not in the PR's diff. Re-anchor to the nearest line that is in the diff (typically the function header) and prefix the comment body with `(Anchored above the offending line; the diff does not include line N.)` |
 | Token missing entirely | Fail fast. The agent emits a single line to the orchestrator: `Cannot post review: TOKEN not provided.` and exits. The orchestrator treats this as a FAILED reviewer per review-summary.agent.md §5. |
