@@ -49,7 +49,7 @@ Ask the user for:
 For each distinct behavior, produce a requirement in the form:
 
 ```
-REQ-<Component>-<NNN>: The component shall <behavior>.
+REQ-<Component>-<001>: The component shall <behavior>.
 ```
 
 Categories to cover:
