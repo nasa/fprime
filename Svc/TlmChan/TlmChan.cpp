@@ -54,13 +54,13 @@ FwChanIdType TlmChan::doHash(FwChanIdType id) {
 }
 
 void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
-    FW_ASSERT(portNum == 0);
+    static_assert(NUM_PINGIN_INPUT_PORTS == 1, "pingIn_handler expects exactly one input port");
     // return key
     this->pingOut_out(0, key);
 }
 
 Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
-    FW_ASSERT(portNum == 0);
+    static_assert(NUM_TLMGET_INPUT_PORTS == 1, "TlmGet_handler expects exactly one input port");
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
@@ -138,7 +138,7 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
 }
 
 void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
-    FW_ASSERT(portNum == 0);
+    static_assert(NUM_TLMRECV_INPUT_PORTS == 1, "TlmRecv_handler expects exactly one input port");
     // Compute index for entry
 
     FwChanIdType index = this->doHash(id);
@@ -190,7 +190,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
 }
 
 void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
-    FW_ASSERT(portNum == 0);
+    static_assert(NUM_RUN_INPUT_PORTS == 1, "Run_handler expects exactly one input port");
     // Only write packets if connected
     if (not this->isConnected_PktSend_OutputPort(0)) {
         return;
