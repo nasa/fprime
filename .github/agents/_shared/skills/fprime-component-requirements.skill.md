@@ -9,6 +9,12 @@ Requirements define **what** the component must do — its behaviors,
 interfaces, and constraints. This phase produces a written requirements
 list that drives all subsequent design and testing.
 
+For context on the overall development process and where requirements
+fit, see the
+[F´ Development Process](https://github.com/nasa/fprime/blob/devel/docs/user-manual/overview/development-practice.md).
+For guidance on work types and component kinds, see
+[Selecting Component, Port, and Command Kinds](https://github.com/nasa/fprime/blob/devel/docs/user-manual/framework/component-and-port-selection.md).
+
 ---
 
 ## STOP — Ask the User

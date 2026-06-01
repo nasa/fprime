@@ -10,6 +10,9 @@ sequential lifecycle. Each phase produces artifacts that feed the next.
 **Never skip a phase or guess at requirements/design decisions — always
 ask the user.**
 
+For the canonical process description, see the
+[F´ Development Process](https://github.com/nasa/fprime/blob/devel/docs/user-manual/overview/development-practice.md).
+
 ---
 
 ## Process Overview
@@ -48,7 +51,8 @@ Each phase has a dedicated skill with detailed guidance:
 
 4. **Follow Test-Driven Development when possible.** The recommended
    F Prime workflow is: design in FPP → write tests → implement to
-   pass tests. See `docs/how-to/test-driven-development.md`.
+   pass tests. See the
+   [TDD guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/test-driven-development.md).
 
 5. **Document as you go.** Each component should have an SDD
    (`docs/sdd.md`) that records requirements coverage, port

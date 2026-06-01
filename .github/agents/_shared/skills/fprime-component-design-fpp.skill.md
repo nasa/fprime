@@ -10,6 +10,11 @@ single source of truth for the component's interface. The FPP compiler
 generates C++ base classes, test harnesses, and dictionaries from this
 model.
 
+For FPP syntax and modeling details, see the
+[FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html).
+For component/port/command kinds, see
+[Selecting Component, Port, and Command Kinds](https://github.com/nasa/fprime/blob/devel/docs/user-manual/framework/component-and-port-selection.md).
+
 **Reference the F Prime design patterns** where possible — standard
 solutions exist for common needs:
 
@@ -53,7 +58,8 @@ generates the initial directory layout, CMakeLists.txt, and FPP stub.
 ### Step 1 — Choose Component Kind
 
 Based on requirements (see
-`docs/user-manual/framework/component-and-port-selection.md`):
+`docs/user-manual/framework/component-and-port-selection.md` for the
+full decision guide):
 
 | Work Type | Component Kind | When to Use |
 |---|---|---|
@@ -66,19 +72,14 @@ ownership and port synchronization semantics.
 
 ### Step 2 — Define Ports
 
-For each interface requirement, define a port in the FPP model:
-
-```fpp
-@ Description of what this port does
-<kind> input port <name>: <PortType>
-
-output port <name>: <PortType>
-```
-
-Port kinds for input ports:
+For each interface requirement, define input/output ports. Port kinds:
 - `sync input` — executes in caller's thread
 - `async input` — enqueued, executes in component's thread
 - `guarded input` — sync with component-wide mutex
+
+See the
+[FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html)
+for port definition syntax.
 
 **Standard framework ports to consider including:**
 
@@ -96,115 +97,25 @@ Port kinds for input ports:
 > **Ask the user only if unsure** about which standard services to
 > connect to.
 
-### Step 3 — Define Commands
+### Step 3 — Define Commands, Telemetry, Events, Parameters
 
-```fpp
-@ Description of command
-async command COMMAND_NAME(
-    arg1: U32 @< Description of arg1
-    arg2: Fw.String @< Description of arg2
-) opcode 0x00
-```
-
-Follow
+Follow the
+[FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html)
+for syntax. Follow
 [F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
-for naming conventions. Commands use UPPER_SNAKE_CASE. Confirm with
-user if the command kind (sync/async/guarded) is ambiguous.
+for naming conventions:
+- Commands: `UPPER_SNAKE_CASE`
+- Telemetry channels: `PascalCase`
+- Events: `PascalCase`
+- Parameters: `PascalCase`
 
-### Step 4 — Define Telemetry Channels
+For each construct, derive names, types, and semantics from the
+confirmed requirements. Ask the user if:
+- The command kind (sync/async/guarded) is ambiguous
+- The event severity level is unclear
+- Parameter defaults or valid ranges are unspecified
 
-```fpp
-@ Description of channel
-telemetry ChannelName: <Type> \
-    id 0x00 \
-    update on change  @< or: update always
-```
-
-Follow
-[F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
-for naming. Channels use PascalCase. Derive data type and update
-semantics from requirements.
-
-### Step 5 — Define Events
-
-```fpp
-@ Description of event
-event EventName(
-    arg1: U32 @< Description
-) severity <SEVERITY> \
-    id 0x00 \
-    format "Event occurred with value {}"
-```
-
-Severity levels (ask the user if the appropriate level is unclear):
-- `DIAGNOSTIC` — debug-level, not shown by default
-- `ACTIVITY_LO` — routine activity
-- `ACTIVITY_HI` — notable activity
-- `WARNING_LO` — off-nominal, non-critical
-- `WARNING_HI` — off-nominal, attention needed
-- `FATAL` — unrecoverable, system-level response expected
-
-### Step 6 — Define Parameters
-
-```fpp
-@ Description of parameter
-param ParamName: <Type> default <value> \
-    id 0x00
-```
-
-Follow
-[F Prime Style Guidelines](https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines)
-for naming. Derive parameter names, types, default values, and valid
-ranges from requirements.
-
-### Step 7 — Assemble the Complete FPP File
-
-Structure:
-
-```fpp
-module <ModuleName> {
-
-    @ Component description
-    <kind> component <ComponentName> {
-
-        # --- Ports ---
-        ...
-
-        # --- Special ports (commands, events, telemetry, time) ---
-        ...
-
-        # --- Commands ---
-        ...
-
-        # --- Telemetry ---
-        ...
-
-        # --- Events ---
-        ...
-
-        # --- Parameters ---
-        ...
-    }
-}
-```
-
-### Step 8 — Create CMakeLists.txt
-
-```cmake
-register_fprime_module(
-    AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/<ComponentName>.fpp"
-    SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/<ComponentName>.cpp"
-    HEADERS
-        "${CMAKE_CURRENT_LIST_DIR}/<ComponentName>.hpp"
-)
-```
-
-Add the component directory to the deployment with
-`add_fprime_subdirectory`.
-
-### Step 9 — Verify Compilation
+### Step 4 — Build and Verify
 
 ```bash
 fprime-util build
@@ -213,7 +124,7 @@ fprime-util build
 The FPP model should compile and generate the base class. Fix any FPP
 errors before proceeding.
 
-### Step 10 — Confirm Design with User
+### Step 5 — Confirm Design with User
 
 Present the FPP model to the user and **wait for confirmation**. The
 model is the interface contract — implementation and tests are written
@@ -227,18 +138,10 @@ If a requirement needs a port type that doesn't exist:
 
 1. **Ask the user** what the port should carry (arguments, return
    type).
-2. Create a new `.fpp` file in an appropriate `Ports/` directory:
-
-```fpp
-module <Module> {
-    @ Description
-    port <PortName>(
-        arg1: <Type>
-        arg2: <Type>
-    )
-}
-```
-
+2. Create a new `.fpp` file in an appropriate `Ports/` directory.
+   See the
+   [FPP User's Guide](https://nasa.github.io/fpp/fpp-users-guide.html)
+   for port definition syntax.
 3. Add to `CMakeLists.txt` and register with `add_fprime_subdirectory`.
 
 ---
