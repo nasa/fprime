@@ -302,7 +302,7 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    if (status == Fw::FW_SERIALIZE_OK and sizeof(U16) + cmdLength > Fw::ComBuffer::SERIALIZED_SIZE) {
+    if (status == Fw::FW_SERIALIZE_OK and sizeof(U16) + cmdLength > FW_COM_BUFFER_MAX_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
