@@ -1,4 +1,4 @@
-# RateGroupDriver Component
+# PassiveRateGroupDriver Component
 
 ## 1. Introduction
 
