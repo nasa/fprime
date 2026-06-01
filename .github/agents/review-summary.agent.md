@@ -110,7 +110,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
 | JPL Design Principles | 0 | 2 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 10 | 8 | 2 | 1 | 9 | **No-Go** |
+| **Totals** | 10 | 10 | 2 | 1 | 9 | **No-Go** |
 
 <details>
 <summary>Since last run</summary>
@@ -324,6 +324,7 @@ Example:
 | Documentation Currency | 0 | 1 | 0 | 0 | 0 | Go |
 | Design | 0 | 0 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
+| JPL Design Principles | 0 | 1 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — Supply Chain / Runner Safety failed: <reason> |
 | **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
 ```
