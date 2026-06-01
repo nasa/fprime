@@ -164,12 +164,6 @@ void <Component>Tester::testNominal() {
 
 ## 5 — Rules-based testing (preferred for complex components)
 
-Use rule-based testing when the component has internal state or
-multiple interacting ports. Full guide:
-[`docs/how-to/rule-based-testing.md`](https://github.com/nasa/fprime/blob/devel/docs/how-to/rule-based-testing.md).
-
-### 5.1 — When to use
-
 | Criteria | Simple tests | Rules-based |
 |---|---|---|
 | Few ports, no state machine | Preferred | Overkill |
@@ -177,127 +171,24 @@ multiple interacting ports. Full guide:
 | Stateful behavior (counters, modes) | Difficult | **Preferred** |
 | Need random / fuzzing coverage | Not possible | **Required** |
 
-### 5.2 — Scaffold
+**Core constructs** (all from `TestUtils/RuleBasedTesting.hpp`):
 
-```bash
-fprime-util new --rule-based-test
-```
+- `FW_RBT_DEFINE_RULE(TesterClass, Group, Rule)` — declares a
+  precondition/action pair and a rule struct on the Tester.
+- **Shadow state** — a Tester member mirroring observable component
+  state; queried in preconditions, updated in actions.
+- **Scenarios** — `RandomScenario` (picks applicable rule at random),
+  `BoundedScenario` (wraps another, stops after N steps),
+  `SequenceScenario` (fixed order).
 
-This creates `test/ut/TestState/` and `test/ut/Rules/` directories.
+Scaffold with `fprime-util new --rule-based-test`. For file layout,
+implementation patterns, and full examples see the
+[rules-based testing guide](https://github.com/nasa/fprime/blob/devel/docs/how-to/rule-based-testing.md)
+and the `Svc/Ccsds/ApidManager` exemplar.
 
-### 5.3 — File layout
-
-```
-<Component>/test/ut/
-    <Component>Tester.{hpp,cpp}     # Tester class (includes shadow + rules)
-    <Component>TestMain.cpp         # TEST() macros + scenarios
-    TestState/TestState.{hpp,cpp}   # Shadow state class
-    Rules/<GroupName>.cpp           # Rule implementations per group
-```
-
-### 5.4 — Shadow test state
-
-Mirror the component's internal state in `test/ut/TestState/TestState.hpp`.
-Only mirror what preconditions and assertions need. Update it in
-lockstep with expected component behavior.
-
-```cpp
-class <Component>TestState {
-  public:
-    std::map<U32, U16> shadow_counts;  // mirrors component internal table
-    bool shadow_isTableFull = false;
-
-    // Shadow operations that mirror component behavior
-    U16  shadow_getAndIncrement(U32 id);
-    U32  shadow_getRandomTrackedId() const;
-    U32  shadow_getRandomUntrackedId() const;
-};
-```
-
-Declare it as a member of the Tester: `<Component>TestState shadow;`
-
-### 5.5 — Declare rules in the Tester
-
-Use `FW_RBT_DEFINE_RULE` from `TestUtils/RuleBasedTesting.hpp`. Each
-invocation declares a precondition method, an action method, and a
-rule struct that delegates to them on the Tester (so F Prime assert
-macros like `ASSERT_EVENTS_*` work inside rule bodies via `this`).
-
-```cpp
-#include "TestUtils/RuleBasedTesting.hpp"
-
-class <Component>Tester : public <Component>GTestBase {
-  public:
-    <Component> component;
-    <Component>TestState shadow;
-
-    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, Existing);
-    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, NewOk);
-    FW_RBT_DEFINE_RULE(<Component>Tester, GetCount, NewTableFull);
-    FW_RBT_DEFINE_RULE(<Component>Tester, Validate, Ok);
-    FW_RBT_DEFINE_RULE(<Component>Tester, Validate, Failure);
-    // ...
-};
-```
-
-### 5.6 — Implement rules
-
-Create `test/ut/Rules/<GroupName>.cpp` per group. Each rule has two
-methods on the Tester:
-
-```cpp
-// Precondition: side-effect-free, queries shadow state
-bool <Component>Tester::GetCount__Existing__precondition() const {
-    return !this->shadow.shadow_counts.empty();
-}
-
-// Action: drive component, assert results, update shadow
-void <Component>Tester::GetCount__Existing__action() {
-    this->clearHistory();
-    U32 id = this->shadow.shadow_getRandomTrackedId();
-    U16 returned = this->invoke_to_getCountIn(0, id, 0);
-    U16 expected = this->shadow.shadow_getAndIncrement(id);
-    ASSERT_EQ(returned, expected);
-    ASSERT_EVENTS_SIZE(0);
-}
-```
-
-### 5.7 — Test main with scenarios
-
-```cpp
-// Targeted test: fixed sequence for known behavior
-TEST(<Component>, GetCounts) {
-    <Component>Tester tester;
-    <Component>Tester::GetCount__NewOk ruleNewOk;
-    <Component>Tester::GetCount__Existing ruleExisting;
-    ruleNewOk.apply(tester);
-    ruleExisting.apply(tester);
-}
-
-// Randomized test: random rule application for broad coverage
-TEST(<Component>, RandomizedTesting) {
-    <Component>Tester tester;
-    <Component>Tester::GetCount__Existing     ruleGetExisting;
-    <Component>Tester::GetCount__NewOk        ruleGetNewOk;
-    <Component>Tester::GetCount__NewTableFull ruleGetFull;
-    <Component>Tester::Validate__Ok           ruleValOk;
-    <Component>Tester::Validate__Failure      ruleValFail;
-
-    STest::Rule<<Component>Tester>* rules[] = {
-        &ruleGetExisting, &ruleGetNewOk, &ruleGetFull,
-        &ruleValOk, &ruleValFail,
-    };
-    STest::RandomScenario<<Component>Tester> random(
-        "Random", rules, FW_NUM_ARRAY_ELEMENTS(rules));
-    STest::BoundedScenario<<Component>Tester> bounded(
-        "Bounded Random", random, 10000);
-    bounded.run(tester);
-}
-```
-
-Scenario types: `RandomScenario` (picks applicable rule at random),
-`BoundedScenario` (wraps another and stops after N steps),
-`SequenceScenario` (fixed order).
+**Build note:** add every `Rules/<GroupName>.cpp` and
+`TestState/TestState.cpp` to the `SOURCES` list in CMakeLists.txt
+(§6 below) and include `DEPENDS STest`.
 
 ---
 
