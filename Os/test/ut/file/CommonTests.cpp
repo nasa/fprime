@@ -4,9 +4,6 @@
 // ======================================================================
 #include "Os/test/ut/file/CommonTests.hpp"
 #include <gtest/gtest.h>
-#include <config/FppConstantsAc.hpp>
-#include <cstring>
-#include "Fw/Types/FileNameString.hpp"
 #include "Os/File.hpp"
 
 static const U32 RANDOM_BOUND = 1000;
@@ -478,47 +475,4 @@ TEST_F(InvalidArguments, ReadInvalidBuffer) {
 TEST_F(InvalidArguments, WriteInvalidBuffer) {
     Os::Test::FileTest::Tester::WriteIllegalBuffer rule;
     rule.apply(*tester);
-}
-
-// Ensure the open(CHAR*, Mode) overload refuses paths that would silently truncate
-TEST_F(Functionality, OpenFileWithOversizePathReturnsBadSize) {
-    // Build a path one character past the FileNameString capacity
-    constexpr FwSizeType OVERSIZE = static_cast<FwSizeType>(FileNameStringSize) + 1;
-    char path[OVERSIZE + 1];
-    memset(path, 'a', OVERSIZE);
-    path[OVERSIZE] = '\0';
-    Os::File::Status status = tester->m_file.open(path, Os::File::Mode::OPEN_CREATE);
-    ASSERT_EQ(status, Os::File::Status::TRUNCATED);
-    ASSERT_FALSE(tester->m_file.isOpen());
-}
-
-// Ensure the open(CHAR*, FwSizeType, Mode) overload refuses paths that would silently truncate
-TEST_F(Functionality, OpenFileWithOversizePathLenVariantReturnsBadSize) {
-    // Caller supplies a generous bound but the path itself exceeds FileNameString capacity
-    constexpr FwSizeType OVERSIZE = static_cast<FwSizeType>(FileNameStringSize) + 16;
-    char path[OVERSIZE + 1];
-    memset(path, 'b', OVERSIZE);
-    path[OVERSIZE] = '\0';
-    Os::File::Status status =
-        tester->m_file.open(path, static_cast<FwSizeType>(OVERSIZE + 1), Os::File::Mode::OPEN_CREATE);
-    ASSERT_EQ(status, Os::File::Status::TRUNCATED);
-    ASSERT_FALSE(tester->m_file.isOpen());
-}
-
-// Ensure a path exactly at FileNameString capacity still opens successfully
-TEST_F(FunctionalIO, OpenFileWithPathExactlyAtLimitSucceeds) {
-    // Build a path whose total length equals FileNameStringSize exactly
-    static const char BASE[] = "/tmp/fprime/";
-    constexpr FwSizeType BASE_LEN = sizeof(BASE) - 1;
-    static_assert(BASE_LEN < FileNameStringSize, "Base path must leave room for at least one filename character");
-    constexpr FwSizeType TOTAL = static_cast<FwSizeType>(FileNameStringSize);
-    char path[TOTAL + 1];
-    memcpy(path, BASE, BASE_LEN);
-    memset(path + BASE_LEN, 'c', TOTAL - BASE_LEN);
-    path[TOTAL] = '\0';
-    Os::File::Status status = tester->m_file.open(path, Os::File::Mode::OPEN_CREATE);
-    ASSERT_EQ(status, Os::File::Status::OP_OK);
-    ASSERT_TRUE(tester->m_file.isOpen());
-    tester->m_file.close();
-    (void)::remove(path);
 }

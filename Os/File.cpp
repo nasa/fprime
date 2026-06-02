@@ -27,7 +27,6 @@ File::~File() {
 
 File::File(const File& other)
     : m_mode(other.m_mode),
-      m_path_storage(other.m_path_storage),
       m_crc(other.m_crc),
       m_crc_buffer(),
       m_handle_storage(),
@@ -38,7 +37,6 @@ File::File(const File& other)
 File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
-        this->m_path_storage = other.m_path_storage;
         this->m_crc = other.m_crc;
         this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
@@ -65,10 +63,6 @@ File::Status File::open(const CHAR* filepath,
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
     const FwSizeType string_len = static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, length));
-    // Refuse oversize paths before touching the delegate so m_path_storage never silently truncates
-    if (string_len > static_cast<FwSizeType>(FileNameStringSize)) {
-        return File::Status::TRUNCATED;
-    }
     FW_ASSERT(string_len < length, static_cast<FwAssertArgType>(string_len), static_cast<FwAssertArgType>(length));
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
@@ -80,8 +74,6 @@ File::Status File::open(const CHAR* filepath,
     File::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
-        // Store an owned copy of the path so it survives the caller freeing the original string
-        this->m_path_storage = filepath;
         // Reset any open CRC calculations
         this->m_crc = File::INITIAL_CRC;
     }
@@ -317,12 +309,10 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
             size = i;
             return Os::File::Status::OP_OK;
         }
-        // Loop from i to i + current_chunk_size looking for `
-`
+        // Loop from i to i + current_chunk_size looking for `\n`
         for (FwSizeType j = i; j < (i + read); j++) {
             // Newline seek back to after it, return the size read
-            if (buffer[j] == '
-') {
+            if (buffer[j] == '\n') {
                 size = j + 1;
                 // Ensure that the computation worked and there is not overflow
                 FW_ASSERT(size <= requested_size);

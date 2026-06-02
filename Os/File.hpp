@@ -7,7 +7,6 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/ConstStringBase.hpp>
-#include <Fw/Types/FileNameString.hpp>
 #include <Os/Os.hpp>
 
 // Forward declaration for UTs
@@ -50,7 +49,6 @@ class FileInterface {
         INVALID_MODE,       //!< Mode for file access is invalid for current operation
         INVALID_ARGUMENT,   //!< Invalid argument passed in
         NO_MORE_RESOURCES,  //!< No more available resources
-        TRUNCATED,          //!< Path exceeds Fw::FileNameString capacity and would be silently truncated
         OTHER_ERROR,        //!<  A catch-all for other errors. Have to look in implementation-specific code
         MAX_STATUS          //!< Maximum value of status
     };
@@ -263,8 +261,7 @@ class File final : public FileInterface {
     //!
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
-    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
-    //!          `Fw::FileNameString` capacity.
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, Mode mode);
 
@@ -281,8 +278,7 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
-    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
-    //!          `Fw::FileNameString` capacity.
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode);
 
@@ -367,8 +363,7 @@ class File final : public FileInterface {
     //! \param path: c-string of path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return: status of the open. Returns `TRUNCATED` without opening when the path exceeds
-    //!          `Fw::FileNameString` capacity.
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
@@ -388,8 +383,7 @@ class File final : public FileInterface {
     //! \param length: bound on the path buffer size
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return: status of the open. Returns `TRUNCATED` without opening (and leaves the file closed
-    //!          closed state) when the path exceeds `Fw::FileNameString` capacity.
+    //! \return: status of the open
     //!
     Os::FileInterface::Status open(const char* path, FwSizeType length, Mode mode, OverwriteType overwrite);
 
@@ -483,18 +477,13 @@ class File final : public FileInterface {
     //!
     Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
 
-    //! \brief read a line from the file using `
-` as the delimiter
+    //! \brief read a line from the file using `\n` as the delimiter
     //!
-    //! Reads a single line from the file including the terminating '
-'. This will return an error if no line is
-    //! found within the specified buffer size. In the case of EOF, the line is read without the terminating '
-'.
+    //! Reads a single line from the file including the terminating '\n'. This will return an error if no line is
+    //! found within the specified buffer size. In the case of EOF, the line is read without the terminating '\n'.
     //!
     //! In the case of an error, this function will seek to the original location in the file. Otherwise, the
-    //! pointer will point to the first character after the `
-` or EOF in the case of no `
-`.
+    //! pointer will point to the first character after the `\n` or EOF in the case of no `\n`.
     //!
     //! It is invalid to send a null buffer.
     //! It is invalid to send a size less than 0.
@@ -595,8 +584,7 @@ class File final : public FileInterface {
   private:
     static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
 
-    Mode m_mode = Mode::OPEN_NO_MODE;   //!< Stores mode for error checking
-    Fw::FileNameString m_path_storage;  //!< Owned copy of the path last opened
+    Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
 
     U32 m_crc = File::INITIAL_CRC;  //!< Current CRC calculation
     U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
