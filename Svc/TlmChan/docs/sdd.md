@@ -104,7 +104,7 @@ All three paths XOR the channel ID with a per-boot seed before hashing, then red
 
 The hash seed is computed once at construction time using `Os::RawTime` (OSAL-backed, no STL dependency) combined with stack-address entropy. The seed is stored in `m_hashSeed` and remains constant for the lifetime of the component. A non-zero seed is guaranteed; if the combined value is zero a known non-zero fallback constant is substituted.
 
-Where the platform provides genuine boot-time entropy (a high-resolution clock that advances between boots and/or address-space randomization), the seed varies per boot, which raises the cost for an adversary attempting to craft channel IDs that collide to the same hash slot. On bare-metal targets without these properties (fixed boot-time clock value, deterministic memory layout, no ASLR) the seed may be effectively constant across boots; such deployments should supply a platform entropy source through the OSAL before relying on per-boot seed diversity as a security property.
+Where the platform provides genuine boot-time entropy (a high-resolution clock that advances between boots and/or address-space randomization), the seed varies per boot, which raises the cost for an adversary attempting to craft channel IDs that collide to the same hash slot. On bare-metal targets without these properties (fixed boot-time clock value, deterministic memory layout) the seed may be effectively constant across boots; such deployments should supply a platform entropy source through the OSAL before relying on per-boot seed diversity as a security property.
 
 ### 3.6 Events
 
