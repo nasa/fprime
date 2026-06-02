@@ -58,25 +58,9 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
-    // -------- Attempt to extract APID from Payload --------
+    // Extract APID from header and copy to context
     ComCfg::FrameContext contextCopy = context;
-    bool descriptorExtracted = false;
-    if (deserializer.getDeserializeSizeLeft() <
-        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE + sizeof(FwPacketDescriptorType)) {
-        // Not enough data to read a valid FwPacketDescriptor, emit event and skip attempting to read an APID
-        this->log_WARNING_LO_PayloadTooShort();
-    } else {
-        // If PacketDescriptor translates to an invalid APID, let it default to FW_PACKET_UNKNOWN
-        // and let downstream components (e.g. custom router) handle it
-        FwPacketDescriptorType packetDescriptor = 0;
-        status = deserializer.deserializeTo(packetDescriptor);
-        FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-        // If a valid descriptor is deserialized, set it in the context
-        if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
-            contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
-        }
-        descriptorExtracted = true;
-    }
+    contextCopy.set_apid(static_cast<ComCfg::Apid::T>(header.get_descriptor()));
 
     // ---------------- Validate Frame Trailer ----------------
     // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
@@ -100,18 +84,11 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
-
     // ---------------- Extract payload from frame ----------------
-    // REVIEW NOTE: I think we may want to just add PacketDescriptor to the FrameHeader type def in FPP ???
-    // TODO: trim comments
-    // Shift data pointer to remove the header and (if extracted) the packet
-    // descriptor.
-    // The downstream buffer covers the packet body only: the header and (when one was
-    // present) the packet descriptor are skipped at the front, and the trailer is dropped
-    // from the back. The descriptor itself is carried in contextCopy.apid.
-    const FwSizeType descriptorBytes = descriptorExtracted ? sizeof(FwPacketDescriptorType) : 0;
-    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE + descriptorBytes);
-    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE - descriptorBytes -
+    // Shift data pointer to effectively remove the header
+    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    // Shrink size to effectively remove the header and trailer
+    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
                  FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);

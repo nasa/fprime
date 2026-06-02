@@ -27,14 +27,11 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     FprimeProtocol::FrameHeader header;
     FprimeProtocol::FrameTrailer trailer;
 
-    // Body on the wire is [packet descriptor][packet body]. The descriptor is sourced from
-    // context.apid and serialized into the frame between the header and the incoming buffer.
-    const FwSizeType bodySize = sizeof(FwPacketDescriptorType) + data.getSize();
-    // Full size of the frame will be size of header + body + trailer
+    // Full size of the frame will be size of header + data + trailer
     FwSizeType frameSize =
-        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + bodySize + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    FW_ASSERT(bodySize <= std::numeric_limits<FprimeProtocol::TokenType>::max(),
-              static_cast<FwAssertArgType>(bodySize));
+        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + data.getSize() + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    FW_ASSERT(data.getSize() <= std::numeric_limits<FprimeProtocol::TokenType>::max(),
+              static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(frameSize <= std::numeric_limits<Fw::Buffer::SizeType>::max(), static_cast<FwAssertArgType>(frameSize));
 
     // Allocate frame buffer
@@ -42,15 +39,11 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     auto frameSerializer = frameBuffer.getSerializer();
     Fw::SerializeStatus status;
 
-    // Serialize the header
+    // Serialize the header (includes APID from context)
     // 0xDEADBEEF is already set as the default value for the header startWord field in the FPP type definition
-    header.set_lengthField(static_cast<FprimeProtocol::TokenType>(bodySize));
+    header.set_lengthField(static_cast<FprimeProtocol::TokenType>(data.getSize()));
+    header.set_descriptor(context.get_apid());
     status = frameSerializer.serializeFrom(header);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-
-    // Serialize the packet descriptor (APID from context)
-    const FwPacketDescriptorType packetDescriptor = static_cast<FwPacketDescriptorType>(context.get_apid());
-    status = frameSerializer.serializeFrom(packetDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     // Serialize the data

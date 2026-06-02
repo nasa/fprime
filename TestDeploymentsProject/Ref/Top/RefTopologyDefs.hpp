@@ -16,13 +16,13 @@
 
 // Subtopology PingEntries includes
 #include "Svc/Subtopologies/CdhCore/PingEntries.hpp"
-#include "Svc/Subtopologies/ComCcsds/PingEntries.hpp"
+#include "Svc/Subtopologies/ComFprime/PingEntries.hpp"
 #include "Svc/Subtopologies/DataProducts/PingEntries.hpp"
 #include "Svc/Subtopologies/FileHandling/PingEntries.hpp"
 
 // SubtopologyTopologyDefs includes
 #include "Svc/Subtopologies/CdhCore/SubtopologyTopologyDefs.hpp"
-#include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
+#include "Svc/Subtopologies/ComFprime/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
 
@@ -81,7 +81,7 @@ struct TopologyState {
     const char* hostname;                         //!< Hostname for TCP communication
     U16 port;                                     //!< Port for TCP communication
     CdhCore::SubtopologyState cdhCore;            //!< Subtopology state for CdhCore
-    ComCcsds::SubtopologyState comCcsds;          //!< Subtopology state for ComCcsds
+    ComFprime::SubtopologyState comFprime;        //!< Subtopology state for ComFprime
     DataProducts::SubtopologyState dataProducts;  //!< Subtopology state for DataProducts
     FileHandling::SubtopologyState fileHandling;  //!< Subtopology state for FileHandling
 };

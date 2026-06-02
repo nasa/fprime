@@ -9,8 +9,9 @@
 # https://fprime.jpl.nasa.gov/latest/docs/reference
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol.fpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol.fpp"
+  DEPENDS
+    Fw_Types
 )
-
-register_fprime_module()

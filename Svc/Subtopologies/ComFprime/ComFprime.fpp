@@ -213,6 +213,9 @@ module ComFprime {
         @ Input port for scheduling ComQueue telemetry output
         port comQueueRun = comQueue.run
 
+        @ Input port triggering commsBufferManager telemetry output
+        port bufferManagerSchedIn = commsBufferManager.schedIn
+
     } # end Subtopology
 
 } # end ComFprime
