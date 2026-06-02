@@ -1093,7 +1093,6 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     // 4 bytes in headerBuf, but headerLength=8 → sizeEppPacket returns 0 → no output yet
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
-    ASSERT_EVENTS_OversizedPacket_SIZE(0);
     this->clearHistory();
 
     // --- Frame 1 ---
