@@ -39,12 +39,12 @@ response port that the sender has indicated in the UDP datagram. This is done by
 ```c++
 Drv::UdpComponentImpl comm = Drv::UdpComponentImpl("UDP Client");
 
-bool constructApp(bool dump, U32 port_number, char* hostname) {
+bool constructApp(bool dump, U32 port_number, char* ipv4_address) {
     ...
-    comm.configureSend(hostname, port_number);
-    comm.configureRecv(hostname, port_number);
+    comm.configureSend(ipv4_address, port_number);
+    comm.configureRecv(ipv4_address, port_number);
     ...
-    if (hostname != nullptr && port_number != 0) {
+    if (ipv4_address != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Needed for receiving only, remove if not configuring to receive
         comm.startSocketTask(name);

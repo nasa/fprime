@@ -28,7 +28,7 @@ GitHub renders a fenced block whose info string is exactly
 range the comment is anchored to.
 
 ```markdown
-**must fix** Unbounded copy from ground argument.
+[Security] **must fix** Unbounded copy from ground argument.
 
 Validate `len` against the destination buffer before copying. The
 incoming `len` is ground-controlled and can exceed `sizeof(dst)`.
@@ -71,7 +71,7 @@ Content-Type: application/json
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
       "line": 142,
       "side": "RIGHT",
-      "body": "**must fix** … \n\n<!-- fprime-agent: security-review; finding-key: abc; v1 -->"
+      "body": "[Security] **must fix** … \n\n<!-- fprime-agent: security-review; finding-key: abc; v1 -->"
     },
     {
       "path": "Svc/CmdDispatcher/CmdDispatcher.cpp",
@@ -79,7 +79,7 @@ Content-Type: application/json
       "line": 207,
       "start_side": "RIGHT",
       "side": "RIGHT",
-      "body": "**suggestion** … \n\n```suggestion\n…\n```\n\n<!-- fprime-agent: security-review; finding-key: def; v1 -->"
+      "body": "[Security] **suggestion** … \n\n```suggestion\n…\n```\n\n<!-- fprime-agent: security-review; finding-key: def; v1 -->"
     }
   ]
 }
@@ -122,13 +122,13 @@ Authorization: Bearer ${TOKEN}
 Content-Type: application/json
 
 {
-  "body": "Fixed in <commit-sha>.\n\n<!-- fprime-agent: security-review; v1; reply-kind: resolution -->"
+  "body": "[Security] Fixed in <commit-sha>.\n\n<!-- fprime-agent: security-review; v1; reply-kind: resolution -->"
 }
 ```
 
 Replies are used for:
 
-- `Fixed in <sha>.` after a clean resolution.
+- `[<review_label>] Fixed in <sha>.` after a clean resolution.
 - The **Improperly resolved.** reply on an un-resolved thread (see
   the improper-resolution body shape in the review contract §9).
 - The **Disagreement — escalating.** reply when contributor pushback
@@ -238,7 +238,7 @@ The agent uses this to:
 
 | Failure | Fallback |
 |---|---|
-| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
+| `resolveReviewThread` returns `403` or the token lacks the discussion-write scope | Post the `[<review_label>] Fixed in <sha>.` reply and proceed. The thread visibly remains open but the audit trail is preserved. Decrement `outstanding` and increment `resolved` in Since-last-run regardless. |
 | `unresolveReviewThread` returns `403` | Post the improperly-resolved reply anyway. The thread remains visibly resolved on GitHub but the reply + maintainer ping is visible inline. Increment `improperly resolved` regardless. |
 | Inline-comment POST returns `422 Pull Request Review thread cannot be created on this line of the diff` | The line is not in the PR's diff. Re-anchor to the nearest line that is in the diff (typically the function header) and prefix the comment body with `(Anchored above the offending line; the diff does not include line N.)` |
 | Token missing entirely | Fail fast. The agent emits a single line to the orchestrator: `Cannot post review: TOKEN not provided.` and exits. The orchestrator treats this as a FAILED reviewer per review-summary.agent.md §5. |

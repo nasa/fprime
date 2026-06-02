@@ -24,6 +24,7 @@ agents:
 
   - name: F Prime Security Vulnerability Reviewer
     short_name: security-review
+    review_label: Security
     role: reviewer
     path: .github/agents/security-review.agent.md
     invocable_by_humans: true
@@ -36,6 +37,7 @@ agents:
 
   - name: F Prime Supply Chain / Runner Safety Reviewer
     short_name: supply-chain-review
+    review_label: Supply Chain
     role: reviewer
     path: .github/agents/supply-chain-review.agent.md
     invocable_by_humans: true
@@ -49,6 +51,7 @@ agents:
 
   - name: F Prime C/C++ Design Reviewer
     short_name: fprime-code-review
+    review_label: C++ Design
     role: reviewer
     path: .github/agents/fprime-code-review.agent.md
     invocable_by_humans: true
@@ -63,6 +66,7 @@ agents:
 
   - name: F Prime Stale Documentation Reviewer
     short_name: stale-documentation-review
+    review_label: Documentation
     role: reviewer
     path: .github/agents/stale-documentation-review.agent.md
     invocable_by_humans: true
@@ -77,6 +81,7 @@ agents:
 
   - name: F Prime Design Reviewer
     short_name: design-review
+    review_label: Design
     role: reviewer
     path: .github/agents/design-review.agent.md
     invocable_by_humans: true
@@ -92,6 +97,7 @@ agents:
 
   - name: F Prime Test Quality Reviewer
     short_name: test-quality-review
+    review_label: Test Quality
     role: reviewer
     path: .github/agents/test-quality-review.agent.md
     invocable_by_humans: true

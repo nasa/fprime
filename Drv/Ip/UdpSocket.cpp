@@ -46,36 +46,41 @@ UdpSocket::UdpSocket() : IpSocket(), m_recv_configured(false) {
 
 UdpSocket::~UdpSocket() = default;
 
-SocketIpStatus UdpSocket::configure(const char* const hostname,
+SocketIpStatus UdpSocket::configure(const char* const ipv4_address,
                                     const U16 port,
                                     const U32 timeout_seconds,
                                     const U32 timeout_microseconds) {
+    (void)ipv4_address;
+    (void)port;
+    (void)timeout_seconds;
+    (void)timeout_microseconds;
     FW_ASSERT(0);  // Must use configureSend and/or configureRecv
     return SocketIpStatus::SOCK_INVALID_CALL;
 }
 
-SocketIpStatus UdpSocket::configureSend(const char* const hostname,
+SocketIpStatus UdpSocket::configureSend(const char* const ipv4_address,
                                         const U16 port,
                                         const U32 timeout_seconds,
                                         const U32 timeout_microseconds) {
-    FW_ASSERT(hostname != nullptr);
+    FW_ASSERT(ipv4_address != nullptr);
     FW_ASSERT(this->isValidPort(port));
     FW_ASSERT(timeout_microseconds < 1000000);
-    return IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
+    return IpSocket::configure(ipv4_address, port, timeout_seconds, timeout_microseconds);
 }
 
-SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
-    FW_ASSERT(hostname != nullptr);
+SocketIpStatus UdpSocket::configureRecv(const char* const ipv4_address, const U16 port) {
+    FW_ASSERT(ipv4_address != nullptr);
     FW_ASSERT(this->isValidPort(port));
-    FW_ASSERT(Fw::StringUtils::string_length(hostname, SOCKET_MAX_HOSTNAME_SIZE) < SOCKET_MAX_HOSTNAME_SIZE);
+    FW_ASSERT(Fw::StringUtils::string_length(ipv4_address, static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE)) <
+              static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
 
     // Initialize the receive address structure
     (void)::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
     m_addr_recv.sin_family = AF_INET;
     m_addr_recv.sin_port = htons(port);
 
-    // Convert hostname to IP address
-    SocketIpStatus status = IpSocket::addressToIp4(hostname, &m_addr_recv.sin_addr);
+    // Convert IPv4 address (dotted-quad) to network-order in_addr
+    SocketIpStatus status = IpSocket::addressToIp4(ipv4_address, &m_addr_recv.sin_addr);
     if (status != SOCK_SUCCESS) {
         return status;
     }
@@ -143,10 +148,10 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-        // First IP address to socket sin_addr
-        status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr));
+        // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+        status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
         if (status != SOCK_SUCCESS) {
-            Fw::Logger::log("Failed to resolve hostname %s: %d\n", m_hostname, static_cast<I32>(status));
+            Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
             ::close(socketFd);
             return status;
         };
@@ -187,9 +192,10 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     if ((port == 0) && (recv_port > 0)) {
         Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_addr, recv_port);
     } else if ((port > 0) && (recv_port == 0)) {
-        Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname, port);
+        Fw::Logger::log("Setup to only send udp at %s:%hu\n", this->m_ipv4_address, port);
     } else if ((port > 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port, m_hostname, port);
+        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port,
+                        this->m_ipv4_address, port);
     }
 
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));

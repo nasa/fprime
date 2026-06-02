@@ -46,19 +46,22 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     /**
      * \brief Configures the Udp send settings but does not open the connection
      *
-     * The UdpComponent may need to send to a remote UDP port. This call configures the hostname, port and send
-     * timeouts for that socket connection. This call should be performed on system startup before send is called.
-     * Note: hostname must be a dot-notation IP address of the form "x.x.x.x". DNS translation is left up
-     * to the user.
+     * The UdpComponent may need to send to a remote UDP port. This call configures the IPv4
+     * address, port, and send timeouts for that socket connection. This call should be performed
+     * on system startup before send is called.
      *
-     * \param hostname: ip address of remote tcp server in the form x.x.x.x
-     * \param port: port of remote tcp server
+     * \warning DNS resolution is NOT performed by this driver. The \a ipv4_address argument MUST
+     * be a NUL-terminated IPv4 address in dotted-quad notation of the form "x.x.x.x" (for
+     * example, "127.0.0.1"). Callers that need DNS lookup must perform it themselves.
+     *
+     * \param ipv4_address: IPv4 address of remote UDP peer in dotted-quad form "x.x.x.x"
+     * \param port: port of remote UDP peer
      * \param send_timeout_seconds: send timeout seconds component. Defaults to: SOCKET_TIMEOUT_SECONDS
-     * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000. Defaults to:
-     * SOCKET_TIMEOUT_MICROSECONDS
+     * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000.
+     *        Defaults to: SOCKET_TIMEOUT_MICROSECONDS
      * \return status of the configure
      */
-    SocketIpStatus configureSend(const char* hostname,
+    SocketIpStatus configureSend(const char* const ipv4_address,
                                  const U16 port,
                                  const U32 send_timeout_seconds = SOCKET_SEND_TIMEOUT_SECONDS,
                                  const U32 send_timeout_microseconds = SOCKET_SEND_TIMEOUT_MICROSECONDS);
@@ -66,16 +69,20 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     /**
      * \brief Configures the Udp receive settings but does not open the connection
      *
-     * The UdpComponent may need to receive from a remote udp port. This call configures the hostname and port of that
-     * source. This call should be performed on system startup before recv or send are called. Note: hostname must be a
-     * dot-notation IP address of the form "x.x.x.x". DNS translation is left up to the user.
+     * The UdpComponent may need to receive from a remote udp port. This call configures the IPv4
+     * address and port of that source. This call should be performed on system startup before
+     * recv or send are called.
      *
-     * \param hostname: ip address of remote tcp server in the form x.x.x.x
-     * \param port: port of remote tcp server
+     * \warning DNS resolution is NOT performed by this driver. The \a ipv4_address argument MUST
+     * be a NUL-terminated IPv4 address in dotted-quad notation of the form "x.x.x.x" (for
+     * example, "0.0.0.0" to bind on all interfaces).
+     *
+     * \param ipv4_address: IPv4 address to bind for receiving, in dotted-quad form "x.x.x.x"
+     * \param port: port to bind for receiving
      * \param buffer_size: size of the buffer to be allocated. Defaults to 1024.
-     *  \return status of the configure
+     * \return status of the configure
      */
-    SocketIpStatus configureRecv(const char* hostname, const U16 port, FwSizeType buffer_size = 1024);
+    SocketIpStatus configureRecv(const char* const ipv4_address, const U16 port, FwSizeType buffer_size = 1024);
 
     /**
      * \brief get the port being received on
