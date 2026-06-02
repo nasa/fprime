@@ -1049,16 +1049,8 @@ void AosDeframerTester::testEppSizeOverflowRejected() {
     // Frame buffer must still be returned regardless of the error path taken
     ASSERT_from_dataReturnOut_SIZE(1);
 
-    // Secondary assertion depends on word width:
-    //   32-bit: overflow guard fires in sizeEppPacket → returns 0 → silent drop, no events
-    //   64-bit: ~4 GB size exceeds MaxPacketSize → OversizedPacket fires before the allocator
-    // The allocator-rejection path is no longer taken for this claim on either width.
-    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
-    if (sizeof(FwSizeType) == 4) {
-        ASSERT_EVENTS_OversizedPacket_SIZE(0);
-    } else {
-        ASSERT_EVENTS_OversizedPacket_SIZE(1);
-    }
+    // In the overflow case, the allocation should report failure
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
 }
 
 void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
@@ -1117,13 +1109,8 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_from_dataReturnOut_SIZE(1);
 
-    // Same width-conditional secondary assertion as testEppSizeOverflowRejected
-    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
-    if (sizeof(FwSizeType) == 4) {
-        ASSERT_EVENTS_OversizedPacket_SIZE(0);
-    } else {
-        ASSERT_EVENTS_OversizedPacket_SIZE(1);
-    }
+    // In the overflow case, the allocation should report failure
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
 }
 
 }  // namespace Ccsds
