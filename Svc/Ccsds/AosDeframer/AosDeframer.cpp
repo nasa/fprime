@@ -319,25 +319,10 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             return 0;
         }
 
-        // Reject packets that exceed the mission-defined maximum before touching the allocator.
-        // packetSize is derived from an untrusted length field read straight off the wire
-        // (especially EPP lol=4, which can claim up to ~4 GB). Capping here turns an implausible
-        // size into an explicit, telemetered rejection rather than relying on the allocator to
-        // refuse the request -- that fallback only emits a generic SpanningPacketAllocFailed and
-        // depends on the allocator pool being smaller than the claimed size, which is not a
-        // guarantee on all targets.
-        if (packetSize > AosDeframer_MaxPacketSize) {
-            this->log_WARNING_HI_OversizedPacket(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(), packetSize,
-                                                 AosDeframer_MaxPacketSize);
-            // The claimed size is untrusted, so we cannot reliably seek past the packet;
-            // abandon any accumulated header state and stop processing this frame.
-            this->abandonSpanningPacket(vc);
-            return 0;
-        }
-
-        // Try to allocate a buffer for the whole packet
+        // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
+        // manager is out of memory, this is handled below.
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
-        if (vc.spanningPacket.buffer.getSize() < packetSize) {
+        if ((not vc.spanningPacket.buffer.isValid()) || (vc.spanningPacket.buffer.getSize() < packetSize)) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
             // Save before abandon clears it -— needed for the correct seek offset below
@@ -515,8 +500,8 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
     // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
     // below must be guarded the same way sizeEppPacket is.
-    static_assert(static_cast<unsigned long long>(SpacePacketHeader::SERIALIZED_SIZE) + 0xFFFFULL + 1ULL <=
-                      std::numeric_limits<FwSizeType>::max(),
+    constexpr FwSizeType MAX_LENGTH = std::numeric_limits<FwSizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE;
+    static_assert(MAX_LENGTH >= std::numeric_limits<U16>::max() + 1,
                   "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
