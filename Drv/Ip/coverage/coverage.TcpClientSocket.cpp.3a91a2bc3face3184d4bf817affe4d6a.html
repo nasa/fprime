@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-01 23:07:38</td>
+      <td>2026-06-02 00:09:54</td>
     </tr>
   </table>
 </div>
@@ -555,7 +555,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// First IP address to socket sin_addr</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
@@ -571,7 +571,7 @@
         </details>
       </td>
       <td class="linecount partialCoveredLine">101</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">IpSocket</span><span class="o">::</span><span class="n">addressToIp4</span><span class="p">(</span><span class="n">m_hostname</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">(</span><span class="n">address</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">))</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SOCK_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">IpSocket</span><span class="o">::</span><span class="n">addressToIp4</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ipv4_address</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">(</span><span class="n">address</span><span class="p">.</span><span class="n">sin_addr</span><span class="p">))</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">SOCK_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
@@ -759,7 +759,7 @@
         </details>
       </td>
       <td class="linecount partialCoveredLine">101</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Connected to %s:%hu as a tcp client</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">m_hostname</span><span class="p">,</span><span class="w"> </span><span class="n">m_port</span><span class="p">);</span></td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Connected to %s:%hu as a tcp client</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ipv4_address</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_port</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
