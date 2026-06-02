@@ -127,11 +127,14 @@ void TlmChanTester::runHashDeterminism() {
 // ============================================================================
 
 void TlmChanTester::runHashSeedDiversity() {
-    // Each TlmChan instance draws its seed from hardware entropy, a high-
-    // resolution timestamp, and a stack-address nonce at construction time.
-    // Two independently constructed instances must (with overwhelming probability)
-    // get different seeds, denying an attacker the ability to pre-compute
-    // collision lists offline.
+    // Each TlmChan instance draws its seed from an OSAL high-resolution
+    // timestamp (Os::RawTime) and a stack-address nonce at construction time.
+    // Two independently constructed instances should (where the platform
+    // provides boot-time entropy) get different seeds, denying an attacker the
+    // ability to pre-compute collision lists offline. NOTE: this property
+    // depends on the platform — on bare-metal targets with a fixed boot clock
+    // and deterministic memory layout the seeds may coincide; that is a
+    // platform-entropy limitation, not a hash-logic defect (see sdd.md 3.5.2).
     //
     // False-failure probability: 1 / 2^32 ≈ 2.3 × 10^-10.  If this test ever
     // fails on a CI run without a deliberate code change, investigate the

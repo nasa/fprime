@@ -27,7 +27,7 @@ class TlmChan final : public TlmChanComponentBase {
     virtual ~TlmChan();
 
   protected:
-    FwChanIdType doHash(FwChanIdType id);
+    FwChanIdType doHash(FwChanIdType id) const;
 
   private:
     // Port functions

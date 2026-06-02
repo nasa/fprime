@@ -87,9 +87,13 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 
     seed = foldedTime ^ foldedStack;
 
-    // A zero seed causes the hash to degenerate — all channel IDs collapse to
-    // the same bucket. Replace with a known non-zero constant to ensure a
-    // valid distribution on all supported platforms.
+    // Force a non-zero seed. Of the three hash paths, only the narrow
+    // (<16-bit) path actually loses its keying at seed == 0: it reverts to the
+    // original linear (id % MOD) % SLOTS reduction, re-exposing the predictable
+    // collision pattern this change removes. The Murmur3 and Wang paths still
+    // diffuse a zero seed correctly, so this guard is conservative for them.
+    // Substituting a known non-zero constant keeps every branch keyed and the
+    // seed uniform to reason about across platforms.
     if (seed == 0) {
         seed = 0xDEADBEEFU;
     }
@@ -99,7 +103,7 @@ TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(
 
 TlmChan::~TlmChan() {}
 
-FwChanIdType TlmChan::doHash(FwChanIdType id) {
+FwChanIdType TlmChan::doHash(FwChanIdType id) const {
     // Validate input before use.
     static_assert(std::is_unsigned<FwChanIdType>::value, "FwChanIdType must be unsigned");
     static_assert(sizeof(FwChanIdType) <= sizeof(U32), "FwChanIdType must fit within U32 for safe hash cast");

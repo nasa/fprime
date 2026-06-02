@@ -37,9 +37,10 @@ class TlmChanTester : public TlmChanGTestBase {
 
     //! Verify that Run_handler's CPU processing guard fires correctly when the
     //! number of updated telemetry entries exceeds TLMCHAN_MAX_ENTRIES_PER_RUN.
-    //! Checks that deferred entries are counted, a guard packet is appended to
-    //! the downlink stream, and m_procCapCount increments cumulatively across
-    //! successive capped invocations.
+    //! Checks that deferred entries are counted, that a TlmChanEpochProcessingCapReached
+    //! WARNING_HI event is emitted with the deferred count (and that no extra
+    //! guard packet is injected into the downlink stream), and that
+    //! m_procCapCount increments cumulatively across successive capped invocations.
     void runProcGuard();
 
     // ----------------------------------------------------------------------
