@@ -86,14 +86,14 @@ agents:
     path: .github/agents/design-review.agent.md
     invocable_by_humans: true
     scope_summary: >
-      Five design categories — design-vs-intent mismatch, code-vs-
-      design mismatch, F Prime pattern violations, scope creep /
-      under-scoped, FPP-vs-C++ divergence — plus the special
-      `design-needs-human-adjudication` finding class that always
-      pings code owners (README maintainer table + git-log
-      approvers) when the PR's design should be settled by a human
-      before deeper review is worthwhile. Does not contribute to CI
-      safety.
+      Eight design categories — design-vs-intent mismatch,
+      code-vs-design mismatch, F Prime pattern violations, scope
+      creep / under-scoped, FPP-vs-C++ divergence, undocumented
+      behavioral regression, resource margin erosion, fault-handling
+      gap — plus the special `design-needs-human-adjudication`
+      finding class that always pings code owners. References the
+      JPL Design Principles skill for margin and fault-protection
+      rules. Does not contribute to CI safety.
 
   - name: F Prime Test Quality Reviewer
     short_name: test-quality-review
