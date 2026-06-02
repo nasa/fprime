@@ -113,21 +113,6 @@ agents:
       on the proposal at nasa/fprime#5160. Does not contribute to
       CI safety.
 
-  - name: JPL Design Principles Compliance Reviewer
-    short_name: jpl-dp-compliance-review
-    role: reviewer
-    path: .github/agents/jpl-dp-compliance-review.agent.md
-    invocable_by_humans: true
-    scope_summary: >
-      Seven categories derived from JPL Design Principles
-      (DP10): margin erosion,
-      fault-protection gaps, testability regression, unnecessary
-      complexity (KISS), traceability gaps, standards deviation,
-      and lessons-learned misses. References the distilled
-      software-relevant principles in
-      `_shared/skills/jpl-design-principles.skill.md`. Does not
-      contribute to CI safety.
-
   - name: F Prime PR Review Summary Aggregator
     short_name: review-summary
     role: aggregator

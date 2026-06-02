@@ -63,7 +63,7 @@ diff alone — that would be guessing.
 
 ---
 
-## Scope — five categories
+## Scope — eight categories
 
 ### 1. Design vs. intent mismatch
 
@@ -217,6 +217,44 @@ the *code-level correctness* of the implementation.
 existing deployments; `**could fix**` when the change is clearly an
 improvement but lacks documentation.
 
+### 7. Resource margin erosion
+
+The PR increases resource consumption (memory, CPU cycles, stack,
+bus bandwidth, queue depth) without analysis showing post-change
+margins remain acceptable, or without updating the CBE. Per
+`_shared/skills/jpl-design-principles.skill.md` DR-6.3.5.3 and
+DR-4.11.6.3, constrained resources must be tracked and visible.
+
+For the framework: changes that degrade efficiency (larger buffers,
+heavier handlers, new allocations in hot paths) reduce the margin
+budget available to users downstream. Efficiency gains are
+encouraged.
+
+**Finding-class:** `design-margin-erosion`.
+
+**Default triage:** `**suggestion**` when margin merely shrinks;
+`**must fix**` if the change demonstrably pushes a resource past a
+documented threshold.
+
+### 8. Fault-handling gap
+
+The PR adds a new code path (command handler, port handler, state
+transition) that can encounter a credible fault but provides no
+detection, recovery, or graceful-degradation logic. Per
+`_shared/skills/jpl-design-principles.skill.md` DR-4.11.4.2,
+DR-4.11.4.5, DR-4.11.4.6, and DR-4.9.1.2, every credible fault
+must be handled cleanly.
+
+Examples:
+- A new handler dereferences a pointer without null check or
+  `FW_ASSERT`.
+- A state transition silently drops data on queue-full.
+- A new I/O path has no timeout or error return check.
+
+**Finding-class:** `design-fault-handling-gap`.
+
+**Default triage:** `**must fix**`.
+
 ---
 
 ## The special case — `design-needs-human-adjudication`
@@ -280,7 +318,8 @@ trigger-specific line.
 For all OTHER design finding-classes (`design-intent-mismatch`,
 `design-code-mismatch`, `design-fprime-anti-pattern`,
 `design-scope-creep`, `design-under-scoped`,
-`design-fpp-cpp-divergence`, `design-behavioral-regression`), the
+`design-fpp-cpp-divergence`, `design-behavioral-regression`,
+`design-margin-erosion`, `design-fault-handling-gap`), the
 standard low-confidence / disagreement-escalation ping mechanism
 from the review contract applies, with no special always-on behavior.
 
@@ -363,6 +402,10 @@ Append a maintainer ping per
 - **`design-behavioral-regression`**: `**must fix**` when the change
   could silently break existing deployments; `**could fix**` when
   the change is clearly an improvement but lacks documentation.
+- **`design-margin-erosion`**: `**suggestion**` when margin shrinks;
+  `**must fix**` when a documented threshold is breached.
+- **`design-fault-handling-gap`**: `**must fix**` — unhandled
+  credible faults on new code paths.
 
 ---
 
