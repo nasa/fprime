@@ -118,6 +118,7 @@ COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
 COMLOGGERTEE
+commandability
 Commandability
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
@@ -239,6 +240,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exceedance
 exploitability
 externalproject
 FAKELOGGER
@@ -638,6 +640,7 @@ rowspan
 rpi
 rptr
 SAlias
+Safing
 sanitizers
 sats
 SBF
