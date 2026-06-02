@@ -162,10 +162,9 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     AOSHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>((m_spacecraftId & static_cast<U16>(0x00FF))
-                                   << AOSHeaderSubfields::spacecraftIdLsbOffset);
-    globalVcId |= static_cast<U16>((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset);
+    U16 globalVcId = static_cast<U16>((context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset) |
+                                      ((m_spacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset) |
+                                      ((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset));
 
     // Virtual Channel Frame Count (4.1.2.4)
     U32 frameCountAndSignaling = static_cast<U32>((currentVc.virtualFrameCount & 0x00FFFFFFU)
@@ -176,8 +175,7 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
 
     // Spacecraft ID MSB (4.1.2.5.4)
     frameCountAndSignaling |=
-        static_cast<U32>((m_spacecraftId & static_cast<U16>(0x0300))
-                         >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+        static_cast<U32>((m_spacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     // Virtual Channel Frame Cycle Count (4.1.2.5.5)
     frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >> 24);
