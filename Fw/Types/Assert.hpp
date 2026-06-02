@@ -22,25 +22,25 @@
 #define FILE_NAME_ARG U32
 #define FW_ASSERT(...)                     \
     ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
-         ? ((void)0)                       \
-         : (Fw::SwAssert(ASSERT_FILE_ID, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
+         ? ((void)0)
+         : (Fw::SwAssert(ASSERT_FILE_ID, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)), __builtin_unreachable()))                \
 #elif FW_ASSERT_LEVEL == FW_FILEID_ASSERT && !defined ASSERT_FILE_ID
 #define FILE_NAME_ARG U32
 #define FW_ASSERT(...)                     \
     ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
          ? ((void)0)                       \
-         : (Fw::SwAssert(static_cast<U32>(0), FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
+         : (Fw::SwAssert(static_cast<U32>(0), FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)), __builtin_unreachable()))
 #elif FW_ASSERT_LEVEL == FW_RELATIVE_PATH_ASSERT && defined ASSERT_RELATIVE_PATH
 #define FILE_NAME_ARG const CHAR*
 #define FW_ASSERT(...)                     \
     ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) \
          ? ((void)0)                       \
-         : (Fw::SwAssert(ASSERT_RELATIVE_PATH, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
+         : (Fw::SwAssert(ASSERT_RELATIVE_PATH, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)), __builtin_unreachable()))
 #else
 #define FILE_NAME_ARG const CHAR*
 #define FW_ASSERT(...)                                 \
     ((FW_ASSERT_FIRST_ARG(__VA_ARGS__, 0)) ? ((void)0) \
-                                           : (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__))))
+                                           : (Fw::SwAssert(__FILE__, FW_ASSERT_NO_FIRST_ARG(__VA_ARGS__, __LINE__)), __builtin_unreachable()))
 #endif
 #endif  // if ASSERT is defined
 
@@ -171,3 +171,4 @@ class AssertHook {
 }  // namespace Fw
 
 #endif  // FW_ASSERT_HPP
+
