@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-02 00:10:56</td>
+      <td>2026-06-02 17:03:17</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l106">Os::Posix::errno_to_directory_status(int) (line 106)</a></td><td>called 45 times</td><td>44.0%</td></tr>
-    <tr><td><a href="#l11">Os::Posix::errno_to_file_status(int) (line 11)</a></td><td>called 151 times</td><td>58.0%</td></tr>
-    <tr><td><a href="#l51">Os::Posix::errno_to_filesystem_status(int) (line 51)</a></td><td>called 619 times</td><td>29.0%</td></tr>
+    <tr><td><a href="#l106">Os::Posix::errno_to_directory_status(int) (line 106)</a></td><td>called 51 times</td><td>44.0%</td></tr>
+    <tr><td><a href="#l11">Os::Posix::errno_to_file_status(int) (line 11)</a></td><td>called 144 times</td><td>58.0%</td></tr>
+    <tr><td><a href="#l51">Os::Posix::errno_to_filesystem_status(int) (line 51)</a></td><td>called 621 times</td><td>29.0%</td></tr>
     <tr><td><a href="#l131">Os::Posix::errno_to_rawtime_status(int) (line 131)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l188">Os::Posix::posix_status_to_conditional_status(int) (line 188)</a></td><td>called 7 times</td><td>67.0%</td></tr>
-    <tr><td><a href="#l169">Os::Posix::posix_status_to_mutex_status(int) (line 169)</a></td><td>called 25055152 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l169">Os::Posix::posix_status_to_mutex_status(int) (line 169)</a></td><td>called 22525034 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l147">Os::Posix::posix_status_to_task_status(int) (line 147)</a></td><td>called 413 times</td><td>50.0%</td></tr>
   </table>
 </details>
@@ -164,14 +164,14 @@
       <td class="lineno"><a id="l11" href="#l11">11</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">151</td>
+      <td class="linecount coveredLine">144</td>
       <td class="src coveredLine"><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">errno_to_file_status</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">151</td>
+      <td class="linecount coveredLine">144</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -182,17 +182,17 @@
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 69 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 13 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 14 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
             <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 68 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 60 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">151</td>
+      <td class="linecount partialCoveredLine">144</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -255,21 +255,21 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">13</td>
+      <td class="linecount coveredLine">14</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">ENOENT</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">13</td>
+      <td class="linecount coveredLine">14</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">DOESNT_EXIST</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">13</td>
+      <td class="linecount coveredLine">14</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -388,21 +388,21 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68</td>
+      <td class="linecount coveredLine">60</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">EINVAL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68</td>
+      <td class="linecount coveredLine">60</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">INVALID_ARGUMENT</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68</td>
+      <td class="linecount coveredLine">60</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -437,7 +437,7 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">151</td>
+      <td class="linecount coveredLine">144</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -458,14 +458,14 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">619</td>
+      <td class="linecount coveredLine">621</td>
       <td class="src coveredLine"><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">errno_to_filesystem_status</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">619</td>
+      <td class="linecount coveredLine">621</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -478,7 +478,7 @@
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 618 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 620 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
@@ -491,7 +491,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">619</td>
+      <td class="linecount partialCoveredLine">621</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -603,7 +603,7 @@
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">618</td>
+      <td class="linecount coveredLine">620</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">ELOOP</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -617,14 +617,14 @@
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">618</td>
+      <td class="linecount coveredLine">620</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FileSystem</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">DOESNT_EXIST</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">618</td>
+      <td class="linecount coveredLine">620</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -841,7 +841,7 @@
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">619</td>
+      <td class="linecount coveredLine">621</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -862,14 +862,14 @@
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="n">Directory</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">errno_to_directory_status</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Directory</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Directory</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -882,12 +882,12 @@
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 45 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 51 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">45</td>
+      <td class="linecount partialCoveredLine">51</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">errno_input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -978,21 +978,21 @@
       <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">EEXIST</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Directory</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">ALREADY_EXISTS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1027,7 +1027,7 @@
       <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45</td>
+      <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1324,14 +1324,14 @@
       <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25055152</td>
+      <td class="linecount coveredLine">22525034</td>
       <td class="src coveredLine"><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">posix_status_to_mutex_status</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">posix_status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25055152</td>
+      <td class="linecount coveredLine">22525034</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">ERROR_OTHER</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1340,35 +1340,35 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 33905037 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 31972230 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25055152</td>
+      <td class="linecount partialCoveredLine">22525034</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">posix_status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">33905037</td>
+      <td class="linecount coveredLine">31972230</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="mi">0</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">33905037</td>
+      <td class="linecount coveredLine">31972230</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">33905037</td>
+      <td class="linecount coveredLine">31972230</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1445,7 +1445,7 @@
       <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25055152</td>
+      <td class="linecount coveredLine">22525034</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">

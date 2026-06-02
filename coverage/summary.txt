@@ -299,7 +299,7 @@ Svc/FileUplink/File.cpp                       23      22    95%   44
 Svc/FileUplink/FileUplink.cpp                126     113    89%   42-44,54-56,65,81-83,89,91-92
 Svc/FileUplink/FileUplink.hpp                 16      16   100%
 Svc/FileUplink/Warnings.cpp                   29      29   100%
-Svc/FileWorker/FileWorker.cpp                287     265    92%   211,214-216,218-220,222-224,270,281,364,401,420-423,470-473
+Svc/FileWorker/FileWorker.cpp                309     279    90%   75-78,167-170,247,250-252,254-256,258-260,306,317,400,437,456-459,506-509
 Svc/FprimeDeframer/FprimeDeframer.cpp         53      53   100%
 Svc/FprimeFramer/FprimeFramer.cpp             31      31   100%
 Svc/FprimeRouter/FprimeRouter.cpp             36      32    88%   43,59-61
@@ -356,5 +356,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17488   14218    81%
+TOTAL                                      17510   14232    81%
 ------------------------------------------------------------------------------
