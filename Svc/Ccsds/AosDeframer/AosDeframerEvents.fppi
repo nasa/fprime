@@ -38,6 +38,11 @@
             severity warning high \
             format "Spanning packet allocation failed on VC {} for {} packet of {} bytes; packet dropped"
 
+        @ A packet's computed size exceeded AosDeframer.MaxPacketSize and was rejected before allocation
+        event OversizedPacket(vcId: U8, pvn: ComCfg.Pvn, packetSize: FwSizeType, maxPacketSize: FwSizeType) \
+            severity warning high \
+            format "Oversized packet on VC {} ({}): {} bytes exceeds maximum {} bytes; packet rejected"
+
         @ Deframing detected a gap/discontinuity in the AOS VC frame count sequence
         event VcFrameCountGap(vcId: U8, received: U32, expected: U32) \
             severity warning high \

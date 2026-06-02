@@ -1020,8 +1020,10 @@ void AosDeframerTester::testEppSizeOverflowRejected() {
     //
     // On a 64-bit host (FwSizeType = U64, where CI tests run):
     //   No arithmetic overflow occurs; the computed size is ~4 GB.
-    //   The test allocator (ALLOC_BUF_SIZE=65536) rejects the allocation and
-    //   SpanningPacketAllocFailed fires — the existing safe fallback path.
+    //   That size exceeds AosDeframer.MaxPacketSize, so the mission-defined cap in
+    //   appendToSpanningPacket rejects the packet before the allocator is ever called
+    //   and OversizedPacket fires. (The allocator-rejection fallback that previously
+    //   raised SpanningPacketAllocFailed is now unreachable for this oversized claim.)
     //
     // In both cases the invariant is: zero packets emitted, no crash.
 
@@ -1049,11 +1051,13 @@ void AosDeframerTester::testEppSizeOverflowRejected() {
 
     // Secondary assertion depends on word width:
     //   32-bit: overflow guard fires in sizeEppPacket → returns 0 → silent drop, no events
-    //   64-bit: ~4 GB size rejected by test allocator → SpanningPacketAllocFailed fires
+    //   64-bit: ~4 GB size exceeds MaxPacketSize → OversizedPacket fires before the allocator
+    // The allocator-rejection path is no longer taken for this claim on either width.
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
     if (sizeof(FwSizeType) == 4) {
-        ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
+        ASSERT_EVENTS_OversizedPacket_SIZE(0);
     } else {
-        ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+        ASSERT_EVENTS_OversizedPacket_SIZE(1);
     }
 }
 
@@ -1068,7 +1072,7 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     // Frame 1 (FHP_NO_PACKET_START) delivers the remaining 4 bytes (the length
     // field 0xFFFFFFFC). Now headerBuf holds all 8 bytes and sizeEppPacket fires:
     //   32-bit: overflow guard → return 0, silent drop
-    //   64-bit: ~4 GB → allocator rejection → SpanningPacketAllocFailed
+    //   64-bit: ~4 GB exceeds MaxPacketSize → OversizedPacket before the allocator
 
     this->configureDefault();
 
@@ -1097,6 +1101,7 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     // 4 bytes in headerBuf, but headerLength=8 → sizeEppPacket returns 0 → no output yet
     ASSERT_from_dataOut_SIZE(0);
     ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
+    ASSERT_EVENTS_OversizedPacket_SIZE(0);
     this->clearHistory();
 
     // --- Frame 1 ---
@@ -1113,10 +1118,11 @@ void AosDeframerTester::testEppSizeOverflowHeaderSpansFrame() {
     ASSERT_from_dataReturnOut_SIZE(1);
 
     // Same width-conditional secondary assertion as testEppSizeOverflowRejected
+    ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
     if (sizeof(FwSizeType) == 4) {
-        ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(0);
+        ASSERT_EVENTS_OversizedPacket_SIZE(0);
     } else {
-        ASSERT_EVENTS_SpanningPacketAllocFailed_SIZE(1);
+        ASSERT_EVENTS_OversizedPacket_SIZE(1);
     }
 }
 

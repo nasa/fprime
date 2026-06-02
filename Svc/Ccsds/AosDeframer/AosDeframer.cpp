@@ -319,12 +319,21 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             return 0;
         }
 
-        // TODO(security): Add a mission-defined upper bound check here once
-        // ComCfg::AosMaxPacketSize is defined in FppConstantsAc.hpp and the
-        // corresponding OversizedPacket warning event is added to AosDeframer.fpp.
-        // On 32-bit targets the overflow guard in sizeEppPacket already returns 0
-        // for values that would wrap. On 64-bit targets, EPP lol=4 packets claiming
-        // ~4 GB are rejected by the allocator call below (existing fallback path).
+        // Reject packets that exceed the mission-defined maximum before touching the allocator.
+        // packetSize is derived from an untrusted length field read straight off the wire
+        // (especially EPP lol=4, which can claim up to ~4 GB). Capping here turns an implausible
+        // size into an explicit, telemetered rejection rather than relying on the allocator to
+        // refuse the request -- that fallback only emits a generic SpanningPacketAllocFailed and
+        // depends on the allocator pool being smaller than the claimed size, which is not a
+        // guarantee on all targets.
+        if (packetSize > AosDeframer_MaxPacketSize) {
+            this->log_WARNING_HI_OversizedPacket(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(), packetSize,
+                                                 AosDeframer_MaxPacketSize);
+            // The claimed size is untrusted, so we cannot reliably seek past the packet;
+            // abandon any accumulated header state and stop processing this frame.
+            this->abandonSpanningPacket(vc);
+            return 0;
+        }
 
         // Try to allocate a buffer for the whole packet
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
@@ -503,8 +512,12 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
     // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
-    // The sum cannot overflow a 32-bit FwSizeType on current targets, but if FwSizeType is
-    // ever narrowed below 17 bits this addition must be guarded the same way sizeEppPacket is.
+    // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
+    // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
+    // below must be guarded the same way sizeEppPacket is.
+    static_assert(static_cast<unsigned long long>(SpacePacketHeader::SERIALIZED_SIZE) + 0xFFFFULL + 1ULL <=
+                      std::numeric_limits<FwSizeType>::max(),
+                  "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
     // TODO: Unify Deframers | bring the whole spp processing into this component

@@ -1,5 +1,5 @@
 module Svc {
-module Ccsds {
+    module Ccsds {
     @ Deframer for the AOS Space Data Link Protocol
     @ Per CCSDS 732.0-B-5 (5th Edition) - AOS Space Data Link Protocol
     @ Supports M_PDU (Multiplexing PDU) data field service with optional:
@@ -7,8 +7,16 @@ module Ccsds {
     @ - Space Packet Protocol (SPP) extraction per CCSDS 133.0-B-2
     @ - Encapsulation Packet Protocol (EPP) extraction per CCSDS 133.1-B-3
     passive component AosDeframer {
-
         constant NumVcs = 1
+
+        @ Mission-defined upper bound on a single reassembled packet, in bytes.
+        @ Packets whose computed size exceeds this are rejected before allocation and
+        @ reported via the OversizedPacket event. This is a sanity ceiling against
+        @ corrupt/untrusted length fields (notably EPP lol=4, which can claim ~4 GB),
+        @ not a tight limit. Missions MUST tune this to exceed their largest legitimate
+        @ packet while staying well below sizes that indicate corruption or attack.
+        @ Default: 256 MiB.
+        constant MaxPacketSize = 0x10000000
 
         import Deframer
 
@@ -22,7 +30,7 @@ module Ccsds {
         include "AosDeframerTelem.fppi"
 
         ###############################################################################
-        # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
+#Standard AC Ports : Required for Channels, Events, Commands, and Parameters #
         ###############################################################################
         @ Port for requesting the current time
         time get port timeCaller
@@ -41,7 +49,6 @@ module Ccsds {
 
         @Port to set the value of a parameter
         param set port prmSetOut
-
     }
-}
+    }
 }
