@@ -98,11 +98,11 @@ callers do not block. A sync port bypasses the queue and executes in
 the caller's thread, defeating thread isolation and hiding potential
 priority inversions.
 
-**Exception:** `guarded` ports on an active component are acceptable
-when the component documents shared-state protection (e.g., a
-telemetry getter that must return immediately). The finding should
-note the exception and downgrade to `**could fix**` or suppress if
-the guarded usage is clearly justified.
+**Note:** `guarded` ports on an active component are equally
+problematic — active components protect shared state via their async
+queue, not via mutex-guarded sync entry points. A `guarded` port
+still executes in the caller's thread and should be flagged just like
+a `sync` port.
 
 **Finding-class:** `arch-sync-on-async-component`.
 
