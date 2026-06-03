@@ -17,6 +17,7 @@
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <cassert>
 #include <cstdio>
+#include <limits>
 
 namespace Fw {
 void defaultReportAssert(FILE_NAME_ARG file,
@@ -90,19 +91,17 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
                                                    FwAssertArgType arg4,
                                                    FwAssertArgType arg5,
                                                    FwAssertArgType arg6) {
-    constexpr FwSizeType outputSize = FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
-                                             static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
-    FwSizeType len = Fw::StringUtils::string_length(file, FileNameStringSize);
-
-    // Calculate start index. If string is shorter than N, keep whole string.
-    FW_ASSERT(file != nullptr);
-    const CHAR* start = (len > outputSize) ? file + (len - outputSize) : file;
-
     // Get file arg for events
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     Fw::LogStringArg fileArg;
     fileArg.format("0x%08" PRIX32, file);
 #else
+    constexpr FwSizeType outputSize = FW_MIN(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
+                                             static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
+    // File name argument is derived from a compiler string literal. Per the C++ standard, string literals are
+    // guaranteed to be null-terminated and whose maximum length is from U16_MAX to available system memory size. Thus,
+    // we choose a bound of the lowest allowed maximum literal length.
+    const CHAR* start = Fw::StringUtils::string_last_n(file, outputSize, std::numeric_limits<U16>::max());
 
     Fw::LogStringArg fileArg(start);
 #endif
