@@ -5,7 +5,7 @@ module FprimeProtocol {
 
     @ Describes the frame header format for the F Prime communications protocol
     @ Wire format: [startWord][lengthField][packetDescriptor][payload][crcField]
-    @ lengthField counts payload bytes only (not including the packetDescriptor)
+    @ lengthField counts the packetDescriptor and payload bytes (preserves the legacy on-wire length semantics)
     struct FrameHeader {
         startWord: TokenType,
         lengthField: TokenType,

@@ -27,10 +27,11 @@ FprimeDeframerTester ::~FprimeDeframerTester() {}
 // ----------------------------------------------------------------------
 
 void FprimeDeframerTester ::testNominalFrame() {
-    // Nominal frame with 1 byte of payload and default (zero) APID in header
+    // Nominal frame with 1 byte of payload and default (zero) APID in header.
+    // lengthField counts the 2-byte packetDescriptor + 1-byte payload = 3.
     U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(1, 255));
-    //           |  F´ start word        |     Length (= 1)      | PD (APID=0)  |   Data     |   Checksum (4 bytes)   |
-    U8 data[15] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
+    //           |  F´ start word        |     Length (= 3)      | PD (APID=0)  |   Data     |   Checksum (4 bytes)   |
+    U8 data[15] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
@@ -46,10 +47,11 @@ void FprimeDeframerTester ::testNominalFrame() {
 }
 
 void FprimeDeframerTester ::testNominalFrameApid() {
-    // Zero-length payload with a specific APID in the header
+    // Zero-length payload with a specific APID in the header.
+    // lengthField counts the 2-byte packetDescriptor + 0-byte payload = 2.
     U8 randomByte = static_cast<U8>(STest::Random::lowerUpper(0, 255));
-    //           |  F´ start word        |     Length (= 0)      | PD (APID)       | Checksum (4 bytes)    |
-    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
+    //           |  F´ start word        |     Length (= 2)      | PD (APID)       | Checksum (4 bytes)    |
+    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x02, 0x00, randomByte, 0x00, 0x00, 0x00, 0x00};
     // Inject the checksum into the data and send it to the component under test
     this->injectChecksum(data, sizeof(data));
     this->mockReceiveData(data, sizeof(data));
@@ -90,8 +92,8 @@ void FprimeDeframerTester ::testIncorrectStartWord() {
 }
 
 void FprimeDeframerTester ::testIncorrectCrc() {
-    // Frame:     |   F´ start word      |      Length = 0       | PD         | INCORRECT Checksum  |
-    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    // Frame:     |   F´ start word      |      Length = 2       | PD         | INCORRECT Checksum  |
+    U8 data[14] = {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
     this->mockReceiveData(data, sizeof(data));
     ASSERT_from_dataOut_SIZE(0);        // nothing emitted on dataOut
     ASSERT_from_dataReturnOut_SIZE(1);  // invalid buffer was deallocated

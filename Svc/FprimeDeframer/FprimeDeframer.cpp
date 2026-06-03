@@ -49,9 +49,17 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
-    // We expect the frame size to be size of header + body (of size specified in header) + trailer
-    const FwSizeType expectedFrameSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
-                                         FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // lengthField counts the packetDescriptor + payload. Reject any frame whose lengthField is too
+    // small to even contain the descriptor (would underflow the payload size computation below).
+    if (header.get_lengthField() < sizeof(FwPacketDescriptorType)) {
+        this->log_WARNING_HI_InvalidLengthReceived();
+        this->dataReturnOut_out(0, data, context);  // drop the frame
+        return;
+    }
+    const FwSizeType payloadSize = header.get_lengthField() - sizeof(FwPacketDescriptorType);
+    // We expect the frame size to be size of header + payload (lengthField minus descriptor) + trailer
+    const FwSizeType expectedFrameSize =
+        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + payloadSize + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
     // Reject packets whose data does not match the header
     if (data.getSize() != expectedFrameSize) {
         this->log_WARNING_HI_InvalidLengthReceived();
@@ -66,15 +74,15 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
 
     // ---------------- Validate Frame Trailer ----------------
-    // Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)
-    status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
+    // Deserialize transmitted trailer: trailer is at offset = len(header) + len(payload)
+    status = deserializer.moveDeserToOffset(FprimeProtocol::FrameHeader::SERIALIZED_SIZE + payloadSize);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
     status = trailer.deserializeFrom(deserializer);
     FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
-    // Compute CRC over the transmitted data (header + body)
+    // Compute CRC over the transmitted data (header + payload)
     Utils::Hash hash;
     Utils::HashBuffer computedCrc;
-    FwSizeType fieldToHashSize = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    FwSizeType fieldToHashSize = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + payloadSize;
     hash.init();
     // Add byte by byte to the hash
     for (FwSizeType i = 0; i < fieldToHashSize; i++) {
@@ -92,7 +100,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     // Shift data pointer past the header; trim trailer from the back.
     // The APID is carried in contextCopy.apid.
     data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    data.setSize(header.get_lengthField());
+    data.setSize(payloadSize);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);
 }

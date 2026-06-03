@@ -59,19 +59,26 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     constexpr FwSizeType header_trailer_overhead =
         FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
 
+    // lengthField counts the packetDescriptor + payload. Reject frames whose lengthField is too
+    // small to even contain the descriptor (would underflow the payload size computation below).
+    if (header.get_lengthField() < sizeof(FwPacketDescriptorType)) {
+        return Status::NO_FRAME_DETECTED;
+    }
+    const FwSizeType payload_size = header.get_lengthField() - sizeof(FwPacketDescriptorType);
+
     // Guard: reject frames whose declared length would overflow FwSizeType when added to the
     // fixed overhead. Using subtraction on unsigned types (as in the prior implementation) is
     // fragile — if the constants change sign or width the subtraction itself can wrap silently.
     // An explicit addition-based check is clearer and easier to audit.
-    if (header.get_lengthField() > std::numeric_limits<FwSizeType>::max() - header_trailer_overhead) {
-        // lengthField + overhead would overflow — frame is invalid
+    if (payload_size > std::numeric_limits<FwSizeType>::max() - header_trailer_overhead) {
+        // payload_size + overhead would overflow — frame is invalid
         return Status::NO_FRAME_DETECTED;
     }
 
-    // We expect the frame size to be size of header + body (of size specified in header) + trailer.
+    // We expect the frame size to be size of header + payload (lengthField minus descriptor) + trailer.
     // Overflow is impossible here: the guard above ensures
-    //   lengthField <= MAX - header_trailer_overhead
-    const FwSizeType expected_frame_size = header.get_lengthField() + header_trailer_overhead;
+    //   payload_size <= MAX - header_trailer_overhead
+    const FwSizeType expected_frame_size = payload_size + header_trailer_overhead;
     // If the frame will never fit, then report NO_FRAME_DETECTED to drop the erroneous frame
     if (data.get_capacity() < expected_frame_size) {
         return Status::NO_FRAME_DETECTED;
@@ -86,7 +93,7 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     U8 trailer_data[FprimeProtocol::FrameTrailer::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     status = data.peek(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE,
-                       FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
+                       FprimeProtocol::FrameHeader::SERIALIZED_SIZE + payload_size);
     if (status != Fw::FW_SERIALIZE_OK) {
         return Status::NO_FRAME_DETECTED;
     }
@@ -100,17 +107,16 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
-    // Compute CRC over the transmitted data (header + body).
+    // Compute CRC over the transmitted data (header + payload).
     // Safety invariant: the guard above ensures
-    //   lengthField <= MAX - header_trailer_overhead
+    //   payload_size <= MAX - header_trailer_overhead
     //                <= MAX - HEADER_SIZE - TRAILER_SIZE
     //                <  MAX - HEADER_SIZE
     // so this addition cannot overflow. The assert makes that contract explicit at the
     // point of use so it remains correct if this code is ever moved or refactored.
-    FW_ASSERT(header.get_lengthField() <=
-                  std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(header.get_lengthField()));
-    FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    FW_ASSERT(payload_size <= std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
+              static_cast<FwAssertArgType>(payload_size));
+    FwSizeType hash_field_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + payload_size;
     hash.init();
     for (FwSizeType i = 0; i < hash_field_size; i++) {
         U8 byte = 0;

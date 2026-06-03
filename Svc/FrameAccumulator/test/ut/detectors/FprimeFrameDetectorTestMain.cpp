@@ -44,7 +44,8 @@ FwSizeType generate_random_fprime_frame(Types::CircularBuffer& circular_buffer) 
     // Build the header using the autocoded FPP type
     U8 frame_header[FRAME_HEADER_SIZE];
     Svc::FprimeProtocol::FrameHeader header;
-    header.set_lengthField(static_cast<Svc::FprimeProtocol::TokenType>(packet_size));
+    // lengthField counts the packetDescriptor + payload
+    header.set_lengthField(static_cast<Svc::FprimeProtocol::TokenType>(packet_size + sizeof(FwPacketDescriptorType)));
     header.set_packetDescriptor(static_cast<FwPacketDescriptorType>(STest::Random::lowerUpper(0, 0xFF)));
     Fw::ExternalSerializeBuffer header_ser(frame_header, FRAME_HEADER_SIZE);
     Fw::SerializeStatus ser_status = header.serializeTo(header_ser);
@@ -168,8 +169,8 @@ TEST(FprimeFrameDetector, TestMoreDataNeeded) {
 }
 
 TEST(FprimeFrameDetector, TestRejectsLengthFieldExceedingCapacity) {
-    // lengthField = 1 -> expected_frame_size = FRAME_OVERHEAD + 1, which
-    // exceeds the ring's capacity. The capacity check in detect() must
+    // lengthField = 3 -> payload_size = 1 -> expected_frame_size = FRAME_OVERHEAD + 1,
+    // which exceeds the ring's capacity. The capacity check in detect() must
     // reject the frame without crashing.
     Svc::FrameDetectors::FprimeFrameDetector fprime_detector;
     U8 buffer[FRAME_OVERHEAD];
@@ -177,7 +178,7 @@ TEST(FprimeFrameDetector, TestRejectsLengthFieldExceedingCapacity) {
     Types::CircularBuffer circular_buffer(buffer, sizeof(buffer));
 
     U8 header_bytes[Svc::FprimeProtocol::FrameHeader::SERIALIZED_SIZE];
-    ASSERT_TRUE(build_fprime_header(header_bytes, 1));
+    ASSERT_TRUE(build_fprime_header(header_bytes, 3));
     circular_buffer.serialize(header_bytes, sizeof(header_bytes));
     U8 trailer_pad[Svc::FprimeProtocol::FrameTrailer::SERIALIZED_SIZE] = {};
     circular_buffer.serialize(trailer_pad, sizeof(trailer_pad));
