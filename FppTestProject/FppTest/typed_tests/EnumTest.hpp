@@ -148,6 +148,8 @@ TYPED_TEST_P(EnumTest, IsValidFunction) {
     typename TypeParam::SerialType invalidValue = FppTest::Enum::getInvalidValue<TypeParam>();
 
     ASSERT_TRUE(TypeParam::isValid(validValue));
+    TypeParam validEnum(static_cast<typename TypeParam::T>(validValue));
+    ASSERT_TRUE(validEnum.isValid());
     ASSERT_FALSE(TypeParam::isValid(invalidValue));
 }
 
@@ -165,7 +167,8 @@ TYPED_TEST_P(EnumTest, Serialization) {
     Fw::SerialBuffer buf(data, sizeof(data));
 
     // Serialize the enums
-    status = buf.serializeFrom(validValue);
+    TypeParam validEnum1(static_cast<typename TypeParam::T>(validValue));
+    status = buf.serializeFrom(validEnum1);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getSize(), sizeof(typename TypeParam::SerialType));
