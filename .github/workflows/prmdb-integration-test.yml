@@ -1,4 +1,4 @@
-name: PrmDb Integration Test
+name: GDS Integration
 
 on:
   pull_request:
@@ -46,8 +46,6 @@ jobs:
       - name: "Create Test Parameter JSON"
         working-directory: ./Ref
         run: |
-          # TODO: Create a simple JSON file with test parameters
-          # Example: {"Ref.recvBuffComp": {"parameter1": 42}}
           cat > test_params.json << 'EOF'
           {
             "Ref.recvBuffComp": {
@@ -63,8 +61,6 @@ jobs:
       - name: "Generate Parameter .dat File"
         working-directory: ./Ref
         run: |
-          # TODO: Use fprime-prm-write to convert JSON to .dat
-          # Hint: You need the dictionary and the JSON input
           fprime-prm-write dat test_params.json \
           --dictionary build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json \
           --output test_params.dat
@@ -104,8 +100,8 @@ jobs:
         working-directory: ./Ref
         run: |
           # Sending GDS fprime-cli commands
-          fprime-cli commands send FileHandling.prmDb.PRM_LOAD_FILE "test_params.dat" MERGE
-          fprime-cli commands send FileHandling.prmDb.PRM_COMMIT_STAGED
+          fprime-cli command-send FileHandling.prmDb.PRM_LOAD_FILE "test_params.dat" MERGE
+          fprime-cli command-send FileHandling.prmDb.PRM_COMMIT_STAGED
 
       # Step 9: Verify parameters loaded
       - name: "Verify Parameters"
@@ -136,21 +132,3 @@ jobs:
             cat gds.log
             exit 1
           fi
-
-      # Step 10: Cleanup
-      - name: "Stop GDS"
-        working-directory: ./Ref
-        if: always()  # Run even if previous steps failed
-        run: |
-          # Check if PID file exists
-          if [ -f gds.pid ]; then
-            # Read the PID
-            GDS_PID=$(cat gds.pid)
-            
-            # Try graceful shutdown
-            kill $GDS_PID || true
-
-            # Wait for shutdown
-            sleep 2
-          fi
-
