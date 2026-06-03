@@ -36,7 +36,7 @@ Outgoing data flows through the following stages:
 
 2. **Framing** — The framer (e.g. [FprimeFramer](https://github.com/nasa/fprime/blob/devel/Svc/FprimeFramer/docs/sdd.md) or a CCSDS framer) wraps each outgoing packet in a protocol-specific frame. The framing interface is pluggable, allowing different protocols to be selected per mission.
 
-3. **Transmission** — The framed data is passed to [ComStub](https://github.com/nasa/fprime/blob/devel/Svc/ComStub/docs/sdd.md), which delegates to a mission-specific communication adapter for physical transmission. The adapter reports success or failure back through the communication status protocol.
+3. **Transmission** — The framed data is passed to a communication adapter that implements the [Communication Adapter Interface](https://github.com/nasa/fprime/blob/devel/docs/reference/communication-adapter-interface.md) for physical transmission. For ground testing, [ComStub](https://github.com/nasa/fprime/blob/devel/Svc/ComStub/docs/sdd.md) wraps a byte stream driver to present this interface. For flight, missions replace ComStub with a mission-specific adapter (e.g. a radio driver) of the same interface. The adapter reports success or failure back through the communication status protocol.
 
 ### Uplink Path
 
