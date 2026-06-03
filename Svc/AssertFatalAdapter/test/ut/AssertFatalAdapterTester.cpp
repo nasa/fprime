@@ -48,7 +48,7 @@ void doLeadingTruncation(char* dst, const char* src, FwSizeType truncatedSize) {
     // Calculate start index. If string is shorter than N, keep whole string.
     const char* start = (len > truncatedSize) ? src + (len - truncatedSize) : src;
     // Copy safely into output buffer (also ensures null-termination)
-    (void)Fw::StringUtils::string_copy(dst, start, truncatedSize + 1);
+    (void)Fw::StringUtils::string_copy(dst, start, std::min(truncatedSize, len) + 1);
 }
 
 void AssertFatalAdapterTester::testAsserts() {
@@ -197,8 +197,6 @@ void AssertFatalAdapterTester::testTruncation() {
     // Expected truncated result: keeps last (maxSize) characters
     char expectedTruncated[Fw::StringBase::BUFFER_SIZE(maxSize)];
     doLeadingTruncation(expectedTruncated, longPath, maxSize);
-    printf("longPath %s\n", longPath);
-    printf("expectedTruncated %s\n", expectedTruncated);
 
     this->clearTextLogs();
     this->component.reportAssert(longPath, 300, 1, 42, 0, 0, 0, 0, 0);
