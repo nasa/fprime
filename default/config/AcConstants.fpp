@@ -60,7 +60,7 @@ constant FwAssertTextSize = 256
 @ in FW_LOG_STRING_MAX_SIZE)
 @ Set much smaller than FwAssertTextSize so there's space for time stamp/assert 
 @ arguments in log message
-constant AssertFatalAdapterEventFileSize = 150
+constant AssertFatalAdapterEventFileSize = FileNameStringSize
 
 @ The maximum size in bytes for passing sequence arguments through CmdSeqIn ports
 @ Note: This must fit within FW_CMD_ARG_BUFFER_MAX_SIZE along with cmd arguments using Svc::SeqArgs
