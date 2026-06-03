@@ -107,7 +107,7 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
 #endif
 
     CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
-    Fw::defaultReportAssert(start, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
+    Fw::defaultReportAssert(file, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,
                             sizeof(msg));
     Fw::Logger::log("%s\n", msg);
 
