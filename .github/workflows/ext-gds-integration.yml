@@ -1,20 +1,27 @@
-name: GDS Integration
+name: "External Repo: GDS Integration"
 
 on:
+  push:
+    branches: [ devel, release/** ]
   pull_request:
-    branches: [ devel ]
-    paths:
-      - 'Svc/PrmDb/**'
-      - 'Ref/**'
-      - '.github/workflows/prmdb-integration-test.yml'  # Test changes to this workflow itself
-
-# Cancel in-progress runs if a newer run is started on the same PR
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   prmdb-test:
+    name: "PrmDb / fprime-prm"
     runs-on: ubuntu-latest
 
     steps:
