@@ -28,11 +28,11 @@ char* string_copy(char* destination, const char* source, FwSizeType num);
 
 /**
  * \brief get a pointer to the last N characters of a string
- * 
+ *
  * Return a pointer to the last N characters of a string. If the string is shorter than N characters, this will return
  * a pointer to the start of the string. The string is assumed to be null-terminated but operations will be performed
  * within the supplied buffer size bound.
- * 
+ *
  * \param source: string to get the last N characters of
  * \param n: number of characters from the end of the string to return
  * \param buffer_size: the size of the buffer containing source string.

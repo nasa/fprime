@@ -98,7 +98,7 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
     fileArg.format("0x%08" PRIX32, file);
 #else
     constexpr FwSizeType outputSize = std::min(static_cast<FwSizeType>(AssertFatalAdapterEventFileSize),
-                                             static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
+                                               static_cast<FwSizeType>(FW_LOG_STRING_MAX_SIZE));
     // File name argument is derived from a compiler string literal. Per the C++ standard, string literals are
     // guaranteed to be null-terminated and whose maximum length is from U16_MAX to available system memory size. Thus,
     // we choose a bound of the lowest allowed maximum literal length.
