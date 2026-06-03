@@ -27,7 +27,7 @@ Drv/LinuxSpiDriver/LinuxSpiDriverComponentImplCommon.cpp
                                                2       0     0%   22-23
 Drv/LinuxUartDriver/LinuxUartDriver.cpp      237       0     0%   30,32-37,39,44-47,49,57,59-64,66,69,71-78,95-96,98-105,108-109,111-118,121,123-130,133-152,154-171,173-175,178-180,183-185,188-190,193-195,198,200-207,224,226-238,242-257,260,263,265,268,271-278,281-284,286,289-291,293,299-302,304-307,309-311,313,315-320,323-324,326-328,330-335,338-342,344-346,348,352-354,356,361-368,370,373-375,377,380-384,386-388,390-391
 Drv/Ports/DataTypes/DataBuffer.cpp            24       0     0%   6-9,11,13,15-18,20-22,25-27,30-31,34-35,38-39,42-43
-Drv/TcpClient/TcpClientComponentImpl.cpp      40      30    75%   53-54,56,75-77,81-83,86
+Drv/TcpClient/TcpClientComponentImpl.cpp      40      32    80%   54,75-77,81-83,86
 Drv/TcpServer/TcpServerComponentImpl.cpp      72      61    84%   60,101-103,123-125,129-131,134
 Drv/Udp/UdpComponentImpl.cpp                  47      32    68%   41-42,61-62,64,83-88,92-94,97
 Fw/Buffer/Buffer.cpp                          96      81    84%   126,130,134,157,163,167,177,179-180,184-189
@@ -342,7 +342,7 @@ Svc/StaticMemory/StaticMemoryComponentImpl.cpp
                                               20      20   100%
 Svc/SystemResources/SystemResources.cpp       73      72    98%   36
 Svc/TlmChan/TlmChan.cpp                      125     103    82%   56,59-60,102-104,114-117,119-121,131-133,197,222,224,226,229,234
-Svc/TlmPacketizer/TlmPacketizer.cpp          295     273    92%   266,268-269,307,319,391,427-428,462-463,478-479,494-495,512-513,577-578,580,591-592,594
+Svc/TlmPacketizer/TlmPacketizer.cpp          295     273    92%   266,268-269,307,319,391,427-428,462-463,478-479,494-495,512-513,576-577,580,591-592,594
 Svc/Version/Version.cpp                      154     148    96%   104-106,228,230-231
 TestUtils/OnChangeChannel.hpp                  6       6   100%
 TestUtils/Option.hpp                          17      17   100%
@@ -356,5 +356,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17515   14236    81%
+TOTAL                                      17515   14238    81%
 ------------------------------------------------------------------------------
