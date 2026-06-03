@@ -72,10 +72,17 @@ This port carries a status of `Fw::Success::SUCCESS` or `Fw::Success::FAILURE` t
 
 ## Communication Queue Protocol
 
-`Svc::ComQueue` queues messages until the communication adapter is ready to receive these messages. For each `Fw::Success::SUCCESS` message received, `Svc::ComQueue` will emit one message. `Svc::ComQueue` will not emit messages at any other time. This implies several things:
+`Svc::ComQueue` queues messages until the communication adapter is ready to receive these messages. For each `Fw::Success::SUCCESS` message received, `Svc::ComQueue` will emit exactly one message. `Svc::ComQueue` will not emit messages at any other time. `Fw::Success::FAILURE` pauses the queue; data flow resumes only when a subsequent `Fw::Success::SUCCESS` is received.
 
-1. An initial `Fw::Success::SUCCESS` message must be sent to `Svc::ComQueue` to initiate data flow
-2. A `Fw::Success::SUCCESS` must be eventually received in response to each message for data to continue to flow
+The following rules govern the `comStatusIn` port of `Svc::ComQueue`:
+
+1. An initial `Fw::Success::SUCCESS` message must be sent to `Svc::ComQueue` to initiate data flow (typically on start-up or driver connection)
+2. Exactly one `Fw::Success::SUCCESS` must eventually be received in response to each emitted message for data to continue to flow
+3. `Fw::Success::FAILURE` pauses the queue — no messages will be emitted until a subsequent `Fw::Success::SUCCESS` is received
+4. After a `Fw::Success::FAILURE`, a `Fw::Success::SUCCESS` must be sent to resume data flow (this SUCCESS does not correspond to any particular message — it indicates that the communication path has been restored)
+
+> [!IMPORTANT]
+> `Fw::Success::SUCCESS` is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successfully transmitted message, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. No other uses of `Fw::Success::SUCCESS` are permitted.
 
 These implications are discussed in more depth in the appropriate protocol sections.
 
@@ -98,23 +105,30 @@ Framer implementations may choose to implement a different behavior. For example
 ## Communication Adapter Protocol
 
 The communication adapter must obey a specific protocol to indicate to F´ application components the status of outgoing
-transmissions. This is done with the `comStatus` port. A communication status is one of two possibilities:
+transmissions. This is done with the `comStatusOut` port. A communication status is one of two possibilities:
 
 | Status               | Description                                                                       |
 |----------------------|-----------------------------------------------------------------------------------|
 | Fw::Success::SUCCESS | *Communication adapter* transmission succeeded and is ready for more data.       |
 | Fw::Success::FAILURE | Last transmission failed; *communication adapter* is unable to receive more data. |
 
-* Fw::Success::SUCCESS may also indicate a connection/reconnection success when data flow must be initiated.
+A *Communication Adapter* shall emit `comStatusOut` signals according to the following rules:
 
-A *Communication Adapter* shall emit either Fw::Success::SUCCESS or Fw::Success::FAILURE via the `comStatusOut` port once
-for each call received on `dataIn`. Additionally, a *Communication Adapter* shall emit Fw::Success::SUCCESS once at
-startup to indicate communication is initially ready and once after each Fw::Success::FAILURE event to indicate that
-communication has been restored. By emitting Fw::Success::SUCCESS after any failure, the communication adapter ensures
-that each received message eventually results in a Fw::Success::SUCCESS.
+1. **On start-up / connection:** The adapter shall emit exactly one `Fw::Success::SUCCESS` to initiate data flow. This typically occurs when the underlying driver signals readiness (e.g. via `drvConnected`). This initial SUCCESS is not in response to any data — it tells `Svc::ComQueue` that the adapter is ready to accept its first message.
 
-Since the communication status reflects the status of specific data transmission it must be sent after the return (deallocation) of that data.
+2. **In response to data received on `dataIn`:** The adapter shall emit exactly one status (`Fw::Success::SUCCESS` or `Fw::Success::FAILURE`) for each call received on `dataIn`.
+   - `Fw::Success::SUCCESS` indicates the transmission succeeded and the adapter is ready for the next message.
+   - `Fw::Success::FAILURE` indicates the transmission failed and the adapter is temporarily unable to receive more data.
 
+3. **After a previous `Fw::Success::FAILURE`:** The adapter shall emit exactly one `Fw::Success::SUCCESS` once communication has been restored. This recovery SUCCESS is not in response to any data — it tells `Svc::ComQueue` to resume sending. The adapter is responsible for any retransmission of the failed data before emitting this recovery signal.
+
+> [!IMPORTANT]
+> `Fw::Success::SUCCESS` is valid in exactly three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission of data received on `dataIn`, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. Each received message on `dataIn` must eventually result in a `Fw::Success::SUCCESS` — either directly on success, or via the failure-then-recovery sequence.
+
+Since the communication status reflects the status of a specific data transmission, it must be sent after the return (deallocation) of that data via the `dataReturnOut` port.
+
+> [!CAUTION]
+> Calls to `comStatusOut` must happen after calls to `dataReturnOut` returning the data the status applies to.
 
 > [!NOTE]
 > It is imperative that *Communication Adapters* implement the `comStatusOut` protocol correctly.

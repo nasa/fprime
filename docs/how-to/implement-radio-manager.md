@@ -58,7 +58,7 @@ Run `fprime-util impl` to generate the component implementation files. Implement
 This port is receiving data from the communication stack and sending it to the hardware for outgoing communications. When done sending the data:
 
 - the input buffer **must** be returned through the `dataReturnOut` port (for memory ownership, see [Design Pattern: Return-To-Sender](../user-manual/framework/memory-management/buffer-pool.md#design-pattern-return-to-sender)) 
-- a status **must** be sent via `comStatusOut`. Only a `Fw::Success::SUCCESS` value will trigger the ComQueue to send new outgoing data. See [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol) for more detail.
+- a status **must** be sent via `comStatusOut`. Only a `Fw::Success::SUCCESS` value will trigger the ComQueue to send new outgoing data. `Fw::Success::SUCCESS` is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. See [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol) for more detail.
 
 **Example:**
 
@@ -116,7 +116,7 @@ void RadioManager::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffe
 
 ### Initiate downlink data flow
 
-As detailed in the [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-queue-protocol), the F´ downlink stack expects to receive an initial `Fw::Success::SUCCESS` message via our Com Adapter component's `comStatusOut` port to initiate data flow. This indicates that the radio manager is ready to be handed data to send out for downlink. Projects may implement this as is relevant for their specific radio. 
+As detailed in the [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol), the F´ downlink stack expects to receive an initial `Fw::Success::SUCCESS` message via our Com Adapter component's `comStatusOut` port to initiate data flow. This initial SUCCESS is not in response to any data — it tells `Svc::ComQueue` that the adapter is ready to accept its first message. Similarly, after a `Fw::Success::FAILURE`, the adapter must eventually emit a recovery `Fw::Success::SUCCESS` to resume data flow. Projects may implement this as is relevant for their specific radio.
 
 In our example, we will leverage the ByteStreamDriver's `ready` port, which signals when the driver is ready to receive data.
 
@@ -242,8 +242,7 @@ Implement retry logic for transient failures. See [`Svc.ComStub::handleSynchrono
 
 - **Return buffers promptly**: Return ownership via `*Return*` ports immediately after transmission.
 
-- **Handle errors gracefully**: Emit `Fw::Success::FAILURE` to pause data flow, then `SUCCESS` when recovered.
-
+- **Handle errors gracefully**: Emit `Fw::Success::FAILURE` to pause data flow, then emit a recovery `Fw::Success::SUCCESS` when the communication path has been restored.
 ---
 
 ## Additional Resources

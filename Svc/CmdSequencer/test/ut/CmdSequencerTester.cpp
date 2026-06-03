@@ -271,7 +271,8 @@ void CmdSequencerTester ::parameterizedDataReadErrors(SequenceFiles::File& file)
 void CmdSequencerTester ::parameterizedNeverLoaded() {
     // Try to run a sequence
     Fw::String fArg("");
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert seqDone response
     ASSERT_from_seqDone_SIZE(1);
@@ -461,7 +462,7 @@ void CmdSequencerTester ::loadSequence(const char* const fileName) {
 
 void CmdSequencerTester ::runSequence(const U32 cmdSeq, const char* const fileName) {
     // Send run command
-    this->sendCmd_CS_RUN(0, cmdSeq, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, cmdSeq, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -474,7 +475,8 @@ void CmdSequencerTester ::runSequence(const U32 cmdSeq, const char* const fileNa
 void CmdSequencerTester ::runSequenceByPortCall(const char* const fileName) {
     // Invoke the seqRun port
     Fw::String fArg(fileName);
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert no command response
     ASSERT_CMD_RESPONSE_SIZE(0);
@@ -500,7 +502,8 @@ void CmdSequencerTester ::runSequenceByFileDispatcherPortCall(const char* const 
 void CmdSequencerTester ::runLoadedSequence() {
     // Invoke the port
     Fw::String fArg("");
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert no command response
     ASSERT_CMD_RESPONSE_SIZE(0);
@@ -512,7 +515,7 @@ void CmdSequencerTester ::runLoadedSequence() {
 
 void CmdSequencerTester ::startNewSequence(const char* const fileName) {
     // Start the sequence
-    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::CmdSequencer_BlockState::NO_BLOCK);
+    this->sendCmd_CS_RUN(0, 0, Fw::CmdStringArg(fileName), Svc::BlockState::NO_BLOCK);
     this->clearAndDispatch();
     // Assert command response
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -530,7 +533,8 @@ void CmdSequencerTester ::startNewSequence(const char* const fileName) {
     ASSERT_EVENTS_CS_InvalidMode_SIZE(1);
     // Invoke sequence port
     Fw::String fArg(fileName);
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert response on seqDone
     ASSERT_from_seqDone_SIZE(1);

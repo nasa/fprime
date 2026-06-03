@@ -23,7 +23,7 @@ namespace Utils {
 //! \class HashBuffer
 //! \brief A container class for holding a hash buffer
 //!
-class HashBuffer : public Fw::SerializeBufferBase {
+class HashBuffer : public Fw::LinearBufferBase {
   public:
     // ----------------------------------------------------------------------
     // Construction and destruction

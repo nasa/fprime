@@ -63,21 +63,31 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
     Fw::ExternalSerializeBuffer buf;
     buf.setExtBuffer(data, sizeof(data));
 
-    // first let's calculate the size of the body. do this by just writing the body,
-    // then calculating how big that was, then clearing and writing the header, then writing the body again
+    // Calculate body size (arg_specs and statements)
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+
     seq.get_header().set_bodySize(static_cast<U32>(buf.getSize()));
     buf.resetSer();
 
+    // Write header using FPP auto-generated serialization
     ASSERT_EQ(buf.serializeFrom(seq.get_header()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+    // Write arg_specs in Fpy variable-length format
     for (U32 ii = 0; ii < seq.get_header().get_argumentCount(); ii++) {
-        ASSERT_EQ(buf.serializeFrom(seq.get_args()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        const Fpy::ArgSpec& argSpec = seq.get_args()[ii];
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_argName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_typeName()), Fw::SerializeStatus::FW_SERIALIZE_OK);
+        // Write size
+        ASSERT_EQ(buf.serializeFrom(argSpec.get_argSize()), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
+
+    // Write statements
     for (U32 ii = 0; ii < seq.get_header().get_statementCount(); ii++) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
@@ -102,6 +112,27 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
 
 void FpySequencerTester::removeFile(const char* name) {
     Os::FileSystem::removeFile(name);
+}
+
+void FpySequencerTester::addArgumentSpec(Fw::String argName, Fw::String typeName, Fpy::StackSizeType argSize) {
+    U8 argCount = seq.get_header().get_argumentCount();
+    FW_ASSERT(argCount < Fpy::MAX_SEQUENCE_ARG_COUNT);
+
+    Fpy::ArgSpec& argSpec = seq.get_args()[argCount];
+
+    // Set arg_name
+    FW_ASSERT(argName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_argName(argName);
+
+    // Set type_name
+    FW_ASSERT(typeName.length() <= Fpy::MAX_ARG_SPEC_NAME_LEN);
+    argSpec.set_typeName(typeName);
+
+    // Set size
+    argSpec.set_argSize(argSize);
+
+    // Increment argument count
+    seq.get_header().set_argumentCount(++argCount);
 }
 
 void FpySequencerTester::resetRuntime() {
@@ -278,22 +309,6 @@ void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::MEMCMP, buf);
 }
-void FpySequencerTester::add_SET_FLAG(U8 flagIdx) {
-    add_SET_FLAG(FpySequencer_SetFlagDirective(flagIdx));
-}
-void FpySequencerTester::add_SET_FLAG(FpySequencer_SetFlagDirective dir) {
-    Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::SET_FLAG, buf);
-}
-void FpySequencerTester::add_GET_FLAG(U8 flagIdx) {
-    add_GET_FLAG(FpySequencer_GetFlagDirective(flagIdx));
-}
-void FpySequencerTester::add_GET_FLAG(FpySequencer_GetFlagDirective dir) {
-    Fw::StatementArgBuffer buf;
-    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
-    addDirective(Fpy::DirectiveId::GET_FLAG, buf);
-}
 void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
@@ -376,6 +391,11 @@ void FpySequencerTester::add_STORE_ABS_CONST_OFFSET(FpySequencer_StoreAbsConstOf
     FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
     addDirective(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, buf);
 }
+
+void FpySequencerTester::add_POP_EVENT() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::POP_EVENT, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
@@ -388,7 +408,7 @@ void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The eve
 void FpySequencerTester::writeAndRun() {
     removeFile("test.bin");
     writeToFile("test.bin");
-    sendCmd_RUN(0, 0, Fw::String("test.bin"), FpySequencer_BlockState::BLOCK);
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::BLOCK);
     // dispatch cmd
     cmp.doDispatch();
     // dispatch sm sig
@@ -501,16 +521,6 @@ Signal FpySequencerTester::tester_memCmp_directiveHandler(const FpySequencer_Mem
     return this->cmp.memCmp_directiveHandler(directive, err);
 }
 
-Signal FpySequencerTester::tester_setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive,
-                                                           DirectiveError& err) {
-    return this->cmp.setFlag_directiveHandler(directive, err);
-}
-
-Signal FpySequencerTester::tester_getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive,
-                                                           DirectiveError& err) {
-    return this->cmp.getFlag_directiveHandler(directive, err);
-}
-
 Signal FpySequencerTester::tester_getField_directiveHandler(const FpySequencer_GetFieldDirective& directive,
                                                             DirectiveError& err) {
     return this->cmp.getField_directiveHandler(directive, err);
@@ -550,6 +560,11 @@ Signal FpySequencerTester::tester_storeAbsConstOffset_directiveHandler(
     const FpySequencer_StoreAbsConstOffsetDirective& directive,
     DirectiveError& err) {
     return this->cmp.storeAbsConstOffset_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.popEvent_directiveHandler(directive, err);
 }
 
 Fw::Success FpySequencerTester::tester_deserializeDirective(const Fpy::Statement& stmt,
@@ -649,6 +664,10 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
     this->cmp.m_computedCRC = crc;
+}
+
+void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {
+    this->cmp.m_sequenceArgs = args;
 }
 
 // Get cmp member pointers

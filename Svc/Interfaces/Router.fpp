@@ -17,7 +17,8 @@ module Svc {
         @ Port for sending file packets as Fw::Buffer (ownership passed to receiver)
         output port fileOut: Fw.BufferSend
 
-        @ Port for receiving ownership back of buffers sent on fileOut
+        @ Port for receiving back ownership of buffers sent on fileOut or any other
+        @ output port that passes buffer ownership to the receiver
         sync input port fileBufferReturnIn: Fw.BufferSend
 
         @ Port for sending command packets as Fw::ComBuffers

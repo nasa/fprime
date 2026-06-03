@@ -164,29 +164,32 @@ void DpWriter::performProcessing(Fw::DpContainer& container) {
     // Get the bit mask for the processing types
     const Fw::DpCfg::ProcType::SerialType procTypes = container.getProcTypes();
     // Do the processing
+    bool did_process = false;
     for (FwIndexType portNum = 0; portNum < NUM_PROCBUFFERSENDOUT_OUTPUT_PORTS; ++portNum) {
         if ((procTypes & (1 << portNum)) != 0) {
             this->procBufferSendOut_out(portNum, buffer);
+            did_process = true;
         }
     }
 
-    // Updated DpContainer object state with the returned value in the
-    // container buffer
-    Fw::SerializeStatus stat = container.deserializeHeader();
-    FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, stat);
+    if (did_process) {
+        // Updated DpContainer object state with the returned value in the
+        // container buffer
+        Fw::SerializeStatus stat = container.deserializeHeader();
+        FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, stat);
 
-    // Check that the buffer size is compatible with the data size in
-    // the container header
-    FW_ASSERT(container.getDataSize() <= buffer.getSize(),
-              // Note: May perform a 64 to 32 bit conversion
-              static_cast<FwAssertArgType>(container.getDataSize()), static_cast<FwAssertArgType>(buffer.getSize()));
+        // Check that the buffer size is compatible with the data size in
+        // the container header
+        FW_ASSERT(container.getDataSize() <= buffer.getSize(), static_cast<FwAssertArgType>(container.getDataSize()),
+                  static_cast<FwAssertArgType>(buffer.getSize()));
 
-    // Re-compute and serialize the container header into the buffer
-    container.updateHeaderHash();
-    container.serializeHeader();
+        // Re-compute and serialize the container header into the buffer
+        container.updateHeaderHash();
+        container.serializeHeader();
 
-    // Shrink internal Fw::Buffer
-    container.shrinkBufferSize();
+        // Shrink internal Fw::Buffer
+        container.shrinkBufferSize();
+    }
 }
 
 Fw::Success::T DpWriter::writeFile(const Fw::DpContainer& container,

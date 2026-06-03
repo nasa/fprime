@@ -3,7 +3,10 @@
 // \brief common function implementation for Os::File
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
+#include <algorithm>
+#include <config/FppConstantsAc.hpp>
 
 extern "C" {
 #include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
@@ -47,8 +50,22 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode) {
 }
 
 File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::OverwriteType overwrite) {
+    FW_ASSERT(nullptr != filepath);
+    return this->open(filepath, static_cast<FwSizeType>(FileNameStringSize + 1), requested_mode, overwrite);
+}
+
+File::Status File::open(const CHAR* filepath, FwSizeType length, File::Mode requested_mode) {
+    return this->open(filepath, length, requested_mode, OverwriteType::NO_OVERWRITE);
+}
+
+File::Status File::open(const CHAR* filepath,
+                        FwSizeType length,
+                        File::Mode requested_mode,
+                        File::OverwriteType overwrite) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     FW_ASSERT(nullptr != filepath);
+    const FwSizeType string_len = static_cast<FwSizeType>(Fw::StringUtils::string_length(filepath, length));
+    FW_ASSERT(string_len < length, static_cast<FwAssertArgType>(string_len), static_cast<FwAssertArgType>(length));
     FW_ASSERT(File::Mode::OPEN_NO_MODE < requested_mode && File::Mode::MAX_OPEN_MODE > requested_mode);
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     FW_ASSERT((0 <= overwrite) && (overwrite < OverwriteType::MAX_OVERWRITE_TYPE));
@@ -65,6 +82,15 @@ File::Status File::open(const CHAR* filepath, File::Mode requested_mode, File::O
     }
 
     return status;
+}
+
+File::Status File::open(const Fw::ConstStringBase& path, File::Mode requested_mode) {
+    return this->open(path.toChar(), static_cast<FwSizeType>(path.getCapacity()), requested_mode,
+                      OverwriteType::NO_OVERWRITE);
+}
+
+File::Status File::open(const Fw::ConstStringBase& path, File::Mode requested_mode, File::OverwriteType overwrite) {
+    return this->open(path.toChar(), static_cast<FwSizeType>(path.getCapacity()), requested_mode, overwrite);
 }
 
 void File::close() {
@@ -275,7 +301,8 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
     FwSizeType read = 0;
     // Loop reading chunk by chunk
     for (FwSizeType i = 0; i < size; i += read) {
-        FwSizeType current_chunk_size = FW_MIN(size - i, static_cast<FwSizeType>(FW_FILE_CHUNK_SIZE));
+        // read in chunks to avoid large buffer allocations
+        FwSizeType current_chunk_size = std::min(size - i, static_cast<FwSizeType>(FW_FILE_CHUNK_SIZE));
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {

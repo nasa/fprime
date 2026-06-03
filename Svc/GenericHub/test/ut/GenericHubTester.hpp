@@ -60,6 +60,14 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_events();
 
+    //! Test of commands in-out
+    //!
+    void test_commands();
+
+    //! Test invalid input/deserialization guard paths
+    //!
+    void test_invalid_deserialization_paths();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -114,8 +122,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
-                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void from_serialOut_handler(FwIndexType portNum,         /*!< The port number*/
+                                Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
     );
 
   private:
@@ -123,7 +131,19 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void send_random_buffer(U32 port);
 
-    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
+
+    void test_command_dispatch();
+
+    void test_command_response();
+
+    void send_from_driver_packet(U32 type,
+                                 U32 port,
+                                 FwBuffSizeType declaredSize,
+                                 const U8* payload,
+                                 FwBuffSizeType payloadSize);
+
+    void assert_no_outputs_sent();
 
     // ----------------------------------------------------------------------
     // Helper methods

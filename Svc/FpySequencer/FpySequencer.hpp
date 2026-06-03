@@ -13,7 +13,6 @@
 #include "Fw/Types/WaitEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
-#include "Svc/FpySequencer/FlagIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencerComponentAc.hpp"
@@ -21,6 +20,7 @@
 #include "Svc/FpySequencer/HeaderSerializableAc.hpp"
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -33,7 +33,6 @@ static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_TLM_BUFFER_
               "Max stack size must be greater than max tlm buffer size");
 static_assert(Svc::Fpy::MAX_STACK_SIZE >= static_cast<FwSizeType>(FW_PARAM_BUFFER_MAX_SIZE),
               "Max stack size must be greater than max prm buffer size");
-static_assert(Svc::Fpy::FLAG_COUNT < std::numeric_limits<U8>::max(), "Flag count must be less than U8 max");
 
 namespace Svc {
 
@@ -65,8 +64,6 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
         FpySequencer_PushTimeDirective pushTime;
-        FpySequencer_SetFlagDirective setFlag;
-        FpySequencer_GetFlagDirective getFlag;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
         FpySequencer_StoreRelDirective storeRel;
@@ -75,6 +72,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_LoadAbsDirective loadAbs;
         FpySequencer_StoreAbsDirective storeAbs;
         FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
+        FpySequencer_PopEventDirective popEvent;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -107,7 +105,7 @@ class FpySequencer : public FpySequencerComponentBase {
         // pushes a byte array to the top of the stack from the source array
         // leaves the source array unmodified
         // does not convert endianness
-        void push(U8* src, Fpy::StackSizeType size);
+        void push(const U8* src, Fpy::StackSizeType size);
 
         // pushes zero bytes to the stack
         void pushZeroes(Fpy::StackSizeType byteCount);
@@ -146,8 +144,16 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        FpySequencer_BlockState block      //!< Return command status when complete or not
+                        Svc::BlockState block              //!< Return command status when complete or not
                         ) override;
+
+    //! Handler implementation for command RUN_ARGS
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                             U32 cmdSeq,                        //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                             Svc::BlockState block,             //!< Return command status when complete or not
+                             Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
+                             ) override;
 
     //! Handler for command VALIDATE
     //!
@@ -157,12 +163,21 @@ class FpySequencer : public FpySequencerComponentBase {
                              const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                              ) override;
 
-    //! Handler for command RUN_VALIDATED
+    //! Handler implementation for command VALIDATE_ARGS
     //!
-    //! Runs a previously validated sequence
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                                  U32 cmdSeq,                    //!< The command sequence number
-                                  FpySequencer_BlockState block  //!< Return command status when complete or not
+    //! Loads and validates a sequence with arguments
+    void VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                                  U32 cmdSeq,                        //!< The command sequence number
+                                  const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                                  Svc::SeqArgs buffer                //!< Arguments to pass to the sequencer
+                                  ) override;
+
+    //! Handler implementation for command RUN_VALIDATED
+    //!
+    //! Must be called after VALIDATE. Runs the sequence that was validated.
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,   //!< The opcode
+                                  U32 cmdSeq,            //!< The command sequence number
+                                  Svc::BlockState block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -218,14 +233,6 @@ class FpySequencer : public FpySequencerComponentBase {
                          U32 cmdSeq            //!< The command sequence number
                          ) override;
 
-    //! Handler for command SET_FLAG
-    //!
-    //! Sets the value of a flag. See Fpy.FlagId docstrings for info on each flag.
-    //! This command is only valid in the RUNNING state.
-    void SET_FLAG_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                             U32 cmdSeq,           //!< The command sequence number
-                             Svc::Fpy::FlagId flag,
-                             bool value) override;
     //! Handler for command DUMP_STACK_TO_FILE
     //!
     //! Writes the contents of the stack to a file. This command is only valid in the RUNNING.PAUSED state.
@@ -259,6 +266,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! sets the block state of the sequence to be run
     void Svc_FpySequencer_SequencerStateMachine_action_setSequenceBlockState(
+        SmId smId,                                              //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
+        ) override;
+
+    //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! sets the arguments to pass to the sequence
+    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
         SmId smId,                                              //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
@@ -345,6 +361,14 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears arguments
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! checks if sequencer should wake from sleep
@@ -373,6 +397,14 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! increments the m_sequencesStarted counter
     void Svc_FpySequencer_SequencerStateMachine_action_incrementSequenceCounter(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action pushArgsToStack of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! pushes sequence arguments to the stack
+    void Svc_FpySequencer_SequencerStateMachine_action_pushArgsToStack(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -481,7 +513,13 @@ class FpySequencer : public FpySequencerComponentBase {
                                ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) override;
+    void seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) override;
+
+    //! Handler implementation for seqCancelIn
+    //!
+    //! port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
 
     //! Handler for input port pingIn
     void pingIn_handler(FwIndexType portNum,  //!< The port number
@@ -552,12 +590,6 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_pushTime
     void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) override;
 
-    //! Internal interface handler for directive_setFlag
-    void directive_setFlag_internalInterfaceHandler(const Svc::FpySequencer_SetFlagDirective& directive) override;
-
-    //! Internal interface handler for directive_getFlag
-    void directive_getFlag_internalInterfaceHandler(const Svc::FpySequencer_GetFlagDirective& directive) override;
-
     //! Internal interface handler for directive_getField
     void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
 
@@ -583,6 +615,9 @@ class FpySequencer : public FpySequencerComponentBase {
     void directive_storeAbsConstOffset_internalInterfaceHandler(
         const Svc::FpySequencer_StoreAbsConstOffsetDirective& directive) override;
 
+    //! Internal interface handler for directive_popEvent
+    void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -606,13 +641,20 @@ class FpySequencer : public FpySequencerComponentBase {
     // live running computation of CRC (updated as we read)
     U32 m_computedCRC;
 
+    // Size of arguments read in current sequence. Used for validation between
+    // User provided arguments and what is requested of the sequence.
+    Fpy::StackSizeType m_totalExpectedArgSize;
+
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
-    FpySequencer_BlockState m_sequenceBlockState;
+    Svc::BlockState m_sequenceBlockState;
     // if we are to block on completion, save the opCode and cmdSeq we should
     // return
     FwOpcodeType m_savedOpCode;
     U32 m_savedCmdSeq;
+
+    // sequence arguments to push to stack when entering RUNNING state
+    Svc::SeqArgs m_sequenceArgs{};
 
     // the goal state is the state that we're trying to reach in the sequencer
     // if it's RUNNING, then we should promptly go to RUNNING once we validate the
@@ -646,11 +688,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Fw::Time wakeupTime = Fw::Time();
 
         Stack stack = Stack();
-
-        // the sequencer runtime flags. these are modifiable by the sequence and control
-        // various aspects of the sequencer.
-        // these get set to a default value from FpySequencerCfg
-        bool flags[Fpy::FLAG_COUNT] = {0};
     } m_runtime;
 
     // the state of the debugger. debugger is separate from runtime
@@ -857,8 +894,6 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
-    Signal setFlag_directiveHandler(const FpySequencer_SetFlagDirective& directive, DirectiveError& error);
-    Signal getFlag_directiveHandler(const FpySequencer_GetFlagDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
     Signal storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error);
@@ -868,6 +903,7 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeAbs_directiveHandler(const FpySequencer_StoreAbsDirective& directive, DirectiveError& error);
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                 DirectiveError& error);
+    Signal popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error);
 };
 
 }  // namespace Svc

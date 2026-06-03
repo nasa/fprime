@@ -1,30 +1,33 @@
 #Source files
-set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.cpp"
-        )
 
-set(MOD_DEPS
-    Fw/Types
-    Fw/Time
+
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/CRCChecker.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/RateLimiter.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TestUtils.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TokenBucket.hpp"
+  DEPENDS
+    Fw_Types
+    Fw_Time
     Os
-    Utils/Hash
-   )
-
-register_fprime_module()
-set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateLimiterTester.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
-        )
-set(UT_MOD_DEPS
-        STest
-        Fw/Types
-        Fw/Time
-        Os
-        )
-register_fprime_ut()
+    Utils_Hash
+)
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateLimiterTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
+  DEPENDS
+    STest
+    Fw_Types
+    Fw_Time
+    Os
+)
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
 if (TARGET "${UT_TARGET_NAME}")
     target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)

@@ -11,17 +11,21 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   fpptest:
     name: Run FppTest
     runs-on: ubuntu-22.04
     steps:
-      - name: "Checkout F´ Repository"
+      - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -43,12 +47,48 @@ jobs:
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util check
+          fprime-util check --pass-through --output-on-failure
         shell: bash
       - name: "Archive Logs"
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: FppTest-Logs
+          path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
+          retention-days: 5
+
+  fpptest-direct-port-calls:
+    name: Run FppTest (Direct Port Calls)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Install requirements.txt"
+        run: |
+          pip3 install -r ./requirements.txt
+        shell: bash
+      - name: "Generate UT build cache"
+        working-directory: ./FppTestProject
+        run: |
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+        shell: bash
+      - name: "Build UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: |
+          fprime-util build --ut
+        shell: bash
+      - name: "Run UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: |
+          fprime-util check --pass-through --output-on-failure
+        shell: bash
+      - name: "Archive Logs"
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FppTest-DirectPortCalls-Logs
           path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
           retention-days: 5

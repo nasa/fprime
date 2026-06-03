@@ -148,6 +148,11 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_CompareEntries();
     void test_PingIn();
     void test_BadFileDone();
+    void test_ProcessFileInvalidDir();
+    void test_MalformedFile();
+    void test_TruncatedDpRejected();
+    void test_NonCanonicalDpRejected();
+    void test_BadHeaderHashRejected();
 };
 
 }  // namespace Svc

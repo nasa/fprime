@@ -5,21 +5,28 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PassiveComponentBase.cpp"
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveComponentBase.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveComponentBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.hpp"
+  DEPENDS
+    Fw_Types
+    Fw_Obj
+    Fw_Port
 )
-# Note: no autocoding files, so basic includes must be hard-coded
-set(MOD_DEPS
-  Fw/Types
-  Fw/Obj
-  Fw/Port
-)
-register_fprime_module()
 # Makes active component its own library such that it can depend on Os where
 # passive components do not.
-list(APPEND MOD_DEPS Os Fw/Comp)
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
+register_fprime_module("Fw_CompQueued"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/QueuedComponentBase.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ActiveComponentBase.cpp"
+  DEPENDS
+    Fw_Types
+    Fw_Obj
+    Fw_Port
+    Os
+    Fw_Comp
 )
-register_fprime_module("Fw_CompQueued")

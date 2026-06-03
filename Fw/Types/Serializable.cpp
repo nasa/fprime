@@ -692,7 +692,8 @@ Serializable::SizeType LinearBufferBase::getDeserializeSizeLeft() const {
 }
 
 Serializable::SizeType LinearBufferBase::getSerializeSizeLeft() const {
-    FW_ASSERT(static_cast<FwAssertArgType>(this->m_serLoc));
+    FW_ASSERT(this->getCapacity() >= this->m_serLoc, static_cast<FwAssertArgType>(this->getCapacity()),
+              static_cast<FwAssertArgType>(this->m_serLoc));
     return this->getCapacity() - this->m_serLoc;
 }
 
@@ -746,7 +747,7 @@ U8* LinearBufferBase::getBuffAddrSer() {
 }
 
 #ifdef BUILD_UT
-bool LinearBufferBase::operator==(const SerializeBufferBase& other) const {
+bool LinearBufferBase::operator==(const LinearBufferBase& other) const {
     if (this->getSize() != other.getSize()) {
         return false;
     }

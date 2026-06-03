@@ -6,6 +6,10 @@ event InvalidSeqRunCall($state: I32) \
     severity warning high \
     format "Cannot run sequence from a port in state {}"
 
+event InvalidSeqCancelCall($state: I32) \
+    severity warning high \
+    format "Cannot cancel sequence from a port in state {}"
+
 event FileOpenError(
     filePath: string
     errorCode: I32
@@ -215,6 +219,20 @@ event TooManySequenceDirectives(
     severity warning high \
     format "A sequence specified it had {} directives but the max was {}"
 
+event ArgSizeMismatch(
+    expected: Fpy.StackSizeType
+    actual: FwSizeType
+    filePath: string
+) \
+    severity warning high \
+    format "Expected {} bytes of arguments, but received {} in sequence file {}"
+
+event ArgTotalSizeExceedsStackLimit(
+    argSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arguments of size {} would exceed max stack size."
+
 event SequencePaused(
     stmtIdx: U32
 ) \
@@ -231,3 +249,52 @@ event BreakpointSet(
 event BreakpointCleared() \
     severity activity high \
     format "Breakpoint cleared"
+
+event LogFatal(
+    filePath: string
+    message: string
+) \
+    severity fatal \
+    format "Sequence {}: {}"
+
+event LogWarningHi(
+    filePath: string
+    message: string
+) \
+    severity warning high \
+    format "Sequence {}: {}"
+
+event LogWarningLo(
+    filePath: string
+    message: string
+) \
+    severity warning low \
+    format "Sequence {}: {}"
+
+event LogCommand(
+    filePath: string
+    message: string
+) \
+    severity command \
+    format "Sequence {}: {}"
+
+event LogActivityHi(
+    filePath: string
+    message: string
+) \
+    severity activity high \
+    format "Sequence {}: {}"
+
+event LogActivityLo(
+    filePath: string
+    message: string
+) \
+    severity activity low \
+    format "Sequence {}: {}"
+
+event LogDiagnostic(
+    filePath: string
+    message: string
+) \
+    severity diagnostic \
+    format "Sequence {}: {}"

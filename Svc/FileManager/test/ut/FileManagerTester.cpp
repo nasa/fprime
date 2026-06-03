@@ -213,54 +213,6 @@ void FileManagerTester ::removeFileFail() {
     ASSERT_EVENTS_FileRemoveError(0, "test_file", Os::FileSystem::DOESNT_EXIST);
 }
 
-void FileManagerTester ::shellCommandSucceed() {
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-    // Remove test_file, if it exists
-    this->system("rm -rf test_file");
-
-    // Create test_file
-    this->shellCommand("touch test_file", LOG_FILE);
-#else
-    FAIL();  // Commands not implemented for this OS
-#endif
-
-    // Assert success
-    this->assertSuccess(FileManager::OPCODE_SHELLCOMMAND);
-    ASSERT_EVENTS_ShellCommandSucceeded_SIZE(1);
-    ASSERT_EVENTS_ShellCommandSucceeded(0, "touch test_file");
-
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-    // Check that test_file is there
-    this->system("test -f test_file");
-
-    // Clean up
-    this->system("rm test_file");
-#else
-    FAIL();  // Commands not implemented for this OS
-#endif
-}
-
-void FileManagerTester ::shellCommandFail() {
-#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-    // Remove test_file, if it exists
-    this->system("rm -rf test_file");
-
-    // Attempt to remove test_file (should fail)
-    this->shellCommand("rm test_file", LOG_FILE);
-#else
-    FAIL();  // Commands not implemented for this OS
-#endif
-    {
-        // Assert failure
-        this->assertFailure(FileManager::OPCODE_SHELLCOMMAND);
-        ASSERT_EVENTS_ShellCommandFailed_SIZE(1);
-        const EventEntry_ShellCommandFailed& e = this->eventHistory_ShellCommandFailed->at(0);
-        const U32 status = e.status;
-        ASSERT_NE(static_cast<U32>(0), status);
-        ASSERT_EVENTS_ShellCommandFailed(0, "rm test_file", status);
-    }
-}
-
 void FileManagerTester ::appendFileSucceed_newFile() {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove testing files, if they exist
@@ -546,13 +498,6 @@ void FileManagerTester ::removeDirectory(const char* const dirName) {
 void FileManagerTester ::removeFile(const char* const fileName, bool ignoreErrors) {
     Fw::CmdStringArg cmdStringFile(fileName);
     this->sendCmd_RemoveFile(INSTANCE, CMD_SEQ, cmdStringFile, ignoreErrors);
-    this->component.doDispatch();
-}
-
-void FileManagerTester ::shellCommand(const char* const command, const char* const logFileName) {
-    Fw::CmdStringArg cmdStringCommand(command);
-    Fw::CmdStringArg cmdStringLogFile(logFileName);
-    this->sendCmd_ShellCommand(INSTANCE, CMD_SEQ, cmdStringCommand, cmdStringLogFile);
     this->component.doDispatch();
 }
 

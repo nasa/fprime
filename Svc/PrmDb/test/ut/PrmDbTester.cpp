@@ -356,7 +356,6 @@ void PrmDbTester::runFileReadError() {
     for (FwSizeType i = 0; i < 5; i++) {
         clearEvents();
         this->m_waits = i + za;
-        printf("DEBUG: FILE_SIZE_ERROR case %d: m_waits=%d\n", static_cast<I32>(i), static_cast<I32>(i + za));
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
@@ -446,11 +445,12 @@ void PrmDbTester::runFileReadError() {
         this->m_waits = i + xa;
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
+
         switch (i) {
             case 0:
                 ASSERT_EVENTS_PrmFileBadCrc_SIZE(1);
                 // Parameter read error caused by adding one to the expected read
-                ASSERT_EVENTS_PrmFileBadCrc(0, 0x33d79cd4, 0xc180712b);
+                ASSERT_EVENTS_PrmFileBadCrc(0, 0x34D79CD3, 0xc180712b);
                 xa++;
                 break;
             case 1:
@@ -586,13 +586,38 @@ void PrmDbTester::runFileWriteError() {
     }
 }
 
+bool PrmDbTester::dbEqual() {
+    if (this->m_impl.m_activeDb->getSize() != this->m_impl.m_stagingDb->getSize()) {
+        return false;
+    }
+
+    Fw::ParamBuffer b;
+
+    for (const auto& entry : *this->m_impl.m_activeDb) {
+        auto found = this->m_impl.m_stagingDb->find(entry.getKey(), b);
+        if (found != Fw::Success::SUCCESS) {
+            return false;
+        }
+
+        if (b.getSize() != entry.getValue().getSize()) {
+            return false;
+        }
+
+        if (std::memcmp(b.getBuffAddr(), entry.getValue().getBuffAddr(), b.getSize()) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void PrmDbTester::runDbEqualTest() {
     Fw::SerializeStatus serStat;
 
     // 1. Test with empty databases - should be equal
     this->m_impl.clearDb(PrmDb_PrmDbType::DB_ACTIVE);
     this->m_impl.clearDb(PrmDb_PrmDbType::DB_STAGING);
-    EXPECT_TRUE(this->m_impl.dbEqual());
+    EXPECT_TRUE(this->dbEqual());
 
     // 2. Add an entry to active DB only - should not be equal
     U32 val1 = 0x42;
@@ -603,7 +628,7 @@ void PrmDbTester::runDbEqualTest() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
 
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_ACTIVE);
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 
     // 3. Add same entry to staging DB - should be equal again
     pBuff.resetSer();
@@ -611,7 +636,7 @@ void PrmDbTester::runDbEqualTest() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
 
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_STAGING);
-    EXPECT_TRUE(this->m_impl.dbEqual());
+    EXPECT_TRUE(this->dbEqual());
 
     // 4. Update entry in active DB only - should not be equal
     U32 val2 = 0x43;
@@ -620,7 +645,7 @@ void PrmDbTester::runDbEqualTest() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
 
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_STAGING);
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 
     // 5. Update staging DB to match - should be equal again
     pBuff.resetSer();
@@ -628,7 +653,7 @@ void PrmDbTester::runDbEqualTest() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
 
     this->m_impl.updateAddPrmImpl(id1, pBuff, PrmDb_PrmDbType::DB_ACTIVE);
-    EXPECT_TRUE(this->m_impl.dbEqual());
+    EXPECT_TRUE(this->dbEqual());
 
     // 6. Add different entry to staging DB - should not be equal
     U32 val3 = 0x44;
@@ -638,7 +663,7 @@ void PrmDbTester::runDbEqualTest() {
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
 
     this->m_impl.updateAddPrmImpl(id2, pBuff, PrmDb_PrmDbType::DB_STAGING);
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 }
 
 void PrmDbTester::runDbCopyTest() {
@@ -668,28 +693,21 @@ void PrmDbTester::runDbCopyTest() {
     this->m_impl.updateAddPrmImpl(id2, pBuff, PrmDb_PrmDbType::DB_ACTIVE);
 
     // Verify databases are not equal
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 
     // Copy active DB to staging DB
     this->m_impl.dbCopy(PrmDb_PrmDbType::DB_STAGING, PrmDb_PrmDbType::DB_ACTIVE);
 
     // Verify databases are now equal
-    EXPECT_TRUE(this->m_impl.dbEqual());
+    EXPECT_TRUE(this->dbEqual());
 
     // Verify values in the staging DB
     pBuff.resetSer();
     U32 testVal1;
-    FwSizeType idx = 0;
-    // Find the parameter and get its index
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (this->m_impl.m_activeDb[i].used && this->m_impl.m_stagingDb[i].id == id1) {
-            idx = i;
-            break;
-        }
-    }
-    EXPECT_TRUE(this->m_impl.m_activeDb[idx].used);
-    EXPECT_EQ(id1, this->m_impl.m_stagingDb[idx].id);
-    pBuff = this->m_impl.m_stagingDb[idx].val;
+
+    // Find the parameter
+    auto findStatus = this->m_impl.m_activeDb->find(id1, pBuff);
+    EXPECT_EQ(findStatus, Fw::Success::SUCCESS);
     serStat = pBuff.deserializeTo(testVal1);
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
     EXPECT_EQ(val1, testVal1);
@@ -721,42 +739,38 @@ void PrmDbTester::runDbCopyTest() {
     this->m_impl.updateAddPrmImpl(id3, pBuff, PrmDb_PrmDbType::DB_STAGING);
 
     // Verify databases are not equal
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 
     // Copy only the second entry from active to staging at the same index
-    FwSizeType activeIdx2 = 1;  // Index of second entry in active DB
-    this->m_impl.dbCopySingle(PrmDb_PrmDbType::DB_STAGING, PrmDb_PrmDbType::DB_ACTIVE, activeIdx2);
+    pBuff.resetSer();
+    auto findSuccess = this->m_impl.m_activeDb->find(id2, pBuff);
+    EXPECT_EQ(findSuccess, Fw::Success::SUCCESS);
 
-    // Verify the specific entry was copied correctly
-    EXPECT_TRUE(this->m_impl.m_stagingDb[activeIdx2].used);
-    EXPECT_EQ(id2, this->m_impl.m_stagingDb[activeIdx2].id);
+    auto insertSuccess = this->m_impl.m_stagingDb->insert(id2, pBuff);
+    EXPECT_EQ(insertSuccess, Fw::Success::SUCCESS);
 
     // Verify value matches
-    pBuff = this->m_impl.m_stagingDb[activeIdx2].val;
+    pBuff.resetSer();
+
+    findSuccess = this->m_impl.m_stagingDb->find(id2, pBuff);
+    EXPECT_EQ(findSuccess, Fw::Success::SUCCESS);
+
     F32 testVal2;
     serStat = pBuff.deserializeTo(testVal2);
     EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
     EXPECT_EQ(val2, testVal2);
 
     // Verify the original entry in staging DB is still there
-    bool foundOriginal = false;
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (this->m_impl.m_stagingDb[i].used && this->m_impl.m_stagingDb[i].id == id3) {
-            foundOriginal = true;
+    auto foundOriginal = this->m_impl.m_stagingDb->find(id3, pBuff);
+    EXPECT_EQ(foundOriginal, Fw::Success::SUCCESS);
 
-            // Verify value is still correct
-            pBuff = this->m_impl.m_stagingDb[i].val;
-            U16 testVal3;
-            serStat = pBuff.deserializeTo(testVal3);
-            EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
-            EXPECT_EQ(val3, testVal3);
-            break;
-        }
-    }
-    EXPECT_TRUE(foundOriginal);
+    U16 testVal3;
+    serStat = pBuff.deserializeTo(testVal3);
+    EXPECT_EQ(Fw::FW_SERIALIZE_OK, serStat);
+    EXPECT_EQ(val3, testVal3);
 
     // Databases should still not be equal since we only copied one entry
-    EXPECT_FALSE(this->m_impl.dbEqual());
+    EXPECT_FALSE(this->dbEqual());
 }
 
 void PrmDbTester::runDbCommitTest() {
@@ -794,8 +808,8 @@ void PrmDbTester::runDbCommitTest() {
     this->m_impl.updateAddPrmImpl(stagingId2, pBuff, PrmDbType::DB_STAGING);
 
     // Store pointers to databases before swap for verification
-    PrmDbImpl::t_dbStruct* preSwapActiveDb = this->m_impl.m_activeDb;
-    PrmDbImpl::t_dbStruct* preSwapStagingDb = this->m_impl.m_stagingDb;
+    auto* preSwapActiveDb = this->m_impl.m_activeDb;
+    auto* preSwapStagingDb = this->m_impl.m_stagingDb;
 
     // Clear events and command history
     this->clearEvents();
@@ -824,14 +838,7 @@ void PrmDbTester::runDbCommitTest() {
     EXPECT_EQ(this->m_impl.m_stagingDb, preSwapActiveDb);
 
     // Verify that the new staging database is empty
-    bool allEntriesCleared = true;
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (this->m_impl.m_stagingDb[i].used) {
-            allEntriesCleared = false;
-            break;
-        }
-    }
-    EXPECT_TRUE(allEntriesCleared);
+    EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
 
     // Verify that parameters can be accessed from the newly active database
     // (which was formerly the staging database)
@@ -868,8 +875,8 @@ void PrmDbTester::runPrmFileLoadNominal() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
-    PrmDbImpl::t_dbStruct* preSwapActiveDb = this->m_impl.m_activeDb;
-    PrmDbImpl::t_dbStruct* preSwapStagingDb = this->m_impl.m_stagingDb;
+    auto* preSwapActiveDb = this->m_impl.m_activeDb;
+    auto* preSwapStagingDb = this->m_impl.m_stagingDb;
 
     // Ensure we're in IDLE state
     EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
@@ -954,23 +961,26 @@ void PrmDbTester::runPrmFileLoadNominal() {
     ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_LOAD_FILE, 10, Fw::CmdResponse::OK);
 
     // Verify that parameters in staging database have expected values
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        // Check for the parameter that we added after the save file (since we are merging)
-        if (this->m_impl.m_stagingDb[i].used && this->m_impl.m_stagingDb[i].id == activeId1) {
-            pBuff = this->m_impl.m_stagingDb[i].val;
-            U32 checkVal;
-            stat = pBuff.deserializeTo(checkVal);
-            EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
-            EXPECT_EQ(checkVal, activeVal1);
-        }
-        // Check for the parameter that we updated after the save file (since we are merging)
-        if (this->m_impl.m_stagingDb[i].used && this->m_impl.m_stagingDb[i].id == activeId2) {
-            pBuff = this->m_impl.m_stagingDb[i].val;
-            U32 checkVal;
-            stat = pBuff.deserializeTo(checkVal);
-            EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
-            EXPECT_EQ(checkVal, activeVal2Original);  // Value should match what was in the file, not what we set
-        }
+    {
+        auto found = this->m_impl.m_stagingDb->find(activeId1, pBuff);
+        EXPECT_EQ(found, Fw::Success::SUCCESS);
+
+        U32 checkVal;
+        stat = pBuff.deserializeTo(checkVal);
+        EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+        EXPECT_EQ(checkVal, activeVal1);
+    }
+
+    {
+        auto found = this->m_impl.m_stagingDb->find(activeId2, pBuff);
+        EXPECT_EQ(found, Fw::Success::SUCCESS);
+
+        U32 checkVal;
+        stat = pBuff.deserializeTo(checkVal);
+        EXPECT_EQ(Fw::FW_SERIALIZE_OK, stat);
+
+        // Value should match what was in the file, not what we set
+        EXPECT_EQ(checkVal, activeVal2Original);
     }
 
     // Send PRM_COMMIT_STAGED command
@@ -992,14 +1002,7 @@ void PrmDbTester::runPrmFileLoadNominal() {
     EXPECT_EQ(this->m_impl.m_stagingDb, preSwapActiveDb);
 
     // Verify the new staging database (former active) is empty
-    bool allEntriesCleared = true;
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (this->m_impl.m_stagingDb[i].used) {
-            allEntriesCleared = false;
-            break;
-        }
-    }
-    EXPECT_TRUE(allEntriesCleared);
+    EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
 
     // Verify we can now perform operations only allowed in IDLE state
     // Try setting a parameter - should work in IDLE state
@@ -1033,8 +1036,8 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     Fw::QueuedComponentBase::MsgDispatchStatus dispatchStatus;
 
     // Store pointers to databases before swap for verification
-    PrmDbImpl::t_dbStruct* preSwapActiveDb = this->m_impl.m_activeDb;
-    PrmDbImpl::t_dbStruct* preSwapStagingDb = this->m_impl.m_stagingDb;
+    auto* preSwapActiveDb = this->m_impl.m_activeDb;
+    auto* preSwapStagingDb = this->m_impl.m_stagingDb;
 
     // Ensure we're in IDLE state
     EXPECT_EQ(this->m_impl.m_state, PrmDbFileLoadState::IDLE);
@@ -1123,14 +1126,7 @@ void PrmDbTester::runPrmFileLoadWithErrors() {
     EXPECT_EQ(this->m_impl.m_stagingDb, preSwapStagingDb);
 
     // Verify the staging database is empty
-    bool allEntriesCleared = true;
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (this->m_impl.m_stagingDb[i].used) {
-            allEntriesCleared = false;
-            break;
-        }
-    }
-    EXPECT_TRUE(allEntriesCleared);
+    EXPECT_EQ(this->m_impl.m_stagingDb->getSize(), 0);
 }
 
 void PrmDbTester::runPrmFileLoadIllegal() {
@@ -1321,6 +1317,128 @@ void PrmDbTester::runPrmFileLoadIllegal() {
     ASSERT_EVENTS_PrmIdAdded_SIZE(1);
 }
 
+void PrmDbTester::runShorterSaveDoesNotCorrupt() {
+    // NOTE: test generated by AI
+    const FwPrmIdType ID_A = 0xA0;
+    const FwPrmIdType ID_B = 0xA1;
+    const FwPrmIdType ID_C = 0xA2;
+    const U32 INITIAL_VAL = 0x11223344;
+    const U32 UPDATED_VAL = 0x99;
+
+    Fw::ParamBuffer pBuff;
+    Fw::QueuedComponentBase::MsgDispatchStatus dispatchStat;
+
+    // -------------------------------------------------------------------
+    // Phase 1: populate with 3 parameters and save (the "longer" file)
+    // -------------------------------------------------------------------
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    this->clearEvents();
+
+    const FwPrmIdType ids[3] = {ID_A, ID_B, ID_C};
+    for (FwSizeType i = 0; i < 3; i++) {
+        pBuff.resetSer();
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, pBuff.serializeFrom(INITIAL_VAL));
+        this->invoke_to_setPrm(0, ids[i], pBuff);
+        dispatchStat = this->m_impl.doDispatch();
+        EXPECT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, dispatchStat);
+    }
+    ASSERT_EVENTS_PrmIdAdded_SIZE(3);
+
+    Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_SAVE_FILE(0, 12);
+    dispatchStat = this->m_impl.doDispatch();
+    EXPECT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, dispatchStat);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_SAVE_FILE, 12, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete(0, 3);
+
+    // Record how many bytes the 3-parameter save produced.
+    const FwSizeType longWriteSize = Os::Stub::File::Test::StaticData::data.pointer;
+    ASSERT_GT(longWriteSize, static_cast<FwSizeType>(0));
+
+    // -------------------------------------------------------------------
+    // Phase 2: replace with 1 parameter and save (the "shorter" file)
+    //
+    // m_io_data is intentionally NOT zeroed between saves so that the bytes
+    // at positions [shortWriteSize, longWriteSize) still hold the old
+    // content — exactly what a POSIX file looks like without O_TRUNC.
+    // -------------------------------------------------------------------
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    this->clearEvents();
+
+    pBuff.resetSer();
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pBuff.serializeFrom(UPDATED_VAL));
+    this->invoke_to_setPrm(0, ID_A, pBuff);
+    dispatchStat = this->m_impl.doDispatch();
+    EXPECT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, dispatchStat);
+    ASSERT_EVENTS_PrmIdAdded_SIZE(1);
+
+    // Reset the write pointer but leave the buffer contents intact.
+    Os::Stub::File::Test::StaticData::setWriteResult(m_io_data, sizeof m_io_data);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+    this->clearEvents();
+    this->clearHistory();
+    this->sendCmd_PRM_SAVE_FILE(0, 13);
+    dispatchStat = this->m_impl.doDispatch();
+    EXPECT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, dispatchStat);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, PrmDbImpl::OPCODE_PRM_SAVE_FILE, 13, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete_SIZE(1);
+    ASSERT_EVENTS_PrmFileSaveComplete(0, 1);
+
+    const FwSizeType shortWriteSize = Os::Stub::File::Test::StaticData::data.pointer;
+
+    // Confirm the precondition: the second save must be strictly smaller.
+    // If this fires, the test is misconfigured — the two saves must differ
+    // in total byte count for the truncation scenario to be meaningful.
+    ASSERT_LT(shortWriteSize, longWriteSize);
+
+    // -------------------------------------------------------------------
+    // Phase 3: reload using only the shorter image — must not emit
+    //          PrmFileBadCrc and must return the updated value.
+    //
+    // We read back exactly shortWriteSize bytes (the content produced by
+    // the second save).  This mirrors what the fixed implementation provides
+    // on a real filesystem: only the new, shorter content exists on disk
+    // because the file was properly truncated on open.
+    //
+    // Without the fix the read would span longWriteSize bytes (the full
+    // untruncated file), the CRC recomputed over those bytes would not match
+    // the header value, and PrmFileBadCrc would fire instead.
+    // -------------------------------------------------------------------
+    this->m_impl.clearDb(PrmDbType::DB_ACTIVE);
+    Os::Stub::File::Test::StaticData::setReadResult(m_io_data, shortWriteSize);
+    Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
+    this->clearEvents();
+
+    this->m_impl.readParamFile();
+
+    // The load must succeed — no CRC mismatch event.
+    ASSERT_EVENTS_PrmFileBadCrc_SIZE(0);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_PrmFileLoadComplete_SIZE(1);
+    ASSERT_EVENTS_PrmFileLoadComplete(0, "ACTIVE", 1, 1, 0);
+
+    // The updated (shorter) value must be present.
+    pBuff.resetSer();
+    EXPECT_EQ(Fw::ParamValid::VALID, this->invoke_to_getPrm(0, ID_A, pBuff).e);
+    U32 readVal = 0;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pBuff.deserializeTo(readVal));
+    EXPECT_EQ(UPDATED_VAL, readVal);
+
+    // ID_B and ID_C were not in the second save and must not be present.
+    pBuff.resetSer();
+    EXPECT_EQ(Fw::ParamValid::INVALID, this->invoke_to_getPrm(0, ID_B, pBuff).e);
+    pBuff.resetSer();
+    EXPECT_EQ(Fw::ParamValid::INVALID, this->invoke_to_getPrm(0, ID_C, pBuff).e);
+}
+
 PrmDbTester* PrmDbTester::PrmDbTestFile::s_tester = nullptr;
 
 void PrmDbTester::PrmDbTestFile::setTester(Svc::PrmDbTester* tester) {
@@ -1386,20 +1504,17 @@ void PrmDbTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
 }
 
 void PrmDbTester::printDb(PrmDb_PrmDbType dbType) {
-    PrmDbImpl::t_dbStruct* db = this->m_impl.getDbPtr(dbType);
+    auto* db = this->m_impl.getDbPtr(dbType);
     printf("%s Parameter DB @ %p \n", PrmDbImpl::getDbString(dbType).toChar(), static_cast<void*>(db));
-    for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-        U8* data = db[entry].val.getBuffAddr();
-        FwSizeType len = db[entry].val.getSize();
-        if (db[entry].used) {
-            std::cout << "  " << std::setw(2) << entry << " :";
-            printf(" ID = %08X", db[entry].id);
-            printf(" Value = ");
-            for (FwSizeType i = 0; i < len; ++i) {
-                printf("%02X ", data[i]);
-            }
-            printf("\n");
+    for (const auto& entry : *db) {
+        printf(" ID = %08X", entry.getKey());
+        printf(" Value = ");
+        const U8* data = entry.getValue().getBuffAddr();
+        FwSizeType len = entry.getValue().getSize();
+        for (FwSizeType i = 0; i < len; ++i) {
+            printf("%02X ", data[i]);
         }
+        printf("\n");
     }
 }
 

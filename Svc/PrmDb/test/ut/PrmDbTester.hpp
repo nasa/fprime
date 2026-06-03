@@ -32,10 +32,13 @@ class PrmDbTester : public PrmDbGTestBase {
     void runPrmFileLoadNominal();
     void runPrmFileLoadWithErrors();
     void runPrmFileLoadIllegal();
+    void runShorterSaveDoesNotCorrupt();
 
     void runRefPrmFile();
 
   private:
+    bool dbEqual();
+
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/

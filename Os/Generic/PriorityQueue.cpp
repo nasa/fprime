@@ -3,6 +3,7 @@
 // \brief priority queue implementation for Os::Queue
 // ======================================================================
 #include "Os/Generic/PriorityQueue.hpp"
+#include <algorithm>
 #include <cstring>
 #include "Fw/LanguageHelpers.hpp"
 #include "Fw/Types/Assert.hpp"
@@ -199,7 +200,7 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
         FW_ASSERT(this->m_handle.m_heap.push(priority, index));
         this->m_handle.store_data(index, buffer, size);
         this->m_handle.m_sizes[index] = size;
-        this->m_handle.m_highMark = FW_MAX(this->m_handle.m_highMark, this->getMessagesAvailable());
+        this->m_handle.m_highMark = std::max(this->m_handle.m_highMark, this->getMessagesAvailable());
     }
     this->m_handle.m_empty.notify();
     return QueueInterface::Status::OP_OK;

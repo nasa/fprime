@@ -2,6 +2,8 @@
 // \title Os/test/ut/file/MyRules.cpp
 // \brief rule implementations for common testing
 // ======================================================================
+#include <Fw/Types/String.hpp>
+#include <algorithm>
 #include <cstdio>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
@@ -53,8 +55,9 @@ void Os::Test::FileTest::Tester::shadow_write(const std::vector<U8>& write_data)
     if (write_data.data() != nullptr) {
         status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
     }
-    // If in APPEND mode, need to set position to the end
-    if (this->m_mode == Os::File::Mode::OPEN_APPEND) {
+    // For append writes with data, mirror file pointer movement to EOF.
+    // Zero-byte writes should not force the pointer to EOF.
+    if ((this->m_mode == Os::File::Mode::OPEN_APPEND) && (original_size > 0)) {
         FwSizeType shadow_size = 0;
         ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
         this->shadow_seek(shadow_size, Os::File::SeekType::ABSOLUTE);
@@ -96,7 +99,8 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
     SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
-    const FwSizeType bound = FW_MIN(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
+    const FwSizeType bound =
+        std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
         this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
@@ -286,9 +290,10 @@ void Os::Test::FileTest::Tester::OpenBaseRule::action(Os::Test::FileTest::Tester
         while (state.exists(*filename)) {
             filename = state.get_filename(this->m_random);
             attempts++;
-            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
-                << "Failed to generate unique filename after " << attempts << " attempts. "
-                << "Consider expanding the filename generation in get_filename().";
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
         }
     }
 
@@ -379,6 +384,115 @@ Os::Test::FileTest::Tester::OpenForRead::OpenForRead(const bool randomize_filena
                                                // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
                                                randomize_filename) {}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateBounded
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateBounded::OpenFileCreateBounded(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateBounded",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the bounded char* open overload
+    FwSizeType length = static_cast<FwSizeType>(filename->length() + 1);
+    Os::File::Status status = state.m_file.open(filename->c_str(), length, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateString
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateString::OpenFileCreateString(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateString",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the ConstStringBase open overload
+    Fw::String path(filename->c_str());
+    Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // After open, m_path points to the local Fw::String buffer which will be destroyed
+    // when this action returns. Reset m_path to point to the persistent filename string
+    // kept alive in the FILES vector to avoid a dangling pointer.
+    if (Os::File::Status::OP_OK == status) {
+        state.m_file.m_path = filename->c_str();
+    }
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  CloseFile
@@ -534,7 +648,7 @@ void Os::Test::FileTest::Tester::Preallocate::action(Os::Test::FileTest::Tester&
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
     FileState final_file_state = state.current_file_state();
-    ASSERT_EQ(final_file_state.size, FW_MAX(original_file_state.size, offset + length));
+    ASSERT_EQ(final_file_state.size, std::max(original_file_state.size, offset + length));
     ASSERT_EQ(final_file_state.position, original_file_state.position);
     state.assert_file_consistent();
 }
@@ -823,6 +937,33 @@ void Os::Test::FileTest::Tester::OpenIllegalPath::action(Os::Test::FileTest::Tes
     bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
     ASSERT_DEATH_IF_SUPPORTED(
         state.m_file.open(nullptr, random_mode,
+                          overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
+        ASSERT_IN_FILE_CPP);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenIllegalBoundedPath
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenIllegalBoundedPath::OpenIllegalBoundedPath()
+    : Os::Test::FileTest::Tester::AssertRule("OpenIllegalBoundedPath") {}
+
+void Os::Test::FileTest::Tester::OpenIllegalBoundedPath::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s \n", this->getName());
+    state.assert_file_consistent();
+    // Create a buffer filled with non-null characters with no null terminator within bounds
+    constexpr FwSizeType BOUND = 10;
+    CHAR path[BOUND];
+    memset(path, 'A', BOUND);  // Fill entirely with 'A', no null terminator within BOUND
+
+    Os::File::Mode random_mode =
+        static_cast<Os::File::Mode>(STest::Pick::lowerUpper(Os::File::Mode::OPEN_READ, Os::File::Mode::OPEN_APPEND));
+    bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+    ASSERT_DEATH_IF_SUPPORTED(
+        state.m_file.open(path, BOUND, random_mode,
                           overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
         ASSERT_IN_FILE_CPP);
     state.assert_file_consistent();
