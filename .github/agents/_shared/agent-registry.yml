@@ -97,6 +97,7 @@ agents:
 
   - name: F Prime Architecture Reviewer
     short_name: architecture-review
+    review_label: Architecture
     role: reviewer
     path: .github/agents/architecture-review.agent.md
     invocable_by_humans: true
