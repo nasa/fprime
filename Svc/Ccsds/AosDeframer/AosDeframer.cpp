@@ -9,9 +9,9 @@
 // - Space Packet Protocol (SPP) extraction (CCSDS 133.0-B-2)
 // - Encapsulation Packet Protocol (EPP) extraction (CCSDS 133.1-B-3)
 // ======================================================================
-
 #include "Svc/Ccsds/AosDeframer/AosDeframer.hpp"
 #include <cstring>
+#include <limits>
 #include "Svc/Ccsds/Types/EppLengthOfLengthEnumAc.hpp"
 #include "Svc/Ccsds/Types/EppProtocolIdEnumAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
@@ -313,17 +313,15 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
         // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
         // packet)
-        // FIXME: packetSize is untrusted (read straight from the wire) and could have unintended side effects,
-        // especially with EPP. We should skip if packetSize exceeds a mission-defined limit instead of letting the
-        // allocator handle any requests, which has a side effect of abandoning spanning packets on failure
         const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
         if (packetSize == 0) {
             return 0;
         }
 
-        // Try to allocate a buffer for the whole packet
+        // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
+        // manager is out of memory, this is handled below.
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
-        if (vc.spanningPacket.buffer.getSize() < packetSize) {
+        if ((not vc.spanningPacket.buffer.isValid()) || (vc.spanningPacket.buffer.getSize() < packetSize)) {
             this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
                                                            packetSize);
             // Save before abandon clears it -— needed for the correct seek offset below
@@ -343,6 +341,12 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                   AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
+        // Destination buffer must be large enough for the accumulated header bytes.
+        // Protect against any future regression in sizeEppPacket/sizeSppPacket
+        // reintroducing an overflow that makes packetSize < bytesReceived.
+        FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                  static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
         ::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
     }
 
@@ -491,6 +495,13 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
     }
 
     // Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)
+    // packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.
+    // Guarantee at compile time that the maximum possible sum fits in FwSizeType. If
+    // FwSizeType is ever narrowed below 17 bits, this fails to build and the addition
+    // below must be guarded the same way sizeEppPacket is.
+    constexpr FwSizeType MAX_LENGTH = std::numeric_limits<FwSizeType>::max() - SpacePacketHeader::SERIALIZED_SIZE;
+    static_assert(MAX_LENGTH >= std::numeric_limits<U16>::max() + 1,
+                  "FwSizeType must be wide enough to hold the maximum SPP packet size without overflow");
     FwSizeType totalPacketSize = SpacePacketHeader::SERIALIZED_SIZE + header.get_packetDataLength() + 1;
 
     // TODO: Unify Deframers | bring the whole spp processing into this component
@@ -554,7 +565,19 @@ FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType p
         packetDataLength = (packetDataLength << 8) | payloadStart[lengthOffset + i];
     }
 
-    totalPacketSize = headerLength + packetDataLength;
+    // Guard against integer overflow and return 0 as incomplete/invalid (if true).
+    // This fires on 32-bit targets (FwSizeType = U32) where the sum would wrap.
+    if (packetDataLength > (std::numeric_limits<FwSizeType>::max() - static_cast<FwSizeType>(headerLength))) {
+        return 0;
+    }
+
+    // Cast both operands to FwSizeType BEFORE adding.
+    // Without the cast, C++ computes headerLength(U8) + packetDataLength(U32) in U32
+    // arithmetic, which wraps on both 32-bit and 64-bit hosts even when FwSizeType is
+    // 64 bits wide.  The guard above is not sufficient on its own: on 64-bit it never
+    // fires (packetDataLength can never exceed UINT64_MAX-8), so the unguarded addition
+    // would still silently truncate to 4 on a 64-bit host.
+    totalPacketSize = static_cast<FwSizeType>(headerLength) + static_cast<FwSizeType>(packetDataLength);
 
     return totalPacketSize;
 }

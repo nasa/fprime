@@ -27,6 +27,7 @@ ARINC
 arpa
 ASize
 ATL
+ATLO
 AUTOBRIEF
 autocode
 autocoded
@@ -43,8 +44,8 @@ bibtex
 Bies
 binaryfile
 BINDIR
-bitfield
 Bitfield
+bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -72,6 +73,8 @@ callergraph
 callgraph
 Campuzano
 carg
+CBE
+CBEs
 CBF
 CBLOCK
 CCACHE
@@ -79,6 +82,7 @@ CCB
 CComponent
 ccsds
 ccsparc
+CDR
 cdh
 CDHCORE
 CDHCORESUBTOPOLOGY
@@ -114,6 +118,8 @@ COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
 COMLOGGERTEE
+commandability
+Commandability
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -167,6 +173,7 @@ deframing
 Deinitialization
 deployables
 DEPRECATEDLIST
+descope
 deser
 Deserial
 DEVICESM
@@ -233,6 +240,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exceedance
 exploitability
 externalproject
 FAKELOGGER
@@ -290,6 +298,7 @@ Fregoso
 frsize
 fsblkcnt
 fsw
+FTA
 FWCASSERT
 gcda
 gcgandhi
@@ -393,9 +402,9 @@ jobrestrictions
 jpl
 jplffs
 jre
+kermit
 kessler
 kevin
-kermit
 kubiak
 Lammert
 lammertbies
@@ -538,10 +547,13 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+PDR
 pdu
 Peet
 penv
 PERLMOD
+PFR
+PFRs
 PHASERMEMBEROUT
 PINGENTRIES
 PINGIN
@@ -628,6 +640,7 @@ rowspan
 rpi
 rptr
 SAlias
+Safing
 sanitizers
 sats
 SBF
@@ -640,6 +653,7 @@ sdiv
 sdls
 searchdata
 SENDPARTIAL
+SEEs
 seqgen
 serializables
 setaffinity
@@ -729,6 +743,7 @@ telem
 TELEMCHANIMPL
 testerbase
 TESTLIST
+testbed
 testmark
 TESTUTILS
 testwrite
@@ -737,11 +752,11 @@ tfvn
 thisdirdoesnotexist
 thisfiledoesnotexist
 Thu
+timcanham
 timebase
 timerfd
 timetag
 timeval
-timcanham
 Tinternal
 tions
 tjh
