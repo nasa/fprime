@@ -1,0 +1,156 @@
+name: PrmDb Integration Test
+
+on:
+  pull_request:
+    branches: [ devel ]
+    paths:
+      - 'Svc/PrmDb/**'
+      - 'Ref/**'
+      - '.github/workflows/prmdb-integration-test.yml'  # Test changes to this workflow itself
+
+# Cancel in-progress runs if a newer run is started on the same PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prmdb-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Get the code
+      - name: "Checkout F Prime Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      # Step 2: Setup Python
+      - name: "Set up Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # Step 3: Setup F´ tools
+      - name: "Setup F Prime Tools"
+        uses: ./.github/actions/setup
+
+      # Step 4: Build Ref deployment
+      - name: "Build Ref Deployment"
+        working-directory: ./Ref
+        run: |
+          fprime-util generate -f
+          fprime-util build
+
+      # Step 5: Create test parameter file
+      - name: "Create Test Parameter JSON"
+        working-directory: ./Ref
+        run: |
+          # TODO: Create a simple JSON file with test parameters
+          # Example: {"Ref.recvBuffComp": {"parameter1": 42}}
+          cat > test_params.json << 'EOF'
+          {
+            "Ref.recvBuffComp": {
+              "parameter1": 42
+            },
+            "Ref.typeDemo": {
+              "CHOICES_PRM": ["ONE", "BLUE"]
+            }
+          }
+          EOF
+
+      # Step 6: Generate .dat file
+      - name: "Generate Parameter .dat File"
+        working-directory: ./Ref
+        run: |
+          # TODO: Use fprime-prm-write to convert JSON to .dat
+          # Hint: You need the dictionary and the JSON input
+          fprime-prm-write dat test_params.json \
+          --dictionary build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json \
+          --output test_params.dat
+
+      # Step 7: Start GDS in background
+      - name: "Start F Prime GDS"
+        working-directory: ./Ref
+        run: |
+          # Start GDS in the background
+          fprime-gds -g none --log-directly > gds.log 2>&1 &
+
+          # save the PID to stop it later
+          echo $! > gds.pid
+
+          # Wait for GDS to be ready (with timeout)
+          for i in {1..30}; do
+            if nc -z localhost 5000 2>/dev/null; then
+              echo "GDS is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "GDS failed to start within 30 seconds"
+              cat gds.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+            # Verify GDS started successfully
+            if ! kill -0 $(cat gds.pid) 2>/dev/null; then
+              echo "GDS failed to start"
+              exit 1
+            fi
+
+      # Step 8: Load parameters into PrmDb
+      - name: "Load Parameters via GDS"
+        working-directory: ./Ref
+        run: |
+          # Sending GDS fprime-cli commands
+          fprime-cli commands send FileHandling.prmDb.PRM_LOAD_FILE "test_params.dat" MERGE
+          fprime-cli commands send FileHandling.prmDb.PRM_COMMIT_STAGED
+
+      # Step 9: Verify parameters loaded
+      - name: "Verify Parameters"
+        working-directory: ./Ref
+        run: |
+          # Check GDS logs for success events, if not found, exit 1
+          if ! grep -q "PrmFileLoadComplete" gds.log; then
+            echo "ERROR: Missing PrmFileLoadComplete event"
+            cat gds.log  # Show log for debugging
+            exit 1
+          fi
+          if ! grep -q "PrmDbCopyAllComplete" gds.log; then
+            echo "ERROR: Missing PrmDbCopyAllComplete event"
+            cat gds.log  # Show log for debugging
+            exit 1
+          fi
+
+          # - Query parameter values
+
+          # Check for error events, if found, then exit 1
+          if grep -q "PrmDbFileLoadFailed" gds.log; then
+            echo "ERROR: Found PrmDbFileLoadFailed"
+            cat gds.log
+          exit 1
+          fi
+          if grep -q "PrmFileBadCrc" gds.log; then
+            echo "ERROR: Found PrmFileBadCrc"
+            cat gds.log
+            exit 1
+          fi
+
+      # Step 10: Cleanup
+      - name: "Stop GDS"
+        working-directory: ./Ref
+        if: always()  # Run even if previous steps failed
+        run: |
+          # Check if PID file exists
+          if [ -f gds.pid ]; then
+            # Read the PID
+            GDS_PID=$(cat gds.pid)
+            
+            # Try graceful shutdown
+            kill $GDS_PID || true
+
+            # Wait for shutdown
+            sleep 2
+          fi
+
