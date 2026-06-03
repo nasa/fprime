@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-02 17:01:40</td>
+      <td>2026-06-03 01:59:52</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l21">Svc::Ccsds::Utils::CRC16::CRC16() (line 21)</a></td><td>called 2008 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l43">Svc::Ccsds::Utils::CRC16::compute(unsigned char const*, unsigned int) (line 43)</a></td><td>called 143 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l43">Svc::Ccsds::Utils::CRC16::compute(unsigned char const*, unsigned int) (line 43)</a></td><td>called 149 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l31">Svc::Ccsds::Utils::CRC16::finalize() (line 31)</a></td><td>called 2008 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l28">Svc::Ccsds::Utils::CRC16::update(unsigned char) (line 28)</a></td><td>called 30100 times</td><td>100.0%</td></tr>
   </table>
@@ -385,14 +385,14 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">143</td>
+      <td class="linecount coveredLine">149</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">U16</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">143</td>
+      <td class="linecount coveredLine">149</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">U16</span><span class="w"> </span><span class="n">crc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span><span class="w">  </span><span class="c1">// Initial value</span></td>
     </tr>
     <tr class="source-line">
@@ -401,19 +401,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 63019 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 143 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 64543 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 149 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">63162</td>
+      <td class="linecount coveredLine">64692</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">63019</td>
+      <td class="linecount coveredLine">64543</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">crc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;</span><span class="p">(</span><span class="n">update_crc_ccitt</span><span class="p">(</span><span class="n">crc</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">])));</span></td>
     </tr>
     <tr class="source-line">
@@ -427,7 +427,7 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">143</td>
+      <td class="linecount coveredLine">149</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">crc</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">  </span><span class="c1">// Finalize with XOR value</span></td>
     </tr>
     <tr class="source-line">
