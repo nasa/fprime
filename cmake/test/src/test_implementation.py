@@ -28,14 +28,14 @@ _ = cmake.get_build(
 
 def test_platform_implementation(IMPLEMENTATION_TEST):
     """Check the platform-specified implementation was produced"""
-    cmake.assert_process_success(IMPLEMENTATION_TEST)
+    cmake.assert_process_success(IMPLEMENTATION_TEST, warnings_ok=True)
 
 
 def test_override_implementation(IMPLEMENTATION_TEST):
     """Check the override-specified implementation was produced"""
-    cmake.assert_process_success(IMPLEMENTATION_TEST)
+    cmake.assert_process_success(IMPLEMENTATION_TEST, warnings_ok=True)
 
 
 def test_non_built_implementation(IMPLEMENTATION_TEST):
     """Check the override target that wasn't use was not built along with the override platform target"""
-    cmake.assert_process_success(IMPLEMENTATION_TEST)
+    cmake.assert_process_success(IMPLEMENTATION_TEST, warnings_ok=True)

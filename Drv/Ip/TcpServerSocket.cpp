@@ -60,8 +60,8 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
-    // First IP address to socket sin_addr
-    if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
+    // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+    if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
         ::close(serverFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
@@ -88,7 +88,7 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
         ::close(serverFd);
         return SOCK_FAILED_TO_LISTEN;  // What we have here is a failure to communicate
     }
-    Fw::Logger::log("Listening for single client at %s:%hu\n", m_hostname, m_port);
+    Fw::Logger::log("Listening for single client at %s:%hu\n", this->m_ipv4_address, this->m_port);
     FW_ASSERT(serverFd != -1);
     socketDescriptor.serverFd = serverFd;
     this->m_port = ntohs(address.sin_port);
@@ -120,7 +120,7 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    Fw::Logger::log("Accepted client at %s:%hu\n", m_hostname, m_port);
+    Fw::Logger::log("Accepted client at %s:%hu\n", this->m_ipv4_address, this->m_port);
     socketDescriptor.fd = clientFd;
     return SOCK_SUCCESS;
 }

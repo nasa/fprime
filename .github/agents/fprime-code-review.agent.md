@@ -292,7 +292,7 @@ prose so a reader can jump to
 `_shared/skills/fprime-cpp-design.skill.md` for context:
 
 ```
-**must fix** CPP-1 (no dynamic memory after init): `new` / `delete` in steady-state handler.
+[C++ Design] **must fix** CPP-1 (no dynamic memory after init): `new` / `delete` in steady-state handler.
 
 Allocate `scratch` once at component init and reuse the buffer;
 post-init heap traffic is forbidden in flight code.

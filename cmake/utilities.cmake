@@ -640,6 +640,28 @@ function(resolve_path_variables)
 endfunction(resolve_path_variables)
 
 ####
+# Function `fprime_glob_ordered`:
+#
+# Runs file(GLOB) for each pattern in a list individually and appends results in order. This
+# preserves the priority of earlier patterns over later ones, unlike a single GLOB call which
+# returns all results in lexicographic order regardless of pattern ordering. Duplicates are removed
+# while preserving the order of first occurrence. Uses GLOB (not GLOB_RECURSE) so that wildcards
+# match a single directory level only.
+#
+# - **OUTPUT_VAR**: variable name to store the accumulated results in (set in PARENT_SCOPE)
+# - **ARGN**: glob patterns to search, in priority order
+####
+function(fprime_glob_ordered OUTPUT_VAR)
+    set(_ACCUMULATED)
+    foreach(_PATTERN IN LISTS ARGN)
+        file(GLOB _MATCHES "${_PATTERN}")
+        list(APPEND _ACCUMULATED ${_MATCHES})
+    endforeach()
+    list(REMOVE_DUPLICATES _ACCUMULATED)
+    set(${OUTPUT_VAR} ${_ACCUMULATED} PARENT_SCOPE)
+endfunction()
+
+####
 # Function `fprime_cmake_fatal_error`:
 #
 # Prints a fatal error message to the user, highlighted with ---- to make it obvious. For multi-line
