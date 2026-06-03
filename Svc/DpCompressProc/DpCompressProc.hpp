@@ -31,7 +31,7 @@ class DpCompressProc final : public DpCompressProcComponentBase {
     // ----------------------------------------------------------------------
 
     void serializeCompressionHeader(
-            Fw::SerializeBufferBase& serializer,
+            Fw::LinearBufferBase& serializer,
             const FwSizeStoreType compressed_payload_size,
             const CompressionMetadata& metadata
     );

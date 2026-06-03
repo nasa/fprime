@@ -4,6 +4,8 @@
 // \brief  cpp file for DpCompressProc component implementation class
 // ======================================================================
 
+#include <cstring>
+
 #include "Svc/DpCompressProc/DpCompressProc.hpp"
 
 #include <Fw/Dp/DpContainer.hpp>
@@ -24,7 +26,7 @@ DpCompressProc ::~DpCompressProc() {}
 
 void DpCompressProc::
     serializeCompressionHeader(
-        Fw::SerializeBufferBase& serializer,
+        Fw::LinearBufferBase& serializer,
         const FwSizeStoreType compressed_payload_size,
         const CompressionMetadata& metadata
 ) {
