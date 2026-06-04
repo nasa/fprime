@@ -27,6 +27,10 @@ TEST(CountingSemaphore, PostWait) {
     // Brief wait to ensure Wait blocks on semaphore before triggering Post
     Fw::TimeInterval delay(0, 10000);  // 10ms
     Os::Task::delay(delay);
+    {
+        Os::ScopeLock lock(aggregator.getLock());
+        ASSERT_EQ(tester.waiters, 1U) << "Waiter should be blocked before post";
+    }
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
@@ -62,6 +66,10 @@ TEST(CountingSemaphore, MultipleWaiters) {
     // Brief wait to ensure both Waits block on semaphore before posting
     Fw::TimeInterval delay(0, 10000);  // 10ms
     Os::Task::delay(delay);
+    {
+        Os::ScopeLock lock(aggregator.getLock());
+        ASSERT_EQ(tester.waiters, 2U) << "Both waiters should be blocked before posting";
+    }
     // Post directly from main thread to release both waiters
     ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
@@ -111,6 +119,10 @@ TEST(CountingSemaphore, TimeoutSuccess) {
     // Brief wait to ensure WaitTimeout blocks before triggering Post
     Fw::TimeInterval delay(0, 10000);  // 10ms
     Os::Task::delay(delay);
+    {
+        Os::ScopeLock lock(aggregator.getLock());
+        ASSERT_EQ(tester.waiters, 1U) << "WaitTimeout should be blocked before post";
+    }
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
@@ -135,7 +147,7 @@ TEST(CountingSemaphore, InvalidParameters) {
 }
 
 TEST(CountingSemaphore, FairnessVerification) {
-    // Verify fairness: multiple waiters all complete when enough posts occur
+    // Verify all waiters can be released when enough posts occur.
     Os::Test::CountingSemaphore::Tester tester;
     AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester> aggregator;
     Os::Test::CountingSemaphore::Tester::Wait wait_rule1(aggregator);
@@ -146,6 +158,10 @@ TEST(CountingSemaphore, FairnessVerification) {
     // Wait for waiters to block before posting
     Fw::TimeInterval delay(0, 15000);  // 15ms
     Os::Task::delay(delay);
+    {
+        Os::ScopeLock lock(aggregator.getLock());
+        ASSERT_EQ(tester.waiters, 3U) << "All waiters should be blocked before posting";
+    }
 
     // Post directly from main thread to unblock 3 waiters
     for (U32 i = 0; i < 3; i++) {
@@ -178,6 +194,10 @@ TEST(CountingSemaphore, ManyThreadsStress) {
     // Wait for waiters to block before posting
     Fw::TimeInterval delay(0, 30000);  // 30ms for 8 threads
     Os::Task::delay(delay);
+    {
+        Os::ScopeLock lock(aggregator.getLock());
+        ASSERT_EQ(tester.waiters, 8U) << "All waiters should be blocked before posting";
+    }
 
     // Post directly from main thread to unblock 8 waiters
     for (U32 i = 0; i < 8; i++) {

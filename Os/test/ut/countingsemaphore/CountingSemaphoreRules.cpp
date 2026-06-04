@@ -20,7 +20,9 @@ bool Tester::Wait::precondition(const Tester& state) {
 
 void Tester::Wait::action(Tester& state) {
     ++state.waiters;
+    this->getLock().unlock();
     ::Os::CountingSemaphore::Status status = state.semaphore.wait();
+    this->getLock().lock();
     --state.waiters;
     ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
@@ -35,11 +37,11 @@ bool Tester::WaitTimeout::precondition(const Tester& state) {
 void Tester::WaitTimeout::action(Tester& state) {
     ++state.waiters;
     Fw::TimeInterval timeout(0, 100000);  // 100ms
+    this->getLock().unlock();
     ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
+    this->getLock().lock();
     --state.waiters;
-    ASSERT_TRUE(status == ::Os::CountingSemaphore::Status::OP_OK ||
-                status == ::Os::CountingSemaphore::Status::ERROR_TIMEOUT)
-        << "Unexpected status: " << status;
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 
 Tester::Post::Post(AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& runner)
