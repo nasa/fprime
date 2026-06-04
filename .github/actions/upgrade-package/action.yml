@@ -20,7 +20,7 @@ runs:
   steps:
     - name: "Get PR target branch"
       id: get_pr_branch
-      uses: nasa/fprime-actions/get-pr-branch@devel
+      uses: nasa/fprime-actions/get-pr-branch@test
       with:
         target_repository: ${{ inputs.repository }}
         default_target_ref: ${{ inputs.default-branch }}
