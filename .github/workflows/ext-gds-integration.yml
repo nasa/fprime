@@ -44,14 +44,14 @@ jobs:
 
       # Step 4: Build Ref deployment
       - name: "Build Ref Deployment"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           fprime-util generate -f
           fprime-util build
 
       # Step 5: Create test parameter file
       - name: "Create Test Parameter JSON"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           cat > test_params.json << 'EOF'
           {
@@ -66,7 +66,7 @@ jobs:
 
       # Step 6: Generate .dat file
       - name: "Generate Parameter .dat File"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           fprime-prm-write dat test_params.json \
           --dictionary build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json \
@@ -74,7 +74,7 @@ jobs:
 
       # Step 7: Start GDS in background
       - name: "Start F Prime GDS"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           # Start GDS in the background
           fprime-gds -g none --log-directly > gds.log 2>&1 &
@@ -104,7 +104,7 @@ jobs:
 
       # Step 8: Load parameters into PrmDb
       - name: "Load Parameters via GDS"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           # Sending GDS fprime-cli commands
           fprime-cli command-send FileHandling.prmDb.PRM_LOAD_FILE "test_params.dat" MERGE
@@ -112,7 +112,7 @@ jobs:
 
       # Step 9: Verify parameters loaded
       - name: "Verify Parameters"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject/Ref
         run: |
           # Check GDS logs for success events, if not found, exit 1
           if ! grep -q "PrmFileLoadComplete" gds.log; then
