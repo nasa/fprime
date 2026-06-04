@@ -2,8 +2,8 @@
 // \title Os/Darwin/DefaultCountingSemaphore.cpp
 // \brief sets default Os::CountingSemaphore Darwin implementation via linker
 // ======================================================================
-#include "Os/Delegate.hpp"
 #include "Os/Darwin/CountingSemaphore.hpp"
+#include "Os/Delegate.hpp"
 
 namespace Os {
 

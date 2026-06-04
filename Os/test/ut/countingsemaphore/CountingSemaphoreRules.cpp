@@ -37,7 +37,8 @@ void Tester::WaitTimeout::action(Tester& state) {
     Fw::TimeInterval timeout(0, 100000);  // 100ms
     ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
     --state.waiters;
-    ASSERT_TRUE(status == ::Os::CountingSemaphore::Status::OP_OK || status == ::Os::CountingSemaphore::Status::ERROR_TIMEOUT)
+    ASSERT_TRUE(status == ::Os::CountingSemaphore::Status::OP_OK ||
+                status == ::Os::CountingSemaphore::Status::ERROR_TIMEOUT)
         << "Unexpected status: " << status;
 }
 
