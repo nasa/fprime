@@ -17,7 +17,7 @@ struct DarwinCountingSemaphoreHandle : public CountingSemaphoreHandle {
 
 class DarwinCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    DarwinCountingSemaphore(U32 initial_count);
+    explicit DarwinCountingSemaphore(U32 initial_count);
 
     ~DarwinCountingSemaphore() override;
 
