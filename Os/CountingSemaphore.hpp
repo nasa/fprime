@@ -2,10 +2,9 @@
 // \title Os/CountingSemaphore.hpp
 // \brief common function definitions for Os::CountingSemaphore
 // ======================================================================
-#include "Os/Os.hpp"
-
 #ifndef OS_COUNTING_SEMAPHORE_HPP_
 #define OS_COUNTING_SEMAPHORE_HPP_
+#include "Os/Os.hpp"
 
 namespace Os {
 
