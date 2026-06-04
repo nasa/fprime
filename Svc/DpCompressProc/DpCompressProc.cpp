@@ -32,10 +32,14 @@ void DpCompressProc::
 ) {
     const FwDpIdType record_id = this->getIdBase() + RecordId::CompressionRecord;
 
-    // TODO: Assert this size wont overflow
-    serializer.serializeFrom(record_id);
-    serializer.serializeFrom(static_cast<FwSizeStoreType>(compressed_payload_size + CompressionMetadata::SERIALIZED_SIZE));
-    serializer.serializeFrom(metadata);
+    Fw::SerializeStatus ok;
+
+    ok = serializer.serializeFrom(record_id);
+    FW_ASSERT(ok == Fw::FW_SERIALIZE_OK, ok);
+    ok = serializer.serializeFrom(static_cast<FwSizeStoreType>(compressed_payload_size + CompressionMetadata::SERIALIZED_SIZE));
+    FW_ASSERT(ok == Fw::FW_SERIALIZE_OK, ok);
+    ok = serializer.serializeFrom(metadata);
+    FW_ASSERT(ok == Fw::FW_SERIALIZE_OK, ok);
 }
 
 void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -56,15 +60,17 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     Fw::DpContainer container(0, fwBuffer);
     container.deserializeHeader();
 
-    FwSizeStoreType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
+    FwSizeType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
         FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) ||
                   (param_valid == Fw::ParamValid::VALID), param_valid);
 
     if (prm_chunk_size > container.getDataSize()) {
-        prm_chunk_size = static_cast<FwSizeStoreType>(container.getDataSize());
+        prm_chunk_size = container.getDataSize();
     }
-    const FwSizeStoreType max_chunk_size = prm_chunk_size;
+    const FwSizeType max_chunk_size = prm_chunk_size;
     FW_ASSERT(max_chunk_size != 0);
+    FW_ASSERT(max_chunk_size <= std::numeric_limits<FwSizeStoreType>::max(),
+              static_cast<FwAssertArgType>(max_chunk_size));
 
     Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET,
                            fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE);
@@ -73,10 +79,6 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
   
     auto data_deser = data_buffer.getDeserializer();
     auto data_reser = data_buffer.getSerializer();
-
-    // Keep track of the number of spare bytes available
-    // in the original buffer.
-    FwSizeType spare_byte_counter = 0;
 
     // Compression record serialized size
     const FwSizeType compression_header_size =
@@ -118,16 +120,23 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     while (data_deser.getDeserializeSizeLeft() > 0) {
 
         // Chunk size for this iteration
-        const FwSizeStoreType chunk_size =
-            // TODO: Check these casts
-            static_cast<FwSizeStoreType>(data_deser.getDeserializeSizeLeft()) < max_chunk_size ?
-            static_cast<FwSizeStoreType>(data_deser.getDeserializeSizeLeft()) : max_chunk_size;
+        const FwSizeType chunk_size_tmp =
+            (data_deser.getDeserializeSizeLeft() < max_chunk_size) ?
+            static_cast<FwSizeType>(data_deser.getDeserializeSizeLeft()) : max_chunk_size;
 
+        // Ensure that FwSizeStoreType is large enough to hold the chunk_size
+        FW_ASSERT(chunk_size_tmp > 0, static_cast<FwAssertArgType>(chunk_size_tmp));
+        FW_ASSERT(chunk_size_tmp <= std::numeric_limits<FwSizeStoreType>::max(),
+                  static_cast<FwAssertArgType>(chunk_size_tmp));
+        const FwSizeStoreType chunk_size = static_cast<FwSizeStoreType>(chunk_size_tmp);
         // a const U8 * and I need to mutable U8*
         U8* data_offset = data_buffer.getData() +
             (data_buffer.getSize() - data_deser.getDeserializeSizeLeft());
 
         Fw::Buffer compression_buffer(data_offset, chunk_size);
+
+        // Jump the deserializer to mark the data as read
+        data_deser.deserializeSkip(chunk_size);
  
         CompressionAlgorithm alg = CompressionAlgorithm::UNCOMPRESSED;
         FwSizeType min_compression = 0;
@@ -169,11 +178,9 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     //  2. A potential uncompressed chunk
                     // Can take advantage of compression that has occurred
                     // before this point
-                    if (spare_byte_counter > 2*compression_header_size) {
-                        min_compression = chunk_size;
-                    } else {
-                        min_compression = chunk_size - (2*compression_header_size - spare_byte_counter);
-                    }
+                    // Note: Could keep track of the number of available spare bytes
+                    // in the buffer, but that adds a complexity for very little benefit
+                    min_compression = chunk_size - (2*compression_header_size);
                     // Compression needs to occur in the buffer with enough
                     // space for the this header
                     compression_offset = compression_header_size;
@@ -209,11 +216,11 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
             // Data was compressed
 
             U8* const comp_data_ptr = compression_buffer.getData() + compression_offset;
-            // TODO: Check these casts. Really should reject packet if compression_buffer is near FwSizeStoreType::max
-            const FwSizeStoreType comp_size = static_cast<FwSizeStoreType>(compression_buffer.getSize()) - static_cast<FwSizeStoreType>(compression_offset);
 
-            // TODO: Does this take care of shrinking this size of spare_byte_counter correctly?
-            spare_byte_counter += chunk_size - comp_size;
+            const FwSizeType compressed_size_tmp = static_cast<FwSizeType>(compression_buffer.getSize()) - static_cast<FwSizeType>(compression_offset);
+            FW_ASSERT(compressed_size_tmp <= std::numeric_limits<FwSizeStoreType>::max());
+            FW_ASSERT(compressed_size_tmp < chunk_size);
+            const FwSizeStoreType compressed_size = static_cast<FwSizeStoreType>(compressed_size_tmp);
 
             // If the first chunk is compressible treat the state as
             // if it was LAST_COMPRESSED. No need to perform the special
@@ -222,6 +229,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                 state = LAST_COMPRESSED;
             }
 
+            const FwSizeType deser_loc = data_deser.getSize() - data_deser.getDeserializeSizeLeft();
             switch (state) {
                 case PRE_COMMIT:
                     // Case A.
@@ -229,7 +237,16 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Prepend a header to the uncompressed data
                     // 3. Write a compressed header to the compressed data
                     // 4. Serialize compressed data
-                    // TODO: Assert that this will not write past current deser location
+
+                    // Assert the next few serialization operations will stay within the
+                    // data that has been read so far
+                    FW_ASSERT(deser_loc >= (uncompressed_size +
+                                            2*static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) +
+                                            compressed_size),
+                              static_cast<FwAssertArgType>(deser_loc),
+                              uncompressed_size,
+                              CompressionMetadata::SERIALIZED_SIZE,
+                              compressed_size);
                     std::memmove(data_buffer.getData() + compression_header_size,
                                  data_buffer.getData(),
                                  uncompressed_size);
@@ -246,12 +263,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     serializeCompressionHeader(
                         data_reser,
-                        comp_size,
+                        compressed_size,
                         CompressionMetadata(alg)
                     );
 
                     data_reser.serializeFrom(comp_data_ptr,
-                                             comp_size,
+                                             compressed_size,
                                              Fw::Serialization::OMIT_LENGTH);
                     break;
                 case LAST_COMPRESSED:
@@ -260,12 +277,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Serialize compressed data
                     serializeCompressionHeader(
                         data_reser,
-                        comp_size,
+                        compressed_size,
                         CompressionMetadata(alg)
                     );
 
                     data_reser.serializeFrom(comp_data_ptr,
-                                             comp_size,
+                                             compressed_size,
                                              Fw::Serialization::OMIT_LENGTH);
                     break;
                 case LAST_UNCOMPRESSED:
@@ -288,12 +305,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     serializeCompressionHeader(
                         data_reser,
-                        comp_size,
+                        compressed_size,
                         CompressionMetadata(alg)
                     );
 
                     data_reser.serializeFrom(comp_data_ptr,
-                                             comp_size,
+                                             compressed_size,
                                              Fw::Serialization::OMIT_LENGTH);
                     break;
                 default:
@@ -340,9 +357,6 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
             }
             uncompressed_size += chunk_size;
         }
-
-        // Jump the deserializer
-        data_deser.deserializeSkip(chunk_size);
 
         // Confirm that the serialized location has not jumped ahead of the deserialize location
         const FwSizeType ser_loc = data_reser.getSize();

@@ -80,8 +80,8 @@ module Svc {
         @ ZLib needs to allocate various memory regions to operate
         @ ZLibBufferSize is the size of the Fw::Buffer to allocate
         @ for the calls to zalloc and zfree
-        @ TODO: Find a good default size of this. How does it change with
-        @ compression level and chunk size?
+        @ The default value here is sufficient for chunk sizes of 32 KB
+        @ however it should be changed with larger chunk sizes
         param ZLibBufferSize: FwSizeType default 269000
 
         ###############################################################################
