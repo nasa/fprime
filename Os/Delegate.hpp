@@ -4,6 +4,7 @@
 // ======================================================================
 #include <new>
 #include <type_traits>
+#include <utility>
 #include "Fw/Types/Assert.hpp"
 #include "Os/Os.hpp"
 #ifndef OS_DELEGATE_HPP_
@@ -99,6 +100,42 @@ inline Interface* makeDelegate(StorageType& aligned_new_memory, const Interface*
     } else {
         interface = new (aligned_new_memory) Implementation(*copy_me);
     }
+    FW_ASSERT(interface != nullptr);
+    return interface;
+}
+//! \brief Make a delegate of type Interface using Implementation with forwarded constructor arguments
+//!
+//! This overload forwards arbitrary constructor arguments to the Implementation class, enabling delegates
+//! that require initialization parameters (e.g. an initial count for a counting semaphore).
+//!
+//! Example: CountingSemaphoreInterface getDelegate with initial_count
+//!
+//! ```c++
+//! #include "Os/Delegate.hpp"
+//!
+//! namespace Os {
+//! CountingSemaphoreInterface* CountingSemaphoreInterface::getDelegate(
+//!         CountingSemaphoreHandleStorage& aligned_new_memory, U32 initial_count) {
+//!     return Os::Delegate::makeDelegate<CountingSemaphoreInterface,
+//!             Os::Posix::Semaphore::PosixCountingSemaphore>(aligned_new_memory, initial_count);
+//! }
+//! }
+//! ```
+//! \tparam Interface: interface the delegate supports
+//! \tparam Implementation: implementation class of the delegate
+//! \tparam StorageType: type of aligned storage
+//! \tparam Args: constructor argument types to forward
+//! \param aligned_new_memory: memory to be filled via placement new call
+//! \param args: constructor arguments forwarded to Implementation
+//! \return pointer to implementation result of placement new
+template <class Interface, class Implementation, class StorageType, class... Args>
+inline Interface* makeDelegate(StorageType& aligned_new_memory, Args&&... args) {
+    // Ensure prerequisites before performing placement new
+    static_assert(std::is_base_of<Interface, Implementation>::value, "Implementation must derive from Interface");
+    static_assert(sizeof(Implementation) <= sizeof(StorageType), "Handle size not large enough");
+    static_assert((FW_HANDLE_ALIGNMENT % alignof(Implementation)) == 0, "Handle alignment invalid");
+    // Placement new the object with forwarded arguments and ensure non-null result
+    Implementation* interface = new (aligned_new_memory) Implementation(std::forward<Args>(args)...);
     FW_ASSERT(interface != nullptr);
     return interface;
 }
