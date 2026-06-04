@@ -11,13 +11,19 @@ namespace Darwin {
 namespace Semaphore {
 
 DarwinCountingSemaphore::DarwinCountingSemaphore(U32 initial_count) {
-    // dispatch_semaphore_create takes initial value (similar to POSIX sem_init)
-    this->m_handle.m_semaphore = dispatch_semaphore_create(static_cast<long>(initial_count));
+    long value = static_cast<long>(initial_count);
+    this->m_handle.m_semaphore = dispatch_semaphore_create(value);
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
+    this->m_handle.m_initial_count = value;
 }
 
 DarwinCountingSemaphore::~DarwinCountingSemaphore() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
+    // dispatch_release requires the semaphore value >= the initial value
+    // passed to dispatch_semaphore_create.  Signal enough times to restore it.
+    for (long i = 0; i < this->m_handle.m_initial_count; ++i) {
+        dispatch_semaphore_signal(this->m_handle.m_semaphore);
+    }
     dispatch_release(this->m_handle.m_semaphore);
     this->m_handle.m_semaphore = nullptr;
 }

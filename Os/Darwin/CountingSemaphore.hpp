@@ -13,6 +13,7 @@ namespace Semaphore {
 
 struct DarwinCountingSemaphoreHandle : public CountingSemaphoreHandle {
     dispatch_semaphore_t m_semaphore = nullptr;
+    long m_initial_count = 0;
 };
 
 class DarwinCountingSemaphore : public CountingSemaphoreInterface {

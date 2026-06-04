@@ -32,7 +32,10 @@ PosixCountingSemaphore::~PosixCountingSemaphore() {
 }
 
 PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
-    int status = sem_wait(&this->m_handle.m_semaphore);
+    int status;
+    do {
+        status = sem_wait(&this->m_handle.m_semaphore);
+    } while (status != 0 && errno == EINTR);
     FW_ASSERT(status == 0 || errno != 0, status);
     return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
 }
@@ -55,7 +58,10 @@ PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(const Fw::Tim
         abstime.tv_nsec = abstime.tv_nsec % 1000000000L;
     }
 
-    int status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);
+    int status;
+    do {
+        status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);
+    } while (status != 0 && errno == EINTR);
     FW_ASSERT(status == 0 || errno != 0, status);
     return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
 #endif

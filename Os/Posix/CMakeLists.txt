@@ -154,7 +154,9 @@ register_fprime_ut(
 # -----------------------------------------
 ### Os/CountingSemaphore/Posix Test Section
 # -----------------------------------------
-
+# POSIX unnamed semaphores (sem_init) are non-functional on macOS (return
+# ENOSYS).  The Darwin implementation covers macOS; skip this test there.
+if(NOT APPLE)
 register_fprime_ut(
      PosixCountingSemaphoreTest 
   SOURCES
@@ -167,6 +169,7 @@ register_fprime_ut(
   CHOOSES_IMPLEMENTATIONS
     "Os_CountingSemaphore_Posix"
 )
+endif()
 
 # -----------------------------------------
 ### Os/RawTime/Posix Test Section
