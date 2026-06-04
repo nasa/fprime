@@ -59,6 +59,7 @@ register_fprime_ut(
     DarwinCountingSemaphoreTest
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/../test/ut/countingsemaphore/CommonTests.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/../test/ut/countingsemaphore/CountingSemaphoreRules.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/DarwinCountingSemaphoreTests.cpp"
   CHOOSES_IMPLEMENTATIONS
     Os_CountingSemaphore_Darwin
