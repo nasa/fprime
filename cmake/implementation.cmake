@@ -112,12 +112,14 @@ function(fprime__internal_choose_implementations CURRENT_MODULE OUTPUT_VARIABLE)
         elseif(UNKNOWNS AND NOT FPRIME_IS_SUB_BUILD)
             fprime_cmake_warning("[implementation] ${CURRENT_MODULE} requires implementation of ${REQUIRED} assuming one of ${UNKNOWNS} is correct")
         elseif(NOT FPRIME_IS_SUB_BUILD)
-            # Before failing, check if a Stub fallback exists for this required
-            # implementation.  New OSAL modules may not yet have platform-specific
-            # implementations everywhere (e.g. Zephyr), so falling back to the
-            # Stub keeps the build viable while emitting a clear warning.
+            # Check if this implementation explicitly allows a Stub fallback.
+            # Only implementations listed in FPRIME_STUB_FALLBACK_ALLOWED may
+            # degrade gracefully; all others remain a fatal error so that
+            # platform mis-configurations for critical services (Os_File,
+            # Os_Task, Os_Mutex, …) are caught at configure time.
+            get_property(FALLBACK_ALLOWED GLOBAL PROPERTY "FPRIME_STUB_FALLBACK_ALLOWED")
             get_property(STUB_IMPL GLOBAL PROPERTY "FPRIME_${REQUIRED}_Stub_IMPLEMENTS")
-            if (STUB_IMPL STREQUAL "${REQUIRED}")
+            if (STUB_IMPL STREQUAL "${REQUIRED}" AND "${REQUIRED}" IN_LIST FALLBACK_ALLOWED)
                 fprime_cmake_warning("[implementation] ${CURRENT_MODULE}: no implementation chosen for ${REQUIRED}; falling back to ${REQUIRED}_Stub. Platform should add a ${REQUIRED}_* entry to CHOOSES_IMPLEMENTATIONS.")
                 list(APPEND IMPLEMENTATION_DEPENDENCIES "${REQUIRED}_Stub")
             else()
