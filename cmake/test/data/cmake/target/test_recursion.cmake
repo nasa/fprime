@@ -52,7 +52,6 @@ set(EXPECTED_FULL_DEPENDENCIES
     Os_Task_Posix_Implementation
     Svc_CmdDispatcher
     Svc_Ping
-    Svc_Ports_CommsPorts
     Svc_Sched
     TestDeployment
     TestLibrary2_TestComponent
