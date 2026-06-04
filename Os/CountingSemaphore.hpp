@@ -2,10 +2,9 @@
 // \title Os/CountingSemaphore.hpp
 // \brief common function definitions for Os::CountingSemaphore
 // ======================================================================
-#include "Os/Os.hpp"
-
 #ifndef OS_COUNTING_SEMAPHORE_HPP_
 #define OS_COUNTING_SEMAPHORE_HPP_
+#include "Os/Os.hpp"
 
 namespace Os {
 
@@ -51,11 +50,10 @@ class CountingSemaphore final : public CountingSemaphoreInterface {
 
     CountingSemaphore(const CountingSemaphoreInterface& other) = delete;
 
-    CountingSemaphore(const CountingSemaphoreInterface* other) = delete;
-
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
-
-    Status wait() override;
+    CountingSemaphore(const CountingSemaphore& other) = delete;
+    CountingSemaphore& operator=(const CountingSemaphore& other) = delete;
+    CountingSemaphore(CountingSemaphore&& other) = delete;
+    CountingSemaphore& operator=(CountingSemaphore&& other) = delete;
 
     Status waitTimeout(U32 timeout_ms) override;
 

@@ -12,12 +12,12 @@ namespace Darwin {
 namespace Semaphore {
 
 struct DarwinCountingSemaphoreHandle : public CountingSemaphoreHandle {
-    dispatch_semaphore_t m_semaphore;
+    dispatch_semaphore_t m_semaphore = nullptr;
 };
 
 class DarwinCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    DarwinCountingSemaphore(U32 initial_count);
+    explicit DarwinCountingSemaphore(U32 initial_count);
 
     ~DarwinCountingSemaphore() override;
 

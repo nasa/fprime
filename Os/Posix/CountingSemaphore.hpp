@@ -12,12 +12,12 @@ namespace Posix {
 namespace Semaphore {
 
 struct PosixCountingSemaphoreHandle : public CountingSemaphoreHandle {
-    sem_t m_semaphore;
+    sem_t m_semaphore{};
 };
 
 class PosixCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    PosixCountingSemaphore(U32 initial_count);
+    explicit PosixCountingSemaphore(U32 initial_count);
 
     ~PosixCountingSemaphore() override;
 
