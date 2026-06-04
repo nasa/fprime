@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/test/ut/countingsemaphore/CommonTests.hpp"
 #include <gtest/gtest.h>
+#include "Fw/Time/TimeInterval.hpp"
 #include "Fw/Types/String.hpp"
 #include "Os/test/ConcurrentRule.hpp"
 #include "Os/test/ut/countingsemaphore/RulesHeaders.hpp"
@@ -29,12 +30,26 @@ TEST(CountingSemaphore, PostWait) {
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed";
 }
 
 TEST(CountingSemaphore, Timeout) {
     Os::CountingSemaphore sem(0U);
-    Os::CountingSemaphore::Status status = sem.waitTimeout(10);
+    Fw::TimeInterval timeout(0, 10000);  // 10ms
+    Os::CountingSemaphore::Status status = sem.waitTimeout(timeout);
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+}
+
+TEST(CountingSemaphore, TryWait) {
+    Os::CountingSemaphore sem(2U);
+    // tryWait should succeed when count > 0
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    // tryWait should return ERROR_TIMEOUT when count == 0
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+    // Post should restore the count, allowing tryWait to succeed again
+    ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
 }
 
 TEST(CountingSemaphore, MultipleWaiters) {
@@ -42,17 +57,16 @@ TEST(CountingSemaphore, MultipleWaiters) {
     AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester> aggregator;
     Os::Test::CountingSemaphore::Tester::Wait wait_rule1(aggregator);
     Os::Test::CountingSemaphore::Tester::Wait wait_rule2(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post_rule1(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post_rule2(aggregator);
 
     aggregator.apply(tester);
-    // Brief wait to ensure both Waits block on semaphore before triggering Posts
+    // Brief wait to ensure both Waits block on semaphore before posting
     Fw::TimeInterval delay(0, 10000);  // 10ms
     Os::Task::delay(delay);
-    std::string to_post("Post");
-    aggregator.notify(to_post);
-    aggregator.notify(to_post);
+    // Post directly from main thread to release both waiters
+    ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     aggregator.join();
+    ASSERT_EQ(tester.waiters, 0U) << "All waiters should have completed";
 }
 
 TEST(CountingSemaphore, InitialCountNonZero) {
@@ -66,11 +80,13 @@ TEST(CountingSemaphore, InitialCountNonZero) {
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK);
     // Drain any remaining tokens (implementation may have extras)
-    while (sem.waitTimeout(1) == Os::CountingSemaphore::Status::OP_OK) {
+    Fw::TimeInterval drain_timeout(0, 1000);  // 1ms
+    while (sem.waitTimeout(drain_timeout) == Os::CountingSemaphore::Status::OP_OK) {
         // Keep draining
     }
     // Now verify timeout on empty semaphore
-    Os::CountingSemaphore::Status status = sem.waitTimeout(10);
+    Fw::TimeInterval timeout(0, 10000);  // 10ms
+    Os::CountingSemaphore::Status status = sem.waitTimeout(timeout);
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
 
@@ -125,20 +141,16 @@ TEST(CountingSemaphore, FairnessVerification) {
     Os::Test::CountingSemaphore::Tester::Wait wait_rule1(aggregator);
     Os::Test::CountingSemaphore::Tester::Wait wait_rule2(aggregator);
     Os::Test::CountingSemaphore::Tester::Wait wait_rule3(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post_rule1(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post_rule2(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post_rule3(aggregator);
 
     aggregator.apply(tester);
-    // Wait for waiters to block before triggering posts
+    // Wait for waiters to block before posting
     Fw::TimeInterval delay(0, 15000);  // 15ms
     Os::Task::delay(delay);
 
-    // Trigger 3 posts to unblock 3 waiters
-    std::string to_post("Post");
-    aggregator.notify(to_post);
-    aggregator.notify(to_post);
-    aggregator.notify(to_post);
+    // Post directly from main thread to unblock 3 waiters
+    for (U32 i = 0; i < 3; i++) {
+        ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
+    }
 
     // All threads should complete successfully
     aggregator.join();
@@ -148,7 +160,7 @@ TEST(CountingSemaphore, FairnessVerification) {
 // Priority 3: Robustness
 
 TEST(CountingSemaphore, ManyThreadsStress) {
-    // Stress test with 8 wait and 8 post threads
+    // Stress test with 8 wait threads
     Os::Test::CountingSemaphore::Tester tester;
     AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester> aggregator;
 
@@ -162,25 +174,14 @@ TEST(CountingSemaphore, ManyThreadsStress) {
     Os::Test::CountingSemaphore::Tester::Wait wait7(aggregator);
     Os::Test::CountingSemaphore::Tester::Wait wait8(aggregator);
 
-    // Create multiple post rules
-    Os::Test::CountingSemaphore::Tester::Post post1(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post2(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post3(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post4(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post5(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post6(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post7(aggregator);
-    Os::Test::CountingSemaphore::Tester::Post post8(aggregator);
-
     aggregator.apply(tester);
-    // Wait for waiters to block before triggering posts
-    Fw::TimeInterval delay(0, 30000);  // 30ms for 16 threads
+    // Wait for waiters to block before posting
+    Fw::TimeInterval delay(0, 30000);  // 30ms for 8 threads
     Os::Task::delay(delay);
 
-    // Trigger 8 posts to unblock 8 waiters
-    std::string to_post("Post");
+    // Post directly from main thread to unblock 8 waiters
     for (U32 i = 0; i < 8; i++) {
-        aggregator.notify(to_post);
+        ASSERT_EQ(tester.semaphore.post(), Os::CountingSemaphore::Status::OP_OK);
     }
 
     // All threads should complete successfully

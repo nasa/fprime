@@ -13,6 +13,7 @@ namespace Semaphore {
 
 struct DarwinCountingSemaphoreHandle : public CountingSemaphoreHandle {
     dispatch_semaphore_t m_semaphore = nullptr;
+    long m_initial_count = 0;
 };
 
 class DarwinCountingSemaphore : public CountingSemaphoreInterface {
@@ -23,11 +24,11 @@ class DarwinCountingSemaphore : public CountingSemaphoreInterface {
 
     DarwinCountingSemaphore(const DarwinCountingSemaphore& other) = delete;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     Status wait() override;
 
-    Status waitTimeout(U32 timeout_ms) override;
+    Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     Status tryWait() override;
 

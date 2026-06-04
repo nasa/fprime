@@ -117,7 +117,7 @@ There are two usage patterns for the wrapper classes:
 | Usage Pattern | Description | Service | Example Usage |
 |---|---|---|---|
 | **Singletons** | Global state and/or accessed through static methods | FileSystem, Cpu, Memory, Task | Trough a static call:<br>```Os::FileSystem::rename(source, destination);``` |
-| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
+| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, CountingSemaphore, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
 
 The full API for each service is documented in the header files in the [`Os/` module](../).
 

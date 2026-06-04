@@ -20,11 +20,11 @@ class StubCountingSemaphore : public CountingSemaphoreInterface {
 
     StubCountingSemaphore(const StubCountingSemaphore& other) = delete;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     StubCountingSemaphore::Status wait() override;
 
-    StubCountingSemaphore::Status waitTimeout(U32 timeout_ms) override;
+    StubCountingSemaphore::Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     StubCountingSemaphore::Status tryWait() override;
 

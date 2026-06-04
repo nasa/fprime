@@ -23,11 +23,11 @@ class PosixCountingSemaphore : public CountingSemaphoreInterface {
 
     PosixCountingSemaphore(const PosixCountingSemaphore& other) = delete;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     PosixCountingSemaphore::Status wait() override;
 
-    PosixCountingSemaphore::Status waitTimeout(U32 timeout_ms) override;
+    PosixCountingSemaphore::Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     PosixCountingSemaphore::Status tryWait() override;
 

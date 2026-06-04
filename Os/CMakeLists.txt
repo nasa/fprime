@@ -136,6 +136,9 @@ add_named_os_module("File;FileSystem;Directory" Utils_Hash)
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 add_named_os_module("Mutex;Condition")
 add_named_os_module(CountingSemaphore)
+# CountingSemaphore is new; allow platforms that have not yet added a native
+# implementation to fall back to the Stub rather than failing the build.
+append_list_property("Os_CountingSemaphore" GLOBAL PROPERTY FPRIME_STUB_FALLBACK_ALLOWED)
 add_named_os_module(Queue)
 add_named_os_module(Cpu)
 add_named_os_module(Memory)

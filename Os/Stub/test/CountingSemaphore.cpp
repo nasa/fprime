@@ -24,7 +24,7 @@ Os::CountingSemaphoreInterface::Status TestCountingSemaphore::wait() {
     return StaticData::data.waitStatus;
 }
 
-Os::CountingSemaphoreInterface::Status TestCountingSemaphore::waitTimeout(U32 timeout_ms) {
+Os::CountingSemaphoreInterface::Status TestCountingSemaphore::waitTimeout(const Fw::TimeInterval& interval) {
     StaticData::data.lastCalled = StaticData::LastFn::WAIT_TIMEOUT_FN;
     return StaticData::data.waitTimeoutStatus;
 }

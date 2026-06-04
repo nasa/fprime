@@ -21,6 +21,7 @@ register_fprime_config(
    CHOOSES_IMPLEMENTATIONS
       Os_Cpu_Darwin
       Os_Memory_Darwin
+      Os_CountingSemaphore_Darwin
    BASE_CONFIG
 )
 target_compile_definitions(PlatformDarwin INTERFACE -DTGT_OS_TYPE_DARWIN)

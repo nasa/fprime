@@ -14,10 +14,9 @@ CountingSemaphore::Status CountingSemaphore::wait() {
     return this->m_delegate.wait();
 }
 
-CountingSemaphore::Status CountingSemaphore::waitTimeout(U32 timeout_ms) {
+CountingSemaphore::Status CountingSemaphore::waitTimeout(const Fw::TimeInterval& interval) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<CountingSemaphoreInterface*>(&this->m_handle_storage[0]));
-    FW_ASSERT(timeout_ms > 0);
-    return this->m_delegate.waitTimeout(timeout_ms);
+    return this->m_delegate.waitTimeout(interval);
 }
 
 CountingSemaphore::Status CountingSemaphore::tryWait() {

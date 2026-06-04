@@ -23,8 +23,6 @@ constant FW_DIRECTORY_HANDLE_MAX_SIZE = 16
 @ Maximum size of a handle for Os::FileSystem
 constant FW_FILESYSTEM_HANDLE_MAX_SIZE = 16
 
-@ Maximum size of a handle for Os::CountingSemaphore
-constant FW_COUNTING_SEMAPHORE_HANDLE_MAX_SIZE = 32
 
 @ Maximum size of a handle for Os::RawTime
 constant FW_RAW_TIME_HANDLE_MAX_SIZE = 56
