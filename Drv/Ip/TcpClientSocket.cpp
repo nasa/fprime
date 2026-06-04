@@ -63,8 +63,8 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-    // First IP address to socket sin_addr
-    if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
+    // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+    if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
         ::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
@@ -86,7 +86,7 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
         return SOCK_FAILED_TO_CONNECT;
     }
     socketDescriptor.fd = socketFd;
-    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", m_hostname, m_port);
+    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", this->m_ipv4_address, this->m_port);
     return SOCK_SUCCESS;
 }
 

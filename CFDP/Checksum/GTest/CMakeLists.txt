@@ -6,13 +6,13 @@
 #
 ####
 if (BUILD_TESTING)
-    set(SOURCE_FILES
+    register_fprime_module(
+      SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/Checksums.cpp"
-    )
-
-    set(MOD_DEPS
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/Checksums.hpp"
+      DEPENDS
         gtest
-        CFDP/Checksum
+        CFDP_Checksum
     )
-    register_fprime_module()
 endif()

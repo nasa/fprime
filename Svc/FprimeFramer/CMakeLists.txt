@@ -10,23 +10,24 @@
 #
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.hpp"
+  DEPENDS
+    Svc_FprimeProtocol
 )
-
-set(MOD_DEPS
-  Svc/FprimeProtocol
-)
-
-register_fprime_module()
 
 
 ### Unit Tests ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTester.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeFramer.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeFramerTester.cpp"
+  UT_AUTO_HELPERS
 )
-set(UT_AUTO_HELPERS ON)
-register_fprime_ut()

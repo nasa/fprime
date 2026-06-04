@@ -43,9 +43,9 @@ Users turning off automatic connection must call `open` to open the connection.
 ```c++
 Drv::TcpServerComponentImpl comm = Drv::TcpServerComponentImpl("TCP Server");
 
-bool constructApp(bool dump, U32 port_number, char* hostname) {
+bool constructApp(bool dump, U32 port_number, char* ipv4_address) {
     ... configure 
-    comm.configure(hostname, port_number);
+    comm.configure(ipv4_address, port_number);
     ...
     Os::TaskString name("ReceiveTask");
     comm.start(name);
