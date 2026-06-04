@@ -20,7 +20,6 @@ bool Tester::Wait::precondition(const Tester& state) {
 
 void Tester::Wait::action(Tester& state) {
     ++state.waiters;
-    this->notify_other("Post");
     getLock().unlock();
     ::Os::CountingSemaphore::Status status = state.semaphore.wait();
     getLock().lock();
@@ -37,7 +36,6 @@ bool Tester::WaitTimeout::precondition(const Tester& state) {
 
 void Tester::WaitTimeout::action(Tester& state) {
     ++state.waiters;
-    this->notify_other("Post");
     getLock().unlock();
     Fw::TimeInterval timeout(0, 100000);  // 100ms
     ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
