@@ -153,6 +153,22 @@ Is turned into the following compressed data product
 ```
 The compressed product is guaranteed to be no larger than the original data product
 
+### Compression State Machine
+
+The algorithm to place the compressed data at the correct location needs requires information about whether the current chunk was compressed and alos information about whether the previous chunk was compressed. This information is tracked through the use of a state machine.
+
+TODO: Add image of SM
+
+The component starts in Init and immediately moves to either the Pre-Commit or Compressed state depending on the first chunk. If the first chunk is incompressible then the state machine moves to the Pre-Commit state. In this state, the algorithm looks for chunks that are sufficiently compressible to store headers for both this first uncompressed chunk, the active compressible chunk and a final potentially uncompressible chunk. The algorithm will remain in this state so long as no sufficiently compressible chunk is found. If the end of buffer is reached in this state then the original buffer is returned unmodified and the data product will not be compressed.
+
+When the first compressible chunk is found, the algorithm will commit to creating a compressed data product, even if this is the only compressible chunk found in the entire product. If the algorithm was previously in Pre-Commit \(Case A\), then uncompressed data in the first part of the buffer is moved so that a compression record can be placed in front of it, then the compressed data along with it's header is appended.
+
+As compressible chunks are found they are appended to the buffer along with individual compression headers. The algorithm ensure that chunks are sufficiently compressed such that there is always room for a final uncompressed chunk, along with the corresponding record header for that uncompressed chunk.
+
+The first incompressible chunk found after Pre-Commit \(Case C\) will generate a uncompressed record header followed by the uncompressed data. As further incompressible chunks are found \(Case D\) then will be appended to the existing uncompressed record, no extra headers are needed. If a compressible chunk is found, or end of the buffer is reached, the true size of the uncompressed record will be written.
+
+This algorithm is non-trival but allows data products, that can be fairly large, to be compressed in place.
+
 ## Change Log
 | Date | Description |
 |---|---|
