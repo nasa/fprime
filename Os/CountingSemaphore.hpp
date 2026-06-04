@@ -51,11 +51,10 @@ class CountingSemaphore final : public CountingSemaphoreInterface {
 
     CountingSemaphore(const CountingSemaphoreInterface& other) = delete;
 
-    CountingSemaphore(const CountingSemaphoreInterface* other) = delete;
-
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
-
-    Status wait() override;
+    CountingSemaphore(const CountingSemaphore& other) = delete;
+    CountingSemaphore& operator=(const CountingSemaphore& other) = delete;
+    CountingSemaphore(CountingSemaphore&& other) = delete;
+    CountingSemaphore& operator=(CountingSemaphore&& other) = delete;
 
     Status waitTimeout(U32 timeout_ms) override;
 
