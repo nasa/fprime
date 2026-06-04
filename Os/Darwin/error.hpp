@@ -9,11 +9,11 @@
 namespace Os {
 namespace Darwin {
 
-//! Convert a Darwin/Mach kern_return_t status to Os::CountingSemaphore::Status representation.
-//! \param kern_status: kern_return_t value from Mach kernel operations
-//! \return: Os::CountingSemaphore::Status representation of the error
+//! Convert a dispatch_semaphore_wait return value to Os::CountingSemaphore::Status.
+//! \param dispatch_result: return value from dispatch_semaphore_wait (0 = success, non-zero = timeout)
+//! \return: Os::CountingSemaphore::Status representation
 //!
-Os::CountingSemaphore::Status kern_return_to_semaphore_status(long kern_status);
+Os::CountingSemaphore::Status dispatch_result_to_semaphore_status(long dispatch_result);
 
 }  // namespace Darwin
 }  // namespace Os

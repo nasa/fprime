@@ -3,8 +3,8 @@
 // \brief Darwin implementations for Os::CountingSemaphore
 // ======================================================================
 #include "Os/Darwin/CountingSemaphore.hpp"
-#include <mach/mach_types.h>
 #include "Fw/Types/Assert.hpp"
+#include "Os/Darwin/error.hpp"
 
 namespace Os {
 namespace Darwin {
@@ -26,31 +26,31 @@ Os::CountingSemaphore::Status DarwinCountingSemaphore::wait() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, DISPATCH_TIME_FOREVER);
     FW_ASSERT(result == 0, static_cast<FwAssertArgType>(result));
-    return kern_return_to_semaphore_status(result);
+    return dispatch_result_to_semaphore_status(result);
 }
 
-Os::CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(U32 timeout_ms) {
+Os::CountingSemaphore::Status DarwinCountingSemaphore::waitTimeout(const Fw::TimeInterval& interval) {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
-    FW_ASSERT(timeout_ms > 0);
 
-    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, static_cast<int64_t>(timeout_ms) * 1000000LL);
+    int64_t nsec = static_cast<int64_t>(interval.getSeconds()) * 1000000000LL +
+                   static_cast<int64_t>(interval.getUSeconds()) * 1000LL;
+    dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, nsec);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, timeout);
 
-    return kern_return_to_semaphore_status(result);
+    return dispatch_result_to_semaphore_status(result);
 }
 
 Os::CountingSemaphore::Status DarwinCountingSemaphore::tryWait() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
     long result = dispatch_semaphore_wait(this->m_handle.m_semaphore, DISPATCH_TIME_NOW);
-    FW_ASSERT(result >= 0);
-
-    return kern_return_to_semaphore_status(result);
+    return dispatch_result_to_semaphore_status(result);
 }
 
 Os::CountingSemaphore::Status DarwinCountingSemaphore::post() {
     FW_ASSERT(this->m_handle.m_semaphore != nullptr);
-    long result = dispatch_semaphore_signal(this->m_handle.m_semaphore);
-    FW_ASSERT(result <= 0);
+    // dispatch_semaphore_signal returns non-zero if a thread was woken, zero otherwise.
+    // Both outcomes are valid — no error condition exists.
+    (void)dispatch_semaphore_signal(this->m_handle.m_semaphore);
     return Os::CountingSemaphore::Status::OP_OK;
 }
 

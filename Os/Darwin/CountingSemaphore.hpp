@@ -27,7 +27,7 @@ class DarwinCountingSemaphore : public CountingSemaphoreInterface {
 
     Status wait() override;
 
-    Status waitTimeout(U32 timeout_ms) override;
+    Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     Status tryWait() override;
 

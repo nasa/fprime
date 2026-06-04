@@ -48,7 +48,7 @@ class TestCountingSemaphore : public CountingSemaphoreInterface {
     Status wait() override;
 
     //! \brief wait on semaphore with timeout and return status
-    Status waitTimeout(U32 timeout_ms) override;
+    Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     //! \brief try to wait on semaphore and return status
     Status tryWait() override;

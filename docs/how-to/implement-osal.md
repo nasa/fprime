@@ -243,6 +243,7 @@ The full set of [OSAL modules](../../Os/docs/sdd.md#2-core-services) that can be
 | Module | Interface | Key Methods |
 |---|---|---|
 | **Mutex** | `MutexInterface` | `take()`, `release()` |
+| **CountingSemaphore** | `CountingSemaphoreInterface` | `wait()`, `waitTimeout()`, `tryWait()`, `post()` |
 | **ConditionVariable** | `ConditionVariableInterface` | `pend()`, `notify()`, `notifyAll()` |
 | **Task** | `TaskInterface` | `start()`, `join()`, `delay()` |
 | **Queue** | `QueueInterface` | `send()`, `receive()` |

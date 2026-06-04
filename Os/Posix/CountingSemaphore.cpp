@@ -27,18 +27,17 @@ PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
     return status == 0 ? Status::OP_OK : posix_status_to_semaphore_status(errno);
 }
 
-PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(U32 timeout_ms) {
-    FW_ASSERT(timeout_ms > 0);
+PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(const Fw::TimeInterval& interval) {
     struct timespec abstime;
     int clock_status = clock_gettime(CLOCK_REALTIME, &abstime);
     FW_ASSERT(clock_status == 0, static_cast<FwAssertArgType>(clock_status));
 
-    abstime.tv_sec += timeout_ms / 1000;
-    abstime.tv_nsec += (timeout_ms % 1000) * 1000000L;
+    abstime.tv_sec += interval.getSeconds();
+    abstime.tv_nsec += static_cast<long>(interval.getUSeconds()) * 1000L;
 
     if (abstime.tv_nsec >= 1000000000L) {
-        abstime.tv_sec += 1;
-        abstime.tv_nsec -= 1000000000L;
+        abstime.tv_sec += abstime.tv_nsec / 1000000000L;
+        abstime.tv_nsec = abstime.tv_nsec % 1000000000L;
     }
 
     int status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);

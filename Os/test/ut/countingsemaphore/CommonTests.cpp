@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/test/ut/countingsemaphore/CommonTests.hpp"
 #include <gtest/gtest.h>
+#include "Fw/Time/TimeInterval.hpp"
 #include "Fw/Types/String.hpp"
 #include "Os/test/ConcurrentRule.hpp"
 #include "Os/test/ut/countingsemaphore/RulesHeaders.hpp"
@@ -29,12 +30,26 @@ TEST(CountingSemaphore, PostWait) {
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed";
 }
 
 TEST(CountingSemaphore, Timeout) {
     Os::CountingSemaphore sem(0U);
-    Os::CountingSemaphore::Status status = sem.waitTimeout(10);
+    Fw::TimeInterval timeout(0, 10000);  // 10ms
+    Os::CountingSemaphore::Status status = sem.waitTimeout(timeout);
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+}
+
+TEST(CountingSemaphore, TryWait) {
+    Os::CountingSemaphore sem(2U);
+    // tryWait should succeed when count > 0
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
+    // tryWait should return ERROR_TIMEOUT when count == 0
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::ERROR_TIMEOUT);
+    // Post should restore the count, allowing tryWait to succeed again
+    ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(sem.tryWait(), Os::CountingSemaphore::Status::OP_OK);
 }
 
 TEST(CountingSemaphore, MultipleWaiters) {
@@ -53,6 +68,7 @@ TEST(CountingSemaphore, MultipleWaiters) {
     aggregator.notify(to_post);
     aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_EQ(tester.waiters, 0U) << "All waiters should have completed";
 }
 
 TEST(CountingSemaphore, InitialCountNonZero) {
@@ -66,11 +82,13 @@ TEST(CountingSemaphore, InitialCountNonZero) {
     ASSERT_EQ(sem.post(), Os::CountingSemaphore::Status::OP_OK);
     ASSERT_EQ(sem.wait(), Os::CountingSemaphore::Status::OP_OK);
     // Drain any remaining tokens (implementation may have extras)
-    while (sem.waitTimeout(1) == Os::CountingSemaphore::Status::OP_OK) {
+    Fw::TimeInterval drain_timeout(0, 1000);  // 1ms
+    while (sem.waitTimeout(drain_timeout) == Os::CountingSemaphore::Status::OP_OK) {
         // Keep draining
     }
     // Now verify timeout on empty semaphore
-    Os::CountingSemaphore::Status status = sem.waitTimeout(10);
+    Fw::TimeInterval timeout(0, 10000);  // 10ms
+    Os::CountingSemaphore::Status status = sem.waitTimeout(timeout);
     ASSERT_EQ(status, Os::CountingSemaphore::Status::ERROR_TIMEOUT);
 }
 
