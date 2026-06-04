@@ -208,6 +208,7 @@ CountingSemaphore::Status posix_status_to_semaphore_status(int posix_status) {
             status = CountingSemaphore::Status::OP_OK;
             break;
         case ETIMEDOUT:
+        case EAGAIN:
             status = CountingSemaphore::Status::ERROR_TIMEOUT;
             break;
         case EINVAL:
