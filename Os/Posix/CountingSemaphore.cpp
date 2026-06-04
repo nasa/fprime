@@ -3,8 +3,8 @@
 // \brief Posix implementations for Os::CountingSemaphore
 // ======================================================================
 #include "Os/Posix/CountingSemaphore.hpp"
-#include <errno.h>
-#include <time.h>
+#include <cerrno>
+#include <ctime>
 #include "Fw/Types/Assert.hpp"
 #include "Os/Posix/error.hpp"
 

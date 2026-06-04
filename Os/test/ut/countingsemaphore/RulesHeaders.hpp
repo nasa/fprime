@@ -20,7 +20,7 @@ struct Tester {
     Os::CountingSemaphore semaphore;
     U32 waiters;
 
-    Tester() : semaphore(10U), waiters(0U) {}
+    Tester() : semaphore(0U), waiters(0U) {}
 
 // Do NOT alter, adds rules to Tester as inner classes
 #include "CountingSemaphoreRules.hpp"
