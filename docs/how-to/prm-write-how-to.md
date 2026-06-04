@@ -1,9 +1,9 @@
-# How-To: Import Parameters to the GDS
+# How-To: Load Parameters in Batch
 
 
 ## Overview
 
-This guide assumes you are familiar with the [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file or through a `.seq` file. Both types of files are created by the `fprime-prm-write tool` using a JSON file with the parameters. The PrmDb component loads parameters from binary `.dat` files that contain a CRC32 header followed by parameter records. CmdSeq loads parameters from a binary created from a `.seq` file.
+Readers of this guide are encouraged to read through the documentation for [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file or through a `.seq` file. Both types of files are created by the `fprime-prm-write tool` using a JSON file with the parameters. The PrmDb component loads parameters from binary `.dat` files that contain a CRC32 header followed by parameter records. CmdSeq loads parameters from a binary created from a `.seq` file.
 
 This guide uses the [**Ref**](https://github.com/nasa/fprime/tree/devel/Ref) (reference) F´ project as an example.
 
@@ -135,9 +135,9 @@ fprime-gds -g none --log-directly
 **Command Line:**
 ```bash
 # Load the .dat file into staging area 
-fprime-cli commands send FileHandling.prmDb.PRM_LOAD_FILE "params.dat" MERGE
+fprime-cli command-send FileHandling.prmDb.PRM_LOAD_FILE "params.dat" MERGE
 # Check events for success
-fprime-cli events list | grep -E "PrmFileLoadComplete|PrmDbFileLoadFailed|PrmFileBadCrc"
+grep -q "PrmFileLoadComplete" gds.log
 ```
 
 **Expected events:**
@@ -159,22 +159,14 @@ Send `FileHandling.prmDb.PRM_COMMIT_STAGED` (no arguments). Check the **Events**
 **Command Line:**
 ```bash
 # Commit staged parameters
-fprime-cli commands send FileHandling.prmDb.PRM_COMMIT_STAGED
+fprime-cli command-send FileHandling.prmDb.PRM_COMMIT_STAGED
 # Verify the commit operation succeeded
-fprime-cli events list | grep "PrmDbCopyAllComplete"
+grep -q "PrmDbCopyAllComplete" gds.log
 ```
 
-### Step 5: Verify Parameter Changes
+### Step 5 (optional): Verify Parameter Changes
 
-**Recommended Method: Check telemetry for each parameter**
-
-Each parameter has a telemetry channel. Check the **Telemetry** tab in the GDS GUI or:
-
-```bash
-fprime-cli telemetry list | grep <parameter-name>
-```
-
-**Alternative Method: Downlink and decode PrmDb.dat**
+**Downlink and decode PrmDb.dat**
 
 If your deployment has file downlink configured (using `Svc.FileDownlink`), you can verify by downloading and decoding the parameter database:
 
