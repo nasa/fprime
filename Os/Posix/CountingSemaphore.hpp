@@ -23,7 +23,7 @@ class PosixCountingSemaphore : public CountingSemaphoreInterface {
 
     PosixCountingSemaphore(const PosixCountingSemaphore& other) = delete;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     PosixCountingSemaphore::Status wait() override;
 

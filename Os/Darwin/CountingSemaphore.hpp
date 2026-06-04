@@ -23,7 +23,7 @@ class DarwinCountingSemaphore : public CountingSemaphoreInterface {
 
     DarwinCountingSemaphore(const DarwinCountingSemaphore& other) = delete;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     Status wait() override;
 
