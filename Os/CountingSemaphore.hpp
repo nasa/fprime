@@ -32,7 +32,7 @@ class CountingSemaphoreInterface {
     CountingSemaphoreInterface(const CountingSemaphoreInterface& other) = delete;
 
     //! \brief assignment operator is forbidden
-    virtual CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     //! \brief wait (decrement) the semaphore, blocking if count is zero
     //! \return status of the operation
