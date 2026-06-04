@@ -16,14 +16,14 @@ module Svc {
 
         @ Port for sending file packets as Fw::Buffer with the packet's APID.
         @ Ownership of the buffer is passed to the receiver.
-        output port fileOut: Svc.ComPacketSend
+        output port fileOut: Fw.ComPacketSend
 
         @ Port for receiving back ownership of buffers sent on fileOut or any other
         @ output port that passes buffer ownership to the receiver
         sync input port fileBufferReturnIn: Fw.BufferSend
 
         @ Port for sending command packets as Fw::ComBuffers with the packet's APID.
-        output port commandOut: Svc.ComBufferSend
+        output port commandOut: Fw.ComBufferSend
 
         @ Port for receiving command responses from a command dispatcher (can be a no-op)
         sync input port cmdResponseIn: Fw.CmdResponse

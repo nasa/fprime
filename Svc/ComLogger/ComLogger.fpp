@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Com input port
-    async input port comIn: Svc.ComBufferSend
+    async input port comIn: Fw.ComBufferSend
 
     @ Ping input port
     async input port pingIn: Svc.Ping

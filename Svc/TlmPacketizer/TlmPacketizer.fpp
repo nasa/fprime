@@ -23,7 +23,7 @@ module Svc {
 
     @ Packet send port
     @ Ordered by Section, Group
-    output port PktSend: [TELEMETRY_SEND_PORTS] Svc.ComBufferSend
+    output port PktSend: [TELEMETRY_SEND_PORTS] Fw.ComBufferSend
 
     async input port controlIn: EnableSection
 

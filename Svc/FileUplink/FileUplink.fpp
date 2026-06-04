@@ -8,7 +8,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Buffer send in
-    async input port bufferSendIn: Svc.ComPacketSend
+    async input port bufferSendIn: Fw.ComPacketSend
 
     @ Buffer send out
     output port bufferSendOut: Fw.BufferSend

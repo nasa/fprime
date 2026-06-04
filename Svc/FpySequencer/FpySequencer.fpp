@@ -25,7 +25,7 @@ module Svc {
         state machine instance sequencer: SequencerStateMachine priority 9 assert
 
         @ output port for commands from the seq
-        output port cmdOut: Svc.ComBufferSend
+        output port cmdOut: Fw.ComBufferSend
 
         @ responses back from commands from the seq
         # cmd responses have lower prio than sm sigs, cmds and ping

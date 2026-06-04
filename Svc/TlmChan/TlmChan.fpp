@@ -13,7 +13,7 @@ module Svc {
     async input port Run: Svc.Sched
 
     @ Packet send port
-    output port PktSend: Svc.ComBufferSend
+    output port PktSend: Fw.ComBufferSend
 
     @ Ping input port
     async input port pingIn: Svc.Ping
