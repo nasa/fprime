@@ -22,7 +22,16 @@ if (DEFINED FPRIME_INSTALL_DEST)
     set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
 endif()
 include("settings/ini")
-ini_to_cache()
+# Skip ini processing when fprime was loaded via find_package() and no settings file was explicitly provided.
+# In the find_package flow the project does not rely on fprime-util or settings.ini for path configuration.
+if (NOT FPRIME_LOADED_VIA_FIND_PACKAGE OR DEFINED FPRIME_SETTINGS_FILE)
+    ini_to_cache()
+endif()
+# When ini processing is skipped and no install destination was set, default to build-artifacts under the project
+if (FPRIME_LOADED_VIA_FIND_PACKAGE AND NOT DEFINED FPRIME_SETTINGS_FILE
+        AND NOT DEFINED FPRIME_INSTALL_DEST AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE PATH "Install dir" FORCE)
+endif()
 
 
 ####
@@ -350,18 +359,12 @@ endif()
 set(FPRIME_FRAMEWORK_PATH "${DETECTED_FRAMEWORK_PATH}" CACHE PATH "F Prime framework location" FORCE)
 
 # Setup project root
-get_filename_component(FULL_PROJECT_PATH "${CMAKE_PROJECT_DIR}" ABSOLUTE)
-file(RELATIVE_PATH TEMP_PATH "${FPRIME_FRAMEWORK_PATH}" "${FULL_PROJECT_PATH}")
-# If defined then force it to be absolute
 if (DEFINED FPRIME_PROJECT_ROOT)
+    # If explicitly defined (CLI or settings.ini), force it to be absolute
     get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     set(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT_ABS}" CACHE PATH "F Prime project location" FORCE)
-# Forces framework path as project root, if a child
-elseif( "${TEMP_PATH}" MATCHES "^[^./].*" )
-    set(FPRIME_PROJECT_ROOT "${FPRIME_FRAMEWORK_PATH}" CACHE PATH "F Prime project location" FORCE)
-# Force PROJECT_ROOT
 else()
-    set(FPRIME_PROJECT_ROOT "${FULL_PROJECT_PATH}" CACHE PATH "F Prime project location" FORCE)
+    set(FPRIME_PROJECT_ROOT "${PROJECT_SOURCE_DIR}" CACHE PATH "F Prime project location" FORCE)
 endif()
 # Force  FPRIME_LIBRARY_LOCATIONS to be absolute
 set(FPRIME_LIBRARY_LOCATIONS_ABS)

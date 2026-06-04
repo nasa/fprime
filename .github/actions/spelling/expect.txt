@@ -30,6 +30,7 @@ ARINC
 arpa
 ASize
 ATL
+ATLO
 AUTOBRIEF
 autocode
 autocoded
@@ -46,8 +47,8 @@ bibtex
 Bies
 binaryfile
 BINDIR
-bitfield
 Bitfield
+bitfield
 bitmaps
 bitshifts
 bitwidth
@@ -77,6 +78,8 @@ callergraph
 callgraph
 Campuzano
 carg
+CBE
+CBEs
 CBF
 CBLOCK
 CCACHE
@@ -84,6 +87,7 @@ CCB
 CComponent
 ccsds
 ccsparc
+CDR
 cdh
 CDHCORE
 CDHCORESUBTOPOLOGY
@@ -119,6 +123,8 @@ COMFPRIME
 COMFPRIMESUBTOPOLOGY
 comlogger
 COMLOGGERTEE
+commandability
+Commandability
 COMMANDDISPATCHERIMPL
 COMMANDDISPATCHERIMPLCFG
 COMPACKET
@@ -176,6 +182,7 @@ dequeue
 Deinitialization
 deployables
 DEPRECATEDLIST
+descope
 deser
 Deserial
 DEVICESM
@@ -245,6 +252,7 @@ eventflags
 EVENTPRIMITIVE
 evr
 evt
+exceedance
 exploitability
 externalproject
 FAKELOGGER
@@ -302,10 +310,12 @@ Fregoso
 frsize
 fsblkcnt
 fsw
+FTA
 FWCASSERT
 gcda
 gcgandhi
 gcov
+gcovr
 gdiplus
 GENHUB
 gettime
@@ -404,9 +414,9 @@ jobrestrictions
 jpl
 jplffs
 jre
+kermit
 kessler
 kevin
-kermit
 kubiak
 Lammert
 lammertbies
@@ -555,12 +565,16 @@ PASSIVERATEGROUP
 PASSIVERATEGROUPIMPLTESTER
 patsubst
 pdflatex
+PDR
 pdu
 Peet
 penv
 PERLMOD
+PFR
+PFRs
 PHASERMEMBEROUT
 PINGENTRIES
+PINGIN
 PINGSEND
 pkill
 PKTS
@@ -645,6 +659,7 @@ rowspan
 rpi
 rptr
 SAlias
+Safing
 sanitizers
 SafeRTOS
 sats
@@ -658,6 +673,7 @@ sdiv
 sdls
 searchdata
 SENDPARTIAL
+SEEs
 seqgen
 serializables
 setaffinity
@@ -752,6 +768,7 @@ telem
 TELEMCHANIMPL
 testerbase
 TESTLIST
+testbed
 testmark
 TESTUTILS
 testwrite
@@ -761,6 +778,7 @@ thisdirdoesnotexist
 thisfiledoesnotexist
 ThreadX
 Thu
+timcanham
 timebase
 timerfd
 timetag
@@ -776,10 +794,12 @@ tlm
 TLMCHAN
 TLMCHANIMPLCFG
 TLMCHANIMPLTESTER
+TLMGET
 TLMPACKET
 TLMPACKETIZER
 TLMPACKETIZERCOMPONENTIMPLCFG
 TLMPACKETIZERTYPES
+TLMRECV
 TODOLIST
 TOKENBUCKETTESTER
 topologydefs
