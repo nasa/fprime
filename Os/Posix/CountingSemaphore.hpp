@@ -17,7 +17,7 @@ struct PosixCountingSemaphoreHandle : public CountingSemaphoreHandle {
 
 class PosixCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    PosixCountingSemaphore(U32 initial_count);
+    explicit PosixCountingSemaphore(U32 initial_count);
 
     ~PosixCountingSemaphore() override;
 
