@@ -52,6 +52,11 @@ class FileWorkerTester final : public FileWorkerGTestBase {
     void testWriteErr();
     void testWriteHashErr();
 
+    // Input-validation paths (assert -> event/return-status conversions)
+    void testReadInvalidInput();
+    void testVerifyInvalidInput();
+    void testWriteInvalidInput();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

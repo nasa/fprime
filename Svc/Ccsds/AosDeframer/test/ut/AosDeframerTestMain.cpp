@@ -205,6 +205,28 @@ TEST(AosDeframer, testUntrustedFhp) {
     tester.testUntrustedFhp();
 }
 
+// ----------------------------------------------------------------------
+// Tests - Security regression (CVE: EPP integer overflow → heap buffer overflow)
+// ----------------------------------------------------------------------
+
+// Regression test: single-frame delivery of the CVE PoC payload.
+// Verifies that the integer overflow guard in sizeEppPacket prevents the
+// heap buffer overflow on 32-bit targets and that the component handles
+// the resulting ~4 GB size gracefully on 64-bit hosts.
+TEST(AosDeframer, testEppSizeOverflowRejected) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppSizeOverflowRejected();
+}
+
+// Regression test: same CVE attack with the EPP header split across two frames.
+// Exercises the header accumulation path in appendToSpanningPacket together with
+// the overflow guard so that neither the direct nor the spanning delivery vector
+// can bypass the fix.
+TEST(AosDeframer, testEppSizeOverflowHeaderSpansFrame) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testEppSizeOverflowHeaderSpansFrame();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

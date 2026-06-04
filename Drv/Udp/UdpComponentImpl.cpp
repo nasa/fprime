@@ -24,16 +24,16 @@ namespace Drv {
 
 UdpComponentImpl::UdpComponentImpl(const char* const compName) : UdpComponentBase(compName) {}
 
-SocketIpStatus UdpComponentImpl::configureSend(const char* hostname,
+SocketIpStatus UdpComponentImpl::configureSend(const char* const ipv4_address,
                                                const U16 port,
                                                const U32 send_timeout_seconds,
                                                const U32 send_timeout_microseconds) {
-    return m_socket.configureSend(hostname, port, send_timeout_seconds, send_timeout_microseconds);
+    return m_socket.configureSend(ipv4_address, port, send_timeout_seconds, send_timeout_microseconds);
 }
 
-SocketIpStatus UdpComponentImpl::configureRecv(const char* hostname, const U16 port, FwSizeType buffer_size) {
+SocketIpStatus UdpComponentImpl::configureRecv(const char* const ipv4_address, const U16 port, FwSizeType buffer_size) {
     m_allocation_size = buffer_size;  // Store the buffer size
-    return m_socket.configureRecv(hostname, port);
+    return m_socket.configureRecv(ipv4_address, port);
 }
 
 UdpComponentImpl::~UdpComponentImpl() {}
