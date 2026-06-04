@@ -14,7 +14,7 @@ struct StubCountingSemaphoreHandle : public CountingSemaphoreHandle {};
 
 class StubCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    StubCountingSemaphore(U32 initial_count);
+    explicit StubCountingSemaphore(U32 initial_count);
 
     ~StubCountingSemaphore() override = default;
 
