@@ -24,7 +24,6 @@ void Tester::Wait::action(Tester& state) {
     --state.waiters;
     ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
-}
 
 Tester::WaitTimeout::WaitTimeout(AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& runner)
     : ConcurrentRule<Os::Test::CountingSemaphore::Tester>("WaitTimeout", runner) {}
