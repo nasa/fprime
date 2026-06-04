@@ -157,7 +157,7 @@ The compressed product is guaranteed to be no larger than the original data prod
 
 The algorithm to place the compressed data at the correct location needs requires information about whether the current chunk was compressed and alos information about whether the previous chunk was compressed. This information is tracked through the use of a state machine.
 
-TODO: Add image of SM
+![DPCompress State Machine](DpCompressProcSM.drawio.png)
 
 The component starts in Init and immediately moves to either the Pre-Commit or Compressed state depending on the first chunk. If the first chunk is incompressible then the state machine moves to the Pre-Commit state. In this state, the algorithm looks for chunks that are sufficiently compressible to store headers for both this first uncompressed chunk, the active compressible chunk and a final potentially uncompressible chunk. The algorithm will remain in this state so long as no sufficiently compressible chunk is found. If the end of buffer is reached in this state then the original buffer is returned unmodified and the data product will not be compressed.
 
