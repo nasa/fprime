@@ -3,8 +3,8 @@
 // \brief  cpp file for ComBufferToComAdapter component implementation class
 // ======================================================================
 
-#include <Svc/ComBufferToComAdapter/ComBufferToComAdapter.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Svc/ComBufferToComAdapter/ComBufferToComAdapter.hpp>
 
 namespace Svc {
 
@@ -12,8 +12,7 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-ComBufferToComAdapter ::ComBufferToComAdapter(const char* compName)
-    : ComBufferToComAdapterComponentBase(compName) {}
+ComBufferToComAdapter ::ComBufferToComAdapter(const char* compName) : ComBufferToComAdapterComponentBase(compName) {}
 
 ComBufferToComAdapter ::~ComBufferToComAdapter() {}
 

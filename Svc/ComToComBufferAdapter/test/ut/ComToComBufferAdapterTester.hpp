@@ -46,8 +46,8 @@ class ComToComBufferAdapterTester : public ComToComBufferAdapterGTestBase {
     // ----------------------------------------------------------------------
 
     //! Handler for from_comBufferSendOut
-    void from_comBufferSendOut_handler(FwIndexType portNum,            //!< The port number
-                                       Fw::ComBuffer& data,            //!< Buffer containing packet data
+    void from_comBufferSendOut_handler(FwIndexType portNum,             //!< The port number
+                                       Fw::ComBuffer& data,             //!< Buffer containing packet data
                                        const ComCfg::Apid& packetType,  //!< Packet APID
                                        U32 context                      //!< Call context value
                                        ) override;
