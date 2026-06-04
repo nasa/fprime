@@ -40,16 +40,16 @@ class TlmChan final : public TlmChanComponentBase {
     void pingIn_handler(const FwIndexType portNum, /*!< The port number*/
                         U32 key                    /*!< Value to return to pinger*/
     );
-
-    typedef struct tlmEntry {
+    enum class ActiveBuffer : U8 { Buffer_0 = 0, Buffer_1 = 1 };
+    struct TlmEntry {
         FwChanIdType id;  //!< telemetry id stored in slot
         bool updated;     //!< set whenever a value has been written. Used to skip if writing out values for downlinking
         Fw::Time lastUpdate;    //!< last updated time
         Fw::TlmBuffer buffer;   //!< buffer to store serialized telemetry
-        tlmEntry* next;         //!< pointer to next bucket in table
+        TlmEntry* next;         //!< pointer to next bucket in table
         bool used;              //!< if entry has been used
         FwChanIdType bucketNo;  //!< for testing
-    } TlmEntry;
+    };
 
     struct TlmSet {
         TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
@@ -57,7 +57,7 @@ class TlmChan final : public TlmChanComponentBase {
         FwChanIdType free;                            //!< next free bucket
     } m_tlmEntries[2];
 
-    U32 m_activeBuffer;  // !< which buffer is active for storing telemetry
+    ActiveBuffer m_activeBuffer;  // !< which buffer is active for storing telemetry
 };
 
 }  // namespace Svc

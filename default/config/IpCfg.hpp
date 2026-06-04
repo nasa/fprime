@@ -19,7 +19,16 @@ enum IpCfg {
     SOCKET_IP_SEND_FLAGS = 0,              // send, sendto FLAGS argument
     SOCKET_IP_RECV_FLAGS = 0,              // recv FLAGS argument
     SOCKET_MAX_ITERATIONS = 0xFFFF,        // Maximum send/recv attempts before an error is returned
-    SOCKET_MAX_HOSTNAME_SIZE = 256         // Maximum stored hostname
+    // Maximum stored IPv4 address string. Sized to fit a full dotted-quad ("255.255.255.255")
+    // plus NUL terminator, with extra slack. The driver does NOT perform DNS resolution; the
+    // configure() call requires an IPv4 address in the form x.x.x.x. The buffer is kept at 256
+    // bytes (rather than INET_ADDRSTRLEN==16) for backwards-compatibility with downstream
+    // projects that override this macro for their own purposes.
+    SOCKET_MAX_IPV4_ADDRESS_SIZE = 256,
+    // DEPRECATED: legacy alias retained for one minor release. New code should use
+    // SOCKET_MAX_IPV4_ADDRESS_SIZE. Removing this alias is a breaking change and must be
+    // accompanied by a major-version bump per the F' versioning policy.
+    SOCKET_MAX_HOSTNAME_SIZE = SOCKET_MAX_IPV4_ADDRESS_SIZE
 };
 static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
 

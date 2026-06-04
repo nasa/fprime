@@ -87,6 +87,8 @@
 \.xz$
 \.zip$
 /mkdocs\.yml$
+^\.devin/
+^\.github/agents/
 ^\.github/actions/spelling/
 ^\Q.github/workflows/spelling.yml\E$
 ^\QAutocoders/Python/test/command_multi_inst/docs/Test1.md\E$

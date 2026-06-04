@@ -46,6 +46,13 @@ resolve_path_variables(FPRIME_BUILD_LOCATIONS)
 fprime_cmake_status("[FPRIME] Module locations: ${FPRIME_BUILD_LOCATIONS}")
 fprime_cmake_status("[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
 include(platform/platform) # Now that module locations are known, load platform settings
+fprime_validate_platform()
+
+# Output directories must be set at file scope (not inside a function) so they persist for all
+# project-level targets. TOOLCHAIN_NAME is available here as a cache variable.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${TOOLCHAIN_NAME}")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${TOOLCHAIN_NAME}")
 
 # Module setup functions, attaches targets to modules, etc.
 include(module)
@@ -151,23 +158,27 @@ macro(fprime_setup_override_targets)
 endmacro(fprime_setup_override_targets)
 
 macro(fprime_initialize_build_system)
-    cmake_minimum_required(VERSION 3.18)
-    fprime_setup_global_includes()
-    fprime_detect_libraries()
-    fprime_setup_standard_targets()
-    fprime_setup_override_targets()
-    set_property(GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED ON)
+    # Ensure that the build system is loaded only once
+    get_property(_FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
+    if (NOT _FPRIME_BUILD_SYSTEM_LOADED)
+        cmake_minimum_required(VERSION 3.18)
+        fprime_setup_global_includes()
+        fprime_detect_libraries()
+        fprime_setup_standard_targets()
+        fprime_setup_override_targets()
+        set_property(GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED ON)
 
-    # Perform necessary sub-builds
-    if (NOT FPRIME_IS_SUB_BUILD)
-        set(SUB_BUILD_TARGETS target/sub-build/fpp_locs target/sub-build/fpp_depend)
-        if (FPRIME_ENABLE_JSON_MODEL_GENERATION)
-            list(APPEND SUB_BUILD_TARGETS target/sub-build/fpp_to_json)
+        # Perform necessary sub-builds
+        if (NOT FPRIME_IS_SUB_BUILD)
+            set(SUB_BUILD_TARGETS target/sub-build/fpp_locs target/sub-build/fpp_depend)
+            if (FPRIME_ENABLE_JSON_MODEL_GENERATION)
+                list(APPEND SUB_BUILD_TARGETS target/sub-build/fpp_to_json)
+            endif()
+            list(APPEND SUB_BUILD_TARGETS target/sub-build/module_info)
+            run_sub_build(info-cache ${SUB_BUILD_TARGETS})
+            # Import the pre-computed properties!
+            include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
         endif()
-        list(APPEND SUB_BUILD_TARGETS target/sub-build/module_info)
-        run_sub_build(info-cache ${SUB_BUILD_TARGETS})
-        # Import the pre-computed properties!
-        include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
     endif()
 endmacro(fprime_initialize_build_system)
 
@@ -211,7 +222,7 @@ function(fprime_setup_included_code)
     # add_fprime_subdirectory cannot be run until later in the build process. Otherwise detection
     # for model specific post processing is messed up. Thus we synthesize the behavior by setting
     # the current module and then calling stock "add_subdirectory".
-    fprime__include_platform_file()
+    fprime_setup_platform()
     # Add "all" target to top level and a target to match all tests
     fprime_util_metadata_add_build_target("all")
     if (BUILD_TESTING)
@@ -243,8 +254,4 @@ function(fprime_setup_included_code)
 endfunction(fprime_setup_included_code)
 
 
-# Load the build system exactly one time
-get_property(FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
-if (NOT FPRIME_BUILD_SYSTEM_LOADED)
-    fprime_initialize_build_system()
-endif ()
+fprime_initialize_build_system()
