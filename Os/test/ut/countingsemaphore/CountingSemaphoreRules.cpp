@@ -20,7 +20,8 @@ void Tester::Wait::action(Tester& state) {
     ++state.waiters;
     Os::CountingSemaphore::Status status = state.semaphore.wait();
     --state.waiters;
-    FW_ASSERT(status == Os::CountingSemaphore::Status::OP_OK, status);
+    ASSERT_EQ(status, Os::CountingSemaphore::Status::OP_OK);
+}
 }
 
 Tester::WaitTimeout::WaitTimeout(AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& runner)
