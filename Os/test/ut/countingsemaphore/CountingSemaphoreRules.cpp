@@ -20,9 +20,9 @@ bool Tester::Wait::precondition(const Tester& state) {
 
 void Tester::Wait::action(Tester& state) {
     ++state.waiters;
-    Os::CountingSemaphore::Status status = state.semaphore.wait();
+    ::Os::CountingSemaphore::Status status = state.semaphore.wait();
     --state.waiters;
-    ASSERT_EQ(status, Os::CountingSemaphore::Status::OP_OK);
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 }
 
@@ -36,9 +36,9 @@ bool Tester::WaitTimeout::precondition(const Tester& state) {
 void Tester::WaitTimeout::action(Tester& state) {
     ++state.waiters;
     Fw::TimeInterval timeout(0, 100000);  // 100ms
-    Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
+    ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
     --state.waiters;
-    ASSERT_TRUE(status == Os::CountingSemaphore::Status::OP_OK || status == Os::CountingSemaphore::Status::ERROR_TIMEOUT)
+    ASSERT_TRUE(status == ::Os::CountingSemaphore::Status::OP_OK || status == ::Os::CountingSemaphore::Status::ERROR_TIMEOUT)
         << "Unexpected status: " << status;
 }
 
@@ -51,8 +51,8 @@ bool Tester::Post::precondition(const Tester& state) {
 
 void Tester::Post::action(Tester& state) {
     this->wait_for_next_step();
-    Os::CountingSemaphore::Status status = state.semaphore.post();
-    ASSERT_EQ(status, Os::CountingSemaphore::Status::OP_OK);
+    ::Os::CountingSemaphore::Status status = state.semaphore.post();
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 
 }  // namespace CountingSemaphore
