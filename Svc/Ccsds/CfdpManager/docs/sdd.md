@@ -444,6 +444,117 @@ These types define the size of CFDP protocol fields:
 | `CFDP_NUM_TRANSACTIONS_PER_PLAYBACK` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
 | `CFDP_NUM_HISTORIES_PER_CHANNEL` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
 
+## Events
+
+The CFDP Manager provides comprehensive event reporting covering all aspects of file transfer operations. A total of 72 events are defined, organized by functional category. Most events are warning-level to alert operators of potential issues, while activity-high events mark significant milestones like transfer start/completion and transaction control operations.
+
+### Command/Control Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| SendFileInitiated | activity low | Successfully initiated file send transfer for source file |
+| SendFileInitiateFail | warning low | Failed to initiate file send transfer for source file |
+| UnsupportedSendFileArguments | warning low | Invalid send file port request with offset and length |
+| InvalidChannel | warning low | Invalid channel ID, maximum channel ID is specified |
+| PlaybackInitiated | activity low | Successfully initiated directory playback for source directory |
+| PlaybackInitiateFail | warning low | Failed to initiate directory playback for source directory |
+| PlaybackInvalidChannel | warning low | Invalid channel ID for playback, maximum channel ID is specified |
+| PollDirInitiated | activity low | Successfully initiated directory poll for source directory |
+| PollDirStopped | activity low | Successfully stopped directory poll for channel and poll index |
+| PollDirBusy | warning low | Cannot start directory poll - channel poll already in use |
+| PollDirNotActive | warning low | Cannot stop directory poll - channel poll is not active |
+| InvalidChannelPoll | warning low | Invalid poll ID, maximum poll ID is specified |
+| SetFlowState | activity low | Set channel to specified flow state |
+| ResetCounters | activity high | Reset telemetry counters for channel (0xFF indicates all channels) |
+
+### PDU Serialization/Deserialization Errors
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| FailPduHeaderDeserialization | warning low | Failed to deserialize PDU header on channel |
+| FailPduSerialization | warning low | Failed to serialize PDU type on channel |
+| FailMetadataPduDeserialization | warning low | Failed to deserialize Metadata PDU on channel |
+| FailFileDataPduDeserialization | warning low | Failed to deserialize File Data PDU on channel |
+| FailEofPduDeserialization | warning low | Failed to deserialize EOF PDU on channel |
+| FailAckPduDeserialization | warning low | Failed to deserialize ACK PDU on channel |
+| FailFinPduDeserialization | warning low | Failed to deserialize FIN PDU on channel |
+| FailNakPduDeserialization | warning low | Failed to deserialize NAK PDU on channel |
+
+### RX Transaction Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| RxAckLimitReached | warning low | RX ACK limit reached for transaction, no fin-ack sent |
+| RxTempFileCreated | activity low | RX transaction creating temp file without metadata |
+| RxFileCreateFailed | warning low | RX transaction failed to create file |
+| RxCrcMismatch | warning low | RX transaction CRC mismatch: expected vs actual |
+| RxNakLimitReached | warning low | RX transaction NAK limit reached |
+| RxSeekFailed | warning low | RX transaction failed to seek to offset |
+| RxWriteFailed | warning low | RX transaction write failed: expected bytes vs actual bytes |
+| RxFileSizeMismatch | warning low | RX transaction EOF file size mismatch: expected vs actual |
+| RxInvalidEofPdu | warning low | RX transaction received invalid EOF PDU |
+| RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
+| RxReadCrcFailed | warning low | RX transaction failed to read during CRC calculation |
+| RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
+| RxFileRenameFailed | warning low | RX transaction failed to rename temp file to final file |
+| RxFileReopenFailed | warning low | RX transaction failed to reopen file after rename |
+| RxInactivityTimeout | warning low | RX transaction inactivity timer expired |
+| RxInvalidDirectiveCode | warning low | RX transaction received invalid directive code for substate |
+| RxTransactionLimitReached | warning low | Dropping packet due to max RX transactions reached |
+
+### TX Transaction Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| TxAckLimitReached | warning low | TX transaction ACK limit reached, no eof-ack received |
+| TxInactivityTimeout | warning low | TX transaction inactivity timer expired |
+| TxFileOpenFailed | warning low | TX transaction failed to open file |
+| TxFileSeekFailed | warning low | TX transaction failed to seek to beginning of file |
+| TxSendMetadataFailed | warning low | TX transaction failed to send metadata PDU |
+| TxEarlyFinReceived | warning low | TX transaction received early FIN, cancelling transfer |
+| TxInvalidNakPdu | warning low | TX transaction received invalid NAK PDU |
+| TxInvalidSegmentRequests | warning low | TX transaction received invalid NAK segment requests |
+| TxNonFileDirectivePduReceived | warning low | TX transaction received non-file-directive PDU |
+| TxInvalidDirectiveCode | warning low | TX transaction received invalid directive code for substate |
+
+### File Transfer Complete Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| TxFileTransferStarted | activity high | TX starting file transfer: source file -> dest file |
+| TxFileTransferCompleted | activity high | TX completed file transfer: source file -> dest file |
+| RxFileTransferCompleted | activity high | RX completed file transfer: source file -> dest file |
+| MetadataReceived | activity low | Metadata received for source and destination files |
+
+### Transaction Control Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| TransactionSuspended | activity low | Transaction suspended |
+| TransactionResumed | activity low | Transaction resumed |
+| TransactionCanceled | activity high | Transaction canceled |
+| TransactionAbandoned | activity high | Transaction abandoned |
+| TransactionNotFound | warning low | Transaction not found |
+
+### Miscellaneous/Diagnostic Events
+
+| Event Name | Severity | Description |
+|------------|----------|-------------|
+| BuffersExhausted | warning low | Unable to allocate a PDU buffer |
+| FailKeepFileMove | warning low | Failed to move source file to move directory |
+| FailPollFileMove | warning low | Failed to move source file to fail directory |
+| FileDataSegmentMetadata | warning low | File data PDU with unsupported segment metadata received |
+| ChunklistUnavailable | warning low | Cannot get chunklist, abandoning transaction |
+| UnhandledPduInIdleState | warning low | Unhandled PDU type received in idle state |
+| InvalidDestinationEid | warning low | Dropping packet for invalid destination entity ID |
+| MaxTxTransactionsReached | warning low | Maximum number of commanded TX files reached |
+| PlaybackDirOpenFailed | warning low | Failed to open playback directory |
+| PlaybackDirSlotUnavailable | warning low | No playback directory slot available |
+| DanglingFileHandleClosed | warning low | Closed dangling file handle for channel and transaction |
+| PlaybackDirReadFailed | warning low | Failed to read from playback directory |
+| ResetFreedTransaction | diagnostic | Attempt to reset a transaction that has already been freed |
+| FileRemoveFailed | warning low | Failed to remove file |
+
 ## Commands
 
 | Name | Description |
@@ -456,6 +567,7 @@ These types define the size of CFDP protocol fields:
 | SuspendResumeTransaction | Suspend or resume a transaction. When suspended, the transaction remains in memory but stops making progress (no PDUs sent or processed, no timers tick). Useful during critical spacecraft operations. Takes an action parameter (SUSPEND or RESUME). Transactions are identified by channel ID, transaction sequence number, and entity ID. |
 | CancelTransaction | Gracefully cancel a transaction with protocol close-out. Sends FIN/ACK PDUs as appropriate for the transaction type and state. Transaction is removed from memory. Transactions are identified by channel ID, transaction sequence number, and entity ID. |
 | AbandonTransaction | Immediately terminate a transaction without protocol close-out. No FIN/ACK sent. Transaction is immediately removed from memory. Used for stuck or unresponsive transactions. Transactions are identified by channel ID, transaction sequence number, and entity ID. |
+| ResetCounters | Resets telemetry counters for the specified CFDP channel. Pass `channelId` 0xFF to reset all channels. |
 
 ## Parameters
 
@@ -507,11 +619,14 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | recvSpurious | U32 | Number of spurious PDUs received (PDUs for nonexistent or completed transactions) |
 | recvFileDataBytes | U64 | Total file data bytes received across all transactions |
 | recvNakSegmentRequests | U32 | Number of NAK segment requests received from peer entity |
+| recvPdu | U32 | Number of PDUs received with valid headers |
 
 #### Sent Counters
 | Field | Type | Description |
 |---|---|---|
 | sentNakSegmentRequests | U32 | Number of NAK segment requests sent to peer entity |
+| sentFileDataBytes | U64 | Total file data bytes sent across all transactions |
+| sentPdu | U32 | Number of PDUs sent with valid headers |
 
 #### Fault Counters
 | Field | Type | Description |
