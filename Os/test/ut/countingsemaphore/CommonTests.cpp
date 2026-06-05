@@ -34,7 +34,7 @@ TEST(CountingSemaphore, PostWait) {
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
-    ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed";
+    ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed via post";
 }
 
 TEST(CountingSemaphore, Timeout) {
@@ -116,7 +116,7 @@ TEST(CountingSemaphore, TimeoutSuccess) {
     Os::Test::CountingSemaphore::Tester::Post post_rule(aggregator);
 
     aggregator.apply(tester);
-    // Brief wait to ensure WaitTimeout blocks before triggering Post
+    // Brief wait to allow WaitTimeout to block on semaphore before triggering Post
     Fw::TimeInterval delay(0, 10000);  // 10ms
     Os::Task::delay(delay);
     {
@@ -126,6 +126,7 @@ TEST(CountingSemaphore, TimeoutSuccess) {
     std::string to_post("Post");
     aggregator.notify(to_post);
     aggregator.join();
+    ASSERT_EQ(tester.waiters, 0U) << "Waiter should have completed via post, not timeout";
 }
 
 TEST(CountingSemaphore, InvalidParameters) {
