@@ -864,7 +864,7 @@ Status::T Engine::stopPollDir(U8 chanId, U8 pollId) {
 
     // Check if the poll directory is in use
     pd = m_channels[chanId]->getPollDir(pollId);
-    if (pd->enabled == Fw::Enabled::DISABLED) {
+    if (pd->enabled == Fw::Enabled::ENABLED) {
         // Clear poll directory arguments
         pd->intervalSec = 0;
         pd->priority = 0;
