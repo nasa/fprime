@@ -194,9 +194,11 @@ DOYTHH
 DPCAT
 DPCATALOG
 DPCFG
+DPCOMPRESSPROC
 DPMANAGER
 dps
 DPWRITER
+DPZLIBCOMPRESSOR
 DRAINBUFFERS
 drv
 drvtcpserversocket
@@ -236,6 +238,7 @@ evt
 exploitability
 externalproject
 FAKELOGGER
+FALLTHRU
 fbuild
 FDISP
 fdp
@@ -423,6 +426,7 @@ lockfiles
 LOGGERRULES
 LOGPACKET
 lol
+Longf
 Lsb
 lseek
 LTK
@@ -466,6 +470,9 @@ mstat
 MState
 multiarch
 multitool
+MUUM
+MUUMMMUMMUMM
+MUUMMMUMMUMMCUUXUUUXXCCCCCCCCCXCMCMMUCUMMXXXUXMCUCCCUUXCXXXUXC
 mutexattr
 Mutexed
 muxed
@@ -619,6 +626,7 @@ remediations
 REMOVEDIRECTORY
 REMOVEFILE
 reprioritize
+reser
 RGD
 rhel
 RHH
@@ -776,6 +784,7 @@ uge
 uitofp
 UML
 umod
+uncomp
 unconfigured
 UNEXP
 unistd
@@ -797,6 +806,7 @@ vendored
 VFILE
 VID
 vla
+voidpf
 VOXL
 vwong
 vxworks
@@ -815,5 +825,7 @@ xdffe
 xsltproc
 xxxx
 XXYY
+zalloc
+zfree
 ziext
 zimri
