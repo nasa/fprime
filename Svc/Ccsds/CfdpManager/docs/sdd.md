@@ -446,7 +446,7 @@ These types define the size of CFDP protocol fields:
 
 ## Events
 
-The CFDP Manager provides comprehensive event reporting covering all aspects of file transfer operations. A total of 72 events are defined, organized by functional category. Most events are warning-level to alert operators of potential issues, while activity-high events mark significant milestones like transfer start/completion and transaction control operations.
+The CFDP Manager provides comprehensive event reporting covering all aspects of file transfer operations, organized by functional category. Most events are warning-level to alert operators of potential issues, while activity-high events mark significant milestones like transfer start/completion and transaction control operations.
 
 ### Command/Control Events
 
@@ -508,6 +508,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 |------------|----------|-------------|
 | TxAckLimitReached | warning low | TX transaction ACK limit reached, no eof-ack received |
 | TxInactivityTimeout | warning low | TX transaction inactivity timer expired |
+| TxZeroLengthFile | warning low | TX transaction cannot transfer zero-length file |
 | TxFileOpenFailed | warning low | TX transaction failed to open file |
 | TxFileSeekFailed | warning low | TX transaction failed to seek to beginning of file |
 | TxSendMetadataFailed | warning low | TX transaction failed to send metadata PDU |

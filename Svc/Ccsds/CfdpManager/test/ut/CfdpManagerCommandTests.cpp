@@ -79,7 +79,7 @@ void CfdpManagerTester::testSendFileZeroLength() {
 }
 
 void CfdpManagerTester::testSendFileNonExistent() {
-    // Test that attempting to send a non-existent file is accepted
+    // Test that attempting to send a nonexistent file is accepted
     // but will fail later when the transaction tries to open the file
 
     const char* nonExistentFile = "test/ut/output/does_not_exist.bin";
@@ -93,7 +93,7 @@ void CfdpManagerTester::testSendFileNonExistent() {
     // Clear any previous events
     this->clearEvents();
 
-    // Send command to transfer non-existent file
+    // Send command to transfer nonexistent file
     this->sendCmd_SendFile(0,  // Instance
                            0,  // cmdSeq
                            channelId, destEid, Cfdp::Class::CLASS_1, Cfdp::Keep::KEEP,
@@ -112,7 +112,7 @@ void CfdpManagerTester::testSendFileNonExistent() {
         this->component.doDispatch();
     }
 
-    // Transaction should emit TxFileOpenFailed event when it tries to open non-existent file
+    // Transaction should emit TxFileOpenFailed event when it tries to open nonexistent file
     // This demonstrates graceful error handling - command accepted, transaction fails with event
     ASSERT_EVENTS_TxFileOpenFailed_SIZE(1);
     ASSERT_EVENTS_TxFileOpenFailed(0, Cfdp::Class::CLASS_1, this->component.getLocalEidParam(), 1, nonExistentFile,
