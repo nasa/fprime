@@ -220,7 +220,9 @@ This creates `params.seq` in the same directory as your JSON file.
    This creates `params.bin`.
 
 2. Load the sequence into `CmdSequencer`:
-   - **GUI**: Send `FileHandling.cmdSeq.CS_RUN` command with the binary file name
+   - **GUI**: 
+   1. Send `FileHandling.cmdSeq.CS_RUN` command with the binary file name
+   2. [Stage and uplink](https://fprime.jpl.nasa.gov/devel/docs/user-manual/overview/gds-introduction/#navigating-the-gds-gui) the params.bin file.
    - **Command Line**: 
      ```bash
      fprime-cli command-send <project>.cmdSeq.CS_RUN --arguments PrmDb_input.bin BLOCK 
