@@ -3,19 +3,19 @@
 
 ## Overview
 
-Readers of this guide are encouraged to read through the documentation for [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file or through a `.seq` file. Both types of files are created by the `fprime-prm-write tool` using a JSON file with the parameters. The PrmDb component loads parameters from binary `.dat` files that contain a CRC32 header followed by parameter records. CmdSeq loads parameters from a binary created from a `.seq` file.
+Readers of this guide are encouraged to read through the documentation for the [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file or through a `.seq` file. Both types of files are created by the `fprime-prm-write` tool using a JSON file with the parameters. The PrmDb component loads parameters from binary `.dat` files that contain a CRC32 header followed by parameter records. CmdSeq loads parameters from a binary created from a `.seq` file.
 
 This guide uses the [**Ref**](https://github.com/nasa/fprime/tree/devel/Ref) (reference) F´ project as an example.
 
 *Contents:*
 
-1. [Why Import Parameters?](#why-import-parameters)
+1. [Why Import Parameters in Batch?](#why-import-parameters-in-batch)
 2. [Creating a Parameters JSON File](#creating-a-parameters-json-file)
 3. [Method 1: Generate a .dat File](#method-1-generate-a-dat-file)
 4. [Method 2: Generate a .seq File](#method-2-generate-a-seq-file)
 5. [Troubleshooting](#troubleshooting)
 
-## Why Import Parameters?
+## Why Import Parameters in Batch?
 
 The `fprime-prm-write` tool allows you to:
 - Set initial parameter values for system startup
@@ -71,9 +71,11 @@ Create a JSON file (e.g., `params.json`) anywhere in your project directory:
     }
 }
 ```
+Component instance names must be fully qualified (e.g., `Ref.recvBuffComp`). 
 
 > [!NOTE]
-> Component instance names must be fully qualified (e.g., `Ref.recvBuffComp`). Parameter values support complex F´ types:
+> The .seq method only handles primitives (strings, numbers, booleans, enums).
+> Parameter values may be complex F´ types **only when using the .dat method**:
 > - **Primitives**: Numbers (`20`, `99.99`), booleans, strings
 > - **Enums**: String constants (e.g., `"RED"`, `"BLUE"`)
 > - **Arrays**: JSON arrays (e.g., `["ONE", "BLUE"]`)
@@ -135,9 +137,9 @@ fprime-gds -g none --log-directly
 **Command Line:**
 ```bash
 # Load the .dat file into staging area 
-fprime-cli command-send FileHandling.prmDb.PRM_LOAD_FILE "params.dat" MERGE
+fprime-cli command-send FileHandling.prmDb.PRM_LOAD_FILE --arguments "params.dat" MERGE
 # Check events for success
-grep -q "PrmFileLoadComplete" gds.log
+grep -E "PrmFileLoadComplete|PrmDbCopyAllComplete|PrmDbFileLoadFailed|PrmFileBadCrc" <path to project log file>
 ```
 
 **Expected events:**
@@ -164,7 +166,7 @@ fprime-cli command-send FileHandling.prmDb.PRM_COMMIT_STAGED
 grep -q "PrmDbCopyAllComplete" gds.log
 ```
 
-### Step 5 (optional): Verify Parameter Changes
+### Step 5 (optional): Verify Individual Parameter Changes
 
 **Downlink and decode PrmDb.dat**
 
@@ -221,12 +223,26 @@ This creates `params.seq` in the same directory as your JSON file.
    - **GUI**: Send `FileHandling.cmdSeq.CS_RUN` command with the binary file name
    - **Command Line**: 
      ```bash
-     fprime-cli commands send FileHandling.cmdSeq.CS_RUN "params.bin" RUN_NOW
+     fprime-cli command-send <project>.cmdSeq.CS_RUN --arguments PrmDb_input.bin BLOCK 
      ```
-
+      - `BLOCK`: The command waits for the sequence to complete before returning status
+      - `NO_BLOCK`: The command returns immediately and the sequence runs in the background
 3. Verify the sequence executed successfully by checking events in the **Events** tab or command line
-
-For more details, follow the standard [F´ sequencing workflow](https://nasa.github.io/fprime/UsersGuide/user/cmd-seq.html).
+    ```bash
+    grep -E "CS_Sequence" <path to project log file>
+    ```
+    | Event | Status | Description |                                                                                  
+    |-------|--------|-------------|                                                                                  
+    | `CS_SequenceLoaded` | ✓ | Sequence file loaded successfully |                                                   
+    | `CS_CommandComplete` | ✓ | Each command in sequence completed |                                                 
+    | `CS_SequenceComplete` | ✓ | Entire sequence finished successfully |                                             
+    | `CS_FileNotFound` | ✗ | .bin file not found |                                                                   
+    | `CS_FileReadError` | ✗ | Error reading the file |                                                               
+    | `CS_FileInvalid` | ✗ | Invalid file format or structure |                                                       
+    | `CS_FileCrcFailure` | ✗ | CRC checksum mismatch |                                                               
+    | `CS_CommandError` | ✗ | A command in the sequence failed |  
+ 
+    For more details, follow the standard [F´ sequencing workflow](https://nasa.github.io/fprime/UsersGuide/user/cmd-seq.html).
 
 ## Troubleshooting
 
