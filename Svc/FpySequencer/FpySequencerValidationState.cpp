@@ -87,12 +87,24 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // make sure we're at EOF
+    // make sure we're at EOF. The size() and position() OS calls can fail
+    // on filesystem errors or if the file was concurrently modified by
+    // another FileManager command (e.g. RemoveFile or AppendFile) between
+    // the file open and this point. Treat the failure as a validation
+    // failure rather than aborting the FSW process.
     FwSizeType sequenceFileSize;
-    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
+    Os::File::Status sizeStatus = sequenceFile.size(sequenceFileSize);
+    if (sizeStatus != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(sizeStatus));
+        return Fw::Success::FAILURE;
+    }
 
     FwSizeType sequenceFilePosition;
-    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
+    Os::File::Status positionStatus = sequenceFile.position(sequenceFilePosition);
+    if (positionStatus != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(positionStatus));
+        return Fw::Success::FAILURE;
+    }
 
     if (sequenceFileSize != sequenceFilePosition) {
         this->log_WARNING_HI_ExtraBytesInSequence(static_cast<FwSizeType>(sequenceFileSize - sequenceFilePosition));

@@ -114,6 +114,7 @@ void FpySequencer::Stack::push<F64>(F64 val) {
 // pops a byte array from the top of the stack into the destination array
 // does not convert endianness
 void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
+    FW_ASSERT(dest != nullptr);
     FW_ASSERT(this->size >= destSize, static_cast<FwAssertArgType>(this->size), static_cast<FwAssertArgType>(destSize));
     memcpy(dest, this->top() - destSize, destSize);
     this->size -= destSize;
@@ -123,6 +124,7 @@ void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
 // leaves the source array unmodified
 // does not convert endianness
 void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
+    FW_ASSERT(src != nullptr);
     FW_ASSERT(this->size + srcSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(srcSize));
     memcpy(this->top(), src, srcSize);
