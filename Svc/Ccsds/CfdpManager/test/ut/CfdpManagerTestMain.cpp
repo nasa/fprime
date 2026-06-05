@@ -90,6 +90,30 @@ TEST(Transaction, MultipleTransactionsInSeries) {
     delete tester;
 }
 
+TEST(Command, SendFileZeroLength) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testSendFileZeroLength();
+    delete tester;
+}
+
+TEST(Command, SendFileNonExistent) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testSendFileNonExistent();
+    delete tester;
+}
+
+TEST(Command, StopPollDirNotActive) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testStopPollDirNotActive();
+    delete tester;
+}
+
+TEST(Command, StopPollDirActive) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testStopPollDirActive();
+    delete tester;
+}
+
 TEST(Miscellaneous, Ping) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testPing();

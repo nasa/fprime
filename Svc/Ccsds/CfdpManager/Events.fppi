@@ -328,6 +328,15 @@ event TxInactivityTimeout(
     severity warning low \
     format "TX class {} transaction {}:{} inactivity timer expired"
 
+event TxZeroLengthFile(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Zero-length file
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} cannot transfer zero-length file {}"
+
 event TxFileOpenFailed(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID

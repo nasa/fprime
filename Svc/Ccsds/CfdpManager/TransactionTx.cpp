@@ -491,9 +491,13 @@ void Transaction::sSubstateSendMetadata() {
                                                                      this->m_history->seq_num, fileStatus);
                 this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                 success = false;
-            } else {
-                // Check that file size is well formed
-                FW_ASSERT(this->m_fsize > 0, static_cast<FwAssertArgType>(this->m_fsize));
+            } else if (this->m_fsize == 0) {
+                // Zero-length file - fail transaction gracefully instead of asserting
+                this->m_cfdpManager->log_WARNING_LO_TxZeroLengthFile(this->getClass(), this->m_history->src_eid,
+                                                                     this->m_history->seq_num,
+                                                                     this->m_history->fnames.src_filename);
+                this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+                success = false;
             }
         }
     }
