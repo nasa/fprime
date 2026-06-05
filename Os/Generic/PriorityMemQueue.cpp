@@ -377,7 +377,7 @@ QueueInterface::Status PriorityMemQueue::create(FwEnumStoreType id,
         this->m_handle.deallocateArrays(allocator, id);
         return Os::QueueInterface::Status::ALLOCATION_FAILED;
     }
-    this->m_handle.m_notEmptySem = new (semMem) Os::CountingSemaphore(0, 0);
+    this->m_handle.m_notEmptySem = new (semMem) Os::CountingSemaphore(static_cast<U32>(0));
 
     // Create the priority queues based on configuration
     if (queueConfig != nullptr) {

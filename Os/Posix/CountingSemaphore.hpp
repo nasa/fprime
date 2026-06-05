@@ -12,20 +12,22 @@ namespace Posix {
 namespace Semaphore {
 
 struct PosixCountingSemaphoreHandle : public CountingSemaphoreHandle {
-    sem_t m_semaphore;
+    sem_t m_semaphore{};
 };
 
 class PosixCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    PosixCountingSemaphore(U32 initial_count, int pshared);
+    explicit PosixCountingSemaphore(U32 initial_count);
 
     ~PosixCountingSemaphore() override;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    PosixCountingSemaphore(const PosixCountingSemaphore& other) = delete;
+
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     PosixCountingSemaphore::Status wait() override;
 
-    PosixCountingSemaphore::Status waitTimeout(U32 timeout_ms) override;
+    PosixCountingSemaphore::Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     PosixCountingSemaphore::Status tryWait() override;
 

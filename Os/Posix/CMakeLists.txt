@@ -35,7 +35,12 @@ register_os_implementation("Console" Posix)
 
 register_os_implementation("Task" Posix Os_Posix_Shared Fw_Time)
 register_os_implementation("Mutex;ConditionVariable" Posix Os_Posix_Shared)
-register_os_implementation("CountingSemaphore" Posix Os_Posix_Shared)
+# POSIX unnamed semaphores (sem_init) are non-functional on macOS (return
+# ENOSYS) and sem_timedwait does not exist. The Darwin implementation
+# covers macOS; exclude the Posix CountingSemaphore entirely.
+if(NOT APPLE)
+    register_os_implementation("CountingSemaphore" Posix Os_Posix_Shared)
+endif()
 register_os_implementation("RawTime" Posix Os_Posix_Shared)
 
 # -----------------------------------------
@@ -154,7 +159,7 @@ register_fprime_ut(
 # -----------------------------------------
 ### Os/CountingSemaphore/Posix Test Section
 # -----------------------------------------
-
+if(NOT APPLE)
 register_fprime_ut(
      PosixCountingSemaphoreTest 
   SOURCES
@@ -167,6 +172,7 @@ register_fprime_ut(
   CHOOSES_IMPLEMENTATIONS
     "Os_CountingSemaphore_Posix"
 )
+endif()
 
 # -----------------------------------------
 ### Os/RawTime/Posix Test Section

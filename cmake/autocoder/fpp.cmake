@@ -7,7 +7,7 @@
 include_guard()
 include(utilities)
 include(autocoder/helpers)
-set(FPRIME_FPP_TO_DICT_WRAPPER "${CMAKE_CURRENT_LIST_DIR}/scripts/fpp_to_dict_wrapper.py")
+set(FPRIME_FPP_TO_DICT_WRAPPER "${CMAKE_CURRENT_LIST_DIR}/scripts/fpp_to_dict_wrapper.py" CACHE INTERNAL "Internal path to fpp_to_dict_wrapper.py" FORCE)
 
 autocoder_setup_for_multiple_sources()
 ####
