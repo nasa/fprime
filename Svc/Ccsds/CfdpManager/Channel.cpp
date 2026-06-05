@@ -234,7 +234,7 @@ void Channel::cycleTx() {
                 CfdpCListTraverse(m_qs[QueueId::TXA], &Channel::cycleTxFirstActiveWrapper, &cycleTxCtx);
 
                 // Keep going until QueueId::PEND is empty or something is run
-                if (args.ran_one || m_qs[QueueId::PEND] == NULL) {
+                if (args.ran_one || m_qs[QueueId::PEND] == nullptr) {
                     break;
                 }
 
@@ -243,10 +243,10 @@ void Channel::cycleTx() {
                 // Class 2 transactions need a chunklist for NAK processing, get one now.
                 // Class 1 transactions don't need chunks since they don't support NAKs.
                 if (txn->getClass() == Cfdp::Class::CLASS_2) {
-                    if (txn->m_chunks == NULL) {
+                    if (txn->m_chunks == nullptr) {
                         txn->m_chunks = this->findUnusedChunks(DIRECTION_TX);
                     }
-                    if (txn->m_chunks == NULL) {
+                    if (txn->m_chunks == nullptr) {
                         // Chunklist unavailable - EVR already emitted by Engine
                         // Leave transaction pending until a chunklist is available.
                         break;
@@ -259,7 +259,7 @@ void Channel::cycleTx() {
         }
 
         // in case the loop exited due to no message buffers, clear it and start from the top next time
-        this->m_currentTxn = NULL;
+        this->m_currentTxn = nullptr;
     }
 }
 
@@ -426,7 +426,7 @@ Transaction* Channel::findUnusedTransaction(Direction direction) {
         // Re-initialize the linked list node to clear stale pointers from FREE list
         CfdpCListInitNode(&txn->m_cl_node);
     } else {
-        txn = NULL;
+        txn = nullptr;
     }
 
     return txn;
@@ -437,9 +437,9 @@ Transaction* Channel::findTransactionBySequenceNumber(TransactionSeq transaction
     // or on Q_TX or Q_RX. Once a transaction moves to history, then it's done.
     //
     // Let's put QueueId::RX up front, because most RX packets will be file data PDUs
-    CfdpTraverseTransSeqArg ctx = {transaction_sequence_number, src_eid, NULL};
+    CfdpTraverseTransSeqArg ctx = {transaction_sequence_number, src_eid, nullptr};
     CListNode* ptrs[] = {m_qs[QueueId::RX], m_qs[QueueId::PEND], m_qs[QueueId::TXA], m_qs[QueueId::TXW]};
-    Transaction* ret = NULL;
+    Transaction* ret = nullptr;
 
     for (CListNode* head : ptrs) {
         CfdpCListTraverse(head, Transaction::findBySequenceNumberCallback, &ctx);
@@ -601,12 +601,12 @@ void Channel::recycleTransaction(Transaction* txn) {
     this->dequeueTransaction(txn);  // this makes it "float" (not in any queue)
 
     // this should always be
-    if (txn->m_history != NULL) {
-        if (txn->m_chunks != NULL) {
+    if (txn->m_history != nullptr) {
+        if (txn->m_chunks != nullptr) {
             chunklist_head = this->getChunkListHead(txn->m_history->dir);
-            if (chunklist_head != NULL) {
+            if (chunklist_head != nullptr) {
                 CfdpCListInsertBack(chunklist_head, &txn->m_chunks->cl_node);
-                txn->m_chunks = NULL;
+                txn->m_chunks = nullptr;
             }
         }
 
@@ -617,7 +617,7 @@ void Channel::recycleTransaction(Transaction* txn) {
             hist_destq = QueueId::HIST_FREE;
         }
         this->insertBackInQueue(hist_destq, &txn->m_history->cl_node);
-        txn->m_history = NULL;
+        txn->m_history = nullptr;
     }
 
     // this wipes it and puts it back onto the list to be found by
@@ -638,7 +638,7 @@ void Channel::insertSortPrio(Transaction* txn, QueueId::T queue) {
         // list is empty, so just insert
         insert_back = true;
     } else {
-        CfdpTraversePriorityArg arg = {NULL, txn->getPriority()};
+        CfdpTraversePriorityArg arg = {nullptr, txn->getPriority()};
         CfdpCListTraverseR(m_qs[queue], Transaction::prioritySearchCallback, &arg);
         if (arg.txn) {
             this->insertAfterInQueue(queue, &arg.txn->m_cl_node, &txn->m_cl_node);
@@ -665,7 +665,7 @@ void Channel::decrementCmdTxCounter() {
 void Channel::clearCurrentIfMatch(Transaction* txn) {
     // Done with this TX transaction
     if (this->m_currentTxn == txn) {
-        this->m_currentTxn = NULL;
+        this->m_currentTxn = nullptr;
     }
 }
 
@@ -683,14 +683,14 @@ CListNode** Channel::getChunkListHead(U8 direction) {
     if (direction < DIRECTION_NUM) {
         result = &m_cs[direction];
     } else {
-        result = NULL;
+        result = nullptr;
     }
 
     return result;
 }
 
 CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir) {
-    CfdpChunkWrapper* ret = NULL;
+    CfdpChunkWrapper* ret = nullptr;
     CListNode* node;
     CListNode** chunklist_head;
 
@@ -699,9 +699,9 @@ CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir) {
     // this should never be null
     FW_ASSERT(chunklist_head);
 
-    if (*chunklist_head != NULL) {
+    if (*chunklist_head != nullptr) {
         node = CfdpCListPop(chunklist_head);
-        if (node != NULL) {
+        if (node != nullptr) {
             ret = container_of_cpp(node, &CfdpChunkWrapper::cl_node);
         }
     }
@@ -741,7 +741,7 @@ void Channel::processPlaybackDirectory(Playback* pb) {
             pb->pending_file = path;
         } else {
             txn = this->findUnusedTransaction(DIRECTION_TX);
-            if (txn == NULL) {
+            if (txn == nullptr) {
                 // while not expected this can certainly happen, because
                 // rx transactions consume in these as well.
                 // should not need to do anything special, will come back next tick
@@ -817,12 +817,12 @@ CListTraverseStatus Channel::doTick(CListNode* node, void* context) {
     Transaction* txn = container_of_cpp(node, &Transaction::m_cl_node);
     if (!this->m_currentTxn || (this->m_currentTxn == txn)) {
         // found where we left off, so clear that and move on
-        this->m_currentTxn = NULL;
+        this->m_currentTxn = nullptr;
         if (!txn->m_flags.com.suspended) {
             (txn->*args->fn)(&args->cont);
         }
 
-        // if this->m_currentTxn was set to not-NULL above, then exit early
+        // if this->m_currentTxn was set to not-nullptr above, then exit early
         // NOTE: if channel is frozen, then tick processing won't have been entered.
         //     so there is no need to check it here
         if (this->m_currentTxn) {

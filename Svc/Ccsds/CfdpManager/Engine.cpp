@@ -183,7 +183,7 @@ void Engine::dispatchTx(Transaction* txn) {
 
 Status::T Engine::sendMd(Transaction* txn) {
     FW_ASSERT((txn->m_state == TXN_STATE_S1) || (txn->m_state == TXN_STATE_S2), txn->m_state);
-    FW_ASSERT(txn->m_chan != NULL);
+    FW_ASSERT(txn->m_chan != nullptr);
 
     // Create and initialize Metadata PDU
     MetadataPdu md;
@@ -470,6 +470,7 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
     Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // First parse header to get transaction information
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -490,10 +491,10 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
         txn->m_history->src_eid = sourceEid;
 
         // all RX transactions will need a chunk list to track file segments
-        if (txn->m_chunks == NULL) {
+        if (txn->m_chunks == nullptr) {
             txn->m_chunks = txn->m_chan->findUnusedChunks(DIRECTION_RX);
         }
-        if (txn->m_chunks == NULL) {
+        if (txn->m_chunks == nullptr) {
             this->m_manager->log_WARNING_LO_ChunklistUnavailable(transactionSeq);
         } else {
             if (pduType == Cfdp::PduTypeEnum::FILE_DATA) {
@@ -549,16 +550,17 @@ bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
 }
 
 void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
-    Transaction* txn = NULL;
-    Channel* chan = NULL;
+    Transaction* txn = nullptr;
+    Channel* chan = nullptr;
 
     FW_ASSERT(chan_id < Cfdp::NumChannels, chan_id, Cfdp::NumChannels);
 
     chan = m_channels[chan_id];
-    FW_ASSERT(chan != NULL);
+    FW_ASSERT(chan != nullptr);
 
     // Parse the header to get transaction routing info
     // Avoid full PDU deserialization here to defer it until the appropriate handler
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -576,13 +578,13 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
         // Look up transaction by sequence number
         txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
 
-        if (txn == NULL) {
+        if (txn == nullptr) {
             // if no match found, then it must be the case that we would be the destination entity id, so verify it
             if (destEid == this->m_manager->getLocalEidParam()) {
                 // we didn't find a match, so assign it to a transaction
                 // assume this is initiating an RX transaction, as TX transactions are only commanded
                 txn = this->startRxTransaction(chan->getChannelId());
-                if (txn == NULL) {
+                if (txn == nullptr) {
                     this->m_manager->log_WARNING_LO_RxTransactionLimitReached(sourceEid, transactionSeq);
                 }
             } else {
@@ -590,7 +592,7 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
             }
         }
 
-        if (txn != NULL) {
+        if (txn != nullptr) {
             // found one! Send it to the transaction state processor
             this->dispatchRecv(txn, buffer);
         } else {
@@ -696,14 +698,14 @@ Status::T Engine::txFile(const Fw::String& src_filename,
     if (chan->getNumCmdTx() < CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN) {
         txn = chan->findUnusedTransaction(DIRECTION_TX);
     } else {
-        txn = NULL;
+        txn = nullptr;
     }
 
-    if (txn == NULL) {
+    if (txn == nullptr) {
         this->m_manager->log_WARNING_LO_MaxTxTransactionsReached();
         ret = Cfdp::Status::ERROR;
     } else {
-        // NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated
+        // NOTE: the caller of this function ensures the provided src and dst filenames are nullptr terminated
 
         txn->m_history->fnames.src_filename = src_filename;
         txn->m_history->fnames.dst_filename = dst_filename;
@@ -732,12 +734,12 @@ Transaction* Engine::startRxTransaction(U8 chan_num) {
     // }
     // else
     // {
-    //     txn = NULL;
+    //     txn = nullptr;
     // }
     // Receive transactions are limited by MaxRxTransactions parameter
     txn = chan->findUnusedTransaction(DIRECTION_RX);
 
-    if (txn != NULL) {
+    if (txn != nullptr) {
         // set default FIN status
         txn->m_state_data.receive.r2.dc = FIN_DELIVERY_CODE_INCOMPLETE;
         txn->m_state_data.receive.r2.fs = FIN_FILE_STATUS_DISCARDED;
@@ -774,7 +776,7 @@ Status::T Engine::playbackDirInitiate(Playback* pb,
         pb->dest_id = dest_id;
         pb->cfdp_class = cfdp_class;
 
-        // NOTE: the caller of this function ensures the provided src and dst filenames are NULL terminated
+        // NOTE: the caller of this function ensures the provided src and dst filenames are nullptr terminated
         pb->fnames.src_filename = src_filename;
         pb->fnames.dst_filename = dst_filename;
     }
@@ -821,7 +823,7 @@ Status::T Engine::startPollDir(U8 chanId,
                                EntityId destEid,
                                U32 intervalSec) {
     Status::T status = Cfdp::Status::SUCCESS;
-    CfdpPollDir* pd = NULL;
+    CfdpPollDir* pd = nullptr;
 
     FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
     FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
@@ -851,7 +853,7 @@ Status::T Engine::startPollDir(U8 chanId,
 
 Status::T Engine::stopPollDir(U8 chanId, U8 pollId) {
     Status::T status = Cfdp::Status::SUCCESS;
-    CfdpPollDir* pd = NULL;
+    CfdpPollDir* pd = nullptr;
 
     FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
     FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
@@ -912,7 +914,7 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
     }
 
     // this should always be
-    FW_ASSERT(txn->m_chan != NULL);
+    FW_ASSERT(txn->m_chan != nullptr);
 
     // If this was on the TXA queue (transmit side) then we need to move it out
     // so the tick processor will stop trying to actively transmit something -
@@ -934,7 +936,7 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
         }
     }
 
-    if (txn->m_history != NULL) {
+    if (txn->m_history != nullptr) {
         // Emit completion events for successful transactions
         if (!TxnStatusIsError(txn->m_history->txn_stat)) {
             if (txn->m_history->dir == DIRECTION_TX) {

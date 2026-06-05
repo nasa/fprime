@@ -128,7 +128,7 @@ class Channel {
      * @param direction Intended direction of data flow (TX or RX)
      *
      * @returns Pointer to a free transaction
-     * @retval  NULL if no free transactions available.
+     * @retval  nullptr if no free transactions available.
      */
     Transaction* findUnusedTransaction(Direction direction);
 
@@ -142,7 +142,7 @@ class Channel {
      * @param src_eid                      Entity ID associated with sequence number
      *
      * @returns Pointer to the given transaction if found
-     * @retval  NULL if the transaction is not found
+     * @retval  nullptr if the transaction is not found
      */
     Transaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number, EntityId src_eid);
 
@@ -304,7 +304,7 @@ class Channel {
      * @param dir  Direction (TX or RX)
      *
      * @returns Pointer to unused chunk wrapper
-     * @retval  NULL if no chunks available
+     * @retval  nullptr if no chunks available
      */
     CfdpChunkWrapper* findUnusedChunks(Direction dir);
 

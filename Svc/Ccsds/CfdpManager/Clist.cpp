@@ -107,7 +107,7 @@ void CfdpCListRemove(CListNode** head, CListNode* node) {
     if (node->next == node) {
         /* only node in the list, so this one is easy */
         FW_ASSERT(node == *head); /* sanity check */
-        *head = NULL;
+        *head = nullptr;
     } else if (*head == node) {
         /* removing the first node in the list, so make the second node in the list the first */
         (*head)->prev->next = node->next;

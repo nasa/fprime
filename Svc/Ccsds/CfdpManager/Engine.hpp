@@ -588,7 +588,7 @@ class Engine {
      * receive direction, most fields are unknown until the MD is received,
      * and thus are left in their initial state here (generally 0).
      *
-     * If there is no capacity for another RX transaction, this returns NULL.
+     * If there is no capacity for another RX transaction, this returns nullptr.
      *
      * @param chan_num  CFDP channel number
      * @returns Pointer to new transaction

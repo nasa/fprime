@@ -46,7 +46,7 @@ AckTxnStatus GetTxnStatus(Transaction* txn) {
     // check if this is still an active Tx (not in holdover or drop etc)
     // in theory this should never be called on S1 because there is no fin-ack to send,
     // but including it for completeness (because it is an active txn)
-    if (txn == NULL) {
+    if (txn == nullptr) {
         LocalStatus = ACK_TXN_STATUS_UNRECOGNIZED;
     } else
         switch (txn->getState()) {

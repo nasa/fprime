@@ -809,7 +809,7 @@ class Transaction {
     /**
      * @brief Pointer to playback entry
      *
-     * NULL if transaction does not belong to a playback.
+     * nullptr if transaction does not belong to a playback.
      */
     Playback* m_pb;
 

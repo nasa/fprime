@@ -460,6 +460,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     /* this function is only entered for data PDUs */
     // Deserialize FileData PDU from buffer
     FileDataPdu fd;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -519,6 +520,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
 
     // Deserialize EOF PDU from buffer
     EofPdu eof;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -555,6 +557,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
 void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
     // Deserialize EOF PDU from buffer
     EofPdu eof;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -593,6 +596,7 @@ void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
     if (!this->m_flags.rx.eof_recv) {
         // Deserialize EOF PDU from buffer
         EofPdu eof;
+        // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());
 
@@ -645,6 +649,7 @@ void Transaction::r1SubstateRecvFileData(const Fw::Buffer& buffer) {
 
     // Deserialize FileData PDU from buffer
     FileDataPdu fd;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -685,6 +690,7 @@ void Transaction::r2SubstateRecvFileData(const Fw::Buffer& buffer) {
 
     // Deserialize FileData PDU from buffer
     FileDataPdu fd;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -948,6 +954,7 @@ Status::T Transaction::r2SubstateSendFin() {
 void Transaction::r2RecvFinAck(const Fw::Buffer& buffer) {
     // Deserialize ACK PDU from buffer
     AckPdu ack;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -981,6 +988,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
 
         // Deserialize Metadata PDU from buffer
         MetadataPdu md;
+        // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());
 
@@ -1059,7 +1067,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
     FW_ASSERT(this->m_state_data.receive.sub_state < RX_SUB_STATE_NUM_STATES, this->m_state_data.receive.sub_state,
               RX_SUB_STATE_NUM_STATES);
 
-    selected_handler = NULL;
+    selected_handler = nullptr;
 
     // Peek at PDU type from buffer
     Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
@@ -1072,6 +1080,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
         }
     } else if (pduType != Cfdp::PduTypeEnum::NONE) {
         // It's a directive PDU - parse header to get directive code
+        // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());
 
@@ -1084,7 +1093,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
 
                 if (directiveCode < FILE_DIRECTIVE_INVALID_MAX) {
                     /* The CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */
-                    if (dispatch->state[this->m_state_data.receive.sub_state] != NULL) {
+                    if (dispatch->state[this->m_state_data.receive.sub_state] != nullptr) {
                         selected_handler =
                             dispatch->state[this->m_state_data.receive.sub_state]->fdirective[directiveCode];
                     }
@@ -1101,7 +1110,7 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
     /*
      * NOTE: if no handler is selected, this will drop packets on the floor here.
      */
-    if (selected_handler != NULL) {
+    if (selected_handler != nullptr) {
         (this->*selected_handler)(buffer);
     } else {
         this->m_cfdpManager->incrementRecvDropped(this->m_chan_num);

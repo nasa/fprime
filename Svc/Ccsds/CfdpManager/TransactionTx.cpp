@@ -75,7 +75,7 @@ FileDirectiveDispatchTable makeFileDirectiveTable(StateRecvFunc fin, StateRecvFu
 
 void Transaction::s1Recv(const Fw::Buffer& buffer) {
     // s1 doesn't need to receive anything
-    static const SSubstateRecvDispatchTable substate_fns = {{NULL}};
+    static const SSubstateRecvDispatchTable substate_fns = {{nullptr}};
     this->sDispatchRecv(buffer, &substate_fns);
 }
 
@@ -299,7 +299,7 @@ void Transaction::s2SubstateSendEof() {
 }
 
 Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 calc_crc, FileSize* bytes_processed) {
-    FW_ASSERT(bytes_processed != NULL);
+    FW_ASSERT(bytes_processed != nullptr);
     *bytes_processed = 0;
 
     Status::T status = Cfdp::Status::SUCCESS;
@@ -413,11 +413,11 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
     Status::T ret = Cfdp::Status::SUCCESS;
     FileSize bytes_processed = 0;
 
-    FW_ASSERT(nakProcessed != NULL);
+    FW_ASSERT(nakProcessed != nullptr);
     *nakProcessed = false;
 
     // Class 2 transactions must have had chunks allocated
-    FW_ASSERT(this->m_chunks != NULL);
+    FW_ASSERT(this->m_chunks != nullptr);
 
     if (this->m_flags.tx.md_need_send) {
         sret = this->m_engine->sendMd(this);
@@ -547,6 +547,7 @@ void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
 void Transaction::s2Fin(const Fw::Buffer& buffer) {
     // Deserialize FIN PDU from buffer
     FinPdu fin;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -586,6 +587,7 @@ void Transaction::s2Nak(const Fw::Buffer& buffer) {
 
     // Deserialize NAK PDU from buffer
     NakPdu nak;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -643,6 +645,7 @@ void Transaction::s2NakArm(const Fw::Buffer& buffer) {
 void Transaction::s2EofAck(const Fw::Buffer& buffer) {
     // Deserialize ACK PDU from buffer
     AckPdu ack;
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
     Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
     sb.setBuffLen(buffer.getSize());
 
@@ -683,13 +686,14 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
     Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
 
     // send state, so we only care about file directive PDU
-    selected_handler = NULL;
+    selected_handler = nullptr;
 
     if (pduType == Cfdp::PduTypeEnum::FILE_DATA) {
         this->m_cfdpManager->log_WARNING_LO_TxNonFileDirectivePduReceived(this->getClass(), this->m_history->src_eid,
                                                                           this->m_history->seq_num);
     } else if (pduType != Cfdp::PduTypeEnum::NONE) {
         // It's a directive PDU - parse header to get directive code
+        // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());
 
@@ -703,7 +707,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
                 if (directiveCode < FILE_DIRECTIVE_INVALID_MAX) {
                     // This should be silent (no event) if no handler is defined in the table
                     substate_tbl = dispatch->substate[this->m_state_data.send.sub_state];
-                    if (substate_tbl != NULL) {
+                    if (substate_tbl != nullptr) {
                         selected_handler = substate_tbl->fdirective[directiveCode];
                     }
                 } else {
@@ -730,7 +734,7 @@ void Transaction::sDispatchTransmit(const SSubstateSendDispatchTable* dispatch) 
     StateSendFunc selected_handler;
 
     selected_handler = dispatch->substate[this->m_state_data.send.sub_state];
-    if (selected_handler != NULL) {
+    if (selected_handler != nullptr) {
         (this->*selected_handler)();
     }
 }
@@ -741,7 +745,7 @@ void Transaction::txStateDispatch(const TxnSendDispatchTable* dispatch) {
     FW_ASSERT(this->m_state < TXN_STATE_INVALID, this->m_state, TXN_STATE_INVALID);
 
     selected_handler = dispatch->tx[this->m_state];
-    if (selected_handler != NULL) {
+    if (selected_handler != nullptr) {
         (this->*selected_handler)();
     }
 }

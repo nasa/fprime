@@ -73,9 +73,11 @@ struct CListNode {
  *
  * Given a pointer to a CListNode object which is known to be a member of a
  * larger container, this converts the pointer to that of the parent.
+ * This is the C++ equivalent of the Linux kernel's container_of macro.
  */
 template <typename Container, typename Member>
 constexpr Container* container_of_cpp(Member* member_ptr, Member Container::* member) {
+    // reinterpret_cast: Required for intrusive list node-to-parent pointer arithmetic (container_of idiom)
     return reinterpret_cast<Container*>(reinterpret_cast<U8*>(member_ptr) -
                                         reinterpret_cast<std::ptrdiff_t>(&(reinterpret_cast<Container*>(0)->*member)));
 }
@@ -137,7 +139,7 @@ void CfdpCListRemove(CListNode** head, CListNode* node);
  * @param head  Pointer to head of list to remove from
  *
  * @returns The first node (now removed) in the list
- * @retval  NULL if list was empty.
+ * @retval  nullptr if list was empty.
  */
 CListNode* CfdpCListPop(CListNode** head);
 
