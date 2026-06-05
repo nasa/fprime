@@ -182,6 +182,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
     entryToUse->used = true;
     entryToUse->id = id;
     entryToUse->updated = true;
+    this->m_tlmEntries[this->m_activeBuffer].updated.insert(entryToUse);
     entryToUse->lastUpdate = timeTag;
     entryToUse->buffer = val;
 }
@@ -197,18 +198,18 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     this->lock();
     this->m_activeBuffer = 1 - this->m_activeBuffer;
     // set activeBuffer to not updated
-    for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        this->m_tlmEntries[this->m_activeBuffer].buckets[entry].updated = false;
+    for (TlmEntry* const &entry : this->m_tlmEntries[this->m_activeBuffer].updated) {
+        entry->updated = false;
     }
+    this->m_tlmEntries[this->m_activeBuffer].updated.clear();
     this->unLock();
 
     // go through each entry and send a packet if it has been updated
     Fw::TlmPacket pkt;
     pkt.resetPktSer();
 
-    for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
-        TlmEntry* p_entry = &this->m_tlmEntries[1 - this->m_activeBuffer].buckets[entry];
-        if ((p_entry->updated) && (p_entry->used)) {
+    for (TlmEntry* const &p_entry : this->m_tlmEntries[1 - this->m_activeBuffer].updated) {
+        if (p_entry->used) {
             Fw::SerializeStatus stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
 
             // check to see if this packet is full, if so, send it
