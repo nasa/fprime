@@ -7,11 +7,11 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Fw/Types/WaitEnumAc.hpp"
-#include "Fw/Types/FileNameString.hpp"
 #include "Os/File.hpp"
 #include "Svc/FpySequencer/DirectiveIdEnumAc.hpp"
 #include "Svc/FpySequencer/FooterSerializableAc.hpp"

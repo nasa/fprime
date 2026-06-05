@@ -618,8 +618,8 @@ void FpySequencerTester::tester_set_m_sequenceFilePath(Fw::String str) {
 void FpySequencerTester::tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args) {
     // the action ignores smId/signal; pass any valid values
     this->cmp.Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
-        FpySequencer::SmId::sequencer,
-        Svc::FpySequencer_SequencerStateMachineStateMachineBase::Signal::cmd_VALIDATE, args);
+        FpySequencer::SmId::sequencer, Svc::FpySequencer_SequencerStateMachineStateMachineBase::Signal::cmd_VALIDATE,
+        args);
 }
 
 U64 FpySequencerTester::tester_get_m_sequencesStarted() {
