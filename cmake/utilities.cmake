@@ -882,7 +882,7 @@ endfunction()
 #
 ####
 function(fprime_target_include_directories BUILD_TARGET_NAME SCOPE)
-    fprime__internal_target_interceptor("target_include_directories" "${BUILD_TARGET_NAME}" "${SCOPE}" ${ARGN})
+    fprime__internal_target_interceptor("target_include_directories" "${BUILD_TARGET_NAME}" ${SCOPE} ${ARGN})
 endfunction()
 
 ####

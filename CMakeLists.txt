@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.18)
 project(FPrime C CXX)
 set(FPRIME_INCLUDE_FRAMEWORK_CODE OFF)
 find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}")
+register_fprime_project()
 
 # Set default warning flags for all builds
 # Specific build modules that do not comply with these flags can disable one or more of them
