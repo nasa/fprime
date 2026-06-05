@@ -8,7 +8,7 @@
 # A normal F Prime toolchain would set the CMAKE_SYSTEM_NAME to Generic and set FPRIME_PLATFORM. However, this is a
 # customization of the toolchain for fprime.  This toolchain is a generic CMake toolchain where FPRIME_PLATFORM is set
 # via a -DFPRIME_PLATFORM flag, showing this other route to use CMake toolchains as-is.
-set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_NAME Generic CACHE INTERNAL "Set the system name to Generic for this toolchain" FORCE)
 
 # Standard program names
 find_program(CMAKE_C_COMPILER   NAMES cc gcc clang)

@@ -14,9 +14,9 @@ find_program(FPUTIL NAMES fprime-util)
 
 locate_fpp_tools()
 
-set(FPRIME__INTERNAL_FRAGMENT "pip install -r \"${FPRIME_FRAMEWORK_PATH}/requirements.txt\"")
-set(FPRIME__INTERNAL_TO_INSTALL_MESSAGE "Install with:\n  '${FPRIME__INTERNAL_FRAGMENT}'")
-set(FPRIME__INTERNAL_TO_REINSTALL "Reinstall with:\n  '${FPRIME__INTERNAL_FRAGMENT} -U --force-reinstall'")
+set(FPRIME__INTERNAL_FRAGMENT "pip install -r \"${FPRIME_FRAMEWORK_PATH}/requirements.txt\"" CACHE INTERNAL "Internal pip install fragment for F Prime requirements" FORCE)
+set(FPRIME__INTERNAL_TO_INSTALL_MESSAGE "Install with:\n  '${FPRIME__INTERNAL_FRAGMENT}'" CACHE INTERNAL "Internal install message for F Prime requirements" FORCE)
+set(FPRIME__INTERNAL_TO_REINSTALL "Reinstall with:\n  '${FPRIME__INTERNAL_FRAGMENT} -U --force-reinstall'" CACHE INTERNAL "Internal reinstall message for F Prime requirements" FORCE)
 # Check python was found
 if (NOT FPUTIL)
     message(FATAL_ERROR " fprime-util was not found. ${FPRIME__INTERNAL_TO_INSTALL_MESSAGE}")

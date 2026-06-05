@@ -14,5 +14,5 @@
 #  2. Specifying sysroot should be used with care as both libraries and headers must exist both in the sysroot
 #
 ####
-set(CMAKE_SYSTEM_PROCESSOR "aarch64")
+set(CMAKE_SYSTEM_PROCESSOR "aarch64" CACHE INTERNAL "Set the system processor to aarch64 for this toolchain" FORCE)
 include("${CMAKE_CURRENT_LIST_DIR}/helpers/arm-linux-base.cmake")

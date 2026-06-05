@@ -38,7 +38,7 @@ list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
 # Now that modules can build within the build cache, the build cache locations (root, F-Prime) are added to the list of
 # locations. This allows for the detection of modules that are built within the build cache.
 set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}"
-    "${CMAKE_BINARY_DIR}/F-Prime" "${CMAKE_BINARY_DIR}")
+    "${CMAKE_BINARY_DIR}/F-Prime" "${CMAKE_BINARY_DIR}" CACHE INTERNAL "List of root locations for F Prime modules" FORCE)
 list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
 resolve_path_variables(FPRIME_BUILD_LOCATIONS)
 

@@ -8,8 +8,8 @@
 #   sudo apt install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf  gdb-multiarch
 ####
 
-set(CMAKE_SYSTEM_PROCESSOR "arm")
-set(ARM_TOOL_SUFFIX eabihf)
+set(CMAKE_SYSTEM_PROCESSOR "arm" CACHE INTERNAL "Set the system processor to arm for this toolchain" FORCE)
+set(ARM_TOOL_SUFFIX eabihf CACHE INTERNAL "Suffix for ARM tools for hardware floating point" FORCE)
 
 if(DEFINED ENV{RPI_TOOLCHAIN_DIR})
     set(ENV{ARM_TOOLS_PATH} "$ENV{RPI_TOOLCHAIN_DIR}")

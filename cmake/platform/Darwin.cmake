@@ -6,11 +6,11 @@
 ####
 
 FIND_PACKAGE ( Threads REQUIRED )
-set(FPRIME_USE_POSIX ON)
-set(FPRIME_HAS_SOCKETS ON)
+set(FPRIME_USE_POSIX ON CACHE INTERNAL "Use POSIX implementations of OS features" FORCE)
+set(FPRIME_HAS_SOCKETS ON CACHE INTERNAL "Indicates if sockets are available" FORCE)
 # Set platform default for stubbed drivers
 if (NOT DEFINED FPRIME_USE_STUBBED_DRIVERS)
-   set(FPRIME_USE_STUBBED_DRIVERS ON)
+   set(FPRIME_USE_STUBBED_DRIVERS ON CACHE INTERNAL "Use stubbed drivers by default" FORCE)
 endif()
 # Add unix include path which is compatible with Darwin for PlatformTypes.hpp
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/unix/Platform/")
