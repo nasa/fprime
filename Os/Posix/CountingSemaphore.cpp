@@ -23,7 +23,7 @@ PosixCountingSemaphore::~PosixCountingSemaphore() {
 }
 
 PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
-    int status;
+    int status = 0;
     do {
         status = sem_wait(&this->m_handle.m_semaphore);
     } while (status != 0 && errno == EINTR);
@@ -32,7 +32,7 @@ PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
 }
 
 PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(const Fw::TimeInterval& interval) {
-    struct timespec abstime;
+    struct timespec abstime{};
     int clock_status = clock_gettime(CLOCK_REALTIME, &abstime);
     FW_ASSERT(clock_status == 0, static_cast<FwAssertArgType>(clock_status));
 
@@ -44,7 +44,7 @@ PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(const Fw::Tim
         abstime.tv_nsec = abstime.tv_nsec % 1000000000L;
     }
 
-    int status;
+    int status = 0;
     do {
         status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);
     } while (status != 0 && errno == EINTR);
