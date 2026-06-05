@@ -32,10 +32,10 @@ class AckPdu : public PduBase {
   public:
     //! Constructor
     AckPdu()
-        : m_directiveCode(FILE_DIRECTIVE_INVALID_MIN),
+        : m_directiveCode(FileDirective::FILE_DIRECTIVE_INVALID_MIN),
           m_directiveSubtypeCode(0),
-          m_conditionCode(CONDITION_CODE_NO_ERROR),
-          m_transactionStatus(ACK_TXN_STATUS_UNDEFINED) {}
+          m_conditionCode(ConditionCode::CONDITION_CODE_NO_ERROR),
+          m_transactionStatus(AckTxnStatus::ACK_TXN_STATUS_UNDEFINED) {}
 
     //! Initialize an ACK PDU
     void initialize(PduDirection direction,

@@ -483,8 +483,8 @@ class Channel {
 
     Engine* m_engine;  //!< Parent CFDP engine
 
-    CListNode* m_qs[QueueId::NUM];   //!< Transaction queues
-    CListNode* m_cs[DIRECTION_NUM];  //!< Command/history lists
+    CListNode* m_qs[QueueId::NUM];                                //!< Transaction queues
+    CListNode* m_cs[static_cast<U32>(Direction::DIRECTION_NUM)];  //!< Command/history lists
 
     U32 m_numCmdTx;  //!< Number of commanded TX transactions
 
@@ -503,10 +503,11 @@ class Channel {
     // Per-channel resource arrays (dynamically allocated, moved from Engine)
     Transaction* m_transactions;  //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
     History* m_histories;         //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
-    CfdpChunkWrapper* m_chunks;   //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM
+    CfdpChunkWrapper* m_chunks;   //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * Direction::DIRECTION_NUM
     Chunk* m_chunkMem;            //!< Chunk memory backing store
 
-    U32 m_dirMaxChunks[DIRECTION_NUM];  //!< Max chunks per direction (RX/TX) for this channel
+    U32 m_dirMaxChunks[static_cast<U32>(
+        Direction::DIRECTION_NUM)];  //!< Max chunks per direction (RX/TX) for this channel
 
     // Friend declarations for testing
     friend class CfdpManagerTester;

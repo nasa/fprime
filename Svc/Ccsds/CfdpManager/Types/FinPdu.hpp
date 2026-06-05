@@ -33,9 +33,9 @@ class FinPdu : public PduBase {
   public:
     //! Constructor
     FinPdu()
-        : m_conditionCode(CONDITION_CODE_NO_ERROR),
-          m_deliveryCode(FIN_DELIVERY_CODE_COMPLETE),
-          m_fileStatus(FIN_FILE_STATUS_RETAINED) {}
+        : m_conditionCode(ConditionCode::CONDITION_CODE_NO_ERROR),
+          m_deliveryCode(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE),
+          m_fileStatus(FinFileStatus::FIN_FILE_STATUS_RETAINED) {}
 
     //! Initialize a Finished PDU
     void initialize(PduDirection direction,
@@ -71,7 +71,7 @@ class FinPdu : public PduBase {
     FinFileStatus getFileStatus() const { return this->m_fileStatus; }
 
     //! Get directive code
-    FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_FIN; }
+    FileDirective getDirectiveCode() const { return FileDirective::FILE_DIRECTIVE_FIN; }
 
     //! Add a TLV to this FIN PDU
     //! @return true if added successfully, false if list is full

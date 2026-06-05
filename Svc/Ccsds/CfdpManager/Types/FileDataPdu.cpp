@@ -32,7 +32,7 @@ U32 FileDataPdu::getBufferSize() const {
     U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
-    if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
+    if (this->m_header.m_largeFileFlag == LargeFileFlag::LARGE_FILE_64_BIT) {
         size += static_cast<U32>(sizeof(U64));  // 8-byte offset
     } else {
         size += static_cast<U32>(sizeof(U32));  // 4-byte offset
@@ -46,7 +46,7 @@ U32 FileDataPdu::getMaxFileDataSize() {
     U32 size = this->m_header.getBufferSize();
 
     // Offset field size depends on large file flag
-    if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
+    if (this->m_header.m_largeFileFlag == LargeFileFlag::LARGE_FILE_64_BIT) {
         size += static_cast<U32>(sizeof(U64));  // 8-byte offset
     } else {
         size += static_cast<U32>(sizeof(U32));  // 4-byte offset
@@ -76,7 +76,7 @@ Fw::SerializeStatus FileDataPdu::fromBuffer(const Fw::Buffer& buffer) {
     }
 
     // Validate this is a file data PDU
-    if (this->m_header.m_pduType != PDU_TYPE_FILE_DATA) {
+    if (this->m_header.m_pduType != PduType::PDU_TYPE_FILE_DATA) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -104,7 +104,7 @@ Fw::SerializeStatus FileDataPdu::toSerialBuffer(Fw::SerialBuffer& serialBuffer) 
     }
 
     // Serialize offset - size depends on large file flag
-    if (this->m_header.m_largeFileFlag == LARGE_FILE_64_BIT) {
+    if (this->m_header.m_largeFileFlag == LargeFileFlag::LARGE_FILE_64_BIT) {
         // Serialize as 8 bytes (64-bit)
         U64 offset64 = this->m_offset;
         status = serialBuffer.serializeFrom(offset64);

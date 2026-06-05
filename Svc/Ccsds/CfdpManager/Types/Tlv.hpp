@@ -18,7 +18,7 @@ namespace Cfdp {
 
 // CFDP TLV Types
 // Blue Book section 5.4, table 5-3
-enum TlvType : U8 {
+enum class TlvType : U8 {
     TLV_TYPE_FILESTORE_REQUEST = 0,       // Filestore request
     TLV_TYPE_FILESTORE_RESPONSE = 1,      // Filestore response
     TLV_TYPE_MESSAGE_TO_USER = 2,         // Message to user

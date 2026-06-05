@@ -60,9 +60,9 @@ FileDirectiveDispatchTable makeFileDirectiveTable(StateRecvFunc fin, StateRecvFu
     FileDirectiveDispatchTable table = {};
     memset(&table, 0, sizeof(table));
 
-    table.fdirective[FILE_DIRECTIVE_FIN] = fin;
-    table.fdirective[FILE_DIRECTIVE_ACK] = ack;
-    table.fdirective[FILE_DIRECTIVE_NAK] = nak;
+    table.fdirective[static_cast<U32>(FileDirective::FILE_DIRECTIVE_FIN)] = fin;
+    table.fdirective[static_cast<U32>(FileDirective::FILE_DIRECTIVE_ACK)] = ack;
+    table.fdirective[static_cast<U32>(FileDirective::FILE_DIRECTIVE_NAK)] = nak;
 
     return table;
 }
@@ -90,10 +90,10 @@ void Transaction::s2Recv(const Fw::Buffer& buffer) {
         makeFileDirectiveTable(&Transaction::s2Fin, &Transaction::s2EofAck, &Transaction::s2NakArm);
 
     static const SSubstateRecvDispatchTable substate_fns = {{
-        &s2_meta,      /* TX_SUB_STATE_METADATA */
-        &s2_fd_or_eof, /* TX_SUB_STATE_FILEDATA */
-        &s2_fd_or_eof, /* TX_SUB_STATE_EOF */
-        &s2_wait_ack   /* TX_SUB_STATE_CLOSEOUT_SYNC */
+        &s2_meta,      /* TxSubState::TX_SUB_STATE_METADATA */
+        &s2_fd_or_eof, /* TxSubState::TX_SUB_STATE_FILEDATA */
+        &s2_fd_or_eof, /* TxSubState::TX_SUB_STATE_EOF */
+        &s2_wait_ack   /* TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC */
     }};
 
     this->sDispatchRecv(buffer, &substate_fns);
@@ -104,16 +104,16 @@ void Transaction::initTxFile(Class::T cfdp_class, Keep::T keep, U8 chan, U8 prio
     m_priority = priority;
     m_keep = keep;
     m_txn_class = cfdp_class;
-    m_state = (cfdp_class == Cfdp::Class::CLASS_2) ? TXN_STATE_S2 : TXN_STATE_S1;
-    m_state_data.send.sub_state = TX_SUB_STATE_METADATA;
+    m_state = (cfdp_class == Cfdp::Class::CLASS_2) ? TxnState::TXN_STATE_S2 : TxnState::TXN_STATE_S1;
+    m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_METADATA;
 }
 
 void Transaction::s1Tx() {
     static const SSubstateSendDispatchTable substate_fns = {{
-        &Transaction::sSubstateSendMetadata,  // TX_SUB_STATE_METADATA
-        &Transaction::sSubstateSendFileData,  // TX_SUB_STATE_FILEDATA
-        &Transaction::s1SubstateSendEof,      // TX_SUB_STATE_EOF
-        nullptr                               // TX_SUB_STATE_CLOSEOUT_SYNC
+        &Transaction::sSubstateSendMetadata,  // TxSubState::TX_SUB_STATE_METADATA
+        &Transaction::sSubstateSendFileData,  // TxSubState::TX_SUB_STATE_FILEDATA
+        &Transaction::s1SubstateSendEof,      // TxSubState::TX_SUB_STATE_EOF
+        nullptr                               // TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC
     }};
 
     this->sDispatchTransmit(&substate_fns);
@@ -121,10 +121,10 @@ void Transaction::s1Tx() {
 
 void Transaction::s2Tx() {
     static const SSubstateSendDispatchTable substate_fns = {{
-        &Transaction::sSubstateSendMetadata,   // TX_SUB_STATE_METADATA
-        &Transaction::s2SubstateSendFileData,  // TX_SUB_STATE_FILEDATA
-        &Transaction::s2SubstateSendEof,       // TX_SUB_STATE_EOF
-        nullptr                                // TX_SUB_STATE_CLOSEOUT_SYNC
+        &Transaction::sSubstateSendMetadata,   // TxSubState::TX_SUB_STATE_METADATA
+        &Transaction::s2SubstateSendFileData,  // TxSubState::TX_SUB_STATE_FILEDATA
+        &Transaction::s2SubstateSendEof,       // TxSubState::TX_SUB_STATE_EOF
+        nullptr                                // TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC
     }};
 
     this->sDispatchTransmit(&substate_fns);
@@ -134,20 +134,20 @@ void Transaction::sAckTimerTick() {
     U8 ack_limit = 0;
 
     // note: the ack timer is only ever relevant on class 2
-    if (this->m_state != TXN_STATE_S2 || !this->m_flags.com.ack_timer_armed) {
+    if (this->m_state != TxnState::TXN_STATE_S2 || !this->m_flags.com.ack_timer_armed) {
         // nothing to do
         return;
     }
 
     if (this->m_ack_timer.getStatus() == Timer::Status::RUNNING) {
         this->m_ack_timer.run();
-    } else if (this->m_state_data.send.sub_state == TX_SUB_STATE_CLOSEOUT_SYNC) {
+    } else if (this->m_state_data.send.sub_state == TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC) {
         // Check limit and handle if needed
         ack_limit = this->m_cfdpManager->getAckLimitParam(this->m_chan_num);
         if (this->m_state_data.send.s2.acknak_count >= ack_limit) {
             this->m_cfdpManager->log_WARNING_LO_TxAckLimitReached(this->getClass(), this->m_history->src_eid,
                                                                   this->m_history->seq_num);
-            this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_EOF);
+            this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_ACK_LIMIT_NO_EOF);
             this->m_cfdpManager->incrementFaultAckLimit(this->m_chan_num);
 
             // give up on this
@@ -193,10 +193,10 @@ void Transaction::sTick(I32* cont /* unused */) {
 
             // HOLD state is the normal path to recycle transaction objects, not an error
             // inactivity is abnormal in any other state
-            if (this->m_state != TXN_STATE_HOLD && this->m_state == TXN_STATE_S2) {
+            if (this->m_state != TxnState::TXN_STATE_HOLD && this->m_state == TxnState::TXN_STATE_S2) {
                 this->m_cfdpManager->log_WARNING_LO_TxInactivityTimeout(this->getClass(), this->m_history->src_eid,
                                                                         this->m_history->seq_num);
-                this->m_engine->setTxnStatus(this, TXN_STATUS_INACTIVITY_DETECTED);
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);
 
                 this->m_cfdpManager->incrementFaultInactivityTimer(this->m_chan_num);
             }
@@ -249,9 +249,9 @@ void Transaction::sTickNak(I32* cont) {
 }
 
 void Transaction::sCancel() {
-    if (this->m_state_data.send.sub_state < TX_SUB_STATE_EOF) {
-        // if state has not reached TX_SUB_STATE_EOF, then set it to TX_SUB_STATE_EOF now.
-        this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
+    if (this->m_state_data.send.sub_state < TxSubState::TX_SUB_STATE_EOF) {
+        // if state has not reached TxSubState::TX_SUB_STATE_EOF, then set it to TxSubState::TX_SUB_STATE_EOF now.
+        this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_EOF;
     }
 }
 
@@ -288,7 +288,7 @@ void Transaction::s2SubstateSendEof() {
     this->m_flags.tx.send_eof = true;
 
     // wait for remaining responses to close out the state machine
-    this->m_state_data.send.sub_state = TX_SUB_STATE_CLOSEOUT_SYNC;
+    this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC;
 
     // always move the transaction onto the wait queue now
     this->m_chan->dequeueTransaction(this);
@@ -309,7 +309,7 @@ Status::T Transaction::sSendFileData(FileSize foffs, FileSize bytes_to_read, U8 
 
     // Create File Data PDU
     FileDataPdu fdPdu;
-    Cfdp::PduDirection direction = DIRECTION_TOWARD_RECEIVER;
+    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
 
     // Calculate maximum data size we can send, accounting for PDU overhead
     U32 maxDataCapacity = fdPdu.getMaxFileDataSize();
@@ -394,13 +394,13 @@ void Transaction::sSubstateSendFileData() {
         this->m_chan->setCurrentTxn(this);
     } else if (status != Cfdp::Status::SUCCESS) {
         // IO error -- change state and send EOF
-        this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
-        this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
+        this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_EOF;
     } else if (bytes_processed > 0) {
         this->m_foffs += bytes_processed;
         if (this->m_foffs == this->m_fsize) {
             // file is done - transition to EOF state, which will be sent in next loop iteration
-            this->m_state_data.send.sub_state = TX_SUB_STATE_EOF;
+            this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_EOF;
         }
     } else {
         // don't care about other cases
@@ -454,7 +454,7 @@ void Transaction::s2SubstateSendFileData() {
 
     status = this->sCheckAndRespondNak(&nakProcessed);
     if (status != Cfdp::Status::SUCCESS) {
-        this->m_engine->setTxnStatus(this, TXN_STATUS_NAK_RESPONSE_ERROR);
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_NAK_RESPONSE_ERROR);
         this->m_flags.tx.send_eof = true; /* do not leave the remote hanging */
         this->m_engine->finishTransaction(this, true);
         return;
@@ -507,7 +507,7 @@ void Transaction::sSubstateSendMetadata() {
             success = false;
         } else if (status == Cfdp::Status::SUCCESS) {
             /* once metadata is sent, switch to filedata mode */
-            this->m_state_data.send.sub_state = TX_SUB_STATE_FILEDATA;
+            this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_FILEDATA;
 
             this->m_cfdpManager->log_ACTIVITY_HI_TxFileTransferStarted(
                 this->getClass(), this->m_history->src_eid, this->m_history->fnames.src_filename,
@@ -518,7 +518,7 @@ void Transaction::sSubstateSendMetadata() {
     }
 
     if (!success) {
-        this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
+        this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
         this->m_engine->finishTransaction(this, true);
     }
 
@@ -526,9 +526,10 @@ void Transaction::sSubstateSendMetadata() {
 }
 
 Status::T Transaction::sSendFinAck() {
-    Status::T ret = this->m_engine->sendAck(this, static_cast<AckTxnStatus>(GetTxnStatus(this)), FILE_DIRECTIVE_FIN,
-                                            static_cast<ConditionCode>(this->m_state_data.send.s2.fin_cc),
-                                            this->m_history->peer_eid, this->m_history->seq_num);
+    Status::T ret =
+        this->m_engine->sendAck(this, static_cast<AckTxnStatus>(GetTxnStatus(this)), FileDirective::FILE_DIRECTIVE_FIN,
+                                static_cast<ConditionCode>(this->m_state_data.send.s2.fin_cc),
+                                this->m_history->peer_eid, this->m_history->seq_num);
     return ret;
 }
 
@@ -536,9 +537,9 @@ void Transaction::s2EarlyFin(const Fw::Buffer& buffer) {
     // received early fin, so just cancel
     this->m_cfdpManager->log_WARNING_LO_TxEarlyFinReceived(this->getClass(), this->m_history->src_eid,
                                                            this->m_history->seq_num);
-    this->m_engine->setTxnStatus(this, TXN_STATUS_EARLY_FIN);
+    this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_EARLY_FIN);
 
-    this->m_state_data.send.sub_state = TX_SUB_STATE_CLOSEOUT_SYNC;
+    this->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC;
 
     // otherwise do normal fin processing
     this->s2Fin(buffer);
@@ -564,7 +565,7 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
         // then re-ack but otherwise ignore it
         if (!this->m_flags.tx.fin_recv) {
             this->m_flags.tx.fin_recv = true;
-            this->m_state_data.send.s2.fin_cc = static_cast<ConditionCode>(fin.getConditionCode());
+            this->m_state_data.send.s2.fin_cc = static_cast<U8>(fin.getConditionCode());
             this->m_state_data.send.s2.acknak_count = 0;  // in case retransmits had occurred
 
             // note this is a no-op unless the status was unset previously
@@ -659,7 +660,7 @@ void Transaction::s2EofAck(const Fw::Buffer& buffer) {
 
     // ACK PDU has been validated during deserialization
     // Check if this is an EOF acknowledgment
-    if (ack.getDirectiveCode() == FILE_DIRECTIVE_END_OF_FILE) {
+    if (ack.getDirectiveCode() == FileDirective::FILE_DIRECTIVE_END_OF_FILE) {
         this->m_flags.tx.eof_ack_recv = true;
         this->m_flags.com.ack_timer_armed = false;    // just wait for FIN now, nothing to re-send
         this->m_state_data.send.s2.acknak_count = 0;  // in case EOF retransmits had occurred
@@ -679,8 +680,8 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
     const FileDirectiveDispatchTable* substate_tbl;
     StateRecvFunc selected_handler;
 
-    FW_ASSERT(this->m_state_data.send.sub_state < TX_SUB_STATE_NUM_STATES, this->m_state_data.send.sub_state,
-              TX_SUB_STATE_NUM_STATES);
+    FW_ASSERT(this->m_state_data.send.sub_state < TxSubState::TX_SUB_STATE_NUM_STATES,
+              static_cast<U8>(this->m_state_data.send.sub_state), static_cast<U8>(TxSubState::TX_SUB_STATE_NUM_STATES));
 
     // Peek at PDU type from buffer
     Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
@@ -704,16 +705,16 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
             if (sb.deserializeTo(directiveCodeByte) == Fw::FW_SERIALIZE_OK) {
                 FileDirective directiveCode = static_cast<FileDirective>(directiveCodeByte);
 
-                if (directiveCode < FILE_DIRECTIVE_INVALID_MAX) {
+                if (directiveCode < FileDirective::FILE_DIRECTIVE_INVALID_MAX) {
                     // This should be silent (no event) if no handler is defined in the table
-                    substate_tbl = dispatch->substate[this->m_state_data.send.sub_state];
+                    substate_tbl = dispatch->substate[static_cast<U32>(this->m_state_data.send.sub_state)];
                     if (substate_tbl != nullptr) {
-                        selected_handler = substate_tbl->fdirective[directiveCode];
+                        selected_handler = substate_tbl->fdirective[static_cast<U32>(directiveCode)];
                     }
                 } else {
                     this->m_cfdpManager->log_WARNING_LO_TxInvalidDirectiveCode(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num, directiveCodeByte,
-                        this->m_state_data.send.sub_state);
+                        static_cast<U8>(this->m_state_data.send.sub_state));
                 }
             }
         }
@@ -733,7 +734,7 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
 void Transaction::sDispatchTransmit(const SSubstateSendDispatchTable* dispatch) {
     StateSendFunc selected_handler;
 
-    selected_handler = dispatch->substate[this->m_state_data.send.sub_state];
+    selected_handler = dispatch->substate[static_cast<U32>(this->m_state_data.send.sub_state)];
     if (selected_handler != nullptr) {
         (this->*selected_handler)();
     }
@@ -742,9 +743,10 @@ void Transaction::sDispatchTransmit(const SSubstateSendDispatchTable* dispatch) 
 void Transaction::txStateDispatch(const TxnSendDispatchTable* dispatch) {
     StateSendFunc selected_handler;
 
-    FW_ASSERT(this->m_state < TXN_STATE_INVALID, this->m_state, TXN_STATE_INVALID);
+    FW_ASSERT(this->m_state < TxnState::TXN_STATE_INVALID, static_cast<U8>(this->m_state),
+              static_cast<U8>(TxnState::TXN_STATE_INVALID));
 
-    selected_handler = dispatch->tx[this->m_state];
+    selected_handler = dispatch->tx[static_cast<U32>(this->m_state)];
     if (selected_handler != nullptr) {
         (this->*selected_handler)();
     }

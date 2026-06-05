@@ -150,7 +150,7 @@ class Engine {
                      U8 chan_num,
                      U8 priority,
                      EntityId dest_id,
-                     TransactionInitType initType = INIT_BY_COMMAND);
+                     TransactionInitType initType = TransactionInitType::INIT_BY_COMMAND);
 
     /**
      * @brief Begin transmit of a directory

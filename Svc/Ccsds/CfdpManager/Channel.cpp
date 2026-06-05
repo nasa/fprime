@@ -74,7 +74,7 @@ Channel::Channel(Engine* engine,
     }
 
     // Initialize command/history lists
-    for (U32 i = 0; i < DIRECTION_NUM; i++) {
+    for (U32 i = 0; i < static_cast<U32>(Direction::DIRECTION_NUM); i++) {
         m_cs[i] = nullptr;
     }
 
@@ -108,12 +108,12 @@ Channel::Channel(Engine* engine,
     // Initialize chunk configuration for this channel
     const U32 rxChunksPerChannel[] = CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION;
     const U32 txChunksPerChannel[] = CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION;
-    m_dirMaxChunks[DIRECTION_RX] = rxChunksPerChannel[m_channelId];
-    m_dirMaxChunks[DIRECTION_TX] = txChunksPerChannel[m_channelId];
+    m_dirMaxChunks[static_cast<U32>(Direction::DIRECTION_RX)] = rxChunksPerChannel[m_channelId];
+    m_dirMaxChunks[static_cast<U32>(Direction::DIRECTION_TX)] = txChunksPerChannel[m_channelId];
 
     // Calculate total chunks needed for this channel
     total_chunks_needed = 0;
-    for (k = 0; k < DIRECTION_NUM; ++k) {
+    for (k = 0; k < static_cast<U32>(Direction::DIRECTION_NUM); ++k) {
         total_chunks_needed += m_dirMaxChunks[k] * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
     }
 
@@ -122,7 +122,8 @@ Channel::Channel(Engine* engine,
     m_transactions = static_cast<Transaction*>(allocator.allocate(memId, transactionsSize));
     FW_ASSERT(m_transactions != nullptr);
 
-    FwSizeType chunksSize = (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM) * sizeof(CfdpChunkWrapper);
+    FwSizeType chunksSize =
+        (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * static_cast<U32>(Direction::DIRECTION_NUM)) * sizeof(CfdpChunkWrapper);
     m_chunks = static_cast<CfdpChunkWrapper*>(allocator.allocate(memId, chunksSize));
     FW_ASSERT(m_chunks != nullptr);
 
@@ -144,7 +145,7 @@ Channel::Channel(Engine* engine,
         this->freeTransaction(txn);
 
         // Initialize chunk wrappers for this transaction (TX and RX)
-        for (k = 0; k < DIRECTION_NUM; ++k, ++cw) {
+        for (k = 0; k < static_cast<U32>(Direction::DIRECTION_NUM); ++k, ++cw) {
             list_head = this->getChunkListHead(static_cast<U8>(k));
 
             // Use placement new to construct CfdpChunkWrapper with the new class-based interface
@@ -181,7 +182,7 @@ void Channel::cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
 
     if (m_chunks != nullptr) {
         // Manually call destructors since we used placement new
-        for (U32 j = 0; j < (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM); ++j) {
+        for (U32 j = 0; j < (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * static_cast<U32>(Direction::DIRECTION_NUM)); ++j) {
             m_chunks[j].~CfdpChunkWrapper();
         }
         allocator.deallocate(memId, m_chunks);
@@ -244,7 +245,7 @@ void Channel::cycleTx() {
                 // Class 1 transactions don't need chunks since they don't support NAKs.
                 if (txn->getClass() == Cfdp::Class::CLASS_2) {
                     if (txn->m_chunks == nullptr) {
-                        txn->m_chunks = this->findUnusedChunks(DIRECTION_TX);
+                        txn->m_chunks = this->findUnusedChunks(Direction::DIRECTION_TX);
                     }
                     if (txn->m_chunks == nullptr) {
                         // Chunklist unavailable - EVR already emitted by Engine
@@ -266,13 +267,13 @@ void Channel::cycleTx() {
 void Channel::tickTransactions() {
     bool reset = true;
 
-    void (Transaction::* fns[CFDP_TICK_TYPE_NUM_TYPES])(I32*) = {&Transaction::rTick, &Transaction::sTick,
-                                                                 &Transaction::sTickNak};
-    I32 qs[CFDP_TICK_TYPE_NUM_TYPES] = {QueueId::RX, QueueId::TXW, QueueId::TXW};
+    void (Transaction::* fns[static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_NUM_TYPES)])(I32*) = {
+        &Transaction::rTick, &Transaction::sTick, &Transaction::sTickNak};
+    I32 qs[static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_NUM_TYPES)] = {QueueId::RX, QueueId::TXW, QueueId::TXW};
 
-    FW_ASSERT(m_tickType < CFDP_TICK_TYPE_NUM_TYPES, m_tickType);
+    FW_ASSERT(m_tickType < static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_NUM_TYPES), m_tickType);
 
-    for (; m_tickType < CFDP_TICK_TYPE_NUM_TYPES; ++m_tickType) {
+    for (; m_tickType < static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_NUM_TYPES); ++m_tickType) {
         TickArgs args = {this, fns[m_tickType], 0, 0};
 
         // Safety bound: retry loop should not exceed the number of transactions in the queue
@@ -309,7 +310,7 @@ void Channel::tickTransactions() {
                 // NAK response (could be many)
                 //
                 // New file data on TXA
-                if (m_tickType != CFDP_TICK_TYPE_TXW_NAK) {
+                if (m_tickType != static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_TXW_NAK)) {
                     reset = false;
                 }
 
@@ -327,7 +328,7 @@ void Channel::tickTransactions() {
     }
 
     if (reset) {
-        m_tickType = CFDP_TICK_TYPE_RX;  // reset tick type
+        m_tickType = static_cast<U8>(CfdpTickType::CFDP_TICK_TYPE_RX);  // reset tick type
     }
 }
 
@@ -419,7 +420,7 @@ Transaction* Channel::findUnusedTransaction(Direction direction) {
 
         // Indicate that this was freshly pulled from the free list
         // notably this state is distinguishable from items still on the free list
-        txn->m_state = TXN_STATE_INIT;
+        txn->m_state = TxnState::TXN_STATE_INIT;
         txn->m_history->dir = direction;
         txn->m_chan = this;  // Set channel pointer
 
@@ -603,7 +604,7 @@ void Channel::recycleTransaction(Transaction* txn) {
     // this should always be
     if (txn->m_history != nullptr) {
         if (txn->m_chunks != nullptr) {
-            chunklist_head = this->getChunkListHead(txn->m_history->dir);
+            chunklist_head = this->getChunkListHead(static_cast<U8>(txn->m_history->dir));
             if (chunklist_head != nullptr) {
                 CfdpCListInsertBack(chunklist_head, &txn->m_chunks->cl_node);
                 txn->m_chunks = nullptr;
@@ -680,7 +681,7 @@ void Channel::setCurrentTxn(const Transaction* txn) {
 CListNode** Channel::getChunkListHead(U8 direction) {
     CListNode** result;
 
-    if (direction < DIRECTION_NUM) {
+    if (direction < static_cast<U32>(Direction::DIRECTION_NUM)) {
         result = &m_cs[direction];
     } else {
         result = nullptr;
@@ -694,7 +695,7 @@ CfdpChunkWrapper* Channel::findUnusedChunks(Direction dir) {
     CListNode* node;
     CListNode** chunklist_head;
 
-    chunklist_head = this->getChunkListHead(dir);
+    chunklist_head = this->getChunkListHead(static_cast<U8>(dir));
 
     // this should never be null
     FW_ASSERT(chunklist_head);
@@ -740,7 +741,7 @@ void Channel::processPlaybackDirectory(Playback* pb) {
 
             pb->pending_file = path;
         } else {
-            txn = this->findUnusedTransaction(DIRECTION_TX);
+            txn = this->findUnusedTransaction(Direction::DIRECTION_TX);
             if (txn == nullptr) {
                 // while not expected this can certainly happen, because
                 // rx transactions consume in these as well.

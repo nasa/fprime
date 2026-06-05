@@ -56,7 +56,7 @@ namespace Cfdp {
 // ======================================================================
 
 Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpManager* manager)
-    : m_state(TXN_STATE_UNDEF),
+    : m_state(TxnState::TXN_STATE_UNDEF),
       m_txn_class(Cfdp::Class::CLASS_1),
       m_history(nullptr),
       m_chunks(nullptr),
@@ -69,7 +69,7 @@ Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpMan
       m_keep(Cfdp::Keep::KEEP),
       m_chan_num(channelId),  // Initialize from parameter
       m_priority(0),
-      m_initType(INIT_BY_COMMAND),
+      m_initType(TransactionInitType::INIT_BY_COMMAND),
       m_cl_node{},
       m_pb(nullptr),
       m_state_data{},
@@ -85,13 +85,13 @@ Transaction::~Transaction() {}
 
 void Transaction::reset() {
     // Reset transaction state to default values
-    this->m_state = TXN_STATE_UNDEF;
+    this->m_state = TxnState::TXN_STATE_UNDEF;
     this->m_txn_class = Cfdp::Class::CLASS_1;
     this->m_fsize = 0;
     this->m_foffs = 0;
     this->m_keep = Cfdp::Keep::KEEP;
     this->m_priority = 0;
-    this->m_initType = INIT_BY_COMMAND;
+    this->m_initType = TransactionInitType::INIT_BY_COMMAND;
     this->m_crc = CFDP::Checksum(0);
     this->m_pb = nullptr;
 
@@ -138,9 +138,9 @@ void Transaction::r1Recv(const Fw::Buffer& buffer) {
     }};
 
     static const RSubstateDispatchTable substate_fns = {{
-        &r1_fdir_handlers, /* RX_SUB_STATE_FILEDATA */
-        &r1_fdir_handlers, /* RX_SUB_STATE_EOF */
-        &r1_fdir_handlers, /* RX_SUB_STATE_CLOSEOUT_SYNC */
+        &r1_fdir_handlers, /* RxSubState::RX_SUB_STATE_FILEDATA */
+        &r1_fdir_handlers, /* RxSubState::RX_SUB_STATE_EOF */
+        &r1_fdir_handlers, /* RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC */
     }};
 
     this->rDispatchRecv(buffer, &substate_fns, &Transaction::r1SubstateRecvFileData);
@@ -179,9 +179,9 @@ void Transaction::r2Recv(const Fw::Buffer& buffer) {
     }};
 
     static const RSubstateDispatchTable substate_fns = {{
-        &r2_fdir_handlers_normal, /* RX_SUB_STATE_FILEDATA */
-        &r2_fdir_handlers_normal, /* RX_SUB_STATE_EOF */
-        &r2_fdir_handlers_finack, /* RX_SUB_STATE_CLOSEOUT_SYNC */
+        &r2_fdir_handlers_normal, /* RxSubState::RX_SUB_STATE_FILEDATA */
+        &r2_fdir_handlers_normal, /* RxSubState::RX_SUB_STATE_EOF */
+        &r2_fdir_handlers_finack, /* RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC */
     }};
 
     this->rDispatchRecv(buffer, &substate_fns, &Transaction::r2SubstateRecvFileData);
@@ -191,7 +191,7 @@ void Transaction::rAckTimerTick() {
     U8 ack_limit = 0;
 
     /* note: the ack timer is only ever armed on class 2 */
-    if (this->m_state != TXN_STATE_R2 || !this->m_flags.com.ack_timer_armed) {
+    if (this->m_state != TxnState::TXN_STATE_R2 || !this->m_flags.com.ack_timer_armed) {
         /* nothing to do */
         return;
     }
@@ -202,7 +202,7 @@ void Transaction::rAckTimerTick() {
         /* ACK timer expired, so check for completion */
         if (!this->m_flags.rx.complete) {
             this->r2Complete(true);
-        } else if (this->m_state_data.receive.sub_state == RX_SUB_STATE_CLOSEOUT_SYNC) {
+        } else if (this->m_state_data.receive.sub_state == RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC) {
             /* Increment acknak counter */
             ++this->m_state_data.receive.r2.acknak_count;
 
@@ -211,7 +211,7 @@ void Transaction::rAckTimerTick() {
             if (this->m_state_data.receive.r2.acknak_count >= ack_limit) {
                 this->m_cfdpManager->log_WARNING_LO_RxAckLimitReached(this->getClass(), this->m_history->src_eid,
                                                                       this->m_history->seq_num);
-                this->m_engine->setTxnStatus(this, TXN_STATUS_ACK_LIMIT_NO_FIN);
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_ACK_LIMIT_NO_FIN);
                 this->m_cfdpManager->incrementFaultAckLimit(this->m_chan_num);
 
                 /* give up on this */
@@ -246,12 +246,12 @@ void Transaction::rTick(I32* cont /* unused */) {
 
             /* HOLD state is the normal path to recycle transaction objects, not an error */
             /* inactivity is abnormal in any other state */
-            if (this->m_state != TXN_STATE_HOLD) {
+            if (this->m_state != TxnState::TXN_STATE_HOLD) {
                 this->rSendInactivityEvent();
 
                 /* in class 2 this also triggers sending an early FIN response */
-                if (this->m_state == TXN_STATE_R2) {
-                    this->r2SetFinTxnStatus(TXN_STATUS_INACTIVITY_DETECTED);
+                if (this->m_state == TxnState::TXN_STATE_R2) {
+                    this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);
                 }
             }
         }
@@ -261,7 +261,8 @@ void Transaction::rTick(I32* cont /* unused */) {
 
     /* rx maintenance: possibly process send_eof_ack, send_nak or send_fin */
     if (this->m_flags.rx.send_eof_ack) {
-        sret = this->m_engine->sendAck(this, ACK_TXN_STATUS_ACTIVE, FILE_DIRECTIVE_END_OF_FILE,
+        sret = this->m_engine->sendAck(this, AckTxnStatus::ACK_TXN_STATUS_ACTIVE,
+                                       FileDirective::FILE_DIRECTIVE_END_OF_FILE,
                                        static_cast<ConditionCode>(this->m_state_data.receive.r2.eof_cc),
                                        this->m_history->peer_eid, this->m_history->seq_num);
         FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
@@ -305,7 +306,8 @@ void Transaction::rTick(I32* cont /* unused */) {
 
 void Transaction::rCancel() {
     /* for cancel, only need to send FIN if R2 */
-    if ((this->m_state == TXN_STATE_R2) && (this->m_state_data.receive.sub_state < RX_SUB_STATE_CLOSEOUT_SYNC)) {
+    if ((this->m_state == TxnState::TXN_STATE_R2) &&
+        (this->m_state_data.receive.sub_state < RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC)) {
         this->m_flags.rx.send_fin = true;
     } else {
         this->r1Reset(); /* if R1, just call it quits */
@@ -317,7 +319,7 @@ void Transaction::rInit() {
     Fw::String tmpDir;
     Fw::String dst;
 
-    if (this->m_state == TXN_STATE_R2) {
+    if (this->m_state == TxnState::TXN_STATE_R2) {
         if (!this->m_flags.rx.md_recv) {
             tmpDir = this->m_cfdpManager->getTmpDirParam(this->m_chan_num);
             /* we need to make a temp file and then do a NAK for md PDU */
@@ -344,13 +346,13 @@ void Transaction::rInit() {
                                                                this->m_history->seq_num,
                                                                this->m_history->fnames.dst_filename, status);
         this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
-        if (this->m_state == TXN_STATE_R2) {
-            this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
+        if (this->m_state == TxnState::TXN_STATE_R2) {
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
         } else {
             this->r1Reset();
         }
     } else {
-        this->m_state_data.receive.sub_state = RX_SUB_STATE_FILEDATA;
+        this->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
     }
 }
 
@@ -364,8 +366,9 @@ void Transaction::r1Reset() {
 }
 
 void Transaction::r2Reset() {
-    if ((this->m_state_data.receive.sub_state == RX_SUB_STATE_CLOSEOUT_SYNC) ||
-        (this->m_state_data.receive.r2.eof_cc != CONDITION_CODE_NO_ERROR) ||
+    if ((this->m_state_data.receive.sub_state == RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC) ||
+        (static_cast<U8>(this->m_state_data.receive.r2.eof_cc) !=
+         static_cast<U8>(ConditionCode::CONDITION_CODE_NO_ERROR)) ||
         TxnStatusIsError(this->m_history->txn_stat) || this->m_flags.com.canceled) {
         this->r1Reset(); /* it's done */
     } else {
@@ -430,7 +433,7 @@ void Transaction::r2Complete(I32 ok_to_send_nak) {
                 send_fin = true;
                 this->m_cfdpManager->incrementFaultNakLimit(this->m_chan_num);
                 /* don't use CFDP_R2_SetFinTxnStatus because many places in this function set send_fin */
-                this->m_engine->setTxnStatus(this, TXN_STATUS_NAK_LIMIT_REACHED);
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_NAK_LIMIT_REACHED);
                 this->m_state_data.receive.r2.acknak_count = 0; /* reset for fin/ack */
             } else {
                 this->m_flags.rx.send_nak = true;
@@ -442,11 +445,11 @@ void Transaction::r2Complete(I32 ok_to_send_nak) {
 
             /* the transaction is now considered complete, but this will not overwrite an
              * error status code if there was one set */
-            this->r2SetFinTxnStatus(TXN_STATUS_NO_ERROR);
+            this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_NO_ERROR);
         }
 
-        /* always go to RX_SUB_STATE_FILEDATA, and let tick change state */
-        this->m_state_data.receive.sub_state = RX_SUB_STATE_FILEDATA;
+        /* always go to RxSubState::RX_SUB_STATE_FILEDATA, and let tick change state */
+        this->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
     }
 }
 
@@ -488,7 +491,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
             if (status != Os::File::OP_OK) {
                 this->m_cfdpManager->log_WARNING_LO_RxSeekFailed(this->getClass(), this->m_history->src_eid,
                                                                  this->m_history->seq_num, offset, status);
-                this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                 this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                 ret = Cfdp::Status::ERROR;
             }
@@ -503,7 +506,7 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
             this->m_cfdpManager->log_WARNING_LO_RxWriteFailed(this->getClass(), this->m_history->src_eid,
                                                               this->m_history->seq_num, dataSize,
                                                               static_cast<I32>(write_size));
-            this->m_engine->setTxnStatus(this, TXN_STATUS_FILESTORE_REJECTION);
+            this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
             this->m_cfdpManager->incrementFaultFileWrite(this->m_chan_num);
             ret = Cfdp::Status::ERROR;
         } else {
@@ -605,7 +608,7 @@ void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
             // Bad EOF, return to FILEDATA substate
             this->m_cfdpManager->log_WARNING_LO_FailEofPduDeserialization(this->getChannelId(),
                                                                           static_cast<I32>(deserStatus));
-            this->m_state_data.receive.sub_state = RX_SUB_STATE_FILEDATA;
+            this->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
             return;
         }
 
@@ -624,7 +627,8 @@ void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
             this->m_flags.rx.send_eof_ack = true; /* defer sending ACK to tick handling */
 
             /* only check for complete if EOF with no errors */
-            if (this->m_state_data.receive.r2.eof_cc == CONDITION_CODE_NO_ERROR) {
+            if (static_cast<U8>(this->m_state_data.receive.r2.eof_cc) ==
+                static_cast<U8>(ConditionCode::CONDITION_CODE_NO_ERROR)) {
                 this->r2Complete(true); /* CFDP_R2_Complete() will change state */
             } else {
                 /* All CFDP CC values directly correspond to a Transaction Status of the same numeric value */
@@ -635,10 +639,10 @@ void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
         } else {
             /* bad EOF sent? */
             if (ret == Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR) {
-                this->r2SetFinTxnStatus(TXN_STATUS_FILE_SIZE_ERROR);
+                this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
             } else {
                 /* can't do anything with this bad EOF, so return to FILEDATA */
-                this->m_state_data.receive.sub_state = RX_SUB_STATE_FILEDATA;
+                this->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
             }
         }
     }
@@ -753,7 +757,7 @@ Status::T Transaction::rSubstateSendNak() {
 
     // Create and initialize NAK PDU
     NakPdu nakPdu;
-    Cfdp::PduDirection direction = DIRECTION_TOWARD_SENDER;
+    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_SENDER;
 
     if (this->m_flags.rx.md_recv) {
         // We have metadata, so send NAK with file data gaps
@@ -839,7 +843,7 @@ Status::T Transaction::r2CalcCrcChunk() {
 
             fileStatus = this->m_fd.open(this->m_history->fnames.dst_filename.toChar(), Os::File::OPEN_READ);
             if (fileStatus != Os::File::OP_OK) {
-                this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
+                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                 ret = Cfdp::Status::ERROR;
             } else {
                 // Reset cached position since we just reopened the file
@@ -869,7 +873,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                     this->m_cfdpManager->log_WARNING_LO_RxSeekCrcFailed(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
                         this->m_state_data.receive.r2.rx_crc_calc_bytes, fileStatus);
-                    // this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
+                    // this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                     this->m_cfdpManager->incrementFaultFileSeek(this->m_chan_num);
                     ret = Cfdp::Status::ERROR;
                 }
@@ -882,7 +886,7 @@ Status::T Transaction::r2CalcCrcChunk() {
                     this->m_cfdpManager->log_WARNING_LO_RxReadCrcFailed(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
                         static_cast<U32>(expected_read_size), static_cast<I32>(read_size));
-                    this->m_engine->setTxnStatus(this, TXN_STATUS_FILE_SIZE_ERROR);
+                    this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                     this->m_cfdpManager->incrementFaultFileRead(this->m_chan_num);
                     ret = Cfdp::Status::ERROR;
                 } else {
@@ -908,10 +912,10 @@ Status::T Transaction::r2CalcCrcChunk() {
                 this->m_keep = Cfdp::Keep::KEEP; /* save the file */
 
                 /* set FIN PDU status */
-                this->m_state_data.receive.r2.dc = FIN_DELIVERY_CODE_COMPLETE;
-                this->m_state_data.receive.r2.fs = FIN_FILE_STATUS_RETAINED;
+                this->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE;
+                this->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_RETAINED;
             } else {
-                this->r2SetFinTxnStatus(TXN_STATUS_FILE_CHECKSUM_FAILURE);
+                this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_CHECKSUM_FAILURE);
             }
 
             this->m_flags.com.crc_calc = true;
@@ -941,7 +945,7 @@ Status::T Transaction::r2SubstateSendFin() {
         /* CFDP_SendFin does not return SEND_PDU_ERROR */
         FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
         this->m_state_data.receive.sub_state =
-            RX_SUB_STATE_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
+            RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
         if (sret != Cfdp::Status::SUCCESS) {
             ret = Cfdp::Status::ERROR;
         }
@@ -1011,7 +1015,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                                                                         this->m_history->seq_num, this->m_fsize,
                                                                         this->m_state_data.receive.r2.eof_size);
                 this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
-                this->r2SetFinTxnStatus(TXN_STATUS_FILE_SIZE_ERROR);
+                this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
                 success = false;
             }
         }
@@ -1025,7 +1029,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                 this->m_cfdpManager->log_WARNING_LO_RxFileRenameFailed(
                     this->getClass(), this->m_history->src_eid, this->m_history->seq_num, fname,
                     this->m_history->fnames.dst_filename, fileSysStatus);
-                this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
+                this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
                 this->m_cfdpManager->incrementFaultFileRename(this->m_chan_num);
                 success = false;
             } else {
@@ -1035,7 +1039,7 @@ void Transaction::r2RecvMd(const Fw::Buffer& buffer) {
                     this->m_cfdpManager->log_WARNING_LO_RxFileReopenFailed(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num,
                         this->m_history->fnames.dst_filename, fileStatus);
-                    this->r2SetFinTxnStatus(TXN_STATUS_FILESTORE_REJECTION);
+                    this->r2SetFinTxnStatus(TxnStatus::TXN_STATUS_FILESTORE_REJECTION);
                     this->m_cfdpManager->incrementFaultFileOpen(this->m_chan_num);
                     success = false;
                 }
@@ -1064,8 +1068,9 @@ void Transaction::rSendInactivityEvent() {
 void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatchTable* dispatch, StateRecvFunc fd_fn) {
     StateRecvFunc selected_handler;
 
-    FW_ASSERT(this->m_state_data.receive.sub_state < RX_SUB_STATE_NUM_STATES, this->m_state_data.receive.sub_state,
-              RX_SUB_STATE_NUM_STATES);
+    FW_ASSERT(this->m_state_data.receive.sub_state < RxSubState::RX_SUB_STATE_NUM_STATES,
+              static_cast<U8>(this->m_state_data.receive.sub_state),
+              static_cast<U8>(RxSubState::RX_SUB_STATE_NUM_STATES));
 
     selected_handler = nullptr;
 
@@ -1091,17 +1096,17 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
             if (sb.deserializeTo(directiveCodeByte) == Fw::FW_SERIALIZE_OK) {
                 FileDirective directiveCode = static_cast<FileDirective>(directiveCodeByte);
 
-                if (directiveCode < FILE_DIRECTIVE_INVALID_MAX) {
+                if (directiveCode < FileDirective::FILE_DIRECTIVE_INVALID_MAX) {
                     /* The CFDP_R_SubstateDispatchTable_t is only used with file directive PDU */
-                    if (dispatch->state[this->m_state_data.receive.sub_state] != nullptr) {
-                        selected_handler =
-                            dispatch->state[this->m_state_data.receive.sub_state]->fdirective[directiveCode];
+                    if (dispatch->state[static_cast<U32>(this->m_state_data.receive.sub_state)] != nullptr) {
+                        selected_handler = dispatch->state[static_cast<U32>(this->m_state_data.receive.sub_state)]
+                                               ->fdirective[static_cast<U32>(directiveCode)];
                     }
                 } else {
                     this->m_cfdpManager->incrementRecvSpurious(this->m_chan_num);
                     this->m_cfdpManager->log_WARNING_LO_RxInvalidDirectiveCode(
                         this->getClass(), this->m_history->src_eid, this->m_history->seq_num, directiveCodeByte,
-                        this->m_state_data.receive.sub_state);
+                        static_cast<U8>(this->m_state_data.receive.sub_state));
                 }
             }
         }

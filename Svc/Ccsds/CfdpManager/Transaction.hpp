@@ -89,7 +89,7 @@ using StateRecvFunc = void (Transaction::*)(const Fw::Buffer& buffer);
  * the PDU transmit action(s) associated with that state.
  */
 struct TxnSendDispatchTable {
-    StateSendFunc tx[TXN_STATE_INVALID]; /**< \brief Transmit handler function */
+    StateSendFunc tx[static_cast<U32>(TxnState::TXN_STATE_INVALID)]; /**< \brief Transmit handler function */
 };
 
 /**
@@ -101,7 +101,7 @@ struct TxnSendDispatchTable {
  */
 struct TxnRecvDispatchTable {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    StateRecvFunc rx[TXN_STATE_INVALID];
+    StateRecvFunc rx[static_cast<U32>(TxnState::TXN_STATE_INVALID)];
 };
 
 /**
@@ -113,7 +113,7 @@ struct TxnRecvDispatchTable {
  */
 struct FileDirectiveDispatchTable {
     /** \brief a separate recv handler for each possible file directive PDU in this state */
-    StateRecvFunc fdirective[FILE_DIRECTIVE_INVALID_MAX];
+    StateRecvFunc fdirective[static_cast<U32>(FileDirective::FILE_DIRECTIVE_INVALID_MAX)];
 };
 
 /**
@@ -123,7 +123,7 @@ struct FileDirectiveDispatchTable {
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
 struct RSubstateDispatchTable {
-    const FileDirectiveDispatchTable* state[RX_SUB_STATE_NUM_STATES];
+    const FileDirectiveDispatchTable* state[static_cast<U32>(RxSubState::RX_SUB_STATE_NUM_STATES)];
 };
 
 /**
@@ -133,7 +133,7 @@ struct RSubstateDispatchTable {
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
 struct SSubstateRecvDispatchTable {
-    const FileDirectiveDispatchTable* substate[TX_SUB_STATE_NUM_STATES];
+    const FileDirectiveDispatchTable* substate[static_cast<U32>(TxSubState::TX_SUB_STATE_NUM_STATES)];
 };
 
 /**
@@ -143,7 +143,7 @@ struct SSubstateRecvDispatchTable {
  * Depending on the sub-state of the transaction, a different action may be taken.
  */
 struct SSubstateSendDispatchTable {
-    StateSendFunc substate[TX_SUB_STATE_NUM_STATES];
+    StateSendFunc substate[static_cast<U32>(TxSubState::TX_SUB_STATE_NUM_STATES)];
 };
 
 /**

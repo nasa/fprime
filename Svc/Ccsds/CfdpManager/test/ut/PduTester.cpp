@@ -52,7 +52,7 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
-    if ((state == TXN_STATE_S2) || (state == TXN_STATE_R2)) {
+    if ((state == TXN_STATE_S2) || (state == TxnState::TXN_STATE_R2)) {
         txn->m_txn_class = Cfdp::Class::CLASS_2;
     } else {
         txn->m_txn_class = Cfdp::Class::CLASS_1;
@@ -125,7 +125,8 @@ void CfdpManagerTester::verifyMetadataPdu(const Fw::Buffer& pduBuffer,
     // Validate header fields
     const Cfdp::PduHeader& header = metadataPdu.asHeader();
     EXPECT_EQ(Cfdp::PduTypeEnum::METADATA, header.getType()) << "Expected T_METADATA type";
-    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, header.getDirection())
+        << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -183,7 +184,8 @@ void CfdpManagerTester::verifyFileDataPdu(const Fw::Buffer& pduBuffer,
     // Validate header fields
     const Cfdp::PduHeader& header = fileDataPdu.asHeader();
     EXPECT_EQ(Cfdp::PduTypeEnum::FILE_DATA, header.getType()) << "Expected T_FILE_DATA type";
-    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, header.getDirection())
+        << "Expected direction toward receiver";
     EXPECT_EQ(expectedClass, header.getTxmMode()) << "TX mode mismatch";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -250,7 +252,8 @@ void CfdpManagerTester::verifyEofPdu(const Fw::Buffer& pduBuffer,
     // Validate header fields
     const Cfdp::PduHeader& header = eofPdu.asHeader();
     EXPECT_EQ(Cfdp::PduTypeEnum::END_OF_FILE, header.getType()) << "Expected T_EOF type";
-    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_RECEIVER, header.getDirection()) << "Expected direction toward receiver";
+    EXPECT_EQ(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, header.getDirection())
+        << "Expected direction toward receiver";
     // Note: Can be either acknowledged or unacknowledged depending on class
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -319,7 +322,7 @@ void CfdpManagerTester::verifyFinPdu(const Fw::Buffer& pduBuffer,
     // Validate header fields
     const Cfdp::PduHeader& header = finPdu.asHeader();
     EXPECT_EQ(Cfdp::PduTypeEnum::FINISHED, header.getType()) << "Expected T_FIN type";
-    EXPECT_EQ(Cfdp::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
+    EXPECT_EQ(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER, header.getDirection()) << "Expected direction toward sender";
     EXPECT_EQ(Cfdp::Class::CLASS_2, header.getTxmMode()) << "Expected acknowledged mode for class 2";
     EXPECT_EQ(expectedSourceEid, header.getSourceEid()) << "Source EID mismatch";
     EXPECT_EQ(expectedDestEid, header.getDestEid()) << "Destination EID mismatch";
@@ -444,8 +447,8 @@ void CfdpManagerTester::sendMetadataPdu(U8 channelId,
                                         U8 closureRequested) {
     // Create and initialize Metadata PDU
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, fileSize,
-                           sourceFilename, destFilename, Cfdp::CHECKSUM_TYPE_MODULAR, closureRequested);
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid,
+                           fileSize, sourceFilename, destFilename, Cfdp::CHECKSUM_TYPE_MODULAR, closureRequested);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -479,8 +482,8 @@ void CfdpManagerTester::sendFileDataPdu(U8 channelId,
                                         Cfdp::Class::T txmMode) {
     // Create and initialize File Data PDU
     Cfdp::FileDataPdu fileDataPdu;
-    fileDataPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, offset,
-                           dataSize, data);
+    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid,
+                           offset, dataSize, data);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -514,8 +517,8 @@ void CfdpManagerTester::sendEofPdu(U8 channelId,
                                    Cfdp::Class::T txmMode) {
     // Create and initialize EOF PDU
     Cfdp::EofPdu eofPdu;
-    eofPdu.initialize(Cfdp::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid, conditionCode,
-                      checksum, fileSize);
+    eofPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid,
+                      conditionCode, checksum, fileSize);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -548,8 +551,8 @@ void CfdpManagerTester::sendFinPdu(U8 channelId,
                                    Cfdp::FinFileStatus fileStatus) {
     // Create and initialize FIN PDU
     Cfdp::FinPdu finPdu;
-    finPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
-                      Cfdp::Class::CLASS_2,           // FIN is only used in Class 2
+    finPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,                         // FIN is only used in Class 2
                       sourceEid, transactionSeq, destEid, conditionCode, deliveryCode, fileStatus);
 
     // Allocate buffer for PDU + packet descriptor
@@ -584,8 +587,8 @@ void CfdpManagerTester::sendAckPdu(U8 channelId,
                                    Cfdp::AckTxnStatus transactionStatus) {
     // Create and initialize ACK PDU
     Cfdp::AckPdu ackPdu;
-    ackPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
-                      Cfdp::Class::CLASS_2,           // ACK is only used in Class 2
+    ackPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // ACK is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,                         // ACK is only used in Class 2
                       sourceEid, transactionSeq, destEid, directiveCode, directiveSubtypeCode, conditionCode,
                       transactionStatus);
 
@@ -621,8 +624,8 @@ void CfdpManagerTester::sendNakPdu(U8 channelId,
                                    const Cfdp::SegmentRequest* segments) {
     // Create and initialize NAK PDU
     Cfdp::NakPdu nakPdu;
-    nakPdu.initialize(Cfdp::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
-                      Cfdp::Class::CLASS_2,           // NAK is only used in Class 2
+    nakPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // NAK is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,                         // NAK is only used in Class 2
                       sourceEid, transactionSeq, destEid, scopeStart, scopeEnd);
 
     // Verify segment count does not exceed maximum
@@ -743,7 +746,7 @@ void CfdpManagerTester::testFileDataPdu() {
 
     // Create File Data PDU with test data
     Cfdp::FileDataPdu fdPdu;
-    Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_RECEIVER;
+    Cfdp::PduDirection direction = Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER;
 
     fdPdu.initialize(direction,
                      Cfdp::Class::CLASS_1,          // transmission mode
@@ -844,7 +847,7 @@ void CfdpManagerTester::testFinPdu() {
     const U32 testSequenceId = 77;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -892,7 +895,7 @@ void CfdpManagerTester::testAckPdu() {
     const U32 testSequenceId = 88;
     const U32 testPeerId = 175;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -941,7 +944,7 @@ void CfdpManagerTester::testNakPdu() {
     const U32 testSequenceId = 99;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Receiver, class 2 (acknowledged mode)
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -950,7 +953,7 @@ void CfdpManagerTester::testNakPdu() {
 
     // Create and initialize NAK PDU
     Cfdp::NakPdu nakPdu;
-    Cfdp::PduDirection direction = Cfdp::DIRECTION_TOWARD_SENDER;
+    Cfdp::PduDirection direction = Cfdp::PduDirection::DIRECTION_TOWARD_SENDER;
     const FileSize testScopeStart = 0;       // Scope covers entire file
     const FileSize testScopeEnd = fileSize;  // Scope covers entire file
 

@@ -38,7 +38,7 @@ class MetadataPdu : public PduBase {
     //! Constructor
     MetadataPdu()
         : m_closureRequested(0),
-          m_checksumType(CHECKSUM_TYPE_MODULAR),
+          m_checksumType(ChecksumType::CHECKSUM_TYPE_MODULAR),
           m_fileSize(0),
           m_sourceFilename(""),
           m_destFilename("") {}
@@ -85,7 +85,7 @@ class MetadataPdu : public PduBase {
     U8 getClosureRequested() const { return this->m_closureRequested; }
 
     //! Get directive code
-    FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_METADATA; }
+    FileDirective getDirectiveCode() const { return FileDirective::FILE_DIRECTIVE_METADATA; }
 
   private:
     //! Initialize this MetadataPdu from a SerialBufferBase

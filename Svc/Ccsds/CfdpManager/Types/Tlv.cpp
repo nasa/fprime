@@ -52,12 +52,12 @@ U8 TlvData::getLength() const {
 // Tlv
 // ======================================================================
 
-Tlv::Tlv() : m_type(TLV_TYPE_ENTITY_ID) {
+Tlv::Tlv() : m_type(TlvType::TLV_TYPE_ENTITY_ID) {
     // Default constructor
 }
 
 void Tlv::initialize(EntityId eid) {
-    this->m_type = TLV_TYPE_ENTITY_ID;
+    this->m_type = TlvType::TLV_TYPE_ENTITY_ID;
     this->m_data.setEntityId(eid);
 }
 
@@ -96,7 +96,7 @@ Fw::SerializeStatus Tlv::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) cons
     }
 
     // Serialize data
-    if (this->m_type == TLV_TYPE_ENTITY_ID) {
+    if (this->m_type == TlvType::TLV_TYPE_ENTITY_ID) {
         // For Entity ID, serialize as EntityId
         EntityId eid = this->m_data.getEntityId();
         status = serialBuffer.serializeFrom(eid);
@@ -136,7 +136,7 @@ Fw::SerializeStatus Tlv::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
     }
 
     // Deserialize data
-    if (this->m_type == TLV_TYPE_ENTITY_ID) {
+    if (this->m_type == TlvType::TLV_TYPE_ENTITY_ID) {
         // For Entity ID, deserialize as EntityId
         EntityId eid;
         status = serialBuffer.deserializeTo(eid);

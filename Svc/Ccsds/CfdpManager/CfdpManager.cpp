@@ -156,7 +156,7 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(FwIndexType portNum,
 
         // Attempt to initiate the file transfer (mark as port-initiated)
         Status::T status = this->m_engine->txFile(sourceFileName, destFileName, cfdpClass, keep, channelId, priority,
-                                                  destEid, INIT_BY_PORT);
+                                                  destEid, TransactionInitType::INIT_BY_PORT);
 
         // Map CFDP status to SendFileStatus
         if (status == Status::SUCCESS) {

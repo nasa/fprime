@@ -21,11 +21,11 @@ void PduHeader::initialize(PduTypeEnum::T type,
                            EntityId destEid) {
     this->m_type = type;
     this->m_version = 1;  // CFDP version is always 1
-    this->m_pduType = (type == PduTypeEnum::FILE_DATA) ? PDU_TYPE_FILE_DATA : PDU_TYPE_DIRECTIVE;
+    this->m_pduType = (type == PduTypeEnum::FILE_DATA) ? PduType::PDU_TYPE_FILE_DATA : PduType::PDU_TYPE_DIRECTIVE;
     this->m_direction = direction;
     this->m_class = txmMode;
-    this->m_crcFlag = CRC_NOT_PRESENT;          // CRC not currently supported
-    this->m_largeFileFlag = LARGE_FILE_32_BIT;  // 32-bit file sizes
+    this->m_crcFlag = CrcFlag::CRC_NOT_PRESENT;                // CRC not currently supported
+    this->m_largeFileFlag = LargeFileFlag::LARGE_FILE_32_BIT;  // 32-bit file sizes
     this->m_segmentationControl = 0;
     this->m_segmentMetadataFlag = 0;
     this->m_pduDataLength = 0;  // To be set later
@@ -108,11 +108,11 @@ Fw::SerializeStatus PduHeader::toSerialBuffer(Fw::SerialBufferBase& serialBuffer
     // bit 0: large_file_flag (0=32-bit, 1=64-bit)
     U8 flags = 0;
     flags = static_cast<U8>(flags | static_cast<U8>((this->m_version & 0x07U) << 5));
-    flags = static_cast<U8>(flags | static_cast<U8>((this->m_pduType & 0x01U) << 4));
-    flags = static_cast<U8>(flags | static_cast<U8>((this->m_direction & 0x01U) << 3));
+    flags = static_cast<U8>(flags | static_cast<U8>((static_cast<U8>(this->m_pduType) & 0x01U) << 4));
+    flags = static_cast<U8>(flags | static_cast<U8>((static_cast<U8>(this->m_direction) & 0x01U) << 3));
     flags = static_cast<U8>(flags | static_cast<U8>((this->m_class & 0x01U) << 2));
-    flags = static_cast<U8>(flags | static_cast<U8>((this->m_crcFlag & 0x01U) << 1));
-    flags = static_cast<U8>(flags | (this->m_largeFileFlag & 0x01U));
+    flags = static_cast<U8>(flags | static_cast<U8>((static_cast<U8>(this->m_crcFlag) & 0x01U) << 1));
+    flags = static_cast<U8>(flags | (static_cast<U8>(this->m_largeFileFlag) & 0x01U));
 
     status = serialBuffer.serializeFrom(flags);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -217,7 +217,7 @@ Fw::SerializeStatus PduHeader::fromSerialBuffer(Fw::SerialBufferBase& serialBuff
 
     // Don't set m_type yet - it will be determined by the directive code for directive PDUs
     // or set to FILE_DATA for file data PDUs
-    if (this->m_pduType == PDU_TYPE_FILE_DATA) {
+    if (this->m_pduType == PduType::PDU_TYPE_FILE_DATA) {
         this->m_type = PduTypeEnum::FILE_DATA;
     } else {
         // For directive PDUs, type will be set when directive code is read
@@ -240,7 +240,7 @@ PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
         U8 flags = data[0];
         PduType pduType = static_cast<PduType>((flags >> 4) & 0x01);
 
-        if (pduType == PDU_TYPE_FILE_DATA) {
+        if (pduType == PduType::PDU_TYPE_FILE_DATA) {
             pduTypeEnum = PduTypeEnum::FILE_DATA;
         } else {
             // For directive PDUs, we need to read the directive code
@@ -259,19 +259,19 @@ PduTypeEnum::T peekPduType(const Fw::Buffer& buffer) {
 
                 // Map directive code to PduTypeEnum
                 switch (directiveCode) {
-                    case FILE_DIRECTIVE_METADATA:
+                    case static_cast<U8>(FileDirective::FILE_DIRECTIVE_METADATA):
                         pduTypeEnum = PduTypeEnum::METADATA;
                         break;
-                    case FILE_DIRECTIVE_END_OF_FILE:
+                    case static_cast<U8>(FileDirective::FILE_DIRECTIVE_END_OF_FILE):
                         pduTypeEnum = PduTypeEnum::END_OF_FILE;
                         break;
-                    case FILE_DIRECTIVE_FIN:
+                    case static_cast<U8>(FileDirective::FILE_DIRECTIVE_FIN):
                         pduTypeEnum = PduTypeEnum::FINISHED;
                         break;
-                    case FILE_DIRECTIVE_ACK:
+                    case static_cast<U8>(FileDirective::FILE_DIRECTIVE_ACK):
                         pduTypeEnum = PduTypeEnum::ACKNOWLEDGMENT;
                         break;
-                    case FILE_DIRECTIVE_NAK:
+                    case static_cast<U8>(FileDirective::FILE_DIRECTIVE_NAK):
                         pduTypeEnum = PduTypeEnum::NEGATIVE_ACK;
                         break;
                     default:

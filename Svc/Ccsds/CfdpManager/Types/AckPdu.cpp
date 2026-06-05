@@ -32,7 +32,7 @@ void AckPdu::initialize(PduDirection direction,
 U32 AckPdu::getBufferSize() const {
     U32 size = this->m_header.getBufferSize();
 
-    // Directive code: 1 byte (FILE_DIRECTIVE_ACK)
+    // Directive code: 1 byte (FileDirective::FILE_DIRECTIVE_ACK)
     // Directive and subtype code (bit-packed): 1 byte
     // Condition code and transaction status (bit-packed): 1 byte
     size += static_cast<U32>(sizeof(U8) + sizeof(U8) + sizeof(U8));
@@ -52,7 +52,7 @@ Fw::SerializeStatus AckPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::En
     }
 
     // Validate this is a directive PDU (not file data)
-    if (this->m_header.m_pduType != PDU_TYPE_DIRECTIVE) {
+    if (this->m_header.m_pduType != PduType::PDU_TYPE_DIRECTIVE) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -62,7 +62,7 @@ Fw::SerializeStatus AckPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::En
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (directiveCode != FILE_DIRECTIVE_ACK) {
+    if (directiveCode != static_cast<U8>(FileDirective::FILE_DIRECTIVE_ACK)) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -90,7 +90,7 @@ Fw::SerializeStatus AckPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
     }
 
     // Directive code (ACK = 6)
-    U8 directiveCodeByte = static_cast<U8>(FILE_DIRECTIVE_ACK);
+    U8 directiveCodeByte = static_cast<U8>(FileDirective::FILE_DIRECTIVE_ACK);
     status = serialBuffer.serializeFrom(directiveCodeByte);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;

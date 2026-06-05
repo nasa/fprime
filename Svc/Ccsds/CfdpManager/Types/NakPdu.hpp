@@ -82,7 +82,7 @@ class NakPdu : public PduBase {
     void clearSegments();
 
     //! Get directive code
-    FileDirective getDirectiveCode() const { return FILE_DIRECTIVE_NAK; }
+    FileDirective getDirectiveCode() const { return FileDirective::FILE_DIRECTIVE_NAK; }
 
   private:
     //! Initialize this NakPdu from a SerialBuffer

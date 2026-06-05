@@ -20,25 +20,25 @@ namespace Ccsds {
 namespace Cfdp {
 
 // CFDP PDU Type
-enum PduType : U8 {
+enum class PduType : U8 {
     PDU_TYPE_DIRECTIVE = 0,  // File directive PDU
     PDU_TYPE_FILE_DATA = 1   // File data PDU
 };
 
 // CFDP PduDirection
-enum PduDirection : U8 {
+enum class PduDirection : U8 {
     DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
     DIRECTION_TOWARD_SENDER = 1     // Toward file sender
 };
 
 // CFDP CRC Flag
-enum CrcFlag : U8 {
+enum class CrcFlag : U8 {
     CRC_NOT_PRESENT = 0,  // CRC not present
     CRC_PRESENT = 1       // CRC present
 };
 
 // CFDP Large File Flag
-enum LargeFileFlag : U8 {
+enum class LargeFileFlag : U8 {
     LARGE_FILE_32_BIT = 0,  // 32-bit file size
     LARGE_FILE_64_BIT = 1   // 64-bit file size
 };

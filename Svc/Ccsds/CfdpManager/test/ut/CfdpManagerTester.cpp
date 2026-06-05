@@ -554,7 +554,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     // Setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_2,
-                       static_cast<U32>(actualFileSize), transactionSeq, TXN_STATE_R2, setup);
+                       static_cast<U32>(actualFileSize), transactionSeq, TxnState::TXN_STATE_R2, setup);
 
     // Read test data
     U8* testData = new U8[actualFileSize];
@@ -591,7 +591,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     }
 
     // Verify FileData processed
-    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state);
+    EXPECT_EQ(TxnState::TXN_STATE_R2, setup.txn->m_state);
     EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state);
 
     // Compute CRC and send EOF
@@ -606,7 +606,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     component.doDispatch();
 
     // Verify EOF processed
-    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state);
+    EXPECT_EQ(TxnState::TXN_STATE_R2, setup.txn->m_state);
     EXPECT_TRUE(setup.txn->m_flags.rx.eof_recv);
     EXPECT_TRUE(setup.txn->m_flags.rx.send_eof_ack);
 
@@ -723,7 +723,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     }
 
     // Verify transaction state before FIN-ACK
-    EXPECT_EQ(TXN_STATE_R2, setup.txn->m_state);
+    EXPECT_EQ(TxnState::TXN_STATE_R2, setup.txn->m_state);
     EXPECT_EQ(RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state);
 
     // Send FIN-ACK

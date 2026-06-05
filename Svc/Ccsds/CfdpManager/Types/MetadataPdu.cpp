@@ -70,7 +70,7 @@ Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer, F
     }
 
     // Validate this is a directive PDU (not file data)
-    if (this->m_header.m_pduType != PDU_TYPE_DIRECTIVE) {
+    if (this->m_header.m_pduType != PduType::PDU_TYPE_DIRECTIVE) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -80,7 +80,7 @@ Fw::SerializeStatus MetadataPdu::deserializeFrom(Fw::SerialBufferBase& buffer, F
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
     }
-    if (directiveCode != FILE_DIRECTIVE_METADATA) {
+    if (directiveCode != static_cast<U8>(FileDirective::FILE_DIRECTIVE_METADATA)) {
         return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
     }
 
@@ -108,7 +108,7 @@ Fw::SerializeStatus MetadataPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuff
     }
 
     // Directive code (METADATA = 7)
-    U8 directiveCode = static_cast<U8>(FILE_DIRECTIVE_METADATA);
+    U8 directiveCode = static_cast<U8>(FileDirective::FILE_DIRECTIVE_METADATA);
     status = serialBuffer.serializeFrom(directiveCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;

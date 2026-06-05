@@ -39,14 +39,14 @@ class Transaction;
 /**
  * @brief Maximum possible number of transactions that may exist on a single CFDP channel
  */
-#define CFDP_NUM_TRANSACTIONS_PER_CHANNEL                                                  \
-    (CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CFDP_MAX_SIMULTANEOUS_RX +               \
-     ((CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) * \
-      CFDP_NUM_TRANSACTIONS_PER_PLAYBACK))
+static constexpr U32 CFDP_NUM_TRANSACTIONS_PER_CHANNEL =
+    (CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CFDP_MAX_SIMULTANEOUS_RX +
+     ((CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) *
+      CFDP_NUM_TRANSACTIONS_PER_PLAYBACK));
 
 // CFDP File Directive Codes
 // Blue Book section 5.2, table 5-4
-enum FileDirective : U8 {
+enum class FileDirective : U8 {
     FILE_DIRECTIVE_INVALID_MIN = 0,  // Minimum used to limit range
     FILE_DIRECTIVE_END_OF_FILE = 4,  // End of File
     FILE_DIRECTIVE_FIN = 5,          // Finished
@@ -60,7 +60,7 @@ enum FileDirective : U8 {
 
 // CFDP Condition Codes
 // Blue Book section 5.2.2, table 5-5
-enum ConditionCode : U8 {
+enum class ConditionCode : U8 {
     CONDITION_CODE_NO_ERROR = 0,
     CONDITION_CODE_POS_ACK_LIMIT_REACHED = 1,
     CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED = 2,
@@ -79,7 +79,7 @@ enum ConditionCode : U8 {
 
 // CFDP ACK Transaction Status
 // Blue Book section 5.2.4, table 5-8
-enum AckTxnStatus : U8 {
+enum class AckTxnStatus : U8 {
     ACK_TXN_STATUS_UNDEFINED = 0,
     ACK_TXN_STATUS_ACTIVE = 1,
     ACK_TXN_STATUS_TERMINATED = 2,
@@ -89,14 +89,14 @@ enum AckTxnStatus : U8 {
 
 // CFDP FIN Delivery Code
 // Blue Book section 5.2.3, table 5-7
-enum FinDeliveryCode : U8 {
+enum class FinDeliveryCode : U8 {
     FIN_DELIVERY_CODE_COMPLETE = 0,   // Data complete
     FIN_DELIVERY_CODE_INCOMPLETE = 1  // Data incomplete
 };
 
 // CFDP FIN File Status
 // Blue Book section 5.2.3, table 5-7
-enum FinFileStatus : U8 {
+enum class FinFileStatus : U8 {
     FIN_FILE_STATUS_DISCARDED = 0,            // File discarded deliberately
     FIN_FILE_STATUS_DISCARDED_FILESTORE = 1,  // File discarded due to filestore rejection
     FIN_FILE_STATUS_RETAINED = 2,             // File retained successfully
@@ -105,7 +105,7 @@ enum FinFileStatus : U8 {
 
 // CFDP Checksum Type
 // Blue Book section 5.2.5, table 5-9
-enum ChecksumType : U8 {
+enum class ChecksumType : U8 {
     CHECKSUM_TYPE_MODULAR = 0,        // Modular checksum
     CHECKSUM_TYPE_CRC_32 = 1,         // CRC-32 (not currently supported)
     CHECKSUM_TYPE_NULL_CHECKSUM = 15  // Null checksum
@@ -114,7 +114,7 @@ enum ChecksumType : U8 {
 /**
  * @brief High-level state of a transaction
  */
-enum TxnState : U8 {
+enum class TxnState : U8 {
     TXN_STATE_UNDEF = 0,  /**< \brief State assigned to an unused object on the free list */
     TXN_STATE_INIT = 1,   /**< \brief State assigned to a newly allocated transaction object */
     TXN_STATE_R1 = 2,     /**< \brief Receive file as class 1 */
@@ -129,7 +129,7 @@ enum TxnState : U8 {
 /**
  * @brief Sub-state of a send file transaction
  */
-enum TxSubState : U8 {
+enum class TxSubState : U8 {
     TX_SUB_STATE_METADATA = 0,      /**< sending the initial MD directive */
     TX_SUB_STATE_FILEDATA = 1,      /**< sending file data PDUs */
     TX_SUB_STATE_EOF = 2,           /**< sending the EOF directive */
@@ -140,7 +140,7 @@ enum TxSubState : U8 {
 /**
  * @brief Sub-state of a receive file transaction
  */
-enum RxSubState : U8 {
+enum class RxSubState : U8 {
     RX_SUB_STATE_FILEDATA = 0,      /**< receive file data PDUs */
     RX_SUB_STATE_EOF = 1,           /**< got EOF directive */
     RX_SUB_STATE_CLOSEOUT_SYNC = 2, /**< pending final acks from remote */
@@ -152,7 +152,7 @@ enum RxSubState : U8 {
  *
  * Differentiates between send and receive history entries
  */
-enum Direction : U8 {
+enum class Direction : U8 {
     DIRECTION_RX = 0,
     DIRECTION_TX = 1,
     DIRECTION_NUM = 2,
@@ -163,7 +163,7 @@ enum Direction : U8 {
  *
  * Differentiates between command-initiated and port-initiated transactions
  */
-enum TransactionInitType : U8 {
+enum class TransactionInitType : U8 {
     INIT_BY_COMMAND = 0,  //!< Transaction initiated via command interface
     INIT_BY_PORT = 1      //!< Transaction initiated via port interface
 };
@@ -171,7 +171,12 @@ enum TransactionInitType : U8 {
 /**
  * @brief Identifies the type of timer tick being processed
  */
-enum CfdpTickType : U8 { CFDP_TICK_TYPE_RX, CFDP_TICK_TYPE_TXW_NORM, CFDP_TICK_TYPE_TXW_NAK, CFDP_TICK_TYPE_NUM_TYPES };
+enum class CfdpTickType : U8 {
+    CFDP_TICK_TYPE_RX,
+    CFDP_TICK_TYPE_TXW_NORM,
+    CFDP_TICK_TYPE_TXW_NAK,
+    CFDP_TICK_TYPE_NUM_TYPES
+};
 
 /**
  * @brief Values for Transaction Status code
@@ -186,27 +191,27 @@ enum CfdpTickType : U8 { CFDP_TICK_TYPE_RX, CFDP_TICK_TYPE_TXW_NORM, CFDP_TICK_T
  * codes defined in the blue book, but can be translated to one
  * of those codes for the purposes of FIN/ACK/EOF PDUs.
  */
-enum TxnStatus : I32 {
+enum class TxnStatus : I32 {
     /**
      * The undefined status is a placeholder for new transactions before a value is set.
      */
     TXN_STATUS_UNDEFINED = -1,
 
     /* Status codes 0-15 share the same values/meanings as the CFDP condition code (CC) */
-    TXN_STATUS_NO_ERROR = CONDITION_CODE_NO_ERROR,
-    TXN_STATUS_POS_ACK_LIMIT_REACHED = CONDITION_CODE_POS_ACK_LIMIT_REACHED,
-    TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED = CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED,
-    TXN_STATUS_INVALID_TRANSMISSION_MODE = CONDITION_CODE_INVALID_TRANSMISSION_MODE,
-    TXN_STATUS_FILESTORE_REJECTION = CONDITION_CODE_FILESTORE_REJECTION,
-    TXN_STATUS_FILE_CHECKSUM_FAILURE = CONDITION_CODE_FILE_CHECKSUM_FAILURE,
-    TXN_STATUS_FILE_SIZE_ERROR = CONDITION_CODE_FILE_SIZE_ERROR,
-    TXN_STATUS_NAK_LIMIT_REACHED = CONDITION_CODE_NAK_LIMIT_REACHED,
-    TXN_STATUS_INACTIVITY_DETECTED = CONDITION_CODE_INACTIVITY_DETECTED,
-    TXN_STATUS_INVALID_FILE_STRUCTURE = CONDITION_CODE_INVALID_FILE_STRUCTURE,
-    TXN_STATUS_CHECK_LIMIT_REACHED = CONDITION_CODE_CHECK_LIMIT_REACHED,
-    TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE = CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE,
-    TXN_STATUS_SUSPEND_REQUEST_RECEIVED = CONDITION_CODE_SUSPEND_REQUEST_RECEIVED,
-    TXN_STATUS_CANCEL_REQUEST_RECEIVED = CONDITION_CODE_CANCEL_REQUEST_RECEIVED,
+    TXN_STATUS_NO_ERROR = static_cast<I32>(ConditionCode::CONDITION_CODE_NO_ERROR),
+    TXN_STATUS_POS_ACK_LIMIT_REACHED = static_cast<I32>(ConditionCode::CONDITION_CODE_POS_ACK_LIMIT_REACHED),
+    TXN_STATUS_KEEP_ALIVE_LIMIT_REACHED = static_cast<I32>(ConditionCode::CONDITION_CODE_KEEP_ALIVE_LIMIT_REACHED),
+    TXN_STATUS_INVALID_TRANSMISSION_MODE = static_cast<I32>(ConditionCode::CONDITION_CODE_INVALID_TRANSMISSION_MODE),
+    TXN_STATUS_FILESTORE_REJECTION = static_cast<I32>(ConditionCode::CONDITION_CODE_FILESTORE_REJECTION),
+    TXN_STATUS_FILE_CHECKSUM_FAILURE = static_cast<I32>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+    TXN_STATUS_FILE_SIZE_ERROR = static_cast<I32>(ConditionCode::CONDITION_CODE_FILE_SIZE_ERROR),
+    TXN_STATUS_NAK_LIMIT_REACHED = static_cast<I32>(ConditionCode::CONDITION_CODE_NAK_LIMIT_REACHED),
+    TXN_STATUS_INACTIVITY_DETECTED = static_cast<I32>(ConditionCode::CONDITION_CODE_INACTIVITY_DETECTED),
+    TXN_STATUS_INVALID_FILE_STRUCTURE = static_cast<I32>(ConditionCode::CONDITION_CODE_INVALID_FILE_STRUCTURE),
+    TXN_STATUS_CHECK_LIMIT_REACHED = static_cast<I32>(ConditionCode::CONDITION_CODE_CHECK_LIMIT_REACHED),
+    TXN_STATUS_UNSUPPORTED_CHECKSUM_TYPE = static_cast<I32>(ConditionCode::CONDITION_CODE_UNSUPPORTED_CHECKSUM_TYPE),
+    TXN_STATUS_SUSPEND_REQUEST_RECEIVED = static_cast<I32>(ConditionCode::CONDITION_CODE_SUSPEND_REQUEST_RECEIVED),
+    TXN_STATUS_CANCEL_REQUEST_RECEIVED = static_cast<I32>(ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED),
 
     /* Additional status codes for items not representable in a CFDP CC, these can be set in
      * transactions that did not make it to the point of sending FIN/EOF. */
