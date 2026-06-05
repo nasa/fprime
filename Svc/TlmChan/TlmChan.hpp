@@ -16,6 +16,7 @@
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
 #include <config/TlmChanImplCfg.hpp>
+#include <Fw/DataStructures/ArraySet.hpp>
 
 namespace Svc {
 
@@ -52,9 +53,10 @@ class TlmChan final : public TlmChanComponentBase {
     } TlmEntry;
 
     struct TlmSet {
-        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
-        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       //!< set of buckets used in hash table
-        FwChanIdType free;                            //!< next free bucket
+        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];        //!< set of hash slots in hash table
+        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];             //!< set of buckets used in hash table
+        FwChanIdType free;                                  //!< next free bucket
+        Fw::ArraySet<TlmEntry*, TLMCHAN_HASH_BUCKETS> updated;  //!< set of updated entries
     } m_tlmEntries[2];
 
     U32 m_activeBuffer;  // !< which buffer is active for storing telemetry
