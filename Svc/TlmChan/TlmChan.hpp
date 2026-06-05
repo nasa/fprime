@@ -13,10 +13,10 @@
 #ifndef TELEMCHANIMPL_HPP_
 #define TELEMCHANIMPL_HPP_
 
+#include <Fw/DataStructures/ArraySet.hpp>
 #include <Fw/Tlm/TlmPacket.hpp>
 #include <Svc/TlmChan/TlmChanComponentAc.hpp>
 #include <config/TlmChanImplCfg.hpp>
-#include <Fw/DataStructures/ArraySet.hpp>
 
 namespace Svc {
 

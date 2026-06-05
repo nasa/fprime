@@ -204,7 +204,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     this->m_activeBuffer =
         (this->m_activeBuffer == ActiveBuffer::Buffer_0) ? ActiveBuffer::Buffer_1 : ActiveBuffer::Buffer_0;
     // set activeBuffer to not updated
-    for (TlmEntry* const &entry : this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].updated) {
+    for (TlmEntry* const& entry : this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].updated) {
         entry->updated = false;
     }
     this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].updated.clear();
@@ -214,7 +214,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     Fw::TlmPacket pkt;
     pkt.resetPktSer();
 
-    for (TlmEntry* const &p_entry : this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].updated) {
+    for (TlmEntry* const& p_entry : this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].updated) {
         if (p_entry->used) {
             Fw::SerializeStatus stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
 
