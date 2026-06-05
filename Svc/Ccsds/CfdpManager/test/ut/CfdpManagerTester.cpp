@@ -174,7 +174,8 @@ void CfdpManagerTester::setupTxTransaction(const char* srcFile,
     // Now verify initial state
     EXPECT_EQ(expectedState, setup.txn->m_state) << "Should be in expected state";
     EXPECT_EQ(0, setup.txn->m_foffs) << "File offset should be 0 initially";
-    EXPECT_EQ(TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state)
+        << "Should start in METADATA sub-state";
     EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
     EXPECT_EQ(priority, setup.txn->m_priority) << "Priority should match";
 
@@ -207,9 +208,10 @@ void CfdpManagerTester::setupTxPortTransaction(const char* srcFile,
 
     // Verify initial transaction state
     ASSERT_EQ(expectedState, setup.txn->m_state) << "Should be in expected state";
-    ASSERT_EQ(INIT_BY_PORT, setup.txn->m_initType) << "Should be marked as port-initiated";
+    ASSERT_EQ(TransactionInitType::INIT_BY_PORT, setup.txn->m_initType) << "Should be marked as port-initiated";
     EXPECT_EQ(0, setup.txn->m_foffs) << "File offset should be 0 initially";
-    EXPECT_EQ(TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state) << "Should start in METADATA sub-state";
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_METADATA, setup.txn->m_state_data.send.sub_state)
+        << "Should start in METADATA sub-state";
     EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
 
     // Verify transaction history
@@ -242,7 +244,8 @@ void CfdpManagerTester::setupRxTransaction(const char* srcFile,
 
     // Verify transaction state
     EXPECT_EQ(expectedState, setup.txn->m_state) << "Should be in expected RX state";
-    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state) << "Should start in FILEDATA sub-state";
+    EXPECT_EQ(RxSubState::RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state)
+        << "Should start in FILEDATA sub-state";
     EXPECT_EQ(channelId, setup.txn->m_chan_num) << "Channel number should match";
     EXPECT_TRUE(setup.txn->m_flags.rx.md_recv) << "md_recv flag should be set after Metadata PDU";
 
@@ -271,23 +274,25 @@ void CfdpManagerTester::waitForTransactionRecycle(U8 channelId, U32 expectedSeqN
 
 void CfdpManagerTester::completeClass2Handshake(U8 channelId, EntityId destEid, U32 expectedSeqNum, Transaction* txn) {
     // Send EOF-ACK
-    this->sendAckPdu(channelId, component.getLocalEidParam(), destEid, expectedSeqNum, Cfdp::FILE_DIRECTIVE_END_OF_FILE,
-                     0, Cfdp::CONDITION_CODE_NO_ERROR, Cfdp::ACK_TXN_STATUS_ACTIVE);
+    this->sendAckPdu(channelId, component.getLocalEidParam(), destEid, expectedSeqNum,
+                     Cfdp::FileDirective::FILE_DIRECTIVE_END_OF_FILE, 0, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     Cfdp::AckTxnStatus::ACK_TXN_STATUS_ACTIVE);
     this->component.doDispatch();
 
     EXPECT_TRUE(txn->m_flags.tx.eof_ack_recv) << "eof_ack_recv flag should be set after EOF-ACK received";
     EXPECT_FALSE(txn->m_flags.com.ack_timer_armed) << "ack_timer_armed should be cleared after EOF-ACK";
-    EXPECT_EQ(TXN_STATE_S2, txn->m_state) << "Should remain in S2 state waiting for FIN";
-    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, txn->m_state_data.send.sub_state)
+    EXPECT_EQ(TxnState::TXN_STATE_S2, txn->m_state) << "Should remain in S2 state waiting for FIN";
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC, txn->m_state_data.send.sub_state)
         << "Should remain in CLOSEOUT_SYNC waiting for FIN";
 
     // Send FIN
-    this->sendFinPdu(channelId, component.getLocalEidParam(), destEid, expectedSeqNum, Cfdp::CONDITION_CODE_NO_ERROR,
-                     Cfdp::FIN_DELIVERY_CODE_COMPLETE, Cfdp::FIN_FILE_STATUS_RETAINED);
+    this->sendFinPdu(channelId, component.getLocalEidParam(), destEid, expectedSeqNum,
+                     Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, Cfdp::FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE,
+                     Cfdp::FinFileStatus::FIN_FILE_STATUS_RETAINED);
     this->component.doDispatch();
 
     EXPECT_TRUE(txn->m_flags.tx.fin_recv) << "fin_recv flag should be set after FIN received";
-    EXPECT_EQ(TXN_STATE_HOLD, txn->m_state) << "Should move to HOLD state after FIN received";
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, txn->m_state) << "Should move to HOLD state after FIN received";
     EXPECT_TRUE(txn->m_flags.tx.send_fin_ack) << "send_fin_ack flag should be set";
 
     // Run cycle to send FIN-ACK
@@ -302,8 +307,8 @@ void CfdpManagerTester::verifyFinAckPdu(FwIndexType pduIndex,
     Fw::Buffer finAckPduBuffer = this->getSentPduBuffer(pduIndex);
     ASSERT_GT(finAckPduBuffer.getSize(), 0) << "FIN-ACK PDU should be sent";
 
-    verifyAckPdu(finAckPduBuffer, sourceEid, destEid, expectedSeqNum, Cfdp::FILE_DIRECTIVE_FIN, 1,
-                 Cfdp::CONDITION_CODE_NO_ERROR, Cfdp::ACK_TXN_STATUS_TERMINATED);
+    verifyAckPdu(finAckPduBuffer, sourceEid, destEid, expectedSeqNum, Cfdp::FileDirective::FILE_DIRECTIVE_FIN, 1,
+                 Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, Cfdp::AckTxnStatus::ACK_TXN_STATUS_TERMINATED);
 }
 
 void CfdpManagerTester::verifyMetadataPduAtIndex(FwIndexType pduIndex,
@@ -386,7 +391,7 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(const char* srcFile, const char* d
     // Setup transaction and verify initial state (command-based only)
     TransactionSetup setup;
     setupTxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, TEST_PRIORITY,
-                       TXN_STATE_S1, setup);
+                       TxnState::TXN_STATE_S1, setup);
 
     // Run first engine cycle - should send Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
@@ -403,7 +408,8 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(const char* srcFile, const char* d
                       static_cast<U16>(fileSize), srcFile, Cfdp::Class::CLASS_1);
 
     EXPECT_EQ(fileSize, setup.txn->m_foffs) << "Should have read entire file";
-    EXPECT_EQ(TX_SUB_STATE_EOF, setup.txn->m_state_data.send.sub_state) << "Should progress to EOF sub-state";
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_EOF, setup.txn->m_state_data.send.sub_state)
+        << "Should progress to EOF sub-state";
 
     // Run second engine cycle - should send EOF PDU
     this->invoke_to_run1Hz(0, 0);
@@ -414,7 +420,7 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(const char* srcFile, const char* d
     Fw::Buffer eofPduBuffer = this->getSentPduBuffer(2);
     ASSERT_GT(eofPduBuffer.getSize(), 0) << "EOF PDU should be sent";
     verifyEofPdu(eofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID, setup.expectedSeqNum,
-                 Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(fileSize), srcFile);
+                 Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(fileSize), srcFile);
 
     // Verify telemetry was emitted (should be emitted at end of each run1Hz)
     // We called run1Hz twice, so expect at least 2 telemetry emissions
@@ -463,7 +469,7 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
     // Uplink Metadata PDU and setup RX transaction
     TransactionSetup setup;
     setupRxTransaction(groundSrcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_1,
-                       static_cast<U32>(actualFileSize), transactionSeq, TXN_STATE_R1, setup);
+                       static_cast<U32>(actualFileSize), transactionSeq, TxnState::TXN_STATE_R1, setup);
 
     // Read test data from source file
     U8* testData = new U8[actualFileSize];
@@ -485,8 +491,8 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
     component.doDispatch();
 
     // Verify FileData processed
-    EXPECT_EQ(TXN_STATE_R1, setup.txn->m_state) << "Should remain in R1 state after FileData";
-    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state)
+    EXPECT_EQ(TxnState::TXN_STATE_R1, setup.txn->m_state) << "Should remain in R1 state after FileData";
+    EXPECT_EQ(RxSubState::RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state)
         << "Should remain in FILEDATA sub-state";
 
     // Compute CRC for EOF PDU
@@ -496,11 +502,12 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
 
     // Send EOF PDU
     sendEofPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
-               Cfdp::CONDITION_CODE_NO_ERROR, expectedCrc, static_cast<FileSize>(actualFileSize), Cfdp::Class::CLASS_1);
+               Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, expectedCrc, static_cast<FileSize>(actualFileSize),
+               Cfdp::Class::CLASS_1);
     component.doDispatch();
 
     // Verify transaction completed
-    EXPECT_EQ(TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after EOF processing";
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after EOF processing";
 
     // Verify file written to disk
     verifyReceivedFile(dstFile, testData, actualFileSize);
@@ -592,7 +599,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
 
     // Verify FileData processed
     EXPECT_EQ(TxnState::TXN_STATE_R2, setup.txn->m_state);
-    EXPECT_EQ(RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state);
+    EXPECT_EQ(RxSubState::RX_SUB_STATE_FILEDATA, setup.txn->m_state_data.receive.sub_state);
 
     // Compute CRC and send EOF
     CFDP::Checksum crc;
@@ -602,7 +609,8 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     FwSizeType pduCountBeforeEof = this->fromPortHistory_dataOut->size();
 
     sendEofPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
-               Cfdp::CONDITION_CODE_NO_ERROR, expectedCrc, static_cast<FileSize>(actualFileSize), Cfdp::Class::CLASS_2);
+               Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, expectedCrc, static_cast<FileSize>(actualFileSize),
+               Cfdp::Class::CLASS_2);
     component.doDispatch();
 
     // Verify EOF processed
@@ -627,7 +635,8 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     Fw::Buffer eofAckPduBuffer = this->getSentPduBuffer(static_cast<FwIndexType>(pduCountBeforeEof));
     ASSERT_GT(eofAckPduBuffer.getSize(), 0);
     verifyAckPdu(eofAckPduBuffer, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
-                 Cfdp::FILE_DIRECTIVE_END_OF_FILE, 1, Cfdp::CONDITION_CODE_NO_ERROR, Cfdp::ACK_TXN_STATUS_ACTIVE);
+                 Cfdp::FileDirective::FILE_DIRECTIVE_END_OF_FILE, 1, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                 Cfdp::AckTxnStatus::ACK_TXN_STATUS_ACTIVE);
 
     // Handle NAK if simulated
     if (simulateNak) {
@@ -724,15 +733,16 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
 
     // Verify transaction state before FIN-ACK
     EXPECT_EQ(TxnState::TXN_STATE_R2, setup.txn->m_state);
-    EXPECT_EQ(RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state);
+    EXPECT_EQ(RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state);
 
     // Send FIN-ACK
     this->sendAckPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
-                     Cfdp::FILE_DIRECTIVE_FIN, 1, Cfdp::CONDITION_CODE_NO_ERROR, Cfdp::ACK_TXN_STATUS_TERMINATED);
+                     Cfdp::FileDirective::FILE_DIRECTIVE_FIN, 1, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     Cfdp::AckTxnStatus::ACK_TXN_STATUS_TERMINATED);
     this->component.doDispatch();
 
     // Verify transaction completed
-    EXPECT_EQ(TXN_STATE_HOLD, setup.txn->m_state);
+    EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state);
 
     // Verify completion event was emitted
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
@@ -796,10 +806,10 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
 
     if (initType == INIT_BY_COMMAND) {
         setupTxTransaction(srcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
-                           TXN_STATE_S2, setup);
+                           TxnState::TXN_STATE_S2, setup);
     } else {
         // Initiate via port
-        setupTxPortTransaction(srcFile, dstFile, channelId, TXN_STATE_S2, setup);
+        setupTxPortTransaction(srcFile, dstFile, channelId, TxnState::TXN_STATE_S2, setup);
     }
 
     // Run engine cycle - Metadata + FileData PDUs
@@ -816,7 +826,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     verifyMultipleFileDataPdus(1, numFileDataPdus, setup, dataPerPdu, srcFile, Cfdp::Class::CLASS_2);
 
     EXPECT_EQ(expectedFileSize, setup.txn->m_foffs);
-    EXPECT_EQ(TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state);
+    EXPECT_EQ(TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.send.sub_state);
     EXPECT_TRUE(setup.txn->m_flags.tx.send_eof);
 
     // Run cycle - EOF PDU
@@ -828,7 +838,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     Fw::Buffer firstEofPduBuffer = this->getSentPduBuffer(firstEofIndex);
     ASSERT_GT(firstEofPduBuffer.getSize(), 0);
     verifyEofPdu(firstEofPduBuffer, component.getLocalEidParam(), TEST_GROUND_EID, setup.expectedSeqNum,
-                 Cfdp::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
+                 Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, static_cast<FileSize>(expectedFileSize), srcFile);
 
     EXPECT_FALSE(setup.txn->m_flags.tx.send_eof);
 
@@ -880,7 +890,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     completeClass2Handshake(channelId, TEST_GROUND_EID, setup.expectedSeqNum, setup.txn);
 
     // If port-initiated, verify fileDoneOut callback BEFORE clearing history
-    if (initType == INIT_BY_PORT) {
+    if (initType == TransactionInitType::INIT_BY_PORT) {
         ASSERT_EQ(1u, this->fromPortHistory_fileDoneOut->size())
             << "fileDoneOut port should be invoked once for port-initiated transfer";
         Svc::SendFileResponse completionResp = this->fromPortHistory_fileDoneOut->at(0).resp;
@@ -988,7 +998,7 @@ void CfdpManagerTester::testClass2RxNack() {
 
 void CfdpManagerTester::testClass2TxPortBased() {
     // Port-initiated transfers use Class 2 for reliability
-    sendAndVerifyClass2Tx(INIT_BY_PORT, "test/ut/output/test_class1_tx_port.bin",
+    sendAndVerifyClass2Tx(TransactionInitType::INIT_BY_PORT, "test/ut/output/test_class1_tx_port.bin",
                           "test/ut/output/test_class1_tx_port_dst.dat", component.getOutgoingFileChunkSizeParam(),
                           false  // No NAK simulation
     );
@@ -1009,8 +1019,8 @@ void CfdpManagerTester::testMultipleTransactionsInSeries() {
                           "/ground/series_c1_rx_src.bin", dataPerPdu);
 
     // Transaction 3: Class 2 TX (port-based)
-    sendAndVerifyClass2Tx(INIT_BY_PORT, "test/ut/output/series_c2_tx.bin", "test/ut/output/series_c2_tx_dst.dat",
-                          5 * dataPerPdu,
+    sendAndVerifyClass2Tx(TransactionInitType::INIT_BY_PORT, "test/ut/output/series_c2_tx.bin",
+                          "test/ut/output/series_c2_tx_dst.dat", 5 * dataPerPdu,
                           false  // No NAK simulation
     );
 

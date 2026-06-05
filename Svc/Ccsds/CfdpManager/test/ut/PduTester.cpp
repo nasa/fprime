@@ -794,7 +794,7 @@ void CfdpManagerTester::testEofPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file transfer complete
-    const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
+    const Cfdp::ConditionCode testConditionCode = Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR;
     txn->m_state_data.send.cached_pos = fileSize;  // Simulate file transfer complete
 
     // Read test file and compute CRC
@@ -853,8 +853,8 @@ void CfdpManagerTester::testFinPdu() {
 
     // Setup transaction to simulate file reception complete
     const ConditionCode testConditionCode = CONDITION_CODE_NO_ERROR;
-    const FinDeliveryCode testDeliveryCode = FIN_DELIVERY_CODE_COMPLETE;
-    const FinFileStatus testFileStatus = FIN_FILE_STATUS_RETAINED;
+    const FinDeliveryCode testDeliveryCode = FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE;
+    const FinFileStatus testFileStatus = FinFileStatus::FIN_FILE_STATUS_RETAINED;
 
     // Clear port history before test
     this->clearHistory();
@@ -900,9 +900,9 @@ void CfdpManagerTester::testAckPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup test parameters for ACK PDU
-    const Cfdp::AckTxnStatus testTransactionStatus = Cfdp::ACK_TXN_STATUS_ACTIVE;
-    const Cfdp::FileDirective testDirectiveCode = Cfdp::FILE_DIRECTIVE_END_OF_FILE;
-    const Cfdp::ConditionCode testConditionCode = Cfdp::CONDITION_CODE_NO_ERROR;
+    const Cfdp::AckTxnStatus testTransactionStatus = Cfdp::AckTxnStatus::ACK_TXN_STATUS_ACTIVE;
+    const Cfdp::FileDirective testDirectiveCode = Cfdp::FileDirective::FILE_DIRECTIVE_END_OF_FILE;
+    const Cfdp::ConditionCode testConditionCode = Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR;
 
     // Clear port history before test
     this->clearHistory();

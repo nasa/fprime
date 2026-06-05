@@ -419,7 +419,7 @@ TEST_F(PduTest, EofRoundTrip) {
     EXPECT_EQ(destEid, header.getDestEid());
 
     // Verify EOF-specific fields
-    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(conditionCode, static_cast<U8>(rxPdu.getConditionCode()));
     EXPECT_EQ(checksum, rxPdu.getChecksum());
     EXPECT_EQ(fileSize, rxPdu.getFileSize());
 }
@@ -447,7 +447,8 @@ TEST_F(PduTest, EofWithError) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE), rxPdu.getConditionCode());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+              static_cast<U8>(rxPdu.getConditionCode()));
 }
 
 TEST_F(PduTest, EofZeroValues) {
@@ -560,9 +561,9 @@ TEST_F(PduTest, FinRoundTrip) {
     EXPECT_EQ(destEid, header.getDestEid());
 
     // Verify FIN-specific fields
-    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
-    EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode());
-    EXPECT_EQ(fileStatus, rxPdu.getFileStatus());
+    EXPECT_EQ(conditionCode, static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(deliveryCode, static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(fileStatus, static_cast<U8>(rxPdu.getFileStatus()));
 }
 
 TEST_F(PduTest, FinWithError) {
@@ -590,9 +591,10 @@ TEST_F(PduTest, FinWithError) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE), rxPdu.getConditionCode());
-    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), rxPdu.getDeliveryCode());
-    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), rxPdu.getFileStatus());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+              static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), static_cast<U8>(rxPdu.getFileStatus()));
 }
 
 TEST_F(PduTest, FinDeliveryIncomplete) {
@@ -619,8 +621,8 @@ TEST_F(PduTest, FinDeliveryIncomplete) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), rxPdu.getDeliveryCode());
-    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_RETAINED), rxPdu.getFileStatus());
+    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_RETAINED), static_cast<U8>(rxPdu.getFileStatus()));
 }
 
 TEST_F(PduTest, FinFileStatusDiscarded) {
@@ -646,8 +648,8 @@ TEST_F(PduTest, FinFileStatusDiscarded) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE), rxPdu.getDeliveryCode());
-    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), rxPdu.getFileStatus());
+    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), static_cast<U8>(rxPdu.getFileStatus()));
 }
 
 TEST_F(PduTest, FinFileStatusDiscardedFilestore) {
@@ -673,9 +675,11 @@ TEST_F(PduTest, FinFileStatusDiscardedFilestore) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILESTORE_REJECTION), rxPdu.getConditionCode());
-    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE), rxPdu.getDeliveryCode());
-    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED_FILESTORE), rxPdu.getFileStatus());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILESTORE_REJECTION),
+              static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED_FILESTORE),
+              static_cast<U8>(rxPdu.getFileStatus()));
 }
 
 TEST_F(PduTest, FinBitPackingValidation) {
@@ -743,10 +747,10 @@ TEST_F(PduTest, AckRoundTrip) {
     const EntityId sourceEid = 50;
     const TransactionSeq transactionSeq = 100;
     const EntityId destEid = 75;
-    const FileDirective directiveCode = static_cast<U8>(FileDirective::FILE_DIRECTIVE_END_OF_FILE);
+    const FileDirective directiveCode = FileDirective::FILE_DIRECTIVE_END_OF_FILE;
     const U8 directiveSubtypeCode = 0;
-    const ConditionCode conditionCode = static_cast<U8>(ConditionCode::CONDITION_CODE_NO_ERROR);
-    const AckTxnStatus transactionStatus = static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_ACTIVE);
+    const ConditionCode conditionCode = ConditionCode::CONDITION_CODE_NO_ERROR;
+    const AckTxnStatus transactionStatus = AckTxnStatus::ACK_TXN_STATUS_ACTIVE;
 
     txPdu.initialize(direction, txmMode, sourceEid, transactionSeq, destEid, directiveCode, directiveSubtypeCode,
                      conditionCode, transactionStatus);
@@ -808,9 +812,9 @@ TEST_F(PduTest, AckForEof) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(FileDirective::FILE_DIRECTIVE_END_OF_FILE), rxPdu.getDirectiveCode());
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_NO_ERROR), rxPdu.getConditionCode());
-    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_ACTIVE), rxPdu.getTransactionStatus());
+    EXPECT_EQ(static_cast<U8>(FileDirective::FILE_DIRECTIVE_END_OF_FILE), static_cast<U8>(rxPdu.getDirectiveCode()));
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_NO_ERROR), static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_ACTIVE), static_cast<U8>(rxPdu.getTransactionStatus()));
 }
 
 TEST_F(PduTest, AckForFin) {
@@ -837,8 +841,8 @@ TEST_F(PduTest, AckForFin) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(FileDirective::FILE_DIRECTIVE_FIN), rxPdu.getDirectiveCode());
-    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_TERMINATED), rxPdu.getTransactionStatus());
+    EXPECT_EQ(static_cast<U8>(FileDirective::FILE_DIRECTIVE_FIN), static_cast<U8>(rxPdu.getDirectiveCode()));
+    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_TERMINATED), static_cast<U8>(rxPdu.getTransactionStatus()));
 }
 
 TEST_F(PduTest, AckWithError) {
@@ -865,8 +869,9 @@ TEST_F(PduTest, AckWithError) {
     Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE), rxPdu.getConditionCode());
-    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_TERMINATED), rxPdu.getTransactionStatus());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+              static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(static_cast<U8>(AckTxnStatus::ACK_TXN_STATUS_TERMINATED), static_cast<U8>(rxPdu.getTransactionStatus()));
 }
 
 TEST_F(PduTest, AckWithSubtype) {
@@ -1558,7 +1563,8 @@ TEST_F(PduTest, EofWithOneTlv) {
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE), rxPdu.getConditionCode());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+              static_cast<U8>(rxPdu.getConditionCode()));
     EXPECT_EQ(1, rxPdu.getNumTlv());
     EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
     EXPECT_EQ(42, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
@@ -1664,7 +1670,7 @@ TEST_F(PduTest, EofTlvRoundTripComplete) {
     EXPECT_EQ(destEid, rxPdu.asHeader().getDestEid());
 
     // Verify EOF fields
-    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
+    EXPECT_EQ(conditionCode, static_cast<U8>(rxPdu.getConditionCode()));
     EXPECT_EQ(checksum, rxPdu.getChecksum());
     EXPECT_EQ(fileSize, rxPdu.getFileSize());
 
@@ -1733,9 +1739,10 @@ TEST_F(PduTest, FinWithOneTlv) {
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
-    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE), rxPdu.getConditionCode());
-    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), rxPdu.getDeliveryCode());
-    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), rxPdu.getFileStatus());
+    EXPECT_EQ(static_cast<U8>(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE),
+              static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), static_cast<U8>(rxPdu.getFileStatus()));
     EXPECT_EQ(1, rxPdu.getNumTlv());
     EXPECT_EQ(TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
     EXPECT_EQ(99, rxPdu.getTlvList().getTlv(0).getData().getEntityId());
@@ -1859,9 +1866,9 @@ TEST_F(PduTest, FinTlvRoundTripComplete) {
     EXPECT_EQ(destEid, rxPdu.asHeader().getDestEid());
 
     // Verify FIN fields
-    EXPECT_EQ(conditionCode, rxPdu.getConditionCode());
-    EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode());
-    EXPECT_EQ(fileStatus, rxPdu.getFileStatus());
+    EXPECT_EQ(conditionCode, static_cast<U8>(rxPdu.getConditionCode()));
+    EXPECT_EQ(deliveryCode, static_cast<U8>(rxPdu.getDeliveryCode()));
+    EXPECT_EQ(fileStatus, static_cast<U8>(rxPdu.getFileStatus()));
 
     // Verify TLVs
     EXPECT_EQ(2, rxPdu.getNumTlv());
