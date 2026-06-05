@@ -795,7 +795,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
                                               FwSizeType expectedFileSize,
                                               bool simulateNak) {
     const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
-    const U8 channelId = (initType == INIT_BY_COMMAND) ? TEST_CHANNEL_ID_1 : TEST_CHANNEL_ID_0;
+    const U8 channelId = (initType == TransactionInitType::INIT_BY_COMMAND) ? TEST_CHANNEL_ID_1 : TEST_CHANNEL_ID_0;
 
     // Create and verify test file
     FwSizeType fileSize;
@@ -804,7 +804,7 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     // Setup transaction
     TransactionSetup setup;
 
-    if (initType == INIT_BY_COMMAND) {
+    if (initType == TransactionInitType::INIT_BY_COMMAND) {
         setupTxTransaction(srcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
                            TxnState::TXN_STATE_S2, setup);
     } else {
@@ -948,7 +948,7 @@ void CfdpManagerTester::testClass2TxNominal() {
     const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
     const FwSizeType expectedFileSize = 5 * dataPerPdu;
 
-    sendAndVerifyClass2Tx(INIT_BY_COMMAND, "test/ut/output/test_class2_tx_5pdu.bin",
+    sendAndVerifyClass2Tx(TransactionInitType::INIT_BY_COMMAND, "test/ut/output/test_class2_tx_5pdu.bin",
                           "test/ut/output/test_class2_tx_dst.dat", expectedFileSize,
                           false  // No NAK simulation
     );
@@ -958,8 +958,8 @@ void CfdpManagerTester::testClass2TxNack() {
     const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
     const FwSizeType expectedFileSize = 5 * dataPerPdu;
 
-    sendAndVerifyClass2Tx(INIT_BY_COMMAND, "test/ut/output/test_c2_tx_nak.bin", "test/ut/output/test_c2_nak_dst.dat",
-                          expectedFileSize,
+    sendAndVerifyClass2Tx(TransactionInitType::INIT_BY_COMMAND, "test/ut/output/test_c2_tx_nak.bin",
+                          "test/ut/output/test_c2_nak_dst.dat", expectedFileSize,
                           true  // Simulate NAK
     );
 }

@@ -52,7 +52,7 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
 
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
-    if ((state == TXN_STATE_S2) || (state == TxnState::TXN_STATE_R2)) {
+    if ((state == TxnState::TXN_STATE_S2) || (state == TxnState::TXN_STATE_R2)) {
         txn->m_txn_class = Cfdp::Class::CLASS_2;
     } else {
         txn->m_txn_class = Cfdp::Class::CLASS_1;
@@ -63,7 +63,7 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
     history->seq_num = sequenceId;
     history->fnames.src_filename = Fw::String(srcFilename);
     history->fnames.dst_filename = Fw::String(dstFilename);
-    history->dir = DIRECTION_TX;
+    history->dir = Direction::DIRECTION_TX;
 
     return txn;
 }
@@ -134,7 +134,8 @@ void CfdpManagerTester::verifyMetadataPdu(const Fw::Buffer& pduBuffer,
 
     // Validate metadata-specific fields
     EXPECT_EQ(expectedFileSize, metadataPdu.getFileSize()) << "File size mismatch";
-    EXPECT_EQ(Cfdp::CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType()) << "Expected modular checksum type";
+    EXPECT_EQ(Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR, metadataPdu.getChecksumType())
+        << "Expected modular checksum type";
 
     // Closure requested should be 0 for Class 1, 1 for Class 2
     U8 expectedClosureRequested = (expectedClass == Cfdp::Class::CLASS_2) ? 1 : 0;
@@ -448,7 +449,8 @@ void CfdpManagerTester::sendMetadataPdu(U8 channelId,
     // Create and initialize Metadata PDU
     Cfdp::MetadataPdu metadataPdu;
     metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, txmMode, sourceEid, transactionSeq, destEid,
-                           fileSize, sourceFilename, destFilename, Cfdp::CHECKSUM_TYPE_MODULAR, closureRequested);
+                           fileSize, sourceFilename, destFilename, Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
+                           closureRequested);
 
     // Allocate buffer for PDU + packet descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -678,7 +680,7 @@ void CfdpManagerTester::testMetaDataPdu() {
     const U32 testSequenceId = 98;
     const U32 testPeerId = 100;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_S1,  // Sender, class 1
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Sender, class 1
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -721,7 +723,7 @@ void CfdpManagerTester::testFileDataPdu() {
     const U32 testSequenceId = 42;
     const U32 testPeerId = 200;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_S1,  // Sender, class 1
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Sender, class 1
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -789,7 +791,7 @@ void CfdpManagerTester::testEofPdu() {
     const U32 testSequenceId = 55;
     const U32 testPeerId = 150;
 
-    Transaction* txn = setupTestTransaction(TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Sender, class 2 (acknowledged mode)
                                             channelId, srcFile, dstFile, fileSize, testSequenceId, testPeerId);
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
@@ -852,7 +854,7 @@ void CfdpManagerTester::testFinPdu() {
     ASSERT_NE(txn, nullptr) << "Failed to create test transaction";
 
     // Setup transaction to simulate file reception complete
-    const ConditionCode testConditionCode = CONDITION_CODE_NO_ERROR;
+    const ConditionCode testConditionCode = ConditionCode::CONDITION_CODE_NO_ERROR;
     const FinDeliveryCode testDeliveryCode = FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE;
     const FinFileStatus testFileStatus = FinFileStatus::FIN_FILE_STATUS_RETAINED;
 
