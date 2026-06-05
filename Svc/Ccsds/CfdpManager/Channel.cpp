@@ -48,7 +48,11 @@ namespace Cfdp {
 // Construction
 // ----------------------------------------------------------------------
 
-Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager)
+Channel::Channel(Engine* engine,
+                 U8 channelId,
+                 CfdpManager* cfdpManager,
+                 Fw::MemAllocator& allocator,
+                 FwEnumStoreType memId)
     : m_engine(engine),
       m_numCmdTx(0),
       m_currentTxn(nullptr),
@@ -113,14 +117,22 @@ Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager)
         total_chunks_needed += m_dirMaxChunks[k] * CFDP_NUM_TRANSACTIONS_PER_CHANNEL;
     }
 
-    // Allocate arrays
-    // Use operator new for raw memory (for types requiring placement new with constructor params)
-    m_transactions = static_cast<Transaction*>(::operator new(CFDP_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(Transaction)));
-    m_chunks = static_cast<CfdpChunkWrapper*>(
-        ::operator new((CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM) * sizeof(CfdpChunkWrapper)));
-    // Regular new for simple types
-    m_histories = new History[CFDP_NUM_HISTORIES_PER_CHANNEL];
-    m_chunkMem = new Chunk[total_chunks_needed];
+    // Allocate arrays using the provided allocator
+    FwSizeType transactionsSize = CFDP_NUM_TRANSACTIONS_PER_CHANNEL * sizeof(Transaction);
+    m_transactions = static_cast<Transaction*>(allocator.allocate(memId, transactionsSize));
+    FW_ASSERT(m_transactions != nullptr);
+
+    FwSizeType chunksSize = (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM) * sizeof(CfdpChunkWrapper);
+    m_chunks = static_cast<CfdpChunkWrapper*>(allocator.allocate(memId, chunksSize));
+    FW_ASSERT(m_chunks != nullptr);
+
+    FwSizeType historiesSize = CFDP_NUM_HISTORIES_PER_CHANNEL * sizeof(History);
+    m_histories = static_cast<History*>(allocator.allocate(memId, historiesSize));
+    FW_ASSERT(m_histories != nullptr);
+
+    FwSizeType chunkMemSize = total_chunks_needed * sizeof(Chunk);
+    m_chunkMem = static_cast<Chunk*>(allocator.allocate(memId, chunkMemSize));
+    FW_ASSERT(m_chunkMem != nullptr);
 
     // Initialize transactions using placement new with parameterized constructor
     cw = m_chunks;
@@ -143,42 +155,50 @@ Channel::Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager)
         }
     }
 
-    // Initialize histories
+    // Initialize histories using placement new (History contains Fw::String which needs proper construction)
     for (j = 0; j < CFDP_NUM_HISTORIES_PER_CHANNEL; ++j) {
-        history = &m_histories[j];
-        // Zero-initialize using aggregate initialization
-        *history = {};
+        history = new (&m_histories[j]) History();  // Use placement new with default constructor
         CfdpCListInitNode(&history->cl_node);
         this->insertBackInQueue(QueueId::HIST_FREE, &history->cl_node);
     }
 }
 
 Channel::~Channel() {
-    // Free dynamically allocated resources
+    // Cleanup should have been called before destruction
+    // This is enforced by Engine::~Engine()
+}
+
+void Channel::cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
+    // Call destructors and deallocate all internal arrays
     if (m_transactions != nullptr) {
         // Manually call destructors since we used placement new
         for (U32 j = 0; j < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; ++j) {
             m_transactions[j].~Transaction();
         }
-        // Free raw memory allocated with operator new
-        ::operator delete(m_transactions);
+        allocator.deallocate(memId, m_transactions);
         m_transactions = nullptr;
     }
-    if (m_histories != nullptr) {
-        delete[] m_histories;
-        m_histories = nullptr;
-    }
+
     if (m_chunks != nullptr) {
         // Manually call destructors since we used placement new
         for (U32 j = 0; j < (CFDP_NUM_TRANSACTIONS_PER_CHANNEL * DIRECTION_NUM); ++j) {
             m_chunks[j].~CfdpChunkWrapper();
         }
-        // Free raw memory allocated with operator new
-        ::operator delete(m_chunks);
+        allocator.deallocate(memId, m_chunks);
         m_chunks = nullptr;
     }
+
+    if (m_histories != nullptr) {
+        // Call destructors on History objects
+        for (U32 j = 0; j < CFDP_NUM_HISTORIES_PER_CHANNEL; ++j) {
+            m_histories[j].~History();
+        }
+        allocator.deallocate(memId, m_histories);
+        m_histories = nullptr;
+    }
+
     if (m_chunkMem != nullptr) {
-        delete[] m_chunkMem;
+        allocator.deallocate(memId, m_chunkMem);
         m_chunkMem = nullptr;
     }
 }

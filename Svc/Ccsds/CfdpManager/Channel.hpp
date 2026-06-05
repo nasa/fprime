@@ -34,6 +34,7 @@
 #define CFDP_CHANNEL_HPP
 
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/MemAllocator.hpp>
 
 #include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
 
@@ -64,15 +65,25 @@ class Channel {
      * @param engine      Pointer to parent CFDP engine
      * @param channelId   Channel ID (index)
      * @param cfdpManager Pointer to parent CfdpManager component
+     * @param allocator   Memory allocator for dynamic allocation
+     * @param memId       Memory allocation identifier
      */
-    Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager);
+    Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager, Fw::MemAllocator& allocator, FwEnumStoreType memId);
 
     /**
      * @brief Destruct a Channel
-     *
-     * Frees dynamically allocated resources (transactions, histories, chunks)
      */
     ~Channel();
+
+    /**
+     * @brief Clean up dynamically allocated resources
+     *
+     * Must be called before destruction to free internal arrays
+     *
+     * @param allocator Memory allocator used during construction
+     * @param memId     Memory allocation identifier
+     */
+    void cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId);
 
     // Disable copy constructor and assignment operator
     // Channel manages dynamic resources and should not be copied

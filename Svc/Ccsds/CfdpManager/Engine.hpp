@@ -35,6 +35,7 @@
 #define CFDP_ENGINE_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/MemAllocator.hpp>
 
 #include <Svc/Ccsds/CfdpManager/Transaction.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/ChannelTelemetrySerializableAc.hpp>
@@ -109,8 +110,10 @@ class Engine {
 
     /**
      * @brief Initialize the CFDP engine
+     * @param allocator Memory allocator for dynamic allocation
+     * @param memId Memory allocation identifier
      */
-    void init();
+    void init(Fw::MemAllocator& allocator, FwEnumStoreType memId);
 
     /**
      * @brief Cycle the engine once per scheduler call
@@ -554,6 +557,12 @@ class Engine {
 
     //! Sequence number tracker for outgoing transactions
     TransactionSeq m_seqNum;
+
+    //! Memory allocator for Channel cleanup
+    Fw::MemAllocator* m_allocator;
+
+    //! Memory allocation identifier
+    FwEnumStoreType m_allocatorId;
 
     // Note: Transactions, histories, and chunks are now owned by each Channel
 

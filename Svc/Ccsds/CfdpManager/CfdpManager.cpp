@@ -36,7 +36,7 @@ void CfdpManager ::configure(Fw::MemAllocator& allocator, FwEnumStoreType memId)
     this->m_engine = static_cast<Engine*>(allocator.allocate(memId, engineSize));
     FW_ASSERT(this->m_engine != nullptr);
     (void)new (this->m_engine) Engine(this);
-    this->m_engine->init();
+    this->m_engine->init(allocator, memId);
 
     // Store allocator for cleanup
     this->m_allocator = &allocator;

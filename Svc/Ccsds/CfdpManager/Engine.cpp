@@ -37,6 +37,7 @@
 // ======================================================================
 
 #include <string.h>
+#include <new>
 
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/FileSystem.hpp>
@@ -56,16 +57,25 @@ namespace Cfdp {
 // Construction and destruction
 // ----------------------------------------------------------------------
 
-Engine::Engine(CfdpManager* manager) : m_manager(manager), m_seqNum(0) {
+Engine::Engine(CfdpManager* manager) : m_manager(manager), m_seqNum(0), m_allocator(nullptr), m_allocatorId(0) {
     for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
         m_channels[i] = nullptr;
     }
 }
 
 Engine::~Engine() {
+    FW_ASSERT(m_allocator != nullptr, 0);  // init() must have been called
+
     for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
         if (m_channels[i] != nullptr) {
-            delete m_channels[i];
+            // Clean up Channel's internal arrays first
+            m_channels[i]->cleanup(*m_allocator, m_allocatorId);
+
+            // Call destructor
+            m_channels[i]->~Channel();
+
+            // Deallocate the Channel object itself
+            m_allocator->deallocate(m_allocatorId, m_channels[i]);
             m_channels[i] = nullptr;
         }
     }
@@ -75,11 +85,19 @@ Engine::~Engine() {
 // Public interface methods
 // ----------------------------------------------------------------------
 
-void Engine::init() {
-    // Create all channels
+void Engine::init(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
+    // Store allocator for cleanup in destructor
+    m_allocator = &allocator;
+    m_allocatorId = memId;
+
+    // Allocate and construct all channels using the allocator
     for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
-        m_channels[i] = new Channel(this, i, this->m_manager);
-        FW_ASSERT(m_channels[i] != nullptr);
+        FwSizeType channelSize = sizeof(Channel);
+        void* channelMem = allocator.allocate(memId, channelSize);
+        FW_ASSERT(channelMem != nullptr);
+
+        // Use placement new to construct Channel in allocated memory
+        m_channels[i] = new (channelMem) Channel(this, i, this->m_manager, allocator, memId);
     }
 }
 
