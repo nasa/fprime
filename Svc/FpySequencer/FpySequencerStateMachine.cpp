@@ -40,8 +40,6 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFile
     }
 
     Fw::FormatStatus status;
-    // filePath is buffer len 201 strlen 200 (FileNameStringSize)
-    // seqFilePath is FileNameStringSize
     // the result will get truncated to FileNameStringSize
     status = this->m_sequenceFilePath.format("%s/%s", baseDir.toChar(), value.get_filePath().toChar());
     if (status == Fw::FormatStatus::SUCCESS) {
