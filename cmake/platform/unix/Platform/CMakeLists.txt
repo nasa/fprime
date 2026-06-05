@@ -14,11 +14,11 @@ register_fprime_config(
         Os_Console_Posix
         Os_Task_Posix
         Os_Mutex_Posix
-        Os_CountingSemaphore_Posix
         Os_Generic_PriorityQueue
         Os_RawTime_Posix
         Fw_StringFormat_snprintf
         Fw_StringScan_sscanf
+        Os_CountingSemaphore_Stub # Linux/Darwin specific, so common uses Stub
         # No posix API
         Os_Cpu_Stub
         Os_Memory_Stub
