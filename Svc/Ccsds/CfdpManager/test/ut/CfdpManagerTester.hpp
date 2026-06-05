@@ -480,7 +480,8 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
                                const char* srcFile,
                                const char* dstFile,
                                FwSizeType expectedFileSize,
-                               bool simulateNak = false);
+                               bool simulateNak = false,
+                               bool expectExactCounts = false);
 
     //! Receive and verify a Class 1 RX transaction
     //! @param srcFile Local file to read test data from
