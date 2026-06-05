@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-05 17:27:13</td>
+      <td>2026-06-05 18:02:52</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>8</td>
-      <td>58</td>
-      <td class="coverage-low">13.8%</td>
+      <td>6</td>
+      <td>54</td>
+      <td class="coverage-low">11.1%</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l10">Os::RawTime::RawTime() (line 10)</a></td><td>called 6 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l10">Os::RawTime::RawTime() (line 10)</a></td><td>called 6 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l19">Os::RawTime::RawTime(Os::RawTime const&amp;) (line 19)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l51">Os::RawTime::deserializeFrom(Fw::SerialBufferBase&amp;, Fw::Endianness) (line 51)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l56">Os::RawTime::getDiffUsec(Os::RawTime const&amp;, unsigned int&amp;) const (line 56)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -161,17 +161,15 @@
       <td class="lineno"><a id="l10" href="#l10">10</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/4</summary>
+          <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 336 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 17 taken 6 times.</div>
-            <div class="notTakenBranch">&cross; Branch 18 not taken.</div>
+            <div class="takenBranch">&check; Branch 10 taken 6 times.</div>
+            <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">342</td>
-      <td class="src partialCoveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">(),</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount partialCoveredLine">6</td>
+      <td class="src partialCoveredLine"><span class="n">RawTime</span><span class="o">::</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l11" href="#l11">11</a></td>
@@ -257,7 +255,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">(),</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">.</span><span class="n">m_delegate</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">RawTimeInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">other</span><span class="p">.</span><span class="n">m_delegate</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
