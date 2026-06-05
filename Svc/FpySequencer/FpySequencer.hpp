@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -635,7 +636,8 @@ class FpySequencer : public FpySequencerComponentBase {
     FwEnumStoreType m_allocatorId;
 
     // assigned by the user via cmd
-    Fw::String m_sequenceFilePath;
+    // length is FileNameStringSize
+    Fw::FileNameString m_sequenceFilePath;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)

@@ -29,6 +29,9 @@ constant FW_RAW_TIME_HANDLE_MAX_SIZE = 56
 @ Maximum allowed serialization size for Os::RawTime objects
 constant FW_RAW_TIME_SERIALIZATION_MAX_SIZE = 8
 
+@ Maximum size of a handle for Os::CountingSemaphore
+constant FW_COUNTING_SEMAPHORE_HANDLE_MAX_SIZE = 48
+
 @ Maximum size of a handle for Os::ConditionVariable
 constant FW_CONDITION_VARIABLE_HANDLE_MAX_SIZE = 56
 

@@ -3,7 +3,7 @@
 #
 # A basic versioning target which will produce the version files.
 ####
-set(FPRIME__INTERNAL_VERSION_INFO_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_info.py")
+set(FPRIME__INTERNAL_VERSION_INFO_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/version/generate_version_info.py" CACHE INTERNAL "Internal path to version info generation script" FORCE)
 
 function(version_add_global_target TARGET)
     set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/versions")
