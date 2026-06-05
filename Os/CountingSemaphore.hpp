@@ -7,14 +7,6 @@
 #include "Fw/Time/TimeInterval.hpp"
 #include "Os/Os.hpp"
 
-//! Maximum size (bytes) of the platform-specific CountingSemaphore handle.
-//! Unlike other OSAL handle sizes this is NOT in PlatformCfg.fpp so that
-//! projects with an existing PlatformCfg override (e.g. Zephyr) do not
-//! need an update before this module can be compiled.
-static constexpr FwSizeType COUNTING_SEMAPHORE_HANDLE_MAX_SIZE = 48;
-
-typedef U8 CountingSemaphoreHandleStorage[COUNTING_SEMAPHORE_HANDLE_MAX_SIZE];
-
 namespace Os {
 
 class CountingSemaphoreHandle {};
