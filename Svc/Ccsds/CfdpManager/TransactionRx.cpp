@@ -265,13 +265,17 @@ void Transaction::rTick(I32* cont /* unused */) {
                                        FileDirective::FILE_DIRECTIVE_END_OF_FILE,
                                        static_cast<ConditionCode>(this->m_state_data.receive.r2.eof_cc),
                                        this->m_history->peer_eid, this->m_history->seq_num);
-        FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
 
-        /* if Cfdp::Status::SUCCESS, then move on in the state machine. CFDP_SendAck does not return
-         * SEND_PDU_ERROR */
-        if (sret != Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR) {
+        /* if SUCCESS, move on. If NO_BUF_AVAIL, retry later. If ERROR, stop retrying. */
+        if (sret == Cfdp::Status::SUCCESS) {
             this->m_flags.rx.send_eof_ack = false;
+        } else if (sret == Cfdp::Status::ERROR) {
+            /* Serialization failed - error already logged in serializeAndSendPdu */
+            /* Clear flag to avoid infinite retry loop */
+            this->m_flags.rx.send_eof_ack = false;
+            pending_send = false;
         }
+        /* else NO_BUF_AVAIL: leave flag set to retry next tick */
     } else if (this->m_flags.rx.send_nak) {
         if (!this->rSubstateSendNak()) {
             this->m_flags.rx.send_nak = false; /* will re-enter on error */
@@ -942,8 +946,8 @@ Status::T Transaction::r2SubstateSendFin() {
     if (ret != Cfdp::Status::ERROR) {
         sret = this->m_engine->sendFin(this, this->m_state_data.receive.r2.dc, this->m_state_data.receive.r2.fs,
                                        static_cast<ConditionCode>(TxnStatusToConditionCode(this->m_history->txn_stat)));
-        /* CFDP_SendFin does not return SEND_PDU_ERROR */
-        FW_ASSERT(sret != Cfdp::Status::SEND_PDU_ERROR);
+
+        /* Serialization error already logged in serializeAndSendPdu if ERROR returned */
         this->m_state_data.receive.sub_state =
             RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC; /* whether or not FIN send successful, ok to transition state */
         if (sret != Cfdp::Status::SUCCESS) {
