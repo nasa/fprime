@@ -71,4 +71,3 @@ CountingSemaphoreHandle* PosixCountingSemaphore::getHandle() {
 }  // namespace Semaphore
 }  // namespace Posix
 }  // namespace Os
-
