@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-05 18:01:44</td>
+      <td>2026-06-05 23:16:18</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l5">Os::ConditionVariable::ConditionVariable() (line 5)</a></td><td>called 2241 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l32">Os::ConditionVariable::getHandle() (line 32)</a></td><td>called 1 time</td><td>97.0%</td></tr>
-    <tr><td><a href="#l23">Os::ConditionVariable::notify() (line 23)</a></td><td>called 239129 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l23">Os::ConditionVariable::notify() (line 23)</a></td><td>called 323337 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l27">Os::ConditionVariable::notifyAll() (line 27)</a></td><td>called 2 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l11">Os::ConditionVariable::pend(Os::Mutex&amp;) (line 11)</a></td><td>called 14 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l19">Os::ConditionVariable::wait(Os::Mutex&amp;) (line 19)</a></td><td>called 12 times</td><td>86.0%</td></tr>
@@ -278,7 +278,7 @@
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239129</td>
+      <td class="linecount coveredLine">323337</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ConditionVariable</span><span class="o">::</span><span class="n">notify</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -288,25 +288,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 239129 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 323337 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">239129</td>
+      <td class="linecount partialCoveredLine">323337</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">ConditionVariableInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239129</td>
+      <td class="linecount coveredLine">323337</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">notify</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">239129</td>
+      <td class="linecount coveredLine">323337</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
