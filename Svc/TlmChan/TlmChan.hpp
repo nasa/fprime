@@ -53,9 +53,9 @@ class TlmChan final : public TlmChanComponentBase {
     };
 
     struct TlmSet {
-        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];        //!< set of hash slots in hash table
-        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];             //!< set of buckets used in hash table
-        FwChanIdType free;                                  //!< next free bucket
+        TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];            //!< set of hash slots in hash table
+        TlmEntry buckets[TLMCHAN_HASH_BUCKETS];                 //!< set of buckets used in hash table
+        FwChanIdType free;                                      //!< next free bucket
         Fw::ArraySet<TlmEntry*, TLMCHAN_HASH_BUCKETS> updated;  //!< set of updated entries
     } m_tlmEntries[2];
 
