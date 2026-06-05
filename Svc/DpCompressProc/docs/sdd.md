@@ -62,7 +62,7 @@ Add requirements in the chart below
 |---|---|---|
 |SVC-DPCOMPRESSPROC-001 | `Svc::DpCompressProc` shall return the passed `Fw::Buffer` as either a valid compressed data product or the original uncompressed data product. However the data checksum for the container does not need to be valid in the returned product | Unit Test
 |SVC-DPCOMPRESSPROC-002 | `Svc::DpCompressProc` shall not allocate additional memory when processing the container. This does not apply to any downstream compressor which is allow to allocate memory | Unit Test
-|SVC-DPCOMPRESSPROC-003 | `Svc::DpCompressProc` shall support a user modifyable chunking size | Unit Test
+|SVC-DPCOMPRESSPROC-003 | `Svc::DpCompressProc` shall support a user modifiable chunking size | Unit Test
 
 
 ## Detailed Documentation
@@ -78,11 +78,11 @@ Add requirements in the chart below
 
 ### CompressChunk port
 
-The ComressChunk port call is a synchronous port call with three arguments, buffer, min\_compression and write\_offset and a return enum CompressionAlgorithm
+The CompressChunk port call is a synchronous port call with three arguments, buffer, min\_compression and write\_offset and a return enum CompressionAlgorithm
 
 The buffer, an `Fw::Buffer`, is a chunk of the original data product container. The compressor will overwrite this buffer if it is able to compress the product. The compressor must also update the size of the buffer if compression took place.
 
-min\_compression repressents the minimum amount of compression necessary for the compression to be useful. In order to return a compression data product, with the necessary compression record headers prepended, some chunks may need to be compressed with sufficient free space to accomidate the addition of these buffers. The value is a the maximum number of bytes that can be returned in the `Fw::Buffer`
+min\_compression represents the minimum amount of compression necessary for the compression to be useful. In order to return a compression data product, with the necessary compression record headers prepended, some chunks may need to be compressed with sufficient free space to accommodate the addition of these buffers. The value is a the maximum number of bytes that can be returned in the `Fw::Buffer`
 
 In some cases it is necessary to place the compressed chunk at an offset within the passed `Fw::Buffer`. The write offset informs the compressor where to place the compressed data within the `Fw::Buffer` to accommodate any necessary headers.
 // TODO: Now that I'm thinking about it more, is this necessary? Would it be more straightforward to always place the buffer at the beginning of the `Fw::Buffer` and memmove it as necessary?
@@ -116,7 +116,7 @@ Each compressed chunk is assigned an individual CompressionRecord however multip
 | Record N |
 +----------+
 ```
-is chunked to the following where (C) are compressible chunks and (U) are uncompressible chunks. The chunkink does not take the original record structure into account.
+is chunked to the following where (C) are compressible chunks and (U) are uncompressible chunks. The chunking does not take the original record structure into account.
 ```
 +-------------+
 |   Header    |
@@ -155,7 +155,7 @@ The compressed product is guaranteed to be no larger than the original data prod
 
 ### Compression State Machine
 
-The algorithm to place the compressed data at the correct location needs requires information about whether the current chunk was compressed and alos information about whether the previous chunk was compressed. This information is tracked through the use of a state machine.
+The algorithm to place the compressed data at the correct location needs to know whether the current chunk was compressed and whether the previous chunk was compressed. This information is tracked through the use of a state machine.
 
 ![DPCompress State Machine](DpCompressProcSM.drawio.png)
 
@@ -167,7 +167,7 @@ As compressible chunks are found they are appended to the buffer along with indi
 
 The first incompressible chunk found after Pre-Commit \(Case C\) will generate a uncompressed record header followed by the uncompressed data. As further incompressible chunks are found \(Case D\) then will be appended to the existing uncompressed record, no extra headers are needed. If a compressible chunk is found, or end of the buffer is reached, the true size of the uncompressed record will be written.
 
-This algorithm is non-trival but allows data products, that can be fairly large, to be compressed in place.
+This algorithm is non-trivial but allows data products, that can be fairly large, to be compressed in place.
 
 ## Change Log
 | Date | Description |

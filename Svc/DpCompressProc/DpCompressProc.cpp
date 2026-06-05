@@ -108,7 +108,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         // The last chunk was uncompressed.
         // If more uncompressed chunks are found then the
         // size of the last uncompressed segment needs to
-        // grow to accomidate this segment
+        // grow to accommodate this segment
         LAST_UNCOMPRESSED
     } state;
 
@@ -339,15 +339,15 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     state = PRE_COMMIT;
                     break;
                 case LAST_COMPRESSED:
-                    // Case C - First uncompressable chunk
+                    // Case C - First incompressible chunk
                     //
-                    // 1. Mark the location of the start of uncompressible chunks
+                    // 1. Mark the location of the start of incompressible chunks
                     uncompressed_head = compression_buffer.getData();
 
                     state = LAST_UNCOMPRESSED;
                     break;
                 case LAST_UNCOMPRESSED:
-                    // Case D - Continued sequence of uncompressable chunks
+                    // Case D - Continued sequence of incompressible chunks
                     // No work. Keep increasing track of uncompressed_size
                     state = LAST_UNCOMPRESSED;
                     break;

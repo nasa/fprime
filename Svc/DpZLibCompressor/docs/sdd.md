@@ -11,7 +11,7 @@ See DpCompressProc
 |---|---|
 |compressChunk| Receive chunks of data to compress. See DpCompressProc for more information|
 |bufferCompressionGet| Get an `Fw::Buffer`. This compression buffer is used as a temporary buffer to store the results of the compression|
-|bufferCompressionReturn| Return the compressiong buffer |
+|bufferCompressionReturn| Return the compression buffer |
 |bufferZLibGet| Get an `Fw::Buffer`. This zlib buffer is used as a memory pool to implement malloc/free for zlib through an internal bump allocator|
 |bufferZLibReturn| Return the zlib buffer |
 

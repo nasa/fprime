@@ -8,6 +8,9 @@ project(FPrime C CXX)
 set(FPRIME_FRAMEWORK_PATH "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Location of F prime framework" FORCE)
 set(FPRIME_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}" CACHE PATH "Root path of F prime project" FORCE)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_compile_options("-g")
+
 # Include the build for F prime.
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/FPrime.cmake")
 
