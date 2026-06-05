@@ -6,6 +6,8 @@
 
 #include "Svc/DpZLibCompressor/DpZLibCompressor.hpp"
 
+#include <cstring>
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -142,7 +144,6 @@ CompressionAlgorithm DpZLibCompressor::zlibCompressionHelper(
             ctx.bump_allocator,
             ctx.zlib_alloc_buffer.getSize()
         );
-        fprintf(stderr, "Compression used %ld bytes\n", ctx.bump_allocator);
 
         return CompressionAlgorithm::ZLIB_DEFLATE;
     } else {
