@@ -21,6 +21,7 @@ register_fprime_module(
   REQUIRES_IMPLEMENTATIONS
     Fw_StringFormat
     Fw_StringScan
+    Fw_AssertHook
 )
 
 register_fprime_implementation(
@@ -41,6 +42,16 @@ register_fprime_implementation(
     Fw_Types
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/sscanf_scan.cpp"
+)
+
+register_fprime_implementation(
+    Fw_AssertHook_fputs
+  IMPLEMENTS
+    Fw_AssertHook
+  DEPENDS
+    Fw_Types
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/fputs_assert_hook.cpp"
 )
 
 
