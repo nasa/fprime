@@ -204,13 +204,14 @@ void Channel::cycleTx() {
 
             // Process pending transactions until queue is empty or something runs
             while (true) {
+                // Context for static wrapper: pass both Channel* and CycleTxArgs*
+                struct CycleTxContext {
+                    Channel* channel;
+                    CycleTxArgs* args;
+                } cycleTxCtx = {this, &args};
+
                 // Attempt to run something on TXA
-                CfdpCListTraverse(
-                    m_qs[QueueId::TXA],
-                    [this](CListNode* node, void* context) -> CListTraverseStatus {
-                        return this->cycleTxFirstActive(node, context);
-                    },
-                    &args);
+                CfdpCListTraverse(m_qs[QueueId::TXA], &Channel::cycleTxFirstActiveWrapper, &cycleTxCtx);
 
                 // Keep going until QueueId::PEND is empty or something is run
                 if (args.ran_one || m_qs[QueueId::PEND] == NULL) {
@@ -263,10 +264,14 @@ void Channel::tickTransactions() {
 
         for (U32 retry = 0; retry < maxRetries; ++retry) {
             args.cont = 0;
-            CfdpCListTraverse(
-                m_qs[qs[m_tickType]],
-                [this](CListNode* node, void* context) -> CListTraverseStatus { return this->doTick(node, context); },
-                &args);
+
+            // Context for static wrapper: pass both Channel* and TickArgs*
+            struct TickContext {
+                Channel* channel;
+                TickArgs* args;
+            } tickCtx = {this, &args};
+
+            CfdpCListTraverse(m_qs[qs[m_tickType]], &Channel::doTickWrapper, &tickCtx);
 
             if (args.early_exit) {
                 // early exit means we ran out of available outgoing messages this scheduler cycle.
@@ -428,20 +433,20 @@ Transaction* Channel::findTransactionBySequenceNumber(TransactionSeq transaction
 }
 
 I32 Channel::traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, void* context) {
-    CfdpTraverseAllArg args = {fn, context, 0};
+    I32 counter = 0;
+
+    // Context for static wrapper
+    struct TraverseAllContext {
+        CfdpTraverseAllTransactionsFunc fn;
+        void* userContext;
+        I32* counter;
+    } ctx = {fn, context, &counter};
+
     for (I32 queueidx = QueueId::PEND; queueidx <= QueueId::RX; ++queueidx) {
-        CfdpCListTraverse(
-            m_qs[queueidx],
-            [&args](CListNode* node, void*) -> CListTraverseStatus {
-                Transaction* txn = container_of_cpp(node, &Transaction::m_cl_node);
-                args.fn(txn, args.context);
-                ++args.counter;
-                return CLIST_TRAVERSE_CONTINUE;
-            },
-            nullptr);
+        CfdpCListTraverse(m_qs[queueidx], &Channel::traverseAllTransactionsWrapper, &ctx);
     }
 
-    return args.counter;
+    return counter;
 }
 
 void Channel::resetHistory(History* history) {
@@ -817,6 +822,41 @@ Transaction* Channel::getTransaction(U32 index) {
 History* Channel::getHistory(U32 index) {
     FW_ASSERT(index < CFDP_NUM_HISTORIES_PER_CHANNEL);
     return &m_histories[index];
+}
+
+// ----------------------------------------------------------------------
+// Static callback wrapper implementations
+// ----------------------------------------------------------------------
+
+CListTraverseStatus Channel::cycleTxFirstActiveWrapper(CListNode* node, void* context) {
+    struct CycleTxContext {
+        Channel* channel;
+        CycleTxArgs* args;
+    };
+    CycleTxContext* ctx = static_cast<CycleTxContext*>(context);
+    return ctx->channel->cycleTxFirstActive(node, ctx->args);
+}
+
+CListTraverseStatus Channel::doTickWrapper(CListNode* node, void* context) {
+    struct TickContext {
+        Channel* channel;
+        TickArgs* args;
+    };
+    TickContext* ctx = static_cast<TickContext*>(context);
+    return ctx->channel->doTick(node, ctx->args);
+}
+
+CListTraverseStatus Channel::traverseAllTransactionsWrapper(CListNode* node, void* context) {
+    struct TraverseAllContext {
+        CfdpTraverseAllTransactionsFunc fn;
+        void* userContext;
+        I32* counter;
+    };
+    TraverseAllContext* ctx = static_cast<TraverseAllContext*>(context);
+    Transaction* txn = container_of_cpp(node, &Transaction::m_cl_node);
+    ctx->fn(txn, ctx->userContext);
+    ++(*ctx->counter);
+    return CLIST_TRAVERSE_CONTINUE;
 }
 
 }  // namespace Cfdp

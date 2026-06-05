@@ -8,6 +8,7 @@
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <new>
 
 namespace Svc {
 namespace Ccsds {

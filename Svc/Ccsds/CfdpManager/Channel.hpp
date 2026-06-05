@@ -413,6 +413,34 @@ class Channel {
      */
     CListTraverseStatus doTick(CListNode* node, void* context);
 
+    // ----------------------------------------------------------------------
+    // Static callback wrappers (for function pointer callbacks)
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Static wrapper for cycleTxFirstActive callback
+     * @param node CList node
+     * @param context Pointer to Channel instance
+     * @return Traversal status
+     */
+    static CListTraverseStatus cycleTxFirstActiveWrapper(CListNode* node, void* context);
+
+    /**
+     * @brief Static wrapper for doTick callback
+     * @param node CList node
+     * @param context Pointer to Channel instance
+     * @return Traversal status
+     */
+    static CListTraverseStatus doTickWrapper(CListNode* node, void* context);
+
+    /**
+     * @brief Static wrapper for traverseAllTransactions callback
+     * @param node CList node
+     * @param context Pointer to TraverseAllContext struct
+     * @return Traversal status
+     */
+    static CListTraverseStatus traverseAllTransactionsWrapper(CListNode* node, void* context);
+
   private:
     // ----------------------------------------------------------------------
     // Private helper methods

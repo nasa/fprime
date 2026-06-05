@@ -94,7 +94,7 @@ void CfdpChunkList::removeFromFirst(FileSize size) {
 U32 CfdpChunkList::computeGaps(ChunkIdx maxGaps,
                                FileSize total,
                                FileSize start,
-                               const GapComputeCallback& callback,
+                               GapComputeCallback callback,
                                void* opaque) const {
     U32 ret = 0;
     ChunkIdx i = 0;

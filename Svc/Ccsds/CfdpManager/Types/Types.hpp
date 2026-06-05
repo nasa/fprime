@@ -7,8 +7,6 @@
 #ifndef Svc_Ccsds_Cfdp_Types_HPP
 #define Svc_Ccsds_Cfdp_Types_HPP
 
-#include <functional>
-
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/EnabledEnumAc.hpp>
 #include <Fw/Types/String.hpp>
@@ -415,7 +413,7 @@ union CfdpStateData {
  * @param txn Pointer to current transaction being traversed
  * @param context Opaque object passed from initial call
  */
-using CfdpTraverseAllTransactionsFunc = std::function<void(Transaction* txn, void* context)>;
+using CfdpTraverseAllTransactionsFunc = void (*)(Transaction* txn, void* context);
 
 }  // namespace Cfdp
 }  // namespace Ccsds

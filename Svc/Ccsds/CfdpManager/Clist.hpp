@@ -34,7 +34,6 @@
 
 #include <Fw/Types/BasicTypes.hpp>
 #include <cstddef>
-#include <functional>
 
 namespace Svc {
 namespace Ccsds {
@@ -94,12 +93,12 @@ constexpr Container* container_of_cpp(Member* member_ptr, Member Container::* me
 using CListFunc = CListTraverseStatus (*)(CListNode*, void*);
 
 /**
- * @brief Modern callback type for list traversal
+ * @brief Callback type for list traversal
  *
- * Replaces CListFunc with a more flexible std::function-based callback.
+ * Function pointer callback for list traversal operations.
  * The callback receives the node and an opaque context pointer.
  */
-using CListTraverseCallback = std::function<CListTraverseStatus(CListNode*, void*)>;
+using CListTraverseCallback = CListTraverseStatus (*)(CListNode*, void*);
 
 /************************************************************************/
 /** @brief Initialize a clist node.
@@ -162,18 +161,6 @@ void CfdpCListInsertAfter(CListNode** head, CListNode* start, CListNode* after);
  * @param context Opaque pointer to pass to callback
  */
 void CfdpCListTraverse(CListNode* start, CListFunc fn, void* context);
-
-/************************************************************************/
-/** @brief Traverse the entire list, calling the given function on all nodes (modern C++ version).
- *
- * @note on traversal it's ok to delete the current node, but do not delete
- * other nodes in the same list!!
- *
- * @param start    List to traverse (first node)
- * @param callback Callback function to invoke for each node
- * @param context  Opaque pointer to pass to callback
- */
-void CfdpCListTraverse(CListNode* start, const CListTraverseCallback& callback, void* context);
 
 /************************************************************************/
 /** @brief Reverse list traversal, starting from end, calling given function on all nodes.

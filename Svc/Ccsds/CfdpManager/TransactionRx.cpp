@@ -733,6 +733,15 @@ void Transaction::r2GapCompute(const Chunk* chunk, NakPdu& nak) {
     nak.addSegment(offsetStart, offsetEnd);
 }
 
+void Transaction::r2GapComputeWrapper(const Chunk* chunk, void* opaque) {
+    struct GapComputeContext {
+        Transaction* txn;
+        NakPdu* nak;
+    };
+    GapComputeContext* ctx = static_cast<GapComputeContext*>(opaque);
+    ctx->txn->r2GapCompute(chunk, *ctx->nak);
+}
+
 Status::T Transaction::rSubstateSendNak() {
     Status::T status = Cfdp::Status::SUCCESS;
 
@@ -757,9 +766,13 @@ Status::T Transaction::rSubstateSendNak() {
         U32 gapLimit = (chunkCount < maxChunks) ? maxChunks : (maxChunks - 1);
 
         // For each gap found, add it as a segment to the NAK PDU via callback
-        U32 gapCount = this->m_chunks->chunks.computeGaps(
-            static_cast<ChunkIdx>(gapLimit), this->m_fsize, 0,
-            [this, &nakPdu](const Chunk* chunk, void* opaque) { this->r2GapCompute(chunk, nakPdu); }, nullptr);
+        struct GapComputeContext {
+            Transaction* txn;
+            NakPdu* nak;
+        } gapCtx = {this, &nakPdu};
+
+        U32 gapCount = this->m_chunks->chunks.computeGaps(static_cast<ChunkIdx>(gapLimit), this->m_fsize, 0,
+                                                          &Transaction::r2GapComputeWrapper, &gapCtx);
 
         if (!gapCount) {
             // No gaps left, file reception is complete

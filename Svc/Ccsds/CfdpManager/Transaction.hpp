@@ -634,6 +634,13 @@ class Transaction {
      */
     void r2GapCompute(const Chunk* chunk, NakPdu& nak);
 
+    /**
+     * @brief Static wrapper for r2GapCompute callback
+     * @param chunk Gap chunk
+     * @param opaque Pointer to GapComputeContext struct
+     */
+    static void r2GapComputeWrapper(const Chunk* chunk, void* opaque);
+
     /************************************************************************/
     /** @brief Send a NAK PDU for R2.
      *
