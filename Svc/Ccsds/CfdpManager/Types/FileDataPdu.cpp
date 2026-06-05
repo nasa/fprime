@@ -139,6 +139,12 @@ Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
 
     // Calculate remaining data size based on header's PDU data length
     U16 pduDataLength = this->m_header.getPduDataLength();
+
+    // Defensive check: prevent unsigned integer underflow
+    if (pduDataLength < offsetSize) {
+        return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
+    }
+
     this->m_dataSize = static_cast<U16>(pduDataLength - offsetSize);  // minus offset size
 
     // Point to the data in the buffer (zero-copy)
