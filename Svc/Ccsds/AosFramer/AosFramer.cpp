@@ -23,7 +23,11 @@ AosFramer ::AosFramer(const char* const compName) : AosFramerComponentBase(compN
 
 AosFramer ::~AosFramer() {}
 
-void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControlField, const U8 idlePvns) {
+void AosFramer::configure(const U32 fixedFrameSize,
+                          const bool frameErrorControlField,
+                          const U16 spacecraftId,
+                          const U8 vcId,
+                          const U8 idlePvns) {
     // fixedFrameSize must be less than or equal to the maximum defined in ComCfg.fpp
     FW_ASSERT(fixedFrameSize <= ComCfg::AosMaxFrameFixedSize, static_cast<FwAssertArgType>(fixedFrameSize));
 
@@ -32,6 +36,12 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
                                    (frameErrorControlField ? AOSTrailer::SERIALIZED_SIZE : 0),
               static_cast<FwAssertArgType>(fixedFrameSize));
 
+    // Spacecraft ID is 10 bits (per CCSDS 732.0-B-5 Section 4.1.2.2)
+    FW_ASSERT((spacecraftId & 0xFC00) == 0, static_cast<FwAssertArgType>(spacecraftId));
+
+    // Virtual Channel ID is 6 bits (per CCSDS 732.0-B-5 Section 4.1.2.3)
+    FW_ASSERT((vcId & 0xC0) == 0, static_cast<FwAssertArgType>(vcId));
+
     // AOS Framer must be provided with a protocol to use for Idle Packets
     // Currently, only SPP idle packing is supported
     // EPP is more optimal, however
@@ -39,6 +49,7 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
+    this->m_spacecraftId = spacecraftId;
 
     // For each vc, init the buffer objects
     for (U8 ind = 0; ind < sizeof(this->m_vcs) / sizeof(AosVc); ind++) {
@@ -46,6 +57,7 @@ void AosFramer::configure(const U32 fixedFrameSize, const bool frameErrorControl
 
         // Write the index for mapping a vc struct onto an output port
         currentVc.vc_struct_index = ind;
+        currentVc.virtualChannelId = vcId;
         currentVc.frame.buffer = {currentVc.frame.backer, fixedFrameSize};
         // Set the bitmask of PVNs to use for idle packets
         currentVc.idle_packet_types = idlePvns;
@@ -150,9 +162,9 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
     AOSHeader header;
 
     // GVCID (Global Virtual Channel ID) (Standard 4.1.2.2 and 4.1.2.3)
-    U16 globalVcId = static_cast<U16>(context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset);
-    globalVcId |= static_cast<U16>((ComCfg::SpacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset);
-    globalVcId |= static_cast<U16>((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset);
+    U16 globalVcId = static_cast<U16>((context.get_vcId() << AOSHeaderSubfields::virtualChannelIdOffset) |
+                                      ((m_spacecraftId & 0x00FF) << AOSHeaderSubfields::spacecraftIdLsbOffset) |
+                                      ((Tfvn::AOS & 0x3) << AOSHeaderSubfields::frameVersionOffset));
 
     // Virtual Channel Frame Count (4.1.2.4)
     U32 frameCountAndSignaling = static_cast<U32>((currentVc.virtualFrameCount & 0x00FFFFFFU)
@@ -163,7 +175,7 @@ void AosFramer ::setup_header(const ComCfg::FrameContext& context) {
 
     // Spacecraft ID MSB (4.1.2.5.4)
     frameCountAndSignaling |=
-        static_cast<U32>((ComCfg::SpacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
+        static_cast<U32>((m_spacecraftId & 0x0300) >> (8 - AOSHeaderSubfields::spacecraftIdMsbOffset));
 
     // Virtual Channel Frame Cycle Count (4.1.2.5.5)
     frameCountAndSignaling |= static_cast<U32>((currentVc.virtualFrameCount & 0x0F000000) >> 24);

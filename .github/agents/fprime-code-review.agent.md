@@ -188,7 +188,7 @@ per the review contract §9.
 - Design fit (does the FPP / topology / pattern make sense given
   intent) — handled by `design-review.agent.md`.
 
-The six reviewer agents are designed to partition the review
+The seven reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 
@@ -292,7 +292,7 @@ prose so a reader can jump to
 `_shared/skills/fprime-cpp-design.skill.md` for context:
 
 ```
-**must fix** CPP-1 (no dynamic memory after init): `new` / `delete` in steady-state handler.
+[C++ Design] **must fix** CPP-1 (no dynamic memory after init): `new` / `delete` in steady-state handler.
 
 Allocate `scratch` once at component init and reuse the buffer;
 post-init heap traffic is forbidden in flight code.

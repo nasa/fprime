@@ -18,6 +18,7 @@ Core services are those that directly wrap OS primitives and are implemented by 
 | Service | Purpose |
 |---|---|
 | **Mutex** | Mutual-exclusion lock and RAII `ScopeLock` helper. |
+| **CountingSemaphore** | Counting semaphore for resource counting and thread synchronization. |
 | **Task** | Thread creation, joining, and lifecycle management including start/stop callbacks. |
 | **Queue** | Inter-task message passing with configurable depth, priority support, and blocking modes. |
 
@@ -116,7 +117,7 @@ There are two usage patterns for the wrapper classes:
 | Usage Pattern | Description | Service | Example Usage |
 |---|---|---|---|
 | **Singletons** | Global state and/or accessed through static methods | FileSystem, Cpu, Memory, Task | Trough a static call:<br>```Os::FileSystem::rename(source, destination);``` |
-| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
+| **Handles** | Represents an OS object that carries state | File, Directory, Mutex, CountingSemaphore, Task, Queue, Console | Through an instance:<br>```Os::File my_file; my_file.open("path/to/file.txt");``` |
 
 The full API for each service is documented in the header files in the [`Os/` module](../).
 

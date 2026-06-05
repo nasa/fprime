@@ -4,7 +4,7 @@
 # A target used to add SBOM generation to the build. Will be invoked when running the "all" target
 # and installed into the build_artifacts directory underneath the platform folder.
 ####
-set(FPRIME__INTERNAL_SBOM_REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
+set(FPRIME__INTERNAL_SBOM_REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py" CACHE INTERNAL "Internal path to SBOM redirector script" FORCE)
 
 ####
 # sbom_add_global_target:
