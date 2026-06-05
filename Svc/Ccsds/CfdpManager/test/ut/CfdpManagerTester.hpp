@@ -373,7 +373,7 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test SendFile command with zero-length file (fix verification)
     void testSendFileZeroLength();
 
-    //! Test SendFile command with non-existent file
+    //! Test SendFile command with nonexistent file
     void testSendFileNonExistent();
 
     //! Test StopPollDirectory command on inactive directory
