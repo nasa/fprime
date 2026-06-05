@@ -606,6 +606,8 @@ void Channel::recycleTransaction(Transaction* txn) {
         if (txn->m_chunks != nullptr) {
             chunklist_head = this->getChunkListHead(static_cast<U8>(txn->m_history->dir));
             if (chunklist_head != nullptr) {
+                // Reset chunk list to clear stale data from previous transaction
+                txn->m_chunks->chunks.reset();
                 CfdpCListInsertBack(chunklist_head, &txn->m_chunks->cl_node);
                 txn->m_chunks = nullptr;
             }
