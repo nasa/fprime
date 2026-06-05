@@ -6,11 +6,11 @@
 ####
 include_guard()
 
-set(FPRIME__INTERNAL_UTILITY_SUFFIX "fprime-util")
-set(FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE "build-targets.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
-set(FPRIME__INTERNAL_UTILITY_SUBDIRECTORY_FILE "sub-directories.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
-set(FPRIME__INTERNAL_UTILITY_TESTS_FILE "tests.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
-set(FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE "test-dir.${FPRIME__INTERNAL_UTILITY_SUFFIX}")
+set(FPRIME__INTERNAL_UTILITY_SUFFIX "fprime-util" CACHE INTERNAL "Suffix for fprime-util metadata files" FORCE)
+set(FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE "build-targets.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util build targets metadata" FORCE)
+set(FPRIME__INTERNAL_UTILITY_SUBDIRECTORY_FILE "sub-directories.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util subdirectory metadata" FORCE)
+set(FPRIME__INTERNAL_UTILITY_TESTS_FILE "tests.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util tests metadata" FORCE)
+set(FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE "test-dir.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util test directory metadata" FORCE)
 
 ####
 # Function `fprime_util_metadata_clear`:

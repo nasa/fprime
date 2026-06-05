@@ -98,7 +98,7 @@ void AtomicQueue::create(FwSizeType numBuffers,
     FW_ASSERT(semMem != nullptr, static_cast<FwAssertArgType>(numBuffers));
 
     // Use placement new to construct semaphore with initial count = numBuffers (all slots available)
-    this->m_notFullSem = new (semMem) Os::CountingSemaphore(static_cast<U32>(numBuffers), 0);
+    this->m_notFullSem = new (semMem) Os::CountingSemaphore(static_cast<U32>(numBuffers));
     FW_ASSERT(this->m_notFullSem != nullptr, static_cast<FwAssertArgType>(numBuffers));
 
     this->m_enqueuePos.store(0, std::memory_order_relaxed);

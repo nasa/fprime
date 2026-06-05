@@ -14,15 +14,17 @@ struct StubCountingSemaphoreHandle : public CountingSemaphoreHandle {};
 
 class StubCountingSemaphore : public CountingSemaphoreInterface {
   public:
-    StubCountingSemaphore(U32 initial_count, int pshared);
+    explicit StubCountingSemaphore(U32 initial_count);
 
     ~StubCountingSemaphore() override = default;
 
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) override = delete;
+    StubCountingSemaphore(const StubCountingSemaphore& other) = delete;
+
+    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
 
     StubCountingSemaphore::Status wait() override;
 
-    StubCountingSemaphore::Status waitTimeout(U32 timeout_ms) override;
+    StubCountingSemaphore::Status waitTimeout(const Fw::TimeInterval& interval) override;
 
     StubCountingSemaphore::Status tryWait() override;
 

@@ -8,5 +8,9 @@ module Svc {
         dictionary constant MAX_STACK_SIZE = 65535
         @ the maximum number of bytes in a directive
         dictionary constant MAX_DIRECTIVE_SIZE = 2048
+        @ the default value of the SEQ_BASE_DIR parameter. suffixed to
+        @ the input sequence file path before resolution occurs following
+        @ the rules of Os::File::open. trailing slash optional
+        dictionary constant DEFAULT_SEQ_BASE_DIR = ""
     }
 }

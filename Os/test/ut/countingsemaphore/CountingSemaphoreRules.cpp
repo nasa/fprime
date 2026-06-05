@@ -2,6 +2,8 @@
 // \title Os/test/ut/countingsemaphore/CountingSemaphoreRules.cpp
 // \brief rule implementations for CountingSemaphore
 // ======================================================================
+#include <gtest/gtest.h>
+#include "Fw/Time/TimeInterval.hpp"
 #include "Os/test/ConcurrentRule.hpp"
 #include "Os/test/ut/countingsemaphore/RulesHeaders.hpp"
 
@@ -18,9 +20,11 @@ bool Tester::Wait::precondition(const Tester& state) {
 
 void Tester::Wait::action(Tester& state) {
     ++state.waiters;
-    Os::CountingSemaphore::Status status = state.semaphore.wait();
+    this->getLock().unlock();
+    ::Os::CountingSemaphore::Status status = state.semaphore.wait();
+    this->getLock().lock();
     --state.waiters;
-    FW_ASSERT(status == Os::CountingSemaphore::Status::OP_OK, status);
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 
 Tester::WaitTimeout::WaitTimeout(AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& runner)
@@ -32,10 +36,12 @@ bool Tester::WaitTimeout::precondition(const Tester& state) {
 
 void Tester::WaitTimeout::action(Tester& state) {
     ++state.waiters;
-    Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(100);
+    Fw::TimeInterval timeout(0, 100000);  // 100ms
+    this->getLock().unlock();
+    ::Os::CountingSemaphore::Status status = state.semaphore.waitTimeout(timeout);
+    this->getLock().lock();
     --state.waiters;
-    FW_ASSERT(status == Os::CountingSemaphore::Status::OP_OK || status == Os::CountingSemaphore::Status::ERROR_TIMEOUT,
-              status);
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 
 Tester::Post::Post(AggregatedConcurrentRule<Os::Test::CountingSemaphore::Tester>& runner)
@@ -47,8 +53,8 @@ bool Tester::Post::precondition(const Tester& state) {
 
 void Tester::Post::action(Tester& state) {
     this->wait_for_next_step();
-    Os::CountingSemaphore::Status status = state.semaphore.post();
-    FW_ASSERT(status == Os::CountingSemaphore::Status::OP_OK, status);
+    ::Os::CountingSemaphore::Status status = state.semaphore.post();
+    ASSERT_EQ(status, ::Os::CountingSemaphore::Status::OP_OK);
 }
 
 }  // namespace CountingSemaphore

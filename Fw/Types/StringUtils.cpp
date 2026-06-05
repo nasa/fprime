@@ -21,6 +21,14 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     return returned;
 }
 
+const char* Fw::StringUtils::string_last_n(const char* source, const FwSizeType n, const FwSizeType buffer_size) {
+    FW_ASSERT(source != nullptr);
+    FwSizeType length = Fw::StringUtils::string_length(source, buffer_size);
+
+    // Calculate start index. If string is shorter than N, keep whole string.
+    return (length > n) ? source + (length - n) : source;
+}
+
 FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType buffer_size) {
     FwSizeType length = 0;
     FW_ASSERT(source != nullptr);

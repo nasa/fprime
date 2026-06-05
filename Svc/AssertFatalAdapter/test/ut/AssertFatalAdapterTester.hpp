@@ -13,6 +13,8 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include <string>
+#include <vector>
 #include "AssertFatalAdapterGTestBase.hpp"
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp"
 
@@ -41,6 +43,10 @@ class AssertFatalAdapterTester : public AssertFatalAdapterGTestBase {
     //!
     void testAsserts();
 
+    //! Test file path truncation
+    //!
+    void testTruncation();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -63,11 +69,31 @@ class AssertFatalAdapterTester : public AssertFatalAdapterGTestBase {
     //!
     AssertFatalAdapterComponentImpl component;
 
+    //! Storage for text log messages
+    //!
+    std::vector<std::string> textLogMessages;
+
     void textLogIn(const FwEventIdType id,          //!< The event ID
                    const Fw::Time& timeTag,         //!< The time
                    const Fw::LogSeverity severity,  //!< The severity
                    const Fw::TextLogString& text    //!< The event string
                    ) override;
+
+    //! Clear text log history
+    //!
+    void clearTextLogs();
+
+    //! Get the last text log message
+    //!
+    const std::string& getLastTextLog() const;
+
+    //! Fill buffer with identifiable byte pattern for debugging
+    //! Writes repeating pattern: "00112233...99" to make byte positions visible
+    //! \param buffer: Character buffer to fill
+    //! \param size: Total size of buffer (includes null terminator)
+    //! \param nullTerminate: If true, writes null terminator at end
+    //!
+    static void fillWithBytePattern(char* buffer, FwSizeType size, bool nullTerminate = true);
 };
 
 }  // end namespace Svc
