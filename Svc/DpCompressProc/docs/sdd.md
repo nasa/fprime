@@ -74,7 +74,7 @@ Add requirements in the chart below
 1. `Svc::DpCompressProc` was unable to compress any chunks in the container. The original container is returned unmodified
 1. `Svc::DpCompressProc` was able to compress at least one chunk in the container. The container is modified to be a compressed data product
 
-`Svc::DpCompressProc` does this without allocating any additional buffers, which allows it work work effectively on low-memory systems. To do this each chunk is passed to the compressor with two pieces of metadata, a minimum necessary compression and a write offset
+`Svc::DpCompressProc` does this without allocating any additional buffers, which allows it to work effectively on low-memory systems. To do this each chunk is passed to the compressor with two pieces of metadata, a minimum necessary compression and a write offset
 
 ### CompressChunk port
 
@@ -82,7 +82,7 @@ The CompressChunk port call is a synchronous port call with three arguments, buf
 
 The buffer, an `Fw::Buffer`, is a chunk of the original data product container. The compressor will overwrite this buffer if it is able to compress the product. The compressor must also update the size of the buffer if compression took place.
 
-min\_compression represents the minimum amount of compression necessary for the compression to be useful. In order to return a compression data product, with the necessary compression record headers prepended, some chunks may need to be compressed with sufficient free space to accommodate the addition of these buffers. The value is a the maximum number of bytes that can be returned in the `Fw::Buffer`
+min\_compression represents the minimum amount of compression necessary for the compression to be useful. In order to return a compression data product, with the necessary compression record headers prepended, some chunks may need to be compressed with sufficient free space to accommodate the addition of these buffers. The value is a maximum number of bytes that can be returned in the `Fw::Buffer`
 
 In some cases it is necessary to place the compressed chunk at an offset within the passed `Fw::Buffer`. The write offset informs the compressor where to place the compressed data within the `Fw::Buffer` to accommodate any necessary headers.
 // TODO: Now that I'm thinking about it more, is this necessary? Would it be more straightforward to always place the buffer at the beginning of the `Fw::Buffer` and memmove it as necessary?
