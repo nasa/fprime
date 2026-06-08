@@ -349,7 +349,7 @@ Svc/SeqDispatcher/SeqDispatcher.cpp           78      57    73%   56,61-63,65,69
 Svc/StaticMemory/StaticMemoryComponentImpl.cpp
                                               20      20   100%
 Svc/SystemResources/SystemResources.cpp       73      72    98%   36
-Svc/TlmChan/TlmChan.cpp                      125     103    82%   56,59-60,102-104,114-117,119-121,131-133,197,222,224,226,229,234
+Svc/TlmChan/TlmChan.cpp                      174     135    77%   99,129,131,133,136-140,142,145,149-150,155,158-159,197-199,205-208,210-212,220-222,280,328-329,335-337,340,344,361-362
 Svc/TlmPacketizer/TlmPacketizer.cpp          295     273    92%   266,268-269,307,319,391,427-428,462-463,478-479,494-495,512-513,576-577,580,591-592,594
 Svc/Version/Version.cpp                      154     148    96%   104-106,228,230-231
 TestUtils/OnChangeChannel.hpp                  6       6   100%
@@ -364,5 +364,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17652   14338    81%
+TOTAL                                      17701   14370    81%
 ------------------------------------------------------------------------------
