@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-08 21:51:08</td>
+      <td>2026-06-08 22:20:15</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
+      <td>3</td>
       <td>5</td>
-      <td>18</td>
-      <td class="coverage-low">27.8%</td>
+      <td class="coverage-low">60.0%</td>
     </tr>
   </table>
 </div>
@@ -201,33 +201,22 @@
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/4</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 11 taken 76 times.</div>
-            <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
             <div class="takenBranch">&check; Branch 16 taken 76 times.</div>
-            <div class="notTakenBranch">&cross; Branch 17 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">76</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">::</span><span class="n">setBuff</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">m_bufferData</span><span class="p">,</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
+      <td class="linecount coveredLine">76</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">::</span><span class="n">setBuff</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">m_bufferData</span><span class="p">,</span><span class="w"> </span><span class="n">other</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/4</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 76 times.</div>
-            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">76</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
+      <td class="linecount coveredLine">76</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
@@ -295,16 +284,9 @@
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
-          <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 137 times.</div>
-          </div>
-        </details>
       </td>
-      <td class="linecount partialCoveredLine">137</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
+      <td class="linecount coveredLine">137</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
