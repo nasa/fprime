@@ -27,7 +27,6 @@ File::~File() {
 
 File::File(const File& other)
     : m_mode(other.m_mode),
-      m_path(other.m_path),
       m_crc(other.m_crc),
       m_crc_buffer(),
       m_handle_storage(),
@@ -38,7 +37,6 @@ File::File(const File& other)
 File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
-        this->m_path = other.m_path;
         this->m_crc = other.m_crc;
         this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
@@ -76,7 +74,6 @@ File::Status File::open(const CHAR* filepath,
     File::Status status = this->m_delegate.open(filepath, requested_mode, overwrite);
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
-        this->m_path = filepath;
         // Reset any open CRC calculations
         this->m_crc = File::INITIAL_CRC;
     }
@@ -99,7 +96,6 @@ void File::close() {
     FW_ASSERT((0 <= this->m_mode) && (this->m_mode < Mode::MAX_OPEN_MODE));
     this->m_delegate.close();
     this->m_mode = Mode::OPEN_NO_MODE;
-    this->m_path = nullptr;
 }
 
 bool File::isOpen() const {

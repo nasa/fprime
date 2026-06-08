@@ -585,7 +585,6 @@ class File final : public FileInterface {
     static const U32 INITIAL_CRC = 0xFFFFFFFF;  //!< Initial value for CRC calculation
 
     Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
-    const CHAR* m_path = nullptr;      //!< Path last opened
 
     U32 m_crc = File::INITIAL_CRC;  //!< Current CRC calculation
     U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];

@@ -5,8 +5,8 @@
 ####
 include(target/build) # Borrows some implementation
 include(fprime-util)
-set(FPRIME__INTERNAL_UT_TARGET "ut_exe") # For historical reasons
-set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake")
+set(FPRIME__INTERNAL_UT_TARGET "ut_exe" CACHE INTERNAL "Internal name for UT target" FORCE) # For historical reasons
+set(FPRIME__INTERNAL_UT_CLEAN_SCRIPT "${CMAKE_BINARY_DIR}/clean.cmake" CACHE INTERNAL "Internal path to UT clean script" FORCE)
 
 
 ####

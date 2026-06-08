@@ -5,6 +5,7 @@
 #ifndef OS_POSIX_ERRNO_HPP
 #define OS_POSIX_ERRNO_HPP
 #include "Os/Condition.hpp"
+#include "Os/CountingSemaphore.hpp"
 #include "Os/Directory.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
@@ -56,6 +57,13 @@ Os::Mutex::Status posix_status_to_mutex_status(int posix_status);
 //! \return: Os::ConditionVariable::Status representation of the error
 //!
 Os::ConditionVariable::Status posix_status_to_conditional_status(int posix_status);
+
+//! Convert a Posix return status (int) for Counting Semaphore operations to the Os::CountingSemaphore::Status
+//! representation.
+//! \param posix_status: return status
+//! \return: Os::CountingSemaphore::Status representation of the error
+//!
+Os::CountingSemaphore::Status posix_status_to_semaphore_status(int posix_status);
 
 }  // namespace Posix
 }  // namespace Os

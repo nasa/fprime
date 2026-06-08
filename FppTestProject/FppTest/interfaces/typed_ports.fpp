@@ -122,8 +122,12 @@ module FppTest {
         # Ports for testing special ports
         # ----------------------------------------------------------------------
 
-        output port prmGetIn: Fw.PrmGet
+        @ Output port that causes from_to_prmGetIn = prmGetIn to be generated
+        @ in the test harness. This lets the test harness emulate a PrmDb component.
+        output port to_prmGetIn: Fw.PrmGet
 
+        @ Output port that causes from_to_prmSetIn = prmSetIn to be generated
+        @ in the test harness. This lets the test harness emulate a PrmDb component.
         output port prmSetIn: Fw.PrmSet
 
     }
