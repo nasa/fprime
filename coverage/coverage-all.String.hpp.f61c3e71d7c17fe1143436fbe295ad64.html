@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-08 19:39:23</td>
+      <td>2026-06-08 21:07:05</td>
     </tr>
   </table>
 </div>
@@ -70,16 +70,16 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l25">Fw::String::String() (line 25)</a></td><td>called 101499 times</td><td>72.0%</td></tr>
+    <tr><td><a href="#l25">Fw::String::String() (line 25)</a></td><td>called 101438 times</td><td>72.0%</td></tr>
     <tr><td><a href="#l29">Fw::String::String(Fw::ConstStringBase const&amp;) (line 29)</a></td><td>called 5806 times</td><td>72.0%</td></tr>
     <tr><td><a href="#l27">Fw::String::String(Fw::String const&amp;) (line 27)</a></td><td>called 10068 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l31">Fw::String::String(char const*) (line 31)</a></td><td>called 32562 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l52">Fw::String::getCapacity() const (line 52)</a></td><td>called 278825 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l31">Fw::String::String(char const*) (line 31)</a></td><td>called 32557 times</td><td>72.0%</td></tr>
+    <tr><td><a href="#l52">Fw::String::getCapacity() const (line 52)</a></td><td>called 278341 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l40">Fw::String::operator=(Fw::ConstStringBase const&amp;) (line 40)</a></td><td>called 6007 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l35">Fw::String::operator=(Fw::String const&amp;) (line 35)</a></td><td>called 10391 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l45">Fw::String::operator=(char const*) (line 45)</a></td><td>called 134660 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l50">Fw::String::toChar() const (line 50)</a></td><td>called 345795 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l33">Fw::String::~String() (line 33)</a></td><td>called 149935 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l45">Fw::String::operator=(char const*) (line 45)</a></td><td>called 134609 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l50">Fw::String::toChar() const (line 50)</a></td><td>called 345428 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l33">Fw::String::~String() (line 33)</a></td><td>called 149869 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -267,12 +267,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 11 taken 101499 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 101438 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">101499</td>
+      <td class="linecount partialCoveredLine">101438</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -330,12 +330,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 11 taken 32562 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 32557 times.</div>
             <div class="notTakenBranch">&cross; Branch 12 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">32562</td>
+      <td class="linecount partialCoveredLine">32557</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">String</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">StringBase</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -349,7 +349,7 @@
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">299870</td>
+      <td class="linecount coveredLine">299738</td>
       <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -433,21 +433,21 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">134660</td>
+      <td class="linecount coveredLine">134609</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">String</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">134660</td>
+      <td class="linecount coveredLine">134609</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">StringBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">134660</td>
+      <td class="linecount coveredLine">134609</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -468,7 +468,7 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">345795</td>
+      <td class="linecount coveredLine">345428</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">toChar</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -482,7 +482,7 @@
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">278825</td>
+      <td class="linecount coveredLine">278341</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">StringBase</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">sizeof</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buf</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

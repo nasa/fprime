@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-08 19:39:23</td>
+      <td>2026-06-08 21:07:05</td>
     </tr>
   </table>
 </div>
@@ -70,15 +70,15 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l10">Os::Mutex::Mutex() (line 10)</a></td><td>called 5529 times</td><td>84.0%</td></tr>
-    <tr><td><a href="#l19">Os::Mutex::getHandle() (line 19)</a></td><td>called 15 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l34">Os::Mutex::lock() (line 34)</a></td><td>called 5520911 times</td><td>87.0%</td></tr>
-    <tr><td><a href="#l29">Os::Mutex::release() (line 29)</a></td><td>called 6000405 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l24">Os::Mutex::take() (line 24)</a></td><td>called 5778441 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l41">Os::Mutex::unLock() (line 41)</a></td><td>called 5999076 times</td><td>87.0%</td></tr>
-    <tr><td><a href="#l14">Os::Mutex::~Mutex() (line 14)</a></td><td>called 5530 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l48">Os::ScopeLock::ScopeLock(Os::Mutex&amp;) (line 48)</a></td><td>called 702805 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l52">Os::ScopeLock::~ScopeLock() (line 52)</a></td><td>called 702807 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l10">Os::Mutex::Mutex() (line 10)</a></td><td>called 5507 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l19">Os::Mutex::getHandle() (line 19)</a></td><td>called 12 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l34">Os::Mutex::lock() (line 34)</a></td><td>called 11371346 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l29">Os::Mutex::release() (line 29)</a></td><td>called 10160180 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l24">Os::Mutex::take() (line 24)</a></td><td>called 10087004 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l41">Os::Mutex::unLock() (line 41)</a></td><td>called 11034150 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l14">Os::Mutex::~Mutex() (line 14)</a></td><td>called 5508 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l48">Os::ScopeLock::ScopeLock(Os::Mutex&amp;) (line 48)</a></td><td>called 809094 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l52">Os::ScopeLock::~ScopeLock() (line 52)</a></td><td>called 809097 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -161,14 +161,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 398088 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 5529 times.</div>
-            <div class="takenBranch">&check; Branch 17 taken 5529 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 396504 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 5507 times.</div>
+            <div class="takenBranch">&check; Branch 17 taken 5507 times.</div>
             <div class="notTakenBranch">&cross; Branch 18 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">403617</td>
+      <td class="linecount partialCoveredLine">402011</td>
       <td class="src partialCoveredLine"><span class="n">Mutex</span><span class="o">::</span><span class="n">Mutex</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">(),</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">MutexInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -178,20 +178,20 @@
           <summary class="linebranchSummary">1/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 5529 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 5507 times.</div>
             <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 10 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5529</td>
+      <td class="linecount partialCoveredLine">5507</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5529</td>
+      <td class="linecount coveredLine">5507</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -205,7 +205,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11060</td>
+      <td class="linecount coveredLine">11016</td>
       <td class="src coveredLine"><span class="n">Mutex</span><span class="o">::~</span><span class="n">Mutex</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -215,25 +215,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 5529 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 5507 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">11058</td>
+      <td class="linecount partialCoveredLine">11014</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11058</td>
+      <td class="linecount coveredLine">11014</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_delegate</span><span class="p">.</span><span class="o">~</span><span class="n">MutexInterface</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11060</td>
+      <td class="linecount coveredLine">11016</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -247,7 +247,7 @@
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="n">MutexHandle</span><span class="o">*</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">getHandle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -257,18 +257,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 15 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 12 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">15</td>
+      <td class="linecount partialCoveredLine">12</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">getHandle</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -289,7 +289,7 @@
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5778441</td>
+      <td class="linecount coveredLine">10087004</td>
       <td class="src coveredLine"><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">take</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -299,18 +299,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 6404917 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 14186084 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5778441</td>
+      <td class="linecount partialCoveredLine">10087004</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6404917</td>
+      <td class="linecount coveredLine">14186084</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">take</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -331,7 +331,7 @@
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6000405</td>
+      <td class="linecount coveredLine">10160180</td>
       <td class="src coveredLine"><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">release</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -341,18 +341,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 6569309 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 14421547 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6000405</td>
+      <td class="linecount partialCoveredLine">10160180</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6569309</td>
+      <td class="linecount coveredLine">14421547</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">release</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -373,7 +373,7 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5520911</td>
+      <td class="linecount coveredLine">11371346</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">lock</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -383,18 +383,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 6075883 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 14412385 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5520911</td>
+      <td class="linecount partialCoveredLine">11371346</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6075883</td>
+      <td class="linecount coveredLine">14412385</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">take</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -404,11 +404,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 5671106 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10563250 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5671106</td>
+      <td class="linecount partialCoveredLine">10563250</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -422,7 +422,7 @@
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5671106</td>
+      <td class="linecount coveredLine">10563250</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -436,7 +436,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5999076</td>
+      <td class="linecount coveredLine">11034150</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">unLock</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -446,18 +446,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 6357763 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 14370435 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5999076</td>
+      <td class="linecount partialCoveredLine">11034150</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6357763</td>
+      <td class="linecount coveredLine">14370435</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">release</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -467,11 +467,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 5432042 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 11237705 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5432042</td>
+      <td class="linecount partialCoveredLine">11237705</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mutex</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -485,7 +485,7 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5432042</td>
+      <td class="linecount coveredLine">11237705</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -499,21 +499,21 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702805</td>
+      <td class="linecount coveredLine">809094</td>
       <td class="src coveredLine"><span class="n">ScopeLock</span><span class="o">::</span><span class="n">ScopeLock</span><span class="p">(</span><span class="n">Mutex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mutex</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_mutex</span><span class="p">(</span><span class="n">mutex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702805</td>
+      <td class="linecount coveredLine">809098</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mutex</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702793</td>
+      <td class="linecount coveredLine">809078</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -527,21 +527,21 @@
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702807</td>
+      <td class="linecount coveredLine">809097</td>
       <td class="src coveredLine"><span class="n">ScopeLock</span><span class="o">::~</span><span class="n">ScopeLock</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702807</td>
+      <td class="linecount coveredLine">809097</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mutex</span><span class="p">.</span><span class="n">unLock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">702802</td>
+      <td class="linecount coveredLine">809100</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
