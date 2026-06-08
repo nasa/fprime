@@ -1132,7 +1132,7 @@ Pops a `U32` seed value from the stack and uses it to seed the sequencer's inter
 ## PUSH_RAND (77)
 Pushes the next PRNG value to the stack.
 If this is called without the seed being manually set beforehand, then the seed will be set based on the current time.
-`PUSH_RAND` uses `std::mt19937` from C++'s random library, a deterministic non-cryptographic PRNG. It is suitable for repeatable pseudo-random values, simulations, randomized sequencing behavior, or tests, but it does not qualify as a [CSPRNG](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) and is not suitable for cryptographic keys, secrets, authentication tokens, or security-sensitive randomness.
+`PUSH_RAND` uses `std::mt19937` from C++'s random library, a deterministic non-cryptographic PRNG. It is suitable for repeatable pseudo-random values, simulations, randomized sequencing behavior, or tests, but it does not qualify as a [cryptographically secure pseudorandom number generator](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) and is not suitable for cryptographic keys, secrets, authentication tokens, or security-sensitive randomness.
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
