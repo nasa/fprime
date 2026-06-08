@@ -292,7 +292,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     U32 crcFinal;
     crc.finalize(crcFinal);
     crcFinal = ~crcFinal;
-    serStat = buff.serializeFrom(crc);
+    serStat = buff.serializeFrom(crcFinal);
 
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     writeSize = static_cast<FwSizeType>(buff.getSize());
