@@ -56,8 +56,6 @@ class TlmChan final : public TlmChanComponentBase {
         FwChanIdType free;                            //!< next free bucket
     } m_tlmEntries[2];
 
-    U32 m_activeBuffer;  // !< which buffer is active for storing telemetry
-
     U32 m_hashSeed;  // !< per-boot random seed for telemetry hash
 
     U32 m_procCapCount;  // !< per-epoch processing guard for Run_handler

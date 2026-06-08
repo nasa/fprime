@@ -36,7 +36,7 @@ static_assert(TLMCHAN_MAX_ENTRIES_PER_RUN > 0, "TLMCHAN_MAX_ENTRIES_PER_RUN must
 static_assert(TLMCHAN_MAX_ENTRIES_PER_RUN <= TLMCHAN_HASH_BUCKETS,
               "TLMCHAN_MAX_ENTRIES_PER_RUN cannot exceed TLMCHAN_HASH_BUCKETS");
 
-TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_activeBuffer(0), m_procCapCount(0), m_activeBuffer(ActiveBuffer::Buffer_0) {
+TlmChan::TlmChan(const char* name) : TlmChanComponentBase(name), m_procCapCount(0), m_activeBuffer(ActiveBuffer::Buffer_0) {
     FW_ASSERT(name != nullptr);
 
     // clear slot pointers
