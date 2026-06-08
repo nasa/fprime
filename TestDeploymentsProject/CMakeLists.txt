@@ -26,7 +26,7 @@ add_compile_options(
 )
 
 # Find the fprime package and include the core codebase
-set(FPRIME_INCLUDE_FRAMEWORK_CODE ON)
+set(FPRIME_INCLUDE_FRAMEWORK_CODE OFF)
 find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/..")
-
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/.." "F-Prime")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ref/")

@@ -50,7 +50,7 @@ function(run_sub_build SUB_BUILD_NAME)
     execute_process_or_fail("[sub-build] Failed to generate: ${SUB_BUILD_NAME}"
         "${CMAKE_COMMAND}"
         -G "${CMAKE_GENERATOR}"
-        "${CMAKE_CURRENT_SOURCE_DIR}"
+        "${CMAKE_SOURCE_DIR}"
         "-DFPRIME_SUB_BUILD_TARGETS=${TARGET_LIST_AS_STRING}"
         "-DFPRIME_SKIP_TOOLS_VERSION_CHECK=ON"
         "-DFPRIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
