@@ -383,7 +383,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
 void TlmPacketizer ::controlIn_handler(FwIndexType portNum,
                                        const Svc::TelemetrySection& section,
                                        const Fw::Enabled& enabled) {
-    if (0 <= section && section < TelemetrySection::NUM_SECTIONS && enabled.isValid()) {
+    if (0 <= section && section < TelemetrySection::NUM_SECTIONS) {
         (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = enabled);
     } else {
         this->log_WARNING_LO_SectionUnconfigurable(section, enabled);
