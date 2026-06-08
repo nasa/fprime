@@ -108,154 +108,154 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
     //! Increment receive error counter
     void incrementRecvErrors(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvErrors(m_channelTelemetry[chanId].get_recvErrors() + 1);
     }
 
     //! Increment receive dropped counter
     void incrementRecvDropped(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvDropped(m_channelTelemetry[chanId].get_recvDropped() + 1);
     }
 
     //! Increment receive spurious counter
     void incrementRecvSpurious(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvSpurious(m_channelTelemetry[chanId].get_recvSpurious() + 1);
     }
 
     //! Add to received file data bytes
     void addRecvFileDataBytes(U8 chanId, U32 bytes) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvFileDataBytes(m_channelTelemetry[chanId].get_recvFileDataBytes() + bytes);
     }
 
     //! Add to received NAK segment requests
     void addRecvNakSegmentRequests(U8 chanId, U32 count) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvNakSegmentRequests(m_channelTelemetry[chanId].get_recvNakSegmentRequests() +
                                                               count);
     }
 
     //! Increment received PDU counter
     void incrementRecvPdu(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvPdu(m_channelTelemetry[chanId].get_recvPdu() + 1);
     }
 
     //! Increment receive EOF canceled counter
     void incrementRecvEofCanceled(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_recvEofCanceled(m_channelTelemetry[chanId].get_recvEofCanceled() + 1);
     }
 
     //! Add to sent NAK segment requests
     void addSentNakSegmentRequests(U8 chanId, U32 count) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_sentNakSegmentRequests(m_channelTelemetry[chanId].get_sentNakSegmentRequests() +
                                                               count);
     }
 
     //! Add sent file data bytes
     void addSentFileDataBytes(U8 chanId, U32 bytes) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_sentFileDataBytes(m_channelTelemetry[chanId].get_sentFileDataBytes() + bytes);
     }
 
     //! Increment sent PDU counter
     void incrementSentPdu(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_sentPdu(m_channelTelemetry[chanId].get_sentPdu() + 1);
     }
 
     //! Increment sent EOF canceled counter
     void incrementSentEofCanceled(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_sentEofCanceled(m_channelTelemetry[chanId].get_sentEofCanceled() + 1);
     }
 
     //! Increment fault ACK limit counter
     void incrementFaultAckLimit(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultAckLimit(m_channelTelemetry[chanId].get_faultAckLimit() + 1);
     }
 
     //! Increment fault NAK limit counter
     void incrementFaultNakLimit(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultNakLimit(m_channelTelemetry[chanId].get_faultNakLimit() + 1);
     }
 
     //! Increment fault inactivity timer counter
     void incrementFaultInactivityTimer(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultInactivityTimer(m_channelTelemetry[chanId].get_faultInactivityTimer() + 1);
     }
 
     //! Increment fault CRC mismatch counter
     void incrementFaultCrcMismatch(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultCrcMismatch(m_channelTelemetry[chanId].get_faultCrcMismatch() + 1);
     }
 
     //! Increment fault file size mismatch counter
     void incrementFaultFileSizeMismatch(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileSizeMismatch(m_channelTelemetry[chanId].get_faultFileSizeMismatch() +
                                                              1);
     }
 
     //! Increment fault file open counter
     void incrementFaultFileOpen(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileOpen(m_channelTelemetry[chanId].get_faultFileOpen() + 1);
     }
 
     //! Increment fault file read counter
     void incrementFaultFileRead(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileRead(m_channelTelemetry[chanId].get_faultFileRead() + 1);
     }
 
     //! Increment fault file write counter
     void incrementFaultFileWrite(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileWrite(m_channelTelemetry[chanId].get_faultFileWrite() + 1);
     }
 
     //! Increment fault file seek counter
     void incrementFaultFileSeek(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileSeek(m_channelTelemetry[chanId].get_faultFileSeek() + 1);
     }
 
     //! Increment fault file rename counter
     void incrementFaultFileRename(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultFileRename(m_channelTelemetry[chanId].get_faultFileRename() + 1);
     }
 
     //! Increment fault directory read counter
     void incrementFaultDirectoryRead(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultDirectoryRead(m_channelTelemetry[chanId].get_faultDirectoryRead() + 1);
     }
 
     //! Increment receive EOF error counter (any condition code that is not no-error or cancel)
     void incrementFaultRxEofError(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultRxEofError(m_channelTelemetry[chanId].get_faultRxEofError() + 1);
     }
 
     //! Increment sent EOF error counter (any condition code that is not no-error or cancel)
     void incrementFaultTxEofError(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         m_channelTelemetry[chanId].set_faultTxEofError(m_channelTelemetry[chanId].get_faultTxEofError() + 1);
     }
 
     //! Get reference to channel telemetry for queue depth updates
     Cfdp::ChannelTelemetry& getChannelTelemetryRef(U8 chanId) {
-        FW_ASSERT(chanId < Cfdp::NumChannels);
+        FW_ASSERT(chanId < Cfdp::NumChannels, chanId);
         return m_channelTelemetry[chanId];
     }
 
