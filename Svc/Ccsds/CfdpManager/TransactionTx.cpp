@@ -576,12 +576,20 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
             // note this is a no-op unless the status was unset previously
             this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(this->m_state_data.send.s2.fin_cc));
 
+            // Set flag to send FIN-ACK while still in active state (before finishing)
+            this->m_flags.tx.send_fin_ack = true;
+
             // Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
             // to send it until after the EOF+ACK.  So at this point we stop trying to send anything
             // to the peer, regardless of whether we got every ACK we expected.
             this->m_engine->finishTransaction(this, true);
         }
-        this->m_flags.tx.send_fin_ack = true;
+        else if (this->m_state != TXN_STATE_HOLD)
+        {
+            // Retransmitted FIN: re-send FIN-ACK only if not in HOLD state
+            // If in HOLD, transaction is finished and waiting to recycle - don't prevent that
+            this->m_flags.tx.send_fin_ack = true;
+        }
     }
 }
 
