@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -21,6 +22,7 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "Utils/Hash/Hash.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -144,15 +146,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        FpySequencer_BlockState block      //!< Return command status when complete or not
+                        Svc::BlockState block              //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command RUN_ARGS
-    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
-                             U32 cmdSeq,                          //!< The command sequence number
-                             const Fw::CmdStringArg& fileName,    //!< The name of the sequence file
-                             Svc::FpySequencer_BlockState block,  //!< Return command status when complete or not
-                             Svc::SeqArgs args                    //!< Arguments to pass to the sequencer
+    void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                             U32 cmdSeq,                        //!< The command sequence number
+                             const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+                             Svc::BlockState block,             //!< Return command status when complete or not
+                             Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
                              ) override;
 
     //! Handler for command VALIDATE
@@ -175,9 +177,9 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Handler implementation for command RUN_VALIDATED
     //!
     //! Must be called after VALIDATE. Runs the sequence that was validated.
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,                //!< The opcode
-                                  U32 cmdSeq,                         //!< The command sequence number
-                                  Svc::FpySequencer_BlockState block  //!< Return command status when complete or not
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,   //!< The opcode
+                                  U32 cmdSeq,            //!< The command sequence number
+                                  Svc::BlockState block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -635,15 +637,20 @@ class FpySequencer : public FpySequencerComponentBase {
     FwEnumStoreType m_allocatorId;
 
     // assigned by the user via cmd
-    Fw::String m_sequenceFilePath;
+    // length is FileNameStringSize
+    Fw::FileNameString m_sequenceFilePath;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
     Utils::Hash m_computedCRC;
 
+    // Size of arguments read in current sequence. Used for validation between
+    // User provided arguments and what is requested of the sequence.
+    Fpy::StackSizeType m_totalExpectedArgSize;
+
     // whether or not the sequence we're about to run should return immediately or
     // block on completion
-    FpySequencer_BlockState m_sequenceBlockState;
+    Svc::BlockState m_sequenceBlockState;
     // if we are to block on completion, save the opCode and cmdSeq we should
     // return
     FwOpcodeType m_savedOpCode;

@@ -37,6 +37,24 @@ TEST(ApidManager, ValidateSequenceCounts) {
     ruleValidateFailure.apply(tester);  // validate wrong count; event expected
 }
 
+// Fill the APID table, then validate a count for an untracked APID.
+// Verifies that the component logs ApidTableFull, does NOT log
+// UnexpectedSequenceCount, and does not trip an FW_ASSERT trying to
+// re-sync the (untracked) APID.
+TEST(ApidManager, ValidateSequenceCountWhenTableFull) {
+    ApidManagerTester tester;
+    ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
+    ApidManagerTester::ValidateSeqCount__NewTableFull ruleValidateNewTableFull;
+    // Apply the NewOk rule until the table is full and the shadow flag flips.
+    // The rule itself is responsible for flipping shadow_isTableFull when size has reached MAX.
+    FwIndexType iter_bound = 1000;
+    while (!tester.shadow.shadow_isTableFull && iter_bound-- > 0) {
+        ruleGetNewOk.apply(tester);
+    }
+    // Now exercise the test path: validate a count for an untracked APID against a full table
+    ruleValidateNewTableFull.apply(tester);
+}
+
 // Randomized test: apply rules in a random sequence for a large number of iterations
 TEST(ApidManager, RandomizedTesting) {
     U32 numRulesToApply = 10000;
@@ -46,9 +64,11 @@ TEST(ApidManager, RandomizedTesting) {
     ApidManagerTester::GetSeqCount__NewTableFull ruleGetNewTableFull;
     ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
     ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
+    ApidManagerTester::ValidateSeqCount__NewTableFull ruleValidateNewTableFull;
 
     STest::Rule<ApidManagerTester>* rules[] = {
-        &ruleGetExisting, &ruleGetNewOk, &ruleGetNewTableFull, &ruleValidateOk, &ruleValidateFailure,
+        &ruleGetExisting, &ruleGetNewOk,        &ruleGetNewTableFull,
+        &ruleValidateOk,  &ruleValidateFailure, &ruleValidateNewTableFull,
     };
 
     STest::RandomScenario<ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));

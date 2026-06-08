@@ -7,8 +7,8 @@
 ####
 include_guard()
 include(config_assembler)
-set(FPRIME__INTERNAL_PROPERTY_WRITER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/property_writer.py")
-set(FPRIME__INTERNAL_CAT "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/cat.py")
+set(FPRIME__INTERNAL_PROPERTY_WRITER "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/property_writer.py" CACHE INTERNAL "Internal helper for module_info to write properties" FORCE)
+set(FPRIME__INTERNAL_CAT "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/cat.py" CACHE INTERNAL "Internal helper for module_info to concatenate files" FORCE)
 
 
 

@@ -79,8 +79,6 @@ build-fprime-automatic*
 /ci-logs*
 /ci-Framework-logs*
 /ci-Ref-logs*
-TesterBase.*
-GTestBase.*
 **/DefaultDict/serializable/*
 
 fprime-venv
@@ -94,3 +92,35 @@ Packet-Views
 docs/reference/api/cpp
 docs/reference/api/cmake
 temp_dir/
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app

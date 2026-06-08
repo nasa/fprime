@@ -17,7 +17,7 @@ module Ccsds {
             format "Malformed packet received refusing to deframe"
 
         @ Deframing received an invalid frame length
-        event InvalidLength(transmitted: U16, actual: FwSizeType) \
+        event InvalidLength(transmitted: FwSizeType, actual: FwSizeType) \
             severity warning high \
             format "Invalid length received. Header specified packet byte size of {} | Actual received data length: {}"
 

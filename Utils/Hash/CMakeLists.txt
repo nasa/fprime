@@ -8,30 +8,30 @@
 
 register_fprime_library(
     SOURCES
-        HashBufferCommon.cpp
-        HashCommon.cpp
+        "${CMAKE_CURRENT_LIST_DIR}/HashBufferCommon.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/HashCommon.cpp"
 
-        Crc32/Crc32.cpp
-        Crc32/HashImpl.cpp
+        "${CMAKE_CURRENT_LIST_DIR}/Crc32/Crc32.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Crc32/HashImpl.cpp"
 
         # Only provided to satisfy CCSDS
-        libcrc/lib_crc.c
+        "${CMAKE_CURRENT_LIST_DIR}/libcrc/lib_crc.c"
     HEADERS
-        Hash.hpp
-        HashBuffer.hpp
-        HashConfig.hpp
+        "${CMAKE_CURRENT_LIST_DIR}/Hash.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/HashBuffer.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/HashConfig.hpp"
 
-        Crc32/Crc32.hpp
+        "${CMAKE_CURRENT_LIST_DIR}/Crc32/Crc32.hpp"
 
         # Only provided to satisfy CCSDS
-        libcrc/lib_crc.h
+        "${CMAKE_CURRENT_LIST_DIR}/libcrc/lib_crc.h"
     DEPENDS
         Fw_Types
 )
 
 register_fprime_ut(
     SOURCES
-        Crc32/test/ut/Crc32Test.cpp
+        "${CMAKE_CURRENT_LIST_DIR}/Crc32/test/ut/Crc32Test.cpp"
     DEPENDS
         Utils_Hash
 )

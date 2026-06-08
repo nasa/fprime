@@ -79,6 +79,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void writeToFile(const char* name, FwSizeType maxBytes = Fpy::Sequence::SERIALIZED_SIZE);
     void removeFile(const char* name);
     void addDirective(Fpy::DirectiveId id, Fw::StatementArgBuffer& buf);
+    void addArgumentSpec(Fw::String argName, Fw::String typeName, Fpy::StackSizeType argSize);
 
     void add_WAIT_REL();
     void add_WAIT_REL(FpySequencer_WaitRelDirective dir);
@@ -248,6 +249,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
+    // directly invokes the setSequenceFilePath state machine action, bypassing the
+    // command path (which truncates string args to FW_CMD_STRING_MAX_SIZE)
+    void tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args);
     Fw::Success tester_readBytes(Os::File& file,
                                  FwSizeType readLen,
                                  FpySequencer_FileReadStage readStage,
@@ -256,6 +260,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
+    void tester_set_m_sequenceArgs(Svc::SeqArgs args);
     Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();

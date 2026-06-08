@@ -1,0 +1,39 @@
+####
+# 'Ref' Deployment:
+#
+# This sets up the build for the 'Ref' Application, including the custom reference
+# components. In addition, it imports FPrime.cmake, which includes the core F Prime
+# components.
+####
+
+# Add subdirectories for the Ref project specific components
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PingReceiver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RecvBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SendBuffApp/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SignalGen/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TypeDemo/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpDemo/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BlockDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Top/")
+
+register_fprime_deployment(
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+    DEPENDS
+        ${PROJECT_NAME}_Top
+)
+# The following compile options will only apply to the deployment executable.
+# The extra warnings trigger in core F Prime so we don't apply them there.
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wall)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wextra)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Werror)
+target_compile_options("${PROJECT_NAME}" PUBLIC -pedantic)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wshadow)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wconversion)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wsign-conversion)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wformat-security)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wnon-virtual-dtor)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wold-style-cast)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Woverloaded-virtual)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wno-unused-parameter)
+target_compile_options("${PROJECT_NAME}" PUBLIC -Wundef)

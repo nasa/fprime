@@ -46,6 +46,18 @@ class SerializeTestBuffer : public Fw::LinearBufferBase {
     U8 m_testBuff[255];
 };
 
+TEST(SerializationTest, SerializeSizeLeftStartsAtCapacity) {
+    SerializeTestBuffer buff;
+
+    ASSERT_EQ(buff.getCapacity(), buff.getSerializeSizeLeft());
+
+    const U8 value = 0xAB;
+    const Fw::SerializeStatus status = buff.serializeFrom(value);
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
+    ASSERT_EQ(buff.getCapacity() - sizeof(value), buff.getSerializeSizeLeft());
+}
+
 TEST(SerializationTest, Serialization1) {
     printf("Testing Serialization code\n");
 
@@ -1705,6 +1717,49 @@ TEST(Nominal, string_len) {
 TEST(OffNominal, string_len_zero) {
     const char* test_string = "abc123";
     ASSERT_EQ(Fw::StringUtils::string_length(test_string, static_cast<FwSizeType>(0)), 0);
+}
+
+TEST(Nominal, string_last_n) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 3, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 3);
+    ASSERT_STREQ(tail, "123");
+}
+
+TEST(OffNominal, string_last_n_n_equals_length) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 6, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_n_greater_than_length) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 50, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_zero_n) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 0, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 6);
+    ASSERT_STREQ(tail, "");
+}
+
+TEST(OffNominal, string_last_n_zero_buffer) {
+    char test_string[] = "abc123";
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 3, static_cast<FwSizeType>(0));
+    ASSERT_EQ(tail, test_string);
+    ASSERT_STREQ(tail, "abc123");
+}
+
+TEST(OffNominal, string_last_n_bounded_non_null_terminated) {
+    char test_string[] = {'a', 'b', 'c', 'd'};
+    const char* tail = Fw::StringUtils::string_last_n(test_string, 2, static_cast<FwSizeType>(sizeof(test_string)));
+    ASSERT_EQ(tail, test_string + 2);
+    ASSERT_EQ(tail[0], 'c');
+    ASSERT_EQ(tail[1], 'd');
 }
 
 TEST(OffNominal, sub_string_no_match) {

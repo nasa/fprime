@@ -49,19 +49,29 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     if (header.get_startWord() != default_value.get_startWord()) {
         return Status::NO_FRAME_DETECTED;
     }
-    // Validate size before proceeding
-    const FwSizeType max_payload_size = std::numeric_limits<FwSizeType>::max() -
-                                        FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
-                                        FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
-    // If the header length is larger than size can store, then frame is invalid
-    if (max_payload_size < header.get_lengthField()) {
-        // Size overflow - frame is invalid
+    // Validate size before proceeding.
+    // Use a static_assert to guarantee the two fixed overhead constants don't themselves overflow
+    // when added together. This is a compile-time check so it carries zero runtime cost, but it
+    // protects the runtime guard below if SERIALIZED_SIZE values are ever changed.
+    static_assert(FprimeProtocol::FrameHeader::SERIALIZED_SIZE <=
+                      std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameTrailer::SERIALIZED_SIZE,
+                  "FrameHeader::SERIALIZED_SIZE + FrameTrailer::SERIALIZED_SIZE overflows FwSizeType");
+    constexpr FwSizeType header_trailer_overhead =
+        FprimeProtocol::FrameHeader::SERIALIZED_SIZE + FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+
+    // Guard: reject frames whose declared length would overflow FwSizeType when added to the
+    // fixed overhead. Using subtraction on unsigned types (as in the prior implementation) is
+    // fragile — if the constants change sign or width the subtraction itself can wrap silently.
+    // An explicit addition-based check is clearer and easier to audit.
+    if (header.get_lengthField() > std::numeric_limits<FwSizeType>::max() - header_trailer_overhead) {
+        // lengthField + overhead would overflow — frame is invalid
         return Status::NO_FRAME_DETECTED;
     }
 
-    // We expect the frame size to be size of header + body (of size specified in header) + trailer
-    const FwSizeType expected_frame_size = FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField() +
-                                           FprimeProtocol::FrameTrailer::SERIALIZED_SIZE;
+    // We expect the frame size to be size of header + body (of size specified in header) + trailer.
+    // Overflow is impossible here: the guard above ensures
+    //   lengthField <= MAX - header_trailer_overhead
+    const FwSizeType expected_frame_size = header.get_lengthField() + header_trailer_overhead;
     // If the frame will never fit, then report NO_FRAME_DETECTED to drop the erroneous frame
     if (data.get_capacity() < expected_frame_size) {
         return Status::NO_FRAME_DETECTED;
@@ -90,7 +100,16 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
 
     Utils::Hash hash;
     Utils::HashBuffer hashBuffer;
-    // Compute CRC over the transmitted data (header + body)
+    // Compute CRC over the transmitted data (header + body).
+    // Safety invariant: the guard above ensures
+    //   lengthField <= MAX - header_trailer_overhead
+    //                <= MAX - HEADER_SIZE - TRAILER_SIZE
+    //                <  MAX - HEADER_SIZE
+    // so this addition cannot overflow. The assert makes that contract explicit at the
+    // point of use so it remains correct if this code is ever moved or refactored.
+    FW_ASSERT(header.get_lengthField() <=
+                  std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
+              static_cast<FwAssertArgType>(header.get_lengthField()));
     FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
     hash.init();
     for (FwSizeType i = 0; i < hash_field_size; i++) {
