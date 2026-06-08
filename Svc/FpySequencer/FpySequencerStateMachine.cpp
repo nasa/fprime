@@ -19,13 +19,40 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_signalEntered(
 //! Implementation for action setSequenceFilePath of state machine
 //! Svc_FpySequencer_SequencerStateMachine
 //!
-//! sets the current sequence file path member var
+//! sets the current sequence file path member var, resolving it against
+//! the SEQ_BASE_DIR parameter so that subsequent telemetry, events, and
+//! file IO see the fully qualified path
 void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
     SmId smId,                                              //!< The state machine id
     Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
     const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
 ) {
-    this->m_sequenceFilePath = value.get_filePath();
+    Fw::ParamValid valid;
+    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(valid);
+    if (baseDir.length() == 0) {
+        // the assignment here ensures the string is null terminated
+        // because it uses the string_copy method
+        // also, the filePath string in SequenceExecutionArgs is guaranteed
+        // to be truncated to FileNameStringSize chars, so it will not
+        // be truncated by this assignment
+        this->m_sequenceFilePath = value.get_filePath();
+        return;
+    }
+
+    Fw::FormatStatus status;
+    // the result will get truncated to FileNameStringSize
+    status = this->m_sequenceFilePath.format("%s/%s", baseDir.toChar(), value.get_filePath().toChar());
+    if (status == Fw::FormatStatus::SUCCESS) {
+        return;
+    }
+
+    // the only runtime-reachable non-success status is OVERFLOWED, which means the
+    // base dir and file name together are longer than the sequence file path buffer.
+    // the other statuses can only result from a bad format string literal, which is a
+    // coding error. let the user know the path was truncated; validate() will then fail
+    // to open the (truncated) path and report a FileOpenError.
+    FW_ASSERT(status == Fw::FormatStatus::OVERFLOWED, static_cast<I32>(status));
+    this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, value.get_filePath());
 }
 
 //! Implementation for action setSequenceBlockState of state machine

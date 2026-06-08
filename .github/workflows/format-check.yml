@@ -11,6 +11,10 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+
+permissions:
+  contents: read
 
 jobs:
   cpp-formatting:

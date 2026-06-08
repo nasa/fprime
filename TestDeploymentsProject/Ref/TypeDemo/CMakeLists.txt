@@ -8,11 +8,13 @@
 add_compile_options(
   -Wno-double-promotion
 )
-set(SOURCE_FILES
+register_fprime_module(
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.fpp"
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.cpp"
-)
-set(MOD_DEPS
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/TypeDemo.hpp"
+  DEPENDS
     Os
 )
-register_fprime_module()

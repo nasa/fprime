@@ -59,24 +59,32 @@ class IpSocket {
     IpSocket();
     virtual ~IpSocket() {};
     /**
-     * \brief configure the ip socket with host and transmission timeouts
+     * \brief configure the ip socket with an IPv4 address and transmission timeouts
      *
-     * Configures the IP handler (Tcp, Tcp server, and Udp) to use the given hostname and port. When multiple ports are
-     * used for send/receive these settings affect the send direction (as is the case for udp). Hostname DNS translation
-     * is left up to the caller and thus hostname must be an IP address in dot-notation of the form "x.x.x.x". Port
-     * cannot be set to 0 as dynamic port assignment is not supported.
+     * Configures the IP handler (Tcp, Tcp server, and Udp) to use the given IPv4 address and port.
+     * When multiple ports are used for send/receive these settings affect the send direction (as is
+     * the case for udp).
      *
-     * Note: for UDP sockets this is equivalent to `configureSend` and only sets up the transmission direction of the
-     * socket.  A separate call to `configureRecv` is required to receive on the socket and should be made before the
-     * `open` call has been made.
+     * \warning DNS resolution is NOT performed by this driver. The \a ipv4_address argument MUST be
+     * a NUL-terminated IPv4 address in dotted-quad notation of the form "x.x.x.x" (for example,
+     * "127.0.0.1"). Passing a textual hostname (e.g. "localhost") will be rejected at open() time
+     * with SOCK_INVALID_IP_ADDRESS. Callers that need DNS lookup must perform it themselves and
+     * pass the resolved IPv4 string to this function.
      *
-     * \param hostname: socket uses for outgoing transmissions (and incoming when tcp). Must be of form x.x.x.x
+     * Port cannot be set to 0 as dynamic port assignment is not supported.
+     *
+     * Note: for UDP sockets this is equivalent to `configureSend` and only sets up the
+     * transmission direction of the socket. A separate call to `configureRecv` is required to
+     * receive on the socket and should be made before the `open` call has been made.
+     *
+     * \param ipv4_address: IPv4 address (dotted-quad "x.x.x.x") used for outgoing transmissions
+     *                      (and incoming when tcp).
      * \param port: port socket uses for outgoing transmissions (and incoming when tcp). Must NOT be 0.
      * \param send_timeout_seconds: send timeout seconds portion
      * \param send_timeout_microseconds: send timeout microseconds portion. Must be less than 1000000
      * \return status of configure
      */
-    virtual SocketIpStatus configure(const char* hostname,
+    virtual SocketIpStatus configure(const char* const ipv4_address,
                                      const U16 port,
                                      const U32 send_timeout_seconds,
                                      const U32 send_timeout_microseconds);
@@ -179,12 +187,18 @@ class IpSocket {
     SocketIpStatus setupTimeouts(int socketFd);
 
     /**
-     * \brief converts a given address in dot form x.x.x.x to an ip address. ONLY works for IPv4.
-     * \param address: address to convert
-     * \param ip4: IPv4 representation structure to fill
-     * \return: status of conversion
+     * \brief converts a given IPv4 address in dotted-quad form "x.x.x.x" to a network-order
+     *        in_addr structure. ONLY works for IPv4; does NOT perform DNS resolution.
+     *
+     * On failure the destination buffer is zero-initialized so callers cannot accidentally
+     * consume uninitialized stack memory after a failed conversion.
+     *
+     * \param ipv4_address: NUL-terminated dotted-quad IPv4 address to convert (must not be null)
+     * \param out: pointer to a struct in_addr (or equivalently sized buffer) to fill
+     *             (must not be null)
+     * \return: SOCK_SUCCESS on success, SOCK_INVALID_IP_ADDRESS on any malformed input
      */
-    static SocketIpStatus addressToIp4(const char* address, void* ip4);
+    static SocketIpStatus addressToIp4(const char* const ipv4_address, void* const out);
     /**
      * \brief Protocol specific open implementation, called from open.
      * \param socketDescriptor: (output) socket descriptor opened. Only valid on SOCK_SUCCESS. Otherwise will be invalid
@@ -233,8 +247,8 @@ class IpSocket {
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
-    U16 m_port;                                 //!< IP address port used
-    char m_hostname[SOCKET_MAX_HOSTNAME_SIZE];  //!< Hostname to supply
+    U16 m_port;                                         //!< IP address port used
+    char m_ipv4_address[SOCKET_MAX_IPV4_ADDRESS_SIZE];  //!< IPv4 address (dotted-quad "x.x.x.x")
 };
 }  // namespace Drv
 

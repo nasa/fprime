@@ -201,4 +201,96 @@ void FileWorkerTester ::testWriteHashErr() {
     fTest.setRead(Os::FileInterface::OP_OK);
 }
 
+// ----------------------------------------------------------------------
+// Input-validation tests
+//
+// These exercise the runtime checks that replaced FW_ASSERTs on the
+// readIn/verifyIn/writeIn port handlers. Each malformed input should emit
+// a single InvalidInput warning event, return FW_STATUS_INVALID_INPUT on the
+// corresponding done port, and leave the component in IDLE. None of these
+// paths touch the filesystem, so the FileTester mock state is irrelevant.
+// ----------------------------------------------------------------------
+
+void FileWorkerTester ::testReadInvalidInput() {
+    FwSizeType size = 1024;
+    U8 data[size];
+    Fw::Buffer validBuf(data, size);
+
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_readIn(0, emptyPath, validBuf);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "readIn", "empty path");
+    ASSERT_from_readDoneOut_SIZE(1);
+    ASSERT_from_readDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Invalid (null/zero-size) buffer with an otherwise valid path
+    this->clearHistory();
+    Fw::String validPath("nominalread.bin");
+    Fw::Buffer invalidBuf;  // default construction: null data, zero size -> !isValid()
+    this->invoke_to_readIn(0, validPath, invalidBuf);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "readIn", "invalid buffer");
+    ASSERT_from_readDoneOut_SIZE(1);
+    ASSERT_from_readDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+}
+
+void FileWorkerTester ::testVerifyInvalidInput() {
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_verifyIn(0, emptyPath, 0);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "verifyIn", "empty path");
+    ASSERT_from_verifyDoneOut_SIZE(1);
+    ASSERT_from_verifyDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+}
+
+void FileWorkerTester ::testWriteInvalidInput() {
+    FwSizeType size = 1024;
+    U8 data[size];
+    Fw::Buffer validBuf(data, size);
+    Fw::String validPath("testwrite.txt");
+
+    // Empty path
+    this->clearHistory();
+    Fw::String emptyPath("");
+    this->invoke_to_writeIn(0, emptyPath, validBuf, 0, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "empty path");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Invalid (null/zero-size) buffer
+    this->clearHistory();
+    Fw::Buffer invalidBuf;  // default construction -> !isValid()
+    this->invoke_to_writeIn(0, validPath, invalidBuf, 0, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "invalid buffer");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // Offset past the end of the buffer
+    this->clearHistory();
+    FwSizeType badOffset = size + 1024;
+    this->invoke_to_writeIn(0, validPath, validBuf, badOffset, false);
+    this->component.doDispatch();
+    ASSERT_EVENTS_InvalidInput_SIZE(1);
+    ASSERT_EVENTS_InvalidInput(0, "writeIn", "invalid offset");
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_INVALID_INPUT, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+}
+
 }  // namespace Svc

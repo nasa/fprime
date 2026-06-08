@@ -7,7 +7,7 @@
 
 namespace Os {
 
-RawTime::RawTime() : m_handle_storage(), m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
+RawTime::RawTime() : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -17,7 +17,7 @@ RawTime::~RawTime() {
 }
 
 RawTime::RawTime(const RawTime& other)
-    : m_handle_storage(), m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
+    : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 

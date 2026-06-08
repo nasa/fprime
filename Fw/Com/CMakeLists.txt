@@ -5,9 +5,13 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Com.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ComPacket.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Com.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ComPacket.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ComPacket.hpp"
 )
-register_fprime_module()

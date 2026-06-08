@@ -5,7 +5,7 @@
 ####
 
 # Base settings
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 cmake_policy(SET CMP0048 NEW)
 project(TestDeployment VERSION 1.0.0 LANGUAGES C CXX)
 
@@ -29,6 +29,11 @@ add_fprime_subdirectory(./TestTargetAutocoder)
 add_fprime_subdirectory(./TestChainedAutocoder)
 add_fprime_subdirectory(./TestRelative)
 
-set(SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/Main.cpp")
-set(MOD_DEPS  Svc_CmdDispatcher TestLibrary_TestComponent TestLibrary2_TestComponent)
-register_fprime_deployment()
+register_fprime_deployment(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/Main.cpp"
+  DEPENDS
+    Svc_CmdDispatcher
+    TestLibrary_TestComponent
+    TestLibrary2_TestComponent
+)

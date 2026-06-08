@@ -7,20 +7,23 @@
 ####
 restrict_platforms(Posix SOCKETS)
 
-set(SOURCE_FILES
+register_fprime_module(
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/IpSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpClientSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TcpServerSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/UdpSocket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/SocketComponentHelper.cpp"
-)
-
-set(MOD_DEPS
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/IpSocket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SocketComponentHelper.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TcpClientSocket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/TcpServerSocket.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/UdpSocket.hpp"
+  DEPENDS
     Os
-    Fw/Buffer
+    Fw_Buffer
 )
-
-register_fprime_module()
 
 # The PortSelector library and testing helper is only needed on Testing build
 if (BUILD_TESTING)
@@ -35,18 +38,19 @@ if (BUILD_TESTING)
     target_link_libraries(SocketTestHelper STest Fw_Buffer)
 endif()
 
-set(UT_MOD_DEPS
+
+### UTs ###
+register_fprime_ut(Drv_Ip_Tcp_test
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestTcp.cpp"
+  DEPENDS
     SocketTestHelper
 )
 
-### UTs ###
-set(UT_SOURCE_FILES
-    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestTcp.cpp"
-)
-register_fprime_ut("Drv_Ip_Tcp_test")
-
-set(UT_SOURCE_FILES
+register_fprime_ut(Drv_Ip_Udp_test
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestUdp.cpp"
+  DEPENDS
+    SocketTestHelper
 )
-register_fprime_ut("Drv_Ip_Udp_test")
 
