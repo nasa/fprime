@@ -84,6 +84,9 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
 
     //! Identification used with the memory allocator
     FwEnumStoreType m_allocatorId;
+
+    //! Most recent context received on dataIn, forwarded when a frame is completed
+    ComCfg::FrameContext m_context;
 };
 
 }  // namespace Svc

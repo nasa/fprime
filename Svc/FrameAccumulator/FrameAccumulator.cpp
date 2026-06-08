@@ -53,7 +53,8 @@ void FrameAccumulator ::cleanup() {
 void FrameAccumulator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
     // Check whether there is data to process
     if (buffer.isValid()) {
-        // The buffer is not necessarily a full frame, so the attached context has no meaning and we ignore it
+        // Store context so it can be forwarded when a complete frame is detected
+        this->m_context = context;
         this->processBuffer(buffer);
     }
     // Return ownership of the incoming data
@@ -148,8 +149,7 @@ void FrameAccumulator ::processRing() {
                 FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
                           static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
                           static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
-                ComCfg::FrameContext context;
-                this->dataOut_out(0, buffer, context);
+                this->dataOut_out(0, buffer, this->m_context);
             } else {
                 // No buffer is available
                 this->log_WARNING_HI_NoBufferAvailable();
