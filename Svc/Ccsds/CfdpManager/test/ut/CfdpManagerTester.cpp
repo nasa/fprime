@@ -449,8 +449,8 @@ void CfdpManagerTester::sendAndVerifyClass1Tx(const char* srcFile, const char* d
     // Verify completion event was emitted
     ASSERT_EVENTS_TxFileTransferCompleted_SIZE(1);
     ASSERT_EVENTS_TxFileTransferCompleted(0,  // index
-                                          Cfdp::Class::CLASS_1, component.getLocalEidParam(), setup.expectedSeqNum,
-                                          srcFile, dstFile, static_cast<U32>(fileSize));
+                                          Cfdp::Class::CLASS_1, setup.expectedSeqNum, component.getLocalEidParam(),
+                                          srcFile, TEST_GROUND_EID, dstFile, static_cast<U32>(fileSize));
 
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, setup.expectedSeqNum);
@@ -535,8 +535,8 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
     // Verify completion event was emitted
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
     ASSERT_EVENTS_RxFileTransferCompleted(0,  // index
-                                          Cfdp::Class::CLASS_1, TEST_GROUND_EID, transactionSeq, groundSrcFile, dstFile,
-                                          static_cast<U32>(actualFileSize));
+                                          Cfdp::Class::CLASS_1, transactionSeq, TEST_GROUND_EID, groundSrcFile,
+                                          component.getLocalEidParam(), dstFile, static_cast<U32>(actualFileSize));
 
     // Clean up
     delete[] testData;
@@ -746,8 +746,8 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     // Verify completion event was emitted
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
     ASSERT_EVENTS_RxFileTransferCompleted(0,  // index
-                                          Cfdp::Class::CLASS_2, TEST_GROUND_EID, transactionSeq, groundSrcFile, dstFile,
-                                          static_cast<U32>(actualFileSize));
+                                          Cfdp::Class::CLASS_2, transactionSeq, TEST_GROUND_EID, groundSrcFile,
+                                          component.getLocalEidParam(), dstFile, static_cast<U32>(actualFileSize));
 
     // Wait for transaction recycle
     waitForTransactionRecycle(TEST_CHANNEL_ID_0, transactionSeq);
@@ -900,8 +900,8 @@ void CfdpManagerTester::sendAndVerifyClass2Tx(TransactionInitType initType,
     // Verify completion event was emitted
     ASSERT_EVENTS_TxFileTransferCompleted_SIZE(1);
     ASSERT_EVENTS_TxFileTransferCompleted(0,  // index
-                                          Cfdp::Class::CLASS_2, component.getLocalEidParam(), setup.expectedSeqNum,
-                                          srcFile, dstFile, static_cast<U32>(expectedFileSize));
+                                          Cfdp::Class::CLASS_2, setup.expectedSeqNum, component.getLocalEidParam(),
+                                          srcFile, TEST_GROUND_EID, dstFile, static_cast<U32>(expectedFileSize));
 
     // Wait for transaction recycle
     waitForTransactionRecycle(channelId, setup.expectedSeqNum);

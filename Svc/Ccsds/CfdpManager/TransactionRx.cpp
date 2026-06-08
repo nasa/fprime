@@ -545,8 +545,8 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
 
             /* Only check size if MD received and EOF doesn't have a non-zero condition code (e.g., don't check size for
              * canceled transactions) */
-            if (this->m_flags.rx.md_recv && (cc == CONDITION_CODE_NO_ERROR) && (eof.getFileSize() != this->m_fsize)) {
-                this->m_cfdpManager->log_WARNING_HI_RxFileSizeMismatch(this->getClass(), this->m_history->src_eid,
+            if (this->m_flags.rx.md_recv && (cc == ConditionCode::CONDITION_CODE_NO_ERROR) && (eof.getFileSize() != this->m_fsize)) {
+                this->m_cfdpManager->log_WARNING_LO_RxFileSizeMismatch(this->getClass(), this->m_history->src_eid,
                                                                        this->m_history->seq_num, this->m_fsize,
                                                                        eof.getFileSize());
                 this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
@@ -554,11 +554,11 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
             }
 
             /* Log condition code if non-zero (cancel or error) - applies to both Class 1 and Class 2 */
-            if (cc != CONDITION_CODE_NO_ERROR) {
+            if (cc != ConditionCode::CONDITION_CODE_NO_ERROR) {
                 /* Set transaction status from condition code to prevent completion event */
                 this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(static_cast<I32>(cc)));
 
-                if (cc == CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+                if (cc == ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
                     /* Increment receive EOF cancellation counter (normal operation) */
                     this->m_cfdpManager->incrementRecvEofCanceled(this->m_chan_num);
 
@@ -569,7 +569,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
                     this->m_cfdpManager->incrementFaultRxEofError(this->m_chan_num);
 
                     this->m_cfdpManager->log_WARNING_HI_RxEofWithError(this->getClass(), this->m_history->src_eid,
-                                                                       this->m_history->seq_num, cc);
+                                                                       this->m_history->seq_num, static_cast<U8>(cc));
                 }
             }
         } else {
@@ -605,7 +605,7 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
 
     if (ret == Cfdp::Status::SUCCESS) {
         /* Only check CRC if no error condition code */
-        if (cc == CONDITION_CODE_NO_ERROR) {
+        if (cc == ConditionCode::CONDITION_CODE_NO_ERROR) {
             /* Verify CRC */
             if (this->rCheckCrc(crc) == Cfdp::Status::SUCCESS) {
                 /* successfully processed the file */

@@ -228,9 +228,9 @@ Status::T Engine::sendEof(Transaction* txn) {
     ConditionCode conditionCode = static_cast<ConditionCode>(TxnStatusToConditionCode(txn->m_history->txn_stat));
 
     // Increment sent EOF counters based on condition code
-    if (conditionCode == CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+    if (conditionCode == ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
         this->m_manager->incrementSentEofCanceled(txn->getChannelId());
-    } else if (conditionCode != CONDITION_CODE_NO_ERROR) {
+    } else if (conditionCode != ConditionCode::CONDITION_CODE_NO_ERROR) {
         this->m_manager->incrementFaultTxEofError(txn->getChannelId());
     }
 
@@ -961,7 +961,7 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
             } else if (txn->m_history->dir == Direction::DIRECTION_RX) {
                 this->m_manager->log_ACTIVITY_HI_RxFileTransferCompleted(
                     txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
-                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
+                    txn->m_history->fnames.src_filename, m_manager->getLocalEidParam(), txn->m_history->fnames.dst_filename,
                     static_cast<U32>(txn->m_fsize));
             }
         }

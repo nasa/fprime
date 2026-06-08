@@ -584,7 +584,7 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
             // to the peer, regardless of whether we got every ACK we expected.
             this->m_engine->finishTransaction(this, true);
         }
-        else if (this->m_state != TXN_STATE_HOLD)
+        else if (this->m_state != TxnState::TXN_STATE_HOLD)
         {
             // Retransmitted FIN: re-send FIN-ACK only if not in HOLD state
             // If in HOLD, transaction is finished and waiting to recycle - don't prevent that
