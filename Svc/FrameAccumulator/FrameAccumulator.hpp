@@ -64,11 +64,10 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
 
   private:
     //! \brief process raw buffer
-    //! \return raw data buffer
-    void processBuffer(Fw::Buffer& buffer);
+    void processBuffer(Fw::Buffer& buffer, const ComCfg::FrameContext& context);
 
     //! \brief process circular buffer
-    void processRing();
+    void processRing(const ComCfg::FrameContext& context);
 
     //! Circular buffer for storing data
     Types::CircularBuffer m_inRing;
@@ -84,9 +83,6 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
 
     //! Identification used with the memory allocator
     FwEnumStoreType m_allocatorId;
-
-    //! Most recent context received on dataIn, forwarded when a frame is completed
-    ComCfg::FrameContext m_context;
 };
 
 }  // namespace Svc
