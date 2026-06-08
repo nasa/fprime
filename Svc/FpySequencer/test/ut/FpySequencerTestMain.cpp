@@ -4812,4 +4812,61 @@ TEST_F(FpySequencerTester, popEvent) {
     }
 }
 
+// ======================================================================
+// Hardcoded CRC32 value tests
+//
+// FpySequencer uses CRC32 with init 0xFFFFFFFF and ones' complement
+// finalization (~crc). These tests verify that updateCrc produces known
+// expected values for known inputs.
+// ======================================================================
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_123456789) {
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of "123456789" = 0xCBF43926
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "FpySequencer CRC of \"123456789\" must equal 0xCBF43926 (standard CRC32)";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_DEADBEEF) {
+    const U8 data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of {0xDE,0xAD,0xBE,0xEF} = 0x7C9CA35A
+    ASSERT_EQ(finalCrc, static_cast<U32>(0x7C9CA35A))
+        << "FpySequencer CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x7C9CA35A";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_SingleByte) {
+    const U8 data[] = {0x00};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of {0x00} = 0xD202EF8D
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xD202EF8D)) << "FpySequencer CRC of {0x00} must equal 0xD202EF8D";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Incremental) {
+    // Verify that incremental updateCrc calls produce the same result
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, 4);      // "1234"
+    tester_updateCrc(crc, data + 4, 5);  // "56789"
+    U32 finalCrc = ~crc;
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "Incremental FpySequencer CRC of \"123456789\" must equal 0xCBF43926";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Hello) {
+    const U8 data[] = {'H', 'e', 'l', 'l', 'o'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of "Hello" = 0xF7D18982
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xF7D18982)) << "FpySequencer CRC of \"Hello\" must equal 0xF7D18982";
+}
+
 }  // namespace Svc

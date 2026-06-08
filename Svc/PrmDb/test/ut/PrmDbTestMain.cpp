@@ -287,6 +287,86 @@ TEST(ParameterDbTest, PrmShorterSaveDoesNotCorrupt) {
     tester.runShorterSaveDoesNotCorrupt();
 }
 
+// ======================================================================
+// Hardcoded CRC32 value tests
+//
+// PrmDb uses raw CRC32 accumulation (init 0xFFFFFFFF, no final ones'
+// complement). These tests verify the CRC algorithm used by PrmDb
+// produces known expected values for known inputs.
+// ======================================================================
+
+extern "C" {
+#include <Utils/Hash/libcrc/lib_crc.h>
+}
+
+namespace {
+
+// Helper: replicate PrmDb::computeCrc logic (private method) for test verification
+U32 prmDbComputeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
+    for (FwSizeType byte = 0; byte < size; byte++) {
+        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
+    }
+    return crc;
+}
+
+}  // namespace
+
+TEST(ParameterDbCrcTest, HardcodedValue_123456789) {
+    // CRC32 raw accumulator (no ones' complement) of ASCII "123456789"
+    const BYTE data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = 0xFFFFFFFF;
+    crc = prmDbComputeCrc(crc, data, sizeof(data));
+    ASSERT_EQ(crc, static_cast<U32>(0x340BC6D9))
+        << "PrmDb CRC of \"123456789\" must equal 0x340BC6D9 (raw accumulator)";
+}
+
+TEST(ParameterDbCrcTest, HardcodedValue_DEADBEEF) {
+    const BYTE data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    U32 crc = 0xFFFFFFFF;
+    crc = prmDbComputeCrc(crc, data, sizeof(data));
+    ASSERT_EQ(crc, static_cast<U32>(0x83635CA5)) << "PrmDb CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x83635CA5";
+}
+
+TEST(ParameterDbCrcTest, HardcodedValue_SingleByte) {
+    const BYTE data[] = {0x00};
+    U32 crc = 0xFFFFFFFF;
+    crc = prmDbComputeCrc(crc, data, sizeof(data));
+    ASSERT_EQ(crc, static_cast<U32>(0x2DFD1072)) << "PrmDb CRC of {0x00} must equal 0x2DFD1072";
+}
+
+TEST(ParameterDbCrcTest, HardcodedValue_PrmRecord) {
+    // Simulates PrmDb CRC over a single parameter record:
+    // delimiter(0xA5) + recordSize(big-endian U32=8) + id(big-endian U32=100) + value(big-endian U32=42)
+    U32 crc = 0xFFFFFFFF;
+
+    const BYTE delim = 0xA5;
+    crc = prmDbComputeCrc(crc, &delim, sizeof(delim));
+
+    const BYTE recSize[] = {0x00, 0x00, 0x00, 0x08};
+    crc = prmDbComputeCrc(crc, recSize, sizeof(recSize));
+
+    const BYTE id[] = {0x00, 0x00, 0x00, 0x64};
+    crc = prmDbComputeCrc(crc, id, sizeof(id));
+
+    const BYTE val[] = {0x00, 0x00, 0x00, 0x2A};
+    crc = prmDbComputeCrc(crc, val, sizeof(val));
+
+    ASSERT_EQ(crc, static_cast<U32>(0xF261DECF)) << "PrmDb CRC of param record (id=100, val=42) must equal 0xF261DECF";
+}
+
+TEST(ParameterDbCrcTest, HardcodedValue_Incremental) {
+    // Verify that computing CRC incrementally produces the same result
+    const BYTE data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = 0xFFFFFFFF;
+
+    // First 4 bytes
+    crc = prmDbComputeCrc(crc, data, 4);
+    // Remaining 5 bytes
+    crc = prmDbComputeCrc(crc, data + 4, 5);
+
+    ASSERT_EQ(crc, static_cast<U32>(0x340BC6D9)) << "Incremental PrmDb CRC of \"123456789\" must equal 0x340BC6D9";
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
