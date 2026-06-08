@@ -28,10 +28,10 @@ void Tester ::testExternalParam() {
         ASSERT_EQ(extBoolVal, this->paramTesterDelegate.m_param_ParamBoolExternal);
     }
 
-    I32 i32Val = component.paramGet_ParamI32External(valid);
+    U32 u32Val = component.paramGet_ParamU32External(valid);
     ASSERT_EQ(valid, prmValid);
     if (valid == Fw::ParamValid::VALID) {
-        ASSERT_EQ(i32Val, this->paramTesterDelegate.m_param_ParamI32External);
+        ASSERT_EQ(u32Val, this->paramTesterDelegate.m_param_ParamU32External);
     }
 
     Fw::ParamString stringVal = component.paramGet_ParamStringExternal(valid);
@@ -94,37 +94,37 @@ void Tester ::testExternalParamCommand(FwIndexType portNum, FppTest::Types::Bool
     ASSERT_EQ(this->paramTesterDelegate.m_param_ParamBoolExternal, data.args.val);
 }
 
-void Tester ::testExternalParamCommand(FwIndexType portNum, FppTest::Types::I32Param& data) {
+void Tester ::testExternalParamCommand(FwIndexType portNum, FppTest::Types::U32Param& data) {
     Fw::CmdArgBuffer buf;
 
     // Test unsuccessful saving of param
-    this->sendRawCmd(component.OPCODE_PARAMI32EXTERNAL_SAVE, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32EXTERNAL_SAVE, 1, buf);
 
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, component.OPCODE_PARAMI32EXTERNAL_SAVE, 1, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, component.OPCODE_PARAMU32EXTERNAL_SAVE, 1, Fw::CmdResponse::EXECUTION_ERROR);
 
     this->connectPrmSetIn();
     ASSERT_TRUE(component.isConnected_prmSetOut_OutputPort(portNum));
 
     // Test incorrect deserialization when setting param
-    this->sendRawCmd(component.OPCODE_PARAMI32EXTERNAL_SET, 1, buf);
+    this->sendRawCmd(component.OPCODE_PARAMU32EXTERNAL_SET, 1, buf);
 
     ASSERT_CMD_RESPONSE_SIZE(2);
-    ASSERT_CMD_RESPONSE(1, component.OPCODE_PARAMI32EXTERNAL_SET, 1, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_CMD_RESPONSE(1, component.OPCODE_PARAMU32EXTERNAL_SET, 1, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Test successful setting of param
-    this->paramSet_ParamI32External(data.args.val, Fw::ParamValid::VALID);
-    this->paramSend_ParamI32External(0, 1);
+    this->paramSet_ParamU32External(data.args.val, Fw::ParamValid::VALID);
+    this->paramSend_ParamU32External(0, 1);
 
     ASSERT_CMD_RESPONSE_SIZE(3);
-    ASSERT_CMD_RESPONSE(2, component.OPCODE_PARAMI32EXTERNAL_SET, 1, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(2, component.OPCODE_PARAMU32EXTERNAL_SET, 1, Fw::CmdResponse::OK);
 
     // Test successful saving of param
-    this->paramSave_ParamI32External(0, 1);
+    this->paramSave_ParamU32External(0, 1);
 
     ASSERT_CMD_RESPONSE_SIZE(4);
-    ASSERT_CMD_RESPONSE(3, component.OPCODE_PARAMI32EXTERNAL_SAVE, 1, Fw::CmdResponse::OK);
-    ASSERT_EQ(this->paramTesterDelegate.m_param_ParamI32External, data.args.val);
+    ASSERT_CMD_RESPONSE(3, component.OPCODE_PARAMU32EXTERNAL_SAVE, 1, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->paramTesterDelegate.m_param_ParamU32External, data.args.val);
 }
 
 void Tester ::testExternalParamCommand(FwIndexType portNum, FppTest::Types::PrmStringParam& data) {

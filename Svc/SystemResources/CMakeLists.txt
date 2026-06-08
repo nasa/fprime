@@ -7,21 +7,24 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 
-set(SOURCE_FILES
+register_fprime_module(
+  AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/SystemResources.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResources.hpp"
+  DEPENDS
+    Os
 )
-set(MOD_DEPS
-  Os
-)
-register_fprime_module()
 ### UTs ###
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SystemResourcesTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/SystemResourcesTestMain.cpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/SystemResources.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SystemResourcesTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/SystemResourcesTestMain.cpp"
 )
-register_fprime_ut()
 get_module_name("${CMAKE_CURRENT_LIST_DIR}")
 if (TARGET ${MODULE_NAME}_ut_exe)
     target_compile_options(

@@ -26,6 +26,21 @@ TEST(Nominal, testWriteHashErr) {
     tester.testWriteHashErr();
 }
 
+TEST(Nominal, testReadInvalidInput) {
+    Svc::FileWorkerTester tester;
+    tester.testReadInvalidInput();
+}
+
+TEST(Nominal, testVerifyInvalidInput) {
+    Svc::FileWorkerTester tester;
+    tester.testVerifyInvalidInput();
+}
+
+TEST(Nominal, testWriteInvalidInput) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteInvalidInput();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

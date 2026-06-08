@@ -20,6 +20,11 @@ include(fprime-util)
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
+set(FPRIME_GLOBAL_INTERFACE_TARGET "_fprime_global_interface_target" CACHE INTERNAL "FPRIME_GLOBAL_INTERFACE_TARGETS: global interface targets" FORCE)
+# Create a singleton global interface target
+if (NOT TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}")
+    add_library("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE)
+endif()
 
 ####
 # Macro `skip_on_sub_build`:
@@ -724,6 +729,44 @@ endfunction()
 function(register_os_implementation NAMES SUFFIX)
     add_fprime_supplied_os_module("${NAMES}" "${SUFFIX}" "${ARGN}")
 endfunction()
+
+####
+# Macro `register_fprime_project`:
+#
+# Used to register an F Prime project. This will do the following:
+#   1. Add the current source directory to the FPRIME_BUILD_LOCATIONS property
+#   2. Add the current source directory to the global include directories
+#   3. Add the current binary directory to the global include directories
+#   4. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
+# This allows it to be found and used by other modules in the build system.  It ensures that the components are properly
+# slotted underneath this library for the purposed of include path and target names.
+# Args: none
+#####
+macro(register_fprime_project)
+    fprime_initialize_build_system() # Make sure the build system is initialized before registering the project
+    # Typically it is an error to call register_fprime_project outside the root CMakeLists.txt of a defined `project()`
+    if (NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+        fprime_cmake_warning("register_fprime_project not called in CMakeLists.txt containing a project() declaration")
+    endif()
+
+    # Add to the build locations property
+    append_list_property("${CMAKE_CURRENT_SOURCE_DIR}" GLOBAL PROPERTY FPRIME_PROJECT_LOCATIONS)
+    # Add source and binaries to the interface includes of our singular global interface target
+    target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${CMAKE_CURRENT_BINARY_DIR}")
+
+    # Backwards compatibility: update the build locations variable as well
+    set(FPRIME_BUILD_LOCATIONS "${CMAKE_CURRENT_SOURCE_DIR};${FPRIME_BUILD_LOCATIONS}" CACHE INTERNAL "FPRIME_BUILD_LOCATIONS: list of source directories containing fprime modules" FORCE)
+    # Backwards compatibility: bridge the interface target include directories back into the include_directories directive
+    include_directories("$<TARGET_PROPERTY:${FPRIME_GLOBAL_INTERFACE_TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
+
+    # Update the CMAKE_MODULE_PATH for this particular project
+    get_property(FPRIME_PROJECT_LOCATIONS GLOBAL PROPERTY FPRIME_PROJECT_LOCATIONS)
+    foreach (PROJECT_LOCATION IN LISTS FPRIME_PROJECT_LOCATIONS)
+        list(APPEND CMAKE_MODULE_PATH "${PROJECT_LOCATION}/cmake")
+    endforeach()
+    set(FPRIME_CURRENT_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+endmacro()
 
 #### Documentation links
 # Next Topics:

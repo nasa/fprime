@@ -115,8 +115,6 @@ void Os::Test::FileTest::Tester::shadow_finalize(U32& crc) {
 
 Os::Test::FileTest::Tester::FileState Os::Test::FileTest::Tester::current_file_state() {
     Os::Test::FileTest::Tester::FileState state;
-    // Invariant: mode must not be closed, or path must be nullptr
-    EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) || (nullptr == this->m_file.m_path));
 
     // Read state when file is open
     if (Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) {
@@ -143,13 +141,9 @@ void Os::Test::FileTest::Tester::assert_file_consistent() {
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
     // Ensure CRC match
     ASSERT_EQ(this->m_file.m_crc, this->m_independent_crc);
-    if (this->m_file.m_path == nullptr) {
+    if (Os::File::Mode::OPEN_NO_MODE == this->m_file.m_mode) {
         ASSERT_EQ(this->m_current_path, std::string(""));
     } else {
-        // Ensure the state path matches the file path
-        std::string path = std::string(this->m_file.m_path);
-        ASSERT_EQ(path, this->m_current_path);
-
         // Check real file properties when able to do so
         if (this->functional()) {
             //  File exists, check all properties
@@ -192,7 +186,6 @@ void Os::Test::FileTest::Tester::assert_file_opened(const std::string& path,
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
-        ASSERT_EQ(std::string(this->m_file.m_path), path);
         ASSERT_EQ(this->m_file.m_mode, newly_opened_mode) << "File is in unexpected mode";
 
         // Check truncations
@@ -476,13 +469,6 @@ void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest
     Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
     Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
     ASSERT_EQ(status, s2);
-
-    // After open, m_path points to the local Fw::String buffer which will be destroyed
-    // when this action returns. Reset m_path to point to the persistent filename string
-    // kept alive in the FILES vector to avoid a dangling pointer.
-    if (Os::File::Status::OP_OK == status) {
-        state.m_file.m_path = filename->c_str();
-    }
 
     // Extra check to ensure file is consistently open
     if (Os::File::Status::OP_OK == status) {

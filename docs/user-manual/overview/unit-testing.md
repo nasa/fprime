@@ -28,15 +28,32 @@ maintained. Mapping the tests to requirements can be recorded on a
 spreadsheet, or in the actual test using comments or in the console
 output mechanism.
 
-To start, generate the test classes and add public test methods to the
-tester. The *TesterBase* and the *GTestBase* are auto-generated, while
-the *Tester* is developer-written from a generated template.
+### Generating test scaffolds
+
+To generate the initial test files, run the following command from the
+component directory:
+
+```bash
+fprime-util impl --ut
+```
+
+This produces template files under `test/ut/`:
+
+| Generated file | Purpose | Action |
+|---|---|---|
+| `<Component>Tester.template.hpp` | Tester class header | Rename to `<Component>Tester.hpp` |
+| `<Component>Tester.template.cpp` | Tester class impl | Rename to `<Component>Tester.cpp` |
+
+### Test framework classes
+
+The below *TesterBase* and the *GTestBase* classes are generated into the build cache, while
+the *Tester* is developer-written from the generated template.
 
 ***TesterBase*** is the base class for testing a component and provides
 a harness for unit tests. The *TesterBase* interface is the mirror image
 of the component (*C*) under test. For each output port in *C* there is
-an input port called a “from port,” and for each input port in *C* there
-is an output port called a “to port.” For each “from port” there is a
+an input port called a "from port," and for each input port in *C* there
+is an output port called a "to port." For each "from port" there is a
 history (*H*) of data received through a virtual input handler that
 stores its argument into *H*. The *TesterBase* provides utility methods
 for writing tests for the component. These include sending commands,
@@ -45,7 +62,7 @@ time.
 
 ***GTestBase*** is derived from the *TesterBase* and includes headers
 for the Google Test framework with F′ specific macros. It supports test
-assertions, such as *ASSERT\_EQ(3, x)* to check that two values are
+assertions, such as `ASSERT_EQ(3, x)` to check that two values are
 equal when writing tests. The F′ specific macros check the telemetry
 received from the ports, the events received from the ports, and the
 data received (user-defined) from the ports. The *GTestBase* is factored
@@ -53,44 +70,88 @@ into a separate class so its use is optional on systems that do not
 support it.
 
 ***Tester*** is derived from the *GTestBase* and contains the component
-under test as a member. The autocoder provides a template where the user
-then adds tests as a public method, and also writes tests in a derived
-class of the *Tester*.
+under test as a member. The developer adds test methods and helper
+functions to this class.
 
-Once the test class is generated, the user can begin to send commands,
-check events and telemetry, check user-defined output ports, set
-parameters and the time, build and run the unit tests from the
-*component directory*, and finally analyze the code coverage from the
-*component directory* after building and running the test. However, be
-sure to review the analysis from the *test/ut directory*.
+### Tester class structure
 
-A standard approach to writing unit tests is to write a complete test
-that covers the requirement. If there is overlap, refactoring into
-functions is the preferred approach to avoid code duplication. A more
-disciplined approach would be to write functions that test individual
-behaviors. When writing test code treat unit testing as a programming
-problem by applying similar style guidelines as the flight code. This
-approach avoids less code duplication and provides more readable,
-maintainable, and modifiable tests.
+The Tester constructor must call `initComponents()` then
+`connectPorts()`. The component under test is a member of the Tester.
 
-When writing unit tests for a component be sure to test against the
-interface, such as the send commands and the send data on the output
-ports. Read the internal component state to verify it is good, and only
-modify the state through the interface; do not update the state of the
-component. This approach leads to a more structured test. If there is a
-requirement to test a function in a component implementation that has a
-complex algorithm, then write a test against the function interface.
+```cpp
+#include "<Component>GTestBase.hpp"
+#include "<Namespace>/<Component>/<Component>.hpp"
 
-When unit testing a component, model the external behavior to receive
-commands and send responses by writing a test harness. This approach
-supports modularity testing that can be used for many tests.
+namespace <Namespace> {
+
+class <Component>Tester : public <Component>GTestBase {
+  public:
+    static constexpr U32 MAX_HISTORY_SIZE = 10;
+    static constexpr FwEnumStoreType TEST_INSTANCE_ID = 0;
+    static constexpr FwSizeType TEST_INSTANCE_QUEUE_DEPTH = 10;
+
+    <Component>Tester();
+    ~<Component>Tester();
+
+    // Test methods
+    void testNominal();
+
+  private:
+    void connectPorts();
+    void initComponents();
+    <Component> component;
+};
+
+}  // namespace <Namespace>
+```
+
+### TestMain
+
+The `TestMain.cpp` file contains the Google Test `TEST()` macros and the
+`main()` function. Use `COMMENT(...)` to describe what each test
+verifies and `REQUIREMENT(...)` to trace tests to requirements. Both
+macros are provided by `Fw/Test/UnitTest.hpp`.
+
+Always seed `STest::Random` so randomized picks are reproducible from
+the seed printed at test start.
+
+```cpp
+#include "Fw/Test/UnitTest.hpp"
+#include "STest/Random/Random.hpp"
+#include "<Namespace>/<Component>/test/ut/<Component>Tester.hpp"
+
+namespace <Namespace> {
+
+TEST(<Component>, Nominal) {
+    COMMENT("Describe what this test verifies.");
+    REQUIREMENT("REQ-ID");
+    <Component>Tester tester;
+    tester.testNominal();
+}
+
+}  // namespace <Namespace>
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
+    return RUN_ALL_TESTS();
+}
+```
+
+### Assertion macros
 
 To check event and telemetry histories the user first sends a command,
 and then checks events and telemetry by writing the following code.
 
+**Important:** Call `this->clearHistory()` at the start of each test
+action to reset all histories. Without this, assertions may pass or fail
+based on residual state from previous actions.
+
 **Sending Commands:**
 
-```
+```cpp
+this->clearHistory();
+
 // Send command
 this->sendCOMMAND_NAME(
     cmdSeq, // Command sequence number
@@ -98,23 +159,20 @@ this->sendCOMMAND_NAME(
     arg2 // Argument 2
 );
 
-this->component.doDispatch();
+this->component.doDispatch();  // required for async/queued components
 // Assert command response
-ASSERT_CMD_RESPONSE\_SIZE(1);
+ASSERT_CMD_RESPONSE_SIZE(1);
 ASSERT_CMD_RESPONSE(
     0, // Index in the history
-    Component::OPCODE\_COMMAND\_NAME, // Expected command opcode
+    Component::OPCODE_COMMAND_NAME, // Expected command opcode
     cmdSeq, // Expected command sequence number
     Fw::CmdResponse::OK // Expected command response
-}
+);
 ```
 
 **Checking Events:**
 
-```
-// Send command and check response
-…
-
+```cpp
 // Assert total number of events in history
 ASSERT_EVENTS_SIZE(1);
 
@@ -130,10 +188,8 @@ ASSERT_EVENTS_EventName(
 ```
 
 **Checking Telemetry:**
-```
-// Send command and check response
-…
 
+```cpp
 // Assert total number of telemetry entries in history
 ASSERT_TLM_SIZE(1);
 
@@ -146,11 +202,10 @@ ASSERT_TLM_ChannelName(
     value // Expected value
 );
 ```
-To check the user-defined output ports write the following code.
-```
-// Send command and check response
-…
 
+**Checking Output Ports:**
+
+```cpp
 // Assert total number of entries on from ports
 ASSERT_FROM_PORT_HISTORY_SIZE(1);
 
@@ -165,38 +220,122 @@ ASSERT_from_PortName(
 );
 ```
 
+**Setting Parameters:**
+
 To set the parameters in a test of component *C*, write the following
 code. This call stores the argument in member variables of *TesterBase*,
 so when *C* invokes the *ParamGet* port it receives the argument.
 
-```
+```cpp
 this->paramSet_ParamName(
     value, // Parameter value
     Fw::PARAM_VALID // Parameter status
 );
 ```
 
-Next, to set the time in a text of component *C*, write the following
-code. *Time* is an *Fw::Time* object, so when *C* invokes the *TimeGet*
+**Setting Time:**
+
+To set the time in a test of component *C*, write the following
+code. *Time* is an `Fw::Time` object, so when *C* invokes the *TimeGet*
 port it receives the value time.
 
-`this->setTime(time)`
+```cpp
+this->setTime(time);
+```
 
-The F′ Prime build system provides targets for building and running
-component unit tests.
+**Invoking Ports:**
 
-To build unit tests, go to the component directory (not the *test/ut*
-directory) and run `fprime-util generate --ut`.
+To invoke an input port on the component under test, use the
+`invoke_to_<portName>` method. For active or queued components, call
+`this->component.doDispatch()` afterward to process the message.
 
-To run unit tests, go to the component directory (not the *test/ut*
-directory) and run `fprime-util check [parameter flags]`.
+```cpp
+this->clearHistory();
+this->invoke_to_schedIn(0, context);
+this->component.doDispatch();  // active/queued components only
+```
 
-Unit test check parameter | Description
----|---
-`--all` | Run all unit tests, combinable with `coverage`
-`--coverage` | Check for code coverage in unit tests
+### Helper functions
 
-For example, to run all unit tests and check for code coverage, run `fprime-util check --all --coverage`.
+Every test method should read as a sequence of meaningful actions, not
+raw port calls and assertion macros. Extract repeated patterns into
+helper functions on the Tester class.
+
+**Action helper** — wraps a port invocation with `clearHistory()` and
+`doDispatch()`:
+
+```cpp
+void <Component>Tester::sendScheduleTick() {
+    this->clearHistory();
+    const U32 context = STest::Pick::any();
+    this->invoke_to_schedIn(0, context);
+    this->component.doDispatch();
+}
+```
+
+**Assertion helper** — wraps a group of related assertions:
+
+```cpp
+void <Component>Tester::assertTelemetryIdle() {
+    ASSERT_TLM_Counter_SIZE(0);
+    ASSERT_EVENTS_SIZE(0);
+}
+```
+
+**Combined test** — reads as high-level actions:
+
+```cpp
+void <Component>Tester::testNominal() {
+    sendScheduleTick();
+    ASSERT_TLM_Counter_SIZE(1);
+    ASSERT_TLM_Counter(0, 1);
+    ASSERT_EVENTS_SIZE(0);
+}
+```
+
+Use `STest::Pick::any()` and `STest::Pick::lowerUpper(lo, hi)` for
+port numbers, IDs, and sizes where the specific value does not matter.
+
+### CMakeLists.txt registration
+
+Register unit tests in the component's `CMakeLists.txt` using
+`register_fprime_ut`:
+
+```cmake
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/<Component>.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>TestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>Tester.cpp"
+  DEPENDS
+    STest
+  UT_AUTO_HELPERS
+)
+```
+
+- **`UT_AUTO_HELPERS`** autocodes `connectPorts` and `initComponents`
+  from the FPP model. Omit only if custom port wiring is needed.
+- **`DEPENDS STest`** is required when using `STest::Pick`,
+  `STest::Rule`, or scenario classes.
+
+For rules-based tests, add the additional source files:
+
+```cmake
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>TestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/<Component>Tester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestState/TestState.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/Rules/<GroupName>.cpp"
+```
+
+### Building and running
+
+```bash
+fprime-util build --ut       # build unit tests
+fprime-util check            # run unit tests
+fprime-util check --coverage # run with code coverage
+```
 
 ### Choosing a test library
 
@@ -225,4 +364,11 @@ behaviors.
 
 Note that 100% code coverage does not check which system states were tested, nor which paths through the code were tested.
 
-To review code coverage analysis, go to the component directory and review the summary output *\_gcov.txt* files. Next, go to the component directory to review the coverage annotation *.hpp.gcov* and *.cpp.gcov* source files.
+To review code coverage analysis, go to the component directory and review the summary output `_gcov.txt` files. Next, go to the component directory to review the coverage annotation `*.hpp.gcov` and `*.cpp.gcov` source files.
+
+### Rules-based testing
+
+For components with internal state or multiple interacting ports,
+use rules-based testing with STest. See the
+[rules-based testing guide](../../how-to/rule-based-testing.md)
+for the full procedure.

@@ -10,6 +10,7 @@ Svc::FileWorker is an active F' component used for writing and reading files on 
 |FileWorker-002|FileWorker shall provide an interface to write contents to a file passed in from a client-provided buffer|Unit Test|
 |FileWorker-003|FileWorker shall handle receiving read-done signals while in improper state|Unit Test|
 |FileWorker-004|FileWorker shall handle cancel for reads|Unit Test|
+|FileWorker-005|FileWorker shall validate the inputs to its read, write, and verify port handlers and report malformed inputs via an event and a failure status rather than asserting|Unit Test|
 
 ### Diagrams
 
@@ -63,36 +64,42 @@ bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><c
 <tr style = "border: 2px solid black;"><td rowspan="4"><code>WriteTimeout</code></td><td rowspan="4">warning high</td><td rowspan="4">"Failed after {} of {} bytes written to {} after exceeding timeout of {} microseconds"</td><td rowspan="4"></td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr><tr><td><code>size FileNameStringSize
 timeout</code></td><td><code>U64</code></td><td></td></tr>
 <tr style = "border: 2px solid black;"><td rowspan="3"><code>WriteAborted</code></td><td rowspan="3">warning low</td><td rowspan="3">"Aborted after {} of {} bytes written to {}"</td><td rowspan="3"></td><td><code>bytesWritten</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>writeSize</code></td><td><code>FwSizeType</code></td><td></td></tr><tr><td><code>fileName</code></td><td><code>string</code></td><td></td></tr>
+<tr style = "border: 2px solid black;"><td rowspan="2"><code>InvalidInput</code></td><td rowspan="2">warning high</td><td rowspan="2">"Invalid input in {} handler: {}"</td><td rowspan="2"></td><td><code>handler</code></td><td><code>string</code></td><td></td></tr><tr><td><code>issue</code></td><td><code>string</code></td><td></td></tr>
 </tbody></table>
 
 ### 3.4 Functional Description
+
+Each `*In` port handler validates its arguments before performing any file operation. Malformed inputs — such as an empty path, an invalid (null or zero-length) buffer, a write offset past the end of the buffer, or a path too long for the filename buffer — are reported by emitting an `InvalidInput` warning event and returning `INVALID_INPUT` to the client, rather than triggering an `FW_ASSERT`. This ensures that invalid, externally supplied (e.g. ground-commanded) inputs are surfaced to operators as telemetry instead of causing an assertion failure.
 
 #### 3.4.1 writeIn_handler
 
 Calling component passes in a buffer for writing to file, the file location is *path*, and the offset to start writing at.
 
-1. If not in IDLE state, return NOT_IDLE
-2. Set state to WRITING
-3. Open a file at the provided path and write contents of client-provided buffer to it
-4. After file is finished being written to, also write a validation CRC file
-5. Return to client with write size and set state to IDLE
+1. Validate inputs. If the path is empty, the buffer is invalid, the write offset is past the end of the buffer, or the path is too long for the filename buffer, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. If not in IDLE state, return NOT_IDLE
+3. Set state to WRITING
+4. Open a file at the provided path and write contents of client-provided buffer to it
+5. After file is finished being written to, also write a validation CRC file
+6. Return to client with write size and set state to IDLE
 
 #### 3.4.2 readIn_handler
 
 Calling component passes in a file path *path* to read and a buffer for client to read from
 
-1. If not in IDLE state, return NOT_IDLE
-2. Set state to READING
-3. Verify checksum. If checksum fails, return FAILED_CRC and set state to IDLE
-4. Otherwise, get file size
-5. Read from file into buffer provided by the client
-6. Send back the buffer and set state to IDLE
+1. Validate inputs. If the path is empty or the buffer is invalid, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. If not in IDLE state, return NOT_IDLE
+3. Set state to READING
+4. Verify checksum. If checksum fails, return FAILED_CRC and set state to IDLE
+5. Otherwise, get file size. If getting the file size fails, emit `ReadFailedFileSize` and return `FAILED_FILE_SIZE`, setting state to IDLE
+6. Read from file into buffer provided by the client
+7. Send back the buffer and set state to IDLE
 
 #### 3.4.3 verifyIn_handler
 
-1. Verify checksum. If checksum fails, return FAILED_CRC
-2. Get file size. If file size fails, return FAILED_FILE_SIZE
-3. Return file size to client
+1. Validate the input path. If the path is empty, emit an `InvalidInput` event and return `INVALID_INPUT`
+2. Verify checksum. If checksum fails, return FAILED_CRC
+3. Get file size. If file size fails, return FAILED_FILE_SIZE
+4. Return file size to client
 
 #### 3.4.4 cancelIn_handler
 
