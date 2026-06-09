@@ -20,6 +20,15 @@ namespace Svc {
 Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& startPacket) {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
+    // Defensive bound check.  The path length is currently bounded by the
+    // U8 type of PathName::m_length (max 255 <= MAX_LENGTH); this check
+    // makes the FileUplink::File::open contract self-defending — any
+    // future widening of m_length would otherwise turn the memcpy into a
+    // stack overflow without compiler diagnostic.  Matches the
+    // defense-in-depth style of handleDataPacket() in this component.
+    if (length >= sizeof(path)) {
+        return Os::File::Status::BAD_SIZE;
+    }
     memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
