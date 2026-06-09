@@ -207,7 +207,7 @@ Fw::Success FpySequencer::readFooter() {
     }
 
     // need this for some reason to "finalize" the crc TODO get an explanation on this
-    U32 computedCRC;
+    U32 computedCRC = 0;
     this->m_computedCRC.finalize(computedCRC);
 
     if (computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
