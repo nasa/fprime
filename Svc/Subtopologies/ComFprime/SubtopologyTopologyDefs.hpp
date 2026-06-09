@@ -6,6 +6,8 @@
 #include <Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.hpp>
 #include "ComFprimeConfig/ComFprimeSubtopologyConfig.hpp"
 #include "Svc/Subtopologies/ComFprime/ComFprimeConfig/FppConstantsAc.hpp"
+#include "Svc/Subtopologies/ComFprime/Ports_ComBufferQueueEnumAc.hpp"
+#include "Svc/Subtopologies/ComFprime/Ports_ComPacketQueueEnumAc.hpp"
 
 namespace ComFprime {
 struct SubtopologyState {

@@ -41,7 +41,7 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
     Fw::SerializeStatus status;
 
     // Serialize the header (startWord default is 0xDEADBEEF, packetDescriptor from context APID).
-    // lengthField counts the packetDescriptor + payload to preserve the on-wire length semantics.
+    // lengthField counts the packetDescriptor + payload to preserve the historical on-wire length semantics
     header.set_lengthField(static_cast<FprimeProtocol::TokenType>(data.getSize() + sizeof(FwPacketDescriptorType)));
     header.set_packetDescriptor(static_cast<FwPacketDescriptorType>(context.get_apid()));
     status = frameSerializer.serializeFrom(header);

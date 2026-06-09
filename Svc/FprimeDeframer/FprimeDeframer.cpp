@@ -56,6 +56,7 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
+    // TODO: comment + make sure not to fully trust lengthField + check sizes match etc
     const FwSizeType payloadSize = header.get_lengthField() - sizeof(FwPacketDescriptorType);
     // We expect the frame size to be size of header + payload (lengthField minus descriptor) + trailer
     const FwSizeType expectedFrameSize =
@@ -95,12 +96,12 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
-
     // ---------------- Extract payload from frame ----------------
-    // Shift data pointer past the header; trim trailer from the back.
-    // The APID is carried in contextCopy.apid.
+    // Shift data pointer to effectively remove the header
     data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    data.setSize(payloadSize);
+    // Shrink size to effectively remove the header and trailer
+    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
+                 FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);
 }

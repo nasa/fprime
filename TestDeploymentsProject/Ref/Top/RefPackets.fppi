@@ -13,11 +13,11 @@ telemetry packets RefPackets {
     cmdSeq.CS_CancelCommands
     cmdSeq.CS_CommandsExecuted
     cmdSeq.CS_SequencesCompleted
-    ComCcsds.comQueue.comQueueDepth
-    ComCcsds.comQueue.buffQueueDepth
-    ComCcsds.commsBufferManager.TotalBuffs
-    ComCcsds.commsBufferManager.CurrBuffs
-    ComCcsds.commsBufferManager.HiBuffs
+    ComFprime.comQueue.comQueueDepth
+    ComFprime.comQueue.buffQueueDepth
+    ComFprime.commsBufferManager.TotalBuffs
+    ComFprime.commsBufferManager.CurrBuffs
+    ComFprime.commsBufferManager.HiBuffs
     #CdhCore.tlmSend.GroupConfigs
     #CdhCore.tlmSend.SectionEnabled
 
@@ -35,8 +35,8 @@ telemetry packets RefPackets {
     FileHandling.fileManager.Errors
 
     cmdSeq.CS_Errors
-    ComCcsds.commsBufferManager.NoBuffs
-    ComCcsds.commsBufferManager.EmptyBuffs
+    ComFprime.commsBufferManager.NoBuffs
+    ComFprime.commsBufferManager.EmptyBuffs
 
     rateGroup1Comp.RgCycleSlips
     rateGroup2Comp.RgCycleSlips
