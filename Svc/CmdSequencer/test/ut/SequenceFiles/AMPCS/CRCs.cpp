@@ -55,7 +55,7 @@ void writeFile(Os::File& file,    //!< The file
 void createFile(Fw::LinearBufferBase& buffer, const char* const fileName) {
     CRC crc;
     computeCRC(buffer, crc);
-    U32 crcFinal;
+    U32 crcFinal = 0;
     crc.m_computed.finalize(crcFinal);
     writeCRC(crcFinal, fileName);
 }
