@@ -93,7 +93,7 @@ void Os::Test::FileTest::Tester::shadow_crc(U32& crc) {
         hash.update(&byte, sizeof(byte));
     }
 
-    U32 crcFinal;
+    U32 crcFinal = 0;
     hash.finalize(crcFinal);
     crc = ~crcFinal;
 
