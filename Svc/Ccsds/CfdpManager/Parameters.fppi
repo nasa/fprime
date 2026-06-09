@@ -34,10 +34,10 @@ param FileInDefaultPriority: U8 \
 param ChannelConfig: Cfdp.ChannelArrayParams \
     default [ \
         {
-            ack_limit = 4, \
-            nack_limit = 4, \
-            ack_timer = 3, \
-            inactivity_timer = 30, \
+            ack_limit = 10, \
+            nack_limit = 10, \
+            ack_timer = 10, \
+            inactivity_timer = 120, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
             max_outgoing_pdus_per_cycle = 64, \
@@ -45,10 +45,10 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
             fail_dir = "/fail" \
         }, \
         {
-            ack_limit = 4, \
-            nack_limit = 4, \
-            ack_timer = 3, \
-            inactivity_timer = 30, \
+            ack_limit = 10, \
+            nack_limit = 10, \
+            ack_timer = 10, \
+            inactivity_timer = 120, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
             max_outgoing_pdus_per_cycle = 64, \
