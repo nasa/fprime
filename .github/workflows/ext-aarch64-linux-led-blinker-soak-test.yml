@@ -4,9 +4,6 @@
 # ext-aarch64-linux-led-blinker-soak-setup.yml: analyzes captured ComLogger
 # telemetry for FATALs and degradation trends (if available), then runs the
 # integration tests.
-#
-# TESTING: soak actions point at moisesmata/fprime-actions@soak-testing-actions.
-# Switch back to nasa/fprime-actions@devel before opening the PR for review.
 
 name: "Soak Test: AArch64 Linux LedBlinker"
 
@@ -28,7 +25,7 @@ jobs:
     runs-on: [self-hosted, ARM64]
     steps:
       - name: "Analyze soak telemetry"
-        uses: moisesmata/fprime-actions/soak-monitor@soak-testing-actions
+        uses: nasa/fprime-actions/soak-monitor@devel
         with:
           dictionary: "${{ env.INSTALL_DIR }}/dict/*TopologyDictionary.json"
           com-logs: ${{ env.INSTALL_DIR }}/ComLoggerFiles
@@ -40,7 +37,7 @@ jobs:
     needs: soak-monitoring
     steps:
       - name: "Run integration tests against persistent GDS"
-        uses: moisesmata/fprime-actions/soak-integration-test@soak-testing-actions
+        uses: nasa/fprime-actions/soak-integration-test@devel
         with:
           fsw-service: ledblinker-soak-fsw
           venv: ${{ env.INSTALL_DIR }}/venv

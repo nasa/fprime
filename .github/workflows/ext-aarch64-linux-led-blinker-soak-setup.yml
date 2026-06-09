@@ -1,11 +1,8 @@
 # Soak-test setup for the LedBlinker deployment on AArch64 Linux.
 #
-# Cross-compiles https://github.com/moisesmata/fprime-workshop-led-blinker and
+# Cross-compiles https://github.com/fprime-community/fprime-workshop-led-blinker and
 # installs it on the self-hosted runner as persistent flight-software + GDS
 # systemd services.
-#
-# TESTING: soak actions point at moisesmata/fprime-actions@soak-testing-actions.
-# Switch back to nasa/fprime-actions@devel before opening the PR for review.
 #
 # Pairs with ext-aarch64-linux-led-blinker-soak-test.yml.
 
@@ -37,13 +34,13 @@ jobs:
       - name: "Setup external repository + overlay F´"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: moisesmata/fprime-workshop-led-blinker
+          target_repository: fprime-community/fprime-workshop-led-blinker
           target_ref: devel
       - name: "Cross compile"
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
       - name: "Package soak artifact"
         id: package
-        uses: moisesmata/fprime-actions/soak-package@soak-testing-actions
+        uses: nasa/fprime-actions/soak-package@devel
         with:
           test-source: "LedBlinker/Components/Led/test/int"
       - name: "Archive soak artifact"
@@ -64,7 +61,7 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: moisesmata/fprime-actions/soak-deploy@soak-testing-actions
+        uses: nasa/fprime-actions/soak-deploy@devel
         with:
           install-dir: /opt/ledblinker-soak
           service-prefix: ledblinker-soak
