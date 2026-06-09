@@ -84,7 +84,7 @@ All steps from this point on either take place in the terminal or the GDS GUI.
 
 ## Method 1: Generate a `.dat` File
 
-Use this method to load a binary parameter file into the `PrmDb` component at any time. 
+With this method, the user uplinks a `.dat` file to the FSW and sends `PRM_LOAD_FILE` followed by `PRM_COMMIT_STAGED` commands to the PrmDb component, which loads parameter values in batch from the file.
 
 ### Step 1: Generate the `.dat` File
 
@@ -158,7 +158,7 @@ If your deployment has file downlink configured (using `Svc.FileDownlink`), you 
 
 ## Method 2: Generate a `.seq` File
 
-Use this method to load a binary parameter file into the CmdSequencer component at any time.
+With this method, the user compiles a `.seq` file into a `.bin` and uplinks it to CmdSequencer, which dispatches `_PRM_SET` commands (and `_PRM_SAVE` if `--save` was used) to each component.
 
 > [!TIP]
 > **Using the `--save` flag:** The generated `.seq` file contains `_PRM_SET` commands that update parameter values in memory. If you want the changes to persist across FSW restarts, add the `--save` flag to include `_PRM_SAVE` commands after each `_PRM_SET`, which writes the parameters to the PrmDb.dat file on the FSW.
