@@ -8,13 +8,14 @@
 // ALL RIGHTS RESERVED.  United States Government Sponsorship
 // acknowledged.
 // ======================================================================
-#include <atomic>
-#include "Fw/Types/MemAllocator.hpp"
-#include "Os/Queue.hpp"
-#include "Os/CountingSemaphore.hpp"
-#include "Os/Generic/Types/AtomicQueue.hpp"
 #ifndef OS_GENERIC_PRIORITYMEMQUEUE_HPP
 #define OS_GENERIC_PRIORITYMEMQUEUE_HPP
+
+#include <atomic>
+#include "Fw/Types/MemAllocator.hpp"
+#include "Os/CountingSemaphore.hpp"
+#include "Os/Generic/Types/AtomicQueue.hpp"
+#include "Os/Queue.hpp"
 
 namespace Os {
 namespace Generic {
@@ -37,21 +38,18 @@ class PriorityMemQueue;
 //! bitmasks and a counting semaphore for receive notification.
 struct PriorityMemQueueHandle : public QueueHandle {
     // Per-priority AtomicQueues (dynamically allocated)
-    Types::AtomicQueue* m_atomicQueues;  // Pointer to array of AtomicQueues
-    FwQueuePriorityType m_maxPriority;   // Highest priority value (array size = maxPriority + 1)
-    Os::CountingSemaphore* m_notEmptySem; // Counting semaphore signaling messages available
-    FwEnumStoreType m_id;                // Queue identifier
-    FwEnumStoreType m_allocatorId;       // Allocator ID for memory operations
-    std::atomic<U32> m_priorityMask;     // Bit mask of enabled priorities
-    std::atomic<U32> m_nonEmptyMask;     // Bit mask of priorities with messages (optimization)
-    std::atomic<U32>* m_highWaterMarks;  // Pointer to array of per-priority high water marks
+    Types::AtomicQueue* m_atomicQueues;    // Pointer to array of AtomicQueues
+    FwQueuePriorityType m_maxPriority;     // Highest priority value (array size = maxPriority + 1)
+    Os::CountingSemaphore* m_notEmptySem;  // Counting semaphore signaling messages available
+    FwEnumStoreType m_id;                  // Queue identifier
+    FwEnumStoreType m_allocatorId;         // Allocator ID for memory operations
+    std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
+    std::atomic<U32> m_nonEmptyMask;       // Bit mask of priorities with messages (optimization)
+    std::atomic<U32>* m_highWaterMarks;    // Pointer to array of per-priority high water marks
 
     //! \brief Constructor to initialize members
     PriorityMemQueueHandle()
-        : m_atomicQueues(nullptr),
-          m_maxPriority(0),
-          m_notEmptySem(nullptr),
-          m_highWaterMarks(nullptr) {}
+        : m_atomicQueues(nullptr), m_maxPriority(0), m_notEmptySem(nullptr), m_highWaterMarks(nullptr) {}
 
     //! \brief Initialize the handle
     void init();

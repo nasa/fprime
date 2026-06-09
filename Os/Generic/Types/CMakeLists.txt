@@ -7,6 +7,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/AtomicQueue.hpp"
   DEPENDS
     Fw_Types
+    Fw_Logger
+    Os_CountingSemaphore
 )
 
 # Rules based unit testing
@@ -24,18 +26,17 @@ if (TARGET "${UT_TARGET_NAME}")
 endif()
 
 # AtomicQueue unit test
-set(UT_SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AtomicQueue/AtomicQueueTest.cpp"
-)
-set(UT_MOD_DEPS
-        STest
-        Fw/Types
-        Fw/Time
-        Os
-        Os/CountingSemaphore
-)
 set(UT_TARGET_NAME "Types_Atomic_Queue_test")
-register_fprime_ut("${UT_TARGET_NAME}")
+register_fprime_ut("${UT_TARGET_NAME}"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/AtomicQueue/AtomicQueueTest.cpp"
+  DEPENDS
+    STest
+    Fw_Types
+    Fw_Time
+    Os
+    Os_CountingSemaphore
+)
 if (TARGET "${UT_TARGET_NAME}")
     target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
 endif()

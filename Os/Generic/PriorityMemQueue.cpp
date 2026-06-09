@@ -55,7 +55,7 @@ static constexpr U32 priorityBitMask(FwQueuePriorityType priority) {
 }
 
 void PriorityMemQueueHandle::init() {
-    // If arrays were allocated, initialize them to safe default values 
+    // If arrays were allocated, initialize them to safe default values
     // Initialize all AtomicQueue pointers to null if arrays are allocated
     FwSizeType arraySize = static_cast<FwSizeType>(this->m_maxPriority) + 1;
     if (this->m_atomicQueues != nullptr) {
@@ -83,15 +83,18 @@ void PriorityMemQueueHandle::init() {
     this->m_nonEmptyMask.store(0, std::memory_order_relaxed);
 }
 
-bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId, FwQueuePriorityType maxPriority) {
+bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator,
+                                            FwEnumStoreType allocatorId,
+                                            FwQueuePriorityType maxPriority) {
     // Store allocator ID and max priority for later use
     this->m_allocatorId = allocatorId;
     this->m_maxPriority = maxPriority;
-    
+
     // Calculate array size based on highest priority (0-indexed, so add 1)
     FwSizeType arraySize = static_cast<FwSizeType>(maxPriority) + 1;
-    FW_ASSERT(arraySize <= Os::Generic::Queue::MAX_PRIORITIES, static_cast<FwAssertArgType>(arraySize), Os::Generic::Queue::MAX_PRIORITIES);
-    
+    FW_ASSERT(arraySize <= Os::Generic::Queue::MAX_PRIORITIES, static_cast<FwAssertArgType>(arraySize),
+              Os::Generic::Queue::MAX_PRIORITIES);
+
     // Allocate memory for atomicQueues array
     FwSizeType atomicQueuesSize = sizeof(Types::AtomicQueue) * arraySize;
     void* atomicQueuesMem = allocator.checkedAllocate(allocatorId, atomicQueuesSize, alignof(Types::AtomicQueue));
@@ -104,7 +107,7 @@ bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumS
     for (FwSizeType i = 0; i < arraySize; ++i) {
         new (&this->m_atomicQueues[i]) Types::AtomicQueue();
     }
-    
+
     // Allocate memory for highWaterMarks array
     FwSizeType hwmSize = sizeof(std::atomic<U32>) * arraySize;
     void* hwmMem = allocator.checkedAllocate(allocatorId, hwmSize, alignof(std::atomic<U32>));
@@ -117,7 +120,7 @@ bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumS
     for (FwSizeType i = 0; i < arraySize; ++i) {
         new (&this->m_highWaterMarks[i]) std::atomic<U32>(0);
     }
-    
+
     return true;
 }
 
@@ -146,7 +149,7 @@ void PriorityMemQueueHandle::deallocateArrays(Fw::MemAllocator& allocator, FwEnu
 
 void PriorityMemQueueHandle::enablePriority(FwQueuePriorityType priority) {
     FW_ASSERT(priority < Os::Generic::Queue::MAX_PRIORITIES, priority, this->m_id);
-    // Enabling a priority is only allowed if it's in use  
+    // Enabling a priority is only allowed if it's in use
     FW_ASSERT(this->m_atomicQueues != nullptr, this->m_id, priority);
 
     // MEMORY ORDERING: seq_cst for control path operations ensures total ordering
@@ -239,8 +242,10 @@ static void validateQueueConfigs(PriorityMemQueue::QueueConfig* queueConfigs, Fw
         PriorityMemQueue::QueueConfig* currentConfig = &queueConfigs[i];
 
         // Assert if numPriorities is 0 or exceeds maximum
-        FW_ASSERT(currentConfig->numPriorities > 0 && currentConfig->numPriorities <= Os::Generic::Queue::MAX_PRIORITIES,
-                  static_cast<FwAssertArgType>(i), currentConfig->instanceId, static_cast<FwAssertArgType>(currentConfig->numPriorities));
+        FW_ASSERT(
+            currentConfig->numPriorities > 0 && currentConfig->numPriorities <= Os::Generic::Queue::MAX_PRIORITIES,
+            static_cast<FwAssertArgType>(i), currentConfig->instanceId,
+            static_cast<FwAssertArgType>(currentConfig->numPriorities));
 
         // Check for duplicate instance IDs
         for (FwSizeType j = i + 1; j < numQueueConfigs; ++j) {
@@ -251,7 +256,7 @@ static void validateQueueConfigs(PriorityMemQueue::QueueConfig* queueConfigs, Fw
 
         // Check priority configurations
         PriorityMemQueue::QueuePriorityConfig* priorityConfigs = currentConfig->priorityConfigs;
-        FW_ASSERT(priorityConfigs != nullptr, static_cast<FwAssertArgType>(i), currentConfig->instanceId, 
+        FW_ASSERT(priorityConfigs != nullptr, static_cast<FwAssertArgType>(i), currentConfig->instanceId,
                   static_cast<FwAssertArgType>(currentConfig->numPriorities));
         for (FwSizeType p = 0; p < currentConfig->numPriorities; ++p) {
             PriorityMemQueue::QueuePriorityConfig* pConfig = &priorityConfigs[p];
@@ -274,7 +279,10 @@ static void validateQueueConfigs(PriorityMemQueue::QueueConfig* queueConfigs, Fw
     }
 }
 
-void PriorityMemQueue::configure(QueueConfig* queueConfigs, FwSizeType numQueueConfigs, bool required, FwEnumStoreType allocatorId) {
+void PriorityMemQueue::configure(QueueConfig* queueConfigs,
+                                 FwSizeType numQueueConfigs,
+                                 bool required,
+                                 FwEnumStoreType allocatorId) {
     // Accept NULL pointer if and only if numQueueConfigs is 0
     FW_ASSERT((queueConfigs != nullptr) || (numQueueConfigs == 0), 0);
 
@@ -318,12 +326,12 @@ void PriorityMemQueue::resetConfig() {
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
         FwEnumStoreType allocatorId = 0;
-        
+
         // Deallocate the tracking array
         allocator.deallocate(allocatorId, s_configsUsed);
         s_configsUsed = nullptr;
     }
-    
+
     // Reset all static state
     s_configs = nullptr;
     s_numConfigs = 0;
@@ -347,7 +355,7 @@ QueueInterface::Status PriorityMemQueue::create(FwEnumStoreType id,
 
     // Get the memory allocator for queue operations
     Fw::MemAllocator& allocator = this->getAllocator();
-    
+
     // Find a matching configuration if one exists
     QueueConfig* queueConfig = findMatchingConfig(id);
 
@@ -361,12 +369,12 @@ QueueInterface::Status PriorityMemQueue::create(FwEnumStoreType id,
             }
         }
     }
-    
+
     // Allocate arrays for priority data based on maxPriority
     if (!this->m_handle.allocateArrays(allocator, id, maxPriority)) {
         return Os::QueueInterface::Status::ALLOCATION_FAILED;
     }
-    
+
     // Initialize the handle with allocated arrays
     this->m_handle.init();
 
@@ -391,9 +399,7 @@ QueueInterface::Status PriorityMemQueue::create(FwEnumStoreType id,
 
 // Helper method to find a matching configuration for the given ID
 PriorityMemQueue::QueueConfig* PriorityMemQueue::findMatchingConfig(FwEnumStoreType id) {
-    
     if (s_configs != nullptr && s_configsUsed != nullptr) {
-        
         for (FwSizeType i = 0; i < s_numConfigs; ++i) {
             if (s_configs[i].instanceId == id) {
                 // Atomic check-and-set to claim configuration
@@ -415,15 +421,16 @@ QueueInterface::Status PriorityMemQueue::createConfiguredQueues(QueueConfig* que
                                                                 Fw::MemAllocator& allocator,
                                                                 FwEnumStoreType allocatorId) {
     FW_ASSERT(queueConfig != nullptr, this->m_handle.m_id);
-    FW_ASSERT(queueConfig->priorityConfigs != nullptr, this->m_handle.m_id, static_cast<FwAssertArgType>(queueConfig->numPriorities));
+    FW_ASSERT(queueConfig->priorityConfigs != nullptr, this->m_handle.m_id,
+              static_cast<FwAssertArgType>(queueConfig->numPriorities));
 
     for (FwSizeType i = 0; i < queueConfig->numPriorities; ++i) {
         const QueuePriorityConfig& priorityConfig = queueConfig->priorityConfigs[i];
         FwQueuePriorityType priority = priorityConfig.priority;
 
         // Create and initialize the priority queue
-        QueueInterface::Status status =
-            this->createPriorityQueue(priority, priorityConfig.maxMsgSize, priorityConfig.numMsgs, allocator, allocatorId);
+        QueueInterface::Status status = this->createPriorityQueue(priority, priorityConfig.maxMsgSize,
+                                                                  priorityConfig.numMsgs, allocator, allocatorId);
 
         if (status != Os::QueueInterface::Status::OP_OK) {
             return status;
@@ -454,13 +461,13 @@ QueueInterface::Status PriorityMemQueue::createPriorityQueue(FwQueuePriorityType
     FW_ASSERT(this->m_handle.m_atomicQueues != nullptr, this->m_handle.m_id, priority);
     FW_ASSERT(priority < Os::Generic::Queue::MAX_PRIORITIES, this->m_handle.m_id, priority);
     FW_ASSERT(priority <= this->m_handle.m_maxPriority, this->m_handle.m_id, priority, this->m_handle.m_maxPriority);
-    
+
     // Get pointer to the AtomicQueue for this priority (already constructed in allocateArrays)
     Types::AtomicQueue* atomicQueue = &this->m_handle.m_atomicQueues[priority];
-    
+
     // Create the AtomicQueue with the specified parameters
     atomicQueue->create(numMsgs, maxMsgSize, allocator, allocatorId);
-    
+
     // Check if creation was successful (both capacity and slots must be initialized)
     if (!atomicQueue->isCreated()) {
         this->teardownInternal();
@@ -479,7 +486,7 @@ void PriorityMemQueue::teardown() {
 
 void PriorityMemQueue::teardownInternal() {
     FW_ASSERT(this->m_handle.m_atomicQueues != nullptr || this->m_handle.m_maxPriority == 0, this->m_handle.m_id);
-    
+
     // Teardown all AtomicQueues if arrays are allocated
     if (this->m_handle.m_atomicQueues != nullptr) {
         FwSizeType arraySize = static_cast<FwSizeType>(this->m_handle.m_maxPriority) + 1;
@@ -509,7 +516,7 @@ void PriorityMemQueue::teardownInternal() {
     // If we were using a configuration, mark it as unused
     FW_ASSERT(s_configs != nullptr || s_configsUsed == nullptr, this->m_handle.m_id);
     FW_ASSERT(s_configsUsed != nullptr || s_configs == nullptr, this->m_handle.m_id);
-    
+
     if (s_configs != nullptr && s_configsUsed != nullptr) {
         for (FwSizeType i = 0; i < s_numConfigs; ++i) {
             if (s_configs[i].instanceId == this->m_handle.m_id && s_configsUsed[i].load()) {
@@ -526,10 +533,10 @@ void PriorityMemQueue::teardownInternal() {
 //! \param queueId: queue ID for assertions
 //! \param requirePrioritySizing: whether to assert on fallback
 //! \return pointer to AtomicQueue or nullptr if uninitialized
-static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle, 
-                                                 FwQueuePriorityType& priority,
-                                                 FwEnumStoreType queueId,
-                                                 bool requirePrioritySizing) {
+static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle,
+                                                FwQueuePriorityType& priority,
+                                                FwEnumStoreType queueId,
+                                                bool requirePrioritySizing) {
     // Check if priority is within bounds of allocated array
     if (priority > handle.m_maxPriority) {
         if (requirePrioritySizing) {
@@ -556,7 +563,7 @@ static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle,
 //! \param priority: priority index
 //! \param currentDepth: current queue depth
 //! \param queueId: queue ID for assertions
-static void updateHighWaterMark(std::atomic<U32>* highWaterMarks, 
+static void updateHighWaterMark(std::atomic<U32>* highWaterMarks,
                                 FwQueuePriorityType priority,
                                 U32 currentDepth,
                                 FwEnumStoreType queueId) {
@@ -567,9 +574,8 @@ static void updateHighWaterMark(std::atomic<U32>* highWaterMarks,
         if (currentDepth <= prevMax) {
             return;  // No update needed
         }
-        if (highWaterMarks[priority].compare_exchange_weak(prevMax, currentDepth, 
-                                                          std::memory_order_release,
-                                                          std::memory_order_acquire)) {
+        if (highWaterMarks[priority].compare_exchange_weak(prevMax, currentDepth, std::memory_order_release,
+                                                           std::memory_order_acquire)) {
             return;  // Update succeeded
         }
     }
@@ -596,7 +602,8 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     }
 
     // Resolve priority to valid queue
-    Types::AtomicQueue* atomicQueue = resolvePriorityQueue(this->m_handle, priority, this->m_handle.m_id, s_requirePrioritySizing);
+    Types::AtomicQueue* atomicQueue =
+        resolvePriorityQueue(this->m_handle, priority, this->m_handle.m_id, s_requirePrioritySizing);
 
     // Check for sizing problem
     if (size > atomicQueue->getBufferSize()) {
@@ -610,7 +617,7 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     } else {
         success = atomicQueue->enqueue(buffer, size);
     }
-    
+
     if (!success) {
         return QueueInterface::Status::FULL;
     }
@@ -618,15 +625,15 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     // Update per-priority high water mark
     U32 currentDepth = static_cast<U32>(atomicQueue->getSize());
     updateHighWaterMark(this->m_handle.m_highWaterMarks, priority, currentDepth, this->m_handle.m_id);
-    
+
     // Mark this priority as non-empty (optimization for receive scan)
     this->m_handle.m_nonEmptyMask.fetch_or(priorityBitMask(priority), std::memory_order_release);
-    
+
     // Post semaphore to wake up receiver (if any)
     FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id, priority);
     Os::CountingSemaphoreInterface::Status semStatus = this->m_handle.m_notEmptySem->post();
     FW_ASSERT(semStatus == Os::CountingSemaphoreInterface::Status::OP_OK, static_cast<FwAssertArgType>(semStatus));
-    
+
     return QueueInterface::Status::OP_OK;
 }
 
@@ -647,21 +654,21 @@ static bool scanAndDequeue(PriorityMemQueueHandle& handle,
     // Scan from highest to lowest priority
     for (I32 p = handle.m_maxPriority; p >= 0; --p) {
         FwQueuePriorityType testPriority = static_cast<FwQueuePriorityType>(p);
-        
+
         // Skip if priority not in scan mask
         if ((scanMask & priorityBitMask(testPriority)) == 0) {
             continue;
         }
-        
+
         // Validate AtomicQueue exists
         FW_ASSERT(handle.m_atomicQueues != nullptr, handle.m_id, testPriority);
         Types::AtomicQueue* atomicQueue = &handle.m_atomicQueues[testPriority];
         FW_ASSERT(atomicQueue->isCreated(), handle.m_id, testPriority);
-        
+
         // Try to dequeue
         if (atomicQueue->dequeue(destination, capacity, actualSize)) {
             priority = testPriority;
-            
+
             // Dequeue succeeded - check if more messages remain
             if (atomicQueue->getSize() == 0) {
                 handle.m_nonEmptyMask.fetch_and(~priorityBitMask(testPriority), std::memory_order_relaxed);
@@ -705,33 +712,34 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
     // Result: One gets message, others find all queues empty, block again.
     //
     // MEMORY ORDERING: Use acquire on priority mask to ensure visibility of queue state.
-    
+
     // Bounded loop with compile-time limit for JPL Power of Ten compliance
     for (U32 reps = 0; reps < LOOP_GUARD_LIMIT; ++reps) {
         // Get enabled priorities and non-empty hint mask
         U32 enabledPriorities = this->m_handle.m_priorityMask.load(std::memory_order_acquire);
         U32 nonEmptyHint = this->m_handle.m_nonEmptyMask.load(std::memory_order_acquire);
-        
+
         // Combine masks: only scan priorities that are both enabled and likely non-empty
         U32 scanMask = enabledPriorities & nonEmptyHint;
-        
+
         // Scan priorities and attempt dequeue
         if (scanAndDequeue(this->m_handle, destination, capacity, actualSize, priority, scanMask)) {
             return QueueInterface::Status::OP_OK;
         }
-        
+
         // No message available
         if (blockType == QueueInterface::BlockingType::BLOCKING) {
             // Wait for a message
             FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id);
             Os::CountingSemaphoreInterface::Status semStatus = this->m_handle.m_notEmptySem->wait();
-            FW_ASSERT(semStatus == Os::CountingSemaphoreInterface::Status::OP_OK, static_cast<FwAssertArgType>(semStatus));
+            FW_ASSERT(semStatus == Os::CountingSemaphoreInterface::Status::OP_OK,
+                      static_cast<FwAssertArgType>(semStatus));
         } else {
             // Non-blocking, return empty
             return QueueInterface::Status::EMPTY;
         }
     }
-    
+
     // Should never reach here - loop guard prevents infinite loop
     FW_ASSERT(false, this->m_handle.m_id, LOOP_GUARD_LIMIT);
     return QueueInterface::Status::UNKNOWN_ERROR;

@@ -74,7 +74,8 @@ TEST_F(PriorityMemQueueInputValidation, ValidPriorityBoundaries) {
     Os::Generic::PriorityMemQueue::QueueConfig queueConfig = {100, Os::Generic::Queue::MAX_PRIORITIES, priorityConfigs};
 
     Os::Generic::PriorityMemQueue::QueueConfig configs[] = {queueConfig};
-    Os::Generic::PriorityMemQueue::configure(configs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(configs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     Fw::String name("TestQueue");
     Os::QueueInterface::Status status = queue.create(100, name, 10, 128);
@@ -153,7 +154,8 @@ TEST_F(PriorityMemQueueInputValidation, IsPriorityEnabledIndirect) {
     Os::Generic::PriorityMemQueue::QueueConfig queueConfig = {150, 3, priorityConfigs};
 
     Os::Generic::PriorityMemQueue::QueueConfig configs[] = {queueConfig};
-    Os::Generic::PriorityMemQueue::configure(configs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    Os::Generic::PriorityMemQueue::configure(configs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     Fw::String name("TestQueue");
     Os::QueueInterface::Status status = queue.create(150, name, 10, 128);
@@ -209,7 +211,8 @@ TEST_F(PriorityMemQueueInputValidation, RequiredPrioritySizingMode) {
     Os::Generic::PriorityMemQueue::QueueConfig queueConfig = {200, 1, priorityConfigs};
 
     Os::Generic::PriorityMemQueue::QueueConfig configs[] = {queueConfig};
-    Os::Generic::PriorityMemQueue::configure(configs, 1, true, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);  // required = true
+    Os::Generic::PriorityMemQueue::configure(
+        configs, 1, true, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);  // required = true
 
     Os::Generic::PriorityMemQueue queue;
     Fw::String name("TestQueue");
@@ -228,7 +231,8 @@ TEST_F(PriorityMemQueueInputValidation, RequiredPrioritySizingMode) {
 
     // Test non-required mode (should fall back to default priority)
     PriorityMemQueueTestHelper::resetConfig();
-    Os::Generic::PriorityMemQueue::configure(configs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);  // required = false
+    Os::Generic::PriorityMemQueue::configure(
+        configs, 1, false, Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);  // required = false
 
     Os::Generic::PriorityMemQueue queue2;
     Fw::String name2("TestQueue2");
