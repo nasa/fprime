@@ -154,8 +154,12 @@ void Os::Test::FileTest::Tester::assert_valid_mode_status(Os::File::Status& stat
 void Os::Test::FileTest::Tester::assert_file_consistent() {
     // Ensure file mode
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
-    // Ensure CRC match
-    ASSERT_EQ(this->m_file.m_crc, this->m_independent_crc);
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 crcNow;
+    this->m_file.m_hash.finalize(crcNow);
+    crcNow = ~crcNow;
+    ASSERT_EQ(crcNow, this->m_independent_crc);
     if (Os::File::Mode::OPEN_NO_MODE == this->m_file.m_mode) {
         ASSERT_EQ(this->m_current_path, std::string(""));
     } else {
@@ -1146,7 +1150,13 @@ void Os::Test::FileTest::Tester::IncrementalCrc::action(Os::Test::FileTest::Test
     state.shadow_partial_crc(shadow_size);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size_desired, shadow_size);
-    ASSERT_EQ(state.m_file.m_crc, state.m_independent_crc);
+
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 expected_crc = 0;
+    state.m_file.m_hash.finalize(expected_crc);
+    expected_crc = ~expected_crc;
+    ASSERT_EQ(expected_crc, state.m_independent_crc);
     state.assert_file_consistent();
 }
 
