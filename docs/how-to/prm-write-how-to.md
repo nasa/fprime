@@ -96,7 +96,7 @@ Run the tool in the terminal:
 
 **General syntax:**
 ```bash
-fprime-prm-write dat <json file> --dictionary <path to compiled FPrime dict>
+fprime-prm-write dat <path/to/paramFile.json> --dictionary <path/to/dictionary.json>
 ```
 
 **Example: Ref project:**
