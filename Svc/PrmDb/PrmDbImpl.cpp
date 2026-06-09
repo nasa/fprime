@@ -289,7 +289,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         return;
     }
     buff.resetSer();
-    U32 crcFinal;
+    U32 crcFinal = 0;
     crc.finalize(crcFinal);
     crcFinal = ~crcFinal;
     serStat = buff.serializeFrom(crcFinal);
