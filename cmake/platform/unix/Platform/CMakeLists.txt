@@ -14,7 +14,6 @@ register_fprime_config(
         Os_Console_Posix
         Os_Task_Posix
         Os_Mutex_Posix
-        Os_CountingSemaphore_Posix
         Os_Generic_PriorityQueue
         Os_RawTime_Posix
         Fw_StringFormat_snprintf
