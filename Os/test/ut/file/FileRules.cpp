@@ -156,7 +156,7 @@ void Os::Test::FileTest::Tester::assert_file_consistent() {
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
     // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
     // the ones complement performed by finalize, and then comparing the values directly.
-    U32 crcNow;
+    U32 crcNow = 0;
     this->m_file.m_hash.finalize(crcNow);
     crcNow = ~crcNow;
     ASSERT_EQ(crcNow, this->m_independent_crc);
