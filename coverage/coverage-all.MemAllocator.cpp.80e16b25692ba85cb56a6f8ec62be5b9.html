@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-09 00:23:56</td>
+      <td>2026-06-09 23:15:04</td>
     </tr>
   </table>
 </div>
@@ -71,15 +71,15 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l13">Fw::MemAllocator::MemAllocator() (line 13)</a></td><td>called 757 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l17">Fw::MemAllocator::allocate(int, unsigned long&amp;, unsigned long) (line 17)</a></td><td>called 4425 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l17">Fw::MemAllocator::allocate(int, unsigned long&amp;, unsigned long) (line 17)</a></td><td>called 4405 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l22">Fw::MemAllocator::checkedAllocate(int, unsigned long&amp;, bool&amp;, unsigned long) (line 22)</a></td><td>called 2 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l33">Fw::MemAllocator::checkedAllocate(int, unsigned long&amp;, unsigned long) (line 33)</a></td><td>called 1 time</td><td>90.0%</td></tr>
     <tr><td><a href="#l15">Fw::MemAllocator::~MemAllocator() (line 15)</a></td><td>called 757 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l38">Fw::MemAllocatorRegistry::MemAllocatorRegistry() (line 38)</a></td><td>called 27 times</td><td>94.0%</td></tr>
-    <tr><td><a href="#l52">Fw::MemAllocatorRegistry::getAllocator(Fw::MemoryAllocation::MemoryAllocatorType) (line 52)</a></td><td>called 2212 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l57">Fw::MemAllocatorRegistry::getAnAllocator(Fw::MemoryAllocation::MemoryAllocatorType) (line 57)</a></td><td>called 2212 times</td><td>59.0%</td></tr>
+    <tr><td><a href="#l52">Fw::MemAllocatorRegistry::getAllocator(Fw::MemoryAllocation::MemoryAllocatorType) (line 52)</a></td><td>called 2202 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l57">Fw::MemAllocatorRegistry::getAnAllocator(Fw::MemoryAllocation::MemoryAllocatorType) (line 57)</a></td><td>called 2202 times</td><td>59.0%</td></tr>
     <tr><td><a href="#l65">Fw::MemAllocatorRegistry::getDefaultAllocator() (line 65)</a></td><td>called 27 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l47">Fw::MemAllocatorRegistry::getInstance() (line 47)</a></td><td>called 2212 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l47">Fw::MemAllocatorRegistry::getInstance() (line 47)</a></td><td>called 2202 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l42">Fw::MemAllocatorRegistry::registerAllocator(Fw::MemoryAllocation::MemoryAllocatorType, Fw::MemAllocator&amp;) (line 42)</a></td><td>called 27 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -210,14 +210,14 @@
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4425</td>
+      <td class="linecount coveredLine">4405</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">MemAllocator</span><span class="o">::</span><span class="n">allocate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">alignment</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4425</td>
+      <td class="linecount coveredLine">4405</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">unused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -226,11 +226,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 4425 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 4405 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">8850</td>
+      <td class="linecount coveredLine">8810</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">allocate</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">unused</span><span class="p">,</span><span class="w"> </span><span class="n">alignment</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -438,7 +438,7 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="n">MemAllocatorRegistry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">MemAllocatorRegistry</span><span class="o">::</span><span class="n">getInstance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -448,7 +448,7 @@
           <summary class="linebranchSummary">4/7</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 27 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 2185 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2175 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 27 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="takenBranch">&check; Branch 6 taken 27 times.</div>
@@ -457,14 +457,14 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2212</td>
+      <td class="linecount partialCoveredLine">2202</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">MemAllocatorRegistry</span><span class="w"> </span><span class="n">registry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">registry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -485,21 +485,21 @@
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">MemAllocatorRegistry</span><span class="o">::</span><span class="n">getAllocator</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MemoryAllocation</span><span class="o">::</span><span class="n">MemoryAllocatorType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocators</span><span class="p">[</span><span class="n">type</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">type</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocators</span><span class="p">[</span><span class="n">type</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
@@ -520,7 +520,7 @@
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">MemAllocatorRegistry</span><span class="o">::</span><span class="n">getAnAllocator</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MemoryAllocation</span><span class="o">::</span><span class="n">MemoryAllocatorType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -536,12 +536,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 2212 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 2202 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2212</td>
+      <td class="linecount partialCoveredLine">2202</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocators</span><span class="p">[</span><span class="n">type</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -550,12 +550,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2212 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 2212 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2202 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 2202 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2212</td>
+      <td class="linecount coveredLine">2202</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getAllocator</span><span class="p">(</span><span class="n">MemoryAllocation</span><span class="o">::</span><span class="n">MemoryAllocatorType</span><span class="o">::</span><span class="n">SYSTEM</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-09 00:23:56</td>
+      <td>2026-06-09 23:15:04</td>
     </tr>
   </table>
 </div>
@@ -70,8 +70,8 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l20">Os::ConditionVariableInterface::getDelegate(unsigned char (&amp;) [56]) (line 20)</a></td><td>called 2267 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l13">Os::MutexInterface::getDelegate(unsigned char (&amp;) [72]) (line 13)</a></td><td>called 5603 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l20">Os::ConditionVariableInterface::getDelegate(unsigned char (&amp;) [56]) (line 20)</a></td><td>called 2257 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l13">Os::MutexInterface::getDelegate(unsigned char (&amp;) [72]) (line 13)</a></td><td>called 5587 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -173,14 +173,14 @@
       <td class="lineno"><a id="l13" href="#l13">13</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5603</td>
+      <td class="linecount coveredLine">5587</td>
       <td class="src coveredLine"><span class="n">MutexInterface</span><span class="o">*</span><span class="w"> </span><span class="nf">MutexInterface::getDelegate</span><span class="p">(</span><span class="n">MutexHandleStorage</span><span class="o">&amp;</span><span class="w"> </span><span class="n">aligned_new_memory</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5603</td>
+      <td class="linecount coveredLine">5587</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Delegate</span><span class="o">::</span><span class="n">makeDelegate</span><span class="o">&lt;</span><span class="n">MutexInterface</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">Mutex</span><span class="o">::</span><span class="n">PosixMutex</span><span class="o">&gt;</span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -222,7 +222,7 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2267</td>
+      <td class="linecount coveredLine">2257</td>
       <td class="src coveredLine"><span class="n">ConditionVariableInterface</span><span class="o">*</span><span class="w"> </span><span class="nf">ConditionVariableInterface::getDelegate</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -243,7 +243,7 @@
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2267</td>
+      <td class="linecount coveredLine">2257</td>
       <td class="src coveredLine"><span class="w">                                      </span><span class="n">ConditionVariableHandleStorage</span><span class="o">&gt;</span><span class="p">(</span><span class="n">aligned_new_memory</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

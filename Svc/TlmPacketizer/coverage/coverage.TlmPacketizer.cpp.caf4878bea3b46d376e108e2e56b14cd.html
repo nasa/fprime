@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-09 00:26:19</td>
+      <td>2026-06-09 23:17:36</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>273</td>
-      <td>295</td>
+      <td>271</td>
+      <td>293</td>
       <td class="coverage-high">92.5%</td>
     </tr>
     <tr>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>236</td>
-      <td>304</td>
-      <td class="coverage-medium">77.6%</td>
+      <td>237</td>
+      <td>306</td>
+      <td class="coverage-medium">77.5%</td>
     </tr>
   </table>
 </div>
@@ -82,7 +82,7 @@
     <tr><td><a href="#l159">Svc::TlmPacketizer::TlmRecv_handler(short, unsigned int, Fw::Time&amp;, Fw::TlmBuffer&amp;) (line 159)</a></td><td>called 102 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l519">Svc::TlmPacketizer::configureSectionGroupRate(Svc::TelemetrySection const&amp;, unsigned int, Svc::RateLogic const&amp;, unsigned int, unsigned int) (line 519)</a></td><td>called 115 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l200">Svc::TlmPacketizer::configureSectionGroupRate_handler(short, Svc::TelemetrySection const&amp;, unsigned int, Svc::RateLogic const&amp;, unsigned int, unsigned int) (line 200)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l383">Svc::TlmPacketizer::controlIn_handler(short, Svc::TelemetrySection const&amp;, Fw::Enabled const&amp;) (line 383)</a></td><td>called 2 times</td><td>58.0%</td></tr>
+    <tr><td><a href="#l383">Svc::TlmPacketizer::controlIn_handler(short, Svc::TelemetrySection const&amp;, Fw::Enabled const&amp;) (line 383)</a></td><td>called 2 times</td><td>57.0%</td></tr>
     <tr><td><a href="#l566">Svc::TlmPacketizer::deserializeParam(unsigned int, unsigned int, Fw::ParamValid, Fw::SerialBufferBase&amp;) (line 566)</a></td><td>called 32 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l551">Svc::TlmPacketizer::missingChannel(unsigned int) (line 551)</a></td><td>called 52 times</td><td>95.0%</td></tr>
     <tr><td><a href="#l395">Svc::TlmPacketizer::pingIn_handler(short, unsigned int) (line 395)</a></td><td>called 1 time</td><td>100.0%</td></tr>
@@ -3398,33 +3398,35 @@
       <td class="lineno"><a id="l386" href="#l386">386</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">section</span><span class="p">.</span><span class="n">isValid</span><span class="p">());</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// NUM_SECTIONS is an enum constant (not a standalone constant), so isValid() accepts it.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l387" href="#l387">387</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">enabled</span><span class="p">.</span><span class="n">isValid</span><span class="p">());</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// The explicit bounds check prevents an out-of-bounds write to m_sectionEnabled.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l388" href="#l388">388</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/6</summary>
+          <summary class="linebranchSummary">4/8</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
-            <div class="takenBranch">&check; Branch 12 taken 2 times.</div>
-            <div class="notTakenBranch">&cross; Branch 13 not taken.</div>
+            <div class="takenBranch">&check; Branch 16 taken 2 times.</div>
+            <div class="notTakenBranch">&cross; Branch 17 not taken.</div>
+            <div class="takenBranch">&check; Branch 18 taken 2 times.</div>
+            <div class="notTakenBranch">&cross; Branch 19 not taken.</div>
           </div>
         </details>
       </td>
       <td class="linecount partialCoveredLine">2</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">section</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">section</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">TelemetrySection</span><span class="o">::</span><span class="n">NUM_SECTIONS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">section</span><span class="p">.</span><span class="n">isValid</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">section</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">TelemetrySection</span><span class="o">::</span><span class="n">NUM_SECTIONS</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">enabled</span><span class="p">.</span><span class="n">isValid</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l389" href="#l389">389</a></td>
