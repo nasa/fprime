@@ -3,7 +3,7 @@
 
 ## Overview
 
-Readers of this guide are encouraged to read through the documentation for the [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file that PrmDb loads directly, or by generating a command sequence (`.seq` file) to dispatch a series of commands.
+Readers of this guide are encouraged to read through the documentation for the [PrmDb component](https://fprime.jpl.nasa.gov/latest/Svc/PrmDb/docs/sdd/) and the [CmdSequencer component](https://fprime.jpl.nasa.gov/latest/Svc/CmdSequencer/docs/sdd/). This guide will go over two methods of updating parameters: through a `.dat` file that PrmDb loads directly, or by generating a command sequence (`.seq` file) to dispatch a series of commands.
 
 This guide uses the [**Ref**](https://github.com/nasa/fprime/tree/devel/TestDeploymentsProject/Ref) (reference) F´ project as an example.
 
