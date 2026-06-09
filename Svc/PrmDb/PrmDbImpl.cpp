@@ -138,7 +138,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // write placeholder for the CRC
     Utils::Hash crc;
-    U32 crcInitial = U32(~0);
+    U32 crcInitial = 0xFFFFFFFF;
     buff.resetSer();
     Fw::SerializeStatus serStat = buff.serializeFrom(crcInitial);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
