@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-08 22:22:01</td>
+      <td>2026-06-09 00:25:26</td>
     </tr>
   </table>
 </div>
@@ -70,10 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l19">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::CRC() (line 19)</a></td><td>called 211 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l32">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::finalize() (line 32)</a></td><td>called 160 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l21">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::init() (line 21)</a></td><td>called 175 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l25">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::update(unsigned char const*, unsigned long) (line 25)</a></td><td>called 264 times</td><td>91.0%</td></tr>
+    <tr><td><a href="#l19">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::CRC() (line 19)</a></td><td>called 216 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l32">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::finalize() (line 32)</a></td><td>called 165 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l21">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::init() (line 21)</a></td><td>called 180 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l25">Svc::CmdSequencerComponentImpl::FPrimeSequence::CRC::update(unsigned char const*, unsigned long) (line 25)</a></td><td>called 270 times</td><td>91.0%</td></tr>
     <tr><td><a href="#l36">Svc::CmdSequencerComponentImpl::FPrimeSequence::FPrimeSequence(Svc::CmdSequencerComponentImpl&amp;) (line 36)</a></td><td>called 72 times</td><td>76.0%</td></tr>
     <tr><td><a href="#l73">Svc::CmdSequencerComponentImpl::FPrimeSequence::clear() (line 73)</a></td><td>called 72 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l295">Svc::CmdSequencerComponentImpl::FPrimeSequence::copyCommand(Fw::ComBuffer&amp;, unsigned int) (line 295)</a></td><td>called 301 times</td><td>94.0%</td></tr>
@@ -236,7 +236,7 @@
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">211</td>
+      <td class="linecount coveredLine">216</td>
       <td class="src coveredLine"><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">FPrimeSequence</span><span class="o">::</span><span class="n">CRC</span><span class="w"> </span><span class="nf">::CRC</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_computed</span><span class="p">(</span><span class="n">INITIAL_COMPUTED_VALUE</span><span class="p">),</span><span class="w"> </span><span class="n">m_stored</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -250,21 +250,21 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">175</td>
+      <td class="linecount coveredLine">180</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">FPrimeSequence</span><span class="o">::</span><span class="n">CRC</span><span class="w"> </span><span class="nf">::init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">175</td>
+      <td class="linecount coveredLine">180</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_computed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INITIAL_COMPUTED_VALUE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">175</td>
+      <td class="linecount coveredLine">180</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -278,14 +278,14 @@
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">264</td>
+      <td class="linecount coveredLine">270</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">FPrimeSequence</span><span class="o">::</span><span class="n">CRC</span><span class="w"> </span><span class="nf">::update</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">BYTE</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">bufferSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">264</td>
+      <td class="linecount coveredLine">270</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -294,19 +294,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 15297 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 264 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 15325 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 270 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">15561</td>
+      <td class="linecount coveredLine">15595</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">bufferSize</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15297</td>
+      <td class="linecount coveredLine">15325</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_computed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">update_crc_32</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_computed</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">])));</span></td>
     </tr>
     <tr class="source-line">
@@ -320,7 +320,7 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">264</td>
+      <td class="linecount coveredLine">270</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -334,21 +334,21 @@
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160</td>
+      <td class="linecount coveredLine">165</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CmdSequencerComponentImpl</span><span class="o">::</span><span class="n">FPrimeSequence</span><span class="o">::</span><span class="n">CRC</span><span class="w"> </span><span class="nf">::finalize</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160</td>
+      <td class="linecount coveredLine">165</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_computed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_computed</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">160</td>
+      <td class="linecount coveredLine">165</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
