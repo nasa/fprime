@@ -587,7 +587,7 @@ class File final : public FileInterface {
 
     Mode m_mode = Mode::OPEN_NO_MODE;  //!< Stores mode for error checking
 
-    Utils::Hash m_hash;
+    Utils::Hash m_hash;  //!< Hash object for incremental CRC calculation
     U8 m_crc_buffer[FW_FILE_CHUNK_SIZE];
 
     // This section is used to store the implementation-defined file handle. To Os::File and fprime, this type is
