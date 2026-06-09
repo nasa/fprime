@@ -78,17 +78,17 @@ Component instance names must be fully qualified (e.g., `Ref.recvBuffComp`).
 > Parameter values may be complex F´ types **only when using the .dat method**.
 
 > [!TIP]
-> **Using the `--defaults` flag:** By default, the `fprime-prm-write` tool only includes parameters explicitly listed in your JSON file. If you add the `--defaults` flag, the tool will include all parameters that have default values defined in the dictionary. This effectively resets all parameters to their defaults, except for those you specify in the JSON file. This flag works for both `.dat` and `.seq` file generation.
+> **Using the `--defaults` flag:** The `fprime-prm-write` tool only automatically includes parameters explicitly listed in your JSON file. If you add the `--defaults` flag, the tool will include all parameters that have default values defined in the dictionary. This effectively resets all parameters to their defaults, except for those you specify in the JSON file. This flag works for both `.dat` and `.seq` file generation.
 
 All steps from this point on either take place in the terminal or the GDS GUI.
 
 ## Method 1: Generate a `.dat` File
 
-With this method, the user uplinks a `.dat` file to the FSW and sends `PRM_LOAD_FILE` followed by `PRM_COMMIT_STAGED` commands to the PrmDb component, which loads parameter values in batch from the file.
+With this method, the user uplinks a `.dat` file to the FSW and sends the `PRM_LOAD_FILE` and `PRM_COMMIT_STAGED` commands to the PrmDb component, which loads parameter values in batch from the file.
 
 ### Step 1: Generate the `.dat` File
 
-Run the tool in the terminal:
+Now you will run the `fprime-prm-write` tool in the terminal.
 
 **General syntax:**
 ```bash
@@ -110,7 +110,7 @@ This creates `params.dat` in the same directory as your JSON file.
 
 1. Launch the GDS using `fprime-gds` and open up the browser window
 2. Navigate to the **Uplink** tab to [stage and uplink](https://fprime.jpl.nasa.gov/devel/docs/user-manual/overview/gds-introduction/#navigating-the-gds-gui) the `params.dat` file.
-    - Specify an onboard Destination Folder
+    - Specify an onboard Destination Folder path
 3. Navigate to the **Commanding** tab
 4. Find and select `FileHandling.prmDb.PRM_LOAD_FILE`
 5. Fill in the arguments:
@@ -131,7 +131,7 @@ This creates `params.dat` in the same directory as your JSON file.
 
 After verifying the load succeeded, commit to make parameters active:
 
-Using the GDS GUI, send `FileHandling.prmDb.PRM_COMMIT_STAGED` (no arguments). Check the **Events** tab for `PrmDbCopyAllComplete` to confirm the commit succeeded.
+In the **Commanding** tab, send `FileHandling.prmDb.PRM_COMMIT_STAGED` (no arguments). Check the **Events** tab for `PrmDbCopyAllComplete` to confirm the commit succeeded.
 
 ### Step 4 (optional): Verify Individual Parameter Changes
 
@@ -145,9 +145,9 @@ If your deployment has file downlink configured (using `Svc.FileDownlink`), you 
    
    **General syntax:** Using the inverse `fprime-prm-decode` tool
    ```bash
-   fprime-prm-decode PrmDb.dat \
-     --dictionary build-fprime-automatic-<platform>/<YourDeployment>/dict/<YourDeployment>TopologyDictionary.json \
-     --format json \
+   fprime-prm-decode PrmDb.dat
+     --dictionary <path/to/TopologyDictionary.json>
+     --format json
      --output downlinked_params.json
    ```
 
@@ -167,7 +167,7 @@ With this method, the user compiles a `.seq` file into a `.bin` and uplinks it t
 
 **General syntax:**
 ```bash
-fprime-prm-write seq <json file> --dictionary <path to compiled FPrime dict>
+fprime-prm-write seq <json file> --dictionary <path/to/TopologyDictionary.json>
 ```
 
 **Example: Ref project:**
@@ -187,7 +187,7 @@ This creates `params.seq` in the same directory as your JSON file.
    This creates `params.bin`.
 
 2. Load the sequence into `CmdSequencer` in the GDS GUI:
-    1. [Stage and uplink](https://fprime.jpl.nasa.gov/devel/docs/user-manual/overview/gds-introduction/#navigating-the-gds-gui) the `params.bin` file.
+    1. In the **Uplink** tab, [stage and uplink](https://fprime.jpl.nasa.gov/devel/docs/user-manual/overview/gds-introduction/#navigating-the-gds-gui) the `params.bin` file.
         - Specify the Destination Folder onboard, such as `/seq`
     2. Send the `<project>.cmdSeq.CS_RUN` command with the binary file name
         - File name should include the path (e.g. `/seq/params.bin`)
@@ -196,7 +196,7 @@ This creates `params.seq` in the same directory as your JSON file.
 
 3. Verify the sequence executed successfully by checking events in the **Events** tab or command line
     ```bash
-    grep -E "CS_Sequence" <path to project log file>
+    grep -E "CS_Sequence" <path/to/project/log/file>
     ```
     | Event | Status | Description |                                                                                  
     |-------|--------|-------------|                                                                                  
@@ -223,7 +223,7 @@ This creates `params.seq` in the same directory as your JSON file.
 
 **Cause:** File not found.
 
-**Fix:** Verify file path and ensure it's accessible to the FSW.
+**Fix:** Verify file path and ensure it's accessible to the FSW (uplinked to the spacecraft, providing the onboard file path).
 
 ### Error: `RuntimeError: Unable to find param <name> in dictionary`
 
