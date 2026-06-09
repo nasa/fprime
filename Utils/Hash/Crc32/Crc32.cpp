@@ -196,7 +196,7 @@ U32 crc32_ieee802_3_update(const U8* data, FwSizeType length, U32 crc) {
         // we'd need the complexity of considering endianness.)
         FwSizeType stop_at = length - 3;
         for (; i < stop_at; i += 4) {
-            crc ^= U32(data[i + 0] | (data[i + 1] << 8) | (data[i + 2] << 16) | (data[i + 3] << 24));
+            crc ^= (U32(data[i + 0]) | (U32(data[i + 1]) << 8) | (U32(data[i + 2]) << 16) | (U32(data[i + 3]) << 24));
             crc = crc32_ieee802_3_lookup3[crc & 0xFF] ^ crc32_ieee802_3_lookup2[(crc >> 8) & 0xFF] ^
                   crc32_ieee802_3_lookup1[(crc >> 16) & 0xFF] ^ crc32_ieee802_3_lookup0[crc >> 24];
         }
