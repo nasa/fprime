@@ -1,5 +1,5 @@
-#ifndef Components_Cascade_Crc32_HPP
-#define Components_Cascade_Crc32_HPP
+#ifndef UTILS_HASH_CRC32_CRC32_HPP
+#define UTILS_HASH_CRC32_CRC32_HPP
 
 #include "Fw/FPrimeBasicTypes.hpp"
 
