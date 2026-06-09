@@ -299,6 +299,9 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                         FwSizeType bufferSize  //!< The buffer size
             );
 
+            //! Return the finalized CRC
+            U32 finalize();
+
             //! Computed CRC
             Utils::Hash m_computed;
 

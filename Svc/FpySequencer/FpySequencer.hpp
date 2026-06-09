@@ -21,8 +21,8 @@
 #include "Svc/FpySequencer/HeaderSerializableAc.hpp"
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
-#include "Utils/Hash/Hash.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
+#include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),

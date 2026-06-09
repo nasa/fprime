@@ -24,13 +24,18 @@ void CmdSequencerComponentImpl::FPrimeSequence::CRC ::update(const BYTE* buffer,
     this->m_computed.update(buffer, bufferSize);
 }
 
+U32 CmdSequencerComponentImpl::FPrimeSequence::CRC ::finalize() {
+    U32 computed = 0;
+    this->m_computed.finalize(computed);
+    return computed;
+}
+
 CmdSequencerComponentImpl::FPrimeSequence ::FPrimeSequence(CmdSequencerComponentImpl& component)
     : Sequence(component) {}
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::validateCRC() {
     bool result = true;
-    U32 computed;
-    this->m_crc.m_computed.finalize(computed);
+    U32 computed = this->m_crc.finalize();
     if (this->m_crc.m_stored != computed) {
         this->m_events.fileCRCFailure(this->m_crc.m_stored, computed);
         result = false;
