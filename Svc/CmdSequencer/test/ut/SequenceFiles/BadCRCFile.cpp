@@ -36,7 +36,7 @@ void BadCRCFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     const U32 size = buffer.getSize();
     this->crc.init();
     this->crc.update(addr, size);
-    U32 crcFinal;
+    U32 crcFinal = 0;
     this->crc.m_computed.finalize(crcFinal);
     crc.m_stored = crcFinal + 1;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(this->crc.m_stored));
