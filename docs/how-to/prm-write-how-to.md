@@ -92,7 +92,7 @@ Now you will run the `fprime-prm-write` tool in the terminal.
 
 **General syntax:**
 ```bash
-fprime-prm-write dat <path/to/paramFile.json> --dictionary <path/to/dictionary.json>
+fprime-prm-write dat <path/to/paramFile.json> --dictionary <path/to/TopologyDictionary.json>
 ```
 
 **Example: Ref project:**
