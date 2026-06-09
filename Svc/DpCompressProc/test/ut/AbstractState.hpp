@@ -38,42 +38,22 @@ class AbstractState {
     //! Construct an AbstractState object
     AbstractState() {}
 
-    enum Compressible {
-        UNCOMPRESSED = 'U',
-        COMPRESSED = 'C',
-        MINIMAL_COMPRESSED = 'M',
-        MAXIMAL_COMPRESSED = 'X'
-    };
+    enum Compressible { UNCOMPRESSED = 'U', COMPRESSED = 'C', MINIMAL_COMPRESSED = 'M', MAXIMAL_COMPRESSED = 'X' };
 
     struct Chunk {
         Compressible compressible;
         U8 sentinel;
 
-        Chunk(Compressible c, U8 s) :
-            compressible(c),
-            sentinel(s) {}
+        Chunk(Compressible c, U8 s) : compressible(c), sentinel(s) {}
     };
 
-    Fw::Buffer build_compress_buffer(
-            FwSizeStoreType chunk_size,
-            std::vector<Chunk> chunks
-    );
+    Fw::Buffer build_compress_buffer(FwSizeStoreType chunk_size, std::vector<Chunk> chunks);
 
-    FwSizeType expected_compressed_size(
-            FwSizeStoreType chunk_size,
-            std::vector<Chunk> chunks
-    );
+    FwSizeType expected_compressed_size(FwSizeStoreType chunk_size, std::vector<Chunk> chunks);
 
-    void check_uncompressed_data(
-            std::vector<U8> data_vec,
-            FwSizeStoreType chunk_size,
-            std::vector<Chunk> chunks
-    );
+    void check_uncompressed_data(std::vector<U8> data_vec, FwSizeStoreType chunk_size, std::vector<Chunk> chunks);
 
-    void set_chunk_state(
-            const FwSizeStoreType chunk_size,
-            std::vector<AbstractState::Chunk> chunks
-    ) {
+    void set_chunk_state(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks) {
         chunk_size_ = chunk_size;
         chunks_ = chunks;
     }
@@ -83,15 +63,10 @@ class AbstractState {
         last_uncompressed_ = false;
     }
 
-    void update_compressed_size_state(
-        FwSizeType compressed_size,
-        AbstractState::Compressible compressible) {
-
+    void update_compressed_size_state(FwSizeType compressed_size, AbstractState::Compressible compressible) {
         exp_compressed_size_ += compressed_size;
 
-        if (compressible != AbstractState::UNCOMPRESSED ||
-            !last_uncompressed_) {
-
+        if (compressible != AbstractState::UNCOMPRESSED || !last_uncompressed_) {
             // Expect a header for this chunk
             exp_compressed_size_ +=
                 sizeof(FwDpIdType) + sizeof(FwSizeStoreType) + Svc::CompressionMetadata::SERIALIZED_SIZE;
@@ -115,4 +90,3 @@ class AbstractState {
 }  // namespace Svc
 
 #endif
-

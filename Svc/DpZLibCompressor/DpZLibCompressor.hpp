@@ -37,8 +37,6 @@ class DpZLibCompressor final : public DpZLibCompressorComponentBase {
                                                     FwSizeType min_compression,
                                                     FwSizeType write_offset) override;
 
-
-
     struct ZLibCtx {
         Fw::Buffer compression_buffer;
 
@@ -48,25 +46,16 @@ class DpZLibCompressor final : public DpZLibCompressorComponentBase {
         z_stream zlib_stream;
         DpZLibCompressor& comp;
 
-        ZLibCtx(DpZLibCompressor& c) :
-            compression_buffer(),
-            zlib_alloc_buffer(),
-            bump_allocator(0),
-            zlib_stream(),
-            comp(c)
-        {}
+        ZLibCtx(DpZLibCompressor& c)
+            : compression_buffer(), zlib_alloc_buffer(), bump_allocator(0), zlib_stream(), comp(c) {}
     };
 
     void cleanupContext(ZLibCtx& ctx);
 
-    CompressionAlgorithm zlibCompressionHelper(
-        ZLibCtx& ctx,
-        const Fw::Buffer& in_buffer
-    );
+    CompressionAlgorithm zlibCompressionHelper(ZLibCtx& ctx, const Fw::Buffer& in_buffer);
 
     static voidpf zlib_alloc_fn(voidpf opaque, uInt items, uInt size);
     static void zlib_free_fn(voidpf opaque, voidpf address);
-
 };
 
 }  // namespace Svc

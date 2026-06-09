@@ -49,14 +49,12 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Run compression and check results
-    void compress(
-        const std::vector<U8>& data,
-        const CompressionAlgorithm exp_alg,
-        const FwSizeType min_compression,
-        const FwSizeType write_offset,
-        const FwSizeType zlib_alloc_size,
-        const I8 compression_level
-    );
+    void compress(const std::vector<U8>& data,
+                  const CompressionAlgorithm exp_alg,
+                  const FwSizeType min_compression,
+                  const FwSizeType write_offset,
+                  const FwSizeType zlib_alloc_size,
+                  const I8 compression_level);
 
   private:
     // ----------------------------------------------------------------------
@@ -69,11 +67,9 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     //! Initialize components
     void initComponents();
 
-    std::vector<U8> zlib_inflate(
-        const Fw::Buffer& comp_buffer,
-        const FwSizeType uncompressed_size,
-        const FwSizeType write_offset
-    );
+    std::vector<U8> zlib_inflate(const Fw::Buffer& comp_buffer,
+                                 const FwSizeType uncompressed_size,
+                                 const FwSizeType write_offset);
 
   private:
     // ----------------------------------------------------------------------
@@ -81,12 +77,10 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     // ----------------------------------------------------------------------
 
     //! Default handler implementation for from_bufferCompressionGet
-    Fw::Buffer from_bufferCompressionGet_handler(
-        FwIndexType portNum, //!< The port number
-        FwSizeType size //!< The requested size
+    Fw::Buffer from_bufferCompressionGet_handler(FwIndexType portNum,  //!< The port number
+                                                 FwSizeType size       //!< The requested size
     ) {
-        if (do_alloc_compression_buffer_ &&
-            !active_compression_buffer_.hasValue()) {
+        if (do_alloc_compression_buffer_ && !active_compression_buffer_.hasValue()) {
             U8* mem = new U8[size];
             active_compression_buffer_.set(mem);
             return Fw::Buffer(active_compression_buffer_.get(), size);
@@ -96,9 +90,8 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     }
 
     //! Default handler implementation for from_bufferCompressionReturn
-    void from_bufferCompressionReturn_handler(
-        FwIndexType portNum, //!< The port number
-        Fw::Buffer& fwBuffer //!< The buffer
+    void from_bufferCompressionReturn_handler(FwIndexType portNum,  //!< The port number
+                                              Fw::Buffer& fwBuffer  //!< The buffer
     ) {
         ASSERT_TRUE(active_compression_buffer_.hasValue());
         ASSERT_EQ(fwBuffer.getData(), active_compression_buffer_.get());
@@ -108,12 +101,10 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     }
 
     //! Default handler implementation for from_bufferZLibGet
-    Fw::Buffer from_bufferZLibGet_handler(
-        FwIndexType portNum, //!< The port number
-        FwSizeType size //!< The requested size
+    Fw::Buffer from_bufferZLibGet_handler(FwIndexType portNum,  //!< The port number
+                                          FwSizeType size       //!< The requested size
     ) {
-        if (do_alloc_zlib_buffer_ &&
-            !active_zlib_buffer_.hasValue()) {
+        if (do_alloc_zlib_buffer_ && !active_zlib_buffer_.hasValue()) {
             U8* mem = new U8[size];
             active_zlib_buffer_.set(mem);
             return Fw::Buffer(active_zlib_buffer_.get(), size);
@@ -123,9 +114,8 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     }
 
     //! Default handler implementation for from_bufferZLibReturn
-    void from_bufferZLibReturn_handler(
-        FwIndexType portNum, //!< The port number
-        Fw::Buffer& fwBuffer //!< The buffer
+    void from_bufferZLibReturn_handler(FwIndexType portNum,  //!< The port number
+                                       Fw::Buffer& fwBuffer  //!< The buffer
     ) {
         ASSERT_TRUE(active_zlib_buffer_.hasValue());
         ASSERT_EQ(fwBuffer.getData(), active_zlib_buffer_.get());
@@ -137,11 +127,11 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
     //! The component under test
     DpZLibCompressor component;
 
-    public:
+  public:
     bool do_alloc_compression_buffer_;
     bool do_alloc_zlib_buffer_;
 
-    private:
+  private:
     TestUtils::Option<U8*, nullptr> active_compression_buffer_;
     TestUtils::Option<U8*, nullptr> active_zlib_buffer_;
 };

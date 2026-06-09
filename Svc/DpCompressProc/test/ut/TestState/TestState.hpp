@@ -32,4 +32,3 @@ class TestState : public DpCompressProcTester {
 }  // namespace Svc
 
 #endif
-

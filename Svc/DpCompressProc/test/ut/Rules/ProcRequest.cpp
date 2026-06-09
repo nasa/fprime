@@ -28,10 +28,8 @@ bool TestState ::precondition__ProcRequest__Compressible() const {
 }
 
 void TestState ::action__ProcRequest__Compressible() {
-
     this->clearHistory();
-    test_chunks(abstractState.chunk_size_,
-                abstractState.chunks_);
+    test_chunks(abstractState.chunk_size_, abstractState.chunks_);
 }
 
 namespace ProcRequest {
@@ -42,9 +40,8 @@ namespace ProcRequest {
 
 void Tester::CompressTest() {
     this->ruleCompressible.apply(this->testState);
-    //this->testState.printEvents();
+    // this->testState.printEvents();
 }
-
 
 }  // namespace ProcRequest
 

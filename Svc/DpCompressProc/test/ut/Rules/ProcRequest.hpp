@@ -28,7 +28,6 @@ class Tester {
     //! Compressible
     void CompressTest();
 
-
   public:
     // ----------------------------------------------------------------------
     // Rules
@@ -46,9 +45,8 @@ class Tester {
     TestState testState;
 };
 
-}  // namespace BufferSendIn
+}  // namespace ProcRequest
 
 }  // namespace Svc
 
 #endif
-
