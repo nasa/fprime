@@ -23,7 +23,7 @@ void serialize(Fw::LinearBufferBase& destBuffer) {
     CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
     crc.init();
     crc.update(destBuffer.getBuffAddr(), destBuffer.getSize());
-    U32 crcFinal;
+    U32 crcFinal = 0;
     crc.m_computed.finalize(crcFinal);
     ASSERT_EQ(destBuffer.serializeFrom(crcFinal), Fw::FW_SERIALIZE_OK);
 }
