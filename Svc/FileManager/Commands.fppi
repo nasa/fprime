@@ -43,7 +43,7 @@ async command ListDirectory(
   opcode 0x07
 
 
-@ List the contents of a directory
+@ Calculate the CRC of a file
 async command CalculateCrc(
                               filename: string size FileNameStringSize @< The file to CRC
                             ) \
