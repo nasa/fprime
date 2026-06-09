@@ -3,7 +3,7 @@
 
 ## Overview
 
-Readers of this guide are encouraged to read through the documentation for the [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file or through a `.seq` file. Both types of files are created by the `fprime-prm-write` tool using a JSON file with the parameters. The PrmDb component loads parameters from binary `.dat` files that contain a CRC32 header followed by parameter records. CmdSeq loads parameters from a binary created from a `.seq` file.
+Readers of this guide are encouraged to read through the documentation for the [**PrmDb component**](https://github.com/nasa/fprime/blob/devel/Svc/PrmDb/docs/sdd.md) (F´ framework standard), which stores and manages parameters in F´ deployments. This guide will go over two methods of updating parameters: through a `.dat` file that PrmDb loads directly, or by generating a command sequence (`.seq` file) to dispatch a series of commands.
 
 This guide uses the [**Ref**](https://github.com/nasa/fprime/tree/devel/Ref) (reference) F´ project as an example.
 
