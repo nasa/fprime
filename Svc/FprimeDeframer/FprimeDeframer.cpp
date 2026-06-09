@@ -56,7 +56,8 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;
     }
-    // TODO: comment + make sure not to fully trust lengthField + check sizes match etc
+    // payloadSize is the size of the payload data, meaning data encapsulated between header and trailer
+    // lengthField describes length of |packetDescriptor + payload data|, so calculate size of payload data
     const FwSizeType payloadSize = header.get_lengthField() - sizeof(FwPacketDescriptorType);
     // We expect the frame size to be size of header + payload (lengthField minus descriptor) + trailer
     const FwSizeType expectedFrameSize =
