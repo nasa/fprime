@@ -254,7 +254,7 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
     Os::File::Status status = sequenceFile.open(fileName.toChar(), Os::File::OPEN_WRITE);
 
     if (status != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(status));
+        this->log_WARNING_HI_FileOpenError(fileName, static_cast<I32>(status));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -488,6 +488,7 @@ void FpySequencer::updateDebugTelemetryStruct() {
 
 void FpySequencer::parametersLoaded() {
     parameterUpdated(PARAMID_STATEMENT_TIMEOUT_SECS);
+    parameterUpdated(PARAMID_SEQ_BASE_DIR);
 }
 
 void FpySequencer::parameterUpdated(FwPrmIdType id) {
@@ -495,6 +496,10 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
     switch (id) {
         case PARAMID_STATEMENT_TIMEOUT_SECS: {
             this->tlmWrite_PRM_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
+            break;
+        }
+        case PARAMID_SEQ_BASE_DIR: {
+            this->tlmWrite_PRM_SEQ_BASE_DIR(this->paramGet_SEQ_BASE_DIR(valid));
             break;
         }
         default: {

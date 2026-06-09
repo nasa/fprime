@@ -226,6 +226,53 @@ void FrameAccumulatorTester ::testDetectionErrorHandling() {
     ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
 }
 
+void FrameAccumulatorTester ::testContextForwarded() {
+    // Set up a context with non-default values
+    ComCfg::FrameContext context;
+    context.set_apid(ComCfg::Apid::FW_PACKET_TELEM);
+    context.set_vcId(5);
+
+    // Single-buffer frame detection: context should be forwarded
+    U32 buffer_size = STest::Random::lowerUpper(1, 1024);
+    U8 data[buffer_size];
+    Fw::Buffer buffer(data, buffer_size);
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer_size);
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_TELEM);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), 5);
+
+    this->clearHistory();
+
+    // Multi-buffer accumulation: context of the completing call should be forwarded
+    ComCfg::FrameContext context1;
+    context1.set_apid(ComCfg::Apid::FW_PACKET_COMMAND);
+    context1.set_vcId(1);
+
+    ComCfg::FrameContext context2;
+    context2.set_apid(ComCfg::Apid::FW_PACKET_LOG);
+    context2.set_vcId(3);
+
+    Fw::Buffer::SizeType buffer1_size = 10;
+    Fw::Buffer::SizeType buffer2_size = 20;
+    U8 data1[buffer1_size];
+    U8 data2[buffer2_size];
+    Fw::Buffer buffer1(data1, buffer1_size);
+    Fw::Buffer buffer2(data2, buffer2_size);
+
+    this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, buffer2_size);
+    this->invoke_to_dataIn(0, buffer1, context1);
+    ASSERT_from_dataOut_SIZE(0);
+
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer1_size + buffer2_size);
+    this->invoke_to_dataIn(0, buffer2, context2);
+    ASSERT_from_dataOut_SIZE(1);
+    // The context forwarded should be from the second (completing) call
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_LOG);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), 3);
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------

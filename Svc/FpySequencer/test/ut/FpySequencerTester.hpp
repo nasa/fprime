@@ -249,6 +249,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_validate();
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
+    // directly invokes the setSequenceFilePath state machine action, bypassing the
+    // command path (which truncates string args to FW_CMD_STRING_MAX_SIZE)
+    void tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args);
     Fw::Success tester_readBytes(Os::File& file,
                                  FwSizeType readLen,
                                  FpySequencer_FileReadStage readStage,
@@ -311,6 +314,14 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
     //! Get the OPCODE_DUMP_STACK_TO_FILE value
     static FwOpcodeType get_OPCODE_DUMP_STACK_TO_FILE() { return FpySequencerComponentBase::OPCODE_DUMP_STACK_TO_FILE; }
+
+    //! Get the CRC initial value used by FpySequencer
+    static U32 get_CRC_INITIAL_VALUE() { return FpySequencer::CRC_INITIAL_VALUE; }
+
+    //! Wrapper for FpySequencer::updateCrc (private static method)
+    static void tester_updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) {
+        FpySequencer::updateCrc(crc, buffer, bufferSize);
+    }
 };
 
 class FpySequencer_SequencerStateMachineTester {

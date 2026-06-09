@@ -567,15 +567,15 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
                                                     const FwPrmIdType local_id,
                                                     const Fw::ParamValid prmStat,
                                                     Fw::SerialBufferBase& buff) {
-    // Autocoder always calls deserializeParam with VALID
-    FW_ASSERT(prmStat == Fw::ParamValid::VALID);
-    switch (local_id) {
-        case PARAMID_SECTION_ENABLED:
-            return buff.deserializeTo(this->m_sectionEnabled);
-        case PARAMID_SECTION_CONFIGS:
-            return buff.deserializeTo(this->m_groupConfigs);
-        default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+    if ((prmStat == Fw::ParamValid::VALID) || (prmStat == Fw::ParamValid::DEFAULT)) {
+        switch (local_id) {
+            case PARAMID_SECTION_ENABLED:
+                return buff.deserializeTo(this->m_sectionEnabled);
+            case PARAMID_SECTION_CONFIGS:
+                return buff.deserializeTo(this->m_groupConfigs);
+            default:
+                FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+        }
     }
     return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
 }

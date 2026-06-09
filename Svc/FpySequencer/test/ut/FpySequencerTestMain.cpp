@@ -5,6 +5,7 @@
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
+#include "Os/FileSystem.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 
 namespace Svc {
@@ -2917,6 +2918,163 @@ TEST_F(FpySequencerTester, validate) {
     ASSERT_EVENTS_ExtraBytesInSequence_SIZE(1);
 }
 
+TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
+    // a relative base dir should be prepended to the file name and the resolved
+    // file should actually open and validate — m_sequenceFilePath (used by
+    // tlm/events/file IO) should hold the fully resolved path
+    allocMem();
+    add_NO_OP();
+    ASSERT_EQ(Os::FileSystem::createDirectory("seq_dir"), Os::FileSystem::Status::OP_OK);
+    writeToFile("seq_dir/test.bin");
+
+    paramSet_SEQ_BASE_DIR(Fw::ParamString("seq_dir"), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+
+    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("seq_dir/test.bin"));
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
+
+    removeFile("seq_dir/test.bin");
+    ASSERT_EQ(Os::FileSystem::removeDirectory("seq_dir"), Os::FileSystem::Status::OP_OK);
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_resolvesAbsolutePath) {
+    // an absolute base dir should be prepended just the same, and the resolved
+    // absolute path should open and validate. (the base dir must fit in the
+    // SEQ_BASE_DIR param, FW_PARAM_STRING_MAX_SIZE, so use a short /tmp path)
+    allocMem();
+    add_NO_OP();
+    const char* absBaseDir = "/tmp/fpy_seq_abs";
+    const char* absFilePath = "/tmp/fpy_seq_abs/test.bin";
+    ASSERT_EQ(Os::FileSystem::createDirectory(absBaseDir), Os::FileSystem::Status::OP_OK);
+    writeToFile(absFilePath);
+
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(absBaseDir), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+
+    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String(absFilePath));
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
+
+    removeFile(absFilePath);
+    ASSERT_EQ(Os::FileSystem::removeDirectory(absBaseDir), Os::FileSystem::Status::OP_OK);
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
+    // empty base dir — m_sequenceFilePath should be the raw user-provided path
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(""), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+
+    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("test.bin"));
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
+    // a base dir that doesn't exist makes file open fail. the FileOpenError
+    // event should report the fully resolved path, not the user-supplied one
+    allocMem();
+    paramSet_SEQ_BASE_DIR(Fw::ParamString("nonexistent_dir"), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/test.bin"));
+}
+
+TEST_F(FpySequencerTester, seqBaseDir_pathTooLongTruncates) {
+    // if SEQ_BASE_DIR plus the user-supplied file name together exceed the
+    // sequence file path buffer (FileNameStringSize), the resolved path gets
+    // truncated. the sequencer should log SequenceFilePathTooLong so the operator
+    // knows why, rather than silently acting on a wrong (truncated) path.
+
+    // size the base dir and file name so that "<baseDir>/<fileName>" is exactly one
+    // character too long for the sequence file path buffer (max strlen
+    // FileNameStringSize), forcing truncation. the separator accounts for the +1:
+    //   baseDirLen + 1 (separator) + fileNameLen == FileNameStringSize + 1
+    const FwSizeType baseDirLen = 8;
+    const FwSizeType fileNameLen = FileNameStringSize - baseDirLen;
+    std::string longBaseDir(baseDirLen, 'a');
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(longBaseDir.c_str()), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    // call the action directly because the command path would truncate the file
+    // name to FW_CMD_STRING_MAX_SIZE before it could ever overflow.
+    std::string longFileName(fileNameLen, 'b');
+    FpySequencer_SequenceExecutionArgs args;
+    args.set_filePath(Fw::String(longFileName.c_str()));
+    tester_setSequenceFilePath(args);
+
+    ASSERT_EVENTS_SequenceFilePathTooLong_SIZE(1);
+    ASSERT_EQ(this->eventHistory_SequenceFilePathTooLong->at(0).baseDir, Fw::LogStringArg(longBaseDir.c_str()));
+    // the stored path was truncated to the maximum length that fits the buffer
+    ASSERT_EQ(tester_get_m_sequenceFilePath().length(), static_cast<FwSizeType>(FileNameStringSize));
+}
+
+TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
+    // when the dump file fails to open, the FileOpenError event must report the
+    // dump file name, not the path of the sequence currently loaded
+    allocMem();
+    add_PUSH_VAL<U8>(0x00);
+    add_PUSH_VAL<U8>(0x11);
+    add_PUSH_VAL<U8>(0x22);
+    writeAndRun();
+
+    // pause before the end so we land in RUNNING_PAUSED
+    tester_get_m_breakpoint_ptr()->breakpointInUse = true;
+    tester_get_m_breakpoint_ptr()->breakpointIndex = 3;
+    dispatchUntilState(State::RUNNING_PAUSED);
+
+    // make the loaded sequence path distinct from the dump path so that, if the
+    // event were to (incorrectly) log m_sequenceFilePath, this test would fail
+    tester_set_m_sequenceFilePath("loaded_sequence.bin");
+    this->clearHistory();
+
+    // dump into a directory that doesn't exist so the open fails
+    sendCmd_DUMP_STACK_TO_FILE(0, 0, Fw::String("nonexistent_dir/dump.bin"));
+    dispatchCurrentMessages(cmp);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_DUMP_STACK_TO_FILE(), 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/dump.bin"));
+}
+
+TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
+    // setting the param should emit the telemetry channel via parameterUpdated
+    Fw::ParamString val("/seq");
+    paramSet_SEQ_BASE_DIR(val, Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+
+    ASSERT_TLM_PRM_SEQ_BASE_DIR_SIZE(1);
+    ASSERT_TLM_PRM_SEQ_BASE_DIR(0, val.toChar());
+}
+
 TEST_F(FpySequencerTester, allocateBuffer) {
     Fw::MallocAllocator alloc;
     cmp.allocateBuffer(0, alloc, 100);
@@ -4652,6 +4810,63 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), "");
         clearEvents();
     }
+}
+
+// ======================================================================
+// Hardcoded CRC32 value tests
+//
+// FpySequencer uses CRC32 with init 0xFFFFFFFF and ones' complement
+// finalization (~crc). These tests verify that updateCrc produces known
+// expected values for known inputs.
+// ======================================================================
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_123456789) {
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of "123456789" = 0xCBF43926
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "FpySequencer CRC of \"123456789\" must equal 0xCBF43926 (standard CRC32)";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_DEADBEEF) {
+    const U8 data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of {0xDE,0xAD,0xBE,0xEF} = 0x7C9CA35A
+    ASSERT_EQ(finalCrc, static_cast<U32>(0x7C9CA35A))
+        << "FpySequencer CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x7C9CA35A";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_SingleByte) {
+    const U8 data[] = {0x00};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of {0x00} = 0xD202EF8D
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xD202EF8D)) << "FpySequencer CRC of {0x00} must equal 0xD202EF8D";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Incremental) {
+    // Verify that incremental updateCrc calls produce the same result
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, 4);      // "1234"
+    tester_updateCrc(crc, data + 4, 5);  // "56789"
+    U32 finalCrc = ~crc;
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "Incremental FpySequencer CRC of \"123456789\" must equal 0xCBF43926";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Hello) {
+    const U8 data[] = {'H', 'e', 'l', 'l', 'o'};
+    U32 crc = get_CRC_INITIAL_VALUE();
+    tester_updateCrc(crc, data, sizeof(data));
+    U32 finalCrc = ~crc;
+    // Standard CRC32 of "Hello" = 0xF7D18982
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xF7D18982)) << "FpySequencer CRC of \"Hello\" must equal 0xF7D18982";
 }
 
 }  // namespace Svc
