@@ -45,5 +45,5 @@ jobs:
           fsw-service: ledblinker-soak-fsw
           venv: ${{ env.INSTALL_DIR }}/venv
           dictionary: "${{ env.INSTALL_DIR }}/dict/*TopologyDictionary.json"
-          test-path: ${{ env.INSTALL_DIR }}/test
+          test-path: ${{ env.INSTALL_DIR }}/test/led_integration_tests.py
           working-directory: ${{ env.INSTALL_DIR }}
