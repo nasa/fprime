@@ -28,6 +28,7 @@ nav:
       - Design Patterns: docs/user-manual/design-patterns/
       - Build System: docs/user-manual/build-system/
       - Security: docs/user-manual/security/
+      - Dummy: docs/user-manual/dummy/
     - How To: docs/how-to
     - Reference: 
       - docs/reference/index.md

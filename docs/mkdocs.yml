@@ -72,6 +72,9 @@ extra_css:
 plugins:
   - search # enables search
   - awesome-nav
+  - gen-files:
+      scripts:
+        - scripts/gen_user_manual.py
   - mike:
       # symlink are not allowed in GH Pages so if website needs to be deployed on GH Pages, use `copy` instead
       # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/

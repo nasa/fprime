@@ -60,6 +60,7 @@ python -m pip install --upgrade pip
 python -m pip install -Ur "$REPO_ROOT/requirements.txt"
 python -m pip install \
 	mkdocs \
+	mkdocs-gen-files \
 	mkdocs-material \
 	mkdocs-awesome-nav \
 	mike \
