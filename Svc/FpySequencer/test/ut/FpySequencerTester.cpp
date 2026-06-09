@@ -94,7 +94,7 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
 
     Utils::Hash hash;
     hash.update(buf.getBuffAddr(), buf.getSize());
-    U32 crc;
+    U32 crc = 0;
     hash.finalize(crc);
 
     seq.get_footer().set_crc(crc);
