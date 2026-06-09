@@ -115,7 +115,7 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
         hash.setHashValue(U32(~this->m_independent_crc));
         hash.update(&byte, sizeof(byte));
 
-        U32 crcFinal;
+        U32 crcFinal = 0;
         hash.finalize(crcFinal);
         this->m_independent_crc = ~crcFinal;
 
