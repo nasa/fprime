@@ -50,7 +50,7 @@ void BadCRCFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
     // CRC
     AMPCS::CRCs::computeCRC(buffer, this->crc);
-    U32 crcFinal;
+    U32 crcFinal = 0;
     this->crc.m_computed.finalize(crcFinal);
     crc.m_stored = crcFinal + 1;
     AMPCS::CRCs::writeCRC(this->crc.m_stored, this->getName().toChar());
