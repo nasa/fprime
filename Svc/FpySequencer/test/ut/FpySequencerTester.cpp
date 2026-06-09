@@ -92,10 +92,12 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
 
-    U32 crc = FpySequencer::CRC_INITIAL_VALUE;
-    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getSize());
+    Utils::Hash hash;
+    hash.update(buf.getBuffAddr(), buf.getSize());
+    U32 crc = 0;
+    hash.finalize(crc);
 
-    seq.get_footer().set_crc(~crc);
+    seq.get_footer().set_crc(crc);
 
     ASSERT_EQ(buf.serializeFrom(seq.get_footer()), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
@@ -670,7 +672,21 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 }
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
-    this->cmp.m_computedCRC = crc;
+    this->cmp.m_computedCRC.setHashValue(U32(~crc));
+}
+
+void FpySequencerTester::tester_init_m_computedCRC() {
+    this->cmp.m_computedCRC.init();
+}
+
+void FpySequencerTester::tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize) {
+    this->cmp.m_computedCRC.update(buffer, bufferSize);
+}
+
+U32 FpySequencerTester::tester_finalize_m_computedCRC() {
+    U32 finalCrc = 0;
+    this->cmp.m_computedCRC.finalize(finalCrc);
+    return finalCrc;
 }
 
 void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {

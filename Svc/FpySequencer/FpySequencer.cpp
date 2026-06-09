@@ -19,7 +19,7 @@ FpySequencer ::FpySequencer(const char* const compName)
       m_allocatorId(0),
       m_sequenceFilePath("<invalid_seq>"),
       m_sequenceObj(),
-      m_computedCRC(0),
+      m_computedCRC(),
       m_totalExpectedArgSize(0),
       m_sequenceBlockState(),
       m_savedOpCode(0),

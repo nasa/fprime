@@ -1,8 +1,7 @@
+#include <Utils/Hash/Hash.hpp>
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-extern "C" {
-#include "Utils/Hash/libcrc/lib_crc.h"
-}
+
 namespace Svc {
 
 void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes) {
@@ -24,13 +23,6 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
     this->m_sequenceBuffer.clear();
 }
 
-void FpySequencer::updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) {
-    FW_ASSERT(buffer);
-    for (FwSizeType index = 0; index < bufferSize; index++) {
-        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buffer[index])));
-    }
-}
-
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
@@ -38,7 +30,7 @@ Fw::Success FpySequencer::validate() {
 
     // crc needs to be initialized with a particular value
     // for the calculation to work
-    this->m_computedCRC = CRC_INITIAL_VALUE;
+    this->m_computedCRC.init();
 
     Os::File sequenceFile;
     Os::File::Status openStatus = sequenceFile.open(this->m_sequenceFilePath.toChar(), Os::File::OPEN_READ);
@@ -215,10 +207,11 @@ Fw::Success FpySequencer::readFooter() {
     }
 
     // need this for some reason to "finalize" the crc TODO get an explanation on this
-    this->m_computedCRC = ~this->m_computedCRC;
+    U32 computedCRC = 0;
+    this->m_computedCRC.finalize(computedCRC);
 
-    if (this->m_computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
-        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.get_footer().get_crc(), this->m_computedCRC);
+    if (computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
+        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.get_footer().get_crc(), computedCRC);
         return Fw::Success::FAILURE;
     }
 
@@ -265,7 +258,7 @@ Fw::Success FpySequencer::readBytes(Os::File& file,
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
 
     if (updateCrc) {
-        FpySequencer::updateCrc(this->m_computedCRC, this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
+        this->m_computedCRC.update(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
     }
 
     return Fw::Success::SUCCESS;

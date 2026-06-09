@@ -15,6 +15,7 @@
 #include <cstdio>
 #include "Os/Stub/Directory.hpp"
 #include "Os/Stub/FileSystem.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 

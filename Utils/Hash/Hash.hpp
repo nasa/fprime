@@ -62,6 +62,11 @@ class Hash {
     void setHashValue(HashBuffer& value  //! Hash value
     );
 
+    //! Set hash value to specified value
+    //!
+    void setHashValue(U32 value  //! Hash value
+    );
+
     //! Update an incremental computation with new data
     //! \param data: pointer to start of data to add to hash calculation
     //! \param len: length of data to add to hash calculation
@@ -70,11 +75,11 @@ class Hash {
     //! Finalize an incremental computation and return the result
     //!
     void finalize(HashBuffer& buffer  //! The result
-    );
+    ) const;
 
     //! Finalize an incremental computation and return the result
     //!
-    void finalize(U32& hashvalue);
+    void finalize(U32& hashvalue) const;
 
     //! Get the file extension for the supported hash type
     //! E.g., could return "SHA256"

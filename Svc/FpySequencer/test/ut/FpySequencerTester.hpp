@@ -260,6 +260,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
+    void tester_init_m_computedCRC();
+    void tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize);
+    U32 tester_finalize_m_computedCRC();
     void tester_set_m_sequenceArgs(Svc::SeqArgs args);
     Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
@@ -314,14 +317,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
     //! Get the OPCODE_DUMP_STACK_TO_FILE value
     static FwOpcodeType get_OPCODE_DUMP_STACK_TO_FILE() { return FpySequencerComponentBase::OPCODE_DUMP_STACK_TO_FILE; }
-
-    //! Get the CRC initial value used by FpySequencer
-    static U32 get_CRC_INITIAL_VALUE() { return FpySequencer::CRC_INITIAL_VALUE; }
-
-    //! Wrapper for FpySequencer::updateCrc (private static method)
-    static void tester_updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) {
-        FpySequencer::updateCrc(crc, buffer, bufferSize);
-    }
 };
 
 class FpySequencer_SequencerStateMachineTester {
