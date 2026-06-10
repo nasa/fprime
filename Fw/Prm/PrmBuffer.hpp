@@ -24,9 +24,7 @@ static_assert(FW_PARAM_BUFFER_MAX_SIZE >= StringBase::BUFFER_SIZE(FW_PARAM_STRIN
 
 class ParamBuffer final : public LinearBufferBase {
   public:
-    enum {
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_PARAM_BUFFER_MAX_SIZE)
-    };
+    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_PARAM_BUFFER_MAX_SIZE) };
 
     ParamBuffer(const U8* args, FwSizeType size);
     ParamBuffer();

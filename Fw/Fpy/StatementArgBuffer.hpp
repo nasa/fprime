@@ -8,9 +8,7 @@ namespace Fw {
 
 class StatementArgBuffer : public LinearBufferBase {
   public:
-    enum {
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_STATEMENT_ARG_BUFFER_MAX_SIZE)
-    };
+    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_STATEMENT_ARG_BUFFER_MAX_SIZE) };
 
     StatementArgBuffer(const U8* args, FwSizeType size);
     StatementArgBuffer();
