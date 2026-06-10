@@ -87,7 +87,9 @@ inline IpSocketOptions makeSizeOption(int opt, int level, size_t val) {
 // machine, they could potentially bind to the same port and intercept messages.
 // Projects should evaluate their threat model and choose options accordingly.
 static const IpSocketOptions IP_SOCKET_OPTIONS[] = {
-    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 0),  // Example
+    // Default the TcpServer to reuse the same port, which prevents TIME_WAIT delays when rerunning
+    // flight software. Set to zero to turn off.
+    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 1),
     // Add other socket options as needed, and expand above helper functions
     // if other types are needed
 };
