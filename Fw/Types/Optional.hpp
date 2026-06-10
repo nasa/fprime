@@ -64,7 +64,7 @@ class Optional {
     constexpr Optional(const T& t) : m_val(t), m_engaged(true) {}
 
     //! Copy constructor
-    constexpr Optional(const Optional& other) : Optional() {
+    Optional(const Optional& other) : Optional() {
         if (other.has_value()) {
             *this = other.value();
         }
@@ -99,7 +99,7 @@ class Optional {
 
     //! Access the value or return a default
     //! \return The contained value if present, otherwise the provided default
-    const T& value_or(const T& default_value) const { return m_engaged ? m_val : default_value; }
+    T value_or(const T& default_value) const { return m_engaged ? m_val : default_value; }
 
     // ----------------------------------------------------------------------
     // Modifiers
