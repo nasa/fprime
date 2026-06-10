@@ -30,7 +30,8 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-workshop-led-blinker
-          target_ref: devel
+          # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
       - name: "Cross compile"
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
       # soak-deploy expects integration tests at artifacts/int/. Stage them here.
