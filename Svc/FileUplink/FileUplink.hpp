@@ -169,12 +169,11 @@ class FileUplink final : public FileUplinkComponentBase {
     //!
     //! Restricts all file writes to the given directory.
     //! Must be called before any files are received.
-    //! The directory must be an absolute path.
+    //! The directory must be an absolute path ending with `/`.
     //!
-    //! \param directory: absolute path of the allowed uplink directory
-    //! \return true if configuration was accepted
+    //! \param directory: absolute path of the allowed uplink directory (must end with `/`)
     //!
-    bool configureSandbox(const char* directory);
+    void configure(const char* directory);
 
   private:
     // ----------------------------------------------------------------------

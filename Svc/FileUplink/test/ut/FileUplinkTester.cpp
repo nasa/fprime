@@ -37,7 +37,13 @@ FileUplinkTester ::FileUplinkTester()
     // Configure sandbox to allow the current working directory for test files
     char cwd[256];
     FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
-    this->component.configureSandbox(cwd);
+    const FwSizeType cwdLen = std::strlen(cwd);
+    FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
+    if (cwd[cwdLen - 1] != '/') {
+        cwd[cwdLen] = '/';
+        cwd[cwdLen + 1] = '\0';
+    }
+    this->component.configure(cwd);
 }
 
 FileUplinkTester ::~FileUplinkTester() {

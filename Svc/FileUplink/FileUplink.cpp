@@ -32,8 +32,8 @@ FileUplink::FileUplink(const char* const name)
 
 FileUplink::~FileUplink() {}
 
-bool FileUplink::configureSandbox(const char* directory) {
-    return this->m_file.osFile.configure(directory);
+void FileUplink::configure(const char* directory) {
+    this->m_file.osFile.configure(directory);
 }
 
 // ----------------------------------------------------------------------

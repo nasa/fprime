@@ -123,12 +123,12 @@ register_fprime_module(
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/IntervalTimer.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/Os.cpp"
-      "${CMAKE_CURRENT_LIST_DIR}/FilePathValidator.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FilePathUtils.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/SandboxedFile.cpp"
     HEADERS
       "${CMAKE_CURRENT_LIST_DIR}/ValidatedFile.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/Os.hpp"
-      "${CMAKE_CURRENT_LIST_DIR}/FilePathValidator.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FilePathUtils.hpp"
       "${CMAKE_CURRENT_LIST_DIR}/SandboxedFile.hpp"
     DEPENDS
       Fw_Time
@@ -152,6 +152,14 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/IntervalTimerTest.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsValidateFileTest.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/OsMutexBasicLockableTest.cpp"
+)
+
+register_fprime_ut(
+    Os_FilePathUtils_Test
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FilePathUtilsTest.cpp"
+  DEPENDS
+    Os
 )
 
 register_fprime_ut(

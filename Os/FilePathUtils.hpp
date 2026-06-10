@@ -1,11 +1,12 @@
 // ======================================================================
-// \title Os/FilePathValidator.hpp
-// \brief Utilities for validating and resolving file paths
+// \title Os/FilePathUtils.hpp
+// \brief Utilities for resolving and validating file paths
 // ======================================================================
-#ifndef Os_FilePathValidator_hpp_
-#define Os_FilePathValidator_hpp_
+#ifndef Os_FilePathUtils_hpp_
+#define Os_FilePathUtils_hpp_
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <config/FppConstantsAc.hpp>
 
 namespace Os {
 
@@ -15,7 +16,7 @@ namespace Os {
 //! and verifying that a resolved path falls within an allowed directory prefix.
 //! These utilities can be used independently of SandboxedFile for any path-validation need.
 //!
-namespace FilePathValidator {
+namespace FilePathUtils {
 
 enum Status {
     VALID,            //!< Path is valid and within the allowed directory
@@ -24,7 +25,7 @@ enum Status {
 };
 
 //! Maximum supported path length for resolution buffers
-static constexpr FwSizeType MAX_PATH_LENGTH = 256;
+static constexpr FwSizeType MAX_PATH_LENGTH = FileNameStringSize;
 
 //! \brief Resolve a path by collapsing `.` and `..` segments
 //!
@@ -41,32 +42,25 @@ static constexpr FwSizeType MAX_PATH_LENGTH = 256;
 //!
 Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize);
 
-//! \brief Check whether a resolved path is within an allowed directory
+//! \brief Check whether a path is within an allowed directory
 //!
-//! Verifies that `resolvedPath` begins with `allowedDirectory` as a proper
+//! Resolves the path (collapsing `.` and `..`), then verifies
+//! that the resolved path begins with `allowedDirectory` as a proper
 //! directory prefix (i.e. the match must end at a `/` boundary to prevent
 //! `/allowed_dir_extra/` from matching `/allowed_dir/`).
 //!
-//! Both paths should already be resolved (no `.` or `..` segments).
-//!
-//! \param resolvedPath: the fully resolved path to check
-//! \param allowedDirectory: the allowed directory prefix (must end with `/`)
-//! \return VALID if path is within the allowed directory, OUTSIDE_SANDBOX otherwise
-//!
-Status checkContainment(const char* resolvedPath, const char* allowedDirectory);
-
-//! \brief Validate that a path falls within an allowed directory
-//!
-//! Convenience function combining resolvePath and checkContainment.
-//! Resolves the path, then checks containment against the allowed directory.
-//!
-//! \param path: input path to validate (may be relative or absolute)
+//! \param path: the input path to check (may be relative or absolute)
 //! \param allowedDirectory: the allowed directory prefix (must be absolute, must end with `/`)
+//! \param resolvedOut: optional output buffer for the resolved path (may be nullptr)
+//! \param resolvedSize: size of the optional output buffer
 //! \return VALID if path is within the allowed directory, OUTSIDE_SANDBOX or INVALID_PATH otherwise
 //!
-Status validatePath(const char* path, const char* allowedDirectory);
+Status isSubDirectory(const char* path,
+                      const char* allowedDirectory,
+                      char* resolvedOut = nullptr,
+                      FwSizeType resolvedSize = 0);
 
-}  // namespace FilePathValidator
+}  // namespace FilePathUtils
 }  // namespace Os
 
 #endif

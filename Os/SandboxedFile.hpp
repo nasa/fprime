@@ -5,8 +5,9 @@
 #ifndef Os_SandboxedFile_hpp_
 #define Os_SandboxedFile_hpp_
 
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/File.hpp>
-#include <Os/FilePathValidator.hpp>
+#include <Os/FilePathUtils.hpp>
 
 namespace Os {
 
@@ -16,6 +17,13 @@ namespace Os {
 //! to ensure they resolve to a location within a configured allowed directory. This prevents
 //! path-traversal attacks (e.g., `../../etc/shadow`) from components that accept externally
 //! supplied file paths (such as FileUplink or CFDP receivers).
+//!
+//! `configure()` must be called before `open()`. Calling `open()` without configuring
+//! returns `NO_PERMISSION`.
+//!
+//! Note: path validation is purely textual (no `realpath()` calls) — it does not follow
+//! symlinks. For deployments where symlink-based escapes are a concern, additional
+//! measures are needed.
 //!
 //! Usage:
 //! ```cpp
@@ -31,8 +39,7 @@ class SandboxedFile {
   public:
     //! \brief Construct an unconfigured SandboxedFile
     //!
-    //! When unconfigured, open() passes through directly to Os::File
-    //! (no sandboxing). Call `configure()` to activate path validation.
+    //! `configure()` must be called before `open()`.
     //!
     SandboxedFile();
 
@@ -42,16 +49,16 @@ class SandboxedFile {
     //! \brief Configure the allowed sandbox directory
     //!
     //! Sets the directory that all file operations are restricted to.
-    //! The directory must be an absolute path. A trailing `/` will be
-    //! appended if not already present.
+    //! The directory must be an absolute path ending with `/`.
     //!
-    //! Must be called before `open()`. May be called multiple times,
-    //! but not while a file is open.
+    //! Intended to be called once at startup. Preconditions are enforced
+    //! with FW_ASSERT: must not be called while a file is open, directory
+    //! must be absolute, must not be empty, must end with `/`, must not
+    //! overflow the buffer.
     //!
-    //! \param allowedDirectory: absolute path of the allowed directory
-    //! \return true if configuration was accepted, false if invalid or file is open
+    //! \param allowedDirectory: absolute path of the allowed directory (must end with `/`)
     //!
-    bool configure(const char* allowedDirectory);
+    void configure(const char* allowedDirectory);
 
     //! \brief Check if a sandbox directory has been configured
     //! \return true if configure() has been called successfully
@@ -62,11 +69,11 @@ class SandboxedFile {
     // Os::File-equivalent interface
     // -------------------------------------------------------
 
-    //! \brief Open a file, validating the path if a sandbox is configured
+    //! \brief Open a file, validating the path against the sandbox directory
     //!
-    //! When configured, validates the path against the sandbox directory
-    //! before opening. Returns `NO_PERMISSION` if the resolved path falls
-    //! outside the sandbox. When unconfigured, passes through to Os::File.
+    //! Resolves the path and checks containment before opening.
+    //! Returns `NO_PERMISSION` if the sandbox is not configured or the
+    //! resolved path falls outside the sandbox.
     //!
     //! \param path: c-string path to open
     //! \param mode: file operation mode
@@ -150,7 +157,7 @@ class SandboxedFile {
     Os::File m_file;
 
     //! The allowed directory (absolute, with trailing '/')
-    char m_allowedDirectory[FilePathValidator::MAX_PATH_LENGTH];
+    Fw::FileNameString m_allowedDirectory;
 
     //! Whether configure() has been called
     bool m_configured;

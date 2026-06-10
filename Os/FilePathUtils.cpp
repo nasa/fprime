@@ -1,14 +1,14 @@
 // ======================================================================
-// \title Os/FilePathValidator.cpp
-// \brief Implementation of file path validation utilities
+// \title Os/FilePathUtils.cpp
+// \brief Implementation of file path utilities
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
-#include <Os/FilePathValidator.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <cstring>
 
 namespace Os {
-namespace FilePathValidator {
+namespace FilePathUtils {
 
 // Segments are stored as offset+length pairs into the working buffer
 struct PathSegment {
@@ -16,25 +16,17 @@ struct PathSegment {
     FwSizeType length;
 };
 
-Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize) {
-    FW_ASSERT(resolvedOut != nullptr);
-
-    if (path == nullptr || path[0] == '\0') {
-        return INVALID_PATH;
-    }
-
-    // Working buffer for the path we'll parse
-    char workBuf[MAX_PATH_LENGTH];
+// Helper: build absolute working buffer from raw path + optional baseDir
+static Status buildWorkBuf(const char* path, const char* baseDir, char* workBuf) {
+    FW_ASSERT(path != nullptr);
+    FW_ASSERT(workBuf != nullptr);
 
     if (path[0] != '/') {
-        // Relative path: prepend baseDir
         if (baseDir == nullptr || baseDir[0] != '/') {
             return INVALID_PATH;
         }
         const FwSizeType baseDirLen = Fw::StringUtils::string_length(baseDir, MAX_PATH_LENGTH);
         const FwSizeType pathLen = Fw::StringUtils::string_length(path, MAX_PATH_LENGTH);
-
-        // Need room for baseDir + '/' + path + '\0'
         const FwSizeType needsSlash = (baseDirLen > 0 && baseDir[baseDirLen - 1] != '/') ? 1 : 0;
         if (baseDirLen + needsSlash + pathLen + 1 > MAX_PATH_LENGTH) {
             return INVALID_PATH;
@@ -48,61 +40,50 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
         pos += pathLen;
         workBuf[pos] = '\0';
     } else {
-        // Absolute path: copy directly
         const FwSizeType pathLen = Fw::StringUtils::string_length(path, MAX_PATH_LENGTH);
         if (pathLen + 1 > MAX_PATH_LENGTH) {
             return INVALID_PATH;
         }
         (void)std::memcpy(workBuf, path, pathLen + 1);
     }
+    return VALID;
+}
 
-    // Parse the path into segments, resolving `.` and `..`
-    // Maximum possible segments is bounded by path length / 2
+// Helper: parse segments and reconstruct resolved path
+static Status resolveSegments(const char* workBuf, char* resolvedOut, FwSizeType resolvedSize) {
+    FW_ASSERT(workBuf != nullptr);
+    FW_ASSERT(resolvedOut != nullptr);
+
     static constexpr FwSizeType MAX_SEGMENTS = MAX_PATH_LENGTH / 2;
     PathSegment segments[MAX_SEGMENTS];
     FwSizeType segmentCount = 0;
 
     const FwSizeType workLen = Fw::StringUtils::string_length(workBuf, MAX_PATH_LENGTH);
-    FwSizeType i = 0;
+    FwSizeType start = (workLen > 0 && workBuf[0] == '/') ? 1 : 0;
 
-    // Skip leading '/'
-    if (workLen > 0 && workBuf[0] == '/') {
-        i = 1;
-    }
-
-    while (i < workLen) {
-        // Find the end of this segment
+    for (FwSizeType i = start; i <= workLen;) {
         FwSizeType segStart = i;
-        while (i < workLen && workBuf[i] != '/') {
-            i++;
+        for (; i < workLen && workBuf[i] != '/'; i++) {
         }
         FwSizeType segLen = i - segStart;
-
-        // Skip the '/' delimiter
         if (i < workLen) {
             i++;
+        } else {
+            i = workLen + 1;  // exit
         }
 
-        // Skip `.` (current directory)
+        if (segLen == 0) {
+            continue;
+        }
         if (segLen == 1 && workBuf[segStart] == '.') {
             continue;
         }
-
-        // Handle `..` (parent directory)
         if (segLen == 2 && workBuf[segStart] == '.' && workBuf[segStart + 1] == '.') {
             if (segmentCount > 0) {
                 segmentCount--;
             }
-            // At root, `..` is a no-op (can't go above root)
             continue;
         }
-
-        // Skip empty segments (from `//`)
-        if (segLen == 0) {
-            continue;
-        }
-
-        // Store this segment
         if (segmentCount >= MAX_SEGMENTS) {
             return INVALID_PATH;
         }
@@ -111,10 +92,8 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
         segmentCount++;
     }
 
-    // Reconstruct the resolved path
+    // Reconstruct
     FwSizeType outPos = 0;
-
-    // Always start with '/'
     if (outPos + 1 >= resolvedSize) {
         return INVALID_PATH;
     }
@@ -122,7 +101,6 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
 
     for (FwSizeType s = 0; s < segmentCount; s++) {
         const FwSizeType segLen = segments[s].length;
-        // Need room for segment + '/' or '\0'
         if (outPos + segLen + 1 >= resolvedSize) {
             return INVALID_PATH;
         }
@@ -131,16 +109,29 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
         resolvedOut[outPos++] = '/';
     }
 
-    // Replace trailing '/' with '\0' (unless root path "/")
     if (outPos > 1) {
         outPos--;
     }
     resolvedOut[outPos] = '\0';
-
     return VALID;
 }
 
-Status checkContainment(const char* resolvedPath, const char* allowedDirectory) {
+Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize) {
+    FW_ASSERT(resolvedOut != nullptr);
+    if (path == nullptr || path[0] == '\0') {
+        return INVALID_PATH;
+    }
+
+    char workBuf[MAX_PATH_LENGTH];
+    Status buildStatus = buildWorkBuf(path, baseDir, workBuf);
+    if (buildStatus != VALID) {
+        return buildStatus;
+    }
+    return resolveSegments(workBuf, resolvedOut, resolvedSize);
+}
+
+// Internal containment check on already-resolved paths
+static Status checkContainment(const char* resolvedPath, const char* allowedDirectory) {
     FW_ASSERT(resolvedPath != nullptr);
     FW_ASSERT(allowedDirectory != nullptr);
 
@@ -150,31 +141,22 @@ Status checkContainment(const char* resolvedPath, const char* allowedDirectory) 
     if (allowedLen == 0 || pathLen == 0) {
         return OUTSIDE_SANDBOX;
     }
-
-    // Allowed directory must end with '/'
     if (allowedDirectory[allowedLen - 1] != '/') {
         return OUTSIDE_SANDBOX;
     }
-
-    // Path must be at least as long as the allowed directory prefix
     if (pathLen < allowedLen) {
-        // Special case: path equals allowed dir without trailing slash
-        // e.g., path="/data/uplink" and allowed="/data/uplink/"
         if (pathLen == allowedLen - 1 && std::memcmp(resolvedPath, allowedDirectory, pathLen) == 0) {
             return VALID;
         }
         return OUTSIDE_SANDBOX;
     }
-
-    // Check prefix match
     if (std::memcmp(resolvedPath, allowedDirectory, allowedLen) != 0) {
         return OUTSIDE_SANDBOX;
     }
-
     return VALID;
 }
 
-Status validatePath(const char* path, const char* allowedDirectory) {
+Status isSubDirectory(const char* path, const char* allowedDirectory, char* resolvedOut, FwSizeType resolvedSize) {
     if (path == nullptr || allowedDirectory == nullptr) {
         return INVALID_PATH;
     }
@@ -185,8 +167,20 @@ Status validatePath(const char* path, const char* allowedDirectory) {
         return resolveStatus;
     }
 
-    return checkContainment(resolved, allowedDirectory);
+    const Status containStatus = checkContainment(resolved, allowedDirectory);
+    if (containStatus != VALID) {
+        return containStatus;
+    }
+
+    // Copy resolved path to output if requested
+    if (resolvedOut != nullptr) {
+        const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolved, MAX_PATH_LENGTH);
+        FW_ASSERT(resolvedSize > resolvedLen);
+        (void)std::memcpy(resolvedOut, resolved, resolvedLen + 1);
+    }
+
+    return VALID;
 }
 
-}  // namespace FilePathValidator
+}  // namespace FilePathUtils
 }  // namespace Os

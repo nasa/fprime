@@ -9,9 +9,7 @@
 
 namespace Os {
 
-SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory(), m_configured(false) {
-    m_allowedDirectory[0] = '\0';
-}
+SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory(), m_configured(false) {}
 
 SandboxedFile::~SandboxedFile() {
     if (m_file.isOpen()) {
@@ -19,38 +17,18 @@ SandboxedFile::~SandboxedFile() {
     }
 }
 
-bool SandboxedFile::configure(const char* allowedDirectory) {
+void SandboxedFile::configure(const char* allowedDirectory) {
     FW_ASSERT(allowedDirectory != nullptr);
+    FW_ASSERT(!m_file.isOpen());
 
-    // Cannot reconfigure while a file is open
-    if (m_file.isOpen()) {
-        return false;
-    }
+    const FwSizeType dirLen = Fw::StringUtils::string_length(allowedDirectory, FilePathUtils::MAX_PATH_LENGTH);
+    FW_ASSERT(dirLen > 0);
+    FW_ASSERT(dirLen < FilePathUtils::MAX_PATH_LENGTH);
+    FW_ASSERT(allowedDirectory[0] == '/');
+    FW_ASSERT(allowedDirectory[dirLen - 1] == '/');
 
-    // Must be an absolute path
-    if (allowedDirectory[0] != '/') {
-        return false;
-    }
-
-    const FwSizeType dirLen = Fw::StringUtils::string_length(allowedDirectory, FilePathValidator::MAX_PATH_LENGTH);
-
-    if (dirLen == 0 || dirLen >= FilePathValidator::MAX_PATH_LENGTH) {
-        return false;
-    }
-
-    // Copy and ensure trailing '/'
-    (void)std::memcpy(m_allowedDirectory, allowedDirectory, dirLen);
-    FwSizeType pos = dirLen;
-    if (m_allowedDirectory[pos - 1] != '/') {
-        if (pos + 1 >= FilePathValidator::MAX_PATH_LENGTH) {
-            return false;
-        }
-        m_allowedDirectory[pos++] = '/';
-    }
-    m_allowedDirectory[pos] = '\0';
-
+    m_allowedDirectory = allowedDirectory;
     m_configured = true;
-    return true;
 }
 
 bool SandboxedFile::isConfigured() const {
@@ -62,31 +40,18 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
                                               Os::FileInterface::OverwriteType overwrite) {
     FW_ASSERT(path != nullptr);
 
-    // When unconfigured, pass through directly to Os::File (no sandboxing).
-    // Sandboxing only activates after configure() is called.
     if (!m_configured) {
-        return m_file.open(path, mode, overwrite);
-    }
-
-    // Resolve the path to canonical form for validation AND for the actual open.
-    // This ensures the path that gets opened is exactly the path that was validated.
-    char resolvedPath[FilePathValidator::MAX_PATH_LENGTH];
-    FilePathValidator::Status resolveStatus =
-        FilePathValidator::resolvePath(path, m_allowedDirectory, resolvedPath, FilePathValidator::MAX_PATH_LENGTH);
-
-    if (resolveStatus != FilePathValidator::VALID) {
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
-    // Verify the resolved path is within the sandbox
-    const FilePathValidator::Status containmentStatus =
-        FilePathValidator::checkContainment(resolvedPath, m_allowedDirectory);
+    char resolvedPath[FilePathUtils::MAX_PATH_LENGTH];
+    const FilePathUtils::Status status =
+        FilePathUtils::isSubDirectory(path, m_allowedDirectory.toChar(), resolvedPath, sizeof(resolvedPath));
 
-    if (containmentStatus != FilePathValidator::VALID) {
+    if (status != FilePathUtils::VALID) {
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
-    // Open the resolved (canonical) path, not the original
     return m_file.open(resolvedPath, mode, overwrite);
 }
 
@@ -142,7 +107,7 @@ const char* SandboxedFile::getSandboxDirectory() const {
     if (!m_configured) {
         return nullptr;
     }
-    return m_allowedDirectory;
+    return m_allowedDirectory.toChar();
 }
 
 }  // namespace Os
