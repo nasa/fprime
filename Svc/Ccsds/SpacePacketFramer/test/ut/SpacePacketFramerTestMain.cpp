@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "SpacePacketFramerTester.hpp"
+#include "STest/Random/Random.hpp"
 
 TEST(SpacePacketFramer, testComStatusPassthrough) {
     Svc::Ccsds::SpacePacketFramerTester tester;
@@ -28,5 +29,6 @@ TEST(SpacePacketFramer, OversizedAllocatorBufferIsTrimmed) {
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }
