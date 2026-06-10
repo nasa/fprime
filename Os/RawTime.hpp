@@ -186,7 +186,17 @@ class RawTime final : public RawTimeInterface {
                                         Fw::Endianness mode = Fw::Endianness::BIG) override;
 
     //! \brief Calculate the difference in microseconds between two RawTime objects.
-    //! Delegates to m_delegate, allowing platform-specific overrides.
+    //!
+    //! This function calculates the difference in microseconds between the current RawTime object
+    //! and another RawTime object provided as a parameter.
+    //!
+    //! \warning This function will return Status::OP_OVERFLOW if the time difference is too large to fit in a U32.
+    //! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).
+    //! \warning Users should prefer getTimeInterval() for larger intervals.
+    //!
+    //! \param other The other RawTime object to compare against.
+    //! \param result A reference to a U32 variable where the result will be stored.
+    //! \return Status indicating the result of the operation.
     Status getDiffUsec(const RawTime& other, U32& result) const override;
 
     // ------------------------------------------------------------
