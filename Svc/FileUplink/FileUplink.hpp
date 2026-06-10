@@ -15,6 +15,7 @@
 
 #include <Fw/FilePacket/FilePacket.hpp>
 #include <Os/File.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Svc/FileUplink/FileUplinkComponentAc.hpp>
 
 namespace Svc {
@@ -41,8 +42,8 @@ class FileUplink final : public FileUplinkComponentBase {
         //! The file name
         Fw::LogStringArg name;
 
-        //! The underlying OS file
-        Os::File osFile;
+        //! The underlying OS file (sandboxed to restrict write locations)
+        Os::SandboxedFile osFile;
 
       private:
         //! The checksum for the file
@@ -163,6 +164,17 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Destroy object FileUplink
     //!
     ~FileUplink();
+
+    //! Configure the allowed uplink directory
+    //!
+    //! Restricts all file writes to the given directory.
+    //! Must be called before any files are received.
+    //! The directory must be an absolute path.
+    //!
+    //! \param directory: absolute path of the allowed uplink directory
+    //! \return true if configuration was accepted
+    //!
+    bool configureSandbox(const char* directory);
 
   private:
     // ----------------------------------------------------------------------

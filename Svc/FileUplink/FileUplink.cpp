@@ -32,6 +32,10 @@ FileUplink::FileUplink(const char* const name)
 
 FileUplink::~FileUplink() {}
 
+bool FileUplink::configureSandbox(const char* directory) {
+    return this->m_file.osFile.configure(directory);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------

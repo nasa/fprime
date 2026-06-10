@@ -12,6 +12,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <unistd.h>
 
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
@@ -33,6 +34,10 @@ FileUplinkTester ::FileUplinkTester()
       sequenceIndex(0) {
     this->connectPorts();
     this->initComponents();
+    // Configure sandbox to allow the current working directory for test files
+    char cwd[256];
+    (void)getcwd(cwd, sizeof(cwd));
+    this->component.configureSandbox(cwd);
 }
 
 FileUplinkTester ::~FileUplinkTester() {
