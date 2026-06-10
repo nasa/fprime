@@ -10,16 +10,10 @@
 namespace Os {
 namespace FilePathUtils {
 
-// Segments are stored as offset+length pairs into the working buffer
-struct PathSegment {
-    FwSizeType offset;
-    FwSizeType length;
-};
-
-// Helper: build absolute working buffer from raw path + optional baseDir
-static Status buildWorkBuf(const char* path, const char* baseDir, char* workBuf) {
+// Helper: copy the raw (unresolved) absolute path into resolvedOut
+static Status buildAbsolutePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize) {
     FW_ASSERT(path != nullptr);
-    FW_ASSERT(workBuf != nullptr);
+    FW_ASSERT(resolvedOut != nullptr);
 
     if (path[0] != '/') {
         if (baseDir == nullptr || baseDir[0] != '/') {
@@ -28,91 +22,72 @@ static Status buildWorkBuf(const char* path, const char* baseDir, char* workBuf)
         const FwSizeType baseDirLen = Fw::StringUtils::string_length(baseDir, MAX_PATH_LENGTH);
         const FwSizeType pathLen = Fw::StringUtils::string_length(path, MAX_PATH_LENGTH);
         const FwSizeType needsSlash = (baseDirLen > 0 && baseDir[baseDirLen - 1] != '/') ? 1 : 0;
-        if (baseDirLen + needsSlash + pathLen + 1 > MAX_PATH_LENGTH) {
+        if (baseDirLen + needsSlash + pathLen + 1 > resolvedSize) {
             return INVALID_PATH;
         }
-        (void)std::memcpy(workBuf, baseDir, baseDirLen);
+        (void)std::memcpy(resolvedOut, baseDir, baseDirLen);
         FwSizeType pos = baseDirLen;
         if (needsSlash) {
-            workBuf[pos++] = '/';
+            resolvedOut[pos++] = '/';
         }
-        (void)std::memcpy(&workBuf[pos], path, pathLen);
+        (void)std::memcpy(&resolvedOut[pos], path, pathLen);
         pos += pathLen;
-        workBuf[pos] = '\0';
+        resolvedOut[pos] = '\0';
     } else {
         const FwSizeType pathLen = Fw::StringUtils::string_length(path, MAX_PATH_LENGTH);
-        if (pathLen + 1 > MAX_PATH_LENGTH) {
+        if (pathLen + 1 > resolvedSize) {
             return INVALID_PATH;
         }
-        (void)std::memcpy(workBuf, path, pathLen + 1);
+        (void)std::memcpy(resolvedOut, path, pathLen + 1);
     }
     return VALID;
 }
 
-// Helper: parse segments and reconstruct resolved path
-static Status resolveSegments(const char* workBuf, char* resolvedOut, FwSizeType resolvedSize) {
-    FW_ASSERT(workBuf != nullptr);
+// Helper: resolve `.`, `..`, and `//` in place within resolvedOut.
+// Uses a read pointer (r) and write pointer (w) on the same buffer.
+// w <= r always holds since resolution only shrinks, so memmove is safe.
+static Status resolveInPlace(char* resolvedOut) {
     FW_ASSERT(resolvedOut != nullptr);
+    FW_ASSERT(resolvedOut[0] == '/');
 
-    static constexpr FwSizeType MAX_SEGMENTS = MAX_PATH_LENGTH / 2;
-    PathSegment segments[MAX_SEGMENTS];
-    FwSizeType segmentCount = 0;
+    const FwSizeType len = Fw::StringUtils::string_length(resolvedOut, MAX_PATH_LENGTH);
+    FwSizeType w = 1;  // write position (past root '/')
 
-    const FwSizeType workLen = Fw::StringUtils::string_length(workBuf, MAX_PATH_LENGTH);
-    FwSizeType start = (workLen > 0 && workBuf[0] == '/') ? 1 : 0;
-
-    for (FwSizeType i = start; i <= workLen;) {
-        FwSizeType segStart = i;
-        for (; i < workLen && workBuf[i] != '/'; i++) {
+    for (FwSizeType r = 1; r <= len;) {
+        FwSizeType segStart = r;
+        for (; r < len && resolvedOut[r] != '/'; r++) {
         }
-        FwSizeType segLen = i - segStart;
-        if (i < workLen) {
-            i++;
+        FwSizeType segLen = r - segStart;
+        if (r < len) {
+            r++;
         } else {
-            i = workLen + 1;  // exit
+            r = len + 1;
         }
 
         if (segLen == 0) {
             continue;
         }
-        if (segLen == 1 && workBuf[segStart] == '.') {
+        if (segLen == 1 && resolvedOut[segStart] == '.') {
             continue;
         }
-        if (segLen == 2 && workBuf[segStart] == '.' && workBuf[segStart + 1] == '.') {
-            if (segmentCount > 0) {
-                segmentCount--;
+        if (segLen == 2 && resolvedOut[segStart] == '.' && resolvedOut[segStart + 1] == '.') {
+            if (w > 1) {
+                w--;
+                for (; w > 1 && resolvedOut[w - 1] != '/'; w--) {
+                }
             }
             continue;
         }
-        if (segmentCount >= MAX_SEGMENTS) {
-            return INVALID_PATH;
-        }
-        segments[segmentCount].offset = segStart;
-        segments[segmentCount].length = segLen;
-        segmentCount++;
+
+        (void)std::memmove(&resolvedOut[w], &resolvedOut[segStart], segLen);
+        w += segLen;
+        resolvedOut[w++] = '/';
     }
 
-    // Reconstruct
-    FwSizeType outPos = 0;
-    if (outPos + 1 >= resolvedSize) {
-        return INVALID_PATH;
+    if (w > 1) {
+        w--;
     }
-    resolvedOut[outPos++] = '/';
-
-    for (FwSizeType s = 0; s < segmentCount; s++) {
-        const FwSizeType segLen = segments[s].length;
-        if (outPos + segLen + 1 > resolvedSize) {
-            return INVALID_PATH;
-        }
-        (void)std::memcpy(&resolvedOut[outPos], &workBuf[segments[s].offset], segLen);
-        outPos += segLen;
-        resolvedOut[outPos++] = '/';
-    }
-
-    if (outPos > 1) {
-        outPos--;
-    }
-    resolvedOut[outPos] = '\0';
+    resolvedOut[w] = '\0';
     return VALID;
 }
 
@@ -122,12 +97,11 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
         return INVALID_PATH;
     }
 
-    char workBuf[MAX_PATH_LENGTH];
-    Status buildStatus = buildWorkBuf(path, baseDir, workBuf);
+    const Status buildStatus = buildAbsolutePath(path, baseDir, resolvedOut, resolvedSize);
     if (buildStatus != VALID) {
         return buildStatus;
     }
-    return resolveSegments(workBuf, resolvedOut, resolvedSize);
+    return resolveInPlace(resolvedOut);
 }
 
 // Internal containment check on already-resolved paths
