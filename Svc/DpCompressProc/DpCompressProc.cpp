@@ -311,7 +311,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     FW_ASSERT(false, state);
                     break;
             }
-            uncompressed_size += chunk_size;
+            uncompressed_size = static_cast<FwSizeStoreType>(uncompressed_size + chunk_size);
         }
 
         // Confirm that the serialized location has not jumped ahead of the deserialize location
