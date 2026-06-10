@@ -4,10 +4,10 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include <Os/FilePathValidator.hpp>
-#include <Os/SandboxedFile.hpp>
 #include <Os/FileSystem.hpp>
-#include <cstring>
+#include <Os/SandboxedFile.hpp>
 #include <cstdio>
+#include <cstring>
 
 // ======================================================================
 // FilePathValidator::resolvePath tests
@@ -24,7 +24,8 @@ TEST_F(FilePathValidatorResolveTest, AbsolutePathUnchanged) {
 
 TEST_F(FilePathValidatorResolveTest, CollapseDotDot) {
     char resolved[Os::FilePathValidator::MAX_PATH_LENGTH];
-    auto status = Os::FilePathValidator::resolvePath("/data/uplink/../other/file.bin", nullptr, resolved, sizeof(resolved));
+    auto status =
+        Os::FilePathValidator::resolvePath("/data/uplink/../other/file.bin", nullptr, resolved, sizeof(resolved));
     ASSERT_EQ(Os::FilePathValidator::VALID, status);
     ASSERT_STREQ("/data/other/file.bin", resolved);
 }

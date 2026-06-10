@@ -18,9 +18,9 @@ namespace Os {
 namespace FilePathValidator {
 
 enum Status {
-    VALID,              //!< Path is valid and within the allowed directory
-    OUTSIDE_SANDBOX,    //!< Resolved path falls outside the allowed directory
-    INVALID_PATH,       //!< Path is malformed or cannot be resolved
+    VALID,            //!< Path is valid and within the allowed directory
+    OUTSIDE_SANDBOX,  //!< Resolved path falls outside the allowed directory
+    INVALID_PATH,     //!< Path is malformed or cannot be resolved
 };
 
 //! Maximum supported path length for resolution buffers
@@ -39,10 +39,7 @@ static constexpr FwSizeType MAX_PATH_LENGTH = 256;
 //! \param resolvedSize: size of the output buffer
 //! \return VALID on success, INVALID_PATH if the path cannot be resolved or the buffer is too small
 //!
-Status resolvePath(const char* path,
-                   const char* baseDir,
-                   char* resolvedOut,
-                   FwSizeType resolvedSize);
+Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize);
 
 //! \brief Check whether a resolved path is within an allowed directory
 //!
@@ -56,8 +53,7 @@ Status resolvePath(const char* path,
 //! \param allowedDirectory: the allowed directory prefix (must end with `/`)
 //! \return VALID if path is within the allowed directory, OUTSIDE_SANDBOX otherwise
 //!
-Status checkContainment(const char* resolvedPath,
-                        const char* allowedDirectory);
+Status checkContainment(const char* resolvedPath, const char* allowedDirectory);
 
 //! \brief Validate that a path falls within an allowed directory
 //!
@@ -68,8 +64,7 @@ Status checkContainment(const char* resolvedPath,
 //! \param allowedDirectory: the allowed directory prefix (must be absolute, must end with `/`)
 //! \return VALID if path is within the allowed directory, OUTSIDE_SANDBOX or INVALID_PATH otherwise
 //!
-Status validatePath(const char* path,
-                    const char* allowedDirectory);
+Status validatePath(const char* path, const char* allowedDirectory);
 
 }  // namespace FilePathValidator
 }  // namespace Os

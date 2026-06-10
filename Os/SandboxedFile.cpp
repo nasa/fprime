@@ -2,9 +2,9 @@
 // \title Os/SandboxedFile.cpp
 // \brief Implementation of directory-sandboxed file wrapper
 // ======================================================================
-#include <Os/SandboxedFile.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <cstring>
 
 namespace Os {
@@ -32,8 +32,7 @@ bool SandboxedFile::configure(const char* allowedDirectory) {
         return false;
     }
 
-    const FwSizeType dirLen = Fw::StringUtils::string_length(
-        allowedDirectory, FilePathValidator::MAX_PATH_LENGTH);
+    const FwSizeType dirLen = Fw::StringUtils::string_length(allowedDirectory, FilePathValidator::MAX_PATH_LENGTH);
 
     if (dirLen == 0 || dirLen >= FilePathValidator::MAX_PATH_LENGTH) {
         return false;
@@ -70,8 +69,8 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
     // Resolve the path to canonical form for validation AND for the actual open.
     // This ensures the path that gets opened is exactly the path that was validated.
     char resolvedPath[FilePathValidator::MAX_PATH_LENGTH];
-    FilePathValidator::Status resolveStatus = FilePathValidator::resolvePath(
-        path, m_allowedDirectory, resolvedPath, FilePathValidator::MAX_PATH_LENGTH);
+    FilePathValidator::Status resolveStatus =
+        FilePathValidator::resolvePath(path, m_allowedDirectory, resolvedPath, FilePathValidator::MAX_PATH_LENGTH);
 
     if (resolveStatus != FilePathValidator::VALID) {
         return Os::FileInterface::Status::NO_PERMISSION;

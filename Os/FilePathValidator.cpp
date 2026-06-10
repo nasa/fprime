@@ -2,9 +2,9 @@
 // \title Os/FilePathValidator.cpp
 // \brief Implementation of file path validation utilities
 // ======================================================================
-#include <Os/FilePathValidator.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <Os/FilePathValidator.hpp>
 #include <cstring>
 
 namespace Os {
@@ -16,10 +16,7 @@ struct PathSegment {
     FwSizeType length;
 };
 
-Status resolvePath(const char* path,
-                   const char* baseDir,
-                   char* resolvedOut,
-                   FwSizeType resolvedSize) {
+Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwSizeType resolvedSize) {
     FW_ASSERT(resolvedOut != nullptr);
 
     if (path == nullptr || path[0] == '\0') {
@@ -143,15 +140,12 @@ Status resolvePath(const char* path,
     return VALID;
 }
 
-Status checkContainment(const char* resolvedPath,
-                        const char* allowedDirectory) {
+Status checkContainment(const char* resolvedPath, const char* allowedDirectory) {
     FW_ASSERT(resolvedPath != nullptr);
     FW_ASSERT(allowedDirectory != nullptr);
 
-    const FwSizeType allowedLen = Fw::StringUtils::string_length(
-        allowedDirectory, MAX_PATH_LENGTH);
-    const FwSizeType pathLen = Fw::StringUtils::string_length(
-        resolvedPath, MAX_PATH_LENGTH);
+    const FwSizeType allowedLen = Fw::StringUtils::string_length(allowedDirectory, MAX_PATH_LENGTH);
+    const FwSizeType pathLen = Fw::StringUtils::string_length(resolvedPath, MAX_PATH_LENGTH);
 
     if (allowedLen == 0 || pathLen == 0) {
         return OUTSIDE_SANDBOX;
@@ -180,8 +174,7 @@ Status checkContainment(const char* resolvedPath,
     return VALID;
 }
 
-Status validatePath(const char* path,
-                    const char* allowedDirectory) {
+Status validatePath(const char* path, const char* allowedDirectory) {
     if (path == nullptr || allowedDirectory == nullptr) {
         return INVALID_PATH;
     }
