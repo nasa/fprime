@@ -418,9 +418,8 @@ TEST(CmdSequencerCrcTest, HardcodedValue_123456789) {
     crc.init();
     const BYTE data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
     crc.update(data, sizeof(data));
-    crc.finalize();
     // Standard CRC32 of "123456789" = 0xCBF43926
-    ASSERT_EQ(crc.m_computed, static_cast<U32>(0xCBF43926))
+    ASSERT_EQ(crc.finalize(), static_cast<U32>(0xCBF43926))
         << "CmdSequencer CRC of \"123456789\" must equal 0xCBF43926 (standard CRC32)";
 }
 
@@ -429,9 +428,8 @@ TEST(CmdSequencerCrcTest, HardcodedValue_DEADBEEF) {
     crc.init();
     const BYTE data[] = {0xDE, 0xAD, 0xBE, 0xEF};
     crc.update(data, sizeof(data));
-    crc.finalize();
     // Standard CRC32 of {0xDE,0xAD,0xBE,0xEF} = 0x7C9CA35A
-    ASSERT_EQ(crc.m_computed, static_cast<U32>(0x7C9CA35A))
+    ASSERT_EQ(crc.finalize(), static_cast<U32>(0x7C9CA35A))
         << "CmdSequencer CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x7C9CA35A";
 }
 
@@ -440,9 +438,8 @@ TEST(CmdSequencerCrcTest, HardcodedValue_SingleByte) {
     crc.init();
     const BYTE data[] = {0x00};
     crc.update(data, sizeof(data));
-    crc.finalize();
     // Standard CRC32 of {0x00} = 0xD202EF8D
-    ASSERT_EQ(crc.m_computed, static_cast<U32>(0xD202EF8D)) << "CmdSequencer CRC of {0x00} must equal 0xD202EF8D";
+    ASSERT_EQ(crc.finalize(), static_cast<U32>(0xD202EF8D)) << "CmdSequencer CRC of {0x00} must equal 0xD202EF8D";
 }
 
 TEST(CmdSequencerCrcTest, HardcodedValue_Incremental) {
@@ -452,8 +449,7 @@ TEST(CmdSequencerCrcTest, HardcodedValue_Incremental) {
     const BYTE data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
     crc.update(data, 4);      // "1234"
     crc.update(data + 4, 5);  // "56789"
-    crc.finalize();
-    ASSERT_EQ(crc.m_computed, static_cast<U32>(0xCBF43926))
+    ASSERT_EQ(crc.finalize(), static_cast<U32>(0xCBF43926))
         << "Incremental CmdSequencer CRC of \"123456789\" must equal 0xCBF43926";
 }
 
@@ -462,9 +458,8 @@ TEST(CmdSequencerCrcTest, HardcodedValue_Hello) {
     crc.init();
     const BYTE data[] = {'H', 'e', 'l', 'l', 'o'};
     crc.update(data, sizeof(data));
-    crc.finalize();
     // Standard CRC32 of "Hello" = 0xF7D18982
-    ASSERT_EQ(crc.m_computed, static_cast<U32>(0xF7D18982)) << "CmdSequencer CRC of \"Hello\" must equal 0xF7D18982";
+    ASSERT_EQ(crc.finalize(), static_cast<U32>(0xF7D18982)) << "CmdSequencer CRC of \"Hello\" must equal 0xF7D18982";
 }
 
 int main(int argc, char** argv) {

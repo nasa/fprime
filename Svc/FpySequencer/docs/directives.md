@@ -866,33 +866,7 @@ Pushes the current time, from the `timeCaller` port, to the stack.
 
 **Requirement:**  FPY-SEQ-010
 
-## SET_FLAG (67)
-Pops a bool off the stack, and sets a command sequencer flag from the value.
-
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| flag_idx | U8 | hardcoded | Index of the flag to set |
-| value | bool | stack | Value to set the flag to |
-
-| Stack Result Type | Description |
-| ------------------|-------------|
-| N/A | |
-
-**Requirement:**  FPY-SEQ-020
-
-## GET_FLAG (68)
-Gets a command sequencer flag and pushes its value to the stack as `FW_SERIALIZE_TRUE_VALUE` or `FW_SERIALIZE_FALSE_VALUE`.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| flag_idx | U8 | hardcoded | Index of the flag to get |
-
-| Stack Result Type | Description |
-| ------------------|-------------|
-| bool | The value of the flag |
-
-**Requirement:**  FPY-SEQ-020
-
-## GET_FIELD (69)
+## GET_FIELD (67)
 Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes from top of stack, and then inside of that a second array of hard-coded number of bytes. The second array is offset by the value previously popped off the stack, with offset 0 meaning the second array starts furthest down the stack. Leaves only the second array of bytes, deleting the surrounding bytes.
 
 | Arg Name | Arg Type | Source | Description |
@@ -907,7 +881,7 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 
 **Requirement:**  FPY-SEQ-019
 
-## PEEK (70)
+## PEEK (68)
 Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. Let `top` be the top of the stack. Takes the region starting at `top - offset - byteCount` and going to `top - offset`, and pushes this region to the top of the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
@@ -920,7 +894,7 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_REL (71)
+## STORE_REL (69)
 Stores a value to a local variable at a runtime-determined offset relative to the current stack frame.
 
 **Preconditions:**
@@ -948,7 +922,7 @@ Stores a value to a local variable at a runtime-determined offset relative to th
 
 **Requirement:**  FPY-SEQ-009
 
-## CALL (72)
+## CALL (70)
 Performs a function call. Pops the target directive index from the stack, saves the return address and current frame pointer to the stack, then transfers control to the target.
 
 **Preconditions:**
@@ -984,7 +958,7 @@ Performs a function call. Pops the target directive index from the stack, saves 
 
 **Requirement:**  FPY-SEQ-009
 
-## RETURN (73)
+## RETURN (71)
 Returns from a function call. Restores the caller's execution context and optionally returns a value.
 
 **Preconditions:**
@@ -1033,7 +1007,7 @@ stack_frame_start (restored)         stack top
 
 **Requirement:**  FPY-SEQ-009
 
-## LOAD_ABS (74)
+## LOAD_ABS (72)
 Loads a value from an absolute address in the stack (used for global variables), and pushes it to the stack.
 
 **Preconditions:**
@@ -1059,7 +1033,7 @@ Loads a value from an absolute address in the stack (used for global variables),
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_ABS (75)
+## STORE_ABS (73)
 Stores a value to an absolute address in the stack (used for global variables), with the offset determined at runtime.
 
 **Preconditions:**
@@ -1084,7 +1058,7 @@ Stores a value to an absolute address in the stack (used for global variables), 
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_ABS_CONST_OFFSET (76)
+## STORE_ABS_CONST_OFFSET (74)
 Stores a value to an absolute address in the stack (used for global variables), with a compile-time-known offset.
 
 **Preconditions:**
@@ -1108,7 +1082,7 @@ Stores a value to an absolute address in the stack (used for global variables), 
 
 **Requirement:**  FPY-SEQ-009
 
-## POP_EVENT (77)
+## POP_EVENT (75)
 Pops a message size, message, and severity from the stack and emits an F Prime event.
 
 **Preconditions:**
@@ -1142,3 +1116,23 @@ Pops a message size, message, and severity from the stack and emits an F Prime e
 | message_size | StackSizeType  | stack  | Number of bytes to pop for the message. |
 | message      | bytes          | stack  | UTF-8 encoded message string. |
 | severity     | Fw.LogSeverity | stack  | The event severity level. |
+
+## SET_SEED (76)
+Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal PRNG.
+
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| seed     | U32      | stack  | Seed value used to initialize the PRNG |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+
+## PUSH_RAND (77)
+Pushes the next PRNG value to the stack.
+If this is called without the seed being manually set beforehand, then the seed will be set based on the current time.
+`PUSH_RAND` uses `std::mt19937` from C++'s random library, a deterministic non-cryptographic PRNG. It is suitable for repeatable pseudo-random values, simulations, randomized sequencing behavior, or tests, but it does not qualify as a [cryptographically secure pseudorandom number generator](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) and is not suitable for cryptographic keys, secrets, authentication tokens, or security-sensitive randomness.
+| Stack Result Type | Description |
+| ------------------|-------------|
+| U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |

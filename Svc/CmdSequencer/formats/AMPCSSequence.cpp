@@ -10,12 +10,10 @@
 // ======================================================================
 
 #include "Svc/CmdSequencer/formats/AMPCSSequence.hpp"
+#include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Os/FileSystem.hpp"
-extern "C" {
-#include "Utils/Hash/libcrc/lib_crc.h"
-}
 
 namespace Svc {
 
@@ -96,8 +94,9 @@ bool AMPCSSequence ::readSequenceFile(const Fw::ConstStringBase& seqFileName) {
 
 bool AMPCSSequence ::validateCRC() {
     bool result = true;
-    if (this->m_crc.m_stored != this->m_crc.m_computed) {
-        this->m_events.fileCRCFailure(this->m_crc.m_stored, this->m_crc.m_computed);
+    U32 computed = this->m_crc.finalize();
+    if (this->m_crc.m_stored != computed) {
+        this->m_events.fileCRCFailure(this->m_crc.m_stored, computed);
         result = false;
     }
     return result;
@@ -190,7 +189,6 @@ bool AMPCSSequence ::readOpenSequenceFile() {
         FW_ASSERT(buffLen == this->m_header.m_fileSize, static_cast<FwAssertArgType>(buffLen),
                   static_cast<FwAssertArgType>(this->m_header.m_fileSize));
         this->m_crc.update(buffAddr, buffLen);
-        this->m_crc.finalize();
     }
     return status;
 }

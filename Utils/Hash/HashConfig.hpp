@@ -7,6 +7,6 @@
 //!
 //! #include <Utils/Hash/openssl/SHA256.hpp>
 //!
-#include <Utils/Hash/libcrc/CRC32.hpp>
+#include <Utils/Hash/Crc32/Crc32.hpp>
 
 #endif

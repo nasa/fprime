@@ -89,13 +89,19 @@
     \*******************************************************************/
 
 static int              crc_tab16_init          = CRC_FALSE;
+// F PRIME CHANGE (see header)
+#if 0
 static int              crc_tab32_init          = CRC_FALSE;
+#endif
 static int              crc_tabccitt_init       = CRC_FALSE;
 static int              crc_tabdnp_init         = CRC_FALSE;
 static int              crc_tabkermit_init      = CRC_FALSE;
 
 static unsigned short   crc_tab16[256];
+// F PRIME CHANGE (see header)
+#if 0
 static unsigned long    crc_tab32[256];
+#endif
 static unsigned short   crc_tabccitt[256];
 static unsigned short   crc_tabdnp[256];
 static unsigned short   crc_tabkermit[256];
@@ -112,7 +118,10 @@ static unsigned short   crc_tabkermit[256];
     \*******************************************************************/
 
 static void             init_crc16_tab( void );
+// F PRIME CHANGE (see header)
+#if 0
 static void             init_crc32_tab( void );
+#endif
 static void             init_crcccitt_tab( void );
 static void             init_crcdnp_tab( void );
 static void             init_crckermit_tab( void );
@@ -269,6 +278,8 @@ unsigned short update_crc_dnp( unsigned short crc, char c ) {
     *                                                                   *
     \*******************************************************************/
 
+// F PRIME CHANGE (see header)
+#if 0
 unsigned long update_crc_32( unsigned long crc, char c ) {
 
     unsigned long tmp, long_c;
@@ -283,6 +294,7 @@ unsigned long update_crc_32( unsigned long crc, char c ) {
     return crc;
 
 }  /* update_crc_32 */
+#endif
 
 
 
@@ -403,6 +415,8 @@ static void init_crcdnp_tab( void ) {
     *                                                                   *
     \*******************************************************************/
 
+// F PRIME CHANGE (see header)
+#if 0
 static void init_crc32_tab( void ) {
 
     int i, j;
@@ -424,6 +438,7 @@ static void init_crc32_tab( void ) {
     crc_tab32_init = CRC_TRUE;
 
 }  /* init_crc32_tab */
+#endif
 
 
 
