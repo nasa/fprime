@@ -31,6 +31,7 @@ async command AppendFile(
                         ) \
   opcode 0x05
 
+@ Get the size of a file
 async command FileSize(
                         fileName: string size FileNameStringSize @< The file to get the size of
                       ) \

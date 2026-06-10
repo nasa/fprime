@@ -138,6 +138,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             }
             const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
             FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
+        } else {
+            // Ensure it is a duplicate in the ignore list, not a duplicate of a valid channel
+            FW_ASSERT(this->m_channels[entryIndex].ignored, static_cast<FwAssertArgType>(id));
         }
         // is ignored channel - update entry in place via reference
         TlmEntry& entry = this->m_channels[entryIndex];
