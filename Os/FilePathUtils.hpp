@@ -44,10 +44,10 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
 
 //! \brief Check whether a path is within an allowed directory
 //!
-//! Resolves the path (collapsing `.` and `..`), then verifies
-//! that the resolved path begins with `allowedDirectory` as a proper
-//! directory prefix (i.e. the match must end at a `/` boundary to prevent
-//! `/allowed_dir_extra/` from matching `/allowed_dir/`).
+//! Resolves both the path and the allowed directory (collapsing `.` and `..`),
+//! then verifies that the resolved path begins with the normalized allowed
+//! directory as a proper directory prefix (i.e. the match must end at a `/`
+//! boundary to prevent `/allowed_dir_extra/` from matching `/allowed_dir/`).
 //!
 //! \param path: the input path to check (may be relative or absolute)
 //! \param allowedDirectory: the allowed directory prefix (must be absolute, must end with `/`)

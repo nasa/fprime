@@ -159,6 +159,18 @@ TEST_F(FilePathUtilsSubDirTest, NullDirectory) {
     ASSERT_EQ(Os::FilePathUtils::INVALID_PATH, status);
 }
 
+TEST_F(FilePathUtilsSubDirTest, NonNormalizedAllowedDirectory) {
+    // allowedDirectory with `.` segment should still work after normalization
+    auto status = Os::FilePathUtils::isSubDirectory("/data/uplink/file.bin", "/data/./uplink/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
+TEST_F(FilePathUtilsSubDirTest, DotDotInAllowedDirectory) {
+    // allowedDirectory with `..` segment should still work after normalization
+    auto status = Os::FilePathUtils::isSubDirectory("/data/uplink/file.bin", "/data/../data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
 TEST_F(FilePathUtilsSubDirTest, OutputsResolvedPath) {
     char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
     auto status = Os::FilePathUtils::isSubDirectory("mission/seq.bin", "/data/uplink/", resolved, sizeof(resolved));

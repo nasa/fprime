@@ -161,13 +161,30 @@ Status isSubDirectory(const char* path, const char* allowedDirectory, char* reso
         return INVALID_PATH;
     }
 
+    // Normalize allowedDirectory so that segments like `.` or `..` don't cause
+    // false rejections during the prefix comparison in checkContainment.
+    char normalizedDir[MAX_PATH_LENGTH];
+    const Status normStatus = resolvePath(allowedDirectory, nullptr, normalizedDir, MAX_PATH_LENGTH);
+    if (normStatus != VALID) {
+        return INVALID_PATH;
+    }
+    // Re-add trailing '/' that resolvePath strips
+    const FwSizeType normLen = Fw::StringUtils::string_length(normalizedDir, MAX_PATH_LENGTH);
+    if (normLen > 0 && normalizedDir[normLen - 1] != '/') {
+        if (normLen + 2 > MAX_PATH_LENGTH) {
+            return INVALID_PATH;
+        }
+        normalizedDir[normLen] = '/';
+        normalizedDir[normLen + 1] = '\0';
+    }
+
     char resolved[MAX_PATH_LENGTH];
-    const Status resolveStatus = resolvePath(path, allowedDirectory, resolved, MAX_PATH_LENGTH);
+    const Status resolveStatus = resolvePath(path, normalizedDir, resolved, MAX_PATH_LENGTH);
     if (resolveStatus != VALID) {
         return resolveStatus;
     }
 
-    const Status containStatus = checkContainment(resolved, allowedDirectory);
+    const Status containStatus = checkContainment(resolved, normalizedDir);
     if (containStatus != VALID) {
         return containStatus;
     }
