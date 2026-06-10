@@ -31,8 +31,8 @@ class SandboxedFile {
   public:
     //! \brief Construct an unconfigured SandboxedFile
     //!
-    //! The sandbox directory must be set via `configure()` before use.
-    //! Calls to `open()` will return `NO_PERMISSION` if unconfigured.
+    //! When unconfigured, open() passes through directly to Os::File
+    //! (no sandboxing). Call `configure()` to activate path validation.
     //!
     SandboxedFile();
 
@@ -62,11 +62,11 @@ class SandboxedFile {
     // Os::File-equivalent interface
     // -------------------------------------------------------
 
-    //! \brief Open a file within the sandbox
+    //! \brief Open a file, validating the path if a sandbox is configured
     //!
-    //! Validates the path against the configured sandbox directory before
-    //! opening. Returns `NO_PERMISSION` if the resolved path falls outside
-    //! the sandbox.
+    //! When configured, validates the path against the sandbox directory
+    //! before opening. Returns `NO_PERMISSION` if the resolved path falls
+    //! outside the sandbox. When unconfigured, passes through to Os::File.
     //!
     //! \param path: c-string path to open
     //! \param mode: file operation mode

@@ -62,8 +62,10 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
                                               Os::FileInterface::OverwriteType overwrite) {
     FW_ASSERT(path != nullptr);
 
+    // When unconfigured, pass through directly to Os::File (no sandboxing).
+    // Sandboxing only activates after configure() is called.
     if (!m_configured) {
-        return Os::FileInterface::Status::NO_PERMISSION;
+        return m_file.open(path, mode, overwrite);
     }
 
     // Resolve the path to canonical form for validation AND for the actual open.

@@ -243,11 +243,14 @@ TEST_F(SandboxedFileTest, TraversalAttackRejected) {
     ASSERT_FALSE(file.isOpen());
 }
 
-TEST_F(SandboxedFileTest, OpenWithoutConfigureRejected) {
+TEST_F(SandboxedFileTest, OpenWithoutConfigurePassesThrough) {
     Os::SandboxedFile file;
-    auto status = file.open("/tmp/sandbox_test/test_file.bin", Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::File::NO_PERMISSION, status);
-    ASSERT_FALSE(file.isOpen());
+    // When unconfigured, SandboxedFile passes through to Os::File (no sandboxing)
+    auto status = file.open("/tmp/sandbox_test/unconfigured_test.bin", Os::File::OPEN_CREATE);
+    ASSERT_EQ(Os::File::OP_OK, status);
+    ASSERT_TRUE(file.isOpen());
+    file.close();
+    (void)::unlink("/tmp/sandbox_test/unconfigured_test.bin");
 }
 
 TEST_F(SandboxedFileTest, WriteAndRead) {

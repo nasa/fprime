@@ -36,7 +36,7 @@ FileUplinkTester ::FileUplinkTester()
     this->initComponents();
     // Configure sandbox to allow the current working directory for test files
     char cwd[256];
-    (void)getcwd(cwd, sizeof(cwd));
+    FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
     this->component.configureSandbox(cwd);
 }
 
