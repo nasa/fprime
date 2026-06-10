@@ -7,53 +7,12 @@
 #ifndef FW_LOG_STRING_HPP
 #define FW_LOG_STRING_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 
 namespace Fw {
 
-class LogStringArg final : public StringBase {
-  public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_LOG_STR,
-        STRING_SIZE = FW_LOG_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
-    };
+using LogStringArg = StringTemplate<FW_LOG_STRING_MAX_SIZE>;
 
-    LogStringArg() : StringBase() { *this = ""; }
-
-    LogStringArg(const LogStringArg& src) : StringBase() { *this = src; }
-
-    LogStringArg(const ConstStringBase& src) : StringBase() { *this = src; }
-
-    LogStringArg(const char* src) : StringBase() { *this = src; }
-
-    ~LogStringArg() {}
-
-    LogStringArg& operator=(const LogStringArg& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    LogStringArg& operator=(const ConstStringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    LogStringArg& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
-
-  private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
-};
 }  // namespace Fw
 
 #endif
