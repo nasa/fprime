@@ -16,7 +16,7 @@ theme:
   language: en
   logo: assets/images/logo-fprime-jpl.svg
   favicon: assets/images/favicon.svg
-  #custom_dir: ../../overrides # external directory
+  custom_dir: ../../overrides # external directory
   icon:
     annotation: material/information-slab-circle  # custom icon for annotations
 
