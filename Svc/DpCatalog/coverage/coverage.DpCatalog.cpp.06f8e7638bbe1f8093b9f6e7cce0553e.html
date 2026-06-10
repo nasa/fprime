@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-09 23:47:19</td>
+      <td>2026-06-10 01:43:08</td>
     </tr>
   </table>
 </div>
@@ -73,10 +73,10 @@
     <tr><td><a href="#l814">Svc::DpCatalog::BUILD_CATALOG_cmdHandler(unsigned int, unsigned int) (line 814)</a></td><td>called 111 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l890">Svc::DpCatalog::CLEAR_CATALOG_cmdHandler(unsigned int, unsigned int) (line 890)</a></td><td>called 3 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l25">Svc::DpCatalog::DpCatalog(char const*) (line 25)</a></td><td>called 525 times</td><td>60.0%</td></tr>
-    <tr><td><a href="#l578">Svc::DpCatalog::DpStateEntry::compareEntries(Svc::DpCatalog::DpStateEntry const&amp;, Svc::DpCatalog::DpStateEntry const&amp;) (line 578)</a></td><td>called 2275084 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l578">Svc::DpCatalog::DpStateEntry::compareEntries(Svc::DpCatalog::DpStateEntry const&amp;, Svc::DpCatalog::DpStateEntry const&amp;) (line 578)</a></td><td>called 2275570 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l616">Svc::DpCatalog::DpStateEntry::operator!=(Svc::DpCatalog::DpStateEntry const&amp;) const (line 616)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l623">Svc::DpCatalog::DpStateEntry::operator&lt;(Svc::DpCatalog::DpStateEntry const&amp;) const (line 623)</a></td><td>called 1635993 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l613">Svc::DpCatalog::DpStateEntry::operator==(Svc::DpCatalog::DpStateEntry const&amp;) const (line 613)</a></td><td>called 639089 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l623">Svc::DpCatalog::DpStateEntry::operator&lt;(Svc::DpCatalog::DpStateEntry const&amp;) const (line 623)</a></td><td>called 1636236 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l613">Svc::DpCatalog::DpStateEntry::operator==(Svc::DpCatalog::DpStateEntry const&amp;) const (line 613)</a></td><td>called 639332 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l620">Svc::DpCatalog::DpStateEntry::operator&gt;(Svc::DpCatalog::DpStateEntry const&amp;) const (line 620)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l819">Svc::DpCatalog::START_XMIT_CATALOG_cmdHandler(unsigned int, unsigned int, Fw::Wait, bool) (line 819)</a></td><td>called 113 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l872">Svc::DpCatalog::STOP_XMIT_CATALOG_cmdHandler(unsigned int, unsigned int) (line 872)</a></td><td>called 3 times</td><td>78.0%</td></tr>
@@ -4967,7 +4967,7 @@
       <td class="lineno"><a id="l578" href="#l578">578</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2275084</td>
+      <td class="linecount coveredLine">2275570</td>
       <td class="src coveredLine"><span class="kt">int</span><span class="w"> </span><span class="nf">DpCatalog::DpStateEntry::compareEntries</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DpStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DpStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -4983,19 +4983,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 22 taken 610525 times.</div>
-            <div class="takenBranch">&check; Branch 23 taken 1664559 times.</div>
+            <div class="takenBranch">&check; Branch 22 taken 611037 times.</div>
+            <div class="takenBranch">&check; Branch 23 taken 1664533 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2275084</td>
+      <td class="linecount coveredLine">2275570</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_priority</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">right</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_priority</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l581" href="#l581">581</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">610525</td>
+      <td class="linecount coveredLine">611037</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5004,19 +5004,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 22 taken 642947 times.</div>
-            <div class="takenBranch">&check; Branch 23 taken 1021612 times.</div>
+            <div class="takenBranch">&check; Branch 22 taken 642981 times.</div>
+            <div class="takenBranch">&check; Branch 23 taken 1021552 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1664559</td>
+      <td class="linecount coveredLine">1664533</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_priority</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_priority</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l583" href="#l583">583</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">642947</td>
+      <td class="linecount coveredLine">642981</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5046,19 +5046,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 22 taken 238263 times.</div>
-            <div class="takenBranch">&check; Branch 23 taken 783349 times.</div>
+            <div class="takenBranch">&check; Branch 22 taken 238245 times.</div>
+            <div class="takenBranch">&check; Branch 23 taken 783307 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1021612</td>
+      <td class="linecount coveredLine">1021552</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_tSec</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">right</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_tSec</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l588" href="#l588">588</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">238263</td>
+      <td class="linecount coveredLine">238245</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5067,19 +5067,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 22 taken 260761 times.</div>
+            <div class="takenBranch">&check; Branch 22 taken 260719 times.</div>
             <div class="takenBranch">&check; Branch 23 taken 522588 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">783349</td>
+      <td class="linecount coveredLine">783307</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_tSec</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">get_tSec</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l590" href="#l590">590</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">260761</td>
+      <td class="linecount coveredLine">260719</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5268,14 +5268,14 @@
       <td class="lineno"><a id="l613" href="#l613">613</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">639089</td>
+      <td class="linecount coveredLine">639332</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">DpCatalog</span><span class="o">::</span><span class="n">DpStateEntry</span><span class="o">::</span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DpStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l614" href="#l614">614</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">639089</td>
+      <td class="linecount coveredLine">639332</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">compareEntries</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -5338,14 +5338,14 @@
       <td class="lineno"><a id="l623" href="#l623">623</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1635993</td>
+      <td class="linecount coveredLine">1636236</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">DpCatalog</span><span class="o">::</span><span class="n">DpStateEntry</span><span class="o">::</span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">DpStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l624" href="#l624">624</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1635993</td>
+      <td class="linecount coveredLine">1636236</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">compareEntries</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
