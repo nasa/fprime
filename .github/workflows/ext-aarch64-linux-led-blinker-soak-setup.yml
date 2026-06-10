@@ -12,11 +12,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      service-user:
-        description: "Linux user to run the services as"
-        required: false
-        default: "fprime"
 
 # New releases replace the running deployment
 concurrency:
@@ -38,16 +33,17 @@ jobs:
           target_ref: devel
       - name: "Cross compile"
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
-      - name: "Package soak artifact"
-        id: package
-        uses: nasa/fprime-actions/soak-package@devel
-        with:
-          test-source: "LedBlinker/Components/Led/test/int"
+      # soak-deploy expects integration tests at artifacts/int/. Stage them here.
+      - name: "Stage integration tests"
+        run: cp -r LedBlinker/Components/Led/test/int int
       - name: "Archive soak artifact"
         uses: actions/upload-artifact@v4
         with:
           name: ledblinker-soak-artifact
-          path: ${{ steps.package.outputs.path }}
+          path: |
+            build-artifacts
+            lib/fprime/requirements.txt
+            int
           retention-days: 5
 
   deploy:
@@ -63,12 +59,4 @@ jobs:
       - name: "Deploy FSW + persistent GDS services"
         uses: nasa/fprime-actions/soak-deploy@devel
         with:
-          install-dir: /opt/ledblinker-soak
-          service-prefix: ledblinker-soak
-          service-user: ${{ github.event.inputs.service-user || 'fprime' }}
-          binary: "artifacts/build-artifacts/aarch64-linux/*/bin/*"
-          dictionary: "artifacts/build-artifacts/aarch64-linux/*/dict/*TopologyDictionary.json"
-          requirements: "artifacts/requirements.txt"
-          extra-pip-packages: "psutil"
-          test-source: "artifacts/int"
-          gds-extra-args: "--framing-selection space-packet-space-data-link"
+          platform: linux
