@@ -101,7 +101,7 @@ static Status resolveSegments(const char* workBuf, char* resolvedOut, FwSizeType
 
     for (FwSizeType s = 0; s < segmentCount; s++) {
         const FwSizeType segLen = segments[s].length;
-        if (outPos + segLen + 1 >= resolvedSize) {
+        if (outPos + segLen + 1 > resolvedSize) {
             return INVALID_PATH;
         }
         (void)std::memcpy(&resolvedOut[outPos], &workBuf[segments[s].offset], segLen);
