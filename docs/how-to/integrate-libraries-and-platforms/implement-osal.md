@@ -1,4 +1,4 @@
-# How-To: Implement an OS Abstraction Layer
+# Implement an OS Abstraction Layer
 
 This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the [OSAL Software Design Document](../../Os/docs/sdd.md).
 

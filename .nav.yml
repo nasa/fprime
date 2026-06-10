@@ -28,7 +28,12 @@ nav:
       - Design Patterns: docs/user-manual/design-patterns/
       - Build System: docs/user-manual/build-system/
       - Security: docs/user-manual/security/
-    - How To: docs/how-to
+    - How-To: 
+      - How-To Index: docs/how-to/index.md
+      - Develop your Project: docs/how-to/develop-your-project/
+      - Test your Project: docs/how-to/test-your-project/
+      - Integrate Libraries and Platforms: docs/how-to/integrate-libraries-and-platforms/
+      - GDS and Operations: docs/how-to/gds-and-operations/
     - Reference: 
       - docs/reference/index.md
       - APIs:

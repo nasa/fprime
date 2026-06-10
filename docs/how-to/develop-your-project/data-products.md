@@ -1,4 +1,4 @@
-# How-To: Generate Data Products
+# Generate Data Products
 
 This How-To describes **when to use data products**, **how to generate them in flight software**, **how to test them**, and provides guidance for **topology integration** and **ground decoding**. It is intended for engineers who are comfortable with F Prime components and want to add structured, store-and-forward mission data to their system.
 

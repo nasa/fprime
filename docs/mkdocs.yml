@@ -16,7 +16,7 @@ theme:
   language: en
   logo: assets/images/logo-fprime-jpl.svg
   favicon: assets/images/favicon.svg
-  custom_dir: ../../overrides # external directory
+  #custom_dir: ../../overrides # external directory
   icon:
     annotation: material/information-slab-circle  # custom icon for annotations
 
@@ -72,6 +72,9 @@ extra_css:
 plugins:
   - search # enables search
   - awesome-nav
+  - gen-files:
+        scripts:
+          - how-to/scripts/gen_how_to.py
   - mike:
       # symlink are not allowed in GH Pages so if website needs to be deployed on GH Pages, use `copy` instead
       # see https://github.blog/changelog/2023-02-21-github-pages-deprecating-symlinks-in-non-actions-builds/
