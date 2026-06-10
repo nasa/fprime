@@ -78,6 +78,8 @@ class PrmDbTester : public PrmDbGTestBase {
     };
 
     void printDb(PrmDb_PrmDbType dbType);
+
+    //! Expose PrmDbImpl::computeCrc for hardcoded CRC value testing
 };
 
 }  // namespace Svc

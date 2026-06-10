@@ -57,6 +57,11 @@ TEST(FrameAccumulator, testDetectionErrorHandling) {
     tester.testDetectionErrorHandling();
 }
 
+TEST(FrameAccumulator, testContextForwarded) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testContextForwarded();
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);

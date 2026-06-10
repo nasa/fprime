@@ -22,6 +22,7 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
+#include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -641,7 +642,7 @@ class FpySequencer : public FpySequencerComponentBase {
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
-    U32 m_computedCRC;
+    Utils::Hash m_computedCRC;
 
     // Size of arguments read in current sequence. Used for validation between
     // User provided arguments and what is requested of the sequence.
@@ -747,11 +748,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
     // Validation state
     // ----------------------------------------------------------------------
-
-    static void updateCrc(U32& crc,              //!< The CRC to update
-                          const U8* buffer,      //!< The buffer
-                          FwSizeType bufferSize  //!< The buffer size
-    );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
     // return SUCCESS if sequence is valid, FAILURE otherwise

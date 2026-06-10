@@ -20,6 +20,10 @@ namespace Svc {
 Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& startPacket) {
     const U32 length = startPacket.getDestinationPath().getLength();
     char path[Fw::FilePacket::PathName::MAX_LENGTH + 1];
+    // Ensure that length is not greater that the size of the variable we will copy into
+    if (length >= sizeof(path)) {
+        return Os::File::Status::BAD_SIZE;
+    }
     memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
