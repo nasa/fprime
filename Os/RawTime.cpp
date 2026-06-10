@@ -53,7 +53,7 @@ Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::E
     return this->m_delegate.deserializeFrom(buffer, mode);
 }
 
-RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
+RawTimeInterface::Status RawTimeInterface::getDiffUsec(const RawTime& other, U32& result) const {
     Fw::TimeInterval interval;
     Status status = this->getTimeInterval(other, interval);
     if (status != Status::OP_OK) {
