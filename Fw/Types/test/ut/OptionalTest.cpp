@@ -1,5 +1,5 @@
-#include <Fw/Types/Optional.hpp>
 #include <gtest/gtest.h>
+#include <Fw/Types/Optional.hpp>
 
 // Test with a simple integer type
 TEST(OptionalTest, DefaultConstructIsEmpty) {

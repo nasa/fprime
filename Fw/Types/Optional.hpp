@@ -41,8 +41,7 @@ constexpr Absent ABSENT = Absent();
 //!
 template <typename T>
 class Optional {
-    static_assert(std::is_trivially_copyable<T>::value,
-                  "Fw::Optional only supports trivially copyable types");
+    static_assert(std::is_trivially_copyable<T>::value, "Fw::Optional only supports trivially copyable types");
 
     union {
         char m_dummy;
@@ -100,9 +99,7 @@ class Optional {
 
     //! Access the value or return a default
     //! \return The contained value if present, otherwise the provided default
-    const T& value_or(const T& default_value) const {
-        return m_engaged ? m_val : default_value;
-    }
+    const T& value_or(const T& default_value) const { return m_engaged ? m_val : default_value; }
 
     // ----------------------------------------------------------------------
     // Modifiers
