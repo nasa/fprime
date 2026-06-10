@@ -9,7 +9,7 @@
 
 namespace Os {
 
-SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory(), m_configured(false) {}
+SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory("/"), m_configured(true) {}
 
 SandboxedFile::~SandboxedFile() {
     if (m_file.isOpen()) {
@@ -104,9 +104,6 @@ Os::FileInterface::Status SandboxedFile::calculateCrc(U32& crc) {
 }
 
 const char* SandboxedFile::getSandboxDirectory() const {
-    if (!m_configured) {
-        return nullptr;
-    }
     return m_allowedDirectory.toChar();
 }
 

@@ -18,8 +18,8 @@ namespace Os {
 //! path-traversal attacks (e.g., `../../etc/shadow`) from components that accept externally
 //! supplied file paths (such as FileUplink or CFDP receivers).
 //!
-//! `configure()` must be called before `open()`. Calling `open()` without configuring
-//! returns `NO_PERMISSION`.
+//! By default, the sandbox is set to `/` (root), which allows any absolute path.
+//! Call `configure()` to restrict to a specific directory.
 //!
 //! Note: path validation is purely textual (no `realpath()` calls) — it does not follow
 //! symlinks. For deployments where symlink-based escapes are a concern, additional
@@ -37,9 +37,9 @@ namespace Os {
 //!
 class SandboxedFile {
   public:
-    //! \brief Construct an unconfigured SandboxedFile
+    //! \brief Construct a SandboxedFile with default sandbox of `/`
     //!
-    //! `configure()` must be called before `open()`.
+    //! The default allows any absolute path. Call `configure()` to restrict.
     //!
     SandboxedFile();
 
@@ -72,8 +72,7 @@ class SandboxedFile {
     //! \brief Open a file, validating the path against the sandbox directory
     //!
     //! Resolves the path and checks containment before opening.
-    //! Returns `NO_PERMISSION` if the sandbox is not configured or the
-    //! resolved path falls outside the sandbox.
+    //! Returns `NO_PERMISSION` if the resolved path falls outside the sandbox.
     //!
     //! \param path: c-string path to open
     //! \param mode: file operation mode
