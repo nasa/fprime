@@ -7,6 +7,7 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <random>
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
@@ -23,7 +24,6 @@
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
-#include <random>
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
               "Sequence arg count must be below U8 max");
