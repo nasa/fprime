@@ -6,6 +6,27 @@
 
 #include <Svc/FpySequencer/FpySequencer.hpp>
 #include <new>
+#include "Fw/Types/StringUtils.hpp"
+
+namespace {
+
+//! Returns true if `path` contains a parent-directory traversal token.
+//!
+//! Sequencer command handlers accept attacker-controlled file paths from
+//! the ground command interface. Although the actual file open is
+//! preceded by a configurable base-directory prepend
+//! (`Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath`,
+//! using the `SEQ_BASE_DIR` parameter), prepending does NOT defeat a
+//! `..` segment supplied by the operator — `<baseDir>/../../etc/passwd`
+//! still resolves outside the intended root. Reject `..` substrings at
+//! the command entry, the same brick-wall hardening template applied in
+//! nasa/fprime#5262 (FileUplink::File::open).
+bool containsPathTraversal(const Fw::CmdStringArg& path) {
+    const FwSizeType len = path.length();
+    return Fw::StringUtils::substring_find(path.toChar(), len, "..", 2) >= 0;
+}
+
+}  // namespace
 
 namespace Svc {
 
@@ -53,6 +74,11 @@ void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< 
                                         Svc::BlockState block,  //!< Return command status when complete or not
                                         Svc::SeqArgs args       //!< Arguments to pass to the sequencer
 ) {
+    if (containsPathTraversal(fileName)) {
+        this->log_WARNING_HI_PathTraversalRejected(fileName);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -92,6 +118,11 @@ void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
                                              const Fw::CmdStringArg& fileName,
                                              Svc::SeqArgs buffer) {
+    if (containsPathTraversal(fileName)) {
+        this->log_WARNING_HI_PathTraversalRejected(fileName);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     // can only validate a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -245,6 +276,11 @@ void FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(FwOpcodeType opCode,           
                                                  U32 cmdSeq,                       //!< The command sequence number
                                                  const Fw::CmdStringArg& fileName  //!< The name of the output file
 ) {
+    if (containsPathTraversal(fileName)) {
+        this->log_WARNING_HI_PathTraversalRejected(fileName);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     if (this->sequencer_getState() != State::RUNNING_PAUSED) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);

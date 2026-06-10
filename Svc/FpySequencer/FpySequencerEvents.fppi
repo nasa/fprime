@@ -312,3 +312,10 @@ event LogDiagnostic(
 ) \
     severity diagnostic \
     format "Sequence {}: {}"
+
+@ A command was rejected because the supplied sequence file path contains a parent-directory traversal token. The command is dropped without invoking any filesystem primitive.
+event PathTraversalRejected(
+    path: string
+) \
+    severity warning high \
+    format "Command rejected: sequence path {} contains a parent-directory traversal token"

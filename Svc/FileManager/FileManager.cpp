@@ -16,9 +16,32 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/ExternalString.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/Directory.hpp"
 #include "Svc/FileManager/FileManager.hpp"
 #include "config/FileManagerConfig.hpp"
+
+namespace {
+
+//! Returns true if `path` contains the `..` path-traversal token.
+//!
+//! Conservative: rejects any occurrence as a substring, not just as a
+//! complete path component (i.e. `foo..bar` is also rejected). The
+//! rationale is the same brick-wall hardening template applied in
+//! nasa/fprime#5262 (FileUplink::File::open): cross-translation-unit
+//! invariants on attacker-controlled input must be enforced locally,
+//! not assumed.
+//!
+//! Without this check, a ground command operator (or upstream sender
+//! who can influence command-line arguments) can pass `../../path` as
+//! the dirName / fileName parameter and reach paths outside the
+//! intended file-management scope.
+bool containsPathTraversal(const Fw::CmdStringArg& path) {
+    const FwSizeType len = path.length();
+    return Fw::StringUtils::substring_find(path.toChar(), len, "..", 2) >= 0;
+}
+
+}  // namespace
 
 namespace Svc {
 
@@ -46,6 +69,14 @@ FileManager ::~FileManager() {}
 void FileManager ::CreateDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    if (containsPathTraversal(dirName)) {
+        Fw::LogStringArg logStringDirName(dirName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringDirName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_CreateDirectoryStarted(logStringDirName);
     bool errorIfDirExists = true;
@@ -63,6 +94,14 @@ void FileManager ::RemoveFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
                                          const bool ignoreErrors) {
+    if (containsPathTraversal(fileName)) {
+        Fw::LogStringArg logStringFileName(fileName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringFileName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_RemoveFileStarted(logStringFileName);
     const Os::FileSystem::Status status = Os::FileSystem::removeFile(fileName.toChar());
@@ -85,6 +124,15 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
                                        const U32 cmdSeq,
                                        const Fw::CmdStringArg& sourceFileName,
                                        const Fw::CmdStringArg& destFileName) {
+    if (containsPathTraversal(sourceFileName) || containsPathTraversal(destFileName)) {
+        Fw::LogStringArg logRejected(
+            containsPathTraversal(sourceFileName) ? sourceFileName.toChar() : destFileName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logRejected);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringSource(sourceFileName.toChar());
     Fw::LogStringArg logStringDest(destFileName.toChar());
     this->log_ACTIVITY_HI_MoveFileStarted(logStringSource, logStringDest);
@@ -101,6 +149,14 @@ void FileManager ::MoveFile_cmdHandler(const FwOpcodeType opCode,
 void FileManager ::RemoveDirectory_cmdHandler(const FwOpcodeType opCode,
                                               const U32 cmdSeq,
                                               const Fw::CmdStringArg& dirName) {
+    if (containsPathTraversal(dirName)) {
+        Fw::LogStringArg logStringDirName(dirName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringDirName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringDirName(dirName.toChar());
     this->log_ACTIVITY_HI_RemoveDirectoryStarted(logStringDirName);
     const Os::FileSystem::Status status = Os::FileSystem::removeDirectory(dirName.toChar());
@@ -117,6 +173,15 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& source,
                                          const Fw::CmdStringArg& target) {
+    if (containsPathTraversal(source) || containsPathTraversal(target)) {
+        Fw::LogStringArg logRejected(
+            containsPathTraversal(source) ? source.toChar() : target.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logRejected);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringSource(source.toChar());
     Fw::LogStringArg logStringTarget(target.toChar());
     this->log_ACTIVITY_HI_AppendFileStarted(logStringSource, logStringTarget);
@@ -134,6 +199,14 @@ void FileManager ::AppendFile_cmdHandler(const FwOpcodeType opCode,
 }
 
 void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const Fw::CmdStringArg& fileName) {
+    if (containsPathTraversal(fileName)) {
+        Fw::LogStringArg logStringFileName(fileName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringFileName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Fw::LogStringArg logStringFileName(fileName.toChar());
     this->log_ACTIVITY_HI_FileSizeStarted(logStringFileName);
 
@@ -151,6 +224,14 @@ void FileManager ::FileSize_cmdHandler(const FwOpcodeType opCode, const U32 cmdS
 void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
                                             const U32 cmdSeq,
                                             const Fw::CmdStringArg& dirName) {
+    if (containsPathTraversal(dirName)) {
+        Fw::LogStringArg logStringDirName(dirName.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringDirName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     // Check if we're already listing a directory
     if (m_listState == LISTING_IN_PROGRESS) {
         this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(Os::Directory::OTHER_ERROR));
@@ -184,6 +265,14 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
 }
 
 void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& filename) {
+    if (containsPathTraversal(filename)) {
+        Fw::LogStringArg logStringFileName(filename.toChar());
+        this->log_WARNING_HI_PathTraversalRejected(logStringFileName);
+        ++this->errorCount;
+        this->tlmWrite_Errors(this->errorCount);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     Os::File file;
     U32 crcValue = 0;
     this->log_ACTIVITY_HI_CalculateCrcStarted(filename);

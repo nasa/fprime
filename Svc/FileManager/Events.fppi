@@ -222,3 +222,11 @@ event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name
   severity activity high \
   id 0x1c \
   format "{} has CRC value 0x{x}"
+
+@ A command was rejected because the supplied path contains a parent-directory traversal token. The command is dropped without invoking any filesystem primitive.
+event PathTraversalRejected(
+                             path: string size FileNameStringSize @< The rejected path argument
+                           ) \
+  severity warning high \
+  id 0x1d \
+  format "Command rejected: path {} contains a parent-directory traversal token"
