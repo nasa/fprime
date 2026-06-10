@@ -10,7 +10,6 @@ class DataBuffer : public Fw::LinearBufferBase {
   public:
     enum {
         DATA_BUFFER_SIZE = 256,
-        SERIALIZED_TYPE_ID = 1010,
         SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(DATA_BUFFER_SIZE)
     };
 

@@ -2,7 +2,6 @@
 #define FW_STATEMENT_BUFFER_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
@@ -10,7 +9,6 @@ namespace Fw {
 class StatementArgBuffer : public LinearBufferBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF,
         SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_STATEMENT_ARG_BUFFER_MAX_SIZE)
     };
 
