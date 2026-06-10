@@ -18,6 +18,7 @@
 #define Fw_Optional_HPP
 
 #include <Fw/Types/Assert.hpp>
+#include <type_traits>
 
 namespace Fw {
 
@@ -33,12 +34,16 @@ constexpr Absent ABSENT = Absent();
 //! \brief A type-safe container for an optional value
 //!
 //! Provides a C++14-compatible alternative to std::optional.
-//! Only supports types with trivial destructors (no heap-allocated resources).
+//! Only supports trivially copyable types (no non-trivial constructors,
+//! destructors, or copy/move operators).
 //!
-//! \tparam T The type of the contained value. Must be trivially destructible.
+//! \tparam T The type of the contained value. Must be trivially copyable.
 //!
 template <typename T>
 class Optional {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "Fw::Optional only supports trivially copyable types");
+
     union {
         char m_dummy;
         T m_val;
@@ -66,7 +71,7 @@ class Optional {
         }
     }
 
-    //! Destructor (trivial — T must have a trivial destructor)
+    //! Destructor (trivial — T must be trivially copyable)
     ~Optional() = default;
 
     // ----------------------------------------------------------------------
