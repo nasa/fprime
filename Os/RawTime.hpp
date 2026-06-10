@@ -185,6 +185,10 @@ class RawTime final : public RawTimeInterface {
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override;
 
+    //! \brief Calculate the difference in microseconds between two RawTime objects.
+    //! Delegates to m_delegate, allowing platform-specific overrides.
+    Status getDiffUsec(const RawTime& other, U32& result) const override;
+
     // ------------------------------------------------------------
     // Common functions built on top of OS-specific functions
     // ------------------------------------------------------------
