@@ -23,5 +23,5 @@ register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/TlmChanHashTester.cpp"
 )
-

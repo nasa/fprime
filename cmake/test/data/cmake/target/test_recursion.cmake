@@ -27,6 +27,9 @@ set(EXPECTED_FULL_DEPENDENCIES
     Os_Console
     Os_Console_Posix
     Os_Console_Posix_Implementation
+    Os_CountingSemaphore
+    Os_CountingSemaphore_Posix
+    Os_CountingSemaphore_Posix_Implementation
     Os_Cpu
     Os_Cpu_${FPRIME_PLATFORM}
     Os_Cpu_${FPRIME_PLATFORM}_Implementation

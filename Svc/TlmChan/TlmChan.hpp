@@ -27,8 +27,7 @@ class TlmChan final : public TlmChanComponentBase {
     virtual ~TlmChan();
 
   protected:
-    // can be overridden for alternate algorithms
-    FwChanIdType doHash(FwChanIdType id);
+    FwChanIdType doHash(FwChanIdType id) const;
 
   private:
     // Port functions
@@ -57,7 +56,17 @@ class TlmChan final : public TlmChanComponentBase {
         FwChanIdType free;                            //!< next free bucket
     } m_tlmEntries[2];
 
-    ActiveBuffer m_activeBuffer;  // !< which buffer is active for storing telemetry
+    U32 m_hashSeed;  // !< per-boot random seed for telemetry hash
+
+    U32 m_procCapCount;  // !< per-epoch processing guard for Run_handler
+
+    U32 m_chanIdSize;  // !< the deployed channel size
+
+    static const U32 MURMUR3_C1 = 0x85EBCA6BU;  // Murmur3 32-bit finalizer multiplier 1
+    static const U32 MURMUR3_C2 = 0xC2B2AE35U;  // Murmur3 32-bit finalizer multiplier 2
+    static const U16 WANG16_C1 = 0x2993U;       // Wang 16-bit hash multiplier 1
+    static const U16 WANG16_C2 = 0xE877U;       // Wang 16-bit hash multiplier 2
+    ActiveBuffer m_activeBuffer;                // !< which buffer is active for storing telemetry
 };
 
 }  // namespace Svc

@@ -5,7 +5,7 @@
 ####
 include_guard()
 # Create a target to act as an interface to all fprime configuration modules
-set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config")
+set(FPRIME__INTERNAL_CONFIG_TARGET_NAME "__fprime_config" CACHE INTERNAL "Internal name of the config target" FORCE)
 add_library(${FPRIME__INTERNAL_CONFIG_TARGET_NAME} INTERFACE)
 
 ####

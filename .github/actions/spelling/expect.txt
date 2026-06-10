@@ -14,6 +14,7 @@ alphanums
 ampcs
 ANamespace
 Aos
+abstime
 aosmpdu
 APacket
 apid
@@ -129,6 +130,8 @@ COMRETRY
 COMSPLITTER
 COMSTUB
 constexpr
+COUNTINGSEMAPHORE
+countingsemaphore
 cookiecutter
 cooldown
 coravy
@@ -593,6 +596,7 @@ projectname
 projectnumber
 propget
 propput
+pshared
 protothreading
 ptbool
 ptf
@@ -757,6 +761,8 @@ timebase
 timerfd
 timetag
 timeval
+timedwait
+timcanham
 Tinternal
 tions
 tjh
@@ -779,6 +785,7 @@ totalram
 tparam
 TPP
 trinomials
+trywait
 tts
 Tumbar
 tumbar
