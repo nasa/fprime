@@ -46,7 +46,7 @@ class DpZLibCompressor final : public DpZLibCompressorComponentBase {
         z_stream zlib_stream;
         DpZLibCompressor& comp;
 
-        ZLibCtx(DpZLibCompressor& c)
+        explicit ZLibCtx(DpZLibCompressor& c)
             : compression_buffer(), zlib_alloc_buffer(), bump_allocator(0), zlib_stream(), comp(c) {}
     };
 
