@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-10 18:40:39</td>
+      <td>2026-06-10 20:26:25</td>
     </tr>
   </table>
 </div>
@@ -776,266 +776,266 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">RawTime</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">RawTimeInterface</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Common virtual functions built on top of OS-specific functions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="p">();</span><span class="w">         </span><span class="c1">//!&lt;  Constructor</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="o">~</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="k">final</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt;  Destructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Calculate the difference in microseconds between two RawTime objects.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief copy constructor that copies the internal representation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function calculates the difference in microseconds between the current RawTime object</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! and another RawTime object provided as a parameter.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief assignment operator that copies the internal representation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning This function will return Status::OP_OVERFLOW if the time difference is too large to fit in a U32.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning Users should prefer getTimeInterval() for larger intervals.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief return the underlying RawTime handle (implementation specific)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return internal RawTime handle representation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param other The other RawTime object to compare against.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">RawTimeHandle</span><span class="o">*</span><span class="w"> </span><span class="nf">getHandle</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param result A reference to a U32 variable where the result will be stored.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l116" href="#l116">116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="nf">getDiffUsec</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Implementation-specific RawTime member functions</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">RawTime</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">RawTimeInterface</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get the current time.</span></td>
+      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="p">();</span><span class="w">         </span><span class="c1">//!&lt;  Constructor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This function retrieves the current time and stores it in the RawTime object.</span></td>
+      <td class="src "><span class="w">    </span><span class="o">~</span><span class="n">RawTime</span><span class="p">()</span><span class="w"> </span><span class="k">final</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt;  Destructor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Each implementation should define its RawTimeHandle type for storing the time.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l124" href="#l124">124</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief copy constructor that copies the internal representation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l125" href="#l125">125</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l126" href="#l126">126</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">now</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief assignment operator that copies the internal representation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Calculate the time interval between this and another raw time.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l129" href="#l129">129</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This function calculates the time interval between the current raw time and another</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief return the underlying RawTime handle (implementation specific)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l131" href="#l131">131</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! specified raw time. The result is stored in the provided (output) interval object.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return internal RawTime handle representation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l132" href="#l132">132</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">RawTimeHandle</span><span class="o">*</span><span class="w"> </span><span class="nf">getHandle</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l133" href="#l133">133</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param other The other RawTimeHandle to compare against.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l134" href="#l134">134</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param interval Output parameter to store the calculated time interval.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l135" href="#l135">135</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Implementation-specific RawTime member functions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l136" href="#l136">136</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">getTimeInterval</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="o">&amp;</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l137" href="#l137">137</a></td>
@@ -1049,7 +1049,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Serialize the contents of the RawTimeInterface object into a buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get the current time.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l139" href="#l139">139</a></td>
@@ -1063,14 +1063,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This function serializes the contents of the RawTimeInterface object into the provided</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function retrieves the current time and stores it in the RawTime object.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Each implementation should define its RawTimeHandle type for storing the time.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l142" href="#l142">142</a></td>
@@ -1084,28 +1084,28 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l144" href="#l144">144</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">now</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l145" href="#l145">145</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l146" href="#l146">146</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! that value in its config/ folder.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Calculate the time interval between this and another raw time.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l147" href="#l147">147</a></td>
@@ -1119,273 +1119,273 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer The buffer to serialize the contents into.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function calculates the time interval between the current raw time and another</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param mode Endianness to use when serializing to buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! specified raw time. The result is stored in the provided (output) interval object.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Fw::SerializeStatus indicating the result of the serialization.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">serializeTo</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param other The other RawTimeHandle to compare against.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l152" href="#l152">152</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="o">::</span><span class="n">BIG</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param interval Output parameter to store the calculated time interval.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deserialize the contents of the RawTimeInterface object from a buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">getTimeInterval</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="o">&amp;</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This function deserializes the contents of the RawTimeInterface object from the provided</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Serialize the contents of the RawTimeInterface object into a buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function serializes the contents of the RawTimeInterface object into the provided</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l159" href="#l159">159</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l160" href="#l160">160</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l161" href="#l161">161</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l162" href="#l162">162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! that value in its config/ folder.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l163" href="#l163">163</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer The buffer to deserialize the contents from.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! that value in its config/ folder.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l165" href="#l165">165</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param mode Endianness to use when deserializing from the buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l166" href="#l166">166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Fw::SerializeStatus indicating the result of the deserialization.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer The buffer to serialize the contents into.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l167" href="#l167">167</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">deserializeFrom</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param mode Endianness to use when serializing to buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="o">::</span><span class="n">BIG</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Fw::SerializeStatus indicating the result of the serialization.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">serializeTo</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">                                    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="o">::</span><span class="n">BIG</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l171" href="#l171">171</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Common functions built on top of OS-specific functions</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deserialize the contents of the RawTimeInterface object from a buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Calculate the difference in microseconds between two RawTime objects.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function deserializes the contents of the RawTimeInterface object from the provided</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l175" href="#l175">175</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This function calculates the difference in microseconds between the current RawTime object</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! and another RawTime object provided as a parameter.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \note The serialization must fit within `FW_RAW_TIME_SERIALIZATION_MAX_SIZE` bytes. This value is</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l178" href="#l178">178</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! defined in FpConfig.h. For example, Posix systems use a pair of U32 (sec, nanosec) and can therefore</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l179" href="#l179">179</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning This function will return Status::OP_OVERFLOW if the time difference is too large to fit in a U32.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! serialize in 8 bytes. Should an OSAL implementation require more than this, the project must increase</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l180" href="#l180">180</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! that value in its config/ folder.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l181" href="#l181">181</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning Users should prefer getTimeInterval() for larger intervals.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l182" href="#l182">182</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer The buffer to deserialize the contents from.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param other The other RawTime object to compare against.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param mode Endianness to use when deserializing from the buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l184" href="#l184">184</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param result A reference to a U32 variable where the result will be stored.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Fw::SerializeStatus indicating the result of the deserialization.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="nf">deserializeFrom</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">getDiffUsec</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                                        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Endianness</span><span class="o">::</span><span class="n">BIG</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l187" href="#l187">187</a></td>
@@ -1399,101 +1399,227 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Calculate the difference in microseconds between two RawTime objects.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This function calculates the difference in microseconds between the current RawTime object</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! and another RawTime object provided as a parameter.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// This section is used to store the implementation-defined RawTime handle. To Os::RawTime and fprime, this type is</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store the handle in</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning This function will return Status::OP_OVERFLOW if the time difference is too large to fit in a U32.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// the byte-array here and set `m_handle_storage` to that address for storage.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning Users should prefer getTimeInterval() for larger intervals.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">alignas</span><span class="p">(</span><span class="n">FW_HANDLE_ALIGNMENT</span><span class="p">)</span><span class="w"> </span><span class="n">RawTimeHandleStorage</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; RawTime handle storage</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">RawTimeInterface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">;</span><span class="w">                                        </span><span class="c1">//!&lt; Delegate for the real implementation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param other The other RawTime object to compare against.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param result A reference to a U32 variable where the result will be stored.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Os</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Status indicating the result of the operation.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">getDiffUsec</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l201" href="#l201">201</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l202" href="#l202">202</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l203" href="#l203">203</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Common functions built on top of OS-specific functions</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l204" href="#l204">204</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ------------------------------------------------------------</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l205" href="#l205">205</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l206" href="#l206">206</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l207" href="#l207">207</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l208" href="#l208">208</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l209" href="#l209">209</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l210" href="#l210">210</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// This section is used to store the implementation-defined RawTime handle. To Os::RawTime and fprime, this type is</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l211" href="#l211">211</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store the handle in</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l212" href="#l212">212</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// the byte-array here and set `m_handle_storage` to that address for storage.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l214" href="#l214">214</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="k">alignas</span><span class="p">(</span><span class="n">FW_HANDLE_ALIGNMENT</span><span class="p">)</span><span class="w"> </span><span class="n">RawTimeHandleStorage</span><span class="w"> </span><span class="n">m_handle_storage</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; RawTime handle storage</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l215" href="#l215">215</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">RawTimeInterface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">;</span><span class="w">                                        </span><span class="c1">//!&lt; Delegate for the real implementation</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l216" href="#l216">216</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l217" href="#l217">217</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Os</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l218" href="#l218">218</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l219" href="#l219">219</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l220" href="#l220">220</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

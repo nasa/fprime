@@ -33,7 +33,6 @@ Drv/Udp/UdpComponentImpl.cpp                  47      32    68%   41-42,61-62,64
 Fw/Buffer/Buffer.cpp                          96      81    84%   126,130,134,157,163,167,177,179-180,184-189
 Fw/Cmd/CmdArgBuffer.cpp                       24      13    54%   6-9,15-18,22,34-35
 Fw/Cmd/CmdPacket.cpp                          23      19    82%   21,23-24,40
-Fw/Cmd/CmdString.hpp                          12      12   100%
 Fw/Com/ComBuffer.cpp                          24      21    87%   22,34-35
 Fw/Com/ComPacket.cpp                          10      10   100%
 Fw/Comp/ActiveComponentBase.cpp               62       6     9%   11,13,15,30-31,35,39,42,48-52,54-59,61-62,65-66,69-70,72,77,80-83,86-88,90,93-96,98-102,104,106-108,111-112,114,116,118-119,121,126
@@ -84,8 +83,6 @@ Fw/Fpy/StatementArgBuffer.cpp                 38      25    65%   7-10,23,35-36,
 Fw/LanguageHelpers.hpp                        14      14   100%
 Fw/Log/LogBuffer.cpp                          24      13    54%   6-9,15-18,22,34-35
 Fw/Log/LogPacket.cpp                          46      40    87%   22,27,32,42,47,52
-Fw/Log/LogString.hpp                          15      15   100%
-Fw/Log/TextLogString.hpp                      12      12   100%
 Fw/Logger/Logger.cpp                          15      15   100%
 Fw/Logger/Logger.hpp                           1       1   100%
 Fw/Obj/ObjBase.cpp                            27      17    63%   35-36,43-49,51
@@ -96,7 +93,6 @@ Fw/Port/OutputPortBase.cpp                    17      15    88%   37-38
 Fw/Port/OutputSerializePort.cpp                7       5    71%   20-21
 Fw/Port/PortBase.cpp                          45      17    37%   9-11,48-49,52,57,64-66,68-71,76-77,80-81,83,87,92,95,97,101,103-105,107
 Fw/Prm/PrmBuffer.cpp                          24      17    70%   6-9,22,34-35
-Fw/Prm/PrmString.hpp                          14      14   100%
 Fw/SerializableFile/SerializableFile.cpp      50      45    90%   45-46,56,77-78
 Fw/Sm/SmSignalBuffer.cpp                      30       0     0%   6-11,13,15,17-19,21-23,25-27,30-31,33-35,38-39,42-43,46-47,50-51
 Fw/Test/String.hpp                            10       0     0%   26,30,32-34,42-44,47,49
@@ -106,29 +102,24 @@ Fw/Time/TimeInterval.cpp                      86      80    93%   60,62,65,67,10
 Fw/Time/TimeInterval.hpp                       2       2   100%
 Fw/Tlm/TlmBuffer.cpp                          24      13    54%   6-9,15-18,22,34-35
 Fw/Tlm/TlmPacket.cpp                          69      46    66%   41,45,75,81,87,109,115,121,127,129-131,134,137,139-141,144-146,148-149,151
-Fw/Tlm/TlmString.hpp                          15      15   100%
 Fw/Types/Assert.cpp                           96      74    77%   17,19-21,73-75,77,86-87,90-91,93-94,124-125,127-128,194-195,207-208
 Fw/Types/Assert.hpp                            2       2   100%
 Fw/Types/ByteArray.hpp                         2       2   100%
 Fw/Types/ConstExternalString.hpp              12      12   100%
 Fw/Types/ConstStringBase.cpp                  44      35    79%   40-41,44-45,86,89,100-102
 Fw/Types/ExternalString.hpp                   24      24   100%
-Fw/Types/FileNameString.hpp                   14      14   100%
-Fw/Types/InternalInterfaceString.hpp           8       8   100%
 Fw/Types/MallocAllocator.cpp                  10       9    90%   26
 Fw/Types/MallocAllocator.hpp                   2       2   100%
 Fw/Types/MemAllocator.cpp                     32      31    96%   62
 Fw/Types/MmapAllocator.hpp                    28      25    89%   96-98
-Fw/Types/ObjectName.hpp                       16      16   100%
 Fw/Types/PolyType.cpp                        437     212    48%   23-26,28-29,50-53,55-56,79-82,84-85,106-109,111-112,137-140,142-143,164-167,169-170,194-197,199-200,221-224,226-227,248-251,273-276,298-301,303-304,323-326,328-329,338-339,356,391-396,402-404,410,412-413,416-423,425-430,433-438,441-446,448-457,459-463,465,469-470,473-474,477-478,481,483-485,489-495,497-502,505-510,513-518,520-534,537,540,542-543,545-546,548,550-554,556-559,562-565,568-571,573-582,627-641,645
 Fw/Types/SerialBuffer.cpp                     17      15    88%   24-25
 Fw/Types/Serializable.cpp                    559     397    71%   23-25,30-32,34,36-37,46-50,52,54-55,59-61,99-101,133-135,150,176-178,206,223,269,275,291,306,318,320,350-352,392-394,415,417,444-446,467,478,480,489,511,518-522,537,555,581,587,596,631,667,680,703,707,718,720-721,724-725,729-731,733,752,763,770-771,773,775-776,779,821-822,825-826,829-830,832-833,836-837,839-840,844-845,847-848,852-853,855-856,859-860,862-863,865-866,868-869,873-875,878-879,881-882,884-885,887-888,891-892,894-895,898-899,901-902,906-907,909-910,914-915,917-918,921-922,924-925,927-928,930-931,935-937,940-941,944-945,948-949,951-952,955-956
 Fw/Types/Serializable.hpp                     18      18   100%
 Fw/Types/snprintf_format.cpp                  22      18    81%   25,31,35,41
 Fw/Types/sscanf_scan.cpp                      20      18    90%   36,44
-Fw/Types/String.hpp                           16      16   100%
 Fw/Types/StringBase.cpp                       53      50    94%   58-60
-Fw/Types/StringTemplate.hpp                    7       7   100%
+Fw/Types/StringTemplate.hpp                   16      16   100%
 Fw/Types/StringToNumber.cpp                   58      27    46%   9,13,18,31,35-36,70-71,74-75,92,97,101,106,109,114,118,123,125,130,133,138,140,145,162,166-169,171-172
 Fw/Types/StringUtils.cpp                      59      58    98%   10
 googletest/googletest/include/gtest/gtest-assertion-result.h
@@ -182,7 +173,7 @@ Os/Os.cpp                                      7       7   100%
 Os/Posix/ConditionVariable.cpp                20      18    90%   35-36
 Os/Posix/Console.cpp                          20      11    55%   14,18-21,23,37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      35    94%   67-68
+Os/Posix/CountingSemaphore.cpp                37      33    89%   43-44,67-68
 Os/Posix/DefaultConsole.cpp                    2       2   100%
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -192,7 +183,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      70    39%   18,20-21,33-35,37,39-40,44-46,54-56,58-61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            170     117    68%   62-64,66,113-115,123-125,154-155,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,270,279,281-282,284-285,310,320,322-323,325-326,335-336,342-343
+Os/Posix/File.cpp                            170     120    70%   62-64,66,123-125,154-155,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,270,279,281-282,284-285,310,320,322-323,325-326,335-336,342-343
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       56      49    87%   49,57,78,87,93,101-102
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -204,7 +195,7 @@ Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
 Os/QueueString.hpp                            11      11   100%
-Os/RawTime.cpp                                52      49    94%   60,72-73
+Os/RawTime.cpp                                55      52    94%   65,77-78
 Os/RawTime.hpp                                 2       2   100%
 Os/Stub/ConditionVariable.cpp                  8       0     0%   12,15,17,20-21,24,26-27
 Os/Stub/ConditionVariable.hpp                  2       2   100%
@@ -350,7 +341,7 @@ Svc/StaticMemory/StaticMemoryComponentImpl.cpp
                                               20      20   100%
 Svc/SystemResources/SystemResources.cpp       73      72    98%   36
 Svc/TlmChan/TlmChan.cpp                      174     135    77%   99,129,131,133,136-140,142,145,149-150,155,158-159,197-199,205-208,210-212,220-222,280,328-329,335-337,340,344,361-362
-Svc/TlmPacketizer/TlmPacketizer.cpp          293     271    92%   266,268-269,307,319,391,427-428,462-463,478-479,494-495,512-513,576-577,580,591-592,594
+Svc/TlmPacketizer/TlmPacketizer.cpp          294     271    92%   143,269,271-272,310,322,394,430-431,465-466,481-482,497-498,515-516,579-580,583,594-595,597
 Svc/Version/Version.cpp                      154     148    96%   104-106,228,230-231
 TestUtils/OnChangeChannel.hpp                  6       6   100%
 TestUtils/Option.hpp                          17      17   100%
@@ -365,5 +356,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17744   14413    81%
+TOTAL                                      17635   14304    81%
 ------------------------------------------------------------------------------
