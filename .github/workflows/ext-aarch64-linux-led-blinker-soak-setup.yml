@@ -1,7 +1,7 @@
 # Soak-test setup for the LedBlinker deployment on AArch64 Linux.
 #
 # Cross-compiles https://github.com/fprime-community/fprime-workshop-led-blinker and
-# installs it on the self-hosted runner as persistent flight-software + GDS
+# runs it on the self-hosted runner as persistent flight-software + GDS
 # systemd services.
 #
 # Pairs with ext-aarch64-linux-led-blinker-soak-test.yml.
@@ -13,8 +13,7 @@ on:
     types: [published]
   workflow_dispatch:
 
-# Shared with the soak-test workflow so a test run waits for setup (and a new
-# release cancels any in-flight test, since the deployment is being replaced).
+# Group shared with soak test workflow, new setup should cancel all old setup and tests
 concurrency:
   group: ledblinker-soak
   cancel-in-progress: true
