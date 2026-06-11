@@ -122,6 +122,16 @@ struct PushTimeDirective {
     _empty: U8
 }
 
+@ pops a U32 from the stack and uses it to seed the RNG used by PushRandDirective
+struct SetSeedDirective {
+    _empty: U8
+}
+
+@ pushes the next RNG value to the stack
+struct PushRandDirective {
+    _empty: U8
+}
+
 @ grabs a specified region from a struct, pushes it to the stack, removing
 @ the rest of the struct
 struct GetFieldDirective {
@@ -222,6 +232,10 @@ internal port directive_memCmp(directive: MemCmpDirective) priority 6 assert
 internal port directive_stackCmd(directive: StackCmdDirective) priority 6 assert
 
 internal port directive_pushTime(directive: PushTimeDirective) priority 6 assert
+
+internal port directive_setSeed(directive: SetSeedDirective) priority 6 assert
+
+internal port directive_pushRand(directive: PushRandDirective) priority 6 assert
 
 internal port directive_getField(directive: GetFieldDirective) priority 6 assert
 
