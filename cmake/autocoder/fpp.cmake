@@ -193,8 +193,7 @@ function(fpp_autocoder_variables FPP_IMPORTS)
     # The JVM resolves all paths, and thus if a path is passed in unresolved form, fpp would see
     # it as a different file.
     set(CMAKE_CURRENT_BINARY_DIR_RESOLVED "${CMAKE_CURRENT_BINARY_DIR}")
-    resolve_path_variables(CMAKE_BINARY_DIR_RESOLVED CMAKE_CURRENT_BINARY_DIR_RESOLVED)
-
+    resolve_path_variables(CMAKE_CURRENT_BINARY_DIR_RESOLVED)
     # Read the locations from the global interface target. These are normalized when set as the property.
     # We then convert this list to a comma-separated list for passing to FPP.
     get_property(FPRIME_LOCATIONS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_LOCATIONS)
