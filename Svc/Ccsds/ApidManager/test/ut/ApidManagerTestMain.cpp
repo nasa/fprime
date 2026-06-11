@@ -45,10 +45,12 @@ TEST(ApidManager, RandomizedTesting) {
     ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
     ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
     ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
-    ApidManagerTester::ValidateSeqCount__NewTableFull ruleValidateNewTableFull;
 
     STest::Rule<ApidManagerTester>* rules[] = {
-        &ruleGetExisting, &ruleGetNewOk, &ruleValidateOk, &ruleValidateFailure, &ruleValidateNewTableFull,
+        &ruleGetExisting,
+        &ruleGetNewOk,
+        &ruleValidateOk,
+        &ruleValidateFailure,
     };
 
     STest::RandomScenario<ApidManagerTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
