@@ -65,10 +65,8 @@ Name | Type | Kind | Purpose
 at component instantiation time:
 
 * *downlinkPacketSize*: The size of the packets to use on downlink.
-* *timeout*: Max amount of time in ms to wait for a buffer return before aborting downlink
 * *cooldown*: The amount of time in ms to wait in a cooldown state before starting next downlink.
-* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for timing timeouts and
-  cooldown.
+* *cycle time*: Frequency in ms of clock pulses sent to `Run` port, used for cooldown.
 * *file queue depth*: The maximum number of files that can be held in the internal file downlink
   queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
   in a busy error response.
@@ -123,7 +121,3 @@ Checklist |
 [Design](Checklist/design.xlsx) |
 [Code](Checklist/code.xlsx) |
 [Unit Test](Checklist/unit_test.xls) |
-
-## 6 Unit Testing
-
-TODO

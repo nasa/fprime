@@ -126,10 +126,6 @@ namespace Svc {
       //!
       void downlinkPartial();
 
-      //! Timeout
-      //!
-      void timeout();
-
       //! sendFilePort
       //! Test downlinking a file via a port
       //!
