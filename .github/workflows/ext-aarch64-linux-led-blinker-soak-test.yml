@@ -14,6 +14,9 @@ on:
 
 permissions:
   contents: read
+  # Required so soak-test can `gh workflow disable` this workflow when the
+  # soak detects a FATAL, a dead FSW, or a failing integration test.
+  actions: write
 
 # Shared with the soak-setup workflow so a test queues behind any in-flight
 # setup. cancel-in-progress: false means a second test run waits rather than
