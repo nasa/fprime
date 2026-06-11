@@ -46,7 +46,9 @@ void CmdSequencerTester ::BadCRC() {
     // Assert events
     const CmdSequencerComponentImpl::FPrimeSequence::CRC& crc = file.getCRC();
     ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_CS_FileCrcFailure(0, file.getName().toChar(), crc.m_stored, crc.m_computed);
+    U32 crcFinal = 0;
+    crc.m_computed.finalize(crcFinal);
+    ASSERT_EVENTS_CS_FileCrcFailure(0, file.getName().toChar(), crc.m_stored, crcFinal);
     // Assert telemetry
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_CS_Errors(0, 1);

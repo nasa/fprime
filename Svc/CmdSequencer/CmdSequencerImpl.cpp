@@ -12,9 +12,7 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>
-}
+#include <Utils/Hash/Hash.hpp>
 
 namespace Svc {
 

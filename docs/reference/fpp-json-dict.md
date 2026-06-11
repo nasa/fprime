@@ -593,7 +593,7 @@ Formal Parameters are used in Commands and Events definitions.
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the command | Period-separated **String** | true |
+| `name` | Name of the command: The qualified name of a component instance followed by a dot and the name of a command for that instance | Period-separated **String** | true |
 | `commandKind` | The kind of command | `async`, `guarded`, `sync`, `set`, `save` | true |
 | `opcode` | Command opcode | **Number** | true |
 | `formalParams` | Parameters of the command | Array of [Formal Parameters](#formal-parameters) | true |
@@ -661,7 +661,7 @@ JSON representation:
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the telemetry channel | Period-separated **String** | true |
+| `name` | Name of the telemetry channel: The qualified name of a component instance followed by a dot and the name of a channel for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) of the telemetry channel | [Type Descriptor](#type-descriptors) | true |
 | `id` | Numeric identifier of the channel | **Number** | true |
 | `telemetryUpdate` | Update specifier of the telemetry channel | `always`, `on change` | true |
@@ -728,7 +728,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the event | Period-separated **String** | true |
+| `name` | Name of the event: The qualified name of a component instance followed by a dot and the name of an event for that instance | Period-separated **String** | true |
 | `severity` | Severity of the event | `ACTIVITY_HI`, `ACTIVITY_LO`, `COMMAND`, `DIAGNOSTIC`, `FATAL`, `WARNING_HI`, `WARNING_LO` | true |
 | `formalParams` | Parameters of the event | Array of [Formal Parameters](#formal-parameters) | true |
 | `id` | Numeric identifier of the event | **Number** | true |
@@ -791,7 +791,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the parameter | Period-separated **String** | true |
+| `name` | Name of the parameter: The qualified name of a component instance followed by a dot and the name of a parameter for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) of the parameter | [Type Descriptor](#type-descriptors) | true |
 | `id` | Numeric identifier of the parameter | **Number** | true |
 | `default` | Default value (of type specified in `type`)  of the parameter | Value of type specified in `type` | false |
@@ -841,7 +841,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the record | Period-separated **String** | true |
+| `name` | Name of the record: The qualified name of a component instance followed by a dot and the name of a record for that instance | Period-separated **String** | true |
 | `type` | [Type Descriptor](#type-descriptors) the record | [Type Descriptor](#type-descriptors) | true |
 | `array` | **Boolean** specifying whether the record stores a variable number of elements | **Boolean** | true |
 | `id` | The numeric identifier of the record | **Number** | true |
@@ -904,7 +904,7 @@ module M {
 
 | Field | Description | Options | Required |
 | ----- | ----------- | ------- | -------- |
-| `name` | Fully qualified name of the container | Period-separated **String** | true |
+| `name` | Name of the container: The qualified name of a component instance followed by a dot and the name of a container for that instance | Period-separated **String** | true |
 | `id` | The numeric identifier of the record | **Number** | true |
 | `defaultPriority` | The downlink priority for the container | **Number** | false |
 | `annotation` | User-defined annotation of container | **String** | false |

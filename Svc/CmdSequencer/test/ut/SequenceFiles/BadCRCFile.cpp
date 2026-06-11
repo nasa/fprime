@@ -36,8 +36,9 @@ void BadCRCFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     const U32 size = buffer.getSize();
     this->crc.init();
     this->crc.update(addr, size);
-    this->crc.finalize();
-    crc.m_stored = this->crc.m_computed + 1;
+    U32 crcFinal = 0;
+    this->crc.m_computed.finalize(crcFinal);
+    crc.m_stored = crcFinal + 1;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(this->crc.m_stored));
 }
 
@@ -49,7 +50,9 @@ void BadCRCFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
     // CRC
     AMPCS::CRCs::computeCRC(buffer, this->crc);
-    this->crc.m_stored = this->crc.m_computed + 1;
+    U32 crcFinal = 0;
+    this->crc.m_computed.finalize(crcFinal);
+    crc.m_stored = crcFinal + 1;
     AMPCS::CRCs::writeCRC(this->crc.m_stored, this->getName().toChar());
 }
 

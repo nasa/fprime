@@ -264,26 +264,6 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 | ----------------------- | --------------------------- |---------|-------------------|
 | FW_PORT_SERIALIZATION   | Enables port serialization. | 1 (on)  | 0 (off) 1 (on)    |
 
-### Serializable Type ID
-
-As described [in serializable types](../overview/05-enum-arr-ser.md), serializable types can be defined for use in the code.
-When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
-data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
-will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
-the macros to configure this feature.
-
-
-**Table 41.** Macros for serializable type ID.
-
-| Macro                          | Definition                       | Default | Valid Values      |
-| -------------------------------| ---------------------------------|---------|-------------------|
-| FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
-| FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
-
-> [!NOTE]
-> Smaller values for `FW_SERIALIZATION_TYPE_ID_BYTES` means that less data storage is needed, but also limits the number of types that can be defined. `FW_SERIALIZATION_TYPE_ID` is required to have type IDs in the buffer and thus to introspect what type is contained in the buffer.
-
-
 ### Buffer Sizes
 
 Many of the built-in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out

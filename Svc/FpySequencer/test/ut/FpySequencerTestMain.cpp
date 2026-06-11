@@ -1399,6 +1399,70 @@ TEST_F(FpySequencerTester, pushTime) {
     ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
 }
 
+TEST_F(FpySequencerTester, pushRand) {
+    FpySequencer_PushRandDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 7, 123, 456);
+    setTestTime(testTime);
+    std::mt19937 expectedRng;
+    std::seed_seq seedSeq{static_cast<U32>(testTime.getTimeBase()), static_cast<U32>(testTime.getContext()),
+                          testTime.getSeconds(), testTime.getUSeconds()};
+    expectedRng.seed(seedSeq);
+
+    tester_get_m_runtime_ptr()->stack.size = 0;
+    Signal result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, sizeof(U32));
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
+
+    // make sure subsequent calls advance the existing RNG instead of reseeding on new time
+    setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 99, 999, 999));
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
+
+    // check almost overflow
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(U32);
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, Fpy::MAX_STACK_SIZE);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+
+    // check overflow
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
+    result = tester_pushRand_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+}
+
+TEST_F(FpySequencerTester, setSeed) {
+    FpySequencer_SetSeedDirective directive;
+    DirectiveError err = DirectiveError::NO_ERROR;
+    const U32 testSeed = 123456789U;
+    std::mt19937 expectedRng;
+    expectedRng.seed(testSeed);
+
+    tester_push<U32>(testSeed);
+    Signal result = tester_setSeed_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);
+
+    // make sure the explicit seed overrides time-based initialization
+    setTestTime(Fw::Time(TimeBase::TB_WORKSTATION_TIME, 77, 888, 999));
+    result = tester_pushRand_directiveHandler(FpySequencer_PushRandDirective(), err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U32>(), expectedRng());
+
+    // underflow
+    result = tester_setSeed_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+}
+
 TEST_F(FpySequencerTester, getField) {
     FpySequencer_GetFieldDirective directive(4, 2);  // parent size 3, member size 2
     tester_push<U8>(123);
@@ -3366,6 +3430,46 @@ TEST_F(FpySequencerTester, deserialize_stackCmd) {
     ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
+TEST_F(FpySequencerTester, deserialize_setSeed) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_SetSeedDirective dir;
+    add_SET_SEED();
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.setSeed, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it succeeds
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
+}
+
+TEST_F(FpySequencerTester, deserialize_pushRand) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_PushRandDirective dir;
+    add_PUSH_RAND();
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.pushRand, dir);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it succeeds
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(0);
+}
+
 TEST_F(FpySequencerTester, deserialize_memCmp) {
     FpySequencer::DirectiveUnion actual;
     FpySequencer_MemCmpDirective dir(123);
@@ -4502,6 +4606,30 @@ TEST_F(FpySequencerTester, IntegrationPushTime) {
     ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
 }
 
+TEST_F(FpySequencerTester, IntegrationPushRand) {
+    allocMem();
+    // Sequence: PUSH_RAND, DISCARD(sizeof(U32))
+    add_PUSH_RAND();
+    add_DISCARD(sizeof(U32));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
+TEST_F(FpySequencerTester, IntegrationSetSeedPushRand) {
+    allocMem();
+    // Sequence: PUSH_VAL(seed), SET_SEED, PUSH_RAND, DISCARD(sizeof(U32))
+    add_PUSH_VAL<U32>(123456789U);
+    add_SET_SEED();
+    add_PUSH_RAND();
+    add_DISCARD(sizeof(U32));
+    writeAndRun();
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, get_OPCODE_RUN(), 0, Fw::CmdResponse::OK);
+}
+
 TEST_F(FpySequencerTester, IntegrationGetField) {
     allocMem();
     // Push a 2-byte "parent": [0xAA, 0xBB]
@@ -4810,6 +4938,63 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), "");
         clearEvents();
     }
+}
+
+// ======================================================================
+// Hardcoded CRC32 value tests
+//
+// FpySequencer uses CRC32 with init 0xFFFFFFFF and ones' complement
+// finalization (~crc). These tests verify that updateCrc produces known
+// expected values for known inputs.
+// ======================================================================
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_123456789) {
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    tester_init_m_computedCRC();
+    tester_update_m_computedCRC(data, sizeof(data));
+    U32 finalCrc = tester_finalize_m_computedCRC();
+    // Standard CRC32 of "123456789" = 0xCBF43926
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "FpySequencer CRC of \"123456789\" must equal 0xCBF43926 (standard CRC32)";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_DEADBEEF) {
+    const U8 data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    tester_init_m_computedCRC();
+    tester_update_m_computedCRC(data, sizeof(data));
+    U32 finalCrc = tester_finalize_m_computedCRC();
+    // Standard CRC32 of {0xDE,0xAD,0xBE,0xEF} = 0x7C9CA35A
+    ASSERT_EQ(finalCrc, static_cast<U32>(0x7C9CA35A))
+        << "FpySequencer CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x7C9CA35A";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_SingleByte) {
+    const U8 data[] = {0x00};
+    tester_init_m_computedCRC();
+    tester_update_m_computedCRC(data, sizeof(data));
+    U32 finalCrc = tester_finalize_m_computedCRC();
+    // Standard CRC32 of {0x00} = 0xD202EF8D
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xD202EF8D)) << "FpySequencer CRC of {0x00} must equal 0xD202EF8D";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Incremental) {
+    // Verify that incremental updateCrc calls produce the same result
+    const U8 data[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    tester_init_m_computedCRC();
+    tester_update_m_computedCRC(data, 4);      // "1234"
+    tester_update_m_computedCRC(data + 4, 5);  // "56789"
+    U32 finalCrc = tester_finalize_m_computedCRC();
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xCBF43926))
+        << "Incremental FpySequencer CRC of \"123456789\" must equal 0xCBF43926";
+}
+
+TEST_F(FpySequencerTester, CrcHardcodedValue_Hello) {
+    const U8 data[] = {'H', 'e', 'l', 'l', 'o'};
+    tester_init_m_computedCRC();
+    tester_update_m_computedCRC(data, sizeof(data));
+    U32 finalCrc = tester_finalize_m_computedCRC();
+    // Standard CRC32 of "Hello" = 0xF7D18982
+    ASSERT_EQ(finalCrc, static_cast<U32>(0xF7D18982)) << "FpySequencer CRC of \"Hello\" must equal 0xF7D18982";
 }
 
 }  // namespace Svc
