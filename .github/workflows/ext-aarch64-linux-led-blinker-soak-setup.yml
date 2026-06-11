@@ -34,7 +34,7 @@ jobs:
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
       - name: "Cross compile"
         uses: moisesmata/fprime-actions/build-with-aarch64-toolchain@soak-testing-actions
-      # soak-deploy expects integration tests at artifacts/int/. Stage them here.
+      # soak-setup expects integration tests at artifacts/int/. Stage them here.
       - name: "Stage integration tests"
         run: cp -r LedBlinker/Components/Led/test/int int
       - name: "Archive soak artifact"
@@ -58,6 +58,6 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: moisesmata/fprime-actions/soak-deploy@soak-testing-actions
+        uses: moisesmata/fprime-actions/soak-setup@soak-testing-actions
         with:
           platform: linux
