@@ -104,7 +104,7 @@ void DpCompressProcTester::uncompress_data(Fw::Buffer container_buf,
         stat = data_deser.deserializeTo(comp_meta);
         ASSERT_EQ(stat, Fw::FW_SERIALIZE_OK);
 
-        const FwSizeStoreType payload_size = record_size - static_cast<FwSizeStoreType>(CompressionMetadata::SERIALIZED_SIZE);
+        const FwSizeStoreType payload_size = static_cast<FwSizeStoreType>(record_size - CompressionMetadata::SERIALIZED_SIZE);
 
         switch (comp_meta.get_algorithm()) {
             case CompressionAlgorithm::UNCOMPRESSED: {
