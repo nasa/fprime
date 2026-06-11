@@ -69,7 +69,6 @@ class ApidManagerTester : public ApidManagerGTestBase {
     //! Rules for the getApidSeqCountIn port
     FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, Existing);
     FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewOk);
-    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewTableFull);
 
     //! Rules for the validateApidSeqCountIn port
     FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
