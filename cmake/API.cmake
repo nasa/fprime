@@ -740,7 +740,7 @@ endfunction()
 #   4. Add the current binary directory to the global include directories
 #   5. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
 # This allows it to be found and used by other modules in the build system.  It ensures that the components are properly
-# slotted underneath this library for the purposed of include path and target names.
+# slotted underneath this library for the purpose of include path and target names.
 # Args: none
 #####
 macro(register_fprime_project)
