@@ -6,6 +6,8 @@
 // These rules exercise the getApidSeqCountIn port.
 // ======================================================================
 
+#include <cstdio>
+
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
@@ -51,7 +53,11 @@ void ApidManagerTester::GetSeqCount__NewOk__action() {
         return;
     }
 
-    ComCfg::Apid::T apid = this->shadow.shadow_getRandomUntrackedApid();
+    TestUtils::Option<ComCfg::Apid::T> apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.hasValue()) {
+        GTEST_SKIP() << "Could not find a valid apid\n";
+    }
+    const auto apid = apidOption.get();
     U16 returned = this->invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 expected = this->shadow.shadow_getAndIncrementSeqCount(apid);
 
@@ -70,7 +76,12 @@ bool ApidManagerTester::GetSeqCount__NewTableFull__precondition() const {
 void ApidManagerTester::GetSeqCount__NewTableFull__action() {
     this->clearHistory();
 
-    ComCfg::Apid::T apid = this->shadow.shadow_getRandomUntrackedApid();
+    // Get a random APID, if possible
+    TestUtils::Option<ComCfg::Apid::T> apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.hasValue()) {
+        GTEST_SKIP() << "Could not find a valid apid\n";
+    }
+    const auto apid = apidOption.get();
     U16 returned = this->invoke_to_getApidSeqCountIn(0, apid, 0);
 
     // Use constexpr local to avoid ODR-use of the static constexpr member

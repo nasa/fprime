@@ -48,14 +48,6 @@ ComCfg::Apid::T ApidManagerTestState::shadow_getRandomTrackedApid() const {
     return std::next(this->shadow_seqCounts.begin(), idx)->first;
 }
 
-ComCfg::Apid::T ApidManagerTestState::shadow_getRandomUntrackedApid() const {
-    ComCfg::Apid::T apid;
-    do {
-        apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(10, ComCfg::Apid::SPP_IDLE_PACKET));
-    } while (this->shadow_seqCounts.find(apid) != this->shadow_seqCounts.end());
-    return apid;
-}
-
 }  // namespace Ccsds
 
 }  // namespace Svc

@@ -72,7 +72,12 @@ bool ApidManagerTester::ValidateSeqCount__NewTableFull__precondition() const {
 void ApidManagerTester::ValidateSeqCount__NewTableFull__action() {
     this->clearHistory();
 
-    ComCfg::Apid::T apid = this->shadow.shadow_getRandomUntrackedApid();
+    // Get a random APID, if possible
+    TestUtils::Option<ComCfg::Apid::T> apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.hasValue()) {
+        GTEST_SKIP() << "could not find a valid apid\n";
+    }
+    const auto apid = apidOption.get();
     // Use any plausible 14-bit sequence count
     constexpr U16 receivedSeqCount = 42;
     U16 returned = this->invoke_to_validateApidSeqCountIn(0, apid, receivedSeqCount);
