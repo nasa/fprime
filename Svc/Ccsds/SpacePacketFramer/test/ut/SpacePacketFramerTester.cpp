@@ -70,7 +70,7 @@ void SpacePacketFramerTester::testNominalFraming() {
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
     ComCfg::FrameContext context;
-    context.set_apid(static_cast<ComCfg::Apid::T>(apid));
+    context.set_apid(apid);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);

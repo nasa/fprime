@@ -4,27 +4,22 @@
 // \brief  Test utilities for CCSDS
 // ======================================================================
 
-#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
 
 namespace Svc {
 
 namespace CcsdsTestUtils {
 
 using SerialType = ComCfg::Apid::SerialType;
-using SerialTypeOption = TestUtils::Option<SerialType>;
+using ApidOption = TestUtils::Option<ComCfg::Apid::T>;
 
-//! Get a random APID
-//! If possible, randomly choose from among the set of configured constants for
-//! ComCfg::APID that fit in 11 bits
-//! If not possible, return NONE
-//! \return The APID
-SerialTypeOption getRandomApid() {
+ApidOption getRandomApid() {
     const SerialType selectedIdx = static_cast<SerialType>(STest::Random::startLength(0, ComCfg::Apid::NUM_CONSTANTS));
     // Choose from within the bounds provided by CCSDS and the SerialType.
-    // 1. We have to respect the CCSDS bound because of the component under test.
+    // 1. We have to respect the CCSDS bound because we are testing CCSDS code
     // 2. We have to respect the SerialType bound because F Prime may not be configured
-    // to use CCSDS, but we still want this unit test to be valid, if possible.
+    // to use CCSDS, but we still want the test to be valid, if possible.
     constexpr auto ccsdsBound = static_cast<SerialType>((1 << 11) - 1);  // 11 bits
     constexpr auto serialTypeBound = std::numeric_limits<SerialType>::max();
     constexpr auto bound = std::min(ccsdsBound, serialTypeBound);
@@ -46,10 +41,11 @@ SerialTypeOption getRandomApid() {
             idx++;
         }
     }
-    // If the APID we found is not valid, then return none
+    // If the APID we found is not valid, then return NONE
     // This can happen if all of the configured APIDs are out of the 11-bit range
     // required by CCSDS
-    const auto result = ComCfg::Apid::isValid(apid) ? SerialTypeOption::some(apid) : SerialTypeOption::none();
+    const auto result =
+        ComCfg::Apid::isValid(apid) ? ApidOption::some(static_cast<ComCfg::Apid::T>(apid)) : ApidOption::none();
     return result;
 }
 

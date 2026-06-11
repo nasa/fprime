@@ -16,7 +16,7 @@ namespace CcsdsTestUtils {
 //! ComCfg::APID that fit in 11 bits.
 //! If not possible, return NONE.
 //! \return SOME(apid) or NONE
-TestUtils::Option<ComCfg::Apid::SerialType> getRandomApid();
+TestUtils::Option<ComCfg::Apid::T> getRandomApid();
 
 }  // namespace CcsdsTestUtils
 
