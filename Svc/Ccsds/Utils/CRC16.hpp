@@ -2,7 +2,7 @@
 #define SVC_CCSDS_UTILS_CRC16_HPP
 
 #include "Fw/Types/BasicTypes.hpp"
-// Include the lic crc c library:
+// Include the libcrc library because we need update_crc_ccitt that is not provided through the main interface.
 extern "C" {
 #include <Utils/Hash/libcrc/lib_crc.h>
 }

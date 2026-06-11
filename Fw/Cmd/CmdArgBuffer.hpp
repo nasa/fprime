@@ -13,7 +13,6 @@
 #define FW_CMD_ARG_BUFFER_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
@@ -21,7 +20,6 @@ namespace Fw {
 class CmdArgBuffer final : public LinearBufferBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_CMD_BUFF,  //!< type id for CmdArgBuffer
         SERIALIZED_SIZE =
             STATIC_SERIALIZED_SIZE(FW_CMD_ARG_BUFFER_MAX_SIZE)  //!< size when serialized. Buffer + size of buffer
     };
