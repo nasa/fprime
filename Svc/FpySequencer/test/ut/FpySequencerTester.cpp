@@ -92,10 +92,12 @@ void FpySequencerTester::writeToFile(const char* name, FwSizeType maxBytes) {
         ASSERT_EQ(buf.serializeFrom(seq.get_statements()[ii]), Fw::SerializeStatus::FW_SERIALIZE_OK);
     }
 
-    U32 crc = FpySequencer::CRC_INITIAL_VALUE;
-    FpySequencer::updateCrc(crc, buf.getBuffAddr(), buf.getSize());
+    Utils::Hash hash;
+    hash.update(buf.getBuffAddr(), buf.getSize());
+    U32 crc = 0;
+    hash.finalize(crc);
 
-    seq.get_footer().set_crc(~crc);
+    seq.get_footer().set_crc(crc);
 
     ASSERT_EQ(buf.serializeFrom(seq.get_footer()), Fw::SerializeStatus::FW_SERIALIZE_OK);
 
@@ -312,6 +314,14 @@ void FpySequencerTester::add_MEMCMP(FpySequencer_MemCmpDirective dir) {
 void FpySequencerTester::add_PUSH_TIME() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::PUSH_TIME, buf);
+}
+void FpySequencerTester::add_SET_SEED() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::SET_SEED, buf);
+}
+void FpySequencerTester::add_PUSH_RAND() {
+    Fw::StatementArgBuffer buf;
+    addDirective(Fpy::DirectiveId::PUSH_RAND, buf);
 }
 void FpySequencerTester::add_GET_FIELD(const Fpy::StackSizeType parentSize, const Fpy::StackSizeType memberSize) {
     add_GET_FIELD(FpySequencer_GetFieldDirective(parentSize, memberSize));
@@ -577,6 +587,16 @@ Signal FpySequencerTester::tester_pushTime_directiveHandler(const FpySequencer_P
     return this->cmp.pushTime_directiveHandler(directive, err);
 }
 
+Signal FpySequencerTester::tester_setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive,
+                                                           DirectiveError& err) {
+    return this->cmp.setSeed_directiveHandler(directive, err);
+}
+
+Signal FpySequencerTester::tester_pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive,
+                                                            DirectiveError& err) {
+    return this->cmp.pushRand_directiveHandler(directive, err);
+}
+
 Signal FpySequencerTester::tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive,
                                                             DirectiveError& err) {
     return this->cmp.allocate_directiveHandler(directive, err);
@@ -646,6 +666,13 @@ void FpySequencerTester::tester_set_m_sequenceFilePath(Fw::String str) {
     this->cmp.m_sequenceFilePath = str;
 }
 
+void FpySequencerTester::tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args) {
+    // the action ignores smId/signal; pass any valid values
+    this->cmp.Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
+        FpySequencer::SmId::sequencer, Svc::FpySequencer_SequencerStateMachineStateMachineBase::Signal::cmd_VALIDATE,
+        args);
+}
+
 U64 FpySequencerTester::tester_get_m_sequencesStarted() {
     return this->cmp.m_sequencesStarted;
 }
@@ -663,7 +690,21 @@ void FpySequencerTester::tester_set_m_statementsDispatched(U64 val) {
 }
 
 void FpySequencerTester::tester_set_m_computedCRC(U32 crc) {
-    this->cmp.m_computedCRC = crc;
+    this->cmp.m_computedCRC.setHashValue(U32(~crc));
+}
+
+void FpySequencerTester::tester_init_m_computedCRC() {
+    this->cmp.m_computedCRC.init();
+}
+
+void FpySequencerTester::tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize) {
+    this->cmp.m_computedCRC.update(buffer, bufferSize);
+}
+
+U32 FpySequencerTester::tester_finalize_m_computedCRC() {
+    U32 finalCrc = 0;
+    this->cmp.m_computedCRC.finalize(finalCrc);
+    return finalCrc;
 }
 
 void FpySequencerTester::tester_set_m_sequenceArgs(Svc::SeqArgs args) {

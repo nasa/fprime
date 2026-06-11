@@ -7,6 +7,8 @@
 #ifndef FpySequencer_HPP
 #define FpySequencer_HPP
 
+#include <random>
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -21,6 +23,7 @@
 #include "Svc/FpySequencer/SequenceSerializableAc.hpp"
 #include "Svc/FpySequencer/StatementSerializableAc.hpp"
 #include "Svc/Seq/BlockStateEnumAc.hpp"
+#include "Utils/Hash/Hash.hpp"
 #include "config/FppConstantsAc.hpp"
 
 static_assert(Svc::Fpy::MAX_SEQUENCE_ARG_COUNT <= std::numeric_limits<U8>::max(),
@@ -64,6 +67,8 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_MemCmpDirective memCmp;
         FpySequencer_StackCmdDirective stackCmd;
         FpySequencer_PushTimeDirective pushTime;
+        FpySequencer_SetSeedDirective setSeed;
+        FpySequencer_PushRandDirective pushRand;
         FpySequencer_GetFieldDirective getField;
         FpySequencer_PeekDirective peek;
         FpySequencer_StoreRelDirective storeRel;
@@ -590,6 +595,12 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_pushTime
     void directive_pushTime_internalInterfaceHandler(const Svc::FpySequencer_PushTimeDirective& directive) override;
 
+    //! Internal interface handler for directive_setSeed
+    void directive_setSeed_internalInterfaceHandler(const Svc::FpySequencer_SetSeedDirective& directive) override;
+
+    //! Internal interface handler for directive_pushRand
+    void directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive) override;
+
     //! Internal interface handler for directive_getField
     void directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) override;
 
@@ -635,11 +646,12 @@ class FpySequencer : public FpySequencerComponentBase {
     FwEnumStoreType m_allocatorId;
 
     // assigned by the user via cmd
-    Fw::String m_sequenceFilePath;
+    // length is FileNameStringSize
+    Fw::FileNameString m_sequenceFilePath;
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
-    U32 m_computedCRC;
+    Utils::Hash m_computedCRC;
 
     // Size of arguments read in current sequence. Used for validation between
     // User provided arguments and what is requested of the sequence.
@@ -686,6 +698,10 @@ class FpySequencer : public FpySequencerComponentBase {
         // the absolute time we should wait for until returning
         // a statement response
         Fw::Time wakeupTime = Fw::Time();
+
+        // RNG state used by PUSH_RAND and SET_SEED directives during this run
+        std::mt19937 rng;
+        bool rngSeeded = false;
 
         Stack stack = Stack();
     } m_runtime;
@@ -745,11 +761,6 @@ class FpySequencer : public FpySequencerComponentBase {
     // ----------------------------------------------------------------------
     // Validation state
     // ----------------------------------------------------------------------
-
-    static void updateCrc(U32& crc,              //!< The CRC to update
-                          const U8* buffer,      //!< The buffer
-                          FwSizeType bufferSize  //!< The buffer size
-    );
 
     // loads the sequence in memory, and does header/crc/integrity checks.
     // return SUCCESS if sequence is valid, FAILURE otherwise
@@ -894,6 +905,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal memCmp_directiveHandler(const FpySequencer_MemCmpDirective& directive, DirectiveError& error);
     Signal stackCmd_directiveHandler(const FpySequencer_StackCmdDirective& directive, DirectiveError& error);
     Signal pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& error);
+    Signal setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive, DirectiveError& error);
+    Signal pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error);
     Signal getField_directiveHandler(const FpySequencer_GetFieldDirective& directive, DirectiveError& error);
     Signal peek_directiveHandler(const FpySequencer_PeekDirective& directive, DirectiveError& error);
     Signal storeRel_directiveHandler(const FpySequencer_StoreRelDirective& directive, DirectiveError& error);

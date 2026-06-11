@@ -358,6 +358,26 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             }
             break;
         }
+        case Fpy::DirectiveId::SET_SEED: {
+            new (&deserializedDirective.setSeed) FpySequencer_SetSeedDirective();
+            if (argBuf.getDeserializeSizeLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
+        case Fpy::DirectiveId::PUSH_RAND: {
+            new (&deserializedDirective.pushRand) FpySequencer_PushRandDirective();
+            if (argBuf.getDeserializeSizeLeft() != 0) {
+                this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
+                                                               Fw::SerializeStatus::FW_DESERIALIZE_SIZE_MISMATCH,
+                                                               argBuf.getDeserializeSizeLeft(), argBuf.getSize());
+                return Fw::Success::FAILURE;
+            }
+            break;
+        }
         case Fpy::DirectiveId::GET_FIELD: {
             new (&deserializedDirective.getField) FpySequencer_GetFieldDirective();
             status = argBuf.deserializeTo(deserializedDirective.getField);
@@ -589,6 +609,14 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
         case Fpy::DirectiveId::PUSH_TIME: {
             this->directive_pushTime_internalInterfaceInvoke(directive.pushTime);
+            return;
+        }
+        case Fpy::DirectiveId::SET_SEED: {
+            this->directive_setSeed_internalInterfaceInvoke(directive.setSeed);
+            return;
+        }
+        case Fpy::DirectiveId::PUSH_RAND: {
+            this->directive_pushRand_internalInterfaceInvoke(directive.pushRand);
             return;
         }
         case Fpy::DirectiveId::GET_FIELD: {

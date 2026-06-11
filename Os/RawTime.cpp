@@ -7,7 +7,7 @@
 
 namespace Os {
 
-RawTime::RawTime() : m_handle_storage(), m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
+RawTime::RawTime() : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -17,7 +17,7 @@ RawTime::~RawTime() {
 }
 
 RawTime::RawTime(const RawTime& other)
-    : m_handle_storage(), m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
+    : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -54,6 +54,11 @@ Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::E
 }
 
 RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate.getDiffUsec(other, result);
+}
+
+RawTimeInterface::Status RawTimeInterface::getDiffUsec(const RawTime& other, U32& result) const {
     Fw::TimeInterval interval;
     Status status = this->getTimeInterval(other, interval);
     if (status != Status::OP_OK) {

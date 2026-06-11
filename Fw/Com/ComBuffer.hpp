@@ -20,7 +20,6 @@ namespace Fw {
 class ComBuffer final : public LinearBufferBase {
   public:
     enum {
-        SERIALIZED_TYPE_ID = 1010,
         SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_COM_BUFFER_MAX_SIZE)  // size of buffer + storage of size word
     };
 

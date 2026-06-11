@@ -13,9 +13,9 @@ include(implementation)
 include(target/ut) # For FPRIME__INTERNAL_UT_TARGET variable
 include(utilities)
 include(fprime-util)
-set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS")
+set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS" CACHE INTERNAL "Base set of control directives for module registration" FORCE)
 
-set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp")
+set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp" CACHE INTERNAL "Empty cpp file to attach to targets before autocoding" FORCE)
 
 ####
 # Function `fprime__internal_add_build_target`:
