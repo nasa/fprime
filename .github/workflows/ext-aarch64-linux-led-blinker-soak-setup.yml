@@ -27,13 +27,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: "Setup external repository + overlay F´"
-        uses: moisesmata/fprime-actions/external-repository-setup@devel
+        uses: moisesmata/fprime-actions/external-repository-setup@soak-testing-actions
         with:
           target_repository: moisesmata/fprime-workshop-led-blinker
           # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
       - name: "Cross compile"
-        uses: moisesmata/fprime-actions/build-with-aarch64-toolchain@devel
+        uses: moisesmata/fprime-actions/build-with-aarch64-toolchain@soak-testing-actions
       # soak-deploy expects integration tests at artifacts/int/. Stage them here.
       - name: "Stage integration tests"
         run: cp -r LedBlinker/Components/Led/test/int int
@@ -58,6 +58,6 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: moisesmata/fprime-actions/soak-deploy@devel
+        uses: moisesmata/fprime-actions/soak-deploy@soak-testing-actions
         with:
           platform: linux
