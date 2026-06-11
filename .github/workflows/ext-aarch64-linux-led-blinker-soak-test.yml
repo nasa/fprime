@@ -15,9 +15,12 @@ on:
 permissions:
   contents: read
 
-# Serialize runs so a manual dispatch (or cron) can't race with another
+# Shared with the soak-setup workflow so a test queues behind any in-flight
+# setup. cancel-in-progress: false means a second test run waits rather than
+# killing the first; setup's own concurrency entry uses true so a release can
+# preempt an in-flight test.
 concurrency:
-  group: ${{ github.workflow }}
+  group: ledblinker-soak
   cancel-in-progress: false
 
 jobs:

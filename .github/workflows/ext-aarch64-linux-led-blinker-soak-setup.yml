@@ -13,9 +13,10 @@ on:
     types: [published]
   workflow_dispatch:
 
-# New releases replace the running deployment
+# Shared with the soak-test workflow so a test run waits for setup (and a new
+# release cancels any in-flight test, since the deployment is being replaced).
 concurrency:
-  group: ${{ github.workflow }}
+  group: ledblinker-soak
   cancel-in-progress: true
 
 permissions:
