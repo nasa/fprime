@@ -115,12 +115,6 @@ Fw::ExternalSerializeBufferWithMemberCopy Buffer::getDeserializer() {
 
 Fw::SerializeStatus Buffer::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     Fw::SerializeStatus stat;
-#if FW_SERIALIZATION_TYPE_ID
-    stat = buffer.serializeFrom(static_cast<U32>(Buffer::TYPE_ID));
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-#endif
     stat = buffer.serializeFrom(reinterpret_cast<PlatformPointerCastType>(this->m_bufferData), mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
@@ -138,19 +132,6 @@ Fw::SerializeStatus Buffer::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endian
 
 Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     Fw::SerializeStatus stat;
-
-#if FW_SERIALIZATION_TYPE_ID
-    U32 typeId;
-
-    stat = buffer.deserializeTo(typeId);
-    if (stat != Fw::FW_SERIALIZE_OK) {
-        return stat;
-    }
-
-    if (typeId != Buffer::TYPE_ID) {
-        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
-    }
-#endif
     PlatformPointerCastType pointer;
     stat = buffer.deserializeTo(pointer, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {

@@ -12,14 +12,13 @@
 #define FW_TLM_BUFFER_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
 
 class TlmBuffer final : public LinearBufferBase {
   public:
-    enum { SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_TLM_BUFFER_MAX_SIZE) };
+    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_TLM_BUFFER_MAX_SIZE) };
 
     TlmBuffer(const U8* args, FwSizeType size);
     TlmBuffer();
