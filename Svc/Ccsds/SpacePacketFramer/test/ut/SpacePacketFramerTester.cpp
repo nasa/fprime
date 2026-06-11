@@ -8,6 +8,7 @@
 
 #include "STest/Random/Random.hpp"
 #include "SpacePacketFramerTester.hpp"
+#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
 
 namespace Svc {
 
@@ -61,44 +62,11 @@ void SpacePacketFramerTester::testNominalFraming() {
         payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
     }
     Fw::Buffer data(payload, sizeof(payload));
-    // Choose a random 11-bit APID
-    // Choose from among the set of configured constants for ComCfg::Apid
-    const ComCfg::Apid::SerialType selectedIdx =
-        static_cast<ComCfg::Apid::SerialType>(STest::Random::startLength(0, ComCfg::Apid::NUM_CONSTANTS));
-    // Choose from within the bounds provided by CCSDS and the SerialType.
-    // 1. We have to respect the CCSDS bound because of the component under test.
-    // 2. We have to respect the SerialType bound because F Prime may not be configured
-    // to use CCSDS, but we still want this unit test to be valid, if possible.
-    constexpr auto ccsdsBound = static_cast<ComCfg::Apid::SerialType>((1 << 11) - 1);  // 11 bits
-    constexpr auto serialTypeBound = std::numeric_limits<ComCfg::Apid::SerialType>::max();
-    constexpr auto bound = std::min(ccsdsBound, serialTypeBound);
-    // Search through the interval [0, maxApid] until we find a valid APID at the
-    // selected index, or we run out of numbers
-    ComCfg::Apid::SerialType idx = 0;
-    ComCfg::Apid::SerialType apid = 0;
-    for (ComCfg::Apid::SerialType candidateApid = 0; candidateApid <= bound; candidateApid++) {
-        if (ComCfg::Apid::isValid(candidateApid)) {
-            // Found a valid APID: store it
-            apid = candidateApid;
-            if (idx == selectedIdx) {
-                // We are at the selected index: done
-                break;
-            }
-            // Not yet at the selected index: keep going
-            // We'll either go onto the next valid APID or use the current one
-            // if we run off the end of the 11-bit range
-            idx++;
-        }
+    const auto apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.hasValue()) {
+        GTEST_SKIP() << "Could not find a valid APID\n";
     }
-    // Print out the apid we found, for diagnostic and debugging purposes
-    printf("apid=%0X\n", apid);
-    fflush(stdout);
-    // If the APID we found is not valid, then skip the test
-    // This can happen if all of the configured APIDs are out of the 11-bit range
-    // required by CCSDS
-    if (!ComCfg::Apid::isValid(apid)) {
-        GTEST_SKIP() << "Could not find a valid 11-bit APID\n";
-    }
+    const auto apid = apidOption.get();
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
     ComCfg::FrameContext context;

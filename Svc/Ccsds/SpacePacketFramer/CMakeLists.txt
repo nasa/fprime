@@ -28,6 +28,7 @@ register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/SpacePacketFramer.fpp"
   DEPENDS
+    Svc_Ccsds_TestUtils
     STest
   UT_AUTO_HELPERS
 )
