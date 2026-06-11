@@ -4,6 +4,7 @@
 # Utility and support functions for the fprime CMake build system.
 ####
 include_guard()
+include(global_interface)
 set_property(GLOBAL PROPERTY C_CPP_ASM_REGEX ".*\.(c|cpp|cc|cxx|S|asm)$")
 
 ####
