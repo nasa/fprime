@@ -63,7 +63,7 @@ endfunction(fprime_add_location_pair)
 # - FPRIME_LIBRARY_LOCATIONS: the list of the library locations of the project, from settings.ini
 #
 # > [!WARNING]
-# > This functions and associated variables are deprecated. New projects and code should not use these variables.
+# > This function and associated variables are deprecated. New projects and code should not use these variables.
 #
 # Arguments: None
 # Returns: None
