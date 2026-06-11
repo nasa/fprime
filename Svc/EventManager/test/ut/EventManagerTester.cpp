@@ -148,22 +148,20 @@ void EventManagerTester::runFilterInvalidCommands() {
     this->clearHistory();
     FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
     Enabled filterEnabled;
-    filterEnabled.m_serializeNumericValue = true;
-    filterEnabled.m_numericValue = 10;
+    filterEnabled.setSerializeValue(10);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
     this->clearHistory();
     reportFilterLevel = FilterSeverity::WARNING_HI;
-    filterEnabled.m_numericValue = -2;
+    filterEnabled.setSerializeValue(-2);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
     FilterSeverity eventLevel;
     this->clearHistory();
     Enabled reportEnable = Enabled::ENABLED;
-    eventLevel.m_serializeNumericValue = true;
-    eventLevel.m_numericValue = -1;
+    eventLevel.setSerializeValue(-1);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
@@ -171,7 +169,7 @@ void EventManagerTester::runFilterInvalidCommands() {
     this->clearHistory();
 
     reportEnable = Enabled::ENABLED;
-    eventLevel.m_numericValue = 100;
+    eventLevel.setSerializeValue(100);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
@@ -300,8 +298,7 @@ void EventManagerTester::runFilterIdNominal() {
     this->clearHistory();
     this->clearEvents();
     Enabled idEnabled;
-    idEnabled.m_serializeNumericValue = true;
-    idEnabled.m_numericValue = 10;
+    idEnabled.setSerializeValue(10);
     this->sendCmd_SET_ID_FILTER(0, cmdSeq, 10, idEnabled);
     // dispatch message
     this->m_impl.doDispatch();

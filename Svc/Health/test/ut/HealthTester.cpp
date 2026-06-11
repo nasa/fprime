@@ -588,8 +588,7 @@ void HealthTester ::miscellaneous() {
 
     // send command with bad value
     Fw::Enabled badValue;
-    badValue.m_serializeNumericValue = true;
-    badValue.m_numericValue = Fw::Enabled::NUM_CONSTANTS;
+    badValue.setSerializeValue(Fw::Enabled::NUM_CONSTANTS);
     sendCmd_HLTH_PING_ENABLE(0, 0, Fw::CmdStringArg("task0"), badValue);
     this->dispatchAll();
 

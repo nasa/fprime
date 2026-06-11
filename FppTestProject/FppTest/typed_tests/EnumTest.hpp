@@ -174,8 +174,7 @@ TYPED_TEST_P(EnumTest, Serialization) {
     ASSERT_EQ(buf.getSize(), sizeof(typename TypeParam::SerialType));
 
     TypeParam invalidEnum1;
-    invalidEnum1.m_serializeNumericValue = true;
-    invalidEnum1.m_numericValue = invalidValue;
+    invalidEnum1.setSerializeValue(invalidValue);
     status = buf.serializeFrom(invalidEnum1);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
