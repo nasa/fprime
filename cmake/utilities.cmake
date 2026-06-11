@@ -277,7 +277,7 @@ function(get_nearest_build_root DIRECTORY_PATH)
             set(LAST_REL "${TEMP_MODULE}")
         endif()
     endforeach()
-    # Report when this file is not anchored under any know location.
+    # Report when this file is not anchored under any known location.
     if ("${FOUND_BUILD_ROOT}" STREQUAL "${DIRECTORY_PATH}")
         message(FATAL_ERROR "No build root found for: ${DIRECTORY_PATH}")
     endif()
