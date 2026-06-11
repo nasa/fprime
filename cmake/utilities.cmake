@@ -253,7 +253,7 @@ endfunction()
 # Function `get_nearest_build_root`:
 #
 # Finds the nearest location in FPRIME_LOCATIONS to the given path. This is used for calculating module names, include
-# paths, and relative asserts. FPRIME_LOCATIONS is derrived from the global interface target.
+# paths, and relative asserts. FPRIME_LOCATIONS is derived from the global interface target.
 #
 # Note: historically these were called "build roots".
 #

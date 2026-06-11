@@ -5,7 +5,7 @@
 # singular target that has all the global properties that the build system requires. These include:
 #
 #     0. FPRIME_LOCATIONS: list of all "root" locations (source, binary)
-#     1. FPRIME_SOURCE_LOCATIONS: list of all "root" locations of the project used for infering target names.
+#     1. FPRIME_SOURCE_LOCATIONS: list of all "root" locations of the project used for inferring target names.
 #     2. FPRIME_BINARY_LOCATIONS: list of all binary equivalents of FPRIME_SOURCE_LOCATIONS in the build cache.
 #     3. INTERFACE_INCLUDE_DIRECTORIES: list of all include directories that apply to all targets in the build system.
 #         a. These include all FPRIME_SOURCE_LOCATIONS, FPRIME_BINARY_LOCATIONS, and configuration directories
