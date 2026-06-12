@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-11 22:35:25</td>
+      <td>2026-06-12 00:07:01</td>
     </tr>
   </table>
 </div>
@@ -71,15 +71,15 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l22">Fw::CircularIndex::CircularIndex() (line 22)</a></td><td>called 74 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l34">Fw::CircularIndex::CircularIndex(Fw::CircularIndex const&amp;) (line 34)</a></td><td>called 12982 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l34">Fw::CircularIndex::CircularIndex(Fw::CircularIndex const&amp;) (line 34)</a></td><td>called 13041 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l25">Fw::CircularIndex::CircularIndex(unsigned long, unsigned long) (line 25)</a></td><td>called 9 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l92">Fw::CircularIndex::decrement(unsigned long) (line 92)</a></td><td>called 2 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l68">Fw::CircularIndex::getModulus() const (line 68)</a></td><td>called 17 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l55">Fw::CircularIndex::getValue() const (line 55)</a></td><td>called 11935 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l82">Fw::CircularIndex::increment(unsigned long) (line 82)</a></td><td>called 25122 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l45">Fw::CircularIndex::operator=(Fw::CircularIndex const&amp;) (line 45)</a></td><td>called 12987 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l55">Fw::CircularIndex::getValue() const (line 55)</a></td><td>called 11946 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l82">Fw::CircularIndex::increment(unsigned long) (line 82)</a></td><td>called 25201 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l45">Fw::CircularIndex::operator=(Fw::CircularIndex const&amp;) (line 45)</a></td><td>called 13046 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l74">Fw::CircularIndex::setModulus(unsigned long) (line 74)</a></td><td>called 67 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l61">Fw::CircularIndex::setValue(unsigned long) (line 61)</a></td><td>called 25801 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l61">Fw::CircularIndex::setValue(unsigned long) (line 61)</a></td><td>called 25874 times</td><td>80.0%</td></tr>
   </table>
 </details>
 
@@ -328,7 +328,7 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12982</td>
+      <td class="linecount coveredLine">13041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">CircularIndex</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CircularIndex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ci</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -405,7 +405,7 @@
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12987</td>
+      <td class="linecount coveredLine">13046</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">CircularIndex</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CircularIndex</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ci</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -414,26 +414,26 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 12987 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 13046 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">12987</td>
+      <td class="linecount partialCoveredLine">13046</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ci</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12987</td>
+      <td class="linecount coveredLine">13046</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci</span><span class="p">.</span><span class="n">m_value</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12987</td>
+      <td class="linecount coveredLine">13046</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_modulus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci</span><span class="p">.</span><span class="n">m_modulus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -447,7 +447,7 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12987</td>
+      <td class="linecount coveredLine">13046</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -482,21 +482,21 @@
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11935</td>
+      <td class="linecount coveredLine">11946</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">getValue</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11935</td>
+      <td class="linecount coveredLine">11946</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_modulus</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11935</td>
+      <td class="linecount coveredLine">11946</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -524,7 +524,7 @@
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25801</td>
+      <td class="linecount coveredLine">25874</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">setValue</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">value</span><span class="w">  </span><span class="c1">//!&lt; The index value</span></td>
     </tr>
     <tr class="source-line">
@@ -538,7 +538,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25801</td>
+      <td class="linecount coveredLine">25874</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_modulus</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -548,18 +548,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 25801 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 25874 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25801</td>
+      <td class="linecount partialCoveredLine">25874</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_modulus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25801</td>
+      <td class="linecount coveredLine">25874</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -678,7 +678,7 @@
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25122</td>
+      <td class="linecount coveredLine">25201</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">increment</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="c1">//!&lt; The amount by which to increment</span></td>
     </tr>
     <tr class="source-line">
@@ -692,7 +692,7 @@
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25122</td>
+      <td class="linecount coveredLine">25201</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_modulus</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -702,25 +702,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 25122 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 25201 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25122</td>
+      <td class="linecount partialCoveredLine">25201</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">amount</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">m_modulus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25122</td>
+      <td class="linecount coveredLine">25201</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setValue</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">offset</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25122</td>
+      <td class="linecount coveredLine">25201</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
