@@ -10,19 +10,18 @@
 
 // Define FW_UNREACHABLE to hint to the compiler that a code path is unreachable.
 // Falls back to a no-op on compilers that do not support __builtin_unreachable.
+// (1) __has_builtin — the modern check, available in Clang and GCC >= 10.
+// (2) defined(__GNUC__) — catches older GCC (4.5–9) which lack __has_builtin
 #ifdef __has_builtin
 #if __has_builtin(__builtin_unreachable)
 #define FW_UNREACHABLE() __builtin_unreachable()
 #endif
 #endif
-
 #ifndef FW_UNREACHABLE
 #if defined(__GNUC__)
 #define FW_UNREACHABLE() __builtin_unreachable()
-#elif defined(_MSC_VER)
-#define FW_UNREACHABLE() __assume(0)
 #else
-#define FW_UNREACHABLE() ((void)0)
+#define FW_UNREACHABLE() ((void)0)  // no-op fallback for unknown compilers
 #endif
 #endif
 
