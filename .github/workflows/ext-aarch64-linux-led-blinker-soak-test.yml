@@ -27,4 +27,4 @@ jobs:
     name: "Soak Test"
     runs-on: [self-hosted, ARM64]
     steps:
-      - uses: moisesmata/fprime-actions/soak-test@soak-testing-actions
+      - uses: nasa/fprime-actions/soak-test@soak-testing-actions
