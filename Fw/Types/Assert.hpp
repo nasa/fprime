@@ -12,9 +12,11 @@
 // Falls back to a no-op on compilers that do not support __builtin_unreachable.
 // (1) __has_builtin — the modern check, available in Clang and GCC >= 10.
 // (2) defined(__GNUC__) — catches older GCC (4.5–9) which lack __has_builtin
+#ifndef FW_UNREACHABLE
 #ifdef __has_builtin
 #if __has_builtin(__builtin_unreachable)
 #define FW_UNREACHABLE() __builtin_unreachable()
+#endif
 #endif
 #endif
 #ifndef FW_UNREACHABLE
