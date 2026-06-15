@@ -25,8 +25,13 @@ namespace {
 bool isValidPacketIdentification(const SpacePacketHeader& header) {
     const U16 packetIdentification = header.get_packetIdentification();
     const U16 pvn = (packetIdentification & SpacePacketSubfields::PvnMask) >> SpacePacketSubfields::PvnOffset;
+    const U16 packetType =
+        (packetIdentification & SpacePacketSubfields::PktTypeMask) >> SpacePacketSubfields::PktTypeOffset;
+    const U16 secondaryHeaderFlag =
+        (packetIdentification & SpacePacketSubfields::SecHdrMask) >> SpacePacketSubfields::SecHdrOffset;
 
-    return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+    return (pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL)) && (packetType == 0x0U) &&
+           (secondaryHeaderFlag == 0x0U);
 }
 
 bool isValidSequenceControl(const SpacePacketHeader& header) {
