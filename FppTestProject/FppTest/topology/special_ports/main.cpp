@@ -124,9 +124,9 @@ TEST_F(FrameworkTester, Log) {
 
     check_log_text({
         {0, comp1.getIdBase() + 0, Fw::Time(10, 10), Fw::LogSeverity::ACTIVITY_HI,
-         Fw::String("(comp1) Event : a: 1, b: 2.000000, c: three")},
+         Fw::String("(FppTest.comp1) Event : a: 1, b: 2.000000, c: three")},
         {0, comp2.getIdBase() + 0, Fw::Time(20, 10), Fw::LogSeverity::ACTIVITY_HI,
-         Fw::String("(comp2) Event : a: 4, b: 8.500000, c: four")},
+         Fw::String("(FppTest.comp2) Event : a: 4, b: 8.500000, c: four")},
     });
 }
 
