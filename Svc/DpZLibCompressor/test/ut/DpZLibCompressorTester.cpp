@@ -64,8 +64,6 @@ void DpZLibCompressorTester ::compress(const std::vector<U8>& data,
         ASSERT_EQ(uncomp_data.size(), data.size());
 
         ASSERT_EQ(memcmp(uncomp_data.data(), data.data(), data.size()), 0);
-
-        printf("Compressed from %ld to %ld\n", data.size(), uncomp_buffer.getSize() - write_offset);
     } else {
         ASSERT_EQ(memcmp(uncomp_buffer.getData(), data.data(), data.size()), 0);
 
