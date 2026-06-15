@@ -31,7 +31,7 @@ module DataProducts{
             DataProducts::dpWriter.configure(dpDir);
         """
     }
-
+    
     # ----------------------------------------------------------------------
     # Passive Components
     # ----------------------------------------------------------------------
@@ -57,34 +57,6 @@ module DataProducts{
         DataProducts::dpBufferManager.cleanup();
         """
     }
-
-    instance dpCompressProc: Svc.DpCompressProc base id DataProductsConfig.BASE_ID + 0x04000
-
-    instance dpZLibCompressor: Svc.DpZLibCompressor base id DataProductsConfig.BASE_ID + 0x05000
-
-    instance dpZLibCompressorBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x06000 \ 
-    {
-        phase Fpp.ToCpp.Phases.configObjects """
-        Svc::BufferManager::BufferBins bins;
-        """
-        phase Fpp.ToCpp.Phases.configComponents """
-        memset(&ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins, 0, sizeof(ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins));
-        ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins.bins[0].bufferSize = DataProductsConfig::ZLibBuffMgr::compressionBufferStoreSize;
-        ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins.bins[0].numBuffers = DataProductsConfig::ZLibBuffMgr::compressionBufferStoreCount;
-        ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins.bins[1].bufferSize = DataProductsConfig::ZLibBuffMgr::allocBufferStoreSize;
-        ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins.bins[1].numBuffers = DataProductsConfig::ZLibBuffMgr::allocBufferStoreCount;
-        DataProducts::dpZLibCompressorBufferManager.setup(
-            DataProductsConfig::ZLibBuffMgr::dpZLibCompressorBufferManagerId,
-            0,
-            DataProducts::Allocation::memAllocator,
-            ConfigObjects::DataProducts_dpZLibCompressorBufferManager::bins
-        );
-        """
-        phase Fpp.ToCpp.Phases.tearDownComponents """
-        DataProducts::dpZLibCompressorBufferManager.cleanup();
-        """
-    }
-
     topology Subtopology {
         #Active Components
         instance dpCat
@@ -93,9 +65,6 @@ module DataProducts{
 
         #Passive Components
         instance dpBufferManager
-        instance dpCompressProc
-        instance dpZLibCompressor
-        instance dpZLibCompressorBufferManager
 
         connections DataProducts {
             # DpMgr and DpWriter connections. Have explicit port indexes for demo
@@ -103,15 +72,7 @@ module DataProducts{
             dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
             dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
 
-            dpWriter.procBufferSendOut[0] -> dpCompressProc.procRequest
             dpWriter.dpWrittenOut -> dpCat.addToCat
-
-            dpCompressProc.compressChunk -> dpZLibCompressor.compressChunk
-            dpZLibCompressor.bufferCompressionGet -> dpZLibCompressorBufferManager.bufferGetCallee
-            dpZLibCompressor.bufferCompressionReturn -> dpZLibCompressorBufferManager.bufferSendIn
-
-            dpZLibCompressor.bufferZLibGet -> dpZLibCompressorBufferManager.bufferGetCallee
-            dpZLibCompressor.bufferZLibReturn -> dpZLibCompressorBufferManager.bufferSendIn
         }
 
         # ----------------------------------------------------------------------

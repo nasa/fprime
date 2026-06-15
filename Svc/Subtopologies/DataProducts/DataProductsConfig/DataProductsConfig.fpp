@@ -22,9 +22,6 @@ module DataProductsConfig {
         constant dpMgr  = 23
         constant dpWriter   = 22
         constant dpBufferManager  = 21
-        constant dpCompressProc = 0
-        constant dpZLibCompressor = 0
-        constant dpZLibCompressorBufferManager = 0
     }
 
     # Buffer management constants
@@ -32,14 +29,6 @@ module DataProductsConfig {
         constant dpBufferStoreSize  = 10000   
         constant dpBufferStoreCount = 10       
         constant dpBufferManagerId  = 300         
-    }
-
-    module ZLibBuffMgr {
-        constant compressionBufferStoreSize  = 32*1024
-        constant compressionBufferStoreCount = 2
-        constant allocBufferStoreSize  = 269000
-        constant allocBufferStoreCount = 2
-        constant dpZLibCompressorBufferManagerId  = 301
     }
     
     # Directory and file paths
