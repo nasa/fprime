@@ -5,19 +5,14 @@
 name: "Soak Test: AArch64 Linux LedBlinker"
 
 on:
-  # Uncomment to run periodically (e.g. every 30 minutes):
-  # schedule:
-  #   - cron: "*/30 * * * *"
+  schedule:
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
-  # Required so soak-test can `gh workflow disable` this workflow when the
-  # soak detects a FATAL, a dead FSW, or a failing integration test.
-  actions: write
 
-# Shared with the soak-setup workflow so a test queues behind any in-flight
-# setup. 
+# Shared with the soak-setup workflow so a test queues behind any setup. 
 concurrency:
   group: ledblinker-soak
   cancel-in-progress: false
