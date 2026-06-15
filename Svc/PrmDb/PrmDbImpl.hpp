@@ -88,9 +88,6 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
-    // helper to compute CRC over a buffer
-    U32 computeCrc(U32 crc, const BYTE* buff, FwSizeType size);
-
     // Pointers to the active and staging databases
     // These point to the actual storage arrays below
     // The active database is the ONLY one used for getting parameters

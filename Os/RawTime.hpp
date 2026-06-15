@@ -96,6 +96,24 @@ class RawTimeInterface : public Fw::Serializable {
     //! \return Fw::SerializeStatus indicating the result of the deserialization.
     virtual Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                                 Fw::Endianness mode = Fw::Endianness::BIG) = 0;
+
+    // ------------------------------------------------------------------
+    // Common virtual functions built on top of OS-specific functions
+    // ------------------------------------------------------------------
+
+    //! \brief Calculate the difference in microseconds between two RawTime objects.
+    //!
+    //! This function calculates the difference in microseconds between the current RawTime object
+    //! and another RawTime object provided as a parameter.
+    //!
+    //! \warning This function will return Status::OP_OVERFLOW if the time difference is too large to fit in a U32.
+    //! \warning This means the largest time difference that can be measured is 2^32 microseconds (about 71 minutes).
+    //! \warning Users should prefer getTimeInterval() for larger intervals.
+    //!
+    //! \param other The other RawTime object to compare against.
+    //! \param result A reference to a U32 variable where the result will be stored.
+    //! \return Status indicating the result of the operation.
+    virtual Status getDiffUsec(const RawTime& other, U32& result) const;
 };
 
 class RawTime final : public RawTimeInterface {
@@ -167,10 +185,6 @@ class RawTime final : public RawTimeInterface {
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override;
 
-    // ------------------------------------------------------------
-    // Common functions built on top of OS-specific functions
-    // ------------------------------------------------------------
-
     //! \brief Calculate the difference in microseconds between two RawTime objects.
     //!
     //! This function calculates the difference in microseconds between the current RawTime object
@@ -183,7 +197,11 @@ class RawTime final : public RawTimeInterface {
     //! \param other The other RawTime object to compare against.
     //! \param result A reference to a U32 variable where the result will be stored.
     //! \return Status indicating the result of the operation.
-    Status getDiffUsec(const RawTime& other, U32& result) const;
+    Status getDiffUsec(const RawTime& other, U32& result) const override;
+
+    // ------------------------------------------------------------
+    // Common functions built on top of OS-specific functions
+    // ------------------------------------------------------------
 
     //! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)
     bool operator==(const RawTime& other) const;

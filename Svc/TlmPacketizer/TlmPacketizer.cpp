@@ -138,6 +138,9 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
             }
             const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
             FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
+        } else {
+            // Ensure it is a duplicate in the ignore list, not a duplicate of a valid channel
+            FW_ASSERT(this->m_channels[entryIndex].ignored, static_cast<FwAssertArgType>(id));
         }
         // is ignored channel - update entry in place via reference
         TlmEntry& entry = this->m_channels[entryIndex];
@@ -383,9 +386,9 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
 void TlmPacketizer ::controlIn_handler(FwIndexType portNum,
                                        const Svc::TelemetrySection& section,
                                        const Fw::Enabled& enabled) {
-    FW_ASSERT(section.isValid());
-    FW_ASSERT(enabled.isValid());
-    if (0 <= section && section < TelemetrySection::NUM_SECTIONS) {
+    // NUM_SECTIONS is an enum constant (not a standalone constant), so isValid() accepts it.
+    // The explicit bounds check prevents an out-of-bounds write to m_sectionEnabled.
+    if (section.isValid() && section < TelemetrySection::NUM_SECTIONS && enabled.isValid()) {
         (void)(this->m_sectionEnabled[static_cast<FwSizeType>(section)] = enabled);
     } else {
         this->log_WARNING_LO_SectionUnconfigurable(section, enabled);

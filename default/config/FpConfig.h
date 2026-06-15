@@ -95,25 +95,6 @@ extern "C" {
 
 // Component Facilities
 
-// Serialization
-
-// Add a type id when serialization is done. More storage,
-// but better detection of errors
-// TODO: Not working yet
-
-#ifndef FW_SERIALIZATION_TYPE_ID
-#define FW_SERIALIZATION_TYPE_ID \
-    (0)  //!< Indicates if type id is stored when type is serialized. (More storage, but more type safety)
-#endif
-
-// Number of bytes to use for serialization IDs. More
-// bytes is more storage, but greater number of IDs
-#if FW_SERIALIZATION_TYPE_ID
-#ifndef FW_SERIALIZATION_TYPE_ID_BYTES
-#define FW_SERIALIZATION_TYPE_ID_BYTES (4)  //!< Number of bytes used to represent type id - more bytes, more ids
-#endif
-#endif
-
 // Set assertion form. Options:
 //   1. FW_NO_ASSERT: assertions are compiled out, side effects are kept
 //   2. FW_FILEID_ASSERT: asserts report a file CRC and line number
