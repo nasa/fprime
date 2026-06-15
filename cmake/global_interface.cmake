@@ -28,7 +28,9 @@ include_guard()
 include(utilities)
 # Create a target for use as the global interface for cross-build properties. Then create a variable to store the name.
 set(FPRIME_GLOBAL_INTERFACE_TARGET "__fprime_global_interface" CACHE INTERNAL "Target name of global interface" FORCE)
-add_library(${FPRIME_GLOBAL_INTERFACE_TARGET} INTERFACE)
+if (NOT TARGET ${FPRIME_GLOBAL_INTERFACE_TARGET})
+    add_library(${FPRIME_GLOBAL_INTERFACE_TARGET} INTERFACE)
+endif()
 
 ####
 # Function `fprime_add_location_pair`:
