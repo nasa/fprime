@@ -14,24 +14,32 @@
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
 
-register_fprime_library(
-    AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.fpp"
-    SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.cpp"
-   DEPENDS
-       -lz
-)
+find_library(ZLIB_LIBRARY z)
 
-### Unit Tests ###
-register_fprime_ut(
-    AUTOCODER_INPUTS
-        "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.fpp"
-    SOURCES
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpZLibCompressorTestMain.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpZLibCompressorTester.cpp"
-    DEPENDS
-        STest # For rules-based testing
-        -lz
-    UT_AUTO_HELPERS
-)
+if (ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
+    message(STATUS "Unable to add Svc_DpZLibCompressor. libz not found")
+
+else()
+
+    register_fprime_library(
+        AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.fpp"
+        SOURCES
+            "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.cpp"
+       DEPENDS
+            ${ZLIB_LIBRARY}
+    )
+
+    ### Unit Tests ###
+    register_fprime_ut(
+        AUTOCODER_INPUTS
+            "${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor.fpp"
+        SOURCES
+            "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpZLibCompressorTestMain.cpp"
+            "${CMAKE_CURRENT_LIST_DIR}/test/ut/DpZLibCompressorTester.cpp"
+        DEPENDS
+            STest # For rules-based testing
+            ${ZLIB_LIBRARY}
+        UT_AUTO_HELPERS
+    )
+endif()
