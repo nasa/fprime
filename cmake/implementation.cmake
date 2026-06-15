@@ -32,7 +32,12 @@ include(config_assembler)
 function(fprime_target_implementations BUILD_SYSTEM_TARGET)
     append_list_property("${ARGN}" TARGET "${BUILD_SYSTEM_TARGET}" PROPERTY FPRIME_CHOSEN_IMPLEMENTATIONS)
     fprime__internal_choose_implementations("${BUILD_SYSTEM_TARGET}" INTERNAL_ALL_IMPLEMENTATIONS)
-    fprime_target_dependencies("${BUILD_SYSTEM_TARGET}" PRIVATE "${INTERNAL_ALL_IMPLEMENTATIONS}")
+
+    set(LINK_SCOPE)
+    if (NOT FPRIME_USE_PLAIN_LINK_SIGNATURE)
+        set(LINK_SCOPE PRIVATE)
+    endif()
+    fprime_target_dependencies("${BUILD_SYSTEM_TARGET}" "${LINK_SCOPE}" "${INTERNAL_ALL_IMPLEMENTATIONS}")
 endfunction()
 
 ####
