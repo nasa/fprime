@@ -39,14 +39,9 @@ BufferAccumulatorTester ::BufferAccumulatorTester(bool a_doAllocateQueue)
     this->initComponents();
     this->connectPorts();
 
-    // Witch to BufferAccumulator_OpState::DRAIN at start so we don't have to
-    // change ut
-    component.m_mode = BufferAccumulator_OpState::DRAIN;
-    component.m_send = true;
-
     if (this->doAllocateQueue) {
         Fw::MallocAllocator buffAccumMallocator;
-        this->component.allocateQueue(0, buffAccumMallocator, MAX_NUM_BUFFERS);
+        this->component.allocateQueue(0, buffAccumMallocator, MAX_NUM_BUFFERS, BufferAccumulator_OpState::DRAIN);
     }
 }
 

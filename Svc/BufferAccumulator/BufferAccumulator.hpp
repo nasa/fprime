@@ -117,7 +117,9 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
     //! and init, but before task is spawned.
     void allocateQueue(FwEnumStoreType identifier,
                        Fw::MemAllocator& allocator,
-                       FwSizeType maxNumBuffers  //!< The maximum number of buffers
+                       FwSizeType maxNumBuffers,  //!< The maximum number of buffers
+                       BufferAccumulator_OpState initialMode = BufferAccumulator_OpState::ACCUMULATE
+                       //!< The initial operating mode
     );
 
     //! Return allocated queue. Should be done during shutdown
