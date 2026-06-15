@@ -75,6 +75,28 @@ socket.open();
 ...
 ```
 
+## Configuration: Socket Options
+
+The `IP_SOCKET_OPTIONS` array in `config/IpCfg.hpp` defines socket options that are applied to all sockets (TCP server,
+TCP client, and UDP) during setup via `setsockopt`. By default, `SO_REUSEADDR` is enabled (`1`). This prevents
+`EADDRINUSE` ("address already in use") errors when restarting flight software that uses a TCP server, by allowing the
+socket to bind immediately even if the port is still in `TIME_WAIT` state from a prior connection.
+
+To disable `SO_REUSEADDR`, override the entry in your project's `IpCfg.hpp`:
+
+```c++
+static const IpSocketOptions IP_SOCKET_OPTIONS[] = {
+    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 0),  // Disable reuse
+};
+```
+
+> [!NOTE]
+> Enabling `SO_REUSEADDR` allows another process on the same machine to bind to the same port. Projects should
+> evaluate their threat model before leaving this enabled. See the comments in `IpCfg.hpp` for details.
+
+Additional socket options can be appended to the `IP_SOCKET_OPTIONS` array using the `makeIntOption` and
+`makeSizeOption` helper functions defined in `IpCfg.hpp`.
+
 ## Drv::TcpClientSocket Class
 
 The Drv::TcpClientSocket class represents an IPv4 TCP client. It inherently provides bidirectional communication with
