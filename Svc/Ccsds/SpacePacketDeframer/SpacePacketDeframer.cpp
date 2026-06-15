@@ -20,6 +20,25 @@ SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePac
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
 
+namespace {
+
+bool isValidPacketIdentification(const SpacePacketHeader& header) {
+    const U16 packetIdentification = header.get_packetIdentification();
+    const U16 pvn = (packetIdentification & SpacePacketSubfields::PvnMask) >> SpacePacketSubfields::PvnOffset;
+
+    return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+}
+
+bool isValidSequenceControl(const SpacePacketHeader& header) {
+    const U16 packetSequenceControl = header.get_packetSequenceControl();
+    const U16 sequenceFlags =
+        (packetSequenceControl & SpacePacketSubfields::SeqFlagsMask) >> SpacePacketSubfields::SeqFlagsOffset;
+
+    return sequenceFlags == 0x3U;
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
@@ -54,6 +73,15 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
     // Deserialization can still fail if the buffer is malformed despite passing the size check
     if (status != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+
+    if (!isValidPacketIdentification(header) || !isValidSequenceControl(header)) {
         this->log_WARNING_HI_InvalidPacket();
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);

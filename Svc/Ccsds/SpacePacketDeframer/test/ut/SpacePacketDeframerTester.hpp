@@ -52,6 +52,8 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void testBufferExactlyHeaderSize();
     void testBufferSmallerThanHeaderSize();
     void testBufferSingleByte();
+    void testInvalidPacketIdentificationControlFields();
+    void testInvalidSequenceFlags();
 
   private:
     // ----------------------------------------------------------------------
@@ -66,6 +68,17 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
 
     //! Assemble a packet with the given parameters
     Fw::Buffer assemblePacket(U16 apid, U16 seqCount, U16 lengthToken, U8* packetData, U16 packetDataLen);
+
+    //! Assemble a packet with explicit CCSDS control fields
+    Fw::Buffer assemblePacketWithControlFields(U16 pvn,
+                                               U16 packetType,
+                                               U16 secondaryHeaderFlag,
+                                               U16 apid,
+                                               U16 sequenceFlags,
+                                               U16 seqCount,
+                                               U16 lengthToken,
+                                               U8* packetData,
+                                               U16 packetDataLen);
 
   private:
     // ----------------------------------------------------------------------
