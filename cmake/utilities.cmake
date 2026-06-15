@@ -4,6 +4,7 @@
 # Utility and support functions for the fprime CMake build system.
 ####
 include_guard()
+include(global_interface)
 set_property(GLOBAL PROPERTY C_CPP_ASM_REGEX ".*\.(c|cpp|cc|cxx|S|asm)$")
 
 ####
@@ -252,16 +253,22 @@ endfunction()
 ####
 # Function `get_nearest_build_root`:
 #
-# Finds the nearest build root from ${FPRIME_BUILD_LOCATIONS} that is a parent of DIRECTORY_PATH.
+# Finds the nearest location in FPRIME_LOCATIONS to the given path. This is used for calculating module names, include
+# paths, and relative asserts. FPRIME_LOCATIONS is derived from the global interface target.
+#
+# Note: historically these were called "build roots".
 #
 # - **DIRECTORY_PATH:** path to detect nearest build root
-# Return: nearest parent from ${FPRIME_BUILD_LOCATIONS}
+# Return: nearest parent from FPRIME_LOCATIONS as read from the global interface target property FPRIME_LOCATIONS
 ####
 function(get_nearest_build_root DIRECTORY_PATH)
-    get_filename_component(DIRECTORY_PATH "${DIRECTORY_PATH}" ABSOLUTE)
+    resolve_path_variables(DIRECTORY_PATH)
     set(FOUND_BUILD_ROOT "${DIRECTORY_PATH}")
     set(LAST_REL "${DIRECTORY_PATH}")
-    foreach(FPRIME_BUILD_LOC ${FPRIME_BUILD_LOCATIONS} ${CMAKE_BINARY_DIR}/F-Prime ${CMAKE_BINARY_DIR})
+
+    # Read the know locations (up to this point) and look for the closest one.
+    get_property(FPRIME_ALL_LOCATIONS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_LOCATIONS)
+    foreach(FPRIME_BUILD_LOC IN LISTS FPRIME_ALL_LOCATIONS)
         get_filename_component(FPRIME_BUILD_LOC "${FPRIME_BUILD_LOC}" ABSOLUTE)
         file(RELATIVE_PATH TEMP_MODULE ${FPRIME_BUILD_LOC} ${DIRECTORY_PATH})
         string(LENGTH "${LAST_REL}" LEN1)
@@ -271,11 +278,13 @@ function(get_nearest_build_root DIRECTORY_PATH)
             set(LAST_REL "${TEMP_MODULE}")
         endif()
     endforeach()
+    # Report when this file is not anchored under any known location.
     if ("${FOUND_BUILD_ROOT}" STREQUAL "${DIRECTORY_PATH}")
         message(FATAL_ERROR "No build root found for: ${DIRECTORY_PATH}")
     endif()
     set(FPRIME_CLOSEST_BUILD_ROOT "${FOUND_BUILD_ROOT}" PARENT_SCOPE)
 endfunction()
+
 ####
 # Function `get_module_name`:
 #
