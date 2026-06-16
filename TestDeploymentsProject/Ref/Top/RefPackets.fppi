@@ -273,6 +273,15 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
+  # Uncomment to enable DpCompression subtopology
+  #packet DpCompression id 38 group 3 {
+    #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
+    #DpCompression.dpZLibCompressorBufferManager.CurrBuffs
+    #DpCompression.dpZLibCompressorBufferManager.HiBuffs
+    #DpCompression.dpZLibCompressorBufferManager.NoBuffs
+    #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
+  #}
+
 } omit {
   CdhCore.cmdDisp.CommandErrors
 }

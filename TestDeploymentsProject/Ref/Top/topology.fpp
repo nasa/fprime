@@ -20,6 +20,7 @@ module Ref {
     instance ComCcsds.Subtopology
     instance FileHandling.Subtopology
     instance DataProducts.Subtopology
+    #instance DpCompression.Subtopology
 
     # ----------------------------------------------------------------------
     # Instances used in the topology
@@ -109,6 +110,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.Subtopology.dpBufferManagerSchedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.Subtopology.dpWriterSchedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.Subtopology.dpMgrSchedIn
+      #rateGroup3Comp.RateGroupMemberOut[7] -> DpCompression.Subtopology.dpZLibBufferManagerSchedIn
     }
 
     connections Communications {
@@ -171,6 +173,8 @@ module Ref {
     connections FileHandling_DataProducts {
       DataProducts.Subtopology.dpCatFileOut              -> FileHandling.Subtopology.fileDownlinkSendFile
       FileHandling.Subtopology.fileDownlinkFileComplete  -> DataProducts.Subtopology.dpCatFileDone
+
+      #DataProducts.Subtopology.dpWriterProcOut[0] -> DpCompression.Subtopology.dpCompressProcIn
     }
 
   }
