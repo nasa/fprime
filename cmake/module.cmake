@@ -78,6 +78,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS")
     set(FPRIME_CMAKE_ADD_OPTIONS "WIN32" "MACOSX_BUNDLE" "OBJECT" "INTERFACE" "IMPORTED" "ALIAS" "GLOBAL"
         "STATIC" "SHARED" "MODULE" "EXCLUDE_FROM_ALL")
+    set(FPRIME_FLAG_CONTROL_SETS ${FPRIME_CMAKE_ADD_OPTIONS} "BASE_CONFIG" "UT_AUTO_HELPERS" "INCLUDE_GTEST")
     # Set module name as passed in, then defaulting to FPRIME_CURRENT_MODULE
     if (${INPUT_COUNT} GREATER 0 AND NOT FIRST_ARGUMENT IN_LIST CONTROL_SETS)
         list(POP_FRONT INPUT_ARGUMENTS MODULE_NAME)
@@ -155,7 +156,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         # between this and other control words.
         elseif(ARGUMENT IN_LIST CONTROL_SETS)
             # Check for control words that are zero-argument (flags) and set them to true
-            if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
+            if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
                 set("LIST_${CURRENT_LIST_NAME}" TRUE)
             endif()
             set(CURRENT_LIST_NAME "${ARGUMENT}")
@@ -173,7 +174,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
         endif()
     endforeach()
     # Check for control words that are zero-argument (flags) and set them to true
-    if (DEFINED CURRENT_LIST_NAME AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
+    if (DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FPRIME_FLAG_CONTROL_SETS AND NOT DEFINED "LIST_${CURRENT_LIST_NAME}")
         set("LIST_${CURRENT_LIST_NAME}" TRUE)
     endif()
     # Update caller scope with the new variables
@@ -273,4 +274,3 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
         append_list_property("${REQUIRES_IMPLEMENTATIONS}" GLOBAL PROPERTY FPRIME_REQUIRED_IMPLEMENTATIONS)
     endif()      
 endfunction()
-
