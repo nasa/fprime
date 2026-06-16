@@ -24,6 +24,8 @@ module DataProductsConfig {
         constant dpMgr  = 23
         constant dpWriter   = 22
         constant dpBufferAccumulator = 21
+        # dpBufferManager is passive; this value is kept for projects that use
+        # the shared DataProducts config constants.
         constant dpBufferManager  = 21
     }
 
