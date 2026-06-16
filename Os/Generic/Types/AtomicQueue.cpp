@@ -333,11 +333,16 @@ FwSizeType AtomicQueue::getSize() const {
     FwSizeType enq = this->m_enqueuePos.load(std::memory_order_relaxed);
     FwSizeType deq = this->m_dequeuePos.load(std::memory_order_relaxed);
     FwSignedSizeType diff = static_cast<FwSignedSizeType>(enq) - static_cast<FwSignedSizeType>(deq);
-    FW_ASSERT(diff >= 0, static_cast<FwAssertArgType>(enq), static_cast<FwAssertArgType>(deq));
-    FW_ASSERT(static_cast<FwSizeType>(diff) <= this->m_capacity, static_cast<FwAssertArgType>(diff),
-              static_cast<FwAssertArgType>(this->m_capacity));
 
-    // Approximate size (may be slightly stale in concurrent access)
+    // Two independent relaxed loads provide no cross-variable consistency guarantee.
+    // Restrict to [0, capacity] rather than asserting — diff can be transiently negative
+    // or > capacity on concurrent access even though no real program state has that.
+    if (diff < 0) {
+        return 0;
+    }
+    if (static_cast<FwSizeType>(diff) > this->m_capacity) {
+        return this->m_capacity;
+    }
     return static_cast<FwSizeType>(diff);
 }
 

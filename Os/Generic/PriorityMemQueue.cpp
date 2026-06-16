@@ -46,6 +46,7 @@ FwSizeType PriorityMemQueue::s_numConfigs = 0;
 bool PriorityMemQueue::s_requirePrioritySizing = false;
 std::atomic<bool>* PriorityMemQueue::s_configsUsed = nullptr;
 bool PriorityMemQueue::s_configured = false;
+FwEnumStoreType PriorityMemQueue::s_allocatorId = 0;
 
 //! \brief Get the bit mask for a priority
 //! \param priority: priority to get mask for
@@ -80,7 +81,6 @@ void PriorityMemQueueHandle::init() {
 
     // Initialize atomic variables
     this->m_priorityMask.store(1U << Os::Generic::Queue::DEFAULT_PRIORITY, std::memory_order_relaxed);
-    this->m_nonEmptyMask.store(0, std::memory_order_relaxed);
 }
 
 bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator,
@@ -128,10 +128,7 @@ void PriorityMemQueueHandle::deallocateArrays(Fw::MemAllocator& allocator, FwEnu
     // Deallocate arrays in reverse order using stored allocator ID
     FwSizeType arraySize = static_cast<FwSizeType>(this->m_maxPriority) + 1;
     if (this->m_highWaterMarks != nullptr) {
-        // Explicitly destroy atomics before deallocation
-        for (FwSizeType i = 0; i < arraySize; ++i) {
-            this->m_highWaterMarks[i].~atomic();
-        }
+        // std::atomic<U32> is trivially destructible — no explicit destructor needed
         allocator.deallocate(allocatorId, this->m_highWaterMarks);
         this->m_highWaterMarks = nullptr;
     }
@@ -317,6 +314,7 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
     s_configs = queueConfigs;
     s_numConfigs = numQueueConfigs;
     s_requirePrioritySizing = required;
+    s_allocatorId = allocatorId;
 }
 
 void PriorityMemQueue::resetConfig() {
@@ -325,7 +323,7 @@ void PriorityMemQueue::resetConfig() {
         // Get allocator (same as used in config())
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-        FwEnumStoreType allocatorId = 0;
+        FwEnumStoreType allocatorId = s_allocatorId;
 
         // Deallocate the tracking array
         allocator.deallocate(allocatorId, s_configsUsed);
@@ -507,7 +505,6 @@ void PriorityMemQueue::teardownInternal() {
 
     // Reset handle state
     this->m_handle.m_priorityMask.store(1U << Os::Generic::Queue::DEFAULT_PRIORITY, std::memory_order_relaxed);
-    this->m_handle.m_nonEmptyMask.store(0, std::memory_order_relaxed);
 
     // Deallocate arrays using stored allocator ID
     Fw::MemAllocator& allocator = this->getAllocator();
@@ -569,6 +566,7 @@ static void updateHighWaterMark(std::atomic<U32>* highWaterMarks,
                                 FwEnumStoreType queueId) {
     FW_ASSERT(highWaterMarks != nullptr, queueId, priority);
     U32 prevMax = highWaterMarks[priority].load(std::memory_order_acquire);
+    // This is best effort, debug data only. So if retry count is exceeded, just give up
     constexpr U32 MAX_CAS_RETRIES = 100;
     for (U32 casRetries = 0; casRetries < MAX_CAS_RETRIES; ++casRetries) {
         if (currentDepth <= prevMax) {
@@ -579,8 +577,6 @@ static void updateHighWaterMark(std::atomic<U32>* highWaterMarks,
             return;  // Update succeeded
         }
     }
-    // Should never reach here - CAS retry limit exceeded
-    FW_ASSERT(false, queueId, priority, MAX_CAS_RETRIES);
 }
 
 QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
@@ -626,9 +622,6 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     U32 currentDepth = static_cast<U32>(atomicQueue->getSize());
     updateHighWaterMark(this->m_handle.m_highWaterMarks, priority, currentDepth, this->m_handle.m_id);
 
-    // Mark this priority as non-empty (optimization for receive scan)
-    this->m_handle.m_nonEmptyMask.fetch_or(priorityBitMask(priority), std::memory_order_release);
-
     // Post semaphore to wake up receiver (if any)
     FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id, priority);
     Os::CountingSemaphoreInterface::Status semStatus = this->m_handle.m_notEmptySem->post();
@@ -637,50 +630,6 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     return QueueInterface::Status::OP_OK;
 }
 
-//! \brief Scan priorities and attempt dequeue from highest available
-//! \param handle: queue handle
-//! \param destination: destination buffer
-//! \param capacity: buffer capacity
-//! \param actualSize: output actual size dequeued
-//! \param priority: output priority of dequeued message
-//! \param scanMask: bitmask of priorities to scan
-//! \return true if message dequeued, false if all queues empty
-static bool scanAndDequeue(PriorityMemQueueHandle& handle,
-                           U8* destination,
-                           FwSizeType capacity,
-                           FwSizeType& actualSize,
-                           FwQueuePriorityType& priority,
-                           U32 scanMask) {
-    // Scan from highest to lowest priority
-    for (I32 p = handle.m_maxPriority; p >= 0; --p) {
-        FwQueuePriorityType testPriority = static_cast<FwQueuePriorityType>(p);
-
-        // Skip if priority not in scan mask
-        if ((scanMask & priorityBitMask(testPriority)) == 0) {
-            continue;
-        }
-
-        // Validate AtomicQueue exists
-        FW_ASSERT(handle.m_atomicQueues != nullptr, handle.m_id, testPriority);
-        Types::AtomicQueue* atomicQueue = &handle.m_atomicQueues[testPriority];
-        FW_ASSERT(atomicQueue->isCreated(), handle.m_id, testPriority);
-
-        // Try to dequeue
-        if (atomicQueue->dequeue(destination, capacity, actualSize)) {
-            priority = testPriority;
-
-            // Dequeue succeeded - check if more messages remain
-            if (atomicQueue->getSize() == 0) {
-                handle.m_nonEmptyMask.fetch_and(~priorityBitMask(testPriority), std::memory_order_relaxed);
-            }
-            return true;
-        } else {
-            // Queue was expected non-empty but is empty - clear hint bit
-            handle.m_nonEmptyMask.fetch_and(~priorityBitMask(testPriority), std::memory_order_relaxed);
-        }
-    }
-    return false;
-}
 
 QueueInterface::Status PriorityMemQueue::receive(U8* destination,
                                                  FwSizeType capacity,
@@ -700,42 +649,42 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
         blockType == QueueInterface::BlockingType::BLOCKING || blockType == QueueInterface::BlockingType::NONBLOCKING,
         blockType, this->m_handle.m_id);
 
-    // RECEIVE FLOW: Scan all enabled priorities from highest to lowest
-    // Loop:
-    //   1. Get enabled priority mask
-    //   2. Scan from highest to lowest priority
-    //   3. Try dequeue on each enabled priority until message found
-    //   4. If no message: wait on semaphore (blocking) or return empty (non-blocking)
+    // RECEIVE FLOW: Scan all enabled priorities from highest to lowest.
+    // For each enabled priority, use getSize() as a cheap pre-filter (2 relaxed loads).
+    // Attempt dequeue only when getSize() > 0; dequeue CAS is the authoritative check.
+    // If getSize() is transiently stale and dequeue() fails, continue to next priority.
+    // Liveness is guaranteed by the semaphore — spurious wakes just re-scan.
     //
-    // DESIGN: No state tracking - directly check AtomicQueues.
-    // Semaphore count may desync (multiple receivers wake on single message).
-    // Result: One gets message, others find all queues empty, block again.
-    //
-    // MEMORY ORDERING: Use acquire on priority mask to ensure visibility of queue state.
+    // MEMORY ORDERING: acquire on priority mask ensures visibility of queue state.
 
     // Bounded loop with compile-time limit for JPL Power of Ten compliance
     for (U32 reps = 0; reps < LOOP_GUARD_LIMIT; ++reps) {
-        // Get enabled priorities and non-empty hint mask
         U32 enabledPriorities = this->m_handle.m_priorityMask.load(std::memory_order_acquire);
-        U32 nonEmptyHint = this->m_handle.m_nonEmptyMask.load(std::memory_order_acquire);
 
-        // Combine masks: only scan priorities that are both enabled and likely non-empty
-        U32 scanMask = enabledPriorities & nonEmptyHint;
-
-        // Scan priorities and attempt dequeue
-        if (scanAndDequeue(this->m_handle, destination, capacity, actualSize, priority, scanMask)) {
-            return QueueInterface::Status::OP_OK;
+        for (I32 p = this->m_handle.m_maxPriority; p >= 0; --p) {
+            FwQueuePriorityType testPriority = static_cast<FwQueuePriorityType>(p);
+            if ((enabledPriorities & priorityBitMask(testPriority)) == 0) {
+                continue;
+            }
+            FW_ASSERT(this->m_handle.m_atomicQueues != nullptr, this->m_handle.m_id, testPriority);
+            Types::AtomicQueue* aq = &this->m_handle.m_atomicQueues[testPriority];
+            FW_ASSERT(aq->isCreated(), this->m_handle.m_id, testPriority);
+            if (aq->getSize() == 0) {
+                continue;
+            }
+            if (aq->dequeue(destination, capacity, actualSize)) {
+                priority = testPriority;
+                return QueueInterface::Status::OP_OK;
+            }
         }
 
-        // No message available
+        // No message found
         if (blockType == QueueInterface::BlockingType::BLOCKING) {
-            // Wait for a message
             FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id);
             Os::CountingSemaphoreInterface::Status semStatus = this->m_handle.m_notEmptySem->wait();
             FW_ASSERT(semStatus == Os::CountingSemaphoreInterface::Status::OP_OK,
                       static_cast<FwAssertArgType>(semStatus));
         } else {
-            // Non-blocking, return empty
             return QueueInterface::Status::EMPTY;
         }
     }

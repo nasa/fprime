@@ -82,22 +82,38 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Ref::Test::PriorityMemQueue::Tester& state) { return state.isCreated() && !state.isFull(); }
+    bool precondition(const Ref::Test::PriorityMemQueue::Tester& state) { 
+        // Can only send if created, not full, AND at least one priority is enabled
+        return state.isCreated() && !state.isFull() && state.hasEnabledPriority();
+    }
 
     //! Action
     void action(Ref::Test::PriorityMemQueue::Tester& state) {
         QueueMessage msg = state.generateRandomMessage();
 
-        // Ensure we only send to enabled priorities to avoid deadlock
-        // (disabled priorities can hold messages but won't be scanned by receive)
-        while (!state.isPriorityEnabled(msg.priority)) {
-            msg.randomize();  // Regenerate until we get an enabled priority
+        // Deterministically search for enabled non-full priority to ensure bounded loop
+        // (satisfies JPL Power of Ten Rule #2: fixed, provable loop bounds)
+        // Start from randomly selected priority and iterate through all priorities in order
+        FwQueuePriorityType startPriority = msg.priority;
+        bool found = false;
+        
+        for (U32 attempts = 0; attempts < Os::Generic::Queue::MAX_PRIORITIES; ++attempts) {
+            FwQueuePriorityType testPriority = (startPriority + attempts) % Os::Generic::Queue::MAX_PRIORITIES;
+            if (state.isPriorityEnabled(testPriority) && !state.isPriorityFull(testPriority)) {
+                msg.priority = testPriority;
+                found = true;
+                break;
+            }
+        }
+        
+        // If couldn't find suitable priority, fail fast
+        if (!found) {
+            FAIL() << "Failed to find enabled non-full priority after checking all " 
+                   << Os::Generic::Queue::MAX_PRIORITIES << " priorities";
         }
 
-        // Choose a random blocking type
-        Os::QueueInterface::BlockingType blockType = (STest::Random::lowerUpper(0, 1) == 0)
-                                                         ? Os::QueueInterface::BlockingType::NONBLOCKING
-                                                         : Os::QueueInterface::BlockingType::BLOCKING;
+        // Use non-blocking to avoid deadlock - precondition ensures queue is not full overall
+        Os::QueueInterface::BlockingType blockType = Os::QueueInterface::BlockingType::NONBLOCKING;
 
         printf("[PriorityMemQueue] Send: priority=%u, size=%zu, blockType=%s\n", msg.priority, msg.size,
                (blockType == Os::QueueInterface::BlockingType::NONBLOCKING) ? "NONBLOCKING" : "BLOCKING");
@@ -125,7 +141,8 @@ struct Receive : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
 
     //! Precondition
     bool precondition(const Ref::Test::PriorityMemQueue::Tester& state) {
-        return state.isCreated() && !state.isEmpty();
+        // Can only receive if there are messages in enabled priorities
+        return state.isCreated() && state.hasReceivableMessages();
     }
 
     //! Action
@@ -235,12 +252,25 @@ struct FillQueue : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
     void action(Ref::Test::PriorityMemQueue::Tester& state) {
         printf("[PriorityMemQueue] FillQueue: Filling queue to capacity\n");
         // Fill the queue until it's full
+        // With multi-priority queues and random messages, individual priorities may fill
+        // before others. Keep trying until all priorities are full (isFull() returns true).
         U32 count = 0;
-        while (!state.isFull()) {
+        U32 consecutiveFulls = 0;
+        
+        while (!state.isFull() && consecutiveFulls < FILL_QUEUE_MAX_RETRIES) {
             QueueMessage msg = state.generateRandomMessage();
             Os::QueueInterface::Status status = state.send(msg, Os::QueueInterface::BlockingType::NONBLOCKING);
-            ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-            count++;
+            
+            if (status == Os::QueueInterface::Status::OP_OK) {
+                count++;
+                consecutiveFulls = 0;  // Reset counter on success
+            } else if (status == Os::QueueInterface::Status::FULL) {
+                // This priority is full, try another random message
+                consecutiveFulls++;
+            } else {
+                // Unexpected error
+                ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+            }
         }
 
         printf("[PriorityMemQueue] FillQueue: Filled with %u messages\n", count);

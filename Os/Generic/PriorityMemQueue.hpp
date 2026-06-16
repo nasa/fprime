@@ -22,8 +22,13 @@ namespace Generic {
 
 // Constants
 namespace Queue {
-// JPL heritage implementation supported up to 32 priorities per message queue, limiting to 16 to reduce memory
-// footprint
+// Maximum number of priority levels supported per queue (0-15).
+// Limited to 16 to:
+// - Fit priority bitmask in a 32-bit atomic for efficient lock-free operations
+// - Reduce memory footprint (each priority requires its own AtomicQueue)
+// - Meet typical F' component needs (most use 2-4 priorities)
+// WARNING: Standard F' components may use priorities outside this range.
+// Ensure topology priority assignments are within [0, MAX_PRIORITIES-1].
 constexpr static FwSizeType MAX_PRIORITIES = 16;
 constexpr static FwSizeType DEFAULT_PRIORITY = 0;
 }  // namespace Queue
@@ -38,18 +43,16 @@ class PriorityMemQueue;
 //! bitmasks and a counting semaphore for receive notification.
 struct PriorityMemQueueHandle : public QueueHandle {
     // Per-priority AtomicQueues (dynamically allocated)
-    Types::AtomicQueue* m_atomicQueues;    // Pointer to array of AtomicQueues
-    FwQueuePriorityType m_maxPriority;     // Highest priority value (array size = maxPriority + 1)
-    Os::CountingSemaphore* m_notEmptySem;  // Counting semaphore signaling messages available
-    FwEnumStoreType m_id;                  // Queue identifier
-    FwEnumStoreType m_allocatorId;         // Allocator ID for memory operations
-    std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
-    std::atomic<U32> m_nonEmptyMask;       // Bit mask of priorities with messages (optimization)
-    std::atomic<U32>* m_highWaterMarks;    // Pointer to array of per-priority high water marks
+    Types::AtomicQueue* m_atomicQueues = nullptr;   // Pointer to array of AtomicQueues
+    FwQueuePriorityType m_maxPriority = 0;          // Highest priority value (array size = maxPriority + 1)
+    Os::CountingSemaphore* m_notEmptySem = nullptr; // Counting semaphore signaling messages available
+    FwEnumStoreType m_id = 0;                       // Queue identifier
+    FwEnumStoreType m_allocatorId = 0;              // Allocator ID for memory operations
+    std::atomic<U32> m_priorityMask{0};             // Bit mask of enabled priorities
+    std::atomic<U32>* m_highWaterMarks = nullptr;   // Pointer to array of per-priority high water marks
 
-    //! \brief Constructor to initialize members
-    PriorityMemQueueHandle()
-        : m_atomicQueues(nullptr), m_maxPriority(0), m_notEmptySem(nullptr), m_highWaterMarks(nullptr) {}
+    //! \brief Constructor
+    PriorityMemQueueHandle() = default;
 
     //! \brief Initialize the handle
     void init();
@@ -225,6 +228,7 @@ class PriorityMemQueue : public Os::QueueInterface {
     static bool s_requirePrioritySizing;
     static std::atomic<bool>* s_configsUsed;
     static bool s_configured;
+    static FwEnumStoreType s_allocatorId;
 
   private:
     //! \brief Find the highest priority with available messages

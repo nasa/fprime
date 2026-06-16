@@ -68,12 +68,12 @@ When an index is pulled from this structure, the root is removed as it is the hi
 
 ## Os::PriorityMemQueue
 
-Os::PriorityMemQueue is an ISR-safe and SMP-safe, priority-based memory queue implementation for F´ using VxWorks message queues (msgQ). This implementation leverages the VxWorks msgQ API to provide robust multi-core synchronization without custom spinlock management, eliminating interrupt starvation issues while maintaining ISR safety.
+Os::PriorityMemQueue is an ISR-safe and SMP-safe, priority-based memory queue implementation for F´ using lock-free atomic circular buffers (`AtomicQueue`). Each priority level has its own dedicated `AtomicQueue`, providing O(1) enqueue and dequeue without mutexes or interrupt disable.
 
 The key components are:
 
-1. **VxWorks msgQ** - One msgQ per priority level for ISR-safe + SMP-safe message storage
-2. **Atomic Priority Tracking** - Lock-free bitmasks to track which priorities have messages
+1. **AtomicQueue** - One lock-free MPMC circular buffer per priority level for ISR-safe + SMP-safe message storage
+2. **Atomic Priority Mask** - Lock-free bitmask tracking which priorities are enabled
 3. **Counting Semaphore** - Notification mechanism for blocking receive operations
 4. **PriorityMemQueue** - Main queue implementation that implements Os::QueueInterface
 
@@ -104,60 +104,47 @@ PMQ-014 | The PriorityMemQueue shall provide per-priority O(1) enqueue and deque
 > [!NOTE]
 > Os::PriorityMemQueue provides ISR safety and per-priority configuration at the cost of increased complexity and memory usage compared to Os::PriorityQueue.
 
-### VxWorks msgQ-Based Architecture
+### AtomicQueue-Based Architecture
 
 #### Overview
 
-`PriorityMemQueue` uses VxWorks message queues (`msgQLib`) for message storage and synchronization. This approach leverages Wind River's platform-optimized queue implementation that provides:
-- **ISR Safety**: `msgQSend` can be called from interrupt context
-- **SMP Safety**: Atomic operations prevent multi-core race conditions
-- **No Interrupt Starvation**: msgQ uses task-level synchronization internally, not global interrupt disable
-- **Platform Optimization**: Wind River has tuned msgQ performance for VxWorks SMP systems
+`PriorityMemQueue` uses `AtomicQueue` — a lock-free MPMC (multi-producer, multi-consumer) circular buffer — for message storage at each priority level. This provides:
+- **ISR Safety**: Enqueue and dequeue use only atomic CAS operations; no interrupt disable or mutex
+- **SMP Safety**: All position tracking uses `std::atomic` with acquire/release ordering on slot sequence numbers
+- **Generic**: No OS-specific APIs; works on any platform providing `std::atomic`
 
-#### Per-Priority Message Queues
+#### Per-Priority AtomicQueues
 
-Each priority level has its own dedicated VxWorks message queue created with `msgQCreate()`:
+Each priority level has its own dedicated `AtomicQueue`, allocated via the F´ memory allocator:
 
-```cpp
-MSG_Q_ID msgQ = msgQCreate(numMsgs, maxMsgSize, MSG_Q_FIFO);
-```
-
-**Parameters**:
-- `numMsgs`: Maximum number of messages for this priority
-- `maxMsgSize`: Maximum message size in bytes
-- `MSG_Q_FIFO`: FIFO ordering within the priority level
-
-**Storage**:
 ```cpp
 struct PriorityMemQueueHandle {
-    MSG_Q_ID m_msgQueues[MAX_PRIORITIES];   // VxWorks msgQ handles
-    FwSizeType m_msgSizes[MAX_PRIORITIES];  // Max size per priority
-    FwSizeType m_depths[MAX_PRIORITIES];    // Depth per priority
-    ...
+    Types::AtomicQueue* m_atomicQueues;    // Array of per-priority circular buffers
+    std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
+    Os::CountingSemaphore* m_notEmptySem;  // Semaphore for blocking receive
+    std::atomic<U32>* m_highWaterMarks;    // Per-priority peak depth
 };
 ```
 
-#### Priority Tracking with Atomics
+#### Send Flow
 
-To implement priority-based dequeue ordering, `PriorityMemQueue` maintains lock-free atomic bitmasks:
+1. Resolve priority to its `AtomicQueue` (or fallback to default priority 0)
+2. Enqueue via lock-free CAS: `atomicQueue->enqueue(buffer, size)`
+3. Update per-priority high water mark
+4. Post semaphore to wake receiver: `m_notEmptySem->post()`
 
-```cpp
-std::atomic<U32> m_priorityMask;       // Which priorities are enabled (bit per priority)
-std::atomic<U32> m_prioritiesWithMsg;  // Which priorities have messages
-```
+#### Receive Flow
 
-**Send Flow**:
-1. Call `msgQSend()` - VxWorks handles synchronization
-2. Atomically set bit: `m_prioritiesWithMsg.fetch_or(1 << priority)`
-3. Post semaphore to wake receiver: `m_notEmpty.post()`
+1. Load enabled priority mask with `memory_order_acquire`
+2. Scan from highest to lowest enabled priority:
+   - Call `getSize()` as a cheap pre-filter (2 relaxed loads)
+   - If `getSize() > 0`, attempt `dequeue()` via lock-free CAS
+   - On success, return message; on failure (MPSC contention), continue to next priority
+3. If no message found:
+   - BLOCKING: `wait()` on semaphore, then re-scan
+   - NONBLOCKING: return `EMPTY`
 
-**Receive Flow**:
-1. Read bitmask (lock-free): `priorities = m_prioritiesWithMsg & m_priorityMask`
-2. Find highest priority bit set
-3. Call `msgQReceive(msgQ[priority], ..., NO_WAIT)`
-4. If queue now empty, atomically clear bit: `m_prioritiesWithMsg.fetch_and(~(1 << priority))`
-
-This design minimizes synchronization overhead - only atomic operations on small integers, no spinlocks needed.
+Liveness is guaranteed by the semaphore — a spurious `getSize()` miss simply causes a re-scan after the next semaphore post.
 
 ### PriorityMemQueue Overview
 
@@ -290,18 +277,11 @@ namespace PriorityBufferConfig {
 
 ### ISR Safety
 
-The VxWorks msgQ-based implementation provides ISR safety through:
+The `AtomicQueue`-based implementation provides ISR safety through:
 
-1. **msgQSend()**: ISR-safe by design in VxWorks
-   - Can be called with `NO_WAIT` timeout from interrupt context
-   - Uses atomic operations internally for SMP safety
-   
-2. **Atomic Bitmasks**: Lock-free priority tracking
-   - `std::atomic<U32>` operations are compiler-intrinsic atomics
-   - No interrupt disable or mutex needed
-   
-3. **msgQReceive()**: ISR-safe with `NO_WAIT` timeout
-   - Non-blocking variant safe from interrupt context
+1. **Lock-free enqueue/dequeue**: Uses atomic CAS on slot sequence numbers; no mutex, no interrupt disable
+2. **Atomic priority mask**: `std::atomic<U32>` with acquire/release ordering — no spinlock needed
+3. **Non-blocking path**: With `NONBLOCKING`, send and receive never call any blocking OS primitive
 
 **ISR Usage Pattern**:
 ```cpp
@@ -311,6 +291,9 @@ queue.receive(dest, capacity, QueueInterface::BlockingType::NONBLOCKING, size, p
 ```
 
 > [!WARNING]
-> **Blocking operations** (`BlockingType::BLOCKING`) use counting semaphores and **must NOT** be called from ISR context. VxWorks will assert if blocking is attempted in interrupt context.
+> **Blocking operations** (`BlockingType::BLOCKING`) use a counting semaphore (`post()`/`wait()`) and **must NOT** be called from ISR context. Semaphore blocking from ISR context is undefined behavior on most RTOSs.
+
+> [!NOTE]
+> ISR safety of `post()` (called by `send()`) depends on the platform's counting semaphore implementation. Verify `Os_CountingSemaphore` ISR safety for your target platform before using `send()` from ISR context.
 
 
