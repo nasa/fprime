@@ -145,10 +145,10 @@ class PriorityMemQueue : public Os::QueueInterface {
     virtual ~PriorityMemQueue();
 
     //! \brief copy constructor is forbidden
-    PriorityMemQueue(const QueueInterface& other) = delete;
+    explicit PriorityMemQueue(const QueueInterface& other) = delete;
 
     //! \brief copy constructor is forbidden
-    PriorityMemQueue(const QueueInterface* other) = delete;
+    explicit PriorityMemQueue(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
     PriorityMemQueue& operator=(const QueueInterface& other) override = delete;
