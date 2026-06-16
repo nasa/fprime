@@ -10,4 +10,3 @@ extern Fw::MemAllocator& memAllocator;
 }  // namespace DpCompression
 
 #endif
-

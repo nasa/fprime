@@ -16,7 +16,6 @@ struct SubtopologyState {
 struct TopologyState {
     SubtopologyState dpCompression;
 };
-}  // namespace DataProducts
+}  // namespace DpCompression
 
 #endif
-

@@ -102,7 +102,11 @@ void DpDemo ::SelectColor_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Ref::DpDem
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, DpDemo_DpReqType reqType, U32 priority, Fw::DpCfg::ProcType proc) {
+void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
+                            U32 cmdSeq,
+                            DpDemo_DpReqType reqType,
+                            U32 priority,
+                            Fw::DpCfg::ProcType proc) {
     // make sure DPs are available
     if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productRequestOut_OutputPort(0)) {
         this->log_WARNING_HI_DpsNotConnected();
