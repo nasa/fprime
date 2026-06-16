@@ -28,19 +28,12 @@ include("settings/ini")
 if (NOT FPRIME_LOADED_VIA_FIND_PACKAGE OR DEFINED FPRIME_SETTINGS_FILE)
     ini_to_cache()
 endif()
-# When ini processing is skipped and no install destination was set, default to build-artifacts under the project
-if (FPRIME_LOADED_VIA_FIND_PACKAGE AND NOT DEFINED FPRIME_SETTINGS_FILE
-        AND NOT DEFINED FPRIME_INSTALL_DEST AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "/" CACHE PATH "Install prefix" FORCE)
-endif()
-
 # FPRIME_INSTALL_DIRECTORY is the default DESTDIR used by fprime_install.cmake
 # when the user has not set DESTDIR in the environment.
 if(NOT DEFINED FPRIME_INSTALL_DIRECTORY)
     set(FPRIME_INSTALL_DIRECTORY "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE INTERNAL
         "Install destination used as default DESTDIR" FORCE)
 endif()
-set(CMAKE_INSTALL_PREFIX "/" CACHE PATH "Install prefix (DESTDIR controls actual location)" FORCE)
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`

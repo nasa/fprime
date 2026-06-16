@@ -3,8 +3,8 @@
 #
 # Wrapper script invoked by POST_BUILD commands to install build artifacts.
 # Defaults DESTDIR to FPRIME_INSTALL_DIRECTORY (passed via -D) when the user
-# has not set DESTDIR in the environment. This keeps CMAKE_INSTALL_PREFIX at
-# "/" so that DESTDIR alone controls the final install location.
+# has not set DESTDIR in the environment. Sets CMAKE_INSTALL_PREFIX to "/"
+# so that DESTDIR alone controls the final install location.
 #
 # Expected -D arguments:
 #   FPRIME_INSTALL_DIRECTORY - default install directory (from configure step)
@@ -14,4 +14,5 @@
 if(NOT DEFINED ENV{DESTDIR})
     set(ENV{DESTDIR} "${FPRIME_INSTALL_DIRECTORY}")
 endif()
+set(CMAKE_INSTALL_PREFIX "/")
 include("${FPRIME_BUILD_DIR}/cmake_install.cmake")
