@@ -48,7 +48,7 @@ CMAKE_NEEDED_SETTINGS = {
     ),
     "default_cmake_options": lambda value: print_list_settings(value.split("\n")),
     # Sets install directory used as default DESTDIR by fprime_install.cmake
-    "install_destination": partial(print_setting, "FPRIME_INSTALL_DIRECTORY"),
+    "install_destination": partial(print_setting, "FPRIME_INSTALL_DEST"),
 }
 
 

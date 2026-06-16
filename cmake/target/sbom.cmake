@@ -30,7 +30,7 @@ function(sbom_add_global_target TARGET)
         install(FILES "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_sbom.json" DESTINATION ${TOOLCHAIN_NAME} COMPONENT ${TARGET})
         add_custom_command(TARGET "${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
                           -DCMAKE_INSTALL_COMPONENT=${TARGET}
-                          -DFPRIME_INSTALL_DIRECTORY=${FPRIME_INSTALL_DIRECTORY}
+                          -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
                           -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
                           -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
     else()

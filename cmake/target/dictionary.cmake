@@ -42,7 +42,7 @@ function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FUL
         install(FILES ${AUTOCODER_GENERATED_OTHER} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${TARGET}")
         add_custom_command(TARGET "${MODULE}_${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
             -DCMAKE_INSTALL_COMPONENT=${MODULE}_${TARGET}
-            -DFPRIME_INSTALL_DIRECTORY=${FPRIME_INSTALL_DIRECTORY}
+            -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
             -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
             -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
     endif()
@@ -56,7 +56,7 @@ function(dictionary_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FUL
             install(FILES ${DICTIONARY_FILES} DESTINATION ${TOOLCHAIN_NAME}/${MODULE}/dict COMPONENT "${MODULE}_${DEPENDENCY}_${TARGET}")
             add_custom_command(TARGET "${MODULE}_${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
                 -DCMAKE_INSTALL_COMPONENT=${MODULE}_${DEPENDENCY}_${TARGET}
-                -DFPRIME_INSTALL_DIRECTORY=${FPRIME_INSTALL_DIRECTORY}
+                -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
                 -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
                 -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
             # Make deployment depend on the module dictionary target

@@ -17,21 +17,16 @@
 #
 ####
 include_guard()
-# Remap changed settings
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(FPRIME_INSTALL_DIRECTORY ${FPRIME_INSTALL_DEST} CACHE INTERNAL
-        "Install destination used as default DESTDIR" FORCE)
-endif()
 include("settings/ini")
 # Skip ini processing when fprime was loaded via find_package() and no settings file was explicitly provided.
 # In the find_package flow the project does not rely on fprime-util or settings.ini for path configuration.
 if (NOT FPRIME_LOADED_VIA_FIND_PACKAGE OR DEFINED FPRIME_SETTINGS_FILE)
     ini_to_cache()
 endif()
-# FPRIME_INSTALL_DIRECTORY is the default DESTDIR used by fprime_install.cmake
+# FPRIME_INSTALL_DEST is the default DESTDIR used by fprime_install.cmake
 # when the user has not set DESTDIR in the environment.
-if(NOT DEFINED FPRIME_INSTALL_DIRECTORY)
-    set(FPRIME_INSTALL_DIRECTORY "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE INTERNAL
+if(NOT DEFINED FPRIME_INSTALL_DEST)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE INTERNAL
         "Install destination used as default DESTDIR" FORCE)
 endif()
 
