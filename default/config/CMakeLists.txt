@@ -40,4 +40,6 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/CRCCheckerConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileManagerConfig.hpp"
     BASE_CONFIG
+    DEPENDS
+        "${FPRIME_GLOBAL_INTERFACE_TARGET}"
 )
