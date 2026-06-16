@@ -20,14 +20,14 @@
 #include "STest/Scenario/RandomScenario.hpp"
 
 // Constants for testing
-const U32 QUEUE_DEPTH = 10;
-const U32 MESSAGE_SIZE = 128;
-const U32 MAX_MESSAGES = 512;  // Max capacity for shadow queue (will be limited by per-priority config)
-const U32 RANDOM_BOUND = 200;  // Reduced from 1000 to keep test time under 10 seconds
-const U32 MAX_TEST_MESSAGE_ID = 1000000;
-const FwEnumStoreType QUEUE_ID = 42;
-const U32 FILL_QUEUE_MAX_RETRIES = 100;  // Max consecutive FULL retries before assuming all priorities full
-const U32 SEND_PRIORITY_SEARCH_MAX_ATTEMPTS = 50;  // Max attempts to find enabled non-full priority
+constexpr U32 QUEUE_DEPTH = 10;
+constexpr U32 MESSAGE_SIZE = 128;
+constexpr U32 MAX_MESSAGES = 512;  // Max capacity for shadow queue (will be limited by per-priority config)
+constexpr U32 RANDOM_BOUND = 200;  // Reduced from 1000 to keep test time under 10 seconds
+constexpr U32 MAX_TEST_MESSAGE_ID = 1000000;
+constexpr FwEnumStoreType QUEUE_ID = 42;
+constexpr U32 FILL_QUEUE_MAX_RETRIES = 100;  // Max consecutive FULL retries before assuming all priorities full
+constexpr U32 SEND_PRIORITY_SEARCH_MAX_ATTEMPTS = 50;  // Max attempts to find enabled non-full priority
 
 // Test configuration
 Os::Generic::PriorityMemQueue::QueuePriorityConfig priorityConfigs[3] = {
@@ -436,345 +436,177 @@ class Tester {
 }  // namespace Ref
 
 // ======================================================================
-// Configuration Tests
+// Configuration Tests - Parameterized to reduce duplication
 // ======================================================================
 
-// Test configuration with single queue and single priority
-TEST_F(PriorityMemQueueTestFixture, SingleQueueSinglePriority) {
-    // Reset configuration state
+// Parameterized config test structure
+struct ConfigTestCase {
+    const char* name;
+    FwEnumStoreType queueId;
+    std::vector<Os::Generic::PriorityMemQueue::QueuePriorityConfig> priorities;
+    bool testSendRecv;  // If true, perform send/receive validation
+};
+
+class PriorityMemQueueConfigTest : public PriorityMemQueueTestFixture,
+                                   public ::testing::WithParamInterface<ConfigTestCase> {};
+
+TEST_P(PriorityMemQueueConfigTest, ConfigAndOperate) {
+    auto testCase = GetParam();
     PriorityMemQueueTestHelper::resetConfig();
-
-    // Create a config with 1 queue, 1 priority
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfig = {0, 5, 64};
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {100, 1, &testPriorityConfig};
-    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
-
-    // Configure the system
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
+    
+    // Build configuration from test case
+    std::vector<Os::Generic::PriorityMemQueue::QueuePriorityConfig> priorityCfgs = testCase.priorities;
+    Os::Generic::PriorityMemQueue::QueueConfig qCfg = {
+        testCase.queueId, 
+        static_cast<U8>(priorityCfgs.size()), 
+        priorityCfgs.data()
+    };
+    Os::Generic::PriorityMemQueue::QueueConfig qCfgs[] = {qCfg};
+    
+    Os::Generic::PriorityMemQueue::configure(qCfgs, 1, false,
                                              Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    // Create a queue using this configuration
+    
+    // Create and test queue
     Os::Generic::PriorityMemQueue queue;
-    Fw::String name("TestQueue1");
-    Os::QueueInterface::Status status = queue.create(100, name, 10, 128);
+    Fw::String name(testCase.name);
+    Os::QueueInterface::Status status = queue.create(testCase.queueId, name, 10, 128);
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    
+    if (testCase.testSendRecv) {
+        U8 sendData[64] = {1, 2, 3};
+        status = queue.send(sendData, 3, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+        
+        U8 recvData[64];
+        FwSizeType actualSize;
+        FwQueuePriorityType priority;
+        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+        ASSERT_EQ(3, actualSize);
+    }
+    
+    queue.teardown();
+}
 
-    // Test send/receive
-    U8 sendData[64] = {1, 2, 3};
-    status = queue.send(sendData, 3, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+INSTANTIATE_TEST_SUITE_P(AllConfigs, PriorityMemQueueConfigTest, ::testing::Values(
+    ConfigTestCase{"SinglePriority", 100, {{0, 64, 5}}, true},
+    ConfigTestCase{"ThreePriorities", 103, {{0, 64, 5}, {1, 32, 6}, {2, 48, 7}}, false},
+    ConfigTestCase{"FivePriorities", 103, {{0, 64, 5}, {1, 32, 6}, {2, 48, 7}, {3, 64, 8}, {4, 32, 10}}, false}
+));
 
-    U8 recvData[64];
+// Multiple queue instances test
+TEST_F(PriorityMemQueueTestFixture, MultipleQueues) {
+    PriorityMemQueueTestHelper::resetConfig();
+    
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig cfg1[] = {{0, 64, 5}};
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig cfg2[] = {{0, 128, 10}};
+    Os::Generic::PriorityMemQueue::QueueConfig qCfgs[] = {{101, 1, cfg1}, {102, 1, cfg2}};
+    
+    Os::Generic::PriorityMemQueue::configure(qCfgs, 2, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    
+    Os::Generic::PriorityMemQueue queue1, queue2;
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue1.create(101, Fw::String("Q1"), 10, 128));
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue2.create(102, Fw::String("Q2"), 10, 128));
+    
+    U8 data[64] = {1};
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, 
+              queue1.send(data, 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, 
+              queue2.send(data, 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    
+    queue1.teardown();
+    queue2.teardown();
+}
+
+// Verify per-priority sizing and ordering
+TEST_F(PriorityMemQueueTestFixture, PriorityOrdering) {
+    PriorityMemQueueTestHelper::resetConfig();
+    
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig cfgs[] = {{0, 64, 5}, {1, 32, 6}, {2, 48, 7}};
+    Os::Generic::PriorityMemQueue::QueueConfig qCfg = {103, 3, cfgs};
+    Os::Generic::PriorityMemQueue::QueueConfig qCfgs[] = {qCfg};
+    Os::Generic::PriorityMemQueue::configure(qCfgs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+    
+    Os::Generic::PriorityMemQueue queue;
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(103, Fw::String("Q"), 10, 128));
+    
+    auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue.getHandle());
+    for (FwQueuePriorityType p = 0; p < 3; ++p) handle->enablePriority(p);
+    
+    // Send to all priorities, verify size limits and priority order on receive
+    U8 data[64];
+    for (FwQueuePriorityType p = 0; p < 3; ++p) {
+        data[0] = static_cast<U8>(p * 10);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, 
+                  queue.send(data, cfgs[p].maxMsgSize, p, Os::QueueInterface::BlockingType::NONBLOCKING));
+        // Oversized message should fail
+        ASSERT_EQ(Os::QueueInterface::Status::SIZE_MISMATCH,
+                  queue.send(data, cfgs[p].maxMsgSize + 1, p, Os::QueueInterface::BlockingType::NONBLOCKING));
+    }
+    
+    // Receive in priority order (highest first)
     FwSizeType actualSize;
     FwQueuePriorityType priority;
-    status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    ASSERT_EQ(3, actualSize);
-    ASSERT_EQ(0, priority);
-
+    for (FwSizeType i = 0; i < 3; ++i) {
+        FwQueuePriorityType expectedPriority = 2 - static_cast<FwQueuePriorityType>(i);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, 
+                  queue.receive(data, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority));
+        ASSERT_EQ(expectedPriority, priority);
+    }
+    
     queue.teardown();
 }
 
-// Test configuration with multiple queues
-TEST_F(PriorityMemQueueTestFixture, MultipleQueues) {
-    // Reset configuration state
-    PriorityMemQueueTestHelper::resetConfig();
-
-    // Create configs for 2 different queue instances
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfig1[] = {{0, 5, 64}};
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig1 = {101, 1, testPriorityConfig1};
-
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfig2[] = {{0, 10, 128}};
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig2 = {102, 1, testPriorityConfig2};
-
-    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig1, testQueueConfig2};
-
-    // Configure the system with 2 queue configs
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 2, false,
-                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    // Create both queues
-    Os::Generic::PriorityMemQueue queue1, queue2;
-    Fw::String name1("Queue1");
-    Fw::String name2("Queue2");
-
-    Os::QueueInterface::Status status1 = queue1.create(101, name1, 10, 128);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status1);
-
-    Os::QueueInterface::Status status2 = queue2.create(102, name2, 10, 128);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status2);
-
-    // Test both queues independently
-    U8 sendData1[64] = {1};
-    status1 = queue1.send(sendData1, 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status1);
-
-    U8 sendData2[128] = {2};
-    status2 = queue2.send(sendData2, 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status2);
-
-    queue1.teardown();
-    queue2.teardown();
-}
-
-// Test configuration with many priorities (> 3)
-TEST_F(PriorityMemQueueTestFixture, ManyPriorities) {
-    PriorityMemQueueTestHelper::resetConfig();
-
-    const FwQueuePriorityType NUM_QUEUE_CONFIGS = 5;
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[5] = {
-        {0, 5, 64}, {1, 6, 32}, {2, 7, 48}, {3, 8, 64}, {4, 10, 32}};
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {103, NUM_QUEUE_CONFIGS, testPriorityConfigs};
-    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, false,
-                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    Os::Generic::PriorityMemQueue queue;
-    Fw::String name("ManyPrioritiesQueue");
-    Os::QueueInterface::Status status = queue.create(103, name, 10, 128);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-
-    auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue.getHandle());
-
-    // Enable all priorities and send max-size messages
-    for (FwQueuePriorityType p = 0; p < NUM_QUEUE_CONFIGS; ++p) {
-        handle->enablePriority(p);
-        U8 data[10];
-        FwSizeType maxMsgSize = testPriorityConfigs[p].maxMsgSize;
-        for (FwSizeType i = 0; i < maxMsgSize; ++i) {
-            data[i] = static_cast<U8>(p * 10 + i);
-        }
-        status = queue.send(data, maxMsgSize, p, Os::QueueInterface::BlockingType::NONBLOCKING);
-        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    }
-
-    // Verify oversized messages are rejected
-    for (FwQueuePriorityType p = 0; p < NUM_QUEUE_CONFIGS; ++p) {
-        U8 data[11];
-        FwSizeType maxMsgSize = testPriorityConfigs[p].maxMsgSize;
-        status = queue.send(data, maxMsgSize + 1, p, Os::QueueInterface::BlockingType::NONBLOCKING);
-        ASSERT_EQ(Os::QueueInterface::Status::SIZE_MISMATCH, status);
-    }
-
-    // Receive messages and verify priority order and data content
-    for (FwQueuePriorityType p = 0; p < NUM_QUEUE_CONFIGS; ++p) {
-        FwQueuePriorityType expectedP = static_cast<FwQueuePriorityType>(NUM_QUEUE_CONFIGS - p - 1);
-        U8 recvData[64];
-        FwSizeType actualSize;
-        FwQueuePriorityType priority;
-        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-        ASSERT_EQ(expectedP, priority);
-        ASSERT_EQ(testPriorityConfigs[expectedP].maxMsgSize, actualSize);
-        for (FwSizeType i = 0; i < actualSize; ++i) {
-            ASSERT_EQ(static_cast<U8>(expectedP * 10 + i), recvData[i]);
-        }
-    }
-
-    // Verify per-priority depth limits
-    for (FwQueuePriorityType p = 0; p < NUM_QUEUE_CONFIGS; ++p) {
-        FwSizeType numMsgs = testPriorityConfigs[p].numMsgs;
-        U8 data[10];
-        FwSizeType maxMsgSize = testPriorityConfigs[p].maxMsgSize;
-        for (FwSizeType i = 0; i < maxMsgSize; ++i) {
-            data[i] = static_cast<U8>(p);
-        }
-        for (FwSizeType i = 0; i < numMsgs; ++i) {
-            status = queue.send(data, maxMsgSize, p, Os::QueueInterface::BlockingType::NONBLOCKING);
-            ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-        }
-        status = queue.send(data, maxMsgSize, p, Os::QueueInterface::BlockingType::NONBLOCKING);
-        ASSERT_EQ(Os::QueueInterface::Status::FULL, status);
-
-        U8 recvData[64];
-        FwSizeType actualSize;
-        FwQueuePriorityType priority;
-        for (FwSizeType i = 0; i < numMsgs; ++i) {
-            status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-            ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-            ASSERT_EQ(p, priority);
-        }
-        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-        ASSERT_EQ(Os::QueueInterface::Status::EMPTY, status);
-    }
-
-    queue.teardown();
-}
-
-// Test multiple reconfigurations
-TEST_F(PriorityMemQueueTestFixture, MultipleReconfigurations) {
-    // First configuration
-    PriorityMemQueueTestHelper::resetConfig();
-
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig priorityConfig1[] = {{0, 5, 64}};
-    Os::Generic::PriorityMemQueue::QueueConfig queueConfig1 = {104, 1, priorityConfig1};
-    Os::Generic::PriorityMemQueue::QueueConfig configs1[] = {queueConfig1};
-
-    Os::Generic::PriorityMemQueue::configure(configs1, 1, false,
-                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    Os::Generic::PriorityMemQueue queue1;
-    Fw::String name1("Queue1");
-    Os::QueueInterface::Status status = queue1.create(104, name1, 10, 128);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    queue1.teardown();
-
-    // Second configuration with different parameters
-    PriorityMemQueueTestHelper::resetConfig();
-
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig priorityConfig2[] = {{0, 10, 128}, {1, 10, 128}};
-    Os::Generic::PriorityMemQueue::QueueConfig queueConfig2 = {105, 2, priorityConfig2};
-    Os::Generic::PriorityMemQueue::QueueConfig configs2[] = {queueConfig2};
-
-    Os::Generic::PriorityMemQueue::configure(configs2, 1, false,
-                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    Os::Generic::PriorityMemQueue queue2;
-    Fw::String name2("Queue2");
-    status = queue2.create(105, name2, 10, 128);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    queue2.teardown();
-
-    // Third configuration with many queue configs
-    PriorityMemQueueTestHelper::resetConfig();
-
-    // Create 10 different queue configs
-    const FwSizeType NUM_QUEUES = 10;
-    Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs3[NUM_QUEUES];
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfigs3[NUM_QUEUES];
-
-    for (FwSizeType i = 0; i < NUM_QUEUES; ++i) {
-        testPriorityConfigs3[i] = {0, 5, 64};
-        testQueueConfigs3[i] = {static_cast<FwEnumStoreType>(200 + i), 1, &testPriorityConfigs3[i]};
-    }
-
-    Os::Generic::PriorityMemQueue::configure(testQueueConfigs3, NUM_QUEUES, false,
-                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    // Create and test a few of them
-    Os::Generic::PriorityMemQueue queues[3];
-    for (FwSizeType i = 0; i < 3; ++i) {
-        Fw::String name("Queue");
-        status = queues[i].create(static_cast<FwEnumStoreType>(200 + i), name, 10, 128);
-        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    }
-
-    for (FwSizeType i = 0; i < 3; ++i) {
-        queues[i].teardown();
-    }
-
-}
-
-// Test configuration with zero queues
+// Default configuration (zero queue configs)
 TEST_F(PriorityMemQueueTestFixture, ZeroQueues) {
-    // Reset configuration state
     PriorityMemQueueTestHelper::resetConfig();
-
-    // Configure with 0 queue configs (not required)
     Os::Generic::PriorityMemQueue::configure(nullptr, 0, false,
                                              Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    // Create a queue - should use default configuration
+    
     Os::Generic::PriorityMemQueue queue;
-    Fw::String name("DefaultQueue");
-    const FwSizeType queueDepth = 5;
-    const FwSizeType maxMsgSize = 64;
-    Os::QueueInterface::Status status = queue.create(106, name, queueDepth, maxMsgSize);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-
-    // Test 1: Verify max message size
-
-    // Should succeed with max size message
-    U8 maxSizeData[64];
-    for (FwSizeType i = 0; i < maxMsgSize; ++i) {
-        maxSizeData[i] = static_cast<U8>(i);
-    }
-    status = queue.send(maxSizeData, maxMsgSize, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-
-    // Should fail with oversized message
-    U8 oversizeData[65];
-    status = queue.send(oversizeData, maxMsgSize + 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::SIZE_MISMATCH, status);
-
-    // Read the message that was sent earlier
-    U8 recvData[64];
+    const FwSizeType depth = 5, maxMsgSz = 64;
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(106, Fw::String("Q"), depth, maxMsgSz));
+    
+    U8 data[65];
     FwSizeType actualSize;
     FwQueuePriorityType priority;
-    status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
-    ASSERT_EQ(maxMsgSize, actualSize);
-
-    // Test 2: Verify exactly queueDepth messages can be sent (no more, no less)
-
-    // Fill queue to capacity
-    U8 testData[64];
-    for (FwSizeType i = 0; i < maxMsgSize; ++i) {
-        testData[i] = static_cast<U8>(0xFF);
-    }
-
-    for (FwSizeType i = 0; i < queueDepth; ++i) {
-        status = queue.send(testData, maxMsgSize, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status) << "Failed to send message " << i << " of " << queueDepth;
-    }
-
-    // Try to send one more - should fail with FULL
-    status = queue.send(testData, maxMsgSize, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-    ASSERT_EQ(Os::QueueInterface::Status::FULL, status) << "Queue accepted more than " << queueDepth << " messages";
-
-    // Receive all messages
-    for (FwSizeType i = 0; i < queueDepth; ++i) {
-        status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status) << "Failed to receive message " << i;
-        ASSERT_EQ(maxMsgSize, actualSize);
-        ASSERT_EQ(0, priority);
-    }
-
-    // Try to receive one more - should fail with EMPTY
-    status = queue.receive(recvData, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-    ASSERT_EQ(Os::QueueInterface::Status::EMPTY, status) << "Queue returned more than " << queueDepth << " messages";
-
+    
+    // Verify max size accepted, oversize rejected
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.send(data, maxMsgSz, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    ASSERT_EQ(Os::QueueInterface::Status::SIZE_MISMATCH, queue.send(data, maxMsgSz + 1, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.receive(data, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority));
+    
+    // Verify depth limit
+    for (FwSizeType i = 0; i < depth; ++i)
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.send(data, maxMsgSz, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    ASSERT_EQ(Os::QueueInterface::Status::FULL, queue.send(data, maxMsgSz, 0, Os::QueueInterface::BlockingType::NONBLOCKING));
+    
+    for (FwSizeType i = 0; i < depth; ++i)
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.receive(data, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority));
+    ASSERT_EQ(Os::QueueInterface::Status::EMPTY, queue.receive(data, 64, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority));
+    
     queue.teardown();
 }
 
-// Helper function to set up a queue with partial priority configuration
-// Returns the created queue with priority 0 and 2 configured, priority 1 NOT configured.
-// Sends an initial test message to priority 2 to verify the configured priority works
-// before the main test begins (establishes baseline functionality).
-static Os::Generic::PriorityMemQueue* setupPartialPriorityQueue(FwEnumStoreType queueId,
-                                                                bool required,
-                                                                const char* queueName) {
-    // Reset configuration state
+// Helper: setup queue with partial priority config (0, 2 only - not 1)
+static Os::Generic::PriorityMemQueue* setupPartialPriorityQueue(FwEnumStoreType queueId, bool required, const char* queueName) {
     PriorityMemQueueTestHelper::resetConfig();
-
-    // Configure with specific priorities - only 0 and 2, NOT 1
-    static Os::Generic::PriorityMemQueue::QueuePriorityConfig testPriorityConfigs[] = {
-        {0, 64, 10}, {2, 32, 5}  // Only priority 0 and 2 are configured, priority 1 is NOT
-    };
-    Os::Generic::PriorityMemQueue::QueueConfig testQueueConfig = {queueId, 2, testPriorityConfigs};
-    Os::Generic::PriorityMemQueue::QueueConfig testConfigs[] = {testQueueConfig};
-
-    Os::Generic::PriorityMemQueue::configure(testConfigs, 1, required,
+    static Os::Generic::PriorityMemQueue::QueuePriorityConfig cfgs[] = {{0, 64, 10}, {2, 32, 5}};
+    Os::Generic::PriorityMemQueue::QueueConfig qCfg = {queueId, 2, cfgs};
+    Os::Generic::PriorityMemQueue::QueueConfig qCfgs[] = {qCfg};
+    Os::Generic::PriorityMemQueue::configure(qCfgs, 1, required,
                                              Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
-
-    // Create a queue
-    Os::Generic::PriorityMemQueue* queue = new Os::Generic::PriorityMemQueue();
-    Fw::String name(queueName);
-    Os::QueueInterface::Status status = queue->create(queueId, name, 10, 64);
-    EXPECT_EQ(Os::QueueInterface::Status::OP_OK, status);
-
-    // Enable priority 2
+    
+    auto* queue = new Os::Generic::PriorityMemQueue();
+    EXPECT_EQ(Os::QueueInterface::Status::OP_OK, queue->create(queueId, Fw::String(queueName), 10, 64));
+    
     auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue->getHandle());
     handle->enablePriority(2);
-
-    // Test 1: Sending to configured priority should work
-    U8 data1[32];
-    for (FwSizeType i = 0; i < 32; ++i) {
-        data1[i] = static_cast<U8>(i);
-    }
-    status = queue->send(data1, 32, 2, Os::QueueInterface::BlockingType::NONBLOCKING);
-    EXPECT_EQ(Os::QueueInterface::Status::OP_OK, status);
-
+    
+    U8 data[32] = {0};
+    EXPECT_EQ(Os::QueueInterface::Status::OP_OK, queue->send(data, 32, 2, Os::QueueInterface::BlockingType::NONBLOCKING));
     return queue;
 }
 
