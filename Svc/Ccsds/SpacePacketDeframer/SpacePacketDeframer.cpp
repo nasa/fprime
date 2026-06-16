@@ -22,16 +22,10 @@ SpacePacketDeframer ::~SpacePacketDeframer() {}
 
 namespace {
 
-bool isValidPacketIdentification(const SpacePacketHeader& header) {
+bool isValidPacketVersionNumber(const SpacePacketHeader& header) {
     const U16 packetIdentification = header.get_packetIdentification();
     const U16 pvn = (packetIdentification & SpacePacketSubfields::PvnMask) >> SpacePacketSubfields::PvnOffset;
-    const U16 packetType =
-        (packetIdentification & SpacePacketSubfields::PktTypeMask) >> SpacePacketSubfields::PktTypeOffset;
-    const U16 secondaryHeaderFlag =
-        (packetIdentification & SpacePacketSubfields::SecHdrMask) >> SpacePacketSubfields::SecHdrOffset;
-
-    return (pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL)) && (packetType == 0x0U) &&
-           (secondaryHeaderFlag == 0x0U);
+    return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
 }
 
 bool isValidSequenceControl(const SpacePacketHeader& header) {
@@ -39,6 +33,8 @@ bool isValidSequenceControl(const SpacePacketHeader& header) {
     const U16 sequenceFlags =
         (packetSequenceControl & SpacePacketSubfields::SeqFlagsMask) >> SpacePacketSubfields::SeqFlagsOffset;
 
+    // This component forwards one complete payload buffer immediately after parsing one Space Packet header.
+    // Segmented Space Packets require reassembly support that SpacePacketDeframer does not currently implement.
     return sequenceFlags == 0x3U;
 }
 
@@ -86,7 +82,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
         return;
     }
 
-    if (!isValidPacketIdentification(header) || !isValidSequenceControl(header)) {
+    if (!isValidPacketVersionNumber(header) || !isValidSequenceControl(header)) {
         this->log_WARNING_HI_InvalidPacket();
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);

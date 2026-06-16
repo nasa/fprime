@@ -214,56 +214,58 @@ void SpacePacketDeframerTester ::testInvalidPacketIdentificationControlFields() 
     ASSERT_EVENTS_InvalidPacket_SIZE(1);
 }
 
-void SpacePacketDeframerTester ::testInvalidPacketType() {
+void SpacePacketDeframerTester ::testCommandPacketTypeAccepted() {
     U8 payload[2] = {0xAA, 0xBB};
+    const U16 seqCount = 0x0012;
     ComCfg::FrameContext nullContext;
 
     Fw::Buffer buffer = this->assemblePacketWithControlFields(
         0x0,
-        0x1,  // command packet instead of telemetry packet
+        0x1,  // command packet type is protocol-valid and should not be rejected here
         0x0,
-        static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM),
+        static_cast<U16>(ComCfg::Apid::FW_PACKET_COMMAND),
         0x3,
-        0x0012,
+        seqCount,
         static_cast<U16>(sizeof(payload) - 1),
         payload,
         sizeof(payload));
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
-    ASSERT_from_dataOut_SIZE(0);
-    ASSERT_from_validateApidSeqCount_SIZE(0);
-    ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_validateApidSeqCount_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_COMMAND);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
+    ASSERT_EVENTS_SIZE(0);
 }
 
-void SpacePacketDeframerTester ::testInvalidSecondaryHeaderFlag() {
+void SpacePacketDeframerTester ::testSecondaryHeaderFlagAccepted() {
     U8 payload[2] = {0xAA, 0xBB};
+    const U16 seqCount = 0x0012;
     ComCfg::FrameContext nullContext;
 
     Fw::Buffer buffer = this->assemblePacketWithControlFields(
         0x0,
         0x0,
-        0x1,  // F Prime does not emit or expect secondary headers here
-        static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM),
+        0x1,  // secondary header presence is protocol-valid and should not be rejected here
+        static_cast<U16>(ComCfg::Apid::FW_PACKET_COMMAND),
         0x3,
-        0x0012,
+        seqCount,
         static_cast<U16>(sizeof(payload) - 1),
         payload,
         sizeof(payload));
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
-    ASSERT_from_dataOut_SIZE(0);
-    ASSERT_from_validateApidSeqCount_SIZE(0);
-    ASSERT_from_dataReturnOut_SIZE(1);
-    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_validateApidSeqCount_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);
     ASSERT_FROM_PORT_HISTORY_SIZE(2);
-    ASSERT_EVENTS_SIZE(1);
-    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_COMMAND);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
+    ASSERT_EVENTS_SIZE(0);
 }
 
 void SpacePacketDeframerTester ::testInvalidSequenceFlags() {
@@ -275,7 +277,7 @@ void SpacePacketDeframerTester ::testInvalidSequenceFlags() {
         0x0,
         0x0,
         static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM),
-        0x1,  // not unsegmented user data
+        0x1,  // segmented packets are not supported by the current SpacePacketDeframer implementation
         0x0012,
         static_cast<U16>(sizeof(payload) - 1),
         payload,

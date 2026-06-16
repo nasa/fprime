@@ -50,14 +50,14 @@ TEST(SpacePacketDeframer, testInvalidPacketIdentificationControlFields) {
     tester.testInvalidPacketIdentificationControlFields();
 }
 
-TEST(SpacePacketDeframer, testInvalidPacketType) {
+TEST(SpacePacketDeframer, testCommandPacketTypeAccepted) {
     Svc::Ccsds::SpacePacketDeframerTester tester;
-    tester.testInvalidPacketType();
+    tester.testCommandPacketTypeAccepted();
 }
 
-TEST(SpacePacketDeframer, testInvalidSecondaryHeaderFlag) {
+TEST(SpacePacketDeframer, testSecondaryHeaderFlagAccepted) {
     Svc::Ccsds::SpacePacketDeframerTester tester;
-    tester.testInvalidSecondaryHeaderFlag();
+    tester.testSecondaryHeaderFlagAccepted();
 }
 
 TEST(SpacePacketDeframer, testInvalidSequenceFlags) {
