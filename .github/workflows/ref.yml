@@ -89,7 +89,7 @@ jobs:
           location: ${{ github.workspace }}
       # Upgrade GDS to devel or pr-xxxx branch if it exists
       - name: "Upgrade fprime-gds to devel or pr-xxxx"
-        uses: nasa/fprime-actions/upgrade-package@use-token-for-limits
+        uses: nasa/fprime-actions/upgrade-package@devel
         with:
           repository: nasa/fprime-gds
       - name: "Download Build Artifacts"
