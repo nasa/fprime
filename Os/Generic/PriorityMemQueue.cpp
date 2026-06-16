@@ -657,7 +657,7 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
     //
     // MEMORY ORDERING: acquire on priority mask ensures visibility of queue state.
 
-    // Bounded loop with compile-time limit for JPL Power of Ten compliance
+    // Bounded loop with compile-time limit
     for (U32 reps = 0; reps < LOOP_GUARD_LIMIT; ++reps) {
         U32 enabledPriorities = this->m_handle.m_priorityMask.load(std::memory_order_acquire);
 

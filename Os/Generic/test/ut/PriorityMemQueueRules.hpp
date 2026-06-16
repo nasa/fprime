@@ -92,7 +92,6 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
         QueueMessage msg = state.generateRandomMessage();
 
         // Deterministically search for enabled non-full priority to ensure bounded loop
-        // (satisfies JPL Power of Ten Rule #2: fixed, provable loop bounds)
         // Start from randomly selected priority and iterate through all priorities in order
         FwQueuePriorityType startPriority = msg.priority;
         bool found = false;
