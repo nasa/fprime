@@ -101,7 +101,6 @@ jobs:
         uses: nasa/fprime-actions/upgrade-package@use-token-for-limits
         with:
           repository: nasa/fprime-gds
-          github-token: ${{ secrets.GITHUB_TOKEN }} # used to avoid API rate limits
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
         with:
