@@ -22,14 +22,13 @@ namespace Generic {
 
 // Constants
 namespace Queue {
-// Maximum number of priority levels supported per queue (0-15).
-// Limited to 16 to:
+// Maximum number of priority levels supported per queue (0-31).
+// Limited to 32 to:
 // - Fit priority bitmask in a 32-bit atomic for efficient lock-free operations
-// - Reduce memory footprint (each priority requires its own AtomicQueue)
 // - Meet typical F' component needs (most use 2-4 priorities)
 // WARNING: Standard F' components may use priorities outside this range.
-// Ensure topology priority assignments are within [0, MAX_PRIORITIES-1].
-constexpr static FwSizeType MAX_PRIORITIES = 16;
+// Ensure FPP priority assignments are within [0, MAX_PRIORITIES-1].
+constexpr static FwSizeType MAX_PRIORITIES = 32;
 constexpr static FwSizeType DEFAULT_PRIORITY = 0;
 }  // namespace Queue
 
@@ -42,27 +41,35 @@ class PriorityMemQueue;
 //! Each priority has its own AtomicQueue. Priority tracking uses atomic
 //! bitmasks and a counting semaphore for receive notification.
 struct PriorityMemQueueHandle : public QueueHandle {
-    // Per-priority AtomicQueues (dynamically allocated)
-    Types::AtomicQueue* m_atomicQueues = nullptr;   // Pointer to array of AtomicQueues
-    FwQueuePriorityType m_maxPriority = 0;          // Highest priority value (array size = maxPriority + 1)
+    // Sparse priority support: map priority→index into m_atomicQueues
+    // Reduces memory waste when using non-consecutive priorities (e.g., {0, 15, 31})
+    I8 m_priorityMap[Queue::MAX_PRIORITIES];        // Priority→index mapping (-1 = unused)
+    Types::AtomicQueue* m_atomicQueues = nullptr;   // Array sized to actual configured priorities
+    FwQueuePriorityType m_maxPriority = 0;          // Highest priority value (for iteration)
+    FwSizeType m_numActivePriorities = 0;           // Number of configured priorities
     Os::CountingSemaphore* m_notEmptySem = nullptr; // Counting semaphore signaling messages available
     FwEnumStoreType m_id = 0;                       // Queue identifier
     FwEnumStoreType m_allocatorId = 0;              // Allocator ID for memory operations
     std::atomic<U32> m_priorityMask{0};             // Bit mask of enabled priorities
-    std::atomic<U32>* m_highWaterMarks = nullptr;   // Pointer to array of per-priority high water marks
+    std::atomic<U32>* m_highWaterMarks = nullptr;   // Array indexed by priority map
 
     //! \brief Constructor
-    PriorityMemQueueHandle() = default;
+    PriorityMemQueueHandle() {
+        // Initialize priority map to all -1 (unused)
+        for (FwSizeType i = 0; i < Queue::MAX_PRIORITIES; ++i) {
+            m_priorityMap[i] = -1;
+        }
+    }
 
     //! \brief Initialize the handle
     void init();
 
-    //! \brief Allocate arrays for priority data
+    //! \brief Allocate arrays for priority data (sparse allocation)
+    //! Uses m_priorityMap to determine which priorities are configured
     //! \param allocator: memory allocator to use
     //! \param allocatorId: ID for memory allocation
-    //! \param maxPriority: highest priority value to support (array size will be maxPriority + 1)
     //! \return true if successful, false otherwise
-    bool allocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId, FwQueuePriorityType maxPriority);
+    bool allocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId);
 
     //! \brief Deallocate arrays for priority data
     //! \param allocator: memory allocator to use
@@ -78,6 +85,15 @@ struct PriorityMemQueueHandle : public QueueHandle {
     //!
     //! \param priority: priority to disable
     void disablePriority(FwQueuePriorityType priority);
+
+    //! \brief Get array index for a priority (inline for performance)
+    //! \param priority: priority to look up
+    //! \return array index, or -1 if priority not configured
+    I8 getPriorityIndex(FwQueuePriorityType priority) const {
+        // Bounds check before array access (buffer overflow protection)
+        FW_ASSERT(priority < Queue::MAX_PRIORITIES, priority);
+        return this->m_priorityMap[priority];
+    }
 };
 //! \brief AtomicQueue-based priority queue implementation
 //!

@@ -839,6 +839,102 @@ TEST_F(PriorityMemQueueTestFixture, OptionalPrioritySizingAssertion) {
     delete queue;
 }
 
+// Test sparse priority allocation with non-consecutive priorities {0, 15, 31}
+TEST_F(PriorityMemQueueTestFixture, SparsePriorityAllocation) {
+    // Reset configuration state
+    PriorityMemQueueTestHelper::resetConfig();
+
+    // Configure with sparse, non-consecutive priorities: 0, 15, 31
+    // This tests the memory optimization where only configured priorities allocate storage
+    Os::Generic::PriorityMemQueue::QueuePriorityConfig sparsePriorityConfigs[] = {
+        {0, 64, 10},   // Priority 0
+        {15, 32, 5},   // Priority 15 (gap of 14 priorities)
+        {31, 128, 8}   // Priority 31 (gap of 15 priorities)
+    };
+    Os::Generic::PriorityMemQueue::QueueConfig sparseQueueConfig = {109, 3, sparsePriorityConfigs};
+    Os::Generic::PriorityMemQueue::QueueConfig sparseConfigs[] = {sparseQueueConfig};
+
+    Os::Generic::PriorityMemQueue::configure(sparseConfigs, 1, false,
+                                             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
+
+    // Create queue
+    Os::Generic::PriorityMemQueue queue;
+    Fw::String name("SparseQueue");
+    Os::QueueInterface::Status status = queue.create(109, name, 10, 128);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    auto* handle = static_cast<Os::Generic::PriorityMemQueueHandle*>(queue.getHandle());
+
+    // Verify sparse allocation: only 3 AtomicQueues allocated (not 32)
+    ASSERT_EQ(3, handle->m_numActivePriorities) << "Should allocate only 3 queues, not 32";
+
+    // Verify priority map correctness
+    ASSERT_EQ(0, handle->getPriorityIndex(0)) << "Priority 0 should map to index 0";
+    ASSERT_EQ(1, handle->getPriorityIndex(15)) << "Priority 15 should map to index 1";
+    ASSERT_EQ(2, handle->getPriorityIndex(31)) << "Priority 31 should map to index 2";
+
+    // Verify unconfigured priorities return -1
+    ASSERT_EQ(-1, handle->getPriorityIndex(1)) << "Priority 1 (unconfigured) should return -1";
+    ASSERT_EQ(-1, handle->getPriorityIndex(14)) << "Priority 14 (unconfigured) should return -1";
+    ASSERT_EQ(-1, handle->getPriorityIndex(16)) << "Priority 16 (unconfigured) should return -1";
+    ASSERT_EQ(-1, handle->getPriorityIndex(30)) << "Priority 30 (unconfigured) should return -1";
+
+    // Enable all configured priorities
+    handle->enablePriority(0);
+    handle->enablePriority(15);
+    handle->enablePriority(31);
+
+    // Send messages to sparse priorities
+    U8 data0[64], data15[32], data31[128];
+    for (FwSizeType i = 0; i < 64; ++i) data0[i] = static_cast<U8>(0x00 + i);
+    for (FwSizeType i = 0; i < 32; ++i) data15[i] = static_cast<U8>(0x15 + i);
+    for (FwSizeType i = 0; i < 128; ++i) data31[i] = static_cast<U8>(0x31 + i);
+
+    status = queue.send(data0, 64, 0, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    status = queue.send(data15, 32, 15, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    status = queue.send(data31, 128, 31, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+
+    // Receive in priority order (highest first: 31, 15, 0)
+    U8 recvData[128];
+    FwSizeType actualSize;
+    FwQueuePriorityType priority;
+
+    status = queue.receive(recvData, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    ASSERT_EQ(31, priority) << "Should receive highest priority (31) first";
+    ASSERT_EQ(128, actualSize);
+
+    status = queue.receive(recvData, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    ASSERT_EQ(15, priority) << "Should receive priority 15 second";
+    ASSERT_EQ(32, actualSize);
+
+    status = queue.receive(recvData, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+    ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    ASSERT_EQ(0, priority) << "Should receive priority 0 last";
+    ASSERT_EQ(64, actualSize);
+
+    // Verify empty
+    status = queue.receive(recvData, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+    ASSERT_EQ(Os::QueueInterface::Status::EMPTY, status);
+
+    // Verify per-priority depth limits work correctly with sparse allocation
+    for (FwSizeType i = 0; i < sparsePriorityConfigs[1].numMsgs; ++i) {
+        status = queue.send(data15, 32, 15, Os::QueueInterface::BlockingType::NONBLOCKING);
+        ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
+    }
+    // Next send to priority 15 should fail (full)
+    status = queue.send(data15, 32, 15, Os::QueueInterface::BlockingType::NONBLOCKING);
+    ASSERT_EQ(Os::QueueInterface::Status::FULL, status) << "Priority 15 should be full after numMsgs sends";
+
+    queue.teardown();
+}
+
 // Test that calling config() twice without reset asserts
 TEST_F(PriorityMemQueueTestFixture, DoubleConfigAssertion) {
     // Reset configuration state

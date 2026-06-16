@@ -84,8 +84,8 @@ The requirements for `Os::Generic::PriorityMemQueue` are as follows:
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 PMQ-001 | The PriorityMemQueue shall implement the Os::QueueInterface for compatibility with F´ components | Inspection, Unit Test
-PMQ-002 | The PriorityMemQueue shall support up to 16 priority levels | Inspection, Unit Test
-PMQ-003 | The PriorityMemQueue shall allocate separate memory pools for each priority level | Inspection, Unit Test
+PMQ-002 | The PriorityMemQueue shall support up to 32 priority levels | Inspection, Unit Test
+PMQ-003 | The PriorityMemQueue shall allocate memory pools only for configured priority levels (sparse allocation) | Inspection, Unit Test
 PMQ-004 | The PriorityMemQueue shall support per-priority configuration of message size and depth | Inspection, Unit Test
 PMQ-005 | The PriorityMemQueue shall support blocking and non-blocking send operations | Unit Test
 PMQ-006 | The PriorityMemQueue shall support blocking and non-blocking receive operations | Unit Test
@@ -119,7 +119,9 @@ Each priority level has its own dedicated `AtomicQueue`, allocated via the F´ m
 
 ```cpp
 struct PriorityMemQueueHandle {
-    Types::AtomicQueue* m_atomicQueues;    // Array of per-priority circular buffers
+    I8 m_priorityMap[32];                  // Priority→index mapping (-1 = unused)
+    Types::AtomicQueue* m_atomicQueues;    // Array sized to configured priorities
+    FwSizeType m_numActivePriorities;      // Number of configured priorities
     std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
     Os::CountingSemaphore* m_notEmptySem;  // Semaphore for blocking receive
     std::atomic<U32>* m_highWaterMarks;    // Per-priority peak depth
@@ -128,15 +130,20 @@ struct PriorityMemQueueHandle {
 
 #### Send Flow
 
-1. Resolve priority to its `AtomicQueue` (or fallback to default priority 0)
-2. Enqueue via lock-free CAS: `atomicQueue->enqueue(buffer, size)`
-3. Update per-priority high water mark
-4. Post semaphore to wake receiver: `m_notEmptySem->post()`
+1. Look up priority in sparse map: `index = m_priorityMap[priority]`
+2. Resolve to `AtomicQueue` at mapped index (or fallback to default priority 0)
+3. Enqueue via lock-free CAS: `atomicQueue->enqueue(buffer, size)`
+4. Update per-priority high water mark
+5. Post semaphore to wake receiver: `m_notEmptySem->post()`
 
 #### Receive Flow
 
 1. Load enabled priority mask with `memory_order_acquire`
-2. Scan from highest to lowest enabled priority:
+2. Scan from highest to lowest priority:
+   - Check if priority is enabled in bitmask (skips disabled priorities)
+   - Look up priority in sparse map: `index = m_priorityMap[priority]`
+   - If priority not configured (`index < 0`), skip to next
+   - Get `AtomicQueue` at mapped index
    - Call `getSize()` as a cheap pre-filter (2 relaxed loads)
    - If `getSize() > 0`, attempt `dequeue()` via lock-free CAS
    - On success, return message; on failure (MPSC contention), continue to next priority
@@ -146,15 +153,35 @@ struct PriorityMemQueueHandle {
 
 Liveness is guaranteed by the semaphore — a spurious `getSize()` miss simply causes a re-scan after the next semaphore post.
 
+#### Sparse Priority Optimization
+
+When using non-consecutive priorities (e.g., {0, 15, 31}), allocating arrays sized to `maxPriority + 1` wastes significant memory on unused entries.
+
+To mitigate that, the priority queue uses a sparse priority map:
+- `m_priorityMap[32]`: Maps priority value → array index (-1 for unconfigured)
+- `m_atomicQueues`: Sized to `numActivePriorities` (not `maxPriority + 1`)
+- `m_highWaterMarks`: Sized to `numActivePriorities`
+
+**Memory Savings Example** (3 priorities: {0, 15, 31}):
+- Before: 32 × 84 bytes = 2,688 bytes per queue
+- After: 3 × 84 bytes + 32 bytes (map) = 284 bytes per queue
+- Savings: 89% reduction (2,404 bytes saved)
+
+For deployments with many queues using sparse priorities, this approach significantly reduces memory footprint and reduces the complexity of understanding how adding new queue priorities will
+impact memory use (each priority adds 84 bytes + message memory).
+
+Performance Impact: Negligible (<6 cycles for write operations, <2% overhead for worst case receive)
+
 ### PriorityMemQueue Overview
 
 `PriorityMemQueue` is the main class that implements `Os::QueueInterface`. It provides a multi-priority message queue with configurable ISR-safe operations and flexible per-priority configuration.
 
-**Priority Ordering**: Larger priority numbers have higher priority than lower priority numbers (i.e., priority 0 is the lowest priority, priority 15 is the highest).
+**Priority Ordering**: Larger priority numbers have higher priority than lower priority numbers (i.e., priority 0 is the lowest priority, priority 31 is the highest).
 
 **Key Features**:
-- **Multi-Priority Support**: Up to 16 independent priority levels (0-15)
-- **Per-Priority Memory Pools**: Each priority has dedicated buffer allocation 
+- **Multi-Priority Support**: Up to 32 independent priority levels (0-31)
+- **Sparse Priority Allocation**: Memory allocated only for configured priorities, reducing waste for non-consecutive priority values
+- **Per-Priority Memory Pools**: Each configured priority has dedicated buffer allocation 
 - **ISR-Safe Operations**: Non-blocking send/receive can be called from interrupt context (platform-dependent)
 - **Flexible Configuration**: Static configuration allows per-component, per-priority sizing
 - **Priority Management**: Runtime enable/disable of individual priority levels
