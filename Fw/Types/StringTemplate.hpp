@@ -27,7 +27,7 @@ class StringTemplate final : public StringBase {
 
     StringTemplate(const ConstStringBase& src) : StringBase() { *this = src; }
 
-    explicit StringTemplate(const char* src) : StringBase() { *this = src; }
+    StringTemplate(const char* src) : StringBase() { *this = src; }
 
     ~StringTemplate() {}
 

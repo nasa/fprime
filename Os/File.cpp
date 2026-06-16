@@ -8,9 +8,6 @@
 #include <algorithm>
 #include <config/FppConstantsAc.hpp>
 
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
-}
 namespace Os {
 
 File::File() : m_crc_buffer(), m_handle_storage(), m_delegate(*FileInterface::getDelegate(m_handle_storage)) {
@@ -27,7 +24,7 @@ File::~File() {
 
 File::File(const File& other)
     : m_mode(other.m_mode),
-      m_crc(other.m_crc),
+      m_hash(other.m_hash),
       m_crc_buffer(),
       m_handle_storage(),
       m_delegate(*FileInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
@@ -37,7 +34,7 @@ File::File(const File& other)
 File& File::operator=(const File& other) {
     if (this != &other) {
         this->m_mode = other.m_mode;
-        this->m_crc = other.m_crc;
+        this->m_hash = other.m_hash;
         this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
     return *this;
@@ -75,7 +72,7 @@ File::Status File::open(const CHAR* filepath,
     if (status == File::Status::OP_OK) {
         this->m_mode = requested_mode;
         // Reset any open CRC calculations
-        this->m_crc = File::INITIAL_CRC;
+        this->m_hash.init();
     }
 
     return status;
@@ -250,7 +247,7 @@ File::Status File::calculateCrc(U32& crc) {
 
 File::Status File::incrementalCrc(FwSizeType& size) {
     File::Status status = File::Status::OP_OK;
-    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE);
+    FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
     if (OPEN_NO_MODE == this->m_mode) {
         status = File::Status::NOT_OPENED;
     } else if (OPEN_READ != this->m_mode) {
@@ -259,9 +256,8 @@ File::Status File::incrementalCrc(FwSizeType& size) {
         // Read data without waiting for additional data to be available
         status = this->read(this->m_crc_buffer, size, File::WaitType::NO_WAIT);
         if (OP_OK == status) {
-            for (FwSizeType i = 0; i < size && i < FW_FILE_CHUNK_SIZE; i++) {
-                this->m_crc = static_cast<U32>(update_crc_32(this->m_crc, static_cast<CHAR>(this->m_crc_buffer[i])));
-            }
+            FW_ASSERT(size <= FW_FILE_CHUNK_SIZE, FwAssertArgType(size));
+            this->m_hash.update(this->m_crc_buffer, size);
         }
     }
     return status;
@@ -269,8 +265,11 @@ File::Status File::incrementalCrc(FwSizeType& size) {
 
 File::Status File::finalizeCrc(U32& crc) {
     File::Status status = File::Status::OP_OK;
-    crc = this->m_crc;
-    this->m_crc = File::INITIAL_CRC;
+    this->m_hash.finalize(crc);
+    // Historically, the CRC calculation in File omitted the final 1's complement step. Utils::Hash performs that step
+    // and as such, we must undo it before returning the value to ensure backwards compatibility.
+    crc = ~crc;
+    this->m_hash.init();
     return status;
 }
 

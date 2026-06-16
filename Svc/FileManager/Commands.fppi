@@ -31,6 +31,7 @@ async command AppendFile(
                         ) \
   opcode 0x05
 
+@ Get the size of a file
 async command FileSize(
                         fileName: string size FileNameStringSize @< The file to get the size of
                       ) \
@@ -43,7 +44,7 @@ async command ListDirectory(
   opcode 0x07
 
 
-@ List the contents of a directory
+@ Calculate the CRC of a file
 async command CalculateCrc(
                               filename: string size FileNameStringSize @< The file to CRC
                             ) \

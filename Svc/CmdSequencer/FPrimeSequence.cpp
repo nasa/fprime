@@ -10,27 +10,24 @@
 
 #include "Fw/Types/Assert.hpp"
 #include "Svc/CmdSequencer/CmdSequencerImpl.hpp"
-extern "C" {
-#include "Utils/Hash/libcrc/lib_crc.h"
-}
 
 namespace Svc {
 
-CmdSequencerComponentImpl::FPrimeSequence::CRC ::CRC() : m_computed(INITIAL_COMPUTED_VALUE), m_stored(0) {}
+CmdSequencerComponentImpl::FPrimeSequence::CRC ::CRC() : m_computed(), m_stored(0) {}
 
 void CmdSequencerComponentImpl::FPrimeSequence::CRC ::init() {
-    this->m_computed = INITIAL_COMPUTED_VALUE;
+    this->m_computed.init();
 }
 
 void CmdSequencerComponentImpl::FPrimeSequence::CRC ::update(const BYTE* buffer, FwSizeType bufferSize) {
     FW_ASSERT(buffer);
-    for (FwSizeType index = 0; index < bufferSize; index++) {
-        this->m_computed = static_cast<U32>(update_crc_32(this->m_computed, static_cast<char>(buffer[index])));
-    }
+    this->m_computed.update(buffer, bufferSize);
 }
 
-void CmdSequencerComponentImpl::FPrimeSequence::CRC ::finalize() {
-    this->m_computed = ~this->m_computed;
+U32 CmdSequencerComponentImpl::FPrimeSequence::CRC ::finalize() {
+    U32 computed = 0;
+    this->m_computed.finalize(computed);
+    return computed;
 }
 
 CmdSequencerComponentImpl::FPrimeSequence ::FPrimeSequence(CmdSequencerComponentImpl& component)
@@ -38,8 +35,9 @@ CmdSequencerComponentImpl::FPrimeSequence ::FPrimeSequence(CmdSequencerComponent
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::validateCRC() {
     bool result = true;
-    if (this->m_crc.m_stored != this->m_crc.m_computed) {
-        this->m_events.fileCRCFailure(this->m_crc.m_stored, this->m_crc.m_computed);
+    U32 computed = this->m_crc.finalize();
+    if (this->m_crc.m_stored != computed) {
+        this->m_events.fileCRCFailure(this->m_crc.m_stored, computed);
         result = false;
     }
     return result;
@@ -104,7 +102,6 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::readOpenFile() {
     if (status) {
         const FwSizeType buffLen = this->m_buffer.getSize();
         this->m_crc.update(buffAddr, buffLen);
-        this->m_crc.finalize();
     }
     return status;
 }

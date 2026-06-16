@@ -113,6 +113,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void add_MEMCMP(Fpy::StackSizeType size);
     void add_MEMCMP(FpySequencer_MemCmpDirective dir);
     void add_PUSH_TIME();
+    void add_SET_SEED();
+    void add_PUSH_RAND();
     void add_GET_FIELD(Fpy::StackSizeType parentSize, Fpy::StackSizeType memberSize);
     void add_GET_FIELD(FpySequencer_GetFieldDirective dir);
     void add_PEEK();
@@ -183,6 +185,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                                        DirectiveError& err);
     Signal tester_popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& err);
     Signal tester_pushTime_directiveHandler(const FpySequencer_PushTimeDirective& directive, DirectiveError& err);
+    Signal tester_setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive, DirectiveError& err);
+    Signal tester_pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& err);
     Signal tester_allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& err);
     Signal tester_loadRel_directiveHandler(const FpySequencer_LoadRelDirective& directive, DirectiveError& err);
     Signal tester_storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
@@ -260,6 +264,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fw::Success tester_readBody();
     Fw::Success tester_readHeader();
     void tester_set_m_computedCRC(U32 crc);
+    void tester_init_m_computedCRC();
+    void tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize);
+    U32 tester_finalize_m_computedCRC();
     void tester_set_m_sequenceArgs(Svc::SeqArgs args);
     Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();

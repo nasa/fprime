@@ -9,9 +9,7 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>
-}
+#include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
 #include <cstring>
@@ -118,28 +116,6 @@ void PrmDbImpl::pingIn_handler(FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
-U32 PrmDbImpl::computeCrc(U32 crc, const BYTE* buff, FwSizeType size) {
-    // Note: The crc parameter accepts any U32 value as valid input.
-    // This is correct behavior for CRC32 accumulation functions where:
-    // - Initial CRC values are typically 0x00000000 or 0xFFFFFFFF
-    // - Intermediate CRC values (from prior computeCrc calls) can be any U32 value
-
-    // Check for null pointer before dereferencing
-    if (buff == nullptr) {
-        // Return the input CRC unchanged if buffer is null
-        return crc;
-    }
-
-    // Check for zero size to avoid unnecessary processing
-    if (size == 0) {
-        return crc;
-    }
-    for (FwSizeType byte = 0; byte < size; byte++) {
-        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buff[byte])));
-    }
-    return crc;
-}
-
 void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Reject PRM_SAVE_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
@@ -161,9 +137,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 
     // write placeholder for the CRC
-    U32 crc = 0xFFFFFFFF;
+    Utils::Hash crc;
+    U32 crcInitial = 0xFFFFFFFF;
     buff.resetSer();
-    Fw::SerializeStatus serStat = buff.serializeFrom(crc);
+    Fw::SerializeStatus serStat = buff.serializeFrom(crcInitial);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     FwSizeType writeSize = static_cast<FwSizeType>(buff.getSize());
     stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
@@ -202,7 +179,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         }
 
         // add delimiter to CRC
-        crc = this->computeCrc(crc, &delim, sizeof(delim));
+        crc.update(&delim, sizeof(delim));
 
         // serialize record size = id field + data
         U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + entry.getValue().getSize());
@@ -231,7 +208,9 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         }
 
         // add recordSize to CRC
-        crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
+        if (buff.getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(buff.getBuffAddr(), writeSize);
+        }
 
         // reset buffer
         buff.resetSer();
@@ -260,7 +239,9 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         }
 
         // add parameter ID to CRC
-        crc = this->computeCrc(crc, buff.getBuffAddr(), writeSize);
+        if (buff.getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(buff.getBuffAddr(), writeSize);
+        }
 
         // write serialized parameter value
 
@@ -281,7 +262,9 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         }
 
         // add serialized parameter value to crc
-        crc = this->computeCrc(crc, entry.getValue().getBuffAddr(), writeSize);
+        if (entry.getValue().getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(entry.getValue().getBuffAddr(), writeSize);
+        }
 
         numRecords++;
     }
@@ -306,7 +289,10 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
         return;
     }
     buff.resetSer();
-    serStat = buff.serializeFrom(crc);
+    U32 crcFinal = 0;
+    crc.finalize(crcFinal);
+    crcFinal = ~crcFinal;
+    serStat = buff.serializeFrom(crcFinal);
 
     FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
     writeSize = static_cast<FwSizeType>(buff.getSize());

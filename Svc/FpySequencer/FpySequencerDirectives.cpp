@@ -209,6 +209,20 @@ void FpySequencer::directive_pushTime_internalInterfaceHandler(const Svc::FpySeq
     handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_TIME, error);
 }
 
+//! Internal interface handler for directive_setSeed
+void FpySequencer::directive_setSeed_internalInterfaceHandler(const Svc::FpySequencer_SetSeedDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->setSeed_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::SET_SEED, error);
+}
+
+//! Internal interface handler for directive_pushRand
+void FpySequencer::directive_pushRand_internalInterfaceHandler(const Svc::FpySequencer_PushRandDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->pushRand_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::PUSH_RAND, error);
+}
+
 //! Internal interface handler for directive_getField
 void FpySequencer::directive_getField_internalInterfaceHandler(const Svc::FpySequencer_GetFieldDirective& directive) {
     DirectiveError error = DirectiveError::NO_ERROR;
@@ -1280,6 +1294,37 @@ Signal FpySequencer::pushTime_directiveHandler(const FpySequencer_PushTimeDirect
 
     // push time to end of stack
     this->m_runtime.stack.push(timeEsb.getBuffAddr(), static_cast<Fpy::StackSizeType>(timeEsb.getSize()));
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::setSeed_directiveHandler(const FpySequencer_SetSeedDirective& directive, DirectiveError& error) {
+    if (this->m_runtime.stack.size < sizeof(U32)) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    U32 seed = this->m_runtime.stack.pop<U32>();
+    this->m_runtime.rng.seed(seed);
+    this->m_runtime.rngSeeded = true;
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::pushRand_directiveHandler(const FpySequencer_PushRandDirective& directive, DirectiveError& error) {
+    if (Fpy::MAX_STACK_SIZE - sizeof(U32) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    if (!this->m_runtime.rngSeeded) {
+        Fw::Time currentTime = this->getTime();
+        std::seed_seq seedSeq{static_cast<U32>(currentTime.getTimeBase()), static_cast<U32>(currentTime.getContext()),
+                              currentTime.getSeconds(), currentTime.getUSeconds()};
+        this->m_runtime.rng.seed(seedSeq);
+        this->m_runtime.rngSeeded = true;
+    }
+
+    U32 randVal = static_cast<U32>(this->m_runtime.rng());
+    this->m_runtime.stack.push(randVal);
     return Signal::stmtResponse_success;
 }
 

@@ -180,9 +180,8 @@ the doc covers the now-changed behavior.
 
 ## Out of scope
 
-- Spelling, grammar, and prose-style fixes — handled by the project's
-  spell-check workflow (`.github/actions/spelling/`) and human
-  reviewers. The doc agent flags content staleness, not wording.
+- Spelling, grammar, and prose-style fixes — left to human reviewers.
+  The doc agent flags content staleness, not wording.
 - Markdown link integrity — handled by `markdown-link-check.yml` in
   CI. The doc agent does not duplicate that check.
 - SDD content quality / completeness beyond "does it reflect the new

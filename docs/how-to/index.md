@@ -132,4 +132,12 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 
     [View Test-Driven Development](test-driven-development.md){ .md-button .md-button--primary }
 
+-   <span class="card-title">__Import Parameters in Batch__</span>
+
+    ---
+
+    This guide covers two methods of updating parameters: through a `.dat` file that PrmDb loads directly, or by generating a command sequence (`.seq` file) to dispatch a series of commands.
+
+    [View Import Parameters in Batch](prm-write-how-to.md){ .md-button .md-button--primary }
+
 </div>
