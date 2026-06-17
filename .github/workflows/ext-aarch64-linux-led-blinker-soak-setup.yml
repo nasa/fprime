@@ -37,14 +37,17 @@ jobs:
       # soak-setup expects integration tests at artifacts/int/. Stage them here.
       - name: "Stage integration tests"
         run: cp -r LedBlinker/Components/Led/test/int int
+      # soak-setup expects the deployment's fprime-gds.yml at artifacts/fprime-gds.yml
+      - name: "Stage fprime-gds.yml"
+        run: cp LedBlinker/LedBlinkerDeployment/fprime-gds.yml fprime-gds.yml
       - name: "Archive soak artifact"
         uses: actions/upload-artifact@v4
         with:
           name: ledblinker-soak-artifact
           path: |
             build-artifacts
-            lib/fprime/requirements.txt
             int
+            fprime-gds.yml
           retention-days: 5
 
   deploy:
