@@ -1559,6 +1559,17 @@ TEST(TypesTest, FormatSpecifierTest) {
     ASSERT_STREQ(str.toChar(), "CHAR: A");
 }
 
+TEST(TypesTest, NumArrayElements) {
+    // FW_NUM_ARRAY_ELEMENTS reports the element count of a C-style array.
+    U32 ids[7] = {0};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(ids), static_cast<size_t>(7));
+
+    // For a multi-dimensional array it returns the outer extent, matching the
+    // old sizeof-based behavior.
+    U8 grid[3][5] = {{0}};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(grid), static_cast<size_t>(3));
+}
+
 TEST(PerformanceTest, F64SerPerfTest) {
     SerializeTestBuffer buff;
 

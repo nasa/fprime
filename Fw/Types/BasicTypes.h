@@ -14,7 +14,8 @@
 //
 // This file also contains macros for a number of useful operations:
 //
-// - FW_NUM_ARRAY_ELEMENTS(a): number of elements in an array
+// - FW_NUM_ARRAY_ELEMENTS(a): number of elements in a C-style array (in C++ this is a
+//       compile error if applied to anything that is not a C-style array)
 // - FW_MAX(a, b): maximum of a and b
 // - FW_MIN(a, b): minimum of a and b
 //
@@ -36,6 +37,7 @@ extern "C" {
 #endif
 #include <config/FPrimeNumericalConfig.h>
 #include <inttypes.h>  // Standard integer types and printf macros
+#include <stddef.h>    // size_t
 
 // Compiler checks
 #if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
@@ -87,7 +89,36 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
 /*----------------------------------------------------------------------------*/
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
+#ifdef __cplusplus
+}  // extern "C"
+
+namespace Fw {
+namespace BasicTypes {
+
+// Element count of a C-style array.
+template <typename T, size_t N>
+constexpr size_t fwNumArrayElements(const T (&)[N]) {
+    return N;
+}
+
+// Catch-all for anything that is not a C-style array. The element count
+// FW_NUM_ARRAY_ELEMENTS computes is sizeof-based, which is wrong for FPP array
+// types and other non-array types (see #5155), so reject those at compile time
+// rather than returning a bogus count. sizeof(T) is used in the assert so it
+// only fires when this overload is actually selected.
+template <typename T>
+constexpr size_t fwNumArrayElements(const T&) {
+    static_assert(sizeof(T) == 0, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
+    return 0;
+}
+
+}  // namespace BasicTypes
+}  // namespace Fw
+
+#define FW_NUM_ARRAY_ELEMENTS(a) (::Fw::BasicTypes::fwNumArrayElements(a))  //!< number of elements in a C-style array
+#else
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
+#endif
 // Deprecated: prefer std::max/std::min from <algorithm> in C++ code.
 // Kept for C compatibility only.
 #define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))  //!< MAX macro (deprecated in C++, use std::max)
@@ -101,7 +132,4 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
     (4)  //!< Uses a relative file path (within fprime/fprime library) for assert.
          //!< Requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
 
-#ifdef __cplusplus
-}
-#endif
 #endif  // FW_BASIC_TYPES_H
