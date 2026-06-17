@@ -43,15 +43,15 @@ class PriorityMemQueue;
 struct PriorityMemQueueHandle : public QueueHandle {
     // Sparse priority support: map priority→index into m_atomicQueues
     // Reduces memory waste when using non-consecutive priorities (e.g., {0, 15, 31})
-    I8 m_priorityMap[Queue::MAX_PRIORITIES];        // Priority→index mapping (-1 = unused)
-    Types::AtomicQueue* m_atomicQueues = nullptr;   // Array sized to actual configured priorities
-    FwQueuePriorityType m_maxPriority = 0;          // Highest priority value (for iteration)
-    FwSizeType m_numActivePriorities = 0;           // Number of configured priorities
-    Os::CountingSemaphore* m_notEmptySem = nullptr; // Counting semaphore signaling messages available
-    FwEnumStoreType m_id = 0;                       // Queue identifier
-    FwEnumStoreType m_allocatorId = 0;              // Allocator ID for memory operations
-    std::atomic<U32> m_priorityMask{0};             // Bit mask of enabled priorities
-    std::atomic<U32>* m_highWaterMarks = nullptr;   // Array indexed by priority map
+    I8 m_priorityMap[Queue::MAX_PRIORITIES];         // Priority→index mapping (-1 = unused)
+    Types::AtomicQueue* m_atomicQueues = nullptr;    // Array sized to actual configured priorities
+    FwQueuePriorityType m_maxPriority = 0;           // Highest priority value (for iteration)
+    FwSizeType m_numActivePriorities = 0;            // Number of configured priorities
+    Os::CountingSemaphore* m_notEmptySem = nullptr;  // Counting semaphore signaling messages available
+    FwEnumStoreType m_id = 0;                        // Queue identifier
+    FwEnumStoreType m_allocatorId = 0;               // Allocator ID for memory operations
+    std::atomic<U32> m_priorityMask{0};              // Bit mask of enabled priorities
+    std::atomic<U32>* m_highWaterMarks = nullptr;    // Array indexed by priority map
 
     //! \brief Constructor
     PriorityMemQueueHandle() {

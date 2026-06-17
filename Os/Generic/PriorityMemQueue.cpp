@@ -57,7 +57,7 @@ static constexpr U32 priorityBitMask(FwQueuePriorityType priority) {
 
 void PriorityMemQueueHandle::init() {
     // NOTE: Do NOT reset m_priorityMap here - it's already populated by create()
-    
+
     // If arrays were allocated, teardown AtomicQueues
     if (this->m_atomicQueues != nullptr) {
         for (FwSizeType i = 0; i < this->m_numActivePriorities; ++i) {
@@ -82,14 +82,13 @@ void PriorityMemQueueHandle::init() {
     this->m_priorityMask.store(1U << Os::Generic::Queue::DEFAULT_PRIORITY, std::memory_order_relaxed);
 }
 
-bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator,
-                                            FwEnumStoreType allocatorId) {
+bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId) {
     this->m_allocatorId = allocatorId;
 
     // Scan m_priorityMap to count configured priorities and find max priority
     this->m_numActivePriorities = 0;
     this->m_maxPriority = 0;
-    
+
     for (FwSizeType p = 0; p < Os::Generic::Queue::MAX_PRIORITIES; ++p) {
         if (this->m_priorityMap[p] >= 0) {
             this->m_numActivePriorities++;
@@ -98,7 +97,7 @@ bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator,
             }
         }
     }
-    
+
     FW_ASSERT(this->m_numActivePriorities > 0, allocatorId);
 
     // Allocate memory for atomicQueues array (sized to actual configured priorities)
@@ -640,7 +639,8 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
     I8 index = this->m_handle.getPriorityIndex(priority);
     FW_ASSERT(index >= 0, this->m_handle.m_id, priority);
     U32 currentDepth = static_cast<U32>(atomicQueue->getSize());
-    updateHighWaterMark(this->m_handle.m_highWaterMarks, static_cast<FwSizeType>(index), currentDepth, this->m_handle.m_id);
+    updateHighWaterMark(this->m_handle.m_highWaterMarks, static_cast<FwSizeType>(index), currentDepth,
+                        this->m_handle.m_id);
 
     // Post semaphore to wake up receiver (if any)
     FW_ASSERT(this->m_handle.m_notEmptySem != nullptr, this->m_handle.m_id, priority);
@@ -649,7 +649,6 @@ QueueInterface::Status PriorityMemQueue::send(const U8* buffer,
 
     return QueueInterface::Status::OP_OK;
 }
-
 
 QueueInterface::Status PriorityMemQueue::receive(U8* destination,
                                                  FwSizeType capacity,

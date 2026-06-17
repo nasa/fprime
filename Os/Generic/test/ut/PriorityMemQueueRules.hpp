@@ -82,9 +82,19 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
     // ----------------------------------------------------------------------
 
     //! Precondition
-    bool precondition(const Ref::Test::PriorityMemQueue::Tester& state) { 
-        // Can only send if created, not full, AND at least one priority is enabled
-        return state.isCreated() && !state.isFull() && state.hasEnabledPriority();
+    bool precondition(const Ref::Test::PriorityMemQueue::Tester& state) {
+        // Can only send if created AND at least one enabled priority has space
+        if (!state.isCreated() || !state.hasEnabledPriority()) {
+            return false;
+        }
+
+        // Verify at least one enabled priority is NOT full
+        for (FwQueuePriorityType p = 0; p < Os::Generic::Queue::MAX_PRIORITIES; ++p) {
+            if (state.isPriorityEnabled(p) && !state.isPriorityFull(p)) {
+                return true;
+            }
+        }
+        return false;  // All enabled priorities are full
     }
 
     //! Action
@@ -95,7 +105,7 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
         // Start from randomly selected priority and iterate through all priorities in order
         FwQueuePriorityType startPriority = msg.priority;
         bool found = false;
-        
+
         for (U32 attempts = 0; attempts < Os::Generic::Queue::MAX_PRIORITIES; ++attempts) {
             FwQueuePriorityType testPriority = (startPriority + attempts) % Os::Generic::Queue::MAX_PRIORITIES;
             if (state.isPriorityEnabled(testPriority) && !state.isPriorityFull(testPriority)) {
@@ -104,10 +114,10 @@ struct Send : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
                 break;
             }
         }
-        
+
         // If couldn't find suitable priority, fail fast
         if (!found) {
-            FAIL() << "Failed to find enabled non-full priority after checking all " 
+            FAIL() << "Failed to find enabled non-full priority after checking all "
                    << Os::Generic::Queue::MAX_PRIORITIES << " priorities";
         }
 
@@ -255,11 +265,11 @@ struct FillQueue : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
         // before others. Keep trying until all priorities are full (isFull() returns true).
         U32 count = 0;
         U32 consecutiveFulls = 0;
-        
+
         while (!state.isFull() && consecutiveFulls < FILL_QUEUE_MAX_RETRIES) {
             QueueMessage msg = state.generateRandomMessage();
             Os::QueueInterface::Status status = state.send(msg, Os::QueueInterface::BlockingType::NONBLOCKING);
-            
+
             if (status == Os::QueueInterface::Status::OP_OK) {
                 count++;
                 consecutiveFulls = 0;  // Reset counter on success

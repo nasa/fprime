@@ -19,6 +19,9 @@
 #include <Os/CountingSemaphore.hpp>
 #include <atomic>
 
+// Forward declaration for test-only friend access
+class AtomicQueueWrapAroundTest;
+
 namespace Types {
 
 //! \class AtomicQueue
@@ -46,6 +49,7 @@ namespace Types {
 //! used (instead of forcing U64) to support platforms with 32-bit native word size where
 //! 64-bit atomics may not be lock-free or require expensive emulation.
 class AtomicQueue {
+    friend class ::AtomicQueueWrapAroundTest;  // Test-only accessor for counter manipulation
   public:
     //! \brief AtomicQueue constructor
     AtomicQueue();
