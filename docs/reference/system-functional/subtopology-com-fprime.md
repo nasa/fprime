@@ -21,9 +21,15 @@ Two variants are available:
 
 ### Topology Diagram
 
-The following diagram shows the ComFprime subtopology topology:
-
 ![ComFprime Subtopology](img/com-fprime-topology.png)
+
+#### Downlink Path
+
+![ComFprime Downlink Path](img/com-fprime-downlink.png)
+
+#### Uplink Path
+
+![ComFprime Uplink Path](img/com-fprime-uplink.png)
 
 ### Included Components
 
