@@ -1,0 +1,25 @@
+# Scheduled soak test for the LedBlinker deployment on AArch64 Linux.
+#
+# Analyzes captured ComLogger telemetry for FATALs and degradation trends, then runs the integration tests.
+
+name: "Soak Test: AArch64 Linux LedBlinker"
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Shared with the soak-setup workflow so a test queues behind any setup. 
+concurrency:
+  group: ledblinker-soak
+  cancel-in-progress: false
+
+jobs:
+  soak-test:
+    name: "Soak Test"
+    runs-on: [self-hosted, ARM64]
+    steps:
+      - uses: nasa/fprime-actions/soak-test@devel
