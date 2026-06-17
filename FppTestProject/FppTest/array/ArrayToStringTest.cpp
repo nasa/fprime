@@ -20,6 +20,7 @@
 #include "FppTest/array/Uint32ArrayArrayAc.hpp"
 
 #include "FppTest/typed_tests/ArrayTest.hpp"
+#include "Fw/Types/BasicTypes.h"
 
 #include "gtest/gtest.h"
 
@@ -63,6 +64,13 @@ TYPED_TEST(ArrayToStringTest, ToString) {
     Fw::String expected(expectedStream.str().c_str());
 
     ASSERT_STREQ(actualStream.str().c_str(), expected.toChar());
+}
+
+TYPED_TEST(ArrayToStringTest, NumArrayElements) {
+    TypeParam a(this->testVals);
+
+    const auto size = FW_NUM_ARRAY_ELEMENTS(a);
+    ASSERT_EQ(size, static_cast<size_t>(TypeParam::SIZE));
 }
 
 }  // namespace Array

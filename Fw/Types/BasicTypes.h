@@ -36,6 +36,7 @@ extern "C" {
 #endif
 #include <config/FPrimeNumericalConfig.h>
 #include <inttypes.h>  // Standard integer types and printf macros
+#include <stddef.h>    // size_t
 
 // Compiler checks
 #if defined(__GNUC__) || defined(__llvm__) || defined(PLATFORM_OVERRIDE_GCC_CLANG_CHECK)
@@ -87,7 +88,30 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
 /*----------------------------------------------------------------------------*/
 /* Useful macro definitions                                                   */
 /*----------------------------------------------------------------------------*/
+#ifdef __cplusplus
+}
+
+namespace Fw {
+namespace BasicTypes {
+
+template <typename T, size_t N>
+constexpr size_t fwNumArrayElements(const T (&)[N]) {
+    return N;
+}
+
+template <typename ArrayType>
+constexpr auto fwNumArrayElements(const ArrayType&)
+    -> decltype(ArrayType::SIZE, sizeof(typename ArrayType::ElementType), size_t{}) {
+    return static_cast<size_t>(ArrayType::SIZE);
+}
+
+}  // namespace BasicTypes
+}  // namespace Fw
+
+#define FW_NUM_ARRAY_ELEMENTS(a) (::Fw::BasicTypes::fwNumArrayElements(a))  //!< number of elements in an array
+#else
 #define FW_NUM_ARRAY_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))  //!< number of elements in an array
+#endif
 // Deprecated: prefer std::max/std::min from <algorithm> in C++ code.
 // Kept for C compatibility only.
 #define FW_MAX(a, b) (((a) > (b)) ? (a) : (b))  //!< MAX macro (deprecated in C++, use std::max)
@@ -102,6 +126,5 @@ typedef double F64;   //!< 64-bit floating point (double). Required for compiler
          //!< Requires -DASSERT_RELATIVE_PATH=path to be set on the compile command line
 
 #ifdef __cplusplus
-}
 #endif
 #endif  // FW_BASIC_TYPES_H
