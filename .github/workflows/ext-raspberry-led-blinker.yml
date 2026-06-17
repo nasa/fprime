@@ -91,6 +91,12 @@ jobs:
           . venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to devel or pr-xxxx branch if it exists
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
         with:

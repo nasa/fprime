@@ -155,7 +155,7 @@ def get_build(
     )
     make_targets = ["all"] if make_targets is None else make_targets
     if install_directory is not None:
-        cmake_arguments["CMAKE_INSTALL_PREFIX"] = str(install_directory)
+        cmake_arguments["FPRIME_INSTALL_DEST"] = str(install_directory)
 
     cmake_output = run_cmake(source_directory, build_directory, cmake_arguments)
     target_outputs = {

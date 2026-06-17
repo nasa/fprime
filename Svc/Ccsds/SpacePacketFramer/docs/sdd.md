@@ -9,6 +9,8 @@ The `Svc::Ccsds::SpacePacketFramer` is typically used upstream of a component th
 ## Configuration
 The `Svc::Ccsds::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
+The component also supports an optional Secondary Header Flag (`hasSecHdr`) that can be set via the `FrameContext` passed to the `dataIn` port. This flag defaults to `false` (no secondary header) but can be configured per packet to indicate the presence of a secondary header.
+
 ## CCSDS Header Fields
 
 For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will populate the CCSDS Space Packet Primary Header fields as follows:
@@ -17,7 +19,7 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 |---|---|---|
 | Version Number | 000 | As per protocol 4.1.3.2 |
 | Packet Type | 0 (Telemetry) | SpacePacketFramer emits reporting packets only (no commanding), as per 4.1.3.3.2 |
-| Secondary Header Flag | 0 | F Prime does not use secondary headers formally |
+| Secondary Header Flag | Uses value passed in the `context` argument | Presence of secondary header are defined in `config/ComCfg.fpp` |
 | Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
 | Sequence Flags | `0b11` (Unsegmented) | Unsegmented user data, F´ data fits in a single packet |
 | Packet Sequence Count | Incremented for each packet, unique count per APID | Managed externally by a [`Svc::Ccsds::ApidManager`](../../ApidManager/docs/sdd.md) |

@@ -80,10 +80,15 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           stage: int
+      # Upgrade GDS to devel or pr-xxxx branch if it exists
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
       - name: Pull Archive Results
         uses: actions/download-artifact@v4
         with:
           name: archive.tar.gz
       - name: "Integration tests"
         run: |
-            fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build
+          fprime-ci -c ${CI_CONFIG_FILE} --skip-stage build

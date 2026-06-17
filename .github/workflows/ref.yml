@@ -4,15 +4,15 @@ name: "Ref"
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
   pull_request:
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
     paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/agents/**'
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/agents/**"
   workflow_dispatch:
     inputs:
       runner:
@@ -87,6 +87,11 @@ jobs:
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
+      # Upgrade GDS to devel or pr-xxxx branch if it exists
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
       - name: "Download Build Artifacts"
         uses: actions/download-artifact@v4
         with:
