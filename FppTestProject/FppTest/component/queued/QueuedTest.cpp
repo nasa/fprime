@@ -4,8 +4,8 @@
 // \brief  cpp file for QueuedTest component implementation class
 // ======================================================================
 
-#include "QueuedTest.hpp"
 #include <Fw/FPrimeBasicTypes.hpp>
+#include "QueuedTest.hpp"
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 
@@ -101,19 +101,21 @@ void QueuedTest ::CMD_ASYNC_STRINGS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_ASYNC_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamEnum en) {
+void QueuedTest ::CMD_ASYNC_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamEnum& en) {
     this->enumCmd.args.val = en;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_ASYNC_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamArray arr) {
+void QueuedTest ::CMD_ASYNC_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamArray& arr) {
     this->arrayCmd.args.val = arr;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_ASYNC_STRUCT_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamStruct str) {
+void QueuedTest ::CMD_ASYNC_STRUCT_cmdHandler(const FwOpcodeType opCode,
+                                              const U32 cmdSeq,
+                                              const FormalParamStruct& str) {
     this->structCmd.args.val = str;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -151,19 +153,19 @@ void QueuedTest ::CMD_STRINGS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamEnum en) {
+void QueuedTest ::CMD_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamEnum& en) {
     this->enumCmd.args.val = en;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamArray arr) {
+void QueuedTest ::CMD_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamArray& arr) {
     this->arrayCmd.args.val = arr;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void QueuedTest ::CMD_STRUCT_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamStruct str) {
+void QueuedTest ::CMD_STRUCT_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamStruct& str) {
     this->structCmd.args.val = str;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
