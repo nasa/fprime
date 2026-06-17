@@ -57,8 +57,16 @@ void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
     this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.allocate(identifier, memSize, recoverable));
     // TODO: Fail gracefully here
     m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
-    this->m_mode = initialMode;
-    this->m_send = initialMode == BufferAccumulator_OpState::DRAIN;
+    switch (initialMode.e) {
+        case BufferAccumulator_OpState::ACCUMULATE:
+        case BufferAccumulator_OpState::DRAIN:
+            this->m_mode.e = initialMode.e;
+            break;
+        default:
+            FW_ASSERT(0);
+            break;
+    }
+    this->m_send = this->m_mode == BufferAccumulator_OpState::DRAIN;
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {
