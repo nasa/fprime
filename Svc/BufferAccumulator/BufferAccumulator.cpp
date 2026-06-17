@@ -45,7 +45,9 @@ BufferAccumulator ::~BufferAccumulator() {}
 
 void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
                                        Fw::MemAllocator& allocator,
-                                       FwSizeType maxNumBuffers  //!< The maximum number of buffers
+                                       FwSizeType maxNumBuffers,  //!< The maximum number of buffers
+                                       BufferAccumulator_OpState initialMode
+                                       //!< The initial operating mode
 ) {
     this->m_allocatorId = identifier;
     // Overflow protection
@@ -55,6 +57,8 @@ void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
     this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.allocate(identifier, memSize, recoverable));
     // TODO: Fail gracefully here
     m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
+    this->m_mode = initialMode;
+    this->m_send = this->m_mode == BufferAccumulator_OpState::DRAIN;
 }
 
 void BufferAccumulator ::deallocateQueue(Fw::MemAllocator& allocator) {

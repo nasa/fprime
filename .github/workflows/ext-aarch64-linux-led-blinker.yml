@@ -5,16 +5,16 @@ name: "External Repo: AArch64 Linux LedBlinker"
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
     paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/agents/**'
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/agents/**"
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -95,6 +95,12 @@ jobs:
           python -m venv venv
           . venv/bin/activate
           pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to devel or pr-xxxx branch if it exists
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
       - name: "Artifacts Download"
         uses: actions/download-artifact@v4
         with:

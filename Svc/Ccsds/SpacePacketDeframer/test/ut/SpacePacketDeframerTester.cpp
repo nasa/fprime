@@ -6,6 +6,7 @@
 
 #include "SpacePacketDeframerTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 #include "Svc/Ccsds/Types/SpacePacketHeaderSerializableAc.hpp"
 
 namespace Svc {
@@ -52,7 +53,8 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
         data[i] = static_cast<U8>(i);
     }
 
-    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength);
+    bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));  // random secondary header flag
+    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength, hasSecHdr);
     ComCfg::FrameContext nullContext;
 
     this->invoke_to_dataIn(0, buffer, nullContext);
@@ -70,6 +72,7 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;
     ASSERT_EQ(context.get_apid(), apid);
     ASSERT_EQ(context.get_sequenceCount(), seqCount);
+    ASSERT_EQ(context.get_hasSecHdr(), hasSecHdr);
 
     ASSERT_EVENTS_SIZE(0);  // No events should be generated in the nominal case
 }
@@ -195,9 +198,14 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 seqCount,
                                                       U16 lengthToken,
                                                       U8* packetData,
-                                                      U16 packetDataLen) {
+                                                      U16 packetDataLen,
+                                                      bool hasSecHdr) {
     SpacePacketHeader header;
-    header.set_packetIdentification(apid);
+    U16 packetId = apid & SpacePacketSubfields::ApidMask;
+    if (hasSecHdr) {
+        packetId |= SpacePacketSubfields::SecHdrMask;
+    }
+    header.set_packetIdentification(packetId);
     header.set_packetSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.set_packetDataLength(lengthToken);
 

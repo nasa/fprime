@@ -11,7 +11,6 @@ from pathlib import Path
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
-
 """
 This enum is includes the values of EventSeverity that can be filtered by the EventManager Component
 """
@@ -288,6 +287,26 @@ def test_seqgen(fprime_test_api):
     ), "Failed to run fprime-seqgen"
     fprime_test_api.send_and_assert_command(
         "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_int.bin", "BLOCK"], max_delay=5
+    )
+
+
+def test_seqgen_complex_args(fprime_test_api):
+    """Tests the seqgen can be dispatched (requires localhost testing)"""
+    sequence = Path(__file__).parent / "test_seq_complex.seq"
+    assert (
+        subprocess.run(
+            [
+                "fprime-seqgen",
+                "--dictionary",
+                str(fprime_test_api.dictionaries.dictionary_path),
+                str(sequence),
+                "/tmp/ref_test_complex.bin",
+            ]
+        ).returncode
+        == 0
+    ), "Failed to run fprime-seqgen"
+    fprime_test_api.send_and_assert_command(
+        "Ref.cmdSeq.CS_RUN", args=["/tmp/ref_test_complex.bin", "BLOCK"], max_delay=5
     )
 
 

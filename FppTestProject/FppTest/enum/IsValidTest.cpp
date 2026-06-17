@@ -8,45 +8,47 @@
 
 #include "gtest/gtest.h"
 
-module FppTest {
-    module Enum {
-        // Test boundary values for enum isValid() function
-        TEST(IsValidTest, IntervalEnum) {
-            Interval e = static_cast<Interval::T>(-1);
-            ASSERT_FALSE(e.isValid());
+namespace FppTest {
+namespace Enum {
+// Test boundary values for enum isValid() function
+TEST(IsValidTest, IntervalEnum) {
+    Interval::SerialType es = static_cast<Interval::SerialType>(-1);
+    ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(0);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(0);
+    ASSERT_TRUE(Interval::isValid(es));
+    Interval interval(static_cast<Interval::T>(es));
+    ASSERT_TRUE(interval.isValid());
 
-            e = static_cast<Interval::T>(1);
-            ASSERT_FALSE(e.isValid());
+    es = static_cast<Interval::SerialType>(1);
+    ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(2);
-            ASSERT_FALSE(e.isValid());
+    es = static_cast<Interval::SerialType>(2);
+    ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(3);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(3);
+    ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(5);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(5);
+    ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(6);
-            ASSERT_FALSE(e.isValid());
+    es = static_cast<Interval::SerialType>(6);
+    ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(10);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(10);
+    ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(99);
-            ASSERT_FALSE(e.isValid());
+    es = static_cast<Interval::SerialType>(99);
+    ASSERT_FALSE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(100);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(100);
+    ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(101);
-            ASSERT_TRUE(e.isValid());
+    es = static_cast<Interval::SerialType>(101);
+    ASSERT_TRUE(Interval::isValid(es));
 
-            e = static_cast<Interval::T>(102);
-            ASSERT_FALSE(e.isValid());
-        }
-    }
+    es = static_cast<Interval::SerialType>(102);
+    ASSERT_FALSE(Interval::isValid(es));
 }
+}  // namespace Enum
+}  // namespace FppTest
