@@ -74,8 +74,7 @@ Create a JSON file (e.g., `params.json`) anywhere in your project directory:
 Component instance names must be fully qualified (e.g., `Ref.recvBuffComp`). 
 
 > [!NOTE]
-> The .seq method only handles primitives (strings, numbers, booleans, enums).
-> Parameter values may be complex F´ types **only when using the .dat method**.
+> Both `.dat` and `.seq` methods support all F´ parameter types including primitives (strings, numbers, booleans, enums), arrays, and structs. The `.seq` method generates command sequences with complex parameter syntax (e.g., `[1, 2, 3]` for arrays, `{field: value}` for structs).
 
 > [!TIP]
 > **Using the `--defaults` flag:** The `fprime-prm-write` tool only automatically includes parameters explicitly listed in your JSON file. If you add the `--defaults` flag, the tool will include all parameters that have default values defined in the dictionary. This effectively resets all parameters to their defaults, except for those you specify in the JSON file. This flag works for both `.dat` and `.seq` file generation.
