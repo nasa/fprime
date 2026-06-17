@@ -7,7 +7,7 @@
 - [F Prime BufferManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/BufferManager/docs/sdd.md)
 - [F Prime BufferAccumulator SDD](https://github.com/nasa/fprime/blob/devel/Svc/BufferAccumulator/docs/sdd.md)
 - [F Prime BufferRepeater SDD](https://github.com/nasa/fprime/blob/devel/Svc/BufferRepeater/docs/sdd.md)
-- [F Prime BufferLogger SDD](https://github.com/nasa/fprime/blob/devel/Svc/BufferLogger/docs/sdd.md)
+- [F Prime BufferLogger](https://github.com/nasa/fprime/blob/devel/Svc/BufferLogger/BufferLogger.fpp)
 - [F Prime StaticMemory SDD](https://github.com/nasa/fprime/blob/devel/Svc/StaticMemory/docs/sdd.md)
 
 ## Overview

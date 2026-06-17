@@ -11,9 +11,9 @@
 - [F Prime ComQueue SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComQueue/docs/sdd.md)
 - [F Prime ComStub SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComStub/docs/sdd.md)
 - [F Prime ComRetry SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComRetry/docs/sdd.md)
-- [F Prime ComSplitter SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/docs/sdd.md)
+- [F Prime ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp)
 - [F Prime ComAggregator SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md)
-- [F Prime ComLogger SDD](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md)
+- [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/README.md)
 - [F Prime CmdSplitter SDD](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md)
 - [F Prime PassThroughRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/PassThroughRouter/docs/sdd.md)
 - [Communication Adapter Interface](https://github.com/nasa/fprime/blob/devel/docs/reference/communication-adapter-interface.md)
@@ -65,12 +65,12 @@ This protocol is designed for simplicity and is commonly used for development an
 
 ### Communication Logging
 
-[ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md) records all outgoing data to files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
+[ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/README.md) records all outgoing data to files on the file system, providing a record of transmitted data for debugging and analysis. Log files are rotated based on a configurable size or byte limit.
 
 ### Splitting and Aggregation
 
 - [CmdSplitter](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md) — Duplicates incoming command buffers to multiple outputs, enabling redundant command processing paths.
-- [ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/docs/sdd.md) — Distributes outgoing communication buffers to multiple output ports.
+- [ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp) — Distributes outgoing communication buffers to multiple output ports.
 - [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) — Merges data from multiple input sources into a single output stream.
 
 ### CCSDS Protocol Support

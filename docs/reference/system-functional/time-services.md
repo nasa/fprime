@@ -6,7 +6,7 @@
 - [F Prime ChronoTime SDD](https://github.com/nasa/fprime/blob/devel/Svc/ChronoTime/docs/sdd.md)
 - [F Prime OsTime SDD](https://github.com/nasa/fprime/blob/devel/Svc/OsTime/docs/sdd.md)
 - [F Prime PosixTime SDD](https://github.com/nasa/fprime/blob/devel/Svc/PosixTime/docs/sdd.md)
-- [F Prime LinuxTimer SDD](https://github.com/nasa/fprime/blob/devel/Svc/LinuxTimer/docs/sdd.md)
+- [F Prime LinuxTimer](https://github.com/nasa/fprime/blob/devel/Svc/LinuxTimer/LinuxTimer.fpp)
 - [Fw::Time SDD](https://github.com/nasa/fprime/blob/devel/Fw/Time/docs/sdd.md)
 
 ## Overview
