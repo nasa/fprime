@@ -52,7 +52,7 @@ jobs:
 
   deploy:
     name: "Deploy Soak Services"
-    runs-on: [self-hosted, ARM64]
+    runs-on: [self-hosted, ARM64, soak-test]
     needs: cross-compilation
     steps:
       - name: "Download soak artifact"
