@@ -554,7 +554,7 @@ TEST_F(PriorityMemQueueTestFixture, PriorityOrdering) {
     FwSizeType actualSize;
     FwQueuePriorityType priority;
     for (FwSizeType i = 0; i < 3; ++i) {
-        FwQueuePriorityType expectedPriority = 2 - static_cast<FwQueuePriorityType>(i);
+        FwQueuePriorityType expectedPriority = static_cast<FwQueuePriorityType>(2 - i);
         ASSERT_EQ(Os::QueueInterface::Status::OP_OK,
                   queue.receive(data, 128, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority));
         ASSERT_EQ(expectedPriority, priority);
@@ -1820,7 +1820,7 @@ TEST_F(PriorityMemQueueTestFixture, RapidNotificationStress) {
         // Create fresh queue for this iteration
         Os::Generic::PriorityMemQueue queue;
         Fw::String name("StressQueue");
-        Os::QueueInterface::Status status = queue.create(200 + iteration, name, 5, 64);
+        Os::QueueInterface::Status status = queue.create(static_cast<FwEnumStoreType>(200 + iteration), name, 5, 64);
         ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
 
         // Set up context for receiver thread
@@ -1844,20 +1844,14 @@ TEST_F(PriorityMemQueueTestFixture, RapidNotificationStress) {
         status = queue.send(testData, sizeof(testData), 0, Os::QueueInterface::BlockingType::NONBLOCKING);
         ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
 
-        // Wait for receiver to complete (with timeout)
-        Os::Task::delay(Fw::TimeInterval(0, 50000));  // 50ms timeout
-
-        // Verify the message was received correctly
-        if (ctx.messageReceived) {
-            successfulIterations++;
-        } else {
-            // On failure, report which iteration failed
-            FAIL() << "Iteration " << iteration << ": Message notification was lost!";
-        }
-
-        // Clean up
+        // join() blocks until receiver completes - if notification lost, this hangs and test times out
         Os::Task::Status joinStatus = receiverTask.join();
         ASSERT_EQ(Os::Task::Status::OP_OK, joinStatus);
+
+        // Verify the message was received - if false, notification was lost
+        ASSERT_TRUE(ctx.messageReceived) << "Iteration " << iteration << ": Message notification was lost!";
+        successfulIterations++;
+
         queue.teardown();
     }
 
