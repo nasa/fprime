@@ -418,6 +418,17 @@ Transaction* Channel::findUnusedTransaction(Direction direction) {
 
         this->removeFromQueue(q_index, &txn->m_history->cl_node);
 
+        // Reset all history fields to initial state (matches constructor zero-init)
+        // This is necessary when recycling from HIST queue to clear stale data
+        txn->m_history->txn_stat = TxnStatus::TXN_STATUS_UNDEFINED;  // Critical: prevents error status inheritance
+        txn->m_history->src_eid = 0;
+        txn->m_history->peer_eid = 0;
+        txn->m_history->seq_num = 0;
+        txn->m_history->fnames.src_filename = "";
+        txn->m_history->fnames.dst_filename = "";
+        // Note: cl_node is managed by queue operations (already handled by removeFromQueue)
+        // Note: dir is explicitly set below (already handled)
+
         // Indicate that this was freshly pulled from the free list
         // notably this state is distinguishable from items still on the free list
         txn->m_state = TxnState::TXN_STATE_INIT;
