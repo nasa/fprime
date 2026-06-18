@@ -54,8 +54,11 @@ function(fprime_add_location_pair SOURCE BINARY)
     # Add source and binaries to the interface includes of our singular global interface target
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${SOURCE}")
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${BINARY}")
-    # Write locations to the fprime-util metadata file
-    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_LOCATIONS_FILE}" "${BINARY}\n")
+    # Write locations to the fprime-util metadata files
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_SOURCE_LOCATIONS_FILE}" "${SOURCE}\n")
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BINARY_LOCATIONS_FILE}" "${BINARY}\n")
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "${SOURCE}\n")
+    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "${BINARY}\n")
 endfunction(fprime_add_location_pair)
 
 ####
