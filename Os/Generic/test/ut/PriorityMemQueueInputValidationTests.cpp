@@ -65,6 +65,7 @@ TEST_P(BoundaryTest, PriorityAndSizeBoundaries) {
     EXPECT_EQ(testCase.expected, status) << "Test: " << testCase.name;
 
     queue.teardown();
+    Os::Generic::PriorityMemQueue::resetConfig();
 }
 
 INSTANTIATE_TEST_SUITE_P(AllBoundaries,
@@ -240,4 +241,5 @@ TEST_F(PriorityMemQueueInputValidation, MaxPriorityEdgeAllConfigs) {
               queue.receive(recvBuf, 128, Os::QueueInterface::BlockingType::NONBLOCKING, size, priority));
 
     queue.teardown();
+    Os::Generic::PriorityMemQueue::resetConfig();
 }
