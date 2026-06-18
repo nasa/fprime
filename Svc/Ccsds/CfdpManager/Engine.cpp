@@ -965,6 +965,26 @@ void Engine::finishTransaction(Transaction* txn, bool keep_history) {
                     static_cast<U32>(txn->m_fsize));
             }
         }
+        else
+        {
+            // Log failure events for failed transactions
+            if (txn->m_history->dir == DIRECTION_TX)
+            {
+                this->m_manager->log_WARNING_HI_TxFileTransferFailed(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid,
+                    txn->m_history->fnames.dst_filename,
+                    static_cast<U8>(txn->m_history->txn_stat));
+            }
+            else if (txn->m_history->dir == DIRECTION_RX)
+            {
+                this->m_manager->log_WARNING_HI_RxFileTransferFailed(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid,
+                    txn->m_history->fnames.dst_filename,
+                    static_cast<U8>(txn->m_history->txn_stat));
+            }
+        }
 
         // extra bookkeeping for tx direction only
         if (txn->m_history->dir == Direction::DIRECTION_TX && txn->m_flags.tx.cmd_tx) {

@@ -449,6 +449,18 @@ event TxFileTransferCompleted(
     severity activity high \
     format "TX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
 
+event TxFileTransferFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    conditionCode: U8 @< Failure condition code
+) \
+    severity warning high \
+    format "TX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
+
 event RxFileTransferCompleted(
     cfdpClass: Cfdp.Class @< CFDP class
     seqNum: U32 @< Transaction sequence number
@@ -460,6 +472,18 @@ event RxFileTransferCompleted(
 ) \
     severity activity high \
     format "RX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
+
+event RxFileTransferFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    conditionCode: U8 @< Failure condition code
+) \
+    severity warning high \
+    format "RX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
 
 event MetadataReceived(
     srcFile: string size MaxFilePathSize @< Source filename from metadata
