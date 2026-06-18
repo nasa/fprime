@@ -1590,6 +1590,8 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
     // message)
     if (messageSize > clampedSize) {
         Fpy::StackSizeType excess = messageSize - clampedSize;
+        FW_ASSERT(this->m_runtime.stack.size >= excess, static_cast<FwAssertArgType>(this->m_runtime.stack.size),
+                  static_cast<FwAssertArgType>(excess));
         this->m_runtime.stack.size -= excess;
     }
     this->m_runtime.stack.pop(messageBuf, clampedSize);

@@ -4918,6 +4918,19 @@ TEST_F(FpySequencerTester, popEvent) {
         tester_get_m_runtime_ptr()->stack.size = 0;
     }
 
+    // Test message size overflow doesn't happen (nasa/fprime#5307)
+    {
+        // Push only the severity, no message bytes, then push messageSize claiming 10 bytes
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
+        tester_push<Fpy::StackSizeType>(0xFFFFFFFF);  // claims 10 bytes of message
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+        // Clean up stack
+        tester_get_m_runtime_ptr()->stack.size = 0;
+    }
+
     // Test empty stack underflow (can't even pop messageSize)
     {
         DirectiveError err = DirectiveError::NO_ERROR;
