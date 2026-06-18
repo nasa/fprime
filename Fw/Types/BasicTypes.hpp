@@ -24,24 +24,32 @@ extern "C" {
 // wrong for FPP array types and other non-array types (see #5155), so the C++
 // form only accepts a C-style array.
 //
-// fwArrayElementCountHelper is declared (never defined) for array types only,
-// and returns a reference to char[N]. The call sits inside sizeof, which is an
-// unevaluated context, so the argument itself is never evaluated. That keeps the
-// result a constant expression and, crucially, safe on member arrays such as
-// this->member (a by-reference helper would force evaluation of this and fail in
-// constant expressions). Passing anything that is not a C-style array has no
-// matching overload, so it is a compile error.
+// ArrayElementCount is resolved on the type only (via decltype, which does not
+// evaluate its operand), so FW_NUM_ARRAY_ELEMENTS stays a constant expression
+// and is safe on member arrays such as this->member. The primary template is
+// picked for non-array types and static_asserts; the partial specialization
+// carries the element count for C-style arrays. Reading ::value through a cast
+// keeps it a constant-expression read, so no out-of-line definition is needed.
 namespace Fw {
 namespace BasicTypes {
 
+template <typename T>
+struct ArrayElementCount {
+    static_assert(sizeof(T) == 0, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
+    static const std::size_t value = 0;
+};
+
 template <typename T, std::size_t N>
-char (&fwArrayElementCountHelper(const T (&)[N]))[N];
+struct ArrayElementCount<T[N]> {
+    static const std::size_t value = N;
+};
 
 }  // namespace BasicTypes
 }  // namespace Fw
 
 #define FW_NUM_ARRAY_ELEMENTS(a) \
-    (sizeof(::Fw::BasicTypes::fwArrayElementCountHelper(a)))  //!< number of elements in a C-style array
+    (static_cast<std::size_t>(   \
+        ::Fw::BasicTypes::ArrayElementCount<decltype(a)>::value))  //!< number of elements in a C-style array
 
 // IEEE compliance checks must occur in C++ code
 #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
