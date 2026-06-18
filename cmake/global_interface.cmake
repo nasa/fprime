@@ -55,7 +55,6 @@ function(fprime_add_location_pair SOURCE BINARY)
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${SOURCE}")
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${BINARY}")
     # Write locations to the fprime-util metadata file
-    file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_LOCATIONS_FILE}" "${SOURCE}\n")
     file(APPEND "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_LOCATIONS_FILE}" "${BINARY}\n")
 endfunction(fprime_add_location_pair)
 
