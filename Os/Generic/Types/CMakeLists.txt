@@ -36,9 +36,6 @@ register_fprime_ut("${UT_TARGET_NAME}"
     Fw_Time
     Os
     Os_CountingSemaphore
-  CHOOSES_IMPLEMENTATIONS
-    Os_CountingSemaphore_Posix
-    Os_Mutex_Posix
 )
 if (TARGET "${UT_TARGET_NAME}")
     target_compile_options("${UT_TARGET_NAME}" PRIVATE -Wno-conversion)
