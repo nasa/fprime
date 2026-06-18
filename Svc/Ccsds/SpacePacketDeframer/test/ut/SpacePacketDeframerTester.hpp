@@ -55,7 +55,7 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void testInvalidPacketIdentificationControlFields();
     void testCommandPacketTypeAccepted();
     void testSecondaryHeaderFlagAccepted();
-    void testInvalidSequenceFlags();
+    void testSequenceFlagsAccepted();
 
   private:
     // ----------------------------------------------------------------------

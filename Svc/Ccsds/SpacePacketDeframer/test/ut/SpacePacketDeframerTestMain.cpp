@@ -60,9 +60,9 @@ TEST(SpacePacketDeframer, testSecondaryHeaderFlagAccepted) {
     tester.testSecondaryHeaderFlagAccepted();
 }
 
-TEST(SpacePacketDeframer, testInvalidSequenceFlags) {
+TEST(SpacePacketDeframer, testSequenceFlagsAccepted) {
     Svc::Ccsds::SpacePacketDeframerTester tester;
-    tester.testInvalidSequenceFlags();
+    tester.testSequenceFlagsAccepted();
 }
 
 int main(int argc, char** argv) {
