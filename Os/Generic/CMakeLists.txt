@@ -37,8 +37,6 @@ register_fprime_ut(
     Os_Generic_PriorityMemQueue_Implementation
   CHOOSES_IMPLEMENTATIONS
     Os_Generic_PriorityMemQueue
-    Os_Mutex_Posix
-    Os_CountingSemaphore_Posix
 )
 
 #### Os/Generic/Queue Section ####
