@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <limits>
+#include <type_traits>
 // Use C linkage for the basic items
 extern "C" {
 #include "Fw/Types/BasicTypes.h"
@@ -30,12 +31,18 @@ extern "C" {
 // picked for non-array types and static_asserts; the partial specialization
 // carries the element count for C-style arrays. Reading ::value through a cast
 // keeps it a constant-expression read, so no out-of-line definition is needed.
+//
+// The assert is keyed off std::is_array<T> (false here, since the primary is
+// only chosen for non-arrays). It is written as a dependent condition on
+// purpose: a plain static_assert(false) in an uninstantiated primary template
+// is ill-formed on older compilers, and is_array also makes the error read as
+// the actual requirement.
 namespace Fw {
 namespace BasicTypes {
 
 template <typename T>
 struct ArrayElementCount {
-    static_assert(sizeof(T) == 0, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
+    static_assert(std::is_array<T>::value, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
     static const std::size_t value = 0;
 };
 
