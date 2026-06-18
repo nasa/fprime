@@ -11,6 +11,7 @@ set(FPRIME__INTERNAL_UTILITY_BUILD_TARGETS_FILE "build-targets.${FPRIME__INTERNA
 set(FPRIME__INTERNAL_UTILITY_SUBDIRECTORY_FILE "sub-directories.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util subdirectory metadata" FORCE)
 set(FPRIME__INTERNAL_UTILITY_TESTS_FILE "tests.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util tests metadata" FORCE)
 set(FPRIME__INTERNAL_UTILITY_TEST_DIR_FILE "test-dir.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util test directory metadata" FORCE)
+set(FPRIME__INTERNAL_UTILITY_LOCATIONS_FILE "fprime-locations.${FPRIME__INTERNAL_UTILITY_SUFFIX}" CACHE INTERNAL "File name for fprime-util locations metadata" FORCE)
 
 ####
 # Function `fprime_util_metadata_clear`:
