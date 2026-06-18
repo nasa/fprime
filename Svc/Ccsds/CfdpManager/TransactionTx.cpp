@@ -188,17 +188,21 @@ void Transaction::sTick(I32* cont /* unused */) {
     if (!this->m_flags.com.inactivity_fired) {
         if (this->m_inactivity_timer.getStatus() == Timer::Status::RUNNING) {
             this->m_inactivity_timer.run();
-        } else {
-            this->m_flags.com.inactivity_fired = true;
+            // Check if timer just expired naturally (after run())
+            if (this->m_inactivity_timer.getStatus() == Timer::Status::EXPIRED) {
+                this->m_flags.com.inactivity_fired = true;
 
-            // HOLD state is the normal path to recycle transaction objects, not an error
-            // inactivity is abnormal in any other state
-            if (this->m_state != TxnState::TXN_STATE_HOLD && this->m_state == TxnState::TXN_STATE_S2) {
-                this->m_cfdpManager->log_WARNING_LO_TxInactivityTimeout(this->getClass(), this->m_history->src_eid,
-                                                                        this->m_history->seq_num);
-                this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);
+                // HOLD state is the normal path to recycle transaction objects, not an error
+                // Canceled transactions timing out while waiting for EOF-ACK is also normal
+                // inactivity is abnormal in any other state
+                if (this->m_state != TxnState::TXN_STATE_HOLD && this->m_state == TxnState::TXN_STATE_S2 &&
+                    !this->m_flags.com.canceled) {
+                    this->m_cfdpManager->log_WARNING_LO_TxInactivityTimeout(this->getClass(), this->m_history->src_eid,
+                                                                            this->m_history->seq_num);
+                    this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);
 
-                this->m_cfdpManager->incrementFaultInactivityTimer(this->m_chan_num);
+                    this->m_cfdpManager->incrementFaultInactivityTimer(this->m_chan_num);
+                }
             }
         }
     }
@@ -220,7 +224,21 @@ void Transaction::sTick(I32* cont /* unused */) {
     // pending for responses for anything.  Send out anything
     // that we need to send (i.e. the EOF) just in case the sender
     // is still listening to us but do not expect any future ACKs
-    if (this->m_flags.com.inactivity_fired && !pending_send) {
+    //
+    // Recycle transaction when inactivity timer expires if:
+    // 1. In HOLD state (transaction finished, any pending sends are cleanup)
+    // 2. In S2 CLOSEOUT_SYNC (stuck waiting for FIN that will never come)
+    // 3. No pending sends (original behavior)
+    bool should_recycle = false;
+    if (this->m_flags.com.inactivity_fired) {
+        if (this->m_state == TxnState::TXN_STATE_HOLD ||
+            (this->m_state == TxnState::TXN_STATE_S2 && this->m_state_data.send.sub_state == TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC) ||
+            !pending_send) {
+            should_recycle = true;
+        }
+    }
+
+    if (should_recycle) {
         // the transaction is now recyclable - this means we will
         // no longer have a record of this transaction seq.  If the sender
         // wakes up or if the network delivers severely delayed PDUs at
@@ -576,18 +594,15 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
             // note this is a no-op unless the status was unset previously
             this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(this->m_state_data.send.s2.fin_cc));
 
-            // Set flag to send FIN-ACK while still in active state (before finishing)
+            // Set flag to send FIN-ACK before finishing transaction
             this->m_flags.tx.send_fin_ack = true;
 
             // Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
             // to send it until after the EOF+ACK.  So at this point we stop trying to send anything
             // to the peer, regardless of whether we got every ACK we expected.
             this->m_engine->finishTransaction(this, true);
-        }
-        else if (this->m_state != TxnState::TXN_STATE_HOLD)
-        {
-            // Retransmitted FIN: re-send FIN-ACK only if not in HOLD state
-            // If in HOLD, transaction is finished and waiting to recycle - don't prevent that
+        } else {
+            // Retransmitted FIN: always set flag to send FIN-ACK
             this->m_flags.tx.send_fin_ack = true;
         }
     }
@@ -678,8 +693,10 @@ void Transaction::s2EofAck(const Fw::Buffer& buffer) {
         this->m_flags.com.ack_timer_armed = false;    // just wait for FIN now, nothing to re-send
         this->m_state_data.send.s2.acknak_count = 0;  // in case EOF retransmits had occurred
 
+        // For canceled transactions, finish immediately after receiving EOF-ACK
+        // The remote side does not send FIN for canceled transactions per CFDP protocol
         // if FIN was also received then we are done (these can come out of order)
-        if (this->m_flags.tx.fin_recv) {
+        if (this->m_flags.com.canceled || this->m_flags.tx.fin_recv) {
             this->m_engine->finishTransaction(this, true);
         }
     }
