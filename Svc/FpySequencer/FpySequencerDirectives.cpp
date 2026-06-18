@@ -1574,8 +1574,10 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
     }
     Fpy::StackSizeType messageSize = this->m_runtime.stack.pop<Fpy::StackSizeType>();
 
+    const Fpy::StackSizeType severitySize = static_cast<Fpy::StackSizeType>(sizeof(Fw::LogSeverity::SerialType));
+
     // Need message_size bytes + sizeof(LogSeverity serial type) for severity
-    if (this->m_runtime.stack.size < messageSize + sizeof(Fw::LogSeverity::SerialType)) {
+    if (this->m_runtime.stack.size < severitySize || this->m_runtime.stack.size - severitySize < messageSize) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
