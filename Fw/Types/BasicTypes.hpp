@@ -19,33 +19,29 @@ extern "C" {
 #include "Fw/Types/BasicTypes.h"
 }
 
-// FW_NUM_ARRAY_ELEMENTS for C++. These templates have to live outside the
-// extern "C" block above (C linkage cannot be applied to templates). The plain
-// sizeof macro is wrong for FPP array types and other non-arrays (see #5155),
-// so restrict the C++ version to C-style arrays and reject everything else at
-// compile time.
+// FW_NUM_ARRAY_ELEMENTS for C++. This has to live outside the extern "C" block
+// above (C linkage cannot be applied to templates). The plain sizeof macro is
+// wrong for FPP array types and other non-array types (see #5155), so the C++
+// form only accepts a C-style array.
+//
+// fwArrayElementCountHelper is declared (never defined) for array types only,
+// and returns a reference to char[N]. The call sits inside sizeof, which is an
+// unevaluated context, so the argument itself is never evaluated. That keeps the
+// result a constant expression and, crucially, safe on member arrays such as
+// this->member (a by-reference helper would force evaluation of this and fail in
+// constant expressions). Passing anything that is not a C-style array has no
+// matching overload, so it is a compile error.
 namespace Fw {
 namespace BasicTypes {
 
-// Element count of a C-style array.
 template <typename T, std::size_t N>
-constexpr std::size_t fwNumArrayElements(const T (&)[N]) {
-    return N;
-}
-
-// Catch-all for anything that is not a C-style array. sizeof(T) is used in the
-// assert so it only fires when this overload is actually selected, instead of a
-// template-error explosion.
-template <typename T>
-constexpr std::size_t fwNumArrayElements(const T&) {
-    static_assert(sizeof(T) == 0, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
-    return 0;
-}
+char (&fwArrayElementCountHelper(const T (&)[N]))[N];
 
 }  // namespace BasicTypes
 }  // namespace Fw
 
-#define FW_NUM_ARRAY_ELEMENTS(a) (::Fw::BasicTypes::fwNumArrayElements(a))  //!< number of elements in a C-style array
+#define FW_NUM_ARRAY_ELEMENTS(a) \
+    (sizeof(::Fw::BasicTypes::fwArrayElementCountHelper(a)))  //!< number of elements in a C-style array
 
 // IEEE compliance checks must occur in C++ code
 #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
