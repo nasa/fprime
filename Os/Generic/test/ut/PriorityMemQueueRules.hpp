@@ -311,8 +311,8 @@ struct SendFull : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
     void action(Ref::Test::PriorityMemQueue::Tester& state) {
         QueueMessage msg = state.generateRandomMessage();
 
-        printf("[PriorityMemQueue] SendFull: Attempting send to full queue, priority=%u, size=%" PRI_FwSizeType "\n", msg.priority,
-               msg.size);
+        printf("[PriorityMemQueue] SendFull: Attempting send to full queue, priority=%u, size=%" PRI_FwSizeType "\n",
+               msg.priority, msg.size);
         // Try to send to a full queue with non-blocking
         Os::QueueInterface::Status status = state.send(msg, Os::QueueInterface::BlockingType::NONBLOCKING);
         ASSERT_EQ(Os::QueueInterface::Status::FULL, status);
@@ -390,7 +390,8 @@ struct PriorityOrder : public STest::Rule<Ref::Test::PriorityMemQueue::Tester> {
             msgs[i].priority = testPriorities[i];
             msgs[i].id = i;
 
-            printf("[PriorityMemQueue] PriorityOrder: Sending priority=%u, size=%" PRI_FwSizeType "\n", msgs[i].priority, msgs[i].size);
+            printf("[PriorityMemQueue] PriorityOrder: Sending priority=%u, size=%" PRI_FwSizeType "\n",
+                   msgs[i].priority, msgs[i].size);
             Os::QueueInterface::Status status = state.send(msgs[i], Os::QueueInterface::BlockingType::NONBLOCKING);
             ASSERT_EQ(Os::QueueInterface::Status::OP_OK, status);
         }

@@ -31,7 +31,6 @@ constexpr U32 RANDOM_BOUND = 200;  // Reduced from 1000 to keep test time under 
 constexpr U32 MAX_TEST_MESSAGE_ID = 1000000;
 constexpr FwEnumStoreType QUEUE_ID = 42;
 constexpr U32 FILL_QUEUE_MAX_RETRIES = 100;  // Max consecutive FULL retries before assuming all priorities full
-constexpr U32 SEND_PRIORITY_SEARCH_MAX_ATTEMPTS = 50;  // Max attempts to find enabled non-full priority
 
 // Test configuration
 Os::Generic::PriorityMemQueue::QueuePriorityConfig priorityConfigs[3] = {
