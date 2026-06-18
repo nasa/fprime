@@ -1,0 +1,63 @@
+# Soak-test setup for the LedBlinker deployment on AArch64 Linux.
+#
+# Cross-compiles https://github.com/fprime-community/fprime-workshop-led-blinker and
+# runs it on the self-hosted runner as persistent flight-software + GDS
+# systemd services.
+#
+# Pairs with ext-aarch64-linux-led-blinker-soak-test.yml.
+
+name: "Soak Setup: AArch64 Linux LedBlinker"
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Group shared with soak test workflow, new setup should cancel all old setup and tests
+concurrency:
+  group: ledblinker-soak
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Setup external repository + overlay F´"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: nasa/fprime-workshop-led-blinker
+          # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
+      - name: "Cross compile"
+        uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
+      # soak-setup expects integration tests at artifacts/int/. Stage them here.
+      - name: "Stage integration tests"
+        run: cp -r LedBlinker/Components/Led/test/int int
+      - name: "Archive soak artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ledblinker-soak-artifact
+          path: |
+            build-artifacts
+            lib/fprime/requirements.txt
+            int
+          retention-days: 5
+
+  deploy:
+    name: "Deploy Soak Services"
+    runs-on: [self-hosted, ARM64]
+    needs: cross-compilation
+    steps:
+      - name: "Download soak artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: ledblinker-soak-artifact
+          path: artifacts
+      - name: "Deploy FSW + persistent GDS services"
+        uses: nasa/fprime-actions/soak-setup@devel
+        with:
+          platform: linux
