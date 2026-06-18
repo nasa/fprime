@@ -26,17 +26,39 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
-    FW_ASSERT(this->m_sequenceFilePath.length() > 0);
-
     // crc needs to be initialized with a particular value
     // for the calculation to work
     this->m_computedCRC.init();
 
+    // concat the seq base dir prefix to the seq file path
+    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(valid);
+    if (baseDir.length() > 0) {
+        // the result will get truncated to FileNameStringSize
+        Fw::FormatStatus status = this->m_fullSequenceFilePath.format("%s/%s", baseDir.toChar(),
+                                                                      this->m_sequenceExecArgs.get_filePath().toChar());
+
+        if (status != Fw::FormatStatus::SUCCESS) {
+            // the only runtime-reachable non-success status is OVERFLOWED, which means the
+            // base dir and file name together are longer than the sequence file path buffer.
+            // the other statuses can only result from a bad format string literal, which is a
+            // coding error.
+            FW_ASSERT(status == Fw::FormatStatus::OVERFLOWED, static_cast<I32>(status));
+            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, this->m_sequenceExecArgs.get_filePath());
+            return Fw::Success::FAILURE;
+        }
+    } else {
+        // the assignment here ensures the string is null terminated
+        // because it uses the string_copy method
+        // also, the filePath string in SequenceExecutionArgs is guaranteed
+        // to be truncated to FileNameStringSize chars, so it will not
+        // be truncated by this assignment
+        this->m_fullSequenceFilePath = this->m_sequenceExecArgs.get_filePath();
+    }
     Os::File sequenceFile;
-    Os::File::Status openStatus = sequenceFile.open(this->m_sequenceFilePath.toChar(), Os::File::OPEN_READ);
+    Os::File::Status openStatus = sequenceFile.open(this->m_fullSequenceFilePath.toChar(), Os::File::OPEN_READ);
 
     if (openStatus != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(openStatus));
+        this->log_WARNING_HI_FileOpenError(this->m_fullSequenceFilePath, static_cast<I32>(openStatus));
         return Fw::Success::FAILURE;
     }
 
@@ -87,14 +109,14 @@ Fw::Success FpySequencer::validate() {
     FwSizeType sequenceFileSize;
     Os::File::Status sizeStatus = sequenceFile.size(sequenceFileSize);
     if (sizeStatus != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(sizeStatus));
+        this->log_WARNING_HI_FileApiError(this->m_fullSequenceFilePath, static_cast<I32>(sizeStatus));
         return Fw::Success::FAILURE;
     }
 
     FwSizeType sequenceFilePosition;
     Os::File::Status positionStatus = sequenceFile.position(sequenceFilePosition);
     if (positionStatus != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(positionStatus));
+        this->log_WARNING_HI_FileApiError(this->m_fullSequenceFilePath, static_cast<I32>(positionStatus));
         return Fw::Success::FAILURE;
     }
 
@@ -105,7 +127,7 @@ Fw::Success FpySequencer::validate() {
 
     Fpy::StackSizeType availableSpace = Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size;
 
-    if (this->m_sequenceArgs.get_size() > availableSpace) {
+    if (this->m_sequenceExecArgs.get_runArgsBuf().get_size() > availableSpace) {
         return Fw::Success::FAILURE;
     }
 
@@ -119,7 +141,7 @@ Fw::Success FpySequencer::readHeader() {
     Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_header());
     if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
-            FpySequencer_FileReadStage::HEADER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+            FpySequencer_FileReadStage::HEADER, this->m_fullSequenceFilePath, static_cast<I32>(deserStatus),
             this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
         return Fw::Success::FAILURE;
     }
@@ -160,7 +182,7 @@ Fw::Success FpySequencer::readBody() {
         deserStatus = this->m_sequenceBuffer.deserializeTo(argSpec);
         if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
-                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                FpySequencer_FileReadStage::BODY, this->m_fullSequenceFilePath, static_cast<I32>(deserStatus),
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
@@ -175,9 +197,10 @@ Fw::Success FpySequencer::readBody() {
     }
 
     // Validate total argument size
-    if (this->m_totalExpectedArgSize != this->m_sequenceArgs.get_size()) {
-        this->log_WARNING_HI_ArgSizeMismatch(this->m_totalExpectedArgSize, this->m_sequenceArgs.get_size(),
-                                             this->m_sequenceFilePath);
+    if (this->m_totalExpectedArgSize != this->m_sequenceExecArgs.get_runArgsBuf().get_size()) {
+        this->log_WARNING_HI_ArgSizeMismatch(this->m_totalExpectedArgSize,
+                                             this->m_sequenceExecArgs.get_runArgsBuf().get_size(),
+                                             this->m_fullSequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
@@ -187,7 +210,7 @@ Fw::Success FpySequencer::readBody() {
         deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
-                FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+                FpySequencer_FileReadStage::BODY, this->m_fullSequenceFilePath, static_cast<I32>(deserStatus),
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
@@ -201,7 +224,7 @@ Fw::Success FpySequencer::readFooter() {
     Fw::SerializeStatus deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_footer());
     if (deserStatus != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileReadDeserializeError(
-            FpySequencer_FileReadStage::FOOTER, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
+            FpySequencer_FileReadStage::FOOTER, this->m_fullSequenceFilePath, static_cast<I32>(deserStatus),
             this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
         return Fw::Success::FAILURE;
     }
@@ -233,19 +256,19 @@ Fw::Success FpySequencer::readBytes(Os::File& file,
     // if this fails, then you need to give the sequencer more buffer memory. pass in a bigger number
     // to fpySeq.allocateBuffer(). This is usually done in topology setup CPP
     if (expectedReadLen > capacity) {
-        this->log_WARNING_HI_InsufficientBufferSpace(static_cast<U64>(capacity), this->m_sequenceFilePath);
+        this->log_WARNING_HI_InsufficientBufferSpace(static_cast<U64>(capacity), this->m_fullSequenceFilePath);
         return Fw::Success::FAILURE;
     }
 
     Os::File::Status fileStatus = file.read(this->m_sequenceBuffer.getBuffAddr(), actualReadLen);
 
     if (fileStatus != Os::File::OP_OK) {
-        this->log_WARNING_HI_FileReadError(readStage, this->m_sequenceFilePath, static_cast<I32>(fileStatus));
+        this->log_WARNING_HI_FileReadError(readStage, this->m_fullSequenceFilePath, static_cast<I32>(fileStatus));
         return Fw::Success::FAILURE;
     }
 
     if (actualReadLen < expectedReadLen) {
-        this->log_WARNING_HI_EndOfFileError(readStage, this->m_sequenceFilePath);
+        this->log_WARNING_HI_EndOfFileError(readStage, this->m_fullSequenceFilePath);
         return Fw::Success::FAILURE;
     }
 

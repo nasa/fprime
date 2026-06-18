@@ -1277,7 +1277,7 @@ TEST_F(FpySequencerTester, exit) {
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::EXIT_WITH_ERROR);
     ASSERT_EVENTS_SequenceExitedWithError_SIZE(1);
-    ASSERT_EVENTS_SequenceExitedWithError(0, tester_get_m_sequenceFilePath().toChar(), 123);
+    ASSERT_EVENTS_SequenceExitedWithError(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), 123);
 }
 
 TEST_F(FpySequencerTester, discard) {
@@ -2793,7 +2793,7 @@ TEST_F(FpySequencerTester, readBody) {
     tester_get_m_sequenceBuffer_ptr()->resetSer();
     Svc::SeqArgs maxArgs{0, 0};
     maxArgs.set_size(Fpy::MAX_SEQUENCE_ARG_COUNT * sizeof(U32));
-    tester_set_m_sequenceArgs(maxArgs);
+    tester_get_m_sequenceExecArgs_ptr()->set_runArgsBuf(maxArgs);
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_ARG_COUNT; ii++) {
         Fw::String argName;
         argName.format("arg%u", ii);
@@ -2832,7 +2832,7 @@ TEST_F(FpySequencerTester, readBody) {
 
     // write some statements
     Svc::SeqArgs noArgs{0, 0};
-    tester_set_m_sequenceArgs(noArgs);
+    tester_get_m_sequenceExecArgs_ptr()->set_runArgsBuf(noArgs);
     tester_get_m_sequenceObj_ptr()->get_header().set_argumentCount(0);
     Fpy::Statement stmt(Fpy::DirectiveId::NO_OP, Fw::StatementArgBuffer());
     for (U32 ii = 0; ii < Fpy::MAX_SEQUENCE_STATEMENT_COUNT; ii++) {
@@ -2926,7 +2926,7 @@ TEST_F(FpySequencerTester, validate) {
     writeToFile("test.bin");
     U8 data[Fpy::Sequence::SERIALIZED_SIZE] = {0};
     tester_get_m_sequenceBuffer_ptr()->setExtBuffer(data, sizeof(data));
-    tester_set_m_sequenceFilePath("test.bin");
+    tester_get_m_sequenceExecArgs_ptr()->set_filePath(Fw::String("test.bin"));
     ASSERT_EQ(tester_validate(), Fw::Success::SUCCESS);
 
     // cause validation failure to open
@@ -2984,7 +2984,7 @@ TEST_F(FpySequencerTester, validate) {
 
 TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
     // a relative base dir should be prepended to the file name and the resolved
-    // file should actually open and validate — m_sequenceFilePath (used by
+    // file should actually open and validate — m_fullSequenceFilePath (used by
     // tlm/events/file IO) should hold the fully resolved path
     allocMem();
     add_NO_OP();
@@ -2999,7 +2999,7 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
 
-    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("seq_dir/test.bin"));
+    ASSERT_EQ(tester_get_m_fullSequenceFilePath(), Fw::String("seq_dir/test.bin"));
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
 
@@ -3026,7 +3026,7 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesAbsolutePath) {
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
 
-    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String(absFilePath));
+    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath(), Fw::String(absFilePath));
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
 
@@ -3035,7 +3035,7 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesAbsolutePath) {
 }
 
 TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
-    // empty base dir — m_sequenceFilePath should be the raw user-provided path
+    // empty base dir — m_sequenceExecArgs.get_filePath() should be the raw user-provided path
     allocMem();
     add_NO_OP();
     writeToFile("test.bin");
@@ -3048,7 +3048,7 @@ TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
 
-    ASSERT_EQ(tester_get_m_sequenceFilePath(), Fw::String("test.bin"));
+    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath(), Fw::String("test.bin"));
 
     removeFile("test.bin");
 }
@@ -3091,12 +3091,13 @@ TEST_F(FpySequencerTester, seqBaseDir_pathTooLongTruncates) {
     std::string longFileName(fileNameLen, 'b');
     FpySequencer_SequenceExecutionArgs args;
     args.set_filePath(Fw::String(longFileName.c_str()));
-    tester_setSequenceFilePath(args);
+    tester_setSequenceExecArgs(args);
 
     ASSERT_EVENTS_SequenceFilePathTooLong_SIZE(1);
     ASSERT_EQ(this->eventHistory_SequenceFilePathTooLong->at(0).baseDir, Fw::LogStringArg(longBaseDir.c_str()));
     // the stored path was truncated to the maximum length that fits the buffer
-    ASSERT_EQ(tester_get_m_sequenceFilePath().length(), static_cast<FwSizeType>(FileNameStringSize));
+    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath().length(),
+              static_cast<FwSizeType>(FileNameStringSize));
 }
 
 TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
@@ -3115,7 +3116,7 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
 
     // make the loaded sequence path distinct from the dump path so that, if the
     // event were to (incorrectly) log m_sequenceFilePath, this test would fail
-    tester_set_m_sequenceFilePath("loaded_sequence.bin");
+    tester_get_m_sequenceExecArgs_ptr()->set_filePath(Fw::String("loaded_sequence.bin"));
     this->clearHistory();
 
     // dump into a directory that doesn't exist so the open fails
@@ -4790,7 +4791,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogFatal_SIZE(1);
-        ASSERT_EVENTS_LogFatal(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogFatal(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4806,7 +4807,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogWarningHi_SIZE(1);
-        ASSERT_EVENTS_LogWarningHi(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogWarningHi(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4822,7 +4823,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogWarningLo_SIZE(1);
-        ASSERT_EVENTS_LogWarningLo(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogWarningLo(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4838,7 +4839,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogCommand_SIZE(1);
-        ASSERT_EVENTS_LogCommand(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogCommand(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4854,7 +4855,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogActivityHi_SIZE(1);
-        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4870,7 +4871,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogActivityLo_SIZE(1);
-        ASSERT_EVENTS_LogActivityLo(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogActivityLo(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4886,7 +4887,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogDiagnostic_SIZE(1);
-        ASSERT_EVENTS_LogDiagnostic(0, tester_get_m_sequenceFilePath().toChar(), testMsg);
+        ASSERT_EVENTS_LogDiagnostic(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), testMsg);
         clearEvents();
     }
 
@@ -4935,7 +4936,7 @@ TEST_F(FpySequencerTester, popEvent) {
         ASSERT_EQ(result, Signal::stmtResponse_success);
         ASSERT_EQ(err, DirectiveError::NO_ERROR);
         ASSERT_EVENTS_LogActivityHi_SIZE(1);
-        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceFilePath().toChar(), "");
+        ASSERT_EVENTS_LogActivityHi(0, tester_get_m_sequenceExecArgs_ptr()->get_filePath().toChar(), "");
         clearEvents();
     }
 }

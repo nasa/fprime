@@ -15,7 +15,7 @@ event FileOpenError(
     errorCode: I32
 ) \
     severity warning high \
-    format "File open error encountered while opening {}: {}"
+    format "File open error encountered while opening '{}': {}"
 
 event FileWriteError(
     writeSize: FwSizeType
@@ -23,7 +23,7 @@ event FileWriteError(
     errorCode: I32
 ) \
     severity warning high \
-    format "File write error encountered while writing {} bytes to {}: {}"
+    format "File write error encountered while writing {} bytes to '{}': {}"
 
 event FileReadError(
     readStage: FileReadStage
@@ -31,14 +31,14 @@ event FileReadError(
     errorCode: I32
 ) \
     severity warning high \
-    format "File read error encountered while reading {} of file {}: {}"
+    format "File read error encountered while reading {} of file '{}': {}"
 
 event EndOfFileError(
     readStage: FileReadStage
     filePath: string
 ) \
     severity warning high \
-    format "End of file encountered unexpectedly while reading {} of file {}"
+    format "End of file encountered unexpectedly while reading {} of file '{}'"
 
 event FileReadDeserializeError(
     readStage: FileReadStage
@@ -48,7 +48,7 @@ event FileReadDeserializeError(
     buffLength: U64
 ) \
     severity warning high \
-    format "Deserialize error encountered while reading {} of file {}: {} ({} bytes left out of {})"
+    format "Deserialize error encountered while reading {} of file '{}': {} ({} bytes left out of {})"
 
 event WrongSchemaVersion(
     expected: U8
@@ -75,21 +75,21 @@ event InsufficientBufferSpace(
     filePath: string
 ) \
     severity warning high \
-    format "Buffer capacity of {} was not big enough for sequence {}"
+    format "Buffer capacity of {} was not big enough for sequence '{}'"
 
 event FileApiError(
     filePath: string
     errorCode: I32
 ) \
     severity warning high \
-    format "File system API error encountered while operating on file {}: {}"
+    format "File system API error encountered while operating on file '{}': {}"
 
 event SequenceFilePathTooLong(
     baseDir: string
     fileName: string
 ) \
     severity warning high \
-    format "Sequence file path was truncated: base directory {} and file name {} together exceed the maximum path length"
+    format "SEQ_BASE_DIR '{}' and file name '{}' together exceed the maximum path length"
 
 # runtime
 
@@ -100,26 +100,26 @@ event CommandFailed(
     response: Fw.CmdResponse
 ) \
     severity warning high \
-    format "Failed to execute command opcode {} index {} in sequence file {}: response was {}"
+    format "Failed to execute command opcode {} index {} in sequence file '{}': response was {}"
 
 event SequenceDone(
     filePath: string
 ) \
     severity activity high \
-    format "Completed sequence file {}"
+    format "Completed sequence file '{}'"
 
 event SequenceCancelled(
     filePath: string
 ) \
     severity activity high \
-    format "Cancelled sequence file {}"
+    format "Cancelled sequence file '{}'"
 
 event SequenceExitedWithError(
     filePath: string
     errorCode: U8
 ) \
     severity warning high \
-    format "Sequence {} exited with error code {}"
+    format "Sequence '{}' exited with error code {}"
 
 event UnknownSequencerDirective(
     $opcode: U8
@@ -127,7 +127,7 @@ event UnknownSequencerDirective(
     filePath: string
 ) \
     severity warning high \
-    format "Unknown sequencer directive id {} at index {} in file {}"
+    format "Unknown sequencer directive id {} at index {} in file '{}'"
 
 event CmdResponseWhileNotRunningSequence(
     $state: I32
@@ -209,7 +209,7 @@ event CommandTimedOut(
     filePath: string
 ) \
     severity warning high \
-    format "A command opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
+    format "A command opcode {} at index {} timed out in sequence '{}', causing the sequence to fail"
 
 event DirectiveTimedOut(
     opCode: U8
@@ -217,7 +217,7 @@ event DirectiveTimedOut(
     filePath: string
 ) \
     severity warning high \
-    format "A directive opcode {} at index {} timed out in sequence {}, causing the sequence to fail"
+    format "A directive opcode {} at index {} timed out in sequence '{}', causing the sequence to fail"
 
 event TooManySequenceArgs(
     count: U8
@@ -239,7 +239,7 @@ event ArgSizeMismatch(
     filePath: string
 ) \
     severity warning high \
-    format "Expected {} bytes of arguments, but received {} in sequence file {}"
+    format "Expected {} bytes of arguments, but received {} in sequence file '{}'"
 
 event ArgTotalSizeExceedsStackLimit(
     argSize: Fpy.StackSizeType
@@ -269,46 +269,46 @@ event LogFatal(
     message: string
 ) \
     severity fatal \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogWarningHi(
     filePath: string
     message: string
 ) \
     severity warning high \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogWarningLo(
     filePath: string
     message: string
 ) \
     severity warning low \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogCommand(
     filePath: string
     message: string
 ) \
     severity command \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogActivityHi(
     filePath: string
     message: string
 ) \
     severity activity high \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogActivityLo(
     filePath: string
     message: string
 ) \
     severity activity low \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"
 
 event LogDiagnostic(
     filePath: string
     message: string
 ) \
     severity diagnostic \
-    format "Sequence {}: {}"
+    format "Sequence '{}': {}"

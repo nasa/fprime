@@ -1119,7 +1119,7 @@ Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& dir
     }
     // otherwise, kill the sequence here
     // raise the user defined error code as an event
-    this->log_WARNING_HI_SequenceExitedWithError(this->m_sequenceFilePath, errorCode);
+    this->log_WARNING_HI_SequenceExitedWithError(this->m_fullSequenceFilePath, errorCode);
     error = DirectiveError::EXIT_WITH_ERROR;
     return Signal::stmtResponse_failure;
 }
@@ -1602,25 +1602,25 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
     // Emit the appropriate event based on severity
     switch (severity) {
         case Fw::LogSeverity::FATAL:
-            this->log_FATAL_LogFatal(this->m_sequenceFilePath, messageStr);
+            this->log_FATAL_LogFatal(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::WARNING_HI:
-            this->log_WARNING_HI_LogWarningHi(this->m_sequenceFilePath, messageStr);
+            this->log_WARNING_HI_LogWarningHi(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::WARNING_LO:
-            this->log_WARNING_LO_LogWarningLo(this->m_sequenceFilePath, messageStr);
+            this->log_WARNING_LO_LogWarningLo(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::COMMAND:
-            this->log_COMMAND_LogCommand(this->m_sequenceFilePath, messageStr);
+            this->log_COMMAND_LogCommand(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::ACTIVITY_HI:
-            this->log_ACTIVITY_HI_LogActivityHi(this->m_sequenceFilePath, messageStr);
+            this->log_ACTIVITY_HI_LogActivityHi(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::ACTIVITY_LO:
-            this->log_ACTIVITY_LO_LogActivityLo(this->m_sequenceFilePath, messageStr);
+            this->log_ACTIVITY_LO_LogActivityLo(this->m_fullSequenceFilePath, messageStr);
             break;
         case Fw::LogSeverity::DIAGNOSTIC:
-            this->log_DIAGNOSTIC_LogDiagnostic(this->m_sequenceFilePath, messageStr);
+            this->log_DIAGNOSTIC_LogDiagnostic(this->m_fullSequenceFilePath, messageStr);
             break;
         default:
             error = DirectiveError::INVALID_ARG;

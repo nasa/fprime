@@ -1,7 +1,11 @@
 struct SequenceExecutionArgs {
+    @ the path of the sequence file to run
     filePath: string size FileNameStringSize
-    $block: Svc.BlockState
-    buffer: Svc.SeqArgs
+    @ whether or not the sequence we're about to run should return immediately or
+    @ block on completion
+    $blockState: Svc.BlockState
+    @ sequence arguments to push to stack when entering RUNNING state
+    runArgsBuf: Svc.SeqArgs
 }
 
 struct BreakpointArgs {
@@ -50,12 +54,8 @@ state machine SequencerStateMachine {
     ####################
     @ simply raises the "entered" signal
     action signalEntered
-    @ sets the current sequence file path member var
-    action setSequenceFilePath: SequenceExecutionArgs
-    @ sets the block state of the sequence to be run
-    action setSequenceBlockState: SequenceExecutionArgs
-    @ sets the arguments to pass to the sequence
-    action setSequenceArguments: SequenceExecutionArgs
+    @ sets the sequence execution arguments (seq path, block state, seq args)
+    action setSequenceExecArgs: SequenceExecutionArgs
     @ performs all steps necessary for sequence validation, and raises a signal result_success or result_failure
     action validate
 
@@ -83,29 +83,26 @@ state machine SequencerStateMachine {
     @ responds to the calling command with EXECUTION_ERROR
     action sendCmdResponse_EXECUTION_ERROR
 
-    @ clears all variables related to the loading/validating of the sequence file
-    action clearSequenceFile
+    @ clears the sequence execution arguments (seq path, block state, seq args)
+    @ and the m_fullSequenceFilePath member var
+    action clearSequenceExecArgs
     @ clears the breakpoint setting
     action clearBreakpoint
-    @ clears arguments
-    action clearSequenceArguments
 
     initial enter IDLE
 
     @ sequencer is ready to load, validate and run a sequence
     state IDLE {
-        # start with an unset goal state, and no debugging settings
-        entry do { clearBreakpoint, setGoalState_IDLE, clearSequenceFile, clearSequenceArguments}
+        # start with an unset goal state, no sequence execution args, and no debugging settings
+        entry do { clearBreakpoint, setGoalState_IDLE, clearSequenceExecArgs }
         # -->
         # wait for a cmd
 
         ####################
         # commands         #
         ####################
-        # validate does not take as input a block state, only a path
-        on cmd_VALIDATE do { setGoalState_VALID, setSequenceFilePath, setSequenceArguments} enter VALIDATING
-        # run takes both path and block state
-        on cmd_RUN do { setGoalState_RUNNING, setSequenceFilePath, setSequenceBlockState, setSequenceArguments} enter VALIDATING
+        on cmd_VALIDATE do { setGoalState_VALID, setSequenceExecArgs } enter VALIDATING
+        on cmd_RUN do { setGoalState_RUNNING, setSequenceExecArgs } enter VALIDATING
 
         on cmd_SET_BREAKPOINT do { setBreakpoint }
         on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }
@@ -152,8 +149,7 @@ state machine SequencerStateMachine {
         ####################
         @ cancelled the sequence after we validated it
         on cmd_CANCEL do { report_seqCancelled } enter IDLE
-        @ the sequence path has already been decided on, so only set the sequenceShouldBlock var
-        on cmd_RUN_VALIDATED do { setSequenceBlockState } enter RUNNING
+        on cmd_RUN_VALIDATED do { setSequenceExecArgs } enter RUNNING
 
         on cmd_SET_BREAKPOINT do { setBreakpoint }
         on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }

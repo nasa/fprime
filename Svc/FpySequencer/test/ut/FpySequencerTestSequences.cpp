@@ -130,4 +130,29 @@ TEST_F(FpySequencerTester, NotTrueSeq) {
     ASSERT_EQ(tester_get_m_tlm_ptr()->lastDirectiveError, DirectiveError::NO_ERROR);
 }
 
+TEST_F(FpySequencerTester, ValidateAfterNoBlockRun) {
+    allocMem();
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    sendCmd_RUN(0, 0, Fw::String("test.bin"), BlockState::NO_BLOCK);
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+
+    // okay, ran a sequence with no block. running validate after it should
+    // return a response
+
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+}
+
 }  // namespace Svc

@@ -49,7 +49,7 @@ The following diagram represents the states of the `FpySequencer`.
 stateDiagram-v2
   direction LR
   state "IDLE
-entry / clearBreakpoint, clearSequenceFile
+entry / clearBreakpoint, clearSequenceExecArgs
     ------------------------------------------------------
     cmd_SET_BREAKPOINT / setBreakpoint
     cmd_CLEAR_BREAKPOINT / clearBreakpoint 
@@ -108,8 +108,8 @@ entry / clearBreakpoint, clearSequenceFile
 
   }
 
-  IDLE --> VALIDATING: cmd_VALIDATE/setSequenceFilePath
-  IDLE --> VALIDATING: cmd_RUN/setSequenceFilePath
+  IDLE --> VALIDATING: cmd_VALIDATE/setSequenceExecArgs
+  IDLE --> VALIDATING: cmd_RUN/setSequenceExecArgs
 
   VALID --> RUNNING: if cmd_RUN
   VALID --> AWAITING_CMD_RUN_VALIDATED: if cmd_VALIDATE

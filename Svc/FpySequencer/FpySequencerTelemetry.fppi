@@ -60,6 +60,3 @@ telemetry BreakBeforeNextLine: bool update on change
 
 @ value of prm STATEMENT_TIMEOUT_SECS
 telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
-
-@ value of prm SEQ_BASE_DIR
-telemetry PRM_SEQ_BASE_DIR: string size FileNameStringSize update on change

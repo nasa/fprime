@@ -251,11 +251,11 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
     Fw::Success tester_validate();
-    Fw::String tester_get_m_sequenceFilePath();
-    void tester_set_m_sequenceFilePath(Fw::String str);
-    // directly invokes the setSequenceFilePath state machine action, bypassing the
+    FpySequencer_SequenceExecutionArgs* tester_get_m_sequenceExecArgs_ptr();
+    Fw::String tester_get_m_fullSequenceFilePath();
+    // directly invokes the setSequenceExecArgs state machine action, bypassing the
     // command path (which truncates string args to FW_CMD_STRING_MAX_SIZE)
-    void tester_setSequenceFilePath(const Svc::FpySequencer_SequenceExecutionArgs& args);
+    void tester_setSequenceExecArgs(const Svc::FpySequencer_SequenceExecutionArgs& args);
     Fw::Success tester_readBytes(Os::File& file,
                                  FwSizeType readLen,
                                  FpySequencer_FileReadStage readStage,
@@ -267,7 +267,6 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     void tester_init_m_computedCRC();
     void tester_update_m_computedCRC(const U8* buffer, FwSizeType bufferSize);
     U32 tester_finalize_m_computedCRC();
-    void tester_set_m_sequenceArgs(Svc::SeqArgs args);
     Svc::FpySequencer::BreakpointInfo* tester_get_m_breakpoint_ptr();
     Svc::Signal tester_checkStatementTimeout();
     Svc::Signal tester_checkShouldWake();

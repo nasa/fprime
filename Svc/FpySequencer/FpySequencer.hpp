@@ -258,28 +258,10 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setSequenceFilePath of state machine Svc_FpySequencer_SequencerStateMachine
+    //! Implementation for action setSequenceExecArgs of state machine Svc_FpySequencer_SequencerStateMachine
     //!
-    //! sets the current sequence file path member var
-    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceFilePath(
-        SmId smId,                                              //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
-        ) override;
-
-    //! Implementation for action setSequenceBlockState of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! sets the block state of the sequence to be run
-    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceBlockState(
-        SmId smId,                                              //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
-        ) override;
-
-    //! Implementation for action setSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! sets the arguments to pass to the sequence
-    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceArguments(
+    //! sets the sequence execution arguments (seq path, block state, seq args)
+    void Svc_FpySequencer_SequencerStateMachine_action_setSequenceExecArgs(
         SmId smId,                                              //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal,  //!< The signal
         const Svc::FpySequencer_SequenceExecutionArgs& value    //!< The value
@@ -358,22 +340,6 @@ class FpySequencer : public FpySequencerComponentBase {
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action clearSequenceFile of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! clears all variables related to the loading/validating of the sequence file
-    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceFile(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action clearSequenceArguments of state machine Svc_FpySequencer_SequencerStateMachine
-    //!
-    //! clears arguments
-    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceArguments(
-        SmId smId,                                             //!< The state machine id
-        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
     //! Implementation for action checkShouldWake of state machine Svc_FpySequencer_SequencerStateMachine
     //!
     //! checks if sequencer should wake from sleep
@@ -418,6 +384,15 @@ class FpySequencer : public FpySequencerComponentBase {
     //!
     //! clears the breakpoint, allowing execution of the sequence to continue
     void Svc_FpySequencer_SequencerStateMachine_action_clearBreakpoint(
+        SmId smId,                                             //!< The state machine id
+        Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action clearSequenceExecArgs of state machine Svc_FpySequencer_SequencerStateMachine
+    //!
+    //! clears the sequence execution arguments (seq path, block state, seq args)
+    //! and the m_fullSequenceFilePath member var
+    void Svc_FpySequencer_SequencerStateMachine_action_clearSequenceExecArgs(
         SmId smId,                                             //!< The state machine id
         Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -645,28 +620,30 @@ class FpySequencer : public FpySequencerComponentBase {
     // id of allocator that gave us m_sequenceBuffer
     FwEnumStoreType m_allocatorId;
 
-    // assigned by the user via cmd
-    // length is FileNameStringSize
-    Fw::FileNameString m_sequenceFilePath;
+    // the execution arguments of the sequence:
+    // * the file name
+    // * the block state
+    // * the sequence runtime args
+    // See the struct member docstrings for more info
+    Svc::FpySequencer_SequenceExecutionArgs m_sequenceExecArgs;
+
+    // the full (including the SEQ_BASE_DIR prefix) path
+    // to the sequence file. Note: not updated until validate() is run
+    Fw::FileNameString m_fullSequenceFilePath;
+
     // the sequence, loaded in memory
     Fpy::Sequence m_sequenceObj;
     // live running computation of CRC (updated as we read)
     Utils::Hash m_computedCRC;
 
     // Size of arguments read in current sequence. Used for validation between
-    // User provided arguments and what is requested of the sequence.
+    // user provided arguments and what is requested of the sequence.
     Fpy::StackSizeType m_totalExpectedArgSize;
 
-    // whether or not the sequence we're about to run should return immediately or
-    // block on completion
-    Svc::BlockState m_sequenceBlockState;
     // if we are to block on completion, save the opCode and cmdSeq we should
     // return
     FwOpcodeType m_savedOpCode;
     U32 m_savedCmdSeq;
-
-    // sequence arguments to push to stack when entering RUNNING state
-    Svc::SeqArgs m_sequenceArgs{};
 
     // the goal state is the state that we're trying to reach in the sequencer
     // if it's RUNNING, then we should promptly go to RUNNING once we validate the

@@ -472,7 +472,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         default: {
             // unsure what this opcode is. check compiler version matches sequencer
             this->log_WARNING_HI_UnknownSequencerDirective(stmt.get_opCode(), this->currentStatementIdx(),
-                                                           this->m_sequenceFilePath);
+                                                           this->m_fullSequenceFilePath);
             return Fw::Success::FAILURE;
         }
     }
@@ -729,10 +729,10 @@ Signal FpySequencer::checkStatementTimeout() {
         this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
         // if we were executing a command, warn that the cmd timed out with its opcode
         this->log_WARNING_HI_CommandTimedOut(this->m_runtime.currentCmdOpcode, this->currentStatementIdx(),
-                                             this->m_sequenceFilePath);
+                                             this->m_fullSequenceFilePath);
     } else {
         this->log_WARNING_HI_DirectiveTimedOut(this->m_runtime.currentStatementOpcode, this->currentStatementIdx(),
-                                               this->m_sequenceFilePath);
+                                               this->m_fullSequenceFilePath);
     }
 
     return Signal::result_checkStatementTimeout_statementTimeout;

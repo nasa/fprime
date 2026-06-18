@@ -17,14 +17,13 @@ FpySequencer ::FpySequencer(const char* const compName)
     : FpySequencerComponentBase(compName),
       m_sequenceBuffer(),
       m_allocatorId(0),
-      m_sequenceFilePath("<invalid_seq>"),
+      m_sequenceExecArgs(),
+      m_fullSequenceFilePath(),
       m_sequenceObj(),
       m_computedCRC(),
       m_totalExpectedArgSize(0),
-      m_sequenceBlockState(),
       m_savedOpCode(0),
       m_savedCmdSeq(0),
-      m_sequenceArgs(0, 0),
       m_goalState(),
       m_sequencesStarted(0),
       m_statementsDispatched(0),
@@ -126,8 +125,13 @@ void FpySequencer::RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,  //!< The opcod
         this->m_savedCmdSeq = cmdSeq;
     }
 
-    this->sequencer_sendSignal_cmd_RUN_VALIDATED(
-        FpySequencer_SequenceExecutionArgs(this->m_sequenceFilePath, block, this->m_sequenceArgs));
+    // copy it
+    FpySequencer_SequenceExecutionArgs execArgs = this->m_sequenceExecArgs;
+    // update just the block state
+    // the rest should stay the same
+    execArgs.set_blockState(block);
+
+    this->sequencer_sendSignal_cmd_RUN_VALIDATED(execArgs);
 
     // only respond if the user doesn't want us to block further execution
     if (block == BlockState::NO_BLOCK) {
@@ -414,7 +418,7 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_LastDirectiveError(this->m_tlm.lastDirectiveError);
     this->tlmWrite_DirectiveErrorIndex(this->m_tlm.directiveErrorIndex);
     this->tlmWrite_DirectiveErrorId(this->m_tlm.directiveErrorId);
-    this->tlmWrite_SeqPath(this->m_sequenceFilePath);
+    this->tlmWrite_SeqPath(this->m_fullSequenceFilePath);
 
     this->tlmWrite_BreakpointIndex(this->m_breakpoint.breakpointIndex);
     this->tlmWrite_BreakOnlyOnceOnBreakpoint(this->m_breakpoint.breakOnlyOnceOnBreakpoint);
@@ -488,7 +492,6 @@ void FpySequencer::updateDebugTelemetryStruct() {
 
 void FpySequencer::parametersLoaded() {
     parameterUpdated(PARAMID_STATEMENT_TIMEOUT_SECS);
-    parameterUpdated(PARAMID_SEQ_BASE_DIR);
 }
 
 void FpySequencer::parameterUpdated(FwPrmIdType id) {
@@ -496,10 +499,6 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
     switch (id) {
         case PARAMID_STATEMENT_TIMEOUT_SECS: {
             this->tlmWrite_PRM_STATEMENT_TIMEOUT_SECS(this->paramGet_STATEMENT_TIMEOUT_SECS(valid));
-            break;
-        }
-        case PARAMID_SEQ_BASE_DIR: {
-            this->tlmWrite_PRM_SEQ_BASE_DIR(this->paramGet_SEQ_BASE_DIR(valid));
             break;
         }
         default: {
