@@ -61,6 +61,6 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: nasa/fprime-actions/soak-setup@soak-actions-improvements
+        uses: nasa/fprime-actions/soak-setup@devel
         with:
           platform: linux

@@ -22,4 +22,4 @@ jobs:
     name: "Soak Test"
     runs-on: [self-hosted, ARM64, soak-test]
     steps:
-      - uses: nasa/fprime-actions/soak-test@soak-actions-improvements
+      - uses: nasa/fprime-actions/soak-test@devel
