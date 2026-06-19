@@ -258,7 +258,7 @@ event RxEofWithError(
     seqNum: U32 @< Transaction sequence number
     conditionCode: U8 @< EOF condition code (checksum failure, file error, etc.)
 ) \
-    severity warning high \
+    severity warning low \
     format "RX class {} transaction {}:{} received EOF with error condition code {}"
 
 event RxSeekCrcFailed(
@@ -458,7 +458,7 @@ event TxFileTransferFailed(
     destFile: string size MaxFilePathSize @< Destination filename
     conditionCode: U8 @< Failure condition code
 ) \
-    severity warning high \
+    severity warning low \
     format "TX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
 
 event RxFileTransferCompleted(
@@ -482,7 +482,7 @@ event RxFileTransferFailed(
     destFile: string size MaxFilePathSize @< Destination filename
     conditionCode: U8 @< Failure condition code
 ) \
-    severity warning high \
+    severity warning low \
     format "RX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
 
 event MetadataReceived(

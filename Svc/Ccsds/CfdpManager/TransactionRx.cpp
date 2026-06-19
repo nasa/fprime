@@ -575,7 +575,7 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
                     /* Increment RX EOF error counter (protocol error) */
                     this->m_cfdpManager->incrementFaultRxEofError(this->m_chan_num);
 
-                    this->m_cfdpManager->log_WARNING_HI_RxEofWithError(this->getClass(), this->m_history->src_eid,
+                    this->m_cfdpManager->log_WARNING_LO_RxEofWithError(this->getClass(), this->m_history->src_eid,
                                                                        this->m_history->seq_num, static_cast<U8>(cc));
                 }
             }
