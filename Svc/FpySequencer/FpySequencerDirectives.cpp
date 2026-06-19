@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include "config/SerialPortIndexEnumAc.hpp"
 
 namespace Svc {
 
@@ -278,6 +279,21 @@ void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
+}
+
+//! Internal interface handler for directive_popEvent
+void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popEvent_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
+}
+
+//! Internal interface handler for directive_popSerializable
+void FpySequencer::directive_popSerializable_internalInterfaceHandler(
+    const Svc::FpySequencer_PopSerializableDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popSerializable_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_SERIALIZABLE, error);
 }
 
 //! Internal interface handler for directive_waitRel
@@ -1559,13 +1575,6 @@ Signal FpySequencer::storeAbsConstOffset_directiveHandler(const FpySequencer_Sto
     return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
 }
 
-//! Internal interface handler for directive_popEvent
-void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->popEvent_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
-}
-
 Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error) {
     // Pop messageSize from the stack
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
@@ -1626,6 +1635,43 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
             error = DirectiveError::INVALID_ARG;
             return Signal::stmtResponse_failure;
     }
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                                      DirectiveError& error) {
+    // Validate port index is in range (using enum constant value)
+    constexpr U32 MAX_PORTS = static_cast<U32>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    if (directive.get_portIndex() >= MAX_PORTS) {
+        error = DirectiveError::INVALID_PORT_INDEX;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Cast port index to FwIndexType for port call
+    const FwIndexType portIndex = static_cast<FwIndexType>(directive.get_portIndex());
+
+    // Check port is connected
+    if (!this->isConnected_serialOut_OutputPort(portIndex)) {
+        error = DirectiveError::SERIAL_PORT_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Validate data size on stack
+    if (this->m_runtime.stack.size < directive.get_size()) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Create external buffer referencing stack data (no copy)
+    U8* dataPtr = this->m_runtime.stack.top() - directive.get_size();
+    Fw::ExternalSerializeBuffer buf(dataPtr, directive.get_size());
+
+    // Call output port
+    this->serialOut_out(portIndex, buf);
+
+    // Pop data from stack
+    this->m_runtime.stack.size -= directive.get_size();
 
     return Signal::stmtResponse_success;
 }
