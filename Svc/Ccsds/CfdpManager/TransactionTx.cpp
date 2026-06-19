@@ -584,6 +584,9 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
     }
 
     if (!this->m_engine->recvFin(this, fin)) {
+        // Always set flag to send FIN-ACK, even if it is a retransmit
+        this->m_flags.tx.send_fin_ack = true;
+
         // set the CC only on the first time we get the FIN.  If this is a dupe
         // then re-ack but otherwise ignore it
         if (!this->m_flags.tx.fin_recv) {
@@ -594,16 +597,10 @@ void Transaction::s2Fin(const Fw::Buffer& buffer) {
             // note this is a no-op unless the status was unset previously
             this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(this->m_state_data.send.s2.fin_cc));
 
-            // Set flag to send FIN-ACK before finishing transaction
-            this->m_flags.tx.send_fin_ack = true;
-
             // Generally FIN is the last exchange in an S2 transaction, the remote is not supposed
             // to send it until after the EOF+ACK.  So at this point we stop trying to send anything
             // to the peer, regardless of whether we got every ACK we expected.
             this->m_engine->finishTransaction(this, true);
-        } else {
-            // Retransmitted FIN: always set flag to send FIN-ACK
-            this->m_flags.tx.send_fin_ack = true;
         }
     }
 }
