@@ -2991,8 +2991,7 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
     ASSERT_EQ(Os::FileSystem::createDirectory("seq_dir"), Os::FileSystem::Status::OP_OK);
     writeToFile("seq_dir/test.bin");
 
-    paramSet_SEQ_BASE_DIR(Fw::ParamString("seq_dir"), Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
+    cmp.m_baseDirOverride = Fw::String("seq_dir");
     this->clearHistory();
 
     sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
@@ -3009,8 +3008,7 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesPath) {
 
 TEST_F(FpySequencerTester, seqBaseDir_resolvesAbsolutePath) {
     // an absolute base dir should be prepended just the same, and the resolved
-    // absolute path should open and validate. (the base dir must fit in the
-    // SEQ_BASE_DIR param, FW_PARAM_STRING_MAX_SIZE, so use a short /tmp path)
+    // absolute path should open and validate.
     allocMem();
     add_NO_OP();
     const char* absBaseDir = "/tmp/fpy_seq_abs";
@@ -3018,15 +3016,14 @@ TEST_F(FpySequencerTester, seqBaseDir_resolvesAbsolutePath) {
     ASSERT_EQ(Os::FileSystem::createDirectory(absBaseDir), Os::FileSystem::Status::OP_OK);
     writeToFile(absFilePath);
 
-    paramSet_SEQ_BASE_DIR(Fw::ParamString(absBaseDir), Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
+    cmp.m_baseDirOverride = Fw::String(absBaseDir);
     this->clearHistory();
 
     sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
 
-    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath(), Fw::String(absFilePath));
+    ASSERT_EQ(tester_get_m_fullSequenceFilePath(), Fw::String(absFilePath));
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::OK);
 
@@ -3040,15 +3037,15 @@ TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
     add_NO_OP();
     writeToFile("test.bin");
 
-    paramSet_SEQ_BASE_DIR(Fw::ParamString(""), Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
+    cmp.m_baseDirOverride = Fw::String("");
     this->clearHistory();
 
     sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::AWAITING_CMD_RUN_VALIDATED);
 
-    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath(), Fw::String("test.bin"));
+    // with an empty base dir, the resolved path is just the raw user path
+    ASSERT_EQ(tester_get_m_fullSequenceFilePath(), Fw::String("test.bin"));
 
     removeFile("test.bin");
 }
@@ -3057,8 +3054,7 @@ TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
     // a base dir that doesn't exist makes file open fail. the FileOpenError
     // event should report the fully resolved path, not the user-supplied one
     allocMem();
-    paramSet_SEQ_BASE_DIR(Fw::ParamString("nonexistent_dir"), Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
+    cmp.m_baseDirOverride = Fw::String("nonexistent_dir");
     this->clearHistory();
 
     sendCmd_VALIDATE(0, 0, Fw::String("test.bin"));
@@ -3069,35 +3065,33 @@ TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
     ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/test.bin"));
 }
 
-TEST_F(FpySequencerTester, seqBaseDir_pathTooLongTruncates) {
+TEST_F(FpySequencerTester, seqBaseDir_pathTooLongFailsValidation) {
     // if SEQ_BASE_DIR plus the user-supplied file name together exceed the
-    // sequence file path buffer (FileNameStringSize), the resolved path gets
-    // truncated. the sequencer should log SequenceFilePathTooLong so the operator
-    // knows why, rather than silently acting on a wrong (truncated) path.
+    // sequence file path buffer (FileNameStringSize), resolving the full path
+    // would overflow. validate() must fail and log SequenceFilePathTooLong so the
+    // operator knows why, rather than silently acting on a wrong (truncated) path.
 
     // size the base dir and file name so that "<baseDir>/<fileName>" is exactly one
     // character too long for the sequence file path buffer (max strlen
-    // FileNameStringSize), forcing truncation. the separator accounts for the +1:
+    // FileNameStringSize), forcing the overflow. the separator accounts for the +1:
     //   baseDirLen + 1 (separator) + fileNameLen == FileNameStringSize + 1
     const FwSizeType baseDirLen = 8;
     const FwSizeType fileNameLen = FileNameStringSize - baseDirLen;
     std::string longBaseDir(baseDirLen, 'a');
-    paramSet_SEQ_BASE_DIR(Fw::ParamString(longBaseDir.c_str()), Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
-    this->clearHistory();
+    cmp.m_baseDirOverride = Fw::String(longBaseDir.c_str());
 
-    // call the action directly because the command path would truncate the file
+    // set the exec args directly because the command path would truncate the file
     // name to FW_CMD_STRING_MAX_SIZE before it could ever overflow.
     std::string longFileName(fileNameLen, 'b');
     FpySequencer_SequenceExecutionArgs args;
     args.set_filePath(Fw::String(longFileName.c_str()));
     tester_setSequenceExecArgs(args);
+    this->clearHistory();
 
+    // validate() should reject the sequence because the resolved path overflows
+    ASSERT_EQ(tester_validate(), Fw::Success::FAILURE);
     ASSERT_EVENTS_SequenceFilePathTooLong_SIZE(1);
     ASSERT_EQ(this->eventHistory_SequenceFilePathTooLong->at(0).baseDir, Fw::LogStringArg(longBaseDir.c_str()));
-    // the stored path was truncated to the maximum length that fits the buffer
-    ASSERT_EQ(tester_get_m_sequenceExecArgs_ptr()->get_filePath().length(),
-              static_cast<FwSizeType>(FileNameStringSize));
 }
 
 TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
@@ -3128,16 +3122,6 @@ TEST_F(FpySequencerTester, cmd_DUMP_STACK_TO_FILE_openErrorLogsDumpFileName) {
                         Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
     ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg("nonexistent_dir/dump.bin"));
-}
-
-TEST_F(FpySequencerTester, prmSeqBaseDirTlm) {
-    // setting the param should emit the telemetry channel via parameterUpdated
-    Fw::ParamString val("/seq");
-    paramSet_SEQ_BASE_DIR(val, Fw::ParamValid::VALID);
-    paramSend_SEQ_BASE_DIR(0, 0);
-
-    ASSERT_TLM_PRM_SEQ_BASE_DIR_SIZE(1);
-    ASSERT_TLM_PRM_SEQ_BASE_DIR(0, val.toChar());
 }
 
 TEST_F(FpySequencerTester, allocateBuffer) {

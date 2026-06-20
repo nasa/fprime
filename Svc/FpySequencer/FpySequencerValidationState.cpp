@@ -23,6 +23,12 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
     this->m_sequenceBuffer.clear();
 }
 
+// returns the base directory against which sequence file paths are resolved.
+// defaults to the SEQ_BASE_DIR config constant; overridable in tests/deployments
+const char* FpySequencer::getSequenceBaseDir() const {
+    return Fpy::SEQ_BASE_DIR;
+}
+
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
@@ -31,10 +37,10 @@ Fw::Success FpySequencer::validate() {
     this->m_computedCRC.init();
 
     // concat the seq base dir prefix to the seq file path
-    Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(valid);
-    if (baseDir.length() > 0) {
+    const char* baseDir = this->getSequenceBaseDir();
+    if (baseDir != nullptr && baseDir[0] != '\0') {
         // the result will get truncated to FileNameStringSize
-        Fw::FormatStatus status = this->m_fullSequenceFilePath.format("%s/%s", baseDir.toChar(),
+        Fw::FormatStatus status = this->m_fullSequenceFilePath.format("%s/%s", baseDir,
                                                                       this->m_sequenceExecArgs.get_filePath().toChar());
 
         if (status != Fw::FormatStatus::SUCCESS) {
@@ -43,7 +49,7 @@ Fw::Success FpySequencer::validate() {
             // the other statuses can only result from a bad format string literal, which is a
             // coding error.
             FW_ASSERT(status == Fw::FormatStatus::OVERFLOWED, static_cast<I32>(status));
-            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, this->m_sequenceExecArgs.get_filePath());
+            this->log_WARNING_HI_SequenceFilePathTooLong(Fw::String(baseDir), this->m_sequenceExecArgs.get_filePath());
             return Fw::Success::FAILURE;
         }
     } else {

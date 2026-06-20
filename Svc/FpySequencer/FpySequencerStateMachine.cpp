@@ -355,10 +355,11 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqStart
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     if (this->isConnected_seqStartOut_OutputPort(0)) {
-        // report that the sequence started to internal callers
-        // NOTE: Sequence Arguments would be cleared if a VALIDATION command is sent, not a full RUN command.
-        // TODO ^ what does this comment mean?
-        this->seqStartOut_out(0, this->m_fullSequenceFilePath, this->m_sequenceExecArgs.get_runArgsBuf());
+        // report that the sequence started to internal callers.
+        // we report the raw operator-supplied path rather than m_fullSequenceFilePath
+        // because this action runs in the VALIDATING entry, before validate() resolves
+        // the base dir prefix into m_fullSequenceFilePath
+        this->seqStartOut_out(0, this->m_sequenceExecArgs.get_filePath(), this->m_sequenceExecArgs.get_runArgsBuf());
     }
 }
 // ----------------------------------------------------------------------

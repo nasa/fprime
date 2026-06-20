@@ -12,6 +12,17 @@
 
 namespace Svc {
 
+// Test subclass that lets each test choose the base directory against which
+// sequence file paths are resolved. SEQ_BASE_DIR is a compile-time config
+// constant in production, but tests need to drive different values, so we
+// override the getSequenceBaseDir() helper to return a settable member.
+class TestFpySequencer : public FpySequencer {
+  public:
+    TestFpySequencer(const char* compName) : FpySequencer(compName), m_baseDirOverride(Fpy::SEQ_BASE_DIR) {}
+    const char* getSequenceBaseDir() const override { return this->m_baseDirOverride.toChar(); }
+    Fw::String m_baseDirOverride;
+};
+
 class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test {
     // ----------------------------------------------------------------------
     // Construction and destruction
@@ -53,7 +64,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
 
     //! The component under test
     //!
-    FpySequencer cmp;
+    TestFpySequencer cmp;
     FpySequencer& component;  // for compatibility
 
     // dispatches events from the queue until the component reaches the given state

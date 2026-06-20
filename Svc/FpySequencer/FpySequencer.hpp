@@ -739,6 +739,12 @@ class FpySequencer : public FpySequencerComponentBase {
     // Validation state
     // ----------------------------------------------------------------------
 
+    // returns the base directory against which sequence file paths are resolved
+    // in validate(). defaults to the SEQ_BASE_DIR config constant. declared
+    // virtual so that unit tests (and specialized deployments) can swap out the
+    // base dir, since SEQ_BASE_DIR is otherwise fixed at compile time
+    virtual const char* getSequenceBaseDir() const;
+
     // loads the sequence in memory, and does header/crc/integrity checks.
     // return SUCCESS if sequence is valid, FAILURE otherwise
     Fw::Success validate();
