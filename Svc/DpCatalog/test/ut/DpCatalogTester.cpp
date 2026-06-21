@@ -74,7 +74,9 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input, FwIndexType numEn
     this->component.m_xmitInProgress = true;
 
     // Collect expected entries (non-transmitted) using input order so that
-    // duplicate handling in std::set matches RedBlackTreeSet (first insert wins)
+    // duplicate handling in std::set matches RedBlackTreeSet (first insert wins).
+    // std::set sorts via operator< on insertion, so priority ordering is maintained
+    // without a separate sort step.
     std::set<DpCatalog::DpStateEntry> expectedEntries;
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
         if (input[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
