@@ -51,8 +51,7 @@ void DpCatalogTester ::doInit() {
     this->component.shutdown();
 }
 
-void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
-                               FwIndexType numEntries) {
+void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input, FwIndexType numEntries) {
     ASSERT_TRUE(input != nullptr);
     ASSERT_TRUE(numEntries > 0);
 
@@ -75,7 +74,7 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     this->component.m_xmitInProgress = true;
 
     // Collect expected entries (non-transmitted) using input order so that
-    // first-inserted-wins dedup in std::set matches RedBlackTreeSet behavior
+    // duplicate handling in std::set matches RedBlackTreeSet (first insert wins)
     std::set<DpCatalog::DpStateEntry> expectedEntries;
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
         if (input[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
