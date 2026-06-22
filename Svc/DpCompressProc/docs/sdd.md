@@ -44,6 +44,7 @@ sequenceDiagram
 ## Port Descriptions
 | Name | Description |
 |---|---|
+|procRequest| Synchronous input port receiving `Fw::Buffer` data product containers from `DpWriter` for compression processing|
 |compressChunk| Pass chunks of the original file data to a compressor. See detailed documentation|
 
 ## Component States
