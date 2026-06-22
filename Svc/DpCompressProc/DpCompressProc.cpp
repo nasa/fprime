@@ -63,9 +63,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         prm_chunk_size = container.getDataSize();
     }
     const FwSizeType max_chunk_size = prm_chunk_size;
-    FW_ASSERT(max_chunk_size != 0);
     FW_ASSERT(max_chunk_size <= std::numeric_limits<FwSizeStoreType>::max(),
               static_cast<FwAssertArgType>(max_chunk_size));
+    if (max_chunk_size <= 0) {
+        // Chunk size is invalid. Give up
+        return;
+    }
 
     Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET,
                            fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE);
@@ -126,7 +129,9 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         Fw::Buffer compression_buffer(data_offset, chunk_size);
 
         // Jump the deserializer to mark the data as read
-        data_deser.deserializeSkip(chunk_size);
+        Fw::SerializeStatus deser_stat;
+        deser_stat = data_deser.deserializeSkip(chunk_size);
+        FW_ASSERT(deser_stat == Fw::FW_SERIALIZE_OK, deser_stat);
 
         CompressionAlgorithm alg = CompressionAlgorithm::UNCOMPRESSED;
         FwSizeType min_compression = 0;

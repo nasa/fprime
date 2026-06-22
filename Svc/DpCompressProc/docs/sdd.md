@@ -149,7 +149,7 @@ Is turned into the following compressed data product
 |  Compressed |
 |   Record 3  |
 |   Metadata  |
-| Chunk 3 (C) | 
+| Chunk 4 (C) | 
 +-------------+
 ```
 The compressed product is guaranteed to be no larger than the original data product

@@ -163,6 +163,9 @@ void DpCompressProcTester::test_chunks(const FwSizeStoreType chunk_size, std::ve
 void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
                                               std::vector<AbstractState::Chunk> chunks,
                                               Fw::Buffer container_buf) {
+    this->clearHistory();
+    this->component.log_ACTIVITY_LO_DidNotCompress_ThrottleClear();
+
     abstractState.success_ = false;
     abstractState.reset_compressed_size_state();
 
@@ -178,6 +181,12 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
             should_compress = true;
             break;
         }
+    }
+
+    if (should_compress) {
+        ASSERT_EVENTS_DidNotCompress_SIZE(0);
+    } else {
+        ASSERT_EVENTS_DidNotCompress_SIZE(1);
     }
 
     Fw::DpContainer container_out(0, container_buf);

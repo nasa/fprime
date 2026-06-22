@@ -119,15 +119,6 @@ TEST(Nominal, Random) {
 
         Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
 
-        /*
-        fprintf(stderr, "iteration %d\n", i);
-        fprintf(stderr, " ");
-        for (auto c : chunks) {
-            fprintf(stderr, "%c", c.compressible);
-        }
-        fprintf(stderr, "\n");
-        */
-
         Svc::Testers::procRequest.CompressTest();
         if (!Svc::Testers::procRequest.testState.abstractState.success_) {
             fprintf(stderr, "Failure on iteration %d\n", i);
