@@ -196,6 +196,8 @@ telemetry packets RefPackets {
     DataProducts.dpWriter.NumFailedWrites
     DataProducts.dpWriter.NumErrors
 
+    DataProducts.dpBufferAccumulator.BA_NumQueuedBuffers
+
     DataProducts.dpBufferManager.TotalBuffs
     DataProducts.dpBufferManager.CurrBuffs
     DataProducts.dpBufferManager.HiBuffs

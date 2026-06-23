@@ -65,7 +65,12 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void initComponents();
 
     //! Assemble a packet with the given parameters
-    Fw::Buffer assemblePacket(U16 apid, U16 seqCount, U16 lengthToken, U8* packetData, U16 packetDataLen);
+    Fw::Buffer assemblePacket(U16 apid,
+                              U16 seqCount,
+                              U16 lengthToken,
+                              U8* packetData,
+                              U16 packetDataLen,
+                              bool hasSecHdr = false);
 
   private:
     // ----------------------------------------------------------------------
