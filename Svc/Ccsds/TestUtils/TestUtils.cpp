@@ -4,8 +4,8 @@
 // \brief  Test utilities for CCSDS
 // ======================================================================
 
-#include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/TestUtils/TestUtils.hpp"
+#include "STest/Random/Random.hpp"
 
 namespace Svc {
 

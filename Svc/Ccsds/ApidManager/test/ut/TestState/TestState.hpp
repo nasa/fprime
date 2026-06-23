@@ -57,7 +57,6 @@ class ApidManagerTestState {
 
     //! Return a uniformly random APID from the set currently tracked in the shadow.
     ComCfg::Apid::T shadow_getRandomTrackedApid() const;
-
 };
 
 }  // namespace Ccsds

@@ -4,8 +4,8 @@
 // \brief  cpp file for SpacePacketFramer component test main function
 // ======================================================================
 
-#include "SpacePacketFramerTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "SpacePacketFramerTester.hpp"
 
 TEST(SpacePacketFramer, testComStatusPassthrough) {
     Svc::Ccsds::SpacePacketFramerTester tester;
