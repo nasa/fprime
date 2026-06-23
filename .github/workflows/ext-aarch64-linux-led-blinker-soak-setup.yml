@@ -38,7 +38,7 @@ jobs:
       - name: "Stage integration tests"
         run: cp -r LedBlinker/Components/Led/test/int int
       - name: "Archive soak artifact"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ledblinker-soak-artifact
           path: |
@@ -53,7 +53,7 @@ jobs:
     needs: cross-compilation
     steps:
       - name: "Download soak artifact"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ledblinker-soak-artifact
           path: artifacts
