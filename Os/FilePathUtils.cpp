@@ -147,12 +147,11 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
 }
 
 Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& baseDir, Fw::StringBase& resolvedOut) {
-    char buffer[MAX_PATH_LENGTH];
-    const Status status = resolvePath(path.toChar(), baseDir.toChar(), buffer, MAX_PATH_LENGTH);
-    if (status == VALID) {
-        resolvedOut = buffer;
-    }
-    return status;
+    // SAFETY: write directly into resolvedOut's internal buffer to avoid a temporary copy.
+    // resolvePath always null-terminates the output, keeping the StringBase in a valid state.
+    char* outBuffer = const_cast<char*>(resolvedOut.toChar());
+    const FwSizeType capacity = static_cast<FwSizeType>(resolvedOut.getCapacity());
+    return resolvePath(path.toChar(), baseDir.toChar(), outBuffer, capacity);
 }
 
 // Internal containment check on already-resolved paths.
@@ -200,7 +199,7 @@ Status isSubDirectory(const char* path, const char* allowedDirectory) {
     // Normalize allowedDirectory so that segments like `.` or `..` don't cause
     // false rejections during the prefix comparison in checkContainment.
     char normalizedDir[MAX_PATH_LENGTH];
-    const Status normStatus = resolvePath(allowedDirectory, nullptr, normalizedDir, MAX_PATH_LENGTH);
+    const Status normStatus = resolvePath(allowedDirectory, "/", normalizedDir, MAX_PATH_LENGTH);
     if (normStatus != VALID) {
         return INVALID_PATH;
     }
@@ -214,20 +213,19 @@ Status isSubDirectory(const char* path, const char* allowedDirectory) {
         normalizedDir[normLen + 1] = '\0';
     }
 
-    // Determine base directory for resolving relative paths.
-    // Relative paths are resolved against the current working directory.
-    const char* baseDir = nullptr;
-    char cwdBuffer[MAX_PATH_LENGTH];
+    // Resolve path: relative paths use CWD as base, absolute paths need no base.
+    char resolved[MAX_PATH_LENGTH];
+    Status resolveStatus;
     if (path[0] != '/') {
+        char cwdBuffer[MAX_PATH_LENGTH];
         const Os::FileSystem::Status cwdStatus = Os::FileSystem::getWorkingDirectory(cwdBuffer, MAX_PATH_LENGTH);
         if (cwdStatus != Os::FileSystem::Status::OP_OK) {
             return INVALID_PATH;
         }
-        baseDir = cwdBuffer;
+        resolveStatus = resolvePath(path, cwdBuffer, resolved, MAX_PATH_LENGTH);
+    } else {
+        resolveStatus = resolvePath(path, "/", resolved, MAX_PATH_LENGTH);
     }
-
-    char resolved[MAX_PATH_LENGTH];
-    const Status resolveStatus = resolvePath(path, baseDir, resolved, MAX_PATH_LENGTH);
     if (resolveStatus != VALID) {
         return resolveStatus;
     }
