@@ -43,10 +43,7 @@ template <typename T>
 class Optional {
     static_assert(std::is_trivially_copyable<T>::value, "Fw::Optional only supports trivially copyable types");
 
-    union {
-        char m_dummy;
-        T m_val;
-    };
+    T m_val;
     bool m_engaged;
 
   public:
@@ -55,7 +52,7 @@ class Optional {
     // ----------------------------------------------------------------------
 
     //! Construct an empty Optional
-    constexpr Optional() : m_dummy(0), m_engaged(false) {}
+    constexpr Optional() : m_val(), m_engaged(false) {}
 
     //! Construct an empty Optional from ABSENT sentinel
     constexpr Optional(const Absent& a) : Optional() { (void)a; }
