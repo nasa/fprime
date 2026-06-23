@@ -1,11 +1,15 @@
 [
   {
     "name": "minimal",
-    "generate-args": "-DFW_OBJECT_NAMES=0 -DFW_OBJECT_REGISTRATION=0 -DFW_QUEUE_REGISTRATION=0 -DFW_PORT_TRACING=0 -DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF"
+    "generate-args": "-DFW_OBJECT_NAMES=0 -DFW_OBJECT_REGISTRATION=0 -DFW_QUEUE_REGISTRATION=0 -DFW_PORT_TRACING=0 -DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF",
+    "disabled": true,
+    "reason": "CdhCore symbol not defined when text logging disabled in TestDeploymentsProject"
   },
   {
     "name": "no-text-logging",
-    "generate-args": "-DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF"
+    "generate-args": "-DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF",
+    "disabled": true,
+    "reason": "CdhCore symbol not defined when text logging disabled in TestDeploymentsProject"
   },
   {
     "name": "no-object-names",

@@ -76,7 +76,7 @@ jobs:
         env:
           SELECTED: ${{ github.event.inputs.profiles || 'all' }}
         run: |
-          ALL_PROFILES=$(cat ci/config-profiles.json)
+          ALL_PROFILES=$(cat ci/config-profiles.json | jq -c '[.[] | select(.disabled != true)]')
           if [ "$SELECTED" = "all" ]; then
             MATRIX="$ALL_PROFILES"
           else
