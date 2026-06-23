@@ -156,6 +156,21 @@ Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& b
     return resolvePath(path.toChar(), baseDir.toChar(), outBuffer, resolvedSize);
 }
 
+Status resolveFromCwd(const char* path, char* resolvedOut, FwSizeType resolvedSize) {
+    FW_ASSERT(path != nullptr);
+    FW_ASSERT(resolvedOut != nullptr);
+
+    if (path[0] != '/') {
+        char cwdBuffer[MAX_PATH_LENGTH];
+        const Os::FileSystem::Status cwdStatus = Os::FileSystem::getWorkingDirectory(cwdBuffer, MAX_PATH_LENGTH);
+        if (cwdStatus != Os::FileSystem::Status::OP_OK) {
+            return INVALID_PATH;
+        }
+        return resolvePath(path, cwdBuffer, resolvedOut, resolvedSize);
+    }
+    return resolvePath(path, "/", resolvedOut, resolvedSize);
+}
+
 // Internal containment check on already-resolved paths.
 // Verifies that resolvedPath starts with allowedDirectory as a prefix,
 // and that the match occurs at a `/` boundary.
@@ -215,19 +230,9 @@ Status isSubDirectory(const char* path, const char* allowedDirectory) {
         normalizedDir[normLen + 1] = '\0';
     }
 
-    // Resolve path: relative paths use CWD as base, absolute paths need no base.
+    // Resolve path: relative paths use CWD as base, absolute paths resolved as-is.
     char resolved[MAX_PATH_LENGTH];
-    Status resolveStatus;
-    if (path[0] != '/') {
-        char cwdBuffer[MAX_PATH_LENGTH];
-        const Os::FileSystem::Status cwdStatus = Os::FileSystem::getWorkingDirectory(cwdBuffer, MAX_PATH_LENGTH);
-        if (cwdStatus != Os::FileSystem::Status::OP_OK) {
-            return INVALID_PATH;
-        }
-        resolveStatus = resolvePath(path, cwdBuffer, resolved, MAX_PATH_LENGTH);
-    } else {
-        resolveStatus = resolvePath(path, "/", resolved, MAX_PATH_LENGTH);
-    }
+    const Status resolveStatus = resolveFromCwd(path, resolved, MAX_PATH_LENGTH);
     if (resolveStatus != VALID) {
         return resolveStatus;
     }

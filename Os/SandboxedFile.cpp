@@ -4,7 +4,6 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringUtils.hpp>
-#include <Os/FileSystem.hpp>
 #include <Os/SandboxedFile.hpp>
 #include <cstring>
 
@@ -24,19 +23,9 @@ void SandboxedFile::configure(const char* allowedDirectory) {
 
     // Resolve the allowed directory (relative paths resolve against CWD)
     char resolved[FilePathUtils::MAX_PATH_LENGTH];
-    if (allowedDirectory[0] != '/') {
-        char cwdBuffer[FilePathUtils::MAX_PATH_LENGTH];
-        const Os::FileSystem::Status cwdStatus =
-            Os::FileSystem::getWorkingDirectory(cwdBuffer, FilePathUtils::MAX_PATH_LENGTH);
-        FW_ASSERT(cwdStatus == Os::FileSystem::Status::OP_OK);
-        const FilePathUtils::Status resolveStatus =
-            FilePathUtils::resolvePath(allowedDirectory, cwdBuffer, resolved, sizeof(resolved));
-        FW_ASSERT(resolveStatus == FilePathUtils::VALID);
-    } else {
-        const FilePathUtils::Status resolveStatus =
-            FilePathUtils::resolvePath(allowedDirectory, "/", resolved, sizeof(resolved));
-        FW_ASSERT(resolveStatus == FilePathUtils::VALID);
-    }
+    const FilePathUtils::Status resolveStatus =
+        FilePathUtils::resolveFromCwd(allowedDirectory, resolved, sizeof(resolved));
+    FW_ASSERT(resolveStatus == FilePathUtils::VALID);
 
     // Ensure trailing '/'
     const FwSizeType resolvedLen = Fw::StringUtils::string_length(resolved, FilePathUtils::MAX_PATH_LENGTH);
@@ -64,20 +53,9 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
-    // Resolve path against CWD (not sandbox dir) then check containment
+    // Resolve path against CWD then check containment
     char resolvedPath[FilePathUtils::MAX_PATH_LENGTH];
-    FilePathUtils::Status resolveStatus;
-    if (path[0] != '/') {
-        char cwdBuffer[FilePathUtils::MAX_PATH_LENGTH];
-        const Os::FileSystem::Status cwdStatus =
-            Os::FileSystem::getWorkingDirectory(cwdBuffer, FilePathUtils::MAX_PATH_LENGTH);
-        if (cwdStatus != Os::FileSystem::Status::OP_OK) {
-            return Os::FileInterface::Status::NO_PERMISSION;
-        }
-        resolveStatus = FilePathUtils::resolvePath(path, cwdBuffer, resolvedPath, sizeof(resolvedPath));
-    } else {
-        resolveStatus = FilePathUtils::resolvePath(path, "/", resolvedPath, sizeof(resolvedPath));
-    }
+    const FilePathUtils::Status resolveStatus = FilePathUtils::resolveFromCwd(path, resolvedPath, sizeof(resolvedPath));
     if (resolveStatus != FilePathUtils::VALID) {
         return Os::FileInterface::Status::NO_PERMISSION;
     }

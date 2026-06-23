@@ -55,6 +55,19 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
 //!
 Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& baseDir, Fw::StringBase& resolvedOut);
 
+//! \brief Resolve a path using CWD as the base for relative paths
+//!
+//! Convenience wrapper: relative paths are resolved against the process's
+//! current working directory; absolute paths are resolved as-is.
+//! Returns INVALID_PATH if CWD cannot be determined.
+//!
+//! \param path: input path to resolve (may be relative or absolute)
+//! \param resolvedOut: output buffer for the resolved path
+//! \param resolvedSize: size of the output buffer
+//! \return VALID on success, INVALID_PATH or TOO_LONG on failure
+//!
+Status resolveFromCwd(const char* path, char* resolvedOut, FwSizeType resolvedSize);
+
 //! \brief Check whether a path is within an allowed directory
 //!
 //! Resolves both the path and the allowed directory (collapsing `.` and `..`),
