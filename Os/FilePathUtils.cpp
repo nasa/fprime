@@ -219,8 +219,7 @@ Status isSubDirectory(const char* path, const char* allowedDirectory) {
     const char* baseDir = nullptr;
     char cwdBuffer[MAX_PATH_LENGTH];
     if (path[0] != '/') {
-        const Os::FileSystem::Status cwdStatus =
-            Os::FileSystem::getWorkingDirectory(cwdBuffer, MAX_PATH_LENGTH);
+        const Os::FileSystem::Status cwdStatus = Os::FileSystem::getWorkingDirectory(cwdBuffer, MAX_PATH_LENGTH);
         if (cwdStatus != Os::FileSystem::Status::OP_OK) {
             return INVALID_PATH;
         }
