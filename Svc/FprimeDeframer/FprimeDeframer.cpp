@@ -4,9 +4,9 @@
 // \brief  cpp file for FprimeDeframer component implementation class
 // ======================================================================
 
+#include "Svc/FprimeDeframer/FprimeDeframer.hpp"
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Svc/FprimeDeframer/FprimeDeframer.hpp"
 
 #include "Svc/FprimeProtocol/FrameHeaderSerializableAc.hpp"
 #include "Svc/FprimeProtocol/FrameTrailerSerializableAc.hpp"
