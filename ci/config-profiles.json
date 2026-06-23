@@ -16,8 +16,8 @@
     "generate-args": "-DFW_OBJECT_NAMES=0"
   },
   {
-    "name": "serialization-type-id",
-    "generate-args": "-DFW_SERIALIZATION_TYPE_ID=1"
+    "name": "direct-port-calls",
+    "generate-args": "-DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON"
   },
   {
     "name": "fileid-assert",
