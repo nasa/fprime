@@ -157,7 +157,7 @@ Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& b
 // Internal containment check on already-resolved paths.
 // Verifies that resolvedPath starts with allowedDirectory as a prefix,
 // and that the match occurs at a `/` boundary.
-static Status checkContainment(const char* resolvedPath, const char* allowedDirectory) {
+Status checkContainment(const char* resolvedPath, const char* allowedDirectory) {
     FW_ASSERT(resolvedPath != nullptr);
     FW_ASSERT(allowedDirectory != nullptr);
 

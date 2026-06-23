@@ -72,6 +72,18 @@ Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& b
 //!
 Status isSubDirectory(const char* path, const char* allowedDirectory);
 
+//! \brief Check whether an already-resolved path is within an allowed directory
+//!
+//! Unlike isSubDirectory, this performs no path resolution — both arguments must
+//! already be canonical absolute paths. Use this when you have already called
+//! resolvePath and want to avoid redundant work.
+//!
+//! \param resolvedPath: canonical absolute path (output of resolvePath)
+//! \param allowedDirectory: canonical allowed directory prefix (must end with `/`)
+//! \return VALID if contained, OUTSIDE_SANDBOX or INVALID_PATH otherwise
+//!
+Status checkContainment(const char* resolvedPath, const char* allowedDirectory);
+
 //! \brief Check whether a path is within an allowed directory (Fw::StringBase overload)
 //!
 //! \param path: input path string

@@ -44,7 +44,7 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
-    // Resolve path first (for opening), then verify containment
+    // Resolve path then check containment directly (no redundant re-resolve)
     char resolvedPath[FilePathUtils::MAX_PATH_LENGTH];
     const FilePathUtils::Status resolveStatus =
         FilePathUtils::resolvePath(path, m_allowedDirectory.toChar(), resolvedPath, sizeof(resolvedPath));
@@ -52,9 +52,7 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
-    const FilePathUtils::Status containStatus =
-        FilePathUtils::isSubDirectory(resolvedPath, m_allowedDirectory.toChar());
-    if (containStatus != FilePathUtils::VALID) {
+    if (FilePathUtils::checkContainment(resolvedPath, m_allowedDirectory.toChar()) != FilePathUtils::VALID) {
         return Os::FileInterface::Status::NO_PERMISSION;
     }
 
