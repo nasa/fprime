@@ -49,14 +49,14 @@ class SandboxedFile {
     //! \brief Configure the allowed sandbox directory
     //!
     //! Sets the directory that all file operations are restricted to.
-    //! The directory must be an absolute path ending with `/`.
+    //! May be absolute or relative (relative paths are resolved against CWD).
+    //! A trailing `/` is appended automatically if not present.
     //!
     //! Intended to be called once at startup. Preconditions are enforced
     //! with FW_ASSERT: must not be called while a file is open, directory
-    //! must be absolute, must not be empty, must end with `/`, must not
-    //! overflow the buffer.
+    //! must resolve successfully, must not overflow the buffer.
     //!
-    //! \param allowedDirectory: absolute path of the allowed directory (must end with `/`)
+    //! \param allowedDirectory: path of the allowed directory (absolute or relative to CWD)
     //!
     void configure(const char* allowedDirectory);
 
@@ -71,7 +71,7 @@ class SandboxedFile {
 
     //! \brief Open a file, validating the path against the sandbox directory
     //!
-    //! Resolves the path and checks containment before opening.
+    //! Resolves the path against CWD and checks containment before opening.
     //! Returns `NO_PERMISSION` if the resolved path falls outside the sandbox.
     //!
     //! \param path: c-string path to open
