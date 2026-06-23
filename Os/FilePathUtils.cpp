@@ -150,8 +150,10 @@ Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& b
     // SAFETY: write directly into resolvedOut's internal buffer to avoid a temporary copy.
     // resolvePath always null-terminates the output, keeping the StringBase in a valid state.
     char* outBuffer = const_cast<char*>(resolvedOut.toChar());
+    // Cap at MAX_PATH_LENGTH so resolveInPlace's string_length scan stays consistent
     const FwSizeType capacity = static_cast<FwSizeType>(resolvedOut.getCapacity());
-    return resolvePath(path.toChar(), baseDir.toChar(), outBuffer, capacity);
+    const FwSizeType resolvedSize = (capacity > MAX_PATH_LENGTH) ? MAX_PATH_LENGTH : capacity;
+    return resolvePath(path.toChar(), baseDir.toChar(), outBuffer, resolvedSize);
 }
 
 // Internal containment check on already-resolved paths.
