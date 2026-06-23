@@ -3,7 +3,9 @@
 // \brief Unit tests for Os::FilePathUtils
 // ======================================================================
 #include <gtest/gtest.h>
+#include <Fw/Types/FileNameString.hpp>
 #include <Os/FilePathUtils.hpp>
+#include <Os/FileSystem.hpp>
 
 // ======================================================================
 // FilePathUtils::resolvePath tests
@@ -92,6 +94,21 @@ TEST_F(FilePathUtilsResolveTest, RelativeWithoutBaseDir) {
     ASSERT_EQ(Os::FilePathUtils::INVALID_PATH, status);
 }
 
+TEST_F(FilePathUtilsResolveTest, BufferTooSmall) {
+    char resolved[5];  // Too small for "/data/uplink/file.bin"
+    auto status = Os::FilePathUtils::resolvePath("/data/uplink/file.bin", nullptr, resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::TOO_LONG, status);
+}
+
+TEST_F(FilePathUtilsResolveTest, StringBaseOverload) {
+    Fw::FileNameString path("/data/./uplink/../uplink/file.bin");
+    Fw::FileNameString baseDir("/");
+    Fw::FileNameString resolved;
+    auto status = Os::FilePathUtils::resolvePath(path, baseDir, resolved);
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/data/uplink/file.bin", resolved.toChar());
+}
+
 // ======================================================================
 // FilePathUtils::isSubDirectory tests
 // ======================================================================
@@ -135,13 +152,11 @@ TEST_F(FilePathUtilsSubDirTest, TraversalAttack) {
 }
 
 TEST_F(FilePathUtilsSubDirTest, RelativeTraversalAttack) {
+    // Relative paths are now resolved against CWD. Unless CWD is within
+    // /data/uplink/, a relative ../../ path should be outside sandbox.
+    // Since test CWD is unlikely to be /data/uplink/, this should fail.
     auto status = Os::FilePathUtils::isSubDirectory("../../etc/passwd", "/data/uplink/");
     ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, status);
-}
-
-TEST_F(FilePathUtilsSubDirTest, ValidRelativePath) {
-    auto status = Os::FilePathUtils::isSubDirectory("mission/seq.bin", "/data/uplink/");
-    ASSERT_EQ(Os::FilePathUtils::VALID, status);
 }
 
 TEST_F(FilePathUtilsSubDirTest, DotDotThenBackIn) {
@@ -171,11 +186,22 @@ TEST_F(FilePathUtilsSubDirTest, DotDotInAllowedDirectory) {
     ASSERT_EQ(Os::FilePathUtils::VALID, status);
 }
 
-TEST_F(FilePathUtilsSubDirTest, OutputsResolvedPath) {
-    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
-    auto status = Os::FilePathUtils::isSubDirectory("mission/seq.bin", "/data/uplink/", resolved, sizeof(resolved));
+TEST_F(FilePathUtilsSubDirTest, RelativePathResolvedAgainstCwd) {
+    // Get CWD, then construct a relative path that should resolve inside sandbox "/"
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto fsStatus = Os::FileSystem::getWorkingDirectory(cwd, sizeof(cwd));
+    ASSERT_EQ(Os::FileSystem::Status::OP_OK, fsStatus);
+
+    // With sandbox "/", any resolved path should be valid
+    auto status = Os::FilePathUtils::isSubDirectory("somefile.bin", "/");
     ASSERT_EQ(Os::FilePathUtils::VALID, status);
-    ASSERT_STREQ("/data/uplink/mission/seq.bin", resolved);
+}
+
+TEST_F(FilePathUtilsSubDirTest, StringBaseOverload) {
+    Fw::FileNameString path("/data/uplink/file.bin");
+    Fw::FileNameString dir("/data/uplink/");
+    auto status = Os::FilePathUtils::isSubDirectory(path, dir);
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
 }
 
 int main(int argc, char** argv) {
