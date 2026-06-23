@@ -3,6 +3,7 @@
 // \brief Unit tests for Os::FilePathUtils
 // ======================================================================
 #include <gtest/gtest.h>
+#include <cstring>
 #include <Fw/Types/FileNameString.hpp>
 #include <Os/FilePathUtils.hpp>
 
@@ -106,6 +107,78 @@ TEST_F(FilePathUtilsResolveTest, StringBaseOverload) {
     auto status = Os::FilePathUtils::resolvePath(path, baseDir, resolved);
     ASSERT_EQ(Os::FilePathUtils::VALID, status);
     ASSERT_STREQ("/data/uplink/file.bin", resolved.toChar());
+}
+
+// ======================================================================
+// FilePathUtils::checkContainment tests
+// ======================================================================
+
+class FilePathUtilsContainmentTest : public ::testing::Test {};
+
+TEST_F(FilePathUtilsContainmentTest, PathWithinDirectory) {
+    auto status = Os::FilePathUtils::checkContainment("/data/uplink/file.bin", "/data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, PathOutsideDirectory) {
+    auto status = Os::FilePathUtils::checkContainment("/data/other/file.bin", "/data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, PrefixSharingNonBoundary) {
+    // "/data/uploadevil/" shares prefix with "/data/upload/" but is a different directory
+    auto status = Os::FilePathUtils::checkContainment("/data/uploadevil/file.bin", "/data/upload/");
+    ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, PathEqualsDirectoryMinusTrailingSlash) {
+    // Path IS the allowed directory itself (without trailing slash)
+    auto status = Os::FilePathUtils::checkContainment("/data/uplink", "/data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, RootSandbox) {
+    auto status = Os::FilePathUtils::checkContainment("/any/path/file.bin", "/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, EmptyResolvedPath) {
+    auto status = Os::FilePathUtils::checkContainment("", "/data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, EmptyAllowedDirectory) {
+    auto status = Os::FilePathUtils::checkContainment("/data/file.bin", "");
+    ASSERT_EQ(Os::FilePathUtils::OUTSIDE_SANDBOX, status);
+}
+
+TEST_F(FilePathUtilsContainmentTest, SubdirectoryContained) {
+    auto status = Os::FilePathUtils::checkContainment("/data/uplink/sub/deep/file.bin", "/data/uplink/");
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+}
+
+// ======================================================================
+// FilePathUtils::resolveFromCwd tests
+// ======================================================================
+
+class FilePathUtilsResolveFromCwdTest : public ::testing::Test {};
+
+TEST_F(FilePathUtilsResolveFromCwdTest, AbsolutePathPassedThrough) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveFromCwd("/data/file.bin", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    ASSERT_STREQ("/data/file.bin", resolved);
+}
+
+TEST_F(FilePathUtilsResolveFromCwdTest, RelativePathResolvesAgainstCwd) {
+    char resolved[Os::FilePathUtils::MAX_PATH_LENGTH];
+    auto status = Os::FilePathUtils::resolveFromCwd("subdir/file.bin", resolved, sizeof(resolved));
+    ASSERT_EQ(Os::FilePathUtils::VALID, status);
+    // Result should start with "/" (is absolute after resolution)
+    ASSERT_EQ('/', resolved[0]);
+    // Result should end with "subdir/file.bin"
+    const char* suffix = std::strstr(resolved, "subdir/file.bin");
+    ASSERT_NE(nullptr, suffix);
 }
 
 int main(int argc, char** argv) {

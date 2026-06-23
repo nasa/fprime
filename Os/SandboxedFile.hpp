@@ -21,9 +21,12 @@ namespace Os {
 //! By default, the sandbox is set to `/` (root), which allows any absolute path.
 //! Call `configure()` to restrict to a specific directory.
 //!
-//! Note: path validation is purely textual (no `realpath()` calls) — it does not follow
-//! symlinks. For deployments where symlink-based escapes are a concern, additional
-//! measures are needed.
+//! Threat model assumption: untrusted actors cannot create symlinks inside the sandbox.
+//! Path validation is purely textual (no `realpath()` calls) — it does not follow symlinks.
+//! On embedded targets without symlink support this is a non-issue. On POSIX targets with
+//! untrusted local write access to the sandbox directory, symlink-based escapes are possible;
+//! additional measures (e.g., `O_NOFOLLOW`, `realpath()` integration) are needed for those
+//! deployments.
 //!
 //! Usage:
 //! ```cpp
@@ -37,6 +40,9 @@ namespace Os {
 //!
 class SandboxedFile {
   public:
+    SandboxedFile(const SandboxedFile&) = delete;             //!< Non-copyable (owns file handle)
+    SandboxedFile& operator=(const SandboxedFile&) = delete;  //!< Non-copy-assignable
+
     //! \brief Construct a SandboxedFile with default sandbox of `/`
     //!
     //! The default allows any absolute path. Call `configure()` to restrict.

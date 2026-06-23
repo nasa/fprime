@@ -94,6 +94,27 @@ TEST_F(SandboxedFileTest, GetSandboxDirectoryDefault) {
     ASSERT_STREQ("/", file.getSandboxDirectory());
 }
 
+TEST_F(SandboxedFileTest, OpenEmptyPathRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    auto status = file.open("", Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
+TEST_F(SandboxedFileTest, OpenOverlongPathRejected) {
+    Os::SandboxedFile file;
+    file.configure("/tmp/sandbox_test/");
+    // Create a path that exceeds MAX_PATH_LENGTH
+    char longPath[Os::FilePathUtils::MAX_PATH_LENGTH + 100];
+    std::memset(longPath, 'a', sizeof(longPath) - 1);
+    longPath[0] = '/';
+    longPath[sizeof(longPath) - 1] = '\0';
+    auto status = file.open(longPath, Os::File::OPEN_READ);
+    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_FALSE(file.isOpen());
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

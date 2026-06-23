@@ -16,6 +16,7 @@
 
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
+#include <Os/FilePathUtils.hpp>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
@@ -35,7 +36,7 @@ FileUplinkTester ::FileUplinkTester()
     this->connectPorts();
     this->initComponents();
     // Configure sandbox to allow the current working directory for test files
-    char cwd[256];
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
     FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
     const FwSizeType cwdLen = std::strlen(cwd);
     FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
