@@ -208,41 +208,5 @@ Status checkContainment(const char* resolvedPath, const char* allowedDirectory) 
     return VALID;
 }
 
-Status isSubDirectory(const char* path, const char* allowedDirectory) {
-    if (path == nullptr || allowedDirectory == nullptr) {
-        return INVALID_PATH;
-    }
-
-    // Normalize allowedDirectory so that segments like `.` or `..` don't cause
-    // false rejections during the prefix comparison in checkContainment.
-    char normalizedDir[MAX_PATH_LENGTH];
-    const Status normStatus = resolvePath(allowedDirectory, "/", normalizedDir, MAX_PATH_LENGTH);
-    if (normStatus != VALID) {
-        return INVALID_PATH;
-    }
-    // Re-add trailing '/' that resolvePath strips
-    const FwSizeType normLen = Fw::StringUtils::string_length(normalizedDir, MAX_PATH_LENGTH);
-    if (normLen > 0 && normalizedDir[normLen - 1] != '/') {
-        if (normLen + 2 > MAX_PATH_LENGTH) {
-            return TOO_LONG;
-        }
-        normalizedDir[normLen] = '/';
-        normalizedDir[normLen + 1] = '\0';
-    }
-
-    // Resolve path: relative paths use CWD as base, absolute paths resolved as-is.
-    char resolved[MAX_PATH_LENGTH];
-    const Status resolveStatus = resolveFromCwd(path, resolved, MAX_PATH_LENGTH);
-    if (resolveStatus != VALID) {
-        return resolveStatus;
-    }
-
-    return checkContainment(resolved, normalizedDir);
-}
-
-Status isSubDirectory(const Fw::ConstStringBase& path, const Fw::ConstStringBase& allowedDirectory) {
-    return isSubDirectory(path.toChar(), allowedDirectory.toChar());
-}
-
 }  // namespace FilePathUtils
 }  // namespace Os
