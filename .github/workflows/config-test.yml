@@ -44,7 +44,7 @@ on:
         required: false
         default: ""
       jobs:
-        description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
+        description: "Parallel job count: a number, 'random' (1-32), or empty for random"
         required: false
         default: ""
 
