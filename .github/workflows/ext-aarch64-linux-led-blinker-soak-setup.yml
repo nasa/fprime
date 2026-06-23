@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: "Setup external repository + overlay F´"
-        uses: nasa/fprime-actions/external-repository-setup@devel
+        uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
         with:
           target_repository: fprime-community/fprime-workshop-led-blinker
           # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
@@ -41,7 +41,7 @@ jobs:
       - name: "Stage fprime-gds.yml"
         run: cp LedBlinker/LedBlinkerDeployment/fprime-gds.yml fprime-gds.yml
       - name: "Archive soak artifact"
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: ledblinker-soak-artifact
           path: |
@@ -56,11 +56,11 @@ jobs:
     needs: cross-compilation
     steps:
       - name: "Download soak artifact"
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: nasa/fprime-actions/soak-setup@devel
+        uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
           platform: linux
