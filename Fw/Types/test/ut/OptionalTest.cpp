@@ -5,11 +5,11 @@
 TEST(OptionalTest, DefaultConstructIsEmpty) {
     Fw::Optional<I32> opt;
     ASSERT_FALSE(opt.has_value());
-    ASSERT_EQ(opt, Fw::ABSENT);
+    ASSERT_EQ(opt, Fw::NONE);
 }
 
-TEST(OptionalTest, AbsentConstructIsEmpty) {
-    Fw::Optional<I32> opt(Fw::ABSENT);
+TEST(OptionalTest, NoneConstructIsEmpty) {
+    Fw::Optional<I32> opt(Fw::NONE);
     ASSERT_FALSE(opt.has_value());
 }
 
@@ -39,9 +39,9 @@ TEST(OptionalTest, AssignValue) {
     ASSERT_EQ(opt.value(), 7);
 }
 
-TEST(OptionalTest, AssignAbsent) {
+TEST(OptionalTest, AssignNone) {
     Fw::Optional<I32> opt(10);
-    opt = Fw::ABSENT;
+    opt = Fw::NONE;
     ASSERT_FALSE(opt.has_value());
 }
 
@@ -107,13 +107,13 @@ TEST(OptionalTest, InequalityOneEmpty) {
     ASSERT_NE(opt1, opt2);
 }
 
-TEST(OptionalTest, AbsentComparisonOperators) {
+TEST(OptionalTest, NoneComparisonOperators) {
     Fw::Optional<I32> empty;
     Fw::Optional<I32> full(42);
-    ASSERT_TRUE(empty == Fw::ABSENT);
-    ASSERT_FALSE(empty != Fw::ABSENT);
-    ASSERT_FALSE(full == Fw::ABSENT);
-    ASSERT_TRUE(full != Fw::ABSENT);
+    ASSERT_TRUE(empty == Fw::NONE);
+    ASSERT_FALSE(empty != Fw::NONE);
+    ASSERT_FALSE(full == Fw::NONE);
+    ASSERT_TRUE(full != Fw::NONE);
 }
 
 TEST(OptionalTest, ReassignValue) {

@@ -23,12 +23,12 @@
 namespace Fw {
 
 //! \brief Sentinel type representing the absence of a value in an Optional
-struct Absent {
-    constexpr explicit Absent() {}
+struct None_t {
+    constexpr explicit None_t() {}
 };
 
 //! \brief Global constant representing an absent/empty optional value
-constexpr Absent ABSENT = Absent();
+constexpr None_t NONE = None_t();
 
 //! \class Optional
 //! \brief A type-safe container for an optional value
@@ -54,8 +54,8 @@ class Optional {
     //! Construct an empty Optional
     constexpr Optional() : m_val(), m_engaged(false) {}
 
-    //! Construct an empty Optional from ABSENT sentinel
-    constexpr Optional(const Absent& a) : Optional() { (void)a; }
+    //! Construct an empty Optional from NONE sentinel
+    constexpr Optional(const None_t& a) : Optional() { (void)a; }
 
     //! Construct an Optional containing a value
     constexpr Optional(const T& t) : m_val(t), m_engaged(true) {}
@@ -116,8 +116,8 @@ class Optional {
         return *this;
     }
 
-    //! Reset the Optional via ABSENT assignment
-    Optional& operator=(const Absent& a) {
+    //! Reset the Optional via NONE assignment
+    Optional& operator=(const None_t& a) {
         (void)a;
         reset();
         return *this;
@@ -137,14 +137,14 @@ class Optional {
     // Comparison operators
     // ----------------------------------------------------------------------
 
-    //! Compare with ABSENT sentinel
-    bool operator==(const Absent& a) const {
+    //! Compare with NONE sentinel
+    bool operator==(const None_t& a) const {
         (void)a;
         return !m_engaged;
     }
 
-    //! Compare with ABSENT sentinel (inequality)
-    bool operator!=(const Absent& a) const {
+    //! Compare with NONE sentinel (inequality)
+    bool operator!=(const None_t& a) const {
         (void)a;
         return m_engaged;
     }
