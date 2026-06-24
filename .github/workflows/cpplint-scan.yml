@@ -64,7 +64,7 @@ jobs:
           category: "cpplint"
 
       - name: Archive static analysis artifacts to download and view
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cpplint-errors
           path: ./*cpplint_cppcheck_result.*
