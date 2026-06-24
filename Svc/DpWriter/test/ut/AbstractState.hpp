@@ -14,12 +14,12 @@
 
 #include <cstring>
 
+#include <Fw/Types/Optional.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "Os/File.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpWriter/DpWriter.hpp"
 #include "TestUtils/OnChangeChannel.hpp"
-#include "TestUtils/Option.hpp"
 
 namespace Svc {
 
@@ -61,13 +61,13 @@ class AbstractState {
 
     //! Get the data size
     FwSizeType getDataSize() const {
-        return this->m_dataSizeOpt.getOrElse(STest::Pick::lowerUpper(MIN_DATA_SIZE, MAX_DATA_SIZE));
+        return this->m_dataSizeOpt.value_or(STest::Pick::lowerUpper(MIN_DATA_SIZE, MAX_DATA_SIZE));
     }
 
     //! Set the data size
-    void setDataSize(FwSizeType dataSize) { this->m_dataSizeOpt.set(dataSize); }
+    void setDataSize(FwSizeType dataSize) { this->m_dataSizeOpt = dataSize; }
 
-    void clearDataSize() { this->m_dataSizeOpt.clear(); }
+    void clearDataSize() { this->m_dataSizeOpt.reset(); }
 
     //! Get a data product buffer backed by bufferData
     //! \return The buffer
@@ -83,7 +83,7 @@ class AbstractState {
     // ----------------------------------------------------------------------
 
     //! The current buffer size
-    TestUtils::Option<FwSizeType> m_dataSizeOpt;
+    Fw::Optional<FwSizeType> m_dataSizeOpt;
 
   public:
     // ----------------------------------------------------------------------
@@ -135,7 +135,7 @@ class AbstractState {
     //! Bit mask for processing out port calls
     Fw::DpCfg::ProcType::SerialType m_procTypes;
 
-    TestUtils::Option<FwSizeType> m_procShrinkDataSizeOpt;
+    Fw::Optional<FwSizeType> m_procShrinkDataSizeOpt;
 };
 
 }  // namespace Svc

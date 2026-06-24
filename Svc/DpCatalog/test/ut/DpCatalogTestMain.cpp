@@ -327,6 +327,6 @@ TEST(OffNominal, MalformedFile) {
 
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
-    // TODO: https://github.com/nasa/fprime/issues/5104 STest::Random::seed();
+    STest::Random::seed();
     return RUN_ALL_TESTS();
 }
