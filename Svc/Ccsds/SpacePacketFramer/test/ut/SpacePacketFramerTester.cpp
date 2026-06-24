@@ -64,10 +64,10 @@ void SpacePacketFramerTester::testNominalFraming() {
     }
     Fw::Buffer data(payload, sizeof(payload));
     const auto apidOption = CcsdsTestUtils::getRandomApid();
-    if (!apidOption.hasValue()) {
+    if (!apidOption.has_value()) {
         GTEST_SKIP() << "Could not find a valid APID\n";
     }
-    const auto apid = apidOption.get();
+    const auto apid = apidOption.value();
     // Choose a random 14-bit sequence count
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag

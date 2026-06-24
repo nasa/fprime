@@ -12,7 +12,7 @@ namespace Svc {
 namespace CcsdsTestUtils {
 
 using SerialType = ComCfg::Apid::SerialType;
-using ApidOption = TestUtils::Option<ComCfg::Apid::T>;
+using ApidOption = Fw::Optional<ComCfg::Apid::T>;
 
 ApidOption getRandomApid() {
     const SerialType selectedIdx = static_cast<SerialType>(STest::Random::startLength(0, ComCfg::Apid::NUM_CONSTANTS));
@@ -44,8 +44,7 @@ ApidOption getRandomApid() {
     // If the APID we found is not valid, then return NONE
     // This can happen if all of the configured APIDs are out of the 11-bit range
     // required by CCSDS
-    const auto result =
-        ComCfg::Apid::isValid(apid) ? ApidOption::some(static_cast<ComCfg::Apid::T>(apid)) : ApidOption::none();
+    const auto result = ComCfg::Apid::isValid(apid) ? ApidOption(static_cast<ComCfg::Apid::T>(apid)) : Fw::NONE;
     return result;
 }
 

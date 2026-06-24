@@ -53,11 +53,11 @@ void ApidManagerTester::GetSeqCount__NewOk__action() {
         return;
     }
 
-    TestUtils::Option<ComCfg::Apid::T> apidOption = CcsdsTestUtils::getRandomApid();
-    if (!apidOption.hasValue()) {
+    Fw::Optional<ComCfg::Apid::T> apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.has_value()) {
         GTEST_SKIP() << "Could not find a valid apid\n";
     }
-    const auto apid = apidOption.get();
+    const auto apid = apidOption.value();
     U16 returned = this->invoke_to_getApidSeqCountIn(0, apid, 0);
     U16 expected = this->shadow.shadow_getAndIncrementSeqCount(apid);
 
