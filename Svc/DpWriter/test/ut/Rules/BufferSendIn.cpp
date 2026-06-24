@@ -105,7 +105,7 @@ void TestState ::action__BufferSendIn__OKProcShrink() {
     this->abstractState.setDataSize(buffer_data_size);
     Fw::Buffer buffer = this->abstractState.getDpBufferWithProc(1);
     // Instruct the proc handler to shrink the buffer
-    this->abstractState.m_procShrinkDataSizeOpt.set(shrink_data_size);
+    this->abstractState.m_procShrinkDataSizeOpt = shrink_data_size;
     const FwSizeType exp_buffer_size = Fw::DpContainer::MIN_PACKET_SIZE + shrink_data_size;
     // Send the buffer
     this->invoke_to_bufferSendIn(0, buffer);
@@ -142,7 +142,7 @@ void TestState ::action__BufferSendIn__OKProcShrink() {
     this->abstractState.m_NumSuccessfulWrites.value++;
 
     this->abstractState.clearDataSize();
-    this->abstractState.m_procShrinkDataSizeOpt.clear();
+    this->abstractState.m_procShrinkDataSizeOpt.reset();
 }
 
 bool TestState ::precondition__BufferSendIn__InvalidBuffer() const {

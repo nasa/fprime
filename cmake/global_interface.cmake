@@ -54,6 +54,16 @@ function(fprime_add_location_pair SOURCE BINARY)
     # Add source and binaries to the interface includes of our singular global interface target
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${SOURCE}")
     target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${BINARY}")
+    # Rewrite the locations metadata files from the deduplicated properties
+    get_property(_SOURCE_LOCS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_SOURCE_LOCATIONS)
+    get_property(_BINARY_LOCS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_BINARY_LOCATIONS)
+    get_property(_ALL_LOCS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_LOCATIONS)
+    string(REGEX REPLACE ";" "\n" _SOURCE_LOCS_NL "${_SOURCE_LOCS}")
+    string(REGEX REPLACE ";" "\n" _BINARY_LOCS_NL "${_BINARY_LOCS}")
+    string(REGEX REPLACE ";" "\n" _ALL_LOCS_NL "${_ALL_LOCS}")
+    file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_SOURCE_LOCATIONS_FILE}" "${_SOURCE_LOCS_NL}\n")
+    file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BINARY_LOCATIONS_FILE}" "${_BINARY_LOCS_NL}\n")
+    file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "${_ALL_LOCS_NL}\n")
 endfunction(fprime_add_location_pair)
 
 ####
