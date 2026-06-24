@@ -114,7 +114,7 @@ jobs:
           test-working-directory: "TestDeploymentsProject"
           binary: "build-artifacts/*/Ref/bin/Ref"
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
-          pytest-args: "Ref/test/int Ref/DpDemo/test/int --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
 
   unit-tests:
