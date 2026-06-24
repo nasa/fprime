@@ -1666,6 +1666,7 @@ Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSeri
     // Create external buffer referencing stack data (no copy)
     U8* dataPtr = this->m_runtime.stack.top() - directive.get_size();
     Fw::ExternalSerializeBuffer buf(dataPtr, directive.get_size());
+    buf.setBuffLen(directive.get_size());
 
     // Call output port
     this->serialOut_out(portIndex, buf);
