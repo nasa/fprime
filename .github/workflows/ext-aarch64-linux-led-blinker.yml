@@ -74,7 +74,7 @@ jobs:
           cp -r ./build-artifacts aarch64-linux-artifacts
           cp -r LedBlinker/Components/Led/test/int aarch64-linux-artifacts
       - name: "Archive Build Artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: aarch64-linux-artifacts
           path: aarch64-linux-artifacts
@@ -102,7 +102,7 @@ jobs:
         with:
           repository: nasa/fprime-gds
       - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: aarch64-linux-artifacts
       - name: Run Integration Tests
@@ -115,7 +115,7 @@ jobs:
           sleep 10
           pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/LedBlinkerDeploymentTopologyDictionary.json ./int/led_integration_tests.py
       - name: "Archive logs"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: aarch64-linux-logs

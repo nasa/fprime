@@ -60,7 +60,7 @@ jobs:
           working-directory: "TestDeploymentsProject"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
       - name: "Archive Build Artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ref-build-artifacts-${{ matrix.runner }}
           path: TestDeploymentsProject/build-artifacts/
@@ -93,7 +93,7 @@ jobs:
         with:
           repository: nasa/fprime-gds
       - name: "Download Build Artifacts"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ref-build-artifacts-${{ matrix.runner }}
           path: TestDeploymentsProject/build-artifacts/

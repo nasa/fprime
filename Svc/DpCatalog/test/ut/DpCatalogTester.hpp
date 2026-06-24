@@ -48,7 +48,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void doInit();
 
     //! Test tree construction
-    void testTree(DpCatalog::DpStateEntry* list, DpCatalog::DpStateEntry* output, FwIndexType numEntries);
+    void testTree(DpCatalog::DpStateEntry* input, FwIndexType numEntries);
 
     struct DpSet {
         FwDpIdType id;
