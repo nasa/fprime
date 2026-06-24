@@ -41,14 +41,14 @@ class DpDemo final : public DpDemoComponentBase {
     //! Select color
     void SelectColor_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                 U32 cmdSeq,           //!< The command sequence number
-                                Ref::DpDemo_ColorEnum color) override;
+                                const Ref::DpDemo_ColorEnum& color) override;
 
     //! Handler implementation for command Dp
     //!
     //! Command for generating a DP
     void Dp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                        U32 cmdSeq,           //!< The command sequence number
-                       DpDemo_DpReqType reqType,
+                       const DpDemo_DpReqType& reqType,
                        U32 priority) override;
 
   private:

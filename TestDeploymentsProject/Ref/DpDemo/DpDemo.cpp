@@ -96,13 +96,13 @@ void DpDemo ::run_handler(FwIndexType portNum, U32 context) {
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void DpDemo ::SelectColor_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Ref::DpDemo_ColorEnum color) {
+void DpDemo ::SelectColor_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Ref::DpDemo_ColorEnum& color) {
     this->selectedColor = color;
     log_ACTIVITY_HI_ColorSelected(color);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, DpDemo_DpReqType reqType, U32 priority) {
+void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const DpDemo_DpReqType& reqType, U32 priority) {
     // make sure DPs are available
     if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productRequestOut_OutputPort(0)) {
         this->log_WARNING_HI_DpsNotConnected();
