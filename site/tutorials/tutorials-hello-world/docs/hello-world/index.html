@@ -1,0 +1,5744 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://fprime.jpl.nasa.gov/latest/tutorials/tutorials-hello-world/docs/hello-world/">
+      
+      
+        <link rel="prev" href="../../../">
+      
+      
+        <link rel="next" href="../../../tutorials-led-blinker/docs/led-blinker/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.svg">
+      <meta name="generator" content="zensical-0.0.45">
+    
+    
+      
+        <title>Hello World Tutorial - F Prime</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.fba56155.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%2022c5.5%200%2010-4.5%2010-10S17.5%202%2012%202%202%206.5%202%2012s4.5%2010%2010%2010M11%207h2v2h-2zm3%2010h-4v-2h1v-2h-1v-2h3v4h1z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../overrides/assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+
+  <link 
+     rel="stylesheet" 
+     href="../../../../assets/stylesheets/extra.css" 
+   /> 
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#hello-world-tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You are not viewing the documentation for the latest release of F Prime.
+<a href="../../../../../latest/docs">
+  <strong>Click here to go to latest release.</strong>
+</a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../../../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://fprime.jpl.nasa.gov/" title="F Prime" class="md-header__button md-logo" aria-label="F Prime" data-md-component="logo">
+      
+  <img src="../../../../assets/images/logo-fprime-jpl.svg" alt="F Prime">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            F Prime
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Hello World Tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1zm6-10h3v2h-3zM1 11h3v2H1zM13 1v3h-2V1zM4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93zm12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.76 2 7.78 3.05 6.5 4.68l9.81 9.82C17.94 13.21 19 11.24 19 9a7 7 0 0 0-7-7M3.28 4 2 5.27 5.04 8.3C5 8.53 5 8.76 5 9c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h5.73l4 4L20 20.72zM9 20v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/nasa/fprime" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nasa/fprime
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://fprime.jpl.nasa.gov/" class="md-tabs__link">
+        
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  Documentation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../getting-started/" class="md-tabs__link">
+          
+  
+  Getting Started with F Prime
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../how-to/" class="md-tabs__link">
+          
+  
+  How-To
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../reference/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../user-manual/" class="md-tabs__link">
+          
+  
+  User Manual
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://fprime.jpl.nasa.gov/" title="F Prime" class="md-nav__button md-logo" aria-label="F Prime" data-md-component="logo">
+      
+  <img src="../../../../assets/images/logo-fprime-jpl.svg" alt="F Prime">
+
+    </a>
+    F Prime
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nasa/fprime" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nasa/fprime
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://fprime.jpl.nasa.gov/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Documentation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Getting Started with F Prime
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Getting Started with F Prime
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting-started/features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Features
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting-started/installing-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Installing F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  How-To
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  How-To
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/custom-framing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement a Framing Protocol
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Generate Data Products
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/define-state-machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Define State Machines in F Prime
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/derive-channels-on-ground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Create Ground-Derived Channels in F Prime GDS
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-device-driver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a Device Driver
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-fprime-libraries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop an F´ Library
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-gds-plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a GDS Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-subtopologies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/implement-osal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement an OS Abstraction Layer
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/implement-radio-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement a Radio Manager Component
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/integrate-external-libraries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integrate a Third-Party Library
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/porting-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Porting to new platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/prm-write-how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Load Parameters in Batch
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/python-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop Components in Python
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/rule-based-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Write Rule-Based Tests for F Prime Components
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/test-driven-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Test-Driven Development in F Prime (F´)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reference
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Reference
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/communication-adapter-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Adapter Interface
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/fpp-json-dict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FPP JSON Dictionary Specification
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/fprime-translations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F Prime Translation Guide
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Plugins
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  GDS Plugins
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/communications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/data-handler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Handler Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/framing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framing Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/gds-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  App Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/gds-function/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Function Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/nomenclature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Nomenclature
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/numerical-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Numerical Types
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../reference/system-functional/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  System Functional Documentation
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  System Functional Documentation
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/buffer-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Buffer Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/ccsds-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CCSDS Protocol Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/command-dispatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Command Dispatch Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/communication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Stack Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Dictionary Capabilities
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/event-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Event Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/file-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  File Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framework Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/hardware-drivers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Hardware Driver Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/health-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Health Monitoring Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/osal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Operating System Abstraction Layer (OSAL)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Parameter Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/rate-group-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rate Group Scheduling Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/sequencing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Sequencing Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-cdh-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CDH Core Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-ccsds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComCcsds Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComFprime Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-logger-tee/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComLoggerTee Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-file-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  File Handling Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/system-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  System Services Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/telemetry-chan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Telemetry Channel Storage Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/telemetry-packetizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Telemetry Packetizer Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/time-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Time Services Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Tutorials
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Tutorials
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Hello World
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Hello World
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-and-f-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Introduction and F´ Terminology
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Troubleshooting
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-creating-an-f-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. Creating an F´ Project
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creating-an-f-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Creating an F´ Component
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-integrating-into-a-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Integrating into a Deployment
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-testing-with-fprime-gds" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Testing With <code>fprime-gds</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Conclusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-more-to-explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. More to Explore
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-led-blinker/docs/led-blinker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  LED Blinker
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-math-component/docs/math-component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  MathComponent
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cross-compilation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Cross-Compilation Setup
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-arduino-led-blinker/docs/arduino-led-blinker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Arduino LED Blinker
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../user-manual/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  User Manual
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  User Manual
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Build System
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Build System
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/01-cmake-intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ CMake Build System
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Cmake Api
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Customization
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-implementations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Implementations
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ and CMake Platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Targets
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-toolchains/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Toolchain Files
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-uts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Build System Unit Tests
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  `settings.ini`: Build Settings Configuration
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Design Patterns
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Design Patterns
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/app-man-drv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Application-Manager-Driver Architecture
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/common-port-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Common Port Design Patterns
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/health-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Health Checking Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/hub-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  A Quick Look at the Hub Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/manager-worker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The Manager/Worker Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/rate-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rate Groups and Timeliness
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/subtopologies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Subtopologies
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framework
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Framework
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/assert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Asserts in F
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/autocoded-functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Autocoded Functions and Component Classes
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/building-topology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Constructing the F´ Topology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/component-and-port-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Selecting Component, Port, and Command Kinds
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/configuring-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Configuring F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/ground-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Ground Interface Architecture and Customization
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../user-manual/framework/memory-management/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Memory Management
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7_4_8" id="__nav_7_4_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Memory Management
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/memory-management/buffer-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Buffer Pools with Svc.BufferManager
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/memory-management/memory-allocation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Memory Allocation with Fw::MemAllocator
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/run-baremetal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ on Baremetal Systems
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/run-multi-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ on Multi-Core Systems
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/state-machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  State Machines
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/supported-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Supported Platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  GDS
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The F´ GDS CLI
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-custom-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The GDS Dashboard
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-dashboard-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Dashboard Component Reference
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-dev-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Developer's Guide
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-test-api-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Integration Test API
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/reusable-integration-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reusable Integration Tests
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/seqgen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Sequencing In F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Overview
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/01-full-intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Introduction To F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/02-fprime-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Software Architecture
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/03-port-comp-top/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Core Constructs: Ports, Components, and Topologies
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/04-cmd-evt-chn-prm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Constructs: Commands, Events, Channels, and Parameters
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/05-enum-arr-ser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Structures and Types
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/development-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Development Process
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/gds-introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The F´ Ground Data System
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/proj-dep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Projects and Deployments
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/source-tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  A Tour of the Source Tree
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/unit-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Unit Testing in F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_7" id="__nav_7_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Security
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Security
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/security/software-bill-of-materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Software Bill Of Materials Generation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction-and-f-terminology" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Introduction and F´ Terminology
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Troubleshooting
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-creating-an-f-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. Creating an F´ Project
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-creating-an-f-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Creating an F´ Component
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-integrating-into-a-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Integrating into a Deployment
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-testing-with-fprime-gds" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Testing With <code>fprime-gds</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Conclusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-more-to-explore" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. More to Explore
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/nasa/fprime/edit/devel/tutorials/tutorials-hello-world/docs/hello-world.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="hello-world-tutorial">Hello World Tutorial</h1>
+<h2 id="introduction-and-f-terminology">Introduction and F´ Terminology</h2>
+<p>The Hello World tutorial is designed to teach new users the basics of
+F´ usage, instruct existing users on new commands that help in F´
+development, and act as the canonical "Hello World" example for F´.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The source for this tutorial is located here:
+<a href="https://github.com/fprime-community/fprime-tutorial-hello-world">https://github.com/fprime-community/fprime-tutorial-hello-world</a>.
+If you are stuck at some point during the tutorial, you may refer to that
+reference as the "solution".</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The commands shown have been tested with the Bourne shell (bash).</p>
+</div>
+<h3 id="f-terminology">F´ Terminology</h3>
+<p>F´ uses specific terminology to refer to specific parts of the
+system. This section dives into the basic F´ terminology used in this
+tutorial and an explanation of how the terminology is used.</p>
+<h4 id="project">Project</h4>
+<p>An F´ project is a collection of files and folders used to work with
+F´. At its core, a project is just a folder that can be used to hold
+F´ code. In this tutorial, you will create your own project to contain
+all the elements for implementing a custom application.  The core F´
+library will be linked as a git submodule so you see how to avoid the
+"clone and own" problem; only your custom code is in your final repo.</p>
+<h4 id="component">Component</h4>
+<p>An F´ component encapsulates a unit of system behavior. Components
+define commands, events, telemetry channels, and parameters, and use
+ports to communicate with other components.</p>
+<p>This tutorial will create a new <code>HiComponent</code> component that defines a
+<code>SAY_HI</code> command, <code>SayHiEvent</code> event, and <code>GreetingCount</code> telemetry
+channel. The component only uses built-in ports. It does not use
+custom ports nor parameters.</p>
+<h4 id="port">Port</h4>
+<p>A port is an interface used to communicate between components.
+This tutorial only uses built-in ports.</p>
+<h4 id="command">Command</h4>
+<p>Commands represent actions that a component can execute. Commands can
+be sent from the ground or via command sequences. Command behavior is
+defined in a command handler defined in the component's
+implementation.</p>
+<p>This tutorial defines one command <code>SAY_HI</code> with a single argument
+<code>greeting</code>.  This command will be sent via the ground system, and the
+flight system will echo the greeting back within an event, and also
+incrememt a telemetry channel counting the number of these commands
+sent.</p>
+<h4 id="event">Event</h4>
+<p>Events represent actions that a component has performed. Events are
+akin to software log messages. Events are received and displayed by
+the ground system.</p>
+<p>This tutorial defines one event <code>SayHiEvent</code> emitted in response to
+the <code>SAY_HI</code> command and containing the same greeting that the command
+had.</p>
+<h4 id="telemetry-channel">Telemetry Channel</h4>
+<p>Telemetry channels provide the active state of the component. Each
+channel represents a single item of state that will be sent to the
+ground system.</p>
+<p>This tutorial defines a single channel <code>GreetingCount</code> that contains
+the count of the number of <code>SAY_HI</code> greeting commands received.</p>
+<h4 id="topology">Topology</h4>
+<p>Topologies are networks of connected components that define the
+software. Multiple instances of a component may be added to the
+topology.</p>
+<p>This tutorial will use a standard command and data handling
+topology. A single <code>HiComponent</code> component instance called
+<code>hiCmpntInstance</code> will be added to the standard topology.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on F Prime Terminology, we recommend
+looking through our
+<a href="https://fprime.jpl.nasa.gov/latest/docs/user-manual/overview/03-port-comp-top/">Documentation</a></p>
+</div>
+<h4 id="deployment">Deployment</h4>
+<p>Deployments are a single build of F´ software. Each deployment results
+in one software executable that can be run along with other associated
+files. Each deployment has a topology that defines the system.</p>
+<p>This tutorial will create the <code>FirstDeployment</code> deployment, run this
+deployment, and test it through the F´ GDS (Ground Data System).</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>If at any point during this tutorial you encounter issues:</p>
+<ul>
+<li>
+<p><strong>Check your current directory</strong>: Ensure you are in the correct
+  directory as specified in each step of the tutorial</p>
+</li>
+<li>
+<p><strong>Ensure your F´ project's virtual environment is activated</strong>:
+  Each terminal / shell needs to activate with<br></p>
+<ul>
+<li><code>source hello-project/fprime-venv/bin/activate</code> for Bourne-like shells</li>
+<li><code>source hello-project/fprime-venv/bin/activate.csh</code> For C-shells</li>
+</ul>
+</li>
+<li>
+<p><strong>Verify your F´ installation</strong>: Run <code>fprime-util --help</code> to
+  ensure F´ tools are properly installed</p>
+</li>
+<li>
+<p><strong>Check build errors</strong>: If you encounter build errors, ensure all
+  previous steps were completed successfully</p>
+</li>
+<li>
+<p><strong>Refer to the utility help text</strong>: For example, run any of</p>
+<ul>
+<li><code>fprime-util  generate  --help</code></li>
+<li><code>fprime-util  build  --help</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Refer to the F´ troubleshooting guide</strong>: Visit
+<a href="https://fprime.jpl.nasa.gov/latest/docs/getting-started/installing-fprime/#troubleshooting">F´ Installation and Troubleshooting</a>
+ for common installation and setup issues</p>
+</li>
+</ul>
+<hr />
+<h2 id="1-creating-an-f-project">1. Creating an F´ Project</h2>
+<p>This section will walk you through creating a new F´ project. First,
+ensure you meet the
+<a href="https://github.com/nasa/fprime?tab=readme-ov-file#system-requirements">F´ System Requirements</a>.</p>
+<h3 id="1a-install-the-f-bootstrap-tool">1a. Install the F´ Bootstrap tool</h3>
+<p>An F´ <a href="#f-terminology">project</a> ties to a specific version of tools to
+work with F´. The F´ Bootstrap tool is responsible for creating a new
+F´ project and installing the Python dependencies within the project's
+virtual environment.</p>
+<p>Install the fprime-bootstrap tool, and verify that its version is 1.5.2 or later, with:
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>%<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>fprime-bootstrap
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>%<span class="w"> </span>pip<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>fprime
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>pip</code> needs to be version 3.6 or higher, or you can use <code>pipx</code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you see a msg like the one below,then in the following step you may need to give the full path to fprime-bootstrap.<br>
+<code>WARNING: The script fprime-bootstrap is installed in '~/.local/bin' which is not on PATH</code></p>
+</div>
+<h3 id="1b-create-a-new-project-repository">1b. Create a new project repository</h3>
+<p>The entrypoint to developing with F´ is creating a new project. This
+will clone the F´ repository and install the full tool suite of the
+specified version for working with the selected version of F´. To
+create this new project, run:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>%<span class="w"> </span>fprime-bootstrap<span class="w"> </span>project
+</span></code></pre></div>
+<p>This command will ask for project information and suggest defaults.
+We will override the defaults with the following:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Project repository name [my-fprime-project]: hello-project
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Project top-level namespace [HelloProject]: HiNamespace
+</span></code></pre></div>
+<p>This step takes tens of seconds to complete.</p>
+<h3 id="1c-understand-the-project-structure">1c. Understand the project structure</h3>
+<p>Bootstrapping your F´ project created a folder called <code>hello-project</code>
+(or any name you chose) containing the standard F´ project structure as
+well as the
+<a href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/">virtual environment</a>
+containing the tools to work with F´.</p>
+<p>Let's navigate to the project directory and look around:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>hello-project
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>%<span class="w"> </span>ls
+</span></code></pre></div>
+<p>This will show the following files:</p>
+<ul>
+<li>
+<p><code>CMakeList.txt</code> and <code>CMakePresets.json</code>: CMake files defining the build system</p>
+</li>
+<li>
+<p><code>fprime-venv/</code>: this folder is the virtual environment containing the Python tools to work with F´</p>
+</li>
+<li>
+<p><code>lib/</code>: Library folder, holding libraries the project will use. This is also where the <code>fprime</code> code lives, as a git submodule that points to https://github.com/nasa/fprime. Contains core F´ components, the API for the build system, among others</p>
+</li>
+<li>
+<p><code>HiNamespace/</code>: top-level source folder for the project. This is where you will create components, deployments, and other project-specific code.</p>
+</li>
+<li>
+<p><code>README.md</code> where you can document work on this project.</p>
+</li>
+<li>
+<p><code>requirements.txt</code>: List of Python packages needed for this project</p>
+</li>
+<li>
+<p><code>settings.ini</code>: allows users to modify various settings that control the build</p>
+</li>
+</ul>
+<h3 id="1d-activate-the-virtual-environment">1d. Activate the virtual environment</h3>
+<p>Activate the virtual environment to use the F´ tool suite in each terminal / shell whenever you work with an F´ project.</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># in hello-project/</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>%<span class="w"> </span><span class="nb">source</span><span class="w"> </span>fprime-venv/bin/activate<span class="w">       </span><span class="c1"># For Bourne-like shells</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>%<span class="w"> </span>.<span class="w">      </span>fprime-venv/bin/activate<span class="w">       </span><span class="c1"># For POSIX shells without the source cmd</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>%<span class="w"> </span><span class="nb">source</span><span class="w"> </span>fprime-venv/bin/activate.csh<span class="w">   </span><span class="c1"># For C-like shells</span>
+</span></code></pre></div>
+<h3 id="1e-generate-the-build-cache-directory">1e. Generate the Build Cache Directory</h3>
+<p>The next step is to set up a build cache directory for the newly
+created project. This will serve as a build environment holding
+compiled code, libraries, and linked executables.</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># in hello-project/</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>generate
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>%<span class="w"> </span>ls
+</span></code></pre></div>
+<p>You should see one new directory, <code>build-fprime-automatic-native</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>fprime-util generate</code> normally only needs to be done once, or after
+ wiping out the cache directory with <code>fprime-util purge</code>.</p>
+</div>
+<h3 id="1f-build-the-new-f-project">1f. Build the New F´ Project</h3>
+<p>Now, build the newly created project. This will build the F´ framework supplied components.</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># in hello-project/</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<h3 id="project-creation-recap">Project Creation Recap</h3>
+<p>A new project has been created which includes the initial build system
+setup, and F´ source code. It is still empty in that the user will
+still need to create components and deployments.</p>
+<p>For the remainder of this tutorial we will use the tools installed for
+our project and issue commands within this new project's virtual
+environment, per the <code>activate</code> command given above.</p>
+<hr />
+<h2 id="2-creating-an-f-component">2. Creating an F´ Component</h2>
+<p>This section will walk new users through creating a basic F´
+component. Remember that you need a shell that has activated the
+virtual environment above.</p>
+<p>F´ components encapsulate the various parts of system behavior. These
+components can interact with the ground system through
+<a href="#command">commands</a>, <a href="#event">events</a>, and
+<a href="#telemetry-channel">telemetry channels</a>.</p>
+<p>Components communicate with other components through <a href="#port">ports</a>,
+which are covered in-depth in the
+<a href="https://github.com/fprime-community/fprime-tutorial-math-component">MathComponent tutorial</a>.</p>
+<h3 id="2a-component-requirements">2a. Component Requirements</h3>
+<p>The first step for creating a new component is understanding what it
+is that we wish to implement. This is called defining requirements.
+In the spirit of "Hello World" this component will encapsulate greeting
+behavior. The component will define three items to implement greeting
+behaviour:</p>
+<ul>
+<li>A <a href="#command">command</a> called <code>SAY_HI</code> that will command the component to send a greeting</li>
+<li>An <a href="#event">event</a> called <code>SayHiEvent</code> that is the greeting sent in response to the <code>SAY_HI</code> command</li>
+<li>A <a href="#telemetry-channel">telemetry channel</a> called <code>GreetingCount</code> that will count each <code>SAY_HI</code> command sent</li>
+</ul>
+<p>These are a simple set of requirements for this component.</p>
+<h3 id="2b-create-the-component">2b. Create the Component</h3>
+<p>The next step is to create the new component. The project contains a
+<code>Components/</code> directory to create components in. Change to that
+directory and issue the following commands:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># From: hello-project</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>HiNamespace/Components
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>%<span class="w"> </span>ls
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>new<span class="w"> </span>--component
+</span></code></pre></div>
+<p>This command will ask for some input. You should respond with the
+following answers (you can just hit <code>&lt;ENTER&gt;</code> when accepting the
+offered defaults:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Cookiecutter<span class="w"> </span>source:<span class="w"> </span>using<span class="w"> </span><span class="nb">builtin</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="o">[</span><span class="m">1</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>name<span class="w"> </span><span class="o">(</span>MyComponent<span class="o">)</span>:<span class="w"> </span>HiComponent
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="o">[</span><span class="m">2</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>short<span class="w"> </span>description<span class="w"> </span><span class="o">(</span>Component<span class="w"> </span><span class="k">for</span><span class="w"> </span>F<span class="w"> </span>Prime<span class="w"> </span>FSW<span class="w"> </span>framework.<span class="o">)</span>:<span class="w"> </span>Hello<span class="w"> </span>World<span class="w"> </span>Tutorial<span class="w"> </span>Component
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="o">[</span><span class="m">3</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>namespace<span class="w"> </span><span class="o">(</span>HiNamespace<span class="o">)</span>:
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">  </span><span class="o">[</span><span class="m">4</span>/8<span class="o">]</span><span class="w"> </span>Select<span class="w"> </span>component<span class="w"> </span>kind
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>active
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>passive
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">    </span><span class="m">3</span><span class="w"> </span>-<span class="w"> </span>queued
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2/3<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="o">[</span><span class="m">5</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Commands?
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">  </span><span class="o">[</span><span class="m">6</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Telemetry?
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">  </span><span class="o">[</span><span class="m">7</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Events?
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">  </span><span class="o">[</span><span class="m">8</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Parameters?
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Found<span class="w"> </span>CMake<span class="w"> </span>file<span class="w"> </span>at<span class="w"> </span><span class="s1">&#39;hello-project/HiNamespace/Components/CMakeLists.txt&#39;</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>Add<span class="w"> </span>HiComponent<span class="w"> </span>to<span class="w"> </span>hello-project/HiNamespace/Components/CMakeLists.txt<span class="w"> </span>at<span class="w"> </span>end<span class="w"> </span>of<span class="w"> </span>file?<span class="w"> </span><span class="o">(</span>yes/no<span class="o">)</span><span class="w"> </span><span class="o">[</span>yes<span class="o">]</span>:
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>Generate<span class="w"> </span>implementation<span class="w"> </span>files?<span class="w"> </span><span class="o">(</span>yes/no<span class="o">)</span><span class="w"> </span><span class="o">[</span>yes<span class="o">]</span>:
+</span><span id="__span-8-29"><a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>Refreshing<span class="w"> </span>cache<span class="w"> </span>and<span class="w"> </span>generating<span class="w"> </span>implementation<span class="w"> </span>files...
+</span><span id="__span-8-30"><a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="o">[</span><span class="m">0</span>/1<span class="o">]</span><span class="w"> </span>Re-running<span class="w"> </span>CMake...
+</span><span id="__span-8-31"><a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>...
+</span></code></pre></div>
+<p>This new component will be able to define commands, events, telemetry
+channels, and parameters.</p>
+<p>We should navigate to the component's directory and look around:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># From: hello-project/HiNamespace/Components</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>HiComponent
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>%<span class="w"> </span>ls
+</span></code></pre></div>
+<p>This will show the following files, which you will edit shortly:</p>
+<ul>
+<li><code>CMakeList.txt</code>: build definitions for the component.</li>
+<li><code>docs</code> folder to place component documentation</li>
+<li><code>HiComponent.fpp</code>: design model for the component</li>
+<li><code>HiComponent.cpp</code> and <code>HiComponent.hpp</code>: C++ implementation files for the component.</li>
+</ul>
+<h3 id="2c-build-this-component">2c. Build this component</h3>
+<p>This shows that the empty code compiles and links
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># From: hello-project/HiNamespace/Components/HiComponent</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>build
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Any component in F´ can be built by navigating to the component's
+folder and running <code>fprime-util build</code>. Build products such as
+libraries go under the project build directory
+<code>hello-project/build-fprime-automatic-native/</code></p>
+</div>
+<h3 id="2d-implement-the-component-model">2d. Implement the Component Model</h3>
+<p>A component model defines the interface of the component with the rest
+of the F´ system and with the ground system F´ communicates with.</p>
+<p>Recall that in defining the requirements above, we specified</p>
+<ul>
+<li>Command <code>SAY_HI</code></li>
+<li>Event <code>SayHiEvent</code></li>
+<li>Telemetry channel <code>GreetingCount</code></li>
+</ul>
+<p><strong>Edit the Model</strong></p>
+<p>In the file <code>HiComponent.fpp</code> replace the line:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>async command TODO opcode 0
+</span></code></pre></div>
+<p>with the following:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>@ Command to issue greeting with maximum length of 20 characters
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>async command SAY_HI(
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    greeting: string size 20 @&lt; Greeting to repeat in the SayHiEvent event
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>)
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>@ Greeting event with maximum greeting length of 20 characters
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>event SayHiEvent(
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    greeting: string size 20 @&lt; Greeting supplied from the SAY_HI command
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>) severity activity high format &quot;I say: {}&quot;
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>@ A count of the number of greetings issued
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>telemetry GreetingCount: U32
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should ensure to replace any existing command, event, and
+channel definitions with those supplied above but leave the
+'Standard AC Ports' section untouched.</p>
+</div>
+<p><strong>Implement the Model</strong></p>
+<p>Generate a template implementation with the following command:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># From: hello-project/HiNamespace/Components/HiComponent</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>impl
+</span></code></pre></div>
+<p>That created the following files which contain empty functions based
+on what we have edited into the FPP file above:</p>
+<ul>
+<li><code>HiComponent.template.cpp</code></li>
+<li><code>HiComponent.template.hpp</code></li>
+</ul>
+<p>While normally one would manually merge new templates with the existing code,
+we will instead overwrite the existing implementations as we have not
+edited them yet. To do this:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>%<span class="w"> </span>mv<span class="w"> </span>HiComponent.template.cpp<span class="w"> </span>HiComponent.cpp
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>%<span class="w"> </span>mv<span class="w"> </span>HiComponent.template.hpp<span class="w"> </span>HiComponent.hpp
+</span></code></pre></div>
+<h3 id="2e-implement-component-behavior">2e. Implement Component Behavior</h3>
+<p>F´ behavior is implemented with two kinds of handlers:</p>
+<ul>
+<li>Command handler functions</li>
+<li>Port handler functions (as described in the next tutorial,
+  <a href="https://github.com/fprime-community/fprime-workshop-led-blinker"><code>LED Blinker</code></a>).</li>
+</ul>
+<p><strong><code>HiComponent.cpp</code>: Define Command Handler</strong></p>
+<p>The generated template <code>HiComponent.cpp</code> file has a mostly-empty
+private <code>SAY_HI_cmdHandler</code> function. Ensure its contents look like:</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">HiComponent</span><span class="w"> </span><span class="nf">::SAY_HI_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">greeting</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="c1">// Copy the command string input into an event string for the SayHiEvent event</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="w"> </span><span class="n">eventGreeting</span><span class="p">(</span><span class="n">greeting</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="c1">// Emit the SayHiEvent event with the copied string</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_SayHiEvent</span><span class="p">(</span><span class="n">eventGreeting</span><span class="p">);</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_GreetingCount</span><span class="p">(</span><span class="o">++</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_greetingCount</span><span class="p">);</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="c1">// Tell the fprime command system that we have completed the processing of the supplied command with OK status</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong><code>HiComponent.hpp</code>: Declare Counting Variable</strong></p>
+<p>Add the m_greetingCount member variable to the class defined in
+<code>HiComponent.hpp</code> and initialize it to zero.
+This is done by adding the following two lines inside
+the <code>class</code> definition in <code>HiComponent.hpp</code>:</p>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">private</span><span class="o">:</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">m_greetingCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span></code></pre></div>
+<h3 id="2f-rebuild-your-component">2f. Rebuild your component</h3>
+<p>The component should build without errors using the same command as
+before your edits. Remember to always save before you build; unsaved
+changes will not be included in the build.</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># From: hello-project/HiNamespace/Components/HiComponent</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<p>That should result in linking a static library named <code>libHiNamespace_Components_HiComponent.a</code> in the build directory.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Resolve any errors that occur before proceeding to the next section.</p>
+</div>
+<hr />
+<h2 id="3-integrating-into-a-deployment">3. Integrating into a Deployment</h2>
+<p>This section will walk new users through creating a new F´
+<a href="#deployment">deployment</a>. This deployment will build a
+<a href="#topology">topology</a> containing the standard F´ stack of components
+and a single <code>HiComponent</code> component instance.</p>
+<h3 id="3a-create-a-new-deployment">3a. Create A New Deployment</h3>
+<p>F´ deployments represent one flight software executable. All the
+components we develop for F´ run within a deployment. The deployment
+created here will contain the standard command and data handling
+stack. This stack enables ground control and data collection.</p>
+<p>To create a deployment, <code>cd</code> into the <code>HiNamespace</code> directory (this is
+the top-level namespace where project code should reside) and run the
+following command. It will ask for some input. Respond with the
+answers shown. For all further questions, select the default response
+by hitting <code>&lt;ENTER&gt;</code></p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../..
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c1"># From: hello-project/HiNamespace/</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>new<span class="w"> </span>--deployment
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span><span class="o">[</span><span class="m">1</span>/3<span class="o">]</span><span class="w"> </span>Deployment<span class="w"> </span>name<span class="w"> </span><span class="o">(</span>MyDeployment<span class="o">)</span>:<span class="w"> </span>FirstDeployment
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">  </span><span class="o">[</span><span class="m">2</span>/3<span class="o">]</span><span class="w"> </span>Deployment<span class="w"> </span>namespace<span class="w"> </span><span class="o">(</span>HiNamespace<span class="o">)</span>:
+</span></code></pre></div>
+<p>That should complete with a line like<br>
+<code>New deployment successfully created: hello-project/HiNamespace/FirstDeployment</code></p>
+<p>At this point, the <code>FirstDeployment</code> has been created, but our
+<code>HiComponent</code> component has not been added to the deployment.</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>%<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>FirstDeployment
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>%<span class="w"> </span>ls<span class="w"> </span>-R1
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>CMakeLists.txt
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>fprime-gds.yml
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>Main.cpp
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>README.md
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>Top/
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>./Top:
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>CMakeLists.txt
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>FirstDeploymentPackets.fppi
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>FirstDeploymentTopology.cpp
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>FirstDeploymentTopology.hpp
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>FirstDeploymentTopologyDefs.hpp
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>instances.fpp
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>topology.fpp
+</span></code></pre></div>
+<h3 id="3b-add-an-instance-of-hicomponent-to-firstdeployment">3b. Add an Instance of HiComponent to FirstDeployment</h3>
+<p>Topologies instantiate all the components in a running system and link
+them together. For some port types, like the commanding, event, and
+telemetry ports used by <code>HiComponent</code>, the connections are made
+automatically. In addition, the topology specifies how to construct
+the component instance. This is also done automatically unless the
+component has specific configuration.</p>
+<p>In order to add a component to the topology, the topology model must
+be updated by adding both:</p>
+<ul>
+<li>An instance definition</li>
+<li>An instance initializer</li>
+</ul>
+<p><strong>Add instance definition to the model</strong></p>
+<p>Edit <code>hello-project/HiNamespace/FirstDeployment/Top/topology.fpp</code> to add
+<code>instance hiCmpntInstance</code> as shown.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>...
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>  topology FirstDeployment {
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>    [ ... other code ...]
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>    # ----------------------------------------------------------------------
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    # Instances used in the topology
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    # ----------------------------------------------------------------------
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    instance ...
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    instance ...
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>    instance hiCmpntInstance
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is only a one-line addition to the FPP file.<br>
+<code>...</code> are placeholders for other component names - do not remove or
+ modify any other instances from the list.</p>
+</div>
+<p><code>hiCmpntInstance</code> is the name of the component instance. Like variable
+names, component instance names should be descriptive and are
+typically named in camel or snake case.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For more style recommendations, refer to the
+<a href="https://github.com/nasa/fprime/wiki/F%C2%B4-Style-Guidelines">F Prime Style Guidelines</a></p>
+</div>
+<p><strong>Add instance initializer to the model</strong></p>
+<p>Since the <code>HiComponent</code> component is an <code>active</code> component it should
+be added to the active components section and should define a priority
+and queue depth options.</p>
+<p>Edit <code>hello-project/HiNamespace/FirstDeployment/Top/instances.fpp</code> to add
+<code>instance hiCmpntInstance</code> as shown.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>  # ----------------------------------------------------------------------
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>  # Active component instances
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>  # ----------------------------------------------------------------------
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>  instance hiCmpntInstance: HiComponent base id 0x10005000 \
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>    queue size Default.QUEUE_SIZE \
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>    stack size Default.STACK_SIZE \
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a>    priority 50
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a four-line addition to the FPP file.<br>
+The user must ensure that the base id (0x10005000) does not conflict
+with any other base ids in the topology. 0x10005000 should be safe
+for deployments created with "fprime-util new --deployment".</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to use the same instance name (i.e. hiCmpntInstance) in
+both <code>topology.fpp</code> and <code>instances.fpp</code>.</p>
+</div>
+<h3 id="3c-build-firstdeployment">3c. Build FirstDeployment</h3>
+<p>Since this component has no custom ports nor does it require special
+configuration, our addition to the topology is completed. The
+deployment can now be set up and built using the following commands:</p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a># From: hello-project/HiNamespace/FirstDeployment
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>% fprime-util build
+</span></code></pre></div>
+That should result in linking a static library named <code>libHiNamespace_FirstDeployment_Top.a</code> in the build directory.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Resolve any errors that occur before proceeding to the next section.</p>
+</div>
+<h2 id="4-testing-with-fprime-gds">4. Testing With <code>fprime-gds</code></h2>
+<p>It is now time to test the <code>HiComponent</code> component by running the
+deployment. This can be accomplished by running the <code>fprime-gds</code>
+command in the deployment, verifying connection, sending the new
+SAY_HI command and verifying that the <code>SayHiEvent</code> event and
+<code>GreetingCount</code> channel appears.</p>
+<p>To start the deployment with default settings, run:
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># From: hello-project/HiNamespace/FirstDeployment</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>%<span class="w"> </span>fprime-gds
+</span></code></pre></div></p>
+<p>The F´ GDS control page should open up in your web browser. If it does
+not open up, navigate to <a href="http://127.0.0.1:5000">http://127.0.0.1:5000</a>.</p>
+<p>Once the F´ GDS page is visible, look for a green circle icon in the
+upper right corner. This shows that the flight software deployment has
+connected to the GDS system. If a red X appears instead, navigate to
+the Logs tab and look for errors in the various logs.</p>
+<p>Now that communication is verified, navigate to the "Channels" tab and
+see some values updating.</p>
+<p>Navigate to the "Commanding" tab and select
+<code>HiNamespace.hiCmpntInstance.SAY_HI</code> from the dropdown list.
+Type a greeting into the argument input box and click the button "Send Command".
+If the argument has validated successfully the command will send.
+Resolve all errors and ensure the command has sent.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Commands are instance specific. Had several HiComponent component
+instances been used, there would be multiple <code>SAY_HI</code> listings, one
+for each component instance.</p>
+</div>
+<p>Now that the command has sent, navigate to the "Events" tab. Ensure
+that the event list contains the HiNamespace.hiCmpntInstance.SayHiEvent
+event with the text entered when sending the command.</p>
+<p>Lastly, navigate to the "Channels" tab. Look for
+"HiNamespace.hiCmpntInstance.GreetingCount" in the channel
+list. Ensure it has recorded the number of times a
+<code>hiCmpntInstance.SAY_HI</code> was sent.</p>
+<p><strong>Shutdown</strong></p>
+<p>In the terminal window where you ran <code>fprime-gds</code>, kill the running
+application and deactivate the virtual environment:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>CTRL-c
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>%<span class="w"> </span>deactivate
+</span></code></pre></div>
+<p><detail><summary>If CTRL-C does not work</summary>
+Try one or more of:</p>
+<ul>
+<li>CTRL-\ (Backslash): Send the SIGQUIT signal (a "harder" interrupt than the CTRL-C SIGINT)</li>
+<li>CTRL-z: Suspend the process.  Then type kill %1 to end it or fg to bring it back</li>
+<li>macOS COMMAND-. (Period): macOS equivalent for a "break"</li>
+<li>Open another terminal, use <code>ps -ef | grep gds</code> and <code>kill &lt;process ID&gt;</code>
+</detail></li>
+</ul>
+<hr />
+<h2 id="5-conclusion">5. Conclusion</h2>
+<p>Congratulations, you have now set up a project, component, and
+deployment in F´, and run the Flight Software application as well as
+controlled it through the F´ GDS!</p>
+<p>In order for your code to conform to the F´ coding practices
+(whitespace, etc), run the utility to format them.
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># From: hello-project/</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>%<span class="w"> </span><span class="nb">source</span><span class="w"> </span>fprime-venv/bin/activate<span class="w">   </span><span class="c1"># Or activate.csh in C-like shells</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>format<span class="w">  </span>--dirs<span class="w"> </span>HiNamespace
+</span></code></pre></div></p>
+<p>And to be sure no errors crept in, purge the build directory (accept offered defaults) and build the whole project again from scratch, and test it again.
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># From: hello-project/</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>purge
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>generate
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>%<span class="w"> </span>fprime-util<span class="w"> </span>build
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>%<span class="w"> </span>fprime-gds
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>CTRL-C
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>%<span class="w"> </span>deactivate
+</span></code></pre></div></p>
+<hr />
+<h2 id="6-more-to-explore">6. More to Explore</h2>
+<h3 id="6a-software-design-document-sdd">6a. Software Design Document (SDD)</h3>
+<p>When you created HiComponent, the tool also created the outline of an SDD.  Consider how you would expand on <code>HiComponent/docs/sdd.md</code></p>
+<hr />
+<p>If you feel inclined, consider defining and implementing additional
+requirements, and exploring how multiple deployments can mix and match
+components.</p>
+<p>For example, you could:</p>
+<h3 id="6b-add-an-additional-instance-of-hicomponent-to-firstdeployment">6b. Add an additional instance of <code>HiComponent</code> to <code>FirstDeployment</code></h3>
+<ul>
+<li>Named <code>duplicateCmpntInstance</code></li>
+<li>Test with <code>fprime-gds</code> by repeatedly issuing both SAY_HI commands</li>
+<li>Look for separate Events from each instance</li>
+<li>Look for separate <code>GreetingCount</code> telemetry channels incrementing only with their respective commands</li>
+<li>
+<p><strong>HINTS</strong></p>
+<ul>
+<li>Edit <code>instances.fpp</code> and <code>topology.fpp</code><br></li>
+<li>Re-build just FirstDeployment</li>
+</ul>
+</li>
+</ul>
+<h3 id="6c-add-a-new-command-introduce_me-within-hicomponent">6c. Add a new command <code>INTRODUCE_ME</code> within <code>HiComponent</code></h3>
+<ul>
+<li>To create a new event <code>IntroEvent</code> with string "Nice to meet you, {}." but does not increment m_greetingCount.</li>
+<li>Remember to rebuild both <code>HiComponent</code> and <code>FirstDeployment</code></li>
+<li>Test with <code>fprime-gds</code> by repeatedly issuing both SAY_HI and INTRODUCE_ME</li>
+<li>Look for their events each time</li>
+<li>See that the <code>GreetingCount</code> telemetry channel only increments on SAY_HI and not INTRODUCE_ME.</li>
+<li>
+<p><strong>HINTS</strong></p>
+<ul>
+<li>Edit <code>HiComponent.fpp</code> and run <code>fprime-impl</code></li>
+<li>Then copy code from the template implementation files to your existing <code>HiComponent.hpp</code> and <code>HiComponent.cpp</code> and flesh out the cpp code.<br></li>
+<li>Re-build the entire project from hello-project/</li>
+</ul>
+</li>
+</ul>
+<h3 id="6d-add-a-new-component-yourcomponent-to-firstdeployment">6d. Add a new component <code>YourComponent</code> to <code>FirstDeployment</code></h3>
+<ul>
+<li>With command SAY_HOLA that creates a new event <code>HolaEvent</code></li>
+<li>Test with <code>fprime-gds</code> by repeatedly each of SAY_HI, INTRODUCE_ME, and SAY_HOLA</li>
+</ul>
+<h3 id="6e-add-a-new-deployment-seconddeployment">6e. Add a new deployment <code>SecondDeployment</code></h3>
+<ul>
+<li>Include <code>YourComponent</code> but not <code>HiComponent</code></li>
+<li>Test with <code>fprime-gds</code> noticing that SAY_HOLA still works, but
+  neither SAY_HI nor INTRODUCE_ME is listed as a command</li>
+</ul>
+<h3 id="6f-create-a-unit-test-for-hicomponent">6f. Create a Unit Test for <code>HiComponent</code></h3>
+<p>Unit Testing is described as an <a href="https://fprime.jpl.nasa.gov/latest/docs/user-manual/overview/development-practice/">F' Development Process</a>.  The topic is also covered in tutorials such as</p>
+<ul>
+<li><a href="https://fprime.jpl.nasa.gov/latest/tutorials-math-component/docs/math-component/#writing-unit-tests-part-1-creating-the-implementation-stub">math-component</a></li>
+<li><a href="https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/#6-led-blinker-unit-testing">led-blinker</a></li>
+</ul>
+<p>For examples, see</p>
+<ul>
+<li><a href="https://github.com/fprime-community/fprime-workshop-led-blinker/blob/devel/LedBlinker/Components/Led/test/ut/LedTester.cpp">LedTester.cpp</a></li>
+<li>And the math-component tutorial's <a href="https://github.com/fprime-community/fprime-tutorial-math-component/tree/devel/MathProject/Components">two components</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tutorials Index">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Tutorials Index
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../../tutorials-led-blinker/docs/led-blinker/" class="md-footer__link md-footer__link--next" aria-label="Next: LED Blinker">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                LED Blinker
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <style>
+    .jpl-links {
+        padding: 2% 0;
+        text-align: center;
+    }
+
+    .jpl-links ul {
+        list-style-type: none;
+        margin: 0;
+    }
+
+    .jpl-links ul li {
+        display: inline;
+        margin: 0 !important;
+        padding-left: 0.5em;
+        padding-right: 0.25em;
+    }
+
+    .jpl-links a {
+        color: white !important;
+        font-weight: bold;
+    }
+
+    .fprime-footer {
+        color: white !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Responsive layout - makes a one column layout instead of a two-column layout */
+    @media (max-width: 800px) {
+        .fprime-footer {
+            flex-direction: column;
+        }
+    }
+
+    .fprime-footer [dir=ltr] .md-typeset ol,
+    [dir=ltr] .md-typeset ul {
+        margin-left: 0;
+    }
+
+    .footer-copyright {
+        color: white !important;
+        text-align: center;
+        font-size: 12px;
+        margin: auto;
+    }
+
+    .footer-divider {
+        width: 100%;
+    }
+
+    .footer-divider hr {
+        display: block;
+        height: 5px;
+        border: 0;
+        border-bottom: 0.5px solid #fff;
+        margin: 1em 0;
+        padding: 0;
+    }
+</style>
+
+<div class="fprime-footer"><a href="../../../../.." class="md-header__button md-logo footer-logo"
+        aria-label="Flight Software &amp; Embedded Systems Framework" data-md-component="logo"
+        title="Flight Software &amp; Embedded Systems Framework" style="width: 25%;">
+        <img src="../../../../../assets/images/logo-fprime-jpl.svg" alt="NASA Jet Propulsion Laboratory F Prime">
+    </a><div class="jpl-links">
+        <ul>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime">
+                    F´ GitHub
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime/discussions">
+                    Discussion Forum
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime/issues">
+                    Report Issues
+                </a>
+            </li>
+            <li>
+                <a href="mailto:fprime@jpl.nasa.gov">
+                    Email Us
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="footer-divider">
+    <hr>
+</div>
+
+<div class="fprime-footer" style="font-size: 16px;">
+    <div class="jpl-links" style="padding-top: 0;">
+        <ul>
+            <li style="margin-left: 0; border-right: 1px solid;">
+                <a href="http://www.nasa.gov/">
+                    NASA
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="http://jpl.nasa.gov/">
+                    JPL
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="http://www.caltech.edu/">
+                    Caltech
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/caltechjpl-privacy-policies-and-important-notices">
+                    Privacy
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/jpl-image-use-policy">
+                    Image Policy
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/frequently-asked-questions">
+                    FAQ
+                </a>
+            </li>
+            <li>
+                <a href="https://jpl.nasa.gov/contact-jpl">
+                    Feedback
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="jpl-links" style="padding-top: 0;">
+        <ul>
+            <li style="margin-left: 0;">
+                <strong>Site Manager:</strong> Jeffrey Levison
+            </li>
+            <li>
+                <strong>Site Editors:</strong> Michael Starch, Thomas Boyer-Chammard, Ashley Nilo
+            </li>
+            <li>
+                <strong>CL#24-6514</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="footer-copyright">
+    <p>
+        JPL is a federally funded research and development center managed for NASA by Caltech. © 2025 California
+        Institute of Technology. Government sponsorship acknowledged.
+    </p>
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["navigation.tabs","navigation.top","navigation.tabs.sticky","navigation.footer","navigation.instant","navigation.indexes","navigation.tracking","content.code.copy","content.code.annotate","content.tooltips","content.tabs.link","content.action.edit"],"search":"../../../../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.6e5f0216.min.js"></script>
+      
+    
+  </body>
+</html>

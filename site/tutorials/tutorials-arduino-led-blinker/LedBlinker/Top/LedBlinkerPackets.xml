@@ -1,0 +1,60 @@
+<packets name="LedBlinkerPackets" namespace="LedBlinker" size="111">
+
+    <import_topology>LedBlinker/Top/LedBlinkerTopologyAppAi.xml</import_topology>
+
+    <packet name="CDH" id="1" level="1">
+        <channel name="cmdDisp.CommandsDispatched"/>
+        <channel name="rateGroup1.MaxCycleTime"/>
+        <channel name="rateGroup1.CycleTime"/>
+        <channel name="rateGroup1.CycleCount"/>
+        <channel name="bufferManager.TotalBuffs"/>
+        <channel name="bufferManager.CurrBuffs"/>
+        <channel name="bufferManager.HiBuffs"/>
+        <!-- Uncomment to use Svc::TlmPacketizer -->
+        <!-- <channel name="tlmSend.SendLevel"/> -->
+    </packet>
+
+    <packet name="CDHErrors" id="2" level="1">
+        <channel name="rateGroup1.RgCycleSlips"/>
+        <channel name="bufferManager.NoBuffs"/>
+        <channel name="bufferManager.EmptyBuffs"/>
+    </packet>
+
+    <packet name="Comms" id="4" level="1">
+        <channel name="comQueue.comQueueDepth"/>
+        <channel name="comQueue.buffQueueDepth"/>
+    </packet>
+
+    <packet name="SystemRes1" id="5" level="2">
+        <channel name="systemResources.MEMORY_TOTAL"/>
+        <channel name="systemResources.MEMORY_USED"/>
+        <channel name="systemResources.NON_VOLATILE_TOTAL"/>
+        <channel name="systemResources.NON_VOLATILE_FREE"/>
+    </packet>
+
+    <packet name="SystemRes3" id="7" level="2">
+        <channel name="systemResources.CPU"/>
+        <channel name="systemResources.CPU_00"/>
+        <channel name="systemResources.CPU_01"/>
+        <channel name="systemResources.CPU_02"/>
+        <channel name="systemResources.CPU_03"/>
+        <channel name="systemResources.CPU_04"/>
+        <channel name="systemResources.CPU_05"/>
+        <channel name="systemResources.CPU_06"/>
+        <channel name="systemResources.CPU_07"/>
+        <channel name="systemResources.CPU_08"/>
+        <channel name="systemResources.CPU_09"/>
+        <channel name="systemResources.CPU_10"/>
+        <channel name="systemResources.CPU_11"/>
+        <channel name="systemResources.CPU_12"/>
+        <channel name="systemResources.CPU_13"/>
+        <channel name="systemResources.CPU_14"/>
+        <channel name="systemResources.CPU_15"/>
+    </packet>
+
+    <!-- Ignored packets -->
+
+    <ignore>
+        <channel name="cmdDisp.CommandErrors"/>
+    </ignore>
+</packets>

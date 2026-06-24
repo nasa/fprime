@@ -1,0 +1,5868 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://fprime.jpl.nasa.gov/latest/tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker/">
+      
+      
+        <link rel="prev" href="../../../cross-compilation/">
+      
+      
+        <link rel="next" href="../../../../user-manual/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.svg">
+      <meta name="generator" content="zensical-0.0.45">
+    
+    
+      
+        <title>F´ LED Blinker Tutorial for Arduino-Supported Boards - F Prime</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.fba56155.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M12%2022c5.5%200%2010-4.5%2010-10S17.5%202%2012%202%202%206.5%202%2012s4.5%2010%2010%2010M11%207h2v2h-2zm3%2010h-4v-2h1v-2h-1v-2h3v4h1z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../overrides/assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+
+  <link 
+     rel="stylesheet" 
+     href="../../../../assets/stylesheets/extra.css" 
+   /> 
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#f-led-blinker-tutorial-for-arduino-supported-boards" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+You are not viewing the documentation for the latest release of F Prime.
+<a href="../../../../../latest/docs">
+  <strong>Click here to go to latest release.</strong>
+</a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL("../../../.."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://fprime.jpl.nasa.gov/" title="F Prime" class="md-header__button md-logo" aria-label="F Prime" data-md-component="logo">
+      
+  <img src="../../../../assets/images/logo-fprime-jpl.svg" alt="F Prime">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            F Prime
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              F´ LED Blinker Tutorial for Arduino-Supported Boards
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 6a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V19a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-1.8c-1.79-1.04-3-2.98-3-5.2a6 6 0 0 1 6-6m2 15v1a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-1zm6-10h3v2h-3zM1 11h3v2H1zM13 1v3h-2V1zM4.92 3.5l2.13 2.14-1.42 1.41L3.5 4.93zm12.03 2.13 2.12-2.13 1.43 1.43-2.13 2.12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C9.76 2 7.78 3.05 6.5 4.68l9.81 9.82C17.94 13.21 19 11.24 19 9a7 7 0 0 0-7-7M3.28 4 2 5.27 5.04 8.3C5 8.53 5 8.76 5 9c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h5.73l4 4L20 20.72zM9 20v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/nasa/fprime" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nasa/fprime
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://fprime.jpl.nasa.gov/" class="md-tabs__link">
+        
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  Documentation
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../getting-started/" class="md-tabs__link">
+          
+  
+  Getting Started with F Prime
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../how-to/" class="md-tabs__link">
+          
+  
+  How-To
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../reference/" class="md-tabs__link">
+          
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  Tutorials
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../user-manual/" class="md-tabs__link">
+          
+  
+  User Manual
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://fprime.jpl.nasa.gov/" title="F Prime" class="md-nav__button md-logo" aria-label="F Prime" data-md-component="logo">
+      
+  <img src="../../../../assets/images/logo-fprime-jpl.svg" alt="F Prime">
+
+    </a>
+    F Prime
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nasa/fprime" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nasa/fprime
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://fprime.jpl.nasa.gov/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Documentation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Getting Started with F Prime
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Getting Started with F Prime
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting-started/features/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Features
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../getting-started/installing-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Installing F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../how-to/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  How-To
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  How-To
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/custom-framing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement a Framing Protocol
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Generate Data Products
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/define-state-machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Define State Machines in F Prime
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/derive-channels-on-ground/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Create Ground-Derived Channels in F Prime GDS
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-device-driver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a Device Driver
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-fprime-libraries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop an F´ Library
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-gds-plugins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a GDS Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/develop-subtopologies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop a Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/implement-osal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement an OS Abstraction Layer
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/implement-radio-manager/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Implement a Radio Manager Component
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/integrate-external-libraries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Integrate a Third-Party Library
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/porting-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Porting to new platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/prm-write-how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Load Parameters in Batch
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/python-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Develop Components in Python
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/rule-based-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Write Rule-Based Tests for F Prime Components
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../how-to/test-driven-development/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Test-Driven Development in F Prime (F´)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reference
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Reference
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/communication-adapter-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Adapter Interface
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/fpp-json-dict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FPP JSON Dictionary Specification
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/fprime-translations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F Prime Translation Guide
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Plugins
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  GDS Plugins
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/communications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/data-handler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Handler Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/framing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framing Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/gds-app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  App Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/gds-plugins/gds-function/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Function Plugin
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/nomenclature/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Nomenclature
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/numerical-types/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Numerical Types
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../reference/system-functional/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  System Functional Documentation
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  System Functional Documentation
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/buffer-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Buffer Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/ccsds-protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CCSDS Protocol Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/command-dispatch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Command Dispatch Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/communication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Communication Stack Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/dictionary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Dictionary Capabilities
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/event-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Event Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/file-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  File Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framework Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/hardware-drivers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Hardware Driver Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/health-monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Health Monitoring Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/osal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Operating System Abstraction Layer (OSAL)
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/parameters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Parameter Management Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/rate-group-scheduling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rate Group Scheduling Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/sequencing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Sequencing Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-cdh-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CDH Core Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-ccsds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComCcsds Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComFprime Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-com-logger-tee/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  ComLoggerTee Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/subtopology-file-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  File Handling Subtopology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/system-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  System Services Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/telemetry-chan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Telemetry Channel Storage Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/telemetry-packetizer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Telemetry Packetizer Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../reference/system-functional/time-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Time Services Functionality
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Tutorials
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Tutorials
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-hello-world/docs/hello-world/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Hello World
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-led-blinker/docs/led-blinker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  LED Blinker
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials-math-component/docs/math-component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  MathComponent
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cross-compilation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Cross-Compilation Setup
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Arduino LED Blinker
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Arduino LED Blinker
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Prerequisites
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tutorial-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Tutorial Steps
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-led-blinker-project-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. LED Blinker: Project Setup
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-building-for-arduino-microcontrollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Building for Arduino Microcontrollers
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-led-blinker-component-design-and-initial-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. LED Blinker: Component Design and Initial Implementation
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-led-blinker-initial-component-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. LED Blinker: Initial Component Integration
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-led-blinker-component-design-and-implementation-continued" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. LED Blinker: Component Design and Implementation, Continued
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-led-blinker-full-system-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. LED Blinker: Full System Integration
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-led-blinker-running-on-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        7. LED Blinker: Running on Hardware
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-led-blinker-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        8. LED Blinker: Conclusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-hardware-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Appendix: Hardware Requirements
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../user-manual/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  User Manual
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  User Manual
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Build System
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Build System
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/01-cmake-intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ CMake Build System
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Cmake Api
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-customization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Customization
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-implementations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Implementations
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ and CMake Platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-targets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Targets
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-toolchains/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Toolchain Files
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/cmake-uts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CMake Build System Unit Tests
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/build-system/settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  `settings.ini`: Build Settings Configuration
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Design Patterns
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Design Patterns
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/app-man-drv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Application-Manager-Driver Architecture
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/common-port-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Common Port Design Patterns
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/health-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Health Checking Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/hub-pattern/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  A Quick Look at the Hub Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/manager-worker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The Manager/Worker Pattern
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/rate-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rate Groups and Timeliness
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/design-patterns/subtopologies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Subtopologies
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Framework
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Framework
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/assert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Asserts in F
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/autocoded-functions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Autocoded Functions and Component Classes
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/building-topology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Constructing the F´ Topology
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/component-and-port-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Selecting Component, Port, and Command Kinds
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/configuring-fprime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Configuring F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/data-products/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Products
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/ground-interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Ground Interface Architecture and Customization
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../user-manual/framework/memory-management/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Memory Management
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7_4_8" id="__nav_7_4_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_7_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Memory Management
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/memory-management/buffer-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Buffer Pools with Svc.BufferManager
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/memory-management/memory-allocation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Memory Allocation with Fw::MemAllocator
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/run-baremetal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ on Baremetal Systems
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/run-multi-core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ on Multi-Core Systems
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/state-machines/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  State Machines
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/framework/supported-platforms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Supported Platforms
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  GDS
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The F´ GDS CLI
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-custom-dashboards/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The GDS Dashboard
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-dashboard-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Dashboard Component Reference
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-dev-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Developer's Guide
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/gds-test-api-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GDS Integration Test API
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/reusable-integration-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reusable Integration Tests
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/gds/seqgen/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Sequencing In F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Overview
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Overview
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/01-full-intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Introduction To F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/02-fprime-architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Software Architecture
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/03-port-comp-top/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Core Constructs: Ports, Components, and Topologies
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/04-cmd-evt-chn-prm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Constructs: Commands, Events, Channels, and Parameters
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/05-enum-arr-ser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Data Structures and Types
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/development-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  F´ Development Process
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/gds-introduction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  The F´ Ground Data System
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/proj-dep/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Projects and Deployments
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/source-tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  A Tour of the Source Tree
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/overview/unit-testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Unit Testing in F´
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_7" id="__nav_7_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Security
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  Security
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-manual/security/software-bill-of-materials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Software Bill Of Materials Generation
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Prerequisites
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tutorial-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Tutorial Steps
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-led-blinker-project-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. LED Blinker: Project Setup
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-building-for-arduino-microcontrollers" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Building for Arduino Microcontrollers
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-led-blinker-component-design-and-initial-implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. LED Blinker: Component Design and Initial Implementation
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-led-blinker-initial-component-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. LED Blinker: Initial Component Integration
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-led-blinker-component-design-and-implementation-continued" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. LED Blinker: Component Design and Implementation, Continued
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-led-blinker-full-system-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. LED Blinker: Full System Integration
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-led-blinker-running-on-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        7. LED Blinker: Running on Hardware
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-led-blinker-conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        8. LED Blinker: Conclusion
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appendix-hardware-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Appendix: Hardware Requirements
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+    <a href="https://github.com/nasa/fprime/edit/devel/tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="f-led-blinker-tutorial-for-arduino-supported-boards">F´ LED Blinker Tutorial for Arduino-Supported Boards</h1>
+<p>This is designed to be an extended introductory F´ tutorial taking the user through the basics of creating components, using events, telemetry, commands, and parameters, and integrating topologies with the goal of running F´ on embedded hardware. This project is an implementation of the <a href="https://github.com/fprime-community/fprime-workshop-led-blinker.git">F´ LED Blinker ARM Linux Tutorial</a> which will allow you to test on Arduino-based microcontrollers using the <a href="https://github.com/fprime-community/fprime-arduino.git"><code>fprime-arduino</code></a> and <a href="https://github.com/fprime-community/fprime-baremetal/"><code>fprime-baremetal</code></a>. </p>
+<p>This version uses a scaled down deployment of F´ to account for the limited resources available on baremetal hardware.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The source for this tutorial is located here: <a href="https://github.com/fprime-community/fprime-arduino-led-blinker">https://github.com/fprime-community/fprime-arduino-led-blinker</a>. If you are stuck at some point during the tutorial, you may refer to that reference as the "solution".</p>
+</div>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>In order to run through this tutorial, users should first do the following:</p>
+<ol>
+<li>Meet the <a href="https://github.com/nasa/fprime?tab=readme-ov-file#system-requirements">F´ System Requirements</a></li>
+<li>Install an IDE or text editor supporting copy-paste. <a href="https://code.visualstudio.com/">VSCode</a> has <a href="https://marketplace.visualstudio.com/items?itemName=jet-propulsion-laboratory.fpp">plugins</a> to work with FPP.</li>
+<li>Complete the <a href="https://fprime.jpl.nasa.gov/latest/tutorials-hello-world/docs/hello-world">Hello World Tutorial</a></li>
+<li>Acquire and set up the appropriate hardware as described in the <a href="#appendix-hardware-requirements"><code>Appendix: Hardware Requirements</code></a> for this tutorial</li>
+</ol>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you do not have the hardware, you can still follow the LED Blinker tutorial! You should just skip the Hardware sections.</p>
+</div>
+<h2 id="tutorial-steps">Tutorial Steps</h2>
+<p>This tutorial is composed of the following steps:</p>
+<ol>
+<li><a href="#1-led-blinker-project-setup">Project Setup</a></li>
+<li><a href="#2-building-for-arduino-microcontrollers">Building for Arduino</a></li>
+<li><a href="#3-led-blinker-component-design-and-initial-implementation">Component Design and Initial Implementation</a></li>
+<li><a href="#4-led-blinker-initial-component-integration">Initial Component Integration</a></li>
+<li><a href="#5-led-blinker-component-design-and-implementation-continued">Continuing Component Implementation</a></li>
+<li><a href="#6-led-blinker-full-system-integration">Full System Integration</a></li>
+<li><a href="#7-led-blinker-running-on-hardware">Running on Hardware</a></li>
+</ol>
+<hr />
+<h2 id="1-led-blinker-project-setup">1. LED Blinker: Project Setup</h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you have followed the <a href="https://fprime.jpl.nasa.gov/latest/docs/tutorials/">HelloWorld tutorial</a> previously, this should feel very familiar...</p>
+</div>
+<p>An F´ Project ties to a specific version of tools to work with F´. In order to create
+this project and install the correct version of tools, you should perform a bootstrap of F´:</p>
+<ol>
+<li>Ensure you meet the <a href="https://github.com/nasa/fprime?tab=readme-ov-file#system-requirements">F´ System Requirements</a></li>
+<li><a href="https://fprime.jpl.nasa.gov/latest/docs/getting-started/installing-fprime/#creating-a-new-f-project">Bootstrap your F´ project</a> with the name <code>arduino-led-blinker</code></li>
+</ol>
+<p>Bootstrapping your F´ project created a folder called <code>arduino-led-blinker</code> (or any name you chose) containing the standard F´ project structure as well as the virtual environment up containing the tools to work with F´.</p>
+<p>Navigate to your project directory and activate your virtual environment if you have not already done so:
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>arduino-led-blinker
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>.<span class="w"> </span>fprime-venv/bin/activate
+</span></code></pre></div></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Follow the <a href="https://github.com/fprime-community/fprime-arduino/blob/main/docs/arduino-cli-install.md">arduino-cli installation guide</a>.</p>
+</div>
+<hr />
+<h2 id="2-building-for-arduino-microcontrollers">2. Building for Arduino Microcontrollers</h2>
+<p>This section will guide you on converting your project to build for Arduino microcontrollers using the <code>fprime-arduino</code> and <code>fprime-baremetal</code> packages.</p>
+<h3 id="adding-fprime-arduino">Adding fprime-arduino</h3>
+<p>First, add the <code>fprime-arduino</code> package as a submodule into the <code>lib/</code> directory.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/fprime-community/fprime-arduino.git<span class="w"> </span>lib/fprime-arduino
+</span></code></pre></div>
+<p>Add <code>fprime-arduino</code> as a library and change the default build toolchain to <code>teensy41</code> in <code>arduino-led-blinker/settings.ini</code> after the framework path.
+<div class="language-ini highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="na">library_locations</span><span class="o">:</span><span class="w"> </span><span class="s">./lib/fprime-arduino</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="na">default_toolchain</span><span class="o">:</span><span class="w"> </span><span class="s">teensy41</span>
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you would like to use a different board as your default toolchain, you may change <code>teensy41</code> to your desired board. The list of available boards in the <code>fprime-arduino</code> toolchain can be found <a href="https://github.com/fprime-community/fprime-arduino/blob/main/docs/board-list.md">here</a>.</p>
+</div>
+<p>Install <code>fprime-arduino</code> dependencies:
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>lib/fprime-arduino/requirements.txt
+</span></code></pre></div></p>
+<h3 id="adding-fprime-baremetal">Adding fprime-baremetal</h3>
+<p>Next, add the <code>fprime-baremetal</code> package as a submodule into your project root.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/fprime-community/fprime-baremetal.git<span class="w"> </span>lib/fprime-baremetal
+</span></code></pre></div>
+<p>Add <code>fprime-baremetal</code> as an additional library alongside <code>fprime-arduino</code> into <code>arduino-led-blinker/settings.ini</code>, separated by a <code>:</code>. The complete library_locations should look like:
+<div class="language-ini highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="na">library_locations</span><span class="o">:</span><span class="w"> </span><span class="s">./lib/fprime-arduino:./lib/fprime-baremetal</span>
+</span></code></pre></div></p>
+<h3 id="add-arduino-deployment">Add Arduino Deployment</h3>
+<p>In order to produce an executable to run the software, users need to create a deployment. A deployment is one software executable that contains the main entry point, and an F´ system topology. We will be using a custom deployment that autogenerates an Arduino deployment.</p>
+<p>First, add the line into <code>arduino-led-blinker/settings.ini</code> below the default_toolchain:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>deployment_cookiecutter: https://github.com/fprime-community/fprime-arduino-deployment-cookiecutter.git
+</span></code></pre></div></p>
+<h3 id="generate-build-cache">Generate Build Cache</h3>
+<p>Now, you are ready to generate a build cache using the following command:
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>fprime-util<span class="w"> </span>generate
+</span></code></pre></div>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Always remember to activate your project's virtual environment whenever you work with it.</p>
+</div>
+<hr />
+<h2 id="3-led-blinker-component-design-and-initial-implementation">3. LED Blinker: Component Design and Initial Implementation</h2>
+<p>The purpose of this exercise is to walk you through the creation and initial implementation of an F´ component to control the blinking of an LED. This section will discuss the design of the full component, the implementation of a command to start/stop the LED blinking, and the sending of events.  Users will then proceed to the initial ground testing before finishing the implementation in a later section.</p>
+<h3 id="component-design">Component Design</h3>
+<p>In order for our component to blink an LED, it needs to accept a command to turn on the LED and drive a GPIO pin via a port call to the GPIO driver. It will also need a <a href="https://fprime.jpl.nasa.gov/latest/docs/user-manual/design-patterns/rate-group/">rate group</a> input port to control the timing of the blink. Additionally, we will define events and telemetry channels to report component state, and a parameter to control the period of the blink.</p>
+<p>This component design is captured in the block diagram below with input ports on the left and output ports on the right. Ports for standard F´ functions (e.g. commands, events, telemetry, and parameters) are circled in green.</p>
+<p><img alt="Led Component Block Diagram" src="../img/component-design.png" /></p>
+<p>In this exercise, the <code>BLINKING_ON_OFF</code> command shall toggle the blinking state of the LED. The period of the blinking is controlled by the <code>BLINK_INTERVAL</code> parameter. Blinking is implemented on the <code>run</code> rate group input port. The component also defines several telemetry channels and events describing the various actions taken by the component.</p>
+<h4 id="design-summary">Design Summary</h4>
+<p><strong>Component Ports:</strong>
+1. <code>run</code>: invoked at a set rate from the rate group, used to control the LED blinking
+2. <code>gpioSet</code>: invoked by the <code>Led</code> component to control the GPIO driver</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Standard component ports (circled in green) are not listed here.</p>
+</div>
+<p><strong>Commands:</strong>
+1. <code>BLINKING_ON_OFF</code>: turn the LED blinking on/off</p>
+<p><strong>Events:</strong>
+1. <code>InvalidBlinkArgument</code>: emitted when an invalid argument was supplied to the <code>BLINKING_ON_OFF</code> command
+2. <code>SetBlinkingState</code>: emitted when the component sets the blink state
+3. <code>BlinkIntervalSet</code>: emitted when the component blink interval parameter is set
+4. <code>LedState</code>: emitted when the LED is driven to a new state</p>
+<p><strong>Telemetry Channels:</strong>
+1. <code>BlinkingState</code>: state of the LED blinking
+2. <code>LedTransitions</code>: count of the LED transitions</p>
+<p><strong>Parameters:</strong>
+1. <code>BLINK_INTERVAL</code>: LED blink period in number of rate group calls</p>
+<h3 id="create-the-component">Create the component</h3>
+<p>It is time to create the basic component. In a terminal, navigate to the project's root directory and run the following:</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nb">cd</span><span class="w"> </span>Components
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>fprime-util<span class="w"> </span>new<span class="w"> </span>--component
+</span></code></pre></div>
+You will be prompted for information regarding your component. Fill out the prompts as shown below:</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Cookiecutter<span class="w"> </span>source:<span class="w"> </span>using<span class="w"> </span><span class="nb">builtin</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="o">[</span><span class="m">1</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>name<span class="w"> </span><span class="o">(</span>MyComponent<span class="o">)</span>:<span class="w"> </span>Led
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="o">[</span><span class="m">2</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>short<span class="w"> </span>description<span class="w"> </span><span class="o">(</span>Component<span class="w"> </span><span class="k">for</span><span class="w"> </span>F<span class="w"> </span>Prime<span class="w"> </span>FSW<span class="w"> </span>framework.<span class="o">)</span>:<span class="w"> </span>Component<span class="w"> </span>to<span class="w"> </span>blink<span class="w"> </span>an<span class="w"> </span>LED<span class="w"> </span>driven<span class="w"> </span>by<span class="w"> </span>a<span class="w"> </span>rate<span class="w"> </span>group
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="o">[</span><span class="m">3</span>/8<span class="o">]</span><span class="w"> </span>Component<span class="w"> </span>namespace<span class="w"> </span><span class="o">(</span>Components<span class="o">)</span>:<span class="w"> </span>Components
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="o">[</span><span class="m">4</span>/8<span class="o">]</span><span class="w"> </span>Select<span class="w"> </span>component<span class="w"> </span>kind
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>active
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>passive
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="m">3</span><span class="w"> </span>-<span class="w"> </span>queued
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2/3<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span><span class="o">[</span><span class="m">5</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Commands?
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">  </span><span class="o">[</span><span class="m">6</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Telemetry?
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">  </span><span class="o">[</span><span class="m">7</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Events?
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">  </span><span class="o">[</span><span class="m">8</span>/8<span class="o">]</span><span class="w"> </span>Enable<span class="w"> </span>Parameters?
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>yes
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>no
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Found<span class="w"> </span>CMake<span class="w"> </span>file<span class="w"> </span>at<span class="w"> </span><span class="s1">&#39;arduino-led-blinker/Components/CMakeLists.txt&#39;</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>Add<span class="w"> </span>Led<span class="w"> </span>to<span class="w"> </span>arduino-led-blinker/Components/CMakeLists.txt<span class="w"> </span>at<span class="w"> </span>end<span class="w"> </span>of<span class="w"> </span>file?<span class="w"> </span><span class="o">(</span>yes/no<span class="o">)</span><span class="w"> </span><span class="o">[</span>yes<span class="o">]</span>:<span class="w"> </span>yes
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>Generate<span class="w"> </span>implementation<span class="w"> </span>files?<span class="w"> </span><span class="o">(</span>yes/no<span class="o">)</span><span class="w"> </span><span class="o">[</span>yes<span class="o">]</span>:<span class="w"> </span>yes
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>Refreshing<span class="w"> </span>cache<span class="w"> </span>and<span class="w"> </span>generating<span class="w"> </span>implementation<span class="w"> </span>files...
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Created<span class="w"> </span>new<span class="w"> </span>component<span class="w"> </span>and<span class="w"> </span>generated<span class="w"> </span>initial<span class="w"> </span>implementations.
+</span></code></pre></div>
+Your new component is located in the directory <code>arduinio-led-blinker/Components/Led</code>.</p>
+<h4 id="commands">Commands</h4>
+<p>Commands are used to command the component from the ground system or a command sequencer. We will add a command named <code>BLINKING_ON_OFF</code> to turn on or off the blinking LED. This command will take in an argument named <code>onOff</code> of type <code>Fw.On</code>.</p>
+<p>Inside your <code>arduino-led-blinker/Components/Led</code> directory, open the file <code>Led.fpp</code> and search for the following:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>        # One async command/port is required for active components
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>        # This should be overridden by the developers with a useful command/port
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>        @ TODO
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>        async command TODO opcode 0
+</span></code></pre></div>
+<p>Replace that block with the following:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>        @ Command to turn on or off the blinking LED
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>        async command BLINKING_ON_OFF(
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>            onOff: Fw.On @&lt; Indicates whether the blinking should be on or off
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>        )
+</span></code></pre></div>
+<h4 id="events">Events</h4>
+<p>Events represent a log of system activities. Events are typically emitted any time the system takes an action. Events are also emitted to report off-nominal conditions.</p>
+<p>Inside your <code>arduino-led-blinker/Components/Led</code> directory, open the <code>Led.fpp</code> file. After the command you added in the previous section, add this event:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>        @ Reports the state we set to blinking.
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>        event SetBlinkingState($state: Fw.On) \
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>            severity activity high \
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>            format &quot;Set blinking state to {}.&quot;
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>state</code> is a keyword in FPP. In order to use it as a variable name, you need to escape it by prepending <code>$</code>.</p>
+</div>
+<h4 id="do-it-yourself">Do it yourself</h4>
+<p>Below is a table with tasks you must complete before moving on to the next section. These tasks require you to update the component's fpp file.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Add an activity high event named <code>BlinkIntervalSet</code> to the fpp. The event takes an argument of <code>U32</code> type to indicate the set interval.</td>
+<td><details><summary>Answer</summary><code>event BlinkIntervalSet(interval: U32) severity activity high format "LED blink interval set to {}"</code></details></td>
+</tr>
+<tr>
+<td>2. Add an activity low event named <code>LedState</code> to the fpp. The event takes an argument of <code>Fw.On</code> type to indicate the LED has been driven to a different state.</td>
+<td><details><summary>Answer</summary><code>event LedState(onOff: Fw.On) severity activity low format "LED is {}"</code></details></td>
+</tr>
+</tbody>
+</table>
+<p>You have completed the Command and Event design phase. We'll move on to the Command and Event implementation phase.</p>
+<h3 id="component-implementation">Component Implementation</h3>
+<p>In the <code>arduino-led-blinker/Components/Led</code> directory, run the following:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>fprime-util<span class="w"> </span>impl
+</span></code></pre></div>
+<p>This command will auto generate two files: <code>Led.template.hpp</code> and <code>Led.template.cpp</code>. These files contain the stub implementation for the component's newly added command.</p>
+<p>Since this is the start of the component's implementation, we can use the generated template files for our initial component implementation. Inside your <code>arduino-led-blinker/Components/Led</code> directory, rename <code>Led.template.hpp</code> to <code>Led.hpp</code> and rename <code>Led.template.cpp</code> to <code>Led.cpp</code>. You can rename the files through the terminal using the two commands below:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>mv<span class="w"> </span>Led.template.hpp<span class="w"> </span>Led.hpp
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>mv<span class="w"> </span>Led.template.cpp<span class="w"> </span>Led.cpp
+</span></code></pre></div>
+<p>Verify your component is building correctly by running the following command in the <code>arduino-led-blinker/Components/Led</code> directory.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Append the flag <code>-j4</code> or <code>-j8</code> to build faster with more cores</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Fix any errors that occur before proceeding with the rest of the tutorial.</p>
+</div>
+<h3 id="component-state">Component State</h3>
+<p>Many of the behaviors of the component discussed in the <a href="#component-design">Component Design</a> section require the tracking of some state. Before diving into the implementation of the behavior let us set up and initialize that state.</p>
+<p>Open <code>Led.hpp</code> in <code>arduino-led-blinker/Components/Led</code>, and add the following private member variables to the end of the file.</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">OFF</span><span class="p">;</span><span class="w"> </span><span class="c1">//! Keeps track if LED is on or off</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="n">U64</span><span class="w"> </span><span class="n">m_transitions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">//! The number of on/off transitions that have occurred from FSW boot up</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">//! Keeps track of how many ticks the LED has been on for</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_blinking</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c1">//! Flag: if true then LED blinking will occur else no blinking will happen</span>
+</span></code></pre></div>
+<p>Run the following in the <code>arduino-led-blinker/Components/Led</code> directory to verify your component is building correctly.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<p>Now that the member variables are set up, we can continue into the component implementation.</p>
+<h4 id="command">Command</h4>
+<p>Now we will implement the behavior of the <code>BLINKING_ON_OFF</code> command. An initial implementation is shown below and may be copied into <code>Led.cpp</code> in-place of the BLINKING_ON_OFF command stub.</p>
+<p><div class="language-cpp highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">Led</span><span class="w"> </span><span class="nf">::BLINKING_ON_OFF_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="w"> </span><span class="n">onOff</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">               </span><span class="c1">// Reset count on any successful command</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_blinking</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">onOff</span><span class="p">;</span><span class="w">  </span><span class="c1">// Update blinking state</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">    </span><span class="c1">// TODO: Emit an event SetBlinkingState to report the blinking state (onOff).</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">    </span><span class="c1">// NOTE: This event will be added during the &quot;Events&quot; exercise.</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="w">    </span><span class="c1">// TODO: Report the blinking state (onOff) on channel BlinkingState.</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span><span class="c1">// NOTE: This telemetry channel will be added during the &quot;Telemetry&quot; exercise.</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">    </span><span class="c1">// Provide command response</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="p">}</span>
+</span></code></pre></div>
+Run the following command in the terminal to verify your component is building correctly.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Fix any errors that occur before proceeding with the rest of the tutorial.</p>
+</div>
+<h4 id="events_1">Events</h4>
+<p>Open <code>Led.cpp</code> in your <code>arduino-led-blinker/Components/Led</code> directory and navigate to the <code>BLINKING_ON_OFF</code> command. Report, via an event, the blinking state has been set.</p>
+<p>To do so, replace:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="w">      </span><span class="c1">// TODO: Emit an event SetBlinkingState to report the blinking state (onOff).</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">      </span><span class="c1">// NOTE: This event will be added during the &quot;Events&quot; exercise.</span>
+</span></code></pre></div></p>
+<p>with:
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_SetBlinkingState</span><span class="p">(</span><span class="n">onOff</span><span class="p">);</span>
+</span></code></pre></div></p>
+<p>Run the following to verify your component is building correctly.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Resolve any <code>fprime-util build</code> errors before continuing</p>
+</div>
+<h3 id="led-blinker-step-3-conclusion">LED Blinker Step 3 Conclusion</h3>
+<p>Congratulations!  You have now implemented some basic functionality in a new F´ component. Your command should look like this
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">Led</span><span class="w"> </span><span class="nf">::BLINKING_ON_OFF_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="w"> </span><span class="n">onOff</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">               </span><span class="c1">// Reset count on any successful command</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_blinking</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">onOff</span><span class="p">;</span><span class="w">  </span><span class="c1">// Update blinking state</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_SetBlinkingState</span><span class="p">(</span><span class="n">onOff</span><span class="p">);</span>
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="w">    </span><span class="c1">// TODO: Report the blinking state (onOff) on channel BlinkingState.</span>
+</span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="w">    </span><span class="c1">// NOTE: This telemetry channel will be added during the &quot;Telemetry&quot; exercise.</span>
+</span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="w">    </span><span class="c1">// Provide command response</span>
+</span><span id="__span-23-11"><a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span>
+</span><span id="__span-23-12"><a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<p>Before finishing the implementation, let's take a break and try running the above command through the ground system. This will require integrating the component into the system topology, which we will get into in the next section.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The last TODO in the <code>BLINKING_ON_OFF</code> command handler will be addressed in a future section. </p>
+</div>
+<hr />
+<h2 id="4-led-blinker-initial-component-integration">4. LED Blinker: Initial Component Integration</h2>
+<p>In this section, users will create a deployment and perform the initial integration of the LED component into that deployment. This deployment will automatically include the basic command and data handling setup needed to interact with the component. Wiring the <code>Led</code> component to the GPIO driver component will be covered in a later section after the component implementation has finished.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Users must have created the <a href="#3-led-blinker-component-design-and-initial-implementation">initial Led component implementation</a> in order to run through this section. Users may continue to define commands, events, telemetry, and ports after this initial integration.</p>
+</div>
+<h3 id="creating-the-ledblinker-deployment">Creating the <code>LedBlinker</code> Deployment</h3>
+<p>In order to produce an executable to run the software, users need to create a deployment. A deployment is one software executable that contains the main entry point, and an F´ system topology.</p>
+<p>Create a new deployment in the <code>arduino-led-blinker</code> directory with:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>fprime-util<span class="w"> </span>new<span class="w"> </span>--deployment
+</span></code></pre></div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>You must ensure that the deployment is using the arduino cookiecutter. To verify this, make sure the cookiecutter source displays references <code>https://github.com/fprime-community/fprime-arduino-deployment-cookiecutter.git</code>. If the cookiecutter source references <code>builtin</code>, ensure you followed the <a href="#Add-Arduino-Deployment">Add Arduino Deployment</a> section.</p>
+</div>
+<p>This will ask for some input, respond with the following answers:
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Cookiecutter<span class="w"> </span>source:<span class="w"> </span>https://github.com/fprime-community/fprime-arduino-deployment-cookiecutter.git
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="o">[</span><span class="m">1</span>/3<span class="o">]</span><span class="w"> </span>Deployment<span class="w"> </span>name<span class="w"> </span><span class="o">(</span>fprime-arduino-deployment<span class="o">)</span>:<span class="w"> </span>LedBlinker
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">  </span><span class="o">[</span><span class="m">2</span>/3<span class="o">]</span><span class="w"> </span>Select<span class="w"> </span>communication<span class="w"> </span>driver<span class="w"> </span><span class="nb">type</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>UART
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>TcpServer
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="w">    </span><span class="m">3</span><span class="w"> </span>-<span class="w"> </span>TcpClient
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2/3<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">  </span><span class="o">[</span><span class="m">3</span>/3<span class="o">]</span><span class="w"> </span>Select<span class="w"> </span>file<span class="w"> </span>system<span class="w"> </span><span class="nb">type</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="w">    </span><span class="m">1</span><span class="w"> </span>-<span class="w"> </span>None
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">    </span><span class="m">2</span><span class="w"> </span>-<span class="w"> </span>SD_Card
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="w">    </span><span class="m">3</span><span class="w"> </span>-<span class="w"> </span>MicroFS
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">    </span>Choose<span class="w"> </span>from<span class="w"> </span><span class="o">[</span><span class="m">1</span>/2/3<span class="o">]</span><span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span>:<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Found<span class="w"> </span>CMake<span class="w"> </span>file<span class="w"> </span>at<span class="w"> </span><span class="s1">&#39;arduino-led-blinker/project.cmake&#39;</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a>Add<span class="w"> </span>LedBlinker<span class="w"> </span>to<span class="w"> </span>arduino-led-blinker/project.cmake<span class="w"> </span>at<span class="w"> </span>end<span class="w"> </span>of<span class="w"> </span>file?<span class="w"> </span><span class="o">(</span>yes/no<span class="o">)</span><span class="w"> </span><span class="o">[</span>yes<span class="o">]</span>:<span class="w"> </span>yes
+</span><span id="__span-25-15"><a id="__codelineno-25-15" name="__codelineno-25-15" href="#__codelineno-25-15"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>New<span class="w"> </span>deployment<span class="w"> </span>successfully<span class="w"> </span>created:<span class="w"> </span>/home/ethan/fprime-projects/arduino-led-blinker/LedBlinker
+</span></code></pre></div>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use the default response for any other questions asked.</p>
+</div>
+<p>In order to check that the deployment was created successfully, the user can build the deployment. This will build the code for the current host system, not the remote embedded hardware allowing local testing during development. </p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="nb">cd</span><span class="w"> </span>LedBlinker
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This will reuse the build cache created during the project creation. CMake warnings may appear to indicate that the build cache is refreshing. The build should start shortly thereafter.</p>
+</div>
+<h3 id="adding-led-component-to-the-deployment">Adding <code>Led</code> Component To The Deployment</h3>
+<p>The component can now be added to the deployment's topology effectively adding this component to the running system. This is done by modifying <code>instances.fpp</code> and <code>topology.fpp</code> in the <code>Top</code> directory.</p>
+<p>Add the following to <code>arduino-led-blinker/LedBlinker/Top/instances.fpp</code>.  Typically, this is added to the "Active component instances" section of that document.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>  instance led: Components.Led base id 0x0E00 \
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>    queue size Default.QUEUE_SIZE \
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>    stack size Default.STACK_SIZE \
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>    priority 95
+</span></code></pre></div>
+<p>This defines an instance of the <code>Led</code> component called <code>led</code>. Since the component is active it needs a queue size, stack size, and priority for the thread of the component and the queue that thread serves. We have chosen the topology specified defaults and a priority of 95.</p>
+<p>Next, the topology needs to use the above definition. This is done by adding the <code>led</code> instance to the list of instances defined in <code>arduino-led-blinker/LedBlinker/Top/topology.fpp</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>    # ----------------------------------------------------------------------
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>    # Instances used in the topology
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>    # ----------------------------------------------------------------------
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>    instance led
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>No port connections need to be added because thus far the component only defines standard ports and those are connected automatically.</p>
+</div>
+<p>Build your deployment</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># In arduino-led-blinker</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nb">cd</span><span class="w"> </span>LedBlinker
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<h3 id="testing-the-topology">Testing the Topology</h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may now plug in your Arduino board into your computer. Find the connected usb device by running <code>ls /dev/tty*</code>.</p>
+<p>For Linux users, it should be along the lines of <code>/dev/ttyUSB0</code> or <code>/dev/ttyACM0</code>.</p>
+<p>For macOS users, it should be along the lines of <code>/dev/cu.usbmodem12345</code>.</p>
+<p>For Windows WSL2 users, you must bind your device to the WSL2 instance. Instructions can be found <a href="https://github.com/fprime-community/fprime-arduino/blob/upgrade-to-fprime-4/docs/arduino-cli-install.md#windows-wsl-2">here</a>.</p>
+<p>For Windows WSL1 users, it should be along the lines of <code>/dev/ttyS1</code>, where <code>S1</code> indicates <code>COM1</code>. Determine the COM port of your board by running <code>usbipd</code> on PowerShell or looking it up in Windows Device Manager.</p>
+</div>
+<p>First, you must upload the binary into your board. The binary is located in the <code>arduino-led-blinker/build-artifacts/&lt;YOUR_TOOLCHAIN&gt;/LedBlinker/bin/</code>. Refer to the upload guides in the <a href="https://github.com/fprime-community/fprime-arduino/blob/upgrade-to-fprime-4/docs/board-list.md"><code>board list</code></a> to upload the correct binary to your board of choice.</p>
+<p>Open the <code>fprime-gds</code> by running the following command:</p>
+<p><div class="language-sh highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>fprime-gds<span class="w"> </span>-n<span class="w"> </span>--dictionary<span class="w"> </span>../build-artifacts/teensy41/LedBlinker/dict/LedBlinkerTopologyDictionary.json<span class="w"> </span>--communication-selection<span class="w"> </span>uart<span class="w"> </span>--uart-device<span class="w"> </span>/dev/ttyACM0<span class="w"> </span>--uart-baud<span class="w"> </span><span class="m">115200</span>
+</span></code></pre></div>
+This will likely open up your browser and show the running flight software.  If it does not open a browser, navigate to <code>http://localhost:5000</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adjust <code>/dev/ttyACM0</code> accordingly to the device port of the board.</p>
+<p>Adjust <code>teensy41</code> accordingly to your board of choice.</p>
+</div>
+<p>Test the component integration with the following steps:
+1. <strong>Verify connection</strong>: confirm that there is a green circle and not a red X in the upper right corner.
+2. <strong>Send a Command</strong>: select the 'Commanding' tab, search for <code>led.BLINKING_ON_OFF</code> and send it with the argument set to <code>ON</code>.
+3. <strong>Verify Event</strong>: select the 'Events' tab and verify that the <code>SetBlinkingState</code> event reports the blinking state was set to <code>ON</code>.</p>
+<p><code>CTRL-C</code> to stop the F´ GDS program.</p>
+<h3 id="led-blinker-step-4-conclusion">LED Blinker Step 4 Conclusion</h3>
+<p>Congratulations! You have now integrated your component and tested that integration.</p>
+<p>Return to the <code>arduino-led-blinker/LedBlinker</code> and run the following commands to test whenever you desire.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c1"># In arduino-led-blinker/LedBlinker</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>fprime-util<span class="w"> </span>build
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>fprime-gds<span class="w"> </span>-n<span class="w"> </span>--dictionary<span class="w"> </span>../build-artifacts/teensy41/LedBlinker/dict/LedBlinkerTopologyDictionary.json<span class="w"> </span>--communication-selection<span class="w"> </span>uart<span class="w"> </span>--uart-device<span class="w"> </span>/dev/ttyACM0<span class="w"> </span>--uart-baud<span class="w"> </span><span class="m">115200</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="c1"># CTRL-C to exit</span>
+</span></code></pre></div>
+<p>This tutorial will return to the component implementation before finishing the integration of the component and testing on hardware.</p>
+<h2 id="5-led-blinker-component-design-and-implementation-continued">5. LED Blinker: Component Design and Implementation, Continued</h2>
+<p>In this section, we will complete the component design and implementation by adding telemetry, parameters, and ports; and implementing the behavior of the <code>run</code> port, which is called by the rate-group.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Refer back to the <a href="#component-design">component design</a> for explanations of what each of these items is intended to do.</p>
+</div>
+<h3 id="continued-component-design">Continued Component Design</h3>
+<h4 id="telemetry">Telemetry</h4>
+<p>Telemetry channels represent the state of the system. Typically, telemetry channels are defined for any states that give crucial insight into the component's behavior.</p>
+<p>Inside your <code>arduino-led-blinker/Components/Led</code> directory, open the <code>Led.fpp</code> file. After the events you added in the previous section, add a telemetry channel of type <code>Fw.On</code> to report the blinking state.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>        @ Telemetry channel to report blinking state.
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>        telemetry BlinkingState: Fw.On
+</span></code></pre></div>
+<h4 id="do-it-yourself_1">Do it yourself</h4>
+<p>Below is a table with a task you must complete before moving on to the next section. This task require you to update the component's fpp file.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Add a telemetry channel <code>LedTransitions</code> of type <code>U64</code> to count LED Transitions to <code>Led.fpp</code>.</td>
+<td><details><summary>Answer</summary><code>telemetry LedTransitions: U64</code></details></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters">Parameters</h4>
+<p>Parameters are ground-controllable settings for the system. Parameters are used to set settings of the system that the ground may need to change at some point during the lifetime of the system. This tutorial sets one parameter, the blink interval.</p>
+<p>For each parameter you define in your fpp, the F´ autocoder will autogenerate a SET and SAVE command. The SET command allows ground to update the parameter. The SAVE command tells your parameter database to stage this new parameter value for saving. To save the parameter for use on a FSW reboot, ground will need to send the <code>PRM_SAVE_FILE</code> command.</p>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, open the <code>Led.fpp</code> file. After the telemetry channels you added previously, add a parameter for the blinking interval. Give the parameter the name <code>BLINK_INTERVAL</code>, type <code>U32</code>, and a default value. It is good practice to assign parameters a valid default value.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>        @ Blinking interval in rate group ticks
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>        param BLINK_INTERVAL: U32 default 1
+</span></code></pre></div>
+<h4 id="additional-ports">Additional Ports</h4>
+<p>Any communication between components should be accomplished through F´ ports. Thus far we have been using a set of standard ports for handling Commands, Telemetry, Events, and Parameters. This section will add two specific ports to our component: input <code>run</code> to be called from the rate group, and output <code>gpioSet</code> to drive the GPIO driver.</p>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, open the <code>Led.fpp</code> file. After the parameters you added previously, add the following two ports:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>        @ Port receiving calls from the rate group
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>        async input port run: Svc.Sched
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>        @ Port sending calls to the GPIO driver
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>        output port gpioSet: Drv.GpioWrite
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Input and output ports can be given any name that you choose. In this example, we choose <code>run</code> and <code>gpioSet</code> since these names capture the behavioral intent. The types of <code>Svc.Sched</code> and <code>Drv.GpioWrite</code> are significant as these types must match the remote component.</p>
+</div>
+<h3 id="continued-component-implementation">Continued Component Implementation</h3>
+<h4 id="input-port-implementation">Input Port Implementation</h4>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, run the following to autogenerate stub functions for the <code>run</code> input port we just added.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>fprime-util<span class="w"> </span>impl
+</span></code></pre></div>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, open <code>Led.template.hpp</code> file and copy this block over to <code>Led.hpp</code>.</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="w">  </span><span class="nl">PRIVATE</span><span class="p">:</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="w">    </span><span class="c1">// Handler implementations for user-defined typed input ports</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="w">    </span><span class="c1">//! Handler implementation for run</span>
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="w">    </span><span class="c1">//!</span>
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a><span class="w">    </span><span class="c1">//! Port receiving calls from the rate group</span>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The port number</span>
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a><span class="w">                     </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="w">  </span><span class="c1">//!&lt; The call order</span>
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="w">                     </span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+</span></code></pre></div>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, open <code>Led.template.cpp</code> file and copy this block over to <code>Led.cpp</code>.
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1">// ----------------------------------------------------------------------</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="c1">// Handler implementations for user-defined typed input ports</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="c1">// ----------------------------------------------------------------------</span>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="kt">void</span><span class="w"> </span><span class="n">Led</span><span class="w"> </span><span class="nf">::run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="w">    </span><span class="c1">// TODO</span>
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a><span class="p">}</span>
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Copying from the template file and pasting into your implementation file is a pattern in F Prime that is often used when adding new input ports or commands.</p>
+</div>
+<p>The <code>run</code> port will be invoked repeatedly on each cycle of the rate group. Each invocation will call into the <code>run_handler</code> function such that the component may perform behavior on each cycle.</p>
+<p>Here we want to turn the LED on or OFF based on a cycle count to implement the "blinking" behavior we desire.</p>
+<p>Copy the run_handler implementation below into your run_handler. Try filling in the TODOs based on what you learned and defined in previous sections.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don't forget to read the code and comments to understand more about how to use F´.</p>
+</div>
+<p><div class="language-cpp highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">Led</span><span class="w"> </span><span class="nf">::run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="w">    </span><span class="c1">// Read back the parameter value</span>
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="w"> </span><span class="n">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="o">::</span><span class="n">INVALID</span><span class="p">;</span>
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">paramGet_BLINK_INTERVAL</span><span class="p">(</span><span class="n">isValid</span><span class="p">);</span>
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>
+</span><span id="__span-38-6"><a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a><span class="w">    </span><span class="c1">// Force interval to be 1 when invalid or not set</span>
+</span><span id="__span-38-7"><a id="__codelineno-38-7" name="__codelineno-38-7" href="#__codelineno-38-7"></a><span class="w">    </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">((</span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="o">::</span><span class="n">INVALID</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">isValid</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="o">::</span><span class="n">UNINIT</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">isValid</span><span class="p">))</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span>
+</span><span id="__span-38-8"><a id="__codelineno-38-8" name="__codelineno-38-8" href="#__codelineno-38-8"></a>
+</span><span id="__span-38-9"><a id="__codelineno-38-9" name="__codelineno-38-9" href="#__codelineno-38-9"></a><span class="w">    </span><span class="c1">// Only perform actions when set to blinking</span>
+</span><span id="__span-38-10"><a id="__codelineno-38-10" name="__codelineno-38-10" href="#__codelineno-38-10"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_blinking</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">interval</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-11"><a id="__codelineno-38-11" name="__codelineno-38-11" href="#__codelineno-38-11"></a><span class="w">        </span><span class="c1">// If toggling state</span>
+</span><span id="__span-38-12"><a id="__codelineno-38-12" name="__codelineno-38-12" href="#__codelineno-38-12"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-13"><a id="__codelineno-38-13" name="__codelineno-38-13" href="#__codelineno-38-13"></a><span class="w">            </span><span class="c1">// Toggle state</span>
+</span><span id="__span-38-14"><a id="__codelineno-38-14" name="__codelineno-38-14" href="#__codelineno-38-14"></a><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">OFF</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="p">;</span>
+</span><span id="__span-38-15"><a id="__codelineno-38-15" name="__codelineno-38-15" href="#__codelineno-38-15"></a><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_transitions</span><span class="o">++</span><span class="p">;</span>
+</span><span id="__span-38-16"><a id="__codelineno-38-16" name="__codelineno-38-16" href="#__codelineno-38-16"></a><span class="w">            </span><span class="c1">// TODO: Report the number of LED transitions (this-&gt;m_transitions) on channel LedTransitions</span>
+</span><span id="__span-38-17"><a id="__codelineno-38-17" name="__codelineno-38-17" href="#__codelineno-38-17"></a>
+</span><span id="__span-38-18"><a id="__codelineno-38-18" name="__codelineno-38-18" href="#__codelineno-38-18"></a><span class="w">            </span><span class="c1">// Port may not be connected, so check before sending output</span>
+</span><span id="__span-38-19"><a id="__codelineno-38-19" name="__codelineno-38-19" href="#__codelineno-38-19"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_gpioSet_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-20"><a id="__codelineno-38-20" name="__codelineno-38-20" href="#__codelineno-38-20"></a><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gpioSet_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logic</span><span class="o">::</span><span class="n">HIGH</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logic</span><span class="o">::</span><span class="n">LOW</span><span class="p">);</span>
+</span><span id="__span-38-21"><a id="__codelineno-38-21" name="__codelineno-38-21" href="#__codelineno-38-21"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-38-22"><a id="__codelineno-38-22" name="__codelineno-38-22" href="#__codelineno-38-22"></a>
+</span><span id="__span-38-23"><a id="__codelineno-38-23" name="__codelineno-38-23" href="#__codelineno-38-23"></a><span class="w">            </span><span class="c1">// TODO: Emit an event LedState to report the LED state (this-&gt;m_state).</span>
+</span><span id="__span-38-24"><a id="__codelineno-38-24" name="__codelineno-38-24" href="#__codelineno-38-24"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-38-25"><a id="__codelineno-38-25" name="__codelineno-38-25" href="#__codelineno-38-25"></a>
+</span><span id="__span-38-26"><a id="__codelineno-38-26" name="__codelineno-38-26" href="#__codelineno-38-26"></a><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_toggleCounter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span>
+</span><span id="__span-38-27"><a id="__codelineno-38-27" name="__codelineno-38-27" href="#__codelineno-38-27"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-38-28"><a id="__codelineno-38-28" name="__codelineno-38-28" href="#__codelineno-38-28"></a><span class="w">    </span><span class="c1">// We are not blinking</span>
+</span><span id="__span-38-29"><a id="__codelineno-38-29" name="__codelineno-38-29" href="#__codelineno-38-29"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-30"><a id="__codelineno-38-30" name="__codelineno-38-30" href="#__codelineno-38-30"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">ON</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-31"><a id="__codelineno-38-31" name="__codelineno-38-31" href="#__codelineno-38-31"></a><span class="w">            </span><span class="c1">// Port may not be connected, so check before sending output</span>
+</span><span id="__span-38-32"><a id="__codelineno-38-32" name="__codelineno-38-32" href="#__codelineno-38-32"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_gpioSet_OutputPort</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-38-33"><a id="__codelineno-38-33" name="__codelineno-38-33" href="#__codelineno-38-33"></a><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gpioSet_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logic</span><span class="o">::</span><span class="n">LOW</span><span class="p">);</span>
+</span><span id="__span-38-34"><a id="__codelineno-38-34" name="__codelineno-38-34" href="#__codelineno-38-34"></a><span class="w">            </span><span class="p">}</span>
+</span><span id="__span-38-35"><a id="__codelineno-38-35" name="__codelineno-38-35" href="#__codelineno-38-35"></a>
+</span><span id="__span-38-36"><a id="__codelineno-38-36" name="__codelineno-38-36" href="#__codelineno-38-36"></a><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">On</span><span class="o">::</span><span class="n">OFF</span><span class="p">;</span>
+</span><span id="__span-38-37"><a id="__codelineno-38-37" name="__codelineno-38-37" href="#__codelineno-38-37"></a><span class="w">            </span><span class="c1">// TODO: Emit an event LedState to report the LED state (this-&gt;m_state).</span>
+</span><span id="__span-38-38"><a id="__codelineno-38-38" name="__codelineno-38-38" href="#__codelineno-38-38"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-38-39"><a id="__codelineno-38-39" name="__codelineno-38-39" href="#__codelineno-38-39"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-38-40"><a id="__codelineno-38-40" name="__codelineno-38-40" href="#__codelineno-38-40"></a><span class="p">}</span>
+</span></code></pre></div>
+In the terminal, run the following to verify your component is building correctly.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Fix any errors that occur before proceeding with the rest of the tutorial.</p>
+</div>
+<h4 id="command-implementation-continued">Command Implementation Continued</h4>
+<p>Inside your <code>arduino-led-blinker/Components/Led</code> directory, open <code>Led.cpp</code>, and navigate to the <code>BLINKING_ON_OFF</code> command. Report the blinking state via the telemetry channel we just added. To do so, replace the following:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="w">      </span><span class="c1">// TODO: Report the blinking state (onOff) on channel BlinkingState.</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="w">      </span><span class="c1">// NOTE: This telemetry channel will be added during the &quot;Telemetry&quot; exercise.</span>
+</span></code></pre></div>
+<p>with the function to send the telemetry channel:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_BlinkingState</span><span class="p">(</span><span class="n">onOff</span><span class="p">);</span>
+</span></code></pre></div>
+<p>In the terminal, run the following to verify your component is building correctly.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Fix any errors that occur before proceeding with the rest of the tutorial.</p>
+</div>
+<h4 id="parameter-implementation">Parameter Implementation</h4>
+<p>When ground updates a component's parameter, the user may want the component to react to the parameter update. F Prime provides a function called <code>parameterUpdated</code> where your component can react to each parameter update. Implementing <code>parameterUpdated</code> for a component is optional but we'll implement it for this tutorial.</p>
+<p>In your <code>arduino-led-blinker/Components/Led</code> directory, open the file <code>Led.hpp</code> and add the following function signature in the <code>PRIVATE:</code> scope:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="w">    </span><span class="c1">//! Emit parameter updated EVR</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="w">    </span><span class="c1">//!</span>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">parameterUpdated</span><span class="p">(</span><span class="n">FwPrmIdType</span><span class="w"> </span><span class="n">id</span><span class="w">  </span><span class="c1">//!&lt; The parameter ID</span>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="w">                          </span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
+</span></code></pre></div>
+<blockquote>
+<p>This function is called when a parameter is updated via the auto generated SET command. Although the value is updated automatically, this function gives developers a chance to respond to changing parameters. This tutorial uses it to emit an event.</p>
+</blockquote>
+<p>Save file and in your <code>arduino-led-blinker/Components/Led</code> directory, open <code>Led.cpp</code> and add the implementation for <code>parameterUpdated</code>:</p>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="kt">void</span><span class="w"> </span><span class="n">Led</span><span class="w"> </span><span class="nf">::parameterUpdated</span><span class="p">(</span><span class="n">FwPrmIdType</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="w"> </span><span class="n">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="o">::</span><span class="n">INVALID</span><span class="p">;</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">PARAMID_BLINK_INTERVAL</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a><span class="w">            </span><span class="c1">// Read back the parameter value</span>
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">paramGet_BLINK_INTERVAL</span><span class="p">(</span><span class="n">isValid</span><span class="p">);</span>
+</span><span id="__span-44-7"><a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a><span class="w">            </span><span class="c1">// NOTE: isValid is always VALID in parameterUpdated as it was just properly set</span>
+</span><span id="__span-44-8"><a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a><span class="w">            </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">isValid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ParamValid</span><span class="o">::</span><span class="n">VALID</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">isValid</span><span class="p">));</span>
+</span><span id="__span-44-9"><a id="__codelineno-44-9" name="__codelineno-44-9" href="#__codelineno-44-9"></a>
+</span><span id="__span-44-10"><a id="__codelineno-44-10" name="__codelineno-44-10" href="#__codelineno-44-10"></a><span class="w">            </span><span class="c1">// Emit the blink interval set event</span>
+</span><span id="__span-44-11"><a id="__codelineno-44-11" name="__codelineno-44-11" href="#__codelineno-44-11"></a><span class="w">            </span><span class="c1">// TODO: Emit an event with, severity activity high, named BlinkIntervalSet that takes in an argument of</span>
+</span><span id="__span-44-12"><a id="__codelineno-44-12" name="__codelineno-44-12" href="#__codelineno-44-12"></a><span class="w">            </span><span class="c1">// type U32 to report the blink interval.</span>
+</span><span id="__span-44-13"><a id="__codelineno-44-13" name="__codelineno-44-13" href="#__codelineno-44-13"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-44-14"><a id="__codelineno-44-14" name="__codelineno-44-14" href="#__codelineno-44-14"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-44-15"><a id="__codelineno-44-15" name="__codelineno-44-15" href="#__codelineno-44-15"></a><span class="w">        </span><span class="k">default</span><span class="o">:</span>
+</span><span id="__span-44-16"><a id="__codelineno-44-16" name="__codelineno-44-16" href="#__codelineno-44-16"></a><span class="w">            </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+</span><span id="__span-44-17"><a id="__codelineno-44-17" name="__codelineno-44-17" href="#__codelineno-44-17"></a><span class="w">            </span><span class="k">break</span><span class="p">;</span>
+</span><span id="__span-44-18"><a id="__codelineno-44-18" name="__codelineno-44-18" href="#__codelineno-44-18"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-44-19"><a id="__codelineno-44-19" name="__codelineno-44-19" href="#__codelineno-44-19"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>In the terminal, run the following to verify your component is building correctly.</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="c1"># In arduino-led-blinker/Components/Led</span>
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>fprime-util<span class="w"> </span>build
+</span></code></pre></div>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Resolve any errors before continuing</p>
+</div>
+<h3 id="do-it-yourself_2">Do it Yourself</h3>
+<p>Below is a table with tasks you must complete. These tasks require you to go back into the component's code and add the missing function calls.</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inside the <code>parameterUpdated</code> function, emit an activity high event named <code>BlinkIntervalSet</code> that takes in an argument of type <code>U32</code> to report the blink interval.</td>
+<td><details><summary>Answer</summary><code>this-&gt;log_ACTIVITY_HI_BlinkIntervalSet(interval);</code></details></td>
+</tr>
+<tr>
+<td>Inside the <code>run_handler</code> port handler, report the number of LED transitions (this-&gt;m_transitions) on channel LedTransitions.</td>
+<td><details><summary>Answer</summary><code>this-&gt;tlmWrite_LedTransitions(this-&gt;m_transitions);</code></details></td>
+</tr>
+<tr>
+<td>Inside the <code>run_handler</code> port handler, emit an event LedState to report the LED state (this-&gt;m_state). There are two places to add this event.</td>
+<td><details><summary>Answer</summary><code>this-&gt;log_ACTIVITY_LO_LedState(this-&gt;m_state);</code></details></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Emitting an event follows this pattern: <code>this-&gt;log_&lt;severity&gt;_&lt;eventName&gt;(&lt;argument_if_any&gt;);</code><br />
+[!TIP]
+Emitting a telemetry channel follows this pattern: <code>this-&gt;tlmWrite_&lt;telemetryChannel&gt;(&lt;telemetryValue&gt;);</code>
+[!TIP]
+After running <code>fprime-util build</code>, your IDE should be able to autocomplete these functions.</p>
+</div>
+<h3 id="led-blinker-step-5-conclusion">LED Blinker Step 5 Conclusion</h3>
+<p>Congratulations! You just completed the implementation of your component. It is time for full system integration!</p>
+<hr />
+<h2 id="6-led-blinker-full-system-integration">6. LED Blinker: Full System Integration</h2>
+<p>Now it is time to add a GPIO driver to our system and attach it to the <code>led</code> component instance. We'll also connect the <code>led</code> component instance to a 1 Hz rate group. Finally, we'll configure the driver to manage the GPIO <code>LED_BUILTIN</code> pin on our hardware. Once this section is finished, the system is ready for running on hardware.</p>
+<h3 id="adding-the-gpio-driver-to-the-topology">Adding the GPIO Driver to the Topology</h3>
+<p><code>fprime-arduino</code> provides a GPIO driver for Arduino microcontrollers called <code>Arduino.GpioDriver</code>. This should be added to both the instance definition list and the topology instance list just like we did for the <code>led</code> component. Since the GPIO driver is a passive component, its definition is a bit more simple.</p>
+<p>Add to "Passive Component" section of <code>led-blinker/LedBLinker/Top/instance.fpp</code>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>    instance gpioDriver: Arduino.GpioDriver base id 0x5000
+</span></code></pre></div></p>
+<p>Add to the instance list of <code>led-blinker/LedBlinker/Top/topology.fpp</code>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a>    instance gpioDriver
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In <code>led-blinker/LedBlinker</code> build the deployment and resolve any errors before continuing.</p>
+</div>
+<h3 id="wiring-the-led-component-instance-to-the-gpiocomponent-component-instance-and-rate-group">Wiring The <code>led</code> Component Instance to the <code>gpioComponent</code> Component Instance and Rate Group</h3>
+<p>The <code>Led</code> component defines the <code>gpioSet</code> output port and the <code>Arduino.GpioDriver</code> defines the <code>gpioWrite</code> input port. These two ports need to be connected from output to input. The <code>ActiveRateGroup</code> component defines an array of ports called <code>RateGroupMemberOut</code> and one of these needs to be connected to <code>run</code> port defined on the <code>Led</code> component.</p>
+<p>We can create a named connections block in the topology and connect the two port pairs. Remember to use the component instances and not the component definitions for each connection.</p>
+<p>To do this, add the following lines to <code>led-blinker/LedBLinker/Top/topology.fpp</code>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>    # Named connection group
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>    connections LedBlinker {
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>      # Rate Group 1 (1Hz cycle) ouput is connected to led&#39;s run input
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a>      rateGroup1.RateGroupMemberOut[3] -&gt; led.run
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>      # led&#39;s gpioSet output is connected to gpioDriver&#39;s gpioWrite input
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>      led.gpioSet -&gt; gpioDriver.gpioWrite
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a>    }
+</span></code></pre></div></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>rateGroup1</code> is preconfigured to call all <code>RateGroupMemberOut</code> at a rate of 1 Hz. We use index <code>RateGroupMemberOut[3]</code> because <code>RateGroupMemberOut[0]</code> through <code>RateGroupMemberOut[2]</code> were used previously in the <code>RateGroups</code> connection block.</p>
+</div>
+<h3 id="configuring-the-gpio-driver">Configuring The GPIO Driver</h3>
+<p>So far the GPIO driver has been instantiated and wired, but has not been told what GPIO pin to control. For this tutorial, the built-in LED will be used. To configure this, the <code>open</code> function needs to be called in the topology's C++ implementation and passed the pin's number and direction.</p>
+<p>This is done by adding the following line to the end of the <code>configureTopology</code> function defined in <code>led-blinker/LedBLinker/Top/LedBLinkerTopology.cpp</code>.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>void configureTopology() {
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a>    gpioDriver.open(Arduino::DEF_LED_BUILTIN, Arduino::GpioDriver::GpioDirection::OUT);
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a>}
+</span></code></pre></div>
+<p>This code tells the GPIO driver to open pin <code>LED_BUILTIN</code> (usually pin 13) as an output pin. If your device does not have a built in LED, select a GPIO pin of your choice.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In <code>led-blinker/LedBlinker</code> build the deployment and resolve any errors before continuing.</p>
+</div>
+<h3 id="led-blinker-step-6-conclusion">LED Blinker Step 6 Conclusion</h3>
+<p>Congratulations!  You've wired your component to the rate group driver and GPIO driver components. It is time to try it on your hardware.</p>
+<hr />
+<h2 id="7-led-blinker-running-on-hardware">7. LED Blinker: Running on Hardware</h2>
+<p>Now it is time to run on hardware. Ensure the microcontroller is connected to the host machine via USB.</p>
+<p>First, upload the binary file to the board after building. Reference the <a href="https://github.com/fprime-community/fprime-arduino/blob/main/docs/board-list.md">board list</a> for guidance on uploading the binaries for your board.</p>
+<p>Next run the F´ GDS without launching the native compilation (<code>-n</code>) and with the dictionary from the build above (<code>--dictionary ./build-artifacts/teensy41/LedBlinker/dict/LedBlinkerTopologyDictionary.json</code>). Connect it to the USB device by adding the <code>--communication-selection</code>, <code>--uart-device</code>, and <code>--uart-baud</code> flags</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1"># In the project root</span>
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>fprime-gds<span class="w"> </span>-n<span class="w"> </span>--dictionary<span class="w"> </span>./build-artifacts/teensy41/LedBlinker/dict/LedBlinkerTopologyDictionary.json<span class="w"> </span>--communication-selection<span class="w"> </span>uart<span class="w"> </span>--uart-device<span class="w"> </span>/dev/ttyACM0<span class="w"> </span>--uart-baud<span class="w"> </span><span class="m">115200</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Adjust <code>/dev/ttyACM0</code> accordingly to the device port of the board.</p>
+<p>Adjust <code>teensy41</code> accordingly to your board of choice.</p>
+</div>
+<p>For MacOS users, you may have to install <code>pyserial</code>: <code>pip install pyserial</code></p>
+<p>You should be able to view the GDS on <a href="http://localhost:5000/">http://localhost:5000/</a>. The green circle should now appear on the top right of F´ GDS.</p>
+<h3 id="testing-the-topology_1">Testing the Topology</h3>
+<p>Test the component integration with the following steps:</p>
+<ol>
+<li>Verify connection: confirm that there is a green circle and not a red X in the upper right corner.</li>
+<li>Send a Command: select the 'Commanding' tab, search for led.BLINKING_ON_OFF and send it with the argument set to ON.</li>
+<li>Verify Event: select the 'Events' tab and verify that the SetBlinkingState event reports the blinking state was set to ON.</li>
+<li>Repeat steps 2 and 3 to turn the LED OFF.</li>
+<li>Verify Telemetry: select the 'Channels' tab and verify that the LedBlinker telemetries appear.</li>
+</ol>
+<h3 id="led-blinker-step-7-conclusion">LED Blinker Step 7 Conclusion</h3>
+<p>Congratulations you've now run on hardware. The final section of this tutorial is to test the component via some system tests!</p>
+<hr />
+<h2 id="8-led-blinker-conclusion">8. LED Blinker: Conclusion</h2>
+<p>Congratulations! You have now completed the F´ Arduino on-hardware tutorial. You should now have a solid understanding of building an F´ project that runs on hardware!</p>
+<p><a class="md-button md-button--primary" href="https://fprime.jpl.nasa.gov/latest/documentation/tutorials/">Return to Tutorials</a></p>
+<hr />
+<h2 id="appendix-hardware-requirements">Appendix: Hardware Requirements</h2>
+<p>Users will need at least one hardware element to follow the LED Blinker tutorial: an embedded Arduino-based microcontroller with an on-board LED. If there is no on-board LED, you will need an external LED capable of withstanding the operating voltage.</p>
+<h3 id="arduino-microcontroller-requirements">Arduino Microcontroller Requirements</h3>
+<p>The microcontroller must have sufficient FLASH memory and SRAM to run F´. The current requirements are at least 140 KB of FLASH memory and 30 KB of RAM.</p>
+<h3 id="wiring-diagram">Wiring Diagram</h3>
+<p>For this tutorial, the on-board LED pin will be used (LED_BUILTIN). For most Arduino microcontrollers, this is GPIO pin 13. For platforms that do not have an on-board LED pin readily available, another pin should be chosen, noted, and used in-place of LED_BUILTIN (13).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../../cross-compilation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Cross-Compilation Setup">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Cross-Compilation Setup
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../../../user-manual/" class="md-footer__link md-footer__link--next" aria-label="Next: User Manual">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                User Manual
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <style>
+    .jpl-links {
+        padding: 2% 0;
+        text-align: center;
+    }
+
+    .jpl-links ul {
+        list-style-type: none;
+        margin: 0;
+    }
+
+    .jpl-links ul li {
+        display: inline;
+        margin: 0 !important;
+        padding-left: 0.5em;
+        padding-right: 0.25em;
+    }
+
+    .jpl-links a {
+        color: white !important;
+        font-weight: bold;
+    }
+
+    .fprime-footer {
+        color: white !important;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    /* Responsive layout - makes a one column layout instead of a two-column layout */
+    @media (max-width: 800px) {
+        .fprime-footer {
+            flex-direction: column;
+        }
+    }
+
+    .fprime-footer [dir=ltr] .md-typeset ol,
+    [dir=ltr] .md-typeset ul {
+        margin-left: 0;
+    }
+
+    .footer-copyright {
+        color: white !important;
+        text-align: center;
+        font-size: 12px;
+        margin: auto;
+    }
+
+    .footer-divider {
+        width: 100%;
+    }
+
+    .footer-divider hr {
+        display: block;
+        height: 5px;
+        border: 0;
+        border-bottom: 0.5px solid #fff;
+        margin: 1em 0;
+        padding: 0;
+    }
+</style>
+
+<div class="fprime-footer"><a href="../../../../.." class="md-header__button md-logo footer-logo"
+        aria-label="Flight Software &amp; Embedded Systems Framework" data-md-component="logo"
+        title="Flight Software &amp; Embedded Systems Framework" style="width: 25%;">
+        <img src="../../../../../assets/images/logo-fprime-jpl.svg" alt="NASA Jet Propulsion Laboratory F Prime">
+    </a><div class="jpl-links">
+        <ul>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime">
+                    F´ GitHub
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime/discussions">
+                    Discussion Forum
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://github.com/nasa/fprime/issues">
+                    Report Issues
+                </a>
+            </li>
+            <li>
+                <a href="mailto:fprime@jpl.nasa.gov">
+                    Email Us
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="footer-divider">
+    <hr>
+</div>
+
+<div class="fprime-footer" style="font-size: 16px;">
+    <div class="jpl-links" style="padding-top: 0;">
+        <ul>
+            <li style="margin-left: 0; border-right: 1px solid;">
+                <a href="http://www.nasa.gov/">
+                    NASA
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="http://jpl.nasa.gov/">
+                    JPL
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="http://www.caltech.edu/">
+                    Caltech
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/caltechjpl-privacy-policies-and-important-notices">
+                    Privacy
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/jpl-image-use-policy">
+                    Image Policy
+                </a>
+            </li>
+            <li style="border-right: 1px solid;">
+                <a href="https://jpl.nasa.gov/frequently-asked-questions">
+                    FAQ
+                </a>
+            </li>
+            <li>
+                <a href="https://jpl.nasa.gov/contact-jpl">
+                    Feedback
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="jpl-links" style="padding-top: 0;">
+        <ul>
+            <li style="margin-left: 0;">
+                <strong>Site Manager:</strong> Jeffrey Levison
+            </li>
+            <li>
+                <strong>Site Editors:</strong> Michael Starch, Thomas Boyer-Chammard, Ashley Nilo
+            </li>
+            <li>
+                <strong>CL#24-6514</strong>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="footer-copyright">
+    <p>
+        JPL is a federally funded research and development center managed for NASA by Caltech. © 2025 California
+        Institute of Technology. Government sponsorship acknowledged.
+    </p>
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["navigation.tabs","navigation.top","navigation.tabs.sticky","navigation.footer","navigation.instant","navigation.indexes","navigation.tracking","content.code.copy","content.code.annotate","content.tooltips","content.tabs.link","content.action.edit"],"search":"../../../../assets/javascripts/workers/search.e2d2d235.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":{"alias":true,"provider":"mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.6e5f0216.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,16 @@
+# fprime items
+logs/
+cmake-build-*
+build-artifacts/
+build-fprime-*
+*-template
+*.template.cpp
+*.template.hpp
+
+# Misc
+/venv/
+/fprime-venv/
+/.idea/
+/.vscode/
+.DS_Store
+*.gcov

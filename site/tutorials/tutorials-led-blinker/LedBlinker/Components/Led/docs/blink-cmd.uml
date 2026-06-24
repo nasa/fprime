@@ -1,0 +1,7 @@
+```plantuml
+@startuml
+ground -> cmdDispatcher: Turn On/Off blink
+cmdDispatcher -> led: Turn On/Off blink
+led -> led: Sets its blinking state to commanded state
+@enduml
+```
