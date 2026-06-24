@@ -23,40 +23,25 @@ extern "C" {
 // FW_NUM_ARRAY_ELEMENTS for C++. This has to live outside the extern "C" block
 // above (C linkage cannot be applied to templates). The plain sizeof macro is
 // wrong for FPP array types and other non-array types (see #5155), so the C++
-// form only accepts a C-style array.
+// form asserts the argument is a C-style array and then takes its extent.
 //
-// ArrayElementCount is resolved on the type only (via decltype, which does not
-// evaluate its operand), so FW_NUM_ARRAY_ELEMENTS stays a constant expression
-// and is safe on member arrays such as this->member. The primary template is
-// picked for non-array types and static_asserts; the partial specialization
-// carries the element count for C-style arrays. Reading ::value through a cast
-// keeps it a constant-expression read, so no out-of-line definition is needed.
-//
-// The assert is keyed off std::is_array<T> (false here, since the primary is
-// only chosen for non-arrays). It is written as a dependent condition on
-// purpose: a plain static_assert(false) in an uninstantiated primary template
-// is ill-formed on older compilers, and is_array also makes the error read as
-// the actual requirement.
+// numArrayElements is resolved on the type only (via decltype, which does not
+// evaluate its operand) and takes no runtime argument, so FW_NUM_ARRAY_ELEMENTS
+// stays a constant expression and is safe on member arrays such as this->member.
 namespace Fw {
 namespace BasicTypes {
 
 template <typename T>
-struct ArrayElementCount {
+constexpr std::size_t numArrayElements() {
     static_assert(std::is_array<T>::value, "FW_NUM_ARRAY_ELEMENTS may only be used on a primitive (C-style) array");
-    static const std::size_t value = 0;
-};
-
-template <typename T, std::size_t N>
-struct ArrayElementCount<T[N]> {
-    static const std::size_t value = N;
-};
+    return std::extent<T>::value;
+}
 
 }  // namespace BasicTypes
 }  // namespace Fw
 
 #define FW_NUM_ARRAY_ELEMENTS(a) \
-    (static_cast<std::size_t>(   \
-        ::Fw::BasicTypes::ArrayElementCount<decltype(a)>::value))  //!< number of elements in a C-style array
+    (::Fw::BasicTypes::numArrayElements<decltype(a)>())  //!< number of elements in a C-style array
 
 // IEEE compliance checks must occur in C++ code
 #if !defined(SKIP_FLOAT_IEEE_754_COMPLIANCE) || !SKIP_FLOAT_IEEE_754_COMPLIANCE
