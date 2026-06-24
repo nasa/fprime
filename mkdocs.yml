@@ -122,22 +122,26 @@ nav:
     - Installing F´: getting-started/installing-fprime.md
   - How-To:
     - How-To: how-to/index.md
-    - Implement a Framing Protocol: how-to/custom-framing.md
-    - Generate Data Products: how-to/data-products.md
-    - Define State Machines in F Prime: how-to/define-state-machines.md
-    - Create Ground-Derived Channels in F Prime GDS: how-to/derive-channels-on-ground.md
-    - Develop a Device Driver: how-to/develop-device-driver.md
-    - Develop an F´ Library: how-to/develop-fprime-libraries.md
-    - Develop a GDS Plugin: how-to/develop-gds-plugins.md
-    - Develop a Subtopology: how-to/develop-subtopologies.md
-    - Implement an OS Abstraction Layer: how-to/implement-osal.md
-    - Implement a Radio Manager Component: how-to/implement-radio-manager.md
-    - Integrate a Third-Party Library: how-to/integrate-external-libraries.md
-    - Porting to new platforms: how-to/porting-guide.md
-    - Load Parameters in Batch: how-to/prm-write-how-to.md
-    - Develop Components in Python: how-to/python-development.md
-    - Write Rule-Based Tests for F Prime Components: how-to/rule-based-testing.md
-    - Test-Driven Development in F Prime (F´): how-to/test-driven-development.md
+    - Dev:
+      - Generate Data Products: how-to/dev/data-products.md
+      - Define State Machines in F Prime: how-to/dev/define-state-machines.md
+      - Develop a Device Driver: how-to/dev/develop-device-driver.md
+      - Develop an F´ Library: how-to/dev/develop-fprime-libraries.md
+      - Develop a Subtopology: how-to/dev/develop-subtopologies.md
+      - Implement a Radio Manager Component: how-to/dev/implement-radio-manager.md
+      - Develop Components in Python: how-to/dev/python-development.md
+    - Integrate:
+      - Implement a Framing Protocol: how-to/integrate/custom-framing.md
+      - Implement an OS Abstraction Layer: how-to/integrate/implement-osal.md
+      - Integrate a Third-Party Library: how-to/integrate/integrate-external-libraries.md
+      - Porting to new platforms: how-to/integrate/porting-guide.md
+    - Ops:
+      - Create Ground-Derived Channels in F Prime GDS: how-to/ops/derive-channels-on-ground.md
+      - Develop a GDS Plugin: how-to/ops/develop-gds-plugins.md
+      - Load Parameters in Batch: how-to/ops/prm-write-how-to.md
+    - Test:
+      - Write Rule-Based Tests for F Prime Components: how-to/test/rule-based-testing.md
+      - Test-Driven Development in F Prime (F´): how-to/test/test-driven-development.md
   - Reference:
     - Reference: reference/index.md
     - Communication Adapter Interface: reference/communication-adapter-interface.md
@@ -189,7 +193,7 @@ nav:
     - User Manual: user-manual/index.md
     - Build System:
       - F´ CMake Build System: user-manual/build-system/01-cmake-intro.md
-      - Cmake Api: user-manual/build-system/cmake-api.md
+      - CMake API Reference: user-manual/build-system/cmake-api.md
       - CMake Customization: user-manual/build-system/cmake-customization.md
       - CMake Implementations: user-manual/build-system/cmake-implementations.md
       - F´ and CMake Platforms: user-manual/build-system/cmake-platforms.md
