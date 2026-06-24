@@ -225,7 +225,7 @@ class BufferLogger final : public BufferLoggerComponentBase {
     //! Sets the volatile logging state
     void BL_SetLogging_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                   const U32 cmdSeq,          /*!< The command sequence number*/
-                                  BufferLogger_LogState state);
+                                  const BufferLogger_LogState& state);
 
     //! Implementation for BL_FlushFile command handler
     //! Flushes the current open log file to disk

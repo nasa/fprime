@@ -816,7 +816,10 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
 }
 
-void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fw::Wait wait, bool remainActive) {
+void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::Wait& wait,
+                                               bool remainActive) {
     Fw::CmdResponse resp = this->doCatalogXmit();
     this->m_remainActive = remainActive;
 
