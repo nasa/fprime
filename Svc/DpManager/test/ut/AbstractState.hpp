@@ -14,11 +14,11 @@
 
 #include <cstring>
 
+#include <Fw/Types/Optional.hpp>
 #include "Fw/Types/Assert.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpManager/DpManager.hpp"
 #include "TestUtils/OnChangeChannel.hpp"
-#include "TestUtils/Option.hpp"
 
 namespace Svc {
 
@@ -72,11 +72,11 @@ class AbstractState {
 
     //! Get the buffer size
     FwSizeType getBufferSize() const {
-        return this->bufferSizeOpt.getOrElse(STest::Pick::lowerUpper(MIN_BUFFER_SIZE, MAX_BUFFER_SIZE));
+        return this->bufferSizeOpt.value_or(STest::Pick::lowerUpper(MIN_BUFFER_SIZE, MAX_BUFFER_SIZE));
     }
 
     //! Set the buffer size
-    void setBufferSize(FwSizeType bufferSize) { this->bufferSizeOpt.set(bufferSize); }
+    void setBufferSize(FwSizeType bufferSize) { this->bufferSizeOpt = bufferSize; }
 
   private:
     // ----------------------------------------------------------------------
@@ -84,7 +84,7 @@ class AbstractState {
     // ----------------------------------------------------------------------
 
     //! The current buffer size
-    TestUtils::Option<FwSizeType> bufferSizeOpt;
+    Fw::Optional<FwSizeType> bufferSizeOpt;
 
   public:
     // ----------------------------------------------------------------------
@@ -110,13 +110,13 @@ class AbstractState {
     U8 bufferData[MAX_BUFFER_SIZE];
 
     //! The last port number used for bufferGetOut
-    TestUtils::Option<FwIndexType> bufferGetOutPortNumOpt;
+    Fw::Optional<FwIndexType> bufferGetOutPortNumOpt;
 
     //! The last port number used for productResponseOut
-    TestUtils::Option<FwIndexType> productResponseOutPortNumOpt;
+    Fw::Optional<FwIndexType> productResponseOutPortNumOpt;
 
     //! The last port number used for productSendOut
-    TestUtils::Option<FwIndexType> productSendOutPortNumOpt;
+    Fw::Optional<FwIndexType> productSendOutPortNumOpt;
 
     //! The number of buffer allocation failed events since the last throttle clear
     FwSizeType bufferAllocationFailedEventCount;
