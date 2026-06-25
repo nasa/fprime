@@ -40,8 +40,8 @@ Fw::Success FpySequencer::validate() {
     const char* baseDir = this->getSequenceBaseDir();
     if (baseDir != nullptr && baseDir[0] != '\0') {
         // the result will get truncated to FileNameStringSize
-        Fw::FormatStatus status = this->m_fullSequenceFilePath.format("%s/%s", baseDir,
-                                                                      this->m_sequenceExecArgs.get_filePath().toChar());
+        Fw::FormatStatus status =
+            this->m_fullSequenceFilePath.format("%s/%s", baseDir, this->m_sequenceExecArgs.get_filePath().toChar());
 
         if (status != Fw::FormatStatus::SUCCESS) {
             // the only runtime-reachable non-success status is OVERFLOWED, which means the
