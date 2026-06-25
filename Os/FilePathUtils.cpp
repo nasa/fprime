@@ -147,12 +147,14 @@ Status resolvePath(const char* path, const char* baseDir, char* resolvedOut, FwS
 }
 
 Status resolvePath(const Fw::ConstStringBase& path, const Fw::ConstStringBase& baseDir, Fw::StringBase& resolvedOut) {
-    char buffer[MAX_PATH_LENGTH];
-    const Status status = resolvePath(path.toChar(), baseDir.toChar(), buffer, sizeof(buffer));
-    if (status == VALID) {
-        resolvedOut = buffer;
-    }
-    return status;
+    // SAFETY: write directly into resolvedOut's internal buffer to avoid a temporary copy.
+    // StringBase::toChar() returns a pointer to the internal buffer, and resolvePath always
+    // null-terminates the output, keeping the StringBase in a valid state.
+    char* outBuffer = const_cast<char*>(resolvedOut.toChar());
+    // Cap at MAX_PATH_LENGTH so resolveInPlace's string_length scan stays consistent
+    const FwSizeType capacity = static_cast<FwSizeType>(resolvedOut.getCapacity());
+    const FwSizeType resolvedSize = (capacity > MAX_PATH_LENGTH) ? MAX_PATH_LENGTH : capacity;
+    return resolvePath(path.toChar(), baseDir.toChar(), outBuffer, resolvedSize);
 }
 
 Status resolveFromCwd(const char* path, char* resolvedOut, FwSizeType resolvedSize) {
