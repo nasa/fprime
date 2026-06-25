@@ -86,7 +86,6 @@ The buffer, an `Fw::Buffer`, is a chunk of the original data product container. 
 min\_compression represents the minimum amount of compression necessary for the compression to be useful. In order to return a compression data product, with the necessary compression record headers prepended, some chunks may need to be compressed with sufficient free space to accommodate the addition of these buffers. The value is a maximum number of bytes that can be returned in the `Fw::Buffer`
 
 In some cases it is necessary to place the compressed chunk at an offset within the passed `Fw::Buffer`. The write offset informs the compressor where to place the compressed data within the `Fw::Buffer` to accommodate any necessary headers.
-// TODO: Now that I'm thinking about it more, is this necessary? Would it be more straightforward to always place the buffer at the beginning of the `Fw::Buffer` and memmove it as necessary?
 
 The return value of the compressor is an enumeration with the compression algorithm used to compress the data, or uncompressed. If the compressor was unable to compress the data it must return the orignal buffer unmodified and the UNCOMPRESSED enumerated value. If the buffer was compressed then it should return the enumerated value that corresponds to the compression algorithm used. This value will be included in the compressed record header and used to decompress the product in the ground tools.
 
