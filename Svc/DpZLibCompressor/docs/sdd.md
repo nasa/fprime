@@ -36,6 +36,20 @@ Add requirements in the chart below
 | SVC-DPZLIBCOMPRESSOR-001 | `Svc::DpZLibCompressor` shall attempt to compress incoming data chunks per the protocol defined by DpCompressProc | Unit Test
 | SVC-DPZLIBCOMPRESSOR-002 | `Svc::DpZLibCompressor` shall either return `Svc::CompressionAlgorithm::UNCOMPRESSED` or `Svc::CompressionAlgorithm::ZLIB_DEFLATE` from the compressChunk input port | Unit Test
 
+## Events
+
+| Name                  | Description                                                               |
+|-----------------------|---------------------------------------------------------------------------|
+| ZLibCompressBadBuffer | WARNING\_LO Unable to allocate a compression buffer through BufferManager |
+| ZLibAllocBadBuffer    | WARNING\_LO Unable to allocate an alloc buffer through BufferManager      |
+| ZLibInitError         | WARNING\_LO ZLib error during deflateInit call                            |
+| ZLibDeflateError      | WARNING\_LO ZLib error during deflate call                                |
+| BufferTooBigForZLib   | WARNING\_LO Buffer size exceeds zlib integer size limits                  |
+| ZLibNoCompression     | DIAGNOSTIC  ZLib unable to compress buffer                                |
+| ZLibCompression       | DIAGNOSTIC  ZLib compressed buffer                                        |
+| ZLibMemoryUsage       | DIAGNOSTIC  ZLib maximum memory usage during compression                  |
+
+
 ## Change Log
 | Date | Description |
 |---|---|

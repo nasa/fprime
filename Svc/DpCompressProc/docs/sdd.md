@@ -65,6 +65,13 @@ Add requirements in the chart below
 |SVC-DPCOMPRESSPROC-002 | `Svc::DpCompressProc` shall not allocate additional memory when processing the container. This does not apply to any downstream compressor which is allow to allocate memory | Unit Test
 |SVC-DPCOMPRESSPROC-003 | `Svc::DpCompressProc` shall support a user modifiable chunking size | Unit Test
 
+## Events
+
+| Name                  | Description                                                        |
+|-----------------------|--------------------------------------------------------------------|
+| CompressionComplete   | DIAGNOSTIC event when DpCompressProc compresses a buffer           |
+| DidNotCompress        | ACTIVITY\_LO event when DpCompressProc can not compress any chunks |
+
 
 ## Detailed Documentation
 
