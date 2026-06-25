@@ -5006,7 +5006,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <hr />
 <h2 id="application-manager-driver-pattern">Application-Manager-Driver Pattern</h2>
 <p>A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component and the bus driver component. The bus driver handles the platform-specific implementation of communications on a specific bus (e.g., LinuxI2cDriver, LinuxUartDriver). The device manager handles the operations and logic for a specific device. This enhances modularity and reusability: for example the same device manager can be ported to different platforms by switching the bus driver component.</p>
-<p>Please refer to the <a href="../../user-manual/design-patterns/app-man-drv/">Application Manager Driver pattern documentation</a> for more details on the design pattern used in F Prime for device drivers.</p>
+<p>Please refer to the <a href="../../../user-manual/design-patterns/app-man-drv/">Application Manager Driver pattern documentation</a> for more details on the design pattern used in F Prime for device drivers.</p>
 <h3 id="example-and-reference">Example and reference</h3>
 <p>Consider an <a href="https://cdn-learn.adafruit.com/downloads/pdf/mpu6050-6-axis-accelerometer-and-gyro.pdf">MPU6050 IMU sensor</a> connected via I2C. An example instantiation of the Application-Manager-Driver pattern, defined in the fprime-sensors repository (see <a href="https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/MpuImu">MpuImu component</a>), would look like this:</p>
 <ul>
@@ -5040,7 +5040,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <h3 id="step-2-define-the-device-manager-component">Step 2 - Define the Device Manager Component</h3>
 <p>Use <code>fprime-util new --component</code> to create a new component for your device manager. It is often useful (although not required) to use Events and Telemetry. It is often sufficient to start with a <code>passive</code> component, and upgrade to <code>active</code> or <code>queued</code> later if needed.</p>
 <p>This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports by mirroring the bus driver's interface.</p>
-<p>For our <code>ImuManager</code> component, we are using an I2C bus, therefore we need to define ports that mirror the <code>Drv.I2c</code> interface (see <a href="../../../Drv/Interfaces/I2c.fpp">Drv/Interfaces/I2c.fpp</a>).<br />
+<p>For our <code>ImuManager</code> component, we are using an I2C bus, therefore we need to define ports that mirror the <code>Drv.I2c</code> interface (see <a href="../../../../Drv/Interfaces/I2c.fpp">Drv/Interfaces/I2c.fpp</a>).<br />
 For example, a <code>Drv.I2c</code> component provides an <strong><em>input</em></strong> port of type <code>Drv.I2cWriteRead</code>, so we need to define an <strong><em>output</em></strong> port of that type in our component in order to connect to a bus driver component. We mirror each Bus Driver port that we need to use in our Device Manager.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># In: ImuManager.fpp</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">@</span> <span class="n">Component</span> <span class="n">emitting</span> <span class="n">telemetry</span> <span class="n">read</span> <span class="kn">from</span><span class="w"> </span><span class="nn">an</span> <span class="n">MpuImu</span>
@@ -5219,7 +5219,7 @@ For example, a <code>Drv.I2c</code> component provides an <strong><em>input</em>
 <li>With a <code>device</code> instance, we can use the <code>i2c_write</code>, <code>i2c_read</code> and <code>i2c_write_read</code> functions to perform I2C write and read operations (see <a href="https://docs.zephyrproject.org/latest/doxygen/html/group__i2c__interface.html#ga2cc5f49493dce89e128ccbfa9d6149a0">API</a>).</li>
 </ul>
 <h3 id="step-2-define-the-bus-driver-component">Step 2 - Define the Bus Driver Component</h3>
-<p>Use <code>fprime-util new --component</code> to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the <code>Drv/Interfaces/</code> directory. For I2C, we can use the existing <code>Drv.I2c</code> interface (see <a href="../../../Drv/Interfaces/I2c.fpp">Drv/Interfaces/I2c.fpp</a>).</p>
+<p>Use <code>fprime-util new --component</code> to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the <code>Drv/Interfaces/</code> directory. For I2C, we can use the existing <code>Drv.I2c</code> interface (see <a href="../../../../Drv/Interfaces/I2c.fpp">Drv/Interfaces/I2c.fpp</a>).</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># In: ZephyrI2cDriver.fpp</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="o">@</span> <span class="n">I2C</span> <span class="n">bus</span> <span class="n">driver</span> <span class="n">interface</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">passive</span> <span class="n">component</span> <span class="n">ZephyrI2cDriver</span> <span class="p">{</span>
@@ -5229,7 +5229,7 @@ For example, a <code>Drv.I2c</code> component provides an <strong><em>input</em>
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Our I2C bus driver will only be responding to read/write requests from a device manager, therefore we define it as a <code>passive component</code> and the <code>Drv.I2c</code> ports are sufficient. If your bus driver needs to perform scheduled tasks (e.g., polling, timeouts, etc.), you may consider adding a scheduling port (<code>Svc.Sched</code>) to hook to a <a href="../../../Svc/ActiveRateGroup/docs/sdd/">Svc.RateGroup</a>, and potentially switching to an <code>active</code> component. <code>queued</code> components can also be used but need careful design to ensure messages are dispatched.</p>
+<p>Our I2C bus driver will only be responding to read/write requests from a device manager, therefore we define it as a <code>passive component</code> and the <code>Drv.I2c</code> ports are sufficient. If your bus driver needs to perform scheduled tasks (e.g., polling, timeouts, etc.), you may consider adding a scheduling port (<code>Svc.Sched</code>) to hook to a <a href="../../../../Svc/ActiveRateGroup/docs/sdd/">Svc.RateGroup</a>, and potentially switching to an <code>active</code> component. <code>queued</code> components can also be used but need careful design to ensure messages are dispatched.</p>
 </div>
 <p>Run <code>fprime-util impl</code> to generate the component C++, including the port handler to fill out. In our case, we will need to implement the <code>write</code>, <code>read</code>, and <code>writeRead</code> port handlers.</p>
 <h3 id="step-3-allow-for-bus-configuration-on-startup">Step 3 - Allow for bus configuration on startup</h3>
@@ -5320,10 +5320,10 @@ For example, a <code>Drv.I2c</code> component provides an <strong><em>input</em>
 <hr />
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li><a href="../../user-manual/design-patterns/app-man-drv/">Application Manager Driver Pattern</a></li>
+<li><a href="../../../user-manual/design-patterns/app-man-drv/">Application Manager Driver Pattern</a></li>
 <li><a href="https://github.com/fprime-community/fprime-sensors">fprime-sensors Repository</a> - A collection of ready-to-use device managers for specific devices</li>
 <li><a href="https://github.com/fprime-community/fprime-sensors-reference">fprime-sensors-reference Repository</a> - Reference project that uses sensors defined in fprime-sensors</li>
-<li><a href="../../../Drv/">F´ core Linux Bus Drivers</a></li>
+<li><a href="../../../../Drv">F´ core Linux Bus Drivers</a></li>
 <li><a href="https://github.com/fprime-community/fprime-zephyr">fprime-zephyr package</a> - F Prime support for Zephyr RTOS, including common bus drivers for Zephyr</li>
 </ul>
 

@@ -5015,13 +5015,13 @@ You are not viewing the documentation for the latest release of F Prime.
 
 
 <h1 id="develop-a-subtopology">Develop a Subtopology</h1>
-<p>Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of <a href=".././develop-fprime-libraries/">libraries</a>.</p>
+<p>Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of <a href="../develop-fprime-libraries/">libraries</a>.</p>
 <p><em>Contents</em>
 1. <a href="#subtopology-structure">Subtopology Structure</a>
 2. <a href="#individual-file-contents">Individual File Contents</a>
     1. <a href="#example-scenario">Example Scenario</a>
 3. <a href="#integration-into-a-main-deployment">Integration into a "Main" Deployment</a>
-4. <a href="#the-subtopology-autocoder">Subtopology Autocoder</a>
+4. <a href="#adding-subtopology-configuration">Adding Subtopology Configuration</a>
 5. <a href="#conclusion">Conclusion</a></p>
 <h2 id="subtopology-structure">Subtopology Structure</h2>
 <p>A subtopology is a folder that contains a <code>topology.cpp</code> file, which includes a <code>topology.fpp</code> file, which is a <em>unified</em> topology file including your wiring, component instances, and init specifications. As opposed to having separate files for component instances and the topology itself, the single file encapsulates both. A <code>topologydefs.hpp</code> defines a struct that is used when instantiating your subtopology. A <code>CMakeLists.txt</code> file links your <code>topology.cpp</code> file to the build for your project.</p>

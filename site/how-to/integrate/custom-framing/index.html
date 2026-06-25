@@ -4972,7 +4972,7 @@ You are not viewing the documentation for the latest release of F Prime.
 
 <h1 id="implement-a-framing-protocol">Implement a Framing Protocol</h1>
 <p>This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software.</p>
-<p>Modern F´ deployments use the CCSDS protocol by default via the <code>Svc.ComCcsds</code> subtopology. The lightweight <a href="../../../Svc/FprimeProtocol/docs/sdd/">F Prime Protocol</a> (available via <code>Svc.ComFprime</code>) is also available as an alternative low-overhead communications protocol that the <a href="https://github.com/nasa/fprime-gds">F Prime GDS</a> understands. However, some projects choose to implement another framing protocol that fits their mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.</p>
+<p>Modern F´ deployments use the CCSDS protocol by default via the <code>Svc.ComCcsds</code> subtopology. The lightweight <a href="../../../../Svc/FprimeProtocol/docs/sdd/">F Prime Protocol</a> (available via <code>Svc.ComFprime</code>) is also available as an alternative low-overhead communications protocol that the <a href="https://github.com/nasa/fprime-gds">F Prime GDS</a> understands. However, some projects choose to implement another framing protocol that fits their mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.</p>
 <h2 id="overview">Overview</h2>
 <p>This guide demonstrates how to implement a custom framing protocol, referred to here as <strong>MyCustomProtocol</strong>. The protocol defines how data is wrapped (framed) for transmission and how frames are validated and unpacked (deframed) on reception. For a bi-directional framing implementation (uplink and downlink), you will need to implement both a framer and a deframer component. A framer is required for downlink (flight software → GDS). A deframer (and optionally a FrameDetector) is needed for deframing uplink messages (GDS → flight software).</p>
 <p>A reference implementation of a custom framing protocol (the "Decaf Protocol") is available in the <code>fprime-examples</code> repository:</p>
@@ -4993,7 +4993,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <li><strong>Manually import components</strong>: Copy the relevant topology code from the subtopology into your main topology so you can modify the component connections as needed, and remove the old <code>import Svc.ComCcsds</code> statement.</li>
 <li><strong>Replace standard components</strong>: Substitute the default framer/deframer components with your custom implementations</li>
 </ol>
-<p>For more information on working with subtopologies, see the <a href="../../user-manual/design-patterns/subtopologies/">Subtopologies Guide</a>. This understanding is essential before proceeding with custom framing implementation.</p>
+<p>For more information on working with subtopologies, see the <a href="../../../user-manual/design-patterns/subtopologies/">Subtopologies Guide</a>. This understanding is essential before proceeding with custom framing implementation.</p>
 <h2 id="flight-software-implementation">Flight Software Implementation</h2>
 <p>To implement a custom framing protocol in F´, will need to implement the following:</p>
 <ul>
@@ -5005,7 +5005,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <p class="admonition-title">Tip</p>
 <p>When creating framer/deframer components using <code>fprime-util new --component</code>, the recommended settings are to use passive components with events enabled.</p>
 </div>
-<p>The following examples will walk through the implementation of a custom framer and deframer for a hypothetical <strong>MyCustomProtocol</strong> protocol. Implementation details are left to the reader, but examples of such implementations can be found in the <a href="https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming">fprime-examples repository</a>, or within the F´ codebase itself (<a href="../../../Svc/FprimeFramer/docs/sdd/">Svc.FprimeFramer</a> and <a href="../../../Svc/FprimeDeframer/docs/sdd/">Svc.FprimeDeframer</a>).</p>
+<p>The following examples will walk through the implementation of a custom framer and deframer for a hypothetical <strong>MyCustomProtocol</strong> protocol. Implementation details are left to the reader, but examples of such implementations can be found in the <a href="https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming">fprime-examples repository</a>, or within the F´ codebase itself (<a href="../../../../Svc/FprimeFramer/docs/sdd/">Svc.FprimeFramer</a> and <a href="../../../../Svc/FprimeDeframer/docs/sdd/">Svc.FprimeDeframer</a>).</p>
 <h3 id="pitfalls-and-best-practices">Pitfalls and Best Practices</h3>
 <p>Before implementing, consider these best practices:</p>
 <ol>
@@ -5137,7 +5137,7 @@ You are not viewing the documentation for the latest release of F Prime.
    If your data transport is stream-based and does not preserve message boundaries, you must implement a mechanism to delimit frames. Examples include:
    - TCP connections (stream-based, no inherent message boundaries)
    - UART/serial connections (e.g. UART radios such as XBee)</p>
-<p>F Prime provides this capability with the <a href="../../../Svc/FrameAccumulator/docs/sdd/">Svc.FrameAccumulator</a> component, which uses a circular buffer and a helper <code>FrameDetector</code> to identify complete frames in the data stream.</p>
+<p>F Prime provides this capability with the <a href="../../../../Svc/FrameAccumulator/docs/sdd/">Svc.FrameAccumulator</a> component, which uses a circular buffer and a helper <code>FrameDetector</code> to identify complete frames in the data stream.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The <code>FrameDetector</code> is a C++ helper class, not an FPP component. It does not have an <code>.fpp</code> definition and is used internally by <code>Svc.FrameAccumulator</code>.</p>
@@ -5171,7 +5171,7 @@ You are not viewing the documentation for the latest release of F Prime.
     // ...existing code...
     frameAccumulator.configure(frameDetector, 1, mallocator, 2048);</code></p>
 <h2 id="f-gds-implementation">F´ GDS Implementation</h2>
-<p>To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the <code>FramerDeframer</code>. This is further documented in the <a href=".././develop-gds-plugins/">How-To Develop a GDS Plugin Guide</a> and <a href="../../reference/gds-plugins/framing/">F Prime GDS Framing Plugin reference</a>.</p>
+<p>To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the <code>FramerDeframer</code>. This is further documented in the <a href="../../ops/develop-gds-plugins/">How-To Develop a GDS Plugin Guide</a> and <a href="../../../reference/gds-plugins/framing/">F Prime GDS Framing Plugin reference</a>.</p>
 <p>For example, in Python:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fprime_gds.common.communication.framing</span><span class="w"> </span><span class="kn">import</span> <span class="n">FramerDeframer</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fprime_gds.plugin.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">gds_plugin</span>
@@ -5191,15 +5191,15 @@ You are not viewing the documentation for the latest release of F Prime.
 </span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>        <span class="c1"># TODO: Return the protocol name for selection with `fprime-gds --framing-selection &lt;selection&gt;`</span>
 </span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>        <span class="k">return</span> <span class="s2">&quot;MyCustomProtocol&quot;</span>
 </span></code></pre></div>
-<p>Make sure to <a href=".././develop-gds-plugins/#packaging-and-testing-plugins">package and install the plugin in your virtual environment</a> for the GDS to be able to load it, then run it:</p>
+<p>Make sure to <a href="../../ops/develop-gds-plugins/#packaging-and-testing-plugins">package and install the plugin in your virtual environment</a> for the GDS to be able to load it, then run it:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>fprime-gds --framing-selection MyCustomProtocol
 </span></code></pre></div>
 <h2 id="references">References</h2>
 <ul>
 <li><a href="https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming">C++ CustomFraming Example</a></li>
 <li><a href="https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing">GDS Plugin Example</a></li>
-<li><a href="../../reference/gds-plugins/framing/">F Prime GDS Framing Plugin</a></li>
-<li><a href="../../reference/communication-adapter-interface/">F Prime Communication Adapter Interface</a></li>
+<li><a href="../../../reference/gds-plugins/framing/">F Prime GDS Framing Plugin</a></li>
+<li><a href="../../../reference/communication-adapter-interface/">F Prime Communication Adapter Interface</a></li>
 <li><a href="https://fprime.jpl.nasa.gov/devel/docs/how-to/develop-gds-plugins/">F Prime GDS Plugin Development</a></li>
 </ul>
 

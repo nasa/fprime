@@ -4769,6 +4769,11 @@ You are not viewing the documentation for the latest release of F Prime.
                       
                     
                     
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
                   
                   <div class="md-sidebar__inner">
                     
@@ -4780,6 +4785,25 @@ You are not viewing the documentation for the latest release of F Prime.
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Table of Contents
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -4804,107 +4828,48 @@ You are not viewing the documentation for the latest release of F Prime.
 
 <h1 id="how-to">How-To</h1>
 <p>How-To guides offer step-by-step instructions for specific development tasks in F Prime.</p>
-<div class="grid cards">
-<ul>
-<li>
-<p><span class="card-title"><strong>F´ GDS Plugin Development</strong></span></p>
-<hr />
-<p>This guide will walk you through the process of developing GDS plugins.</p>
-<p><a class="md-button md-button--primary" href="develop-gds-plugins/">View Develop F´ GDS Plugins</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>F´ Library Development</strong></span></p>
-<hr />
-<p>This how to will walk you through the structure and best practices in developing an F´ library.</p>
-<p><a class="md-button md-button--primary" href="develop-fprime-libraries/">View Develop F´ Libraries</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Integrating Third-Party Libraries</strong></span></p>
-<hr />
-<p>This how to will walk you through how to integrate non-F´ libraries into your F´ project. It
-will cover multiple approaches based on examples with <a href="https://github.com/opencv/opencv">OpenCV</a>, <a href="https://github.com/openssl/openssl">OpenSSL</a> and <a href="https://github.com/etlcpp/etl">ETL</a>.</p>
-<p><a class="md-button md-button--primary" href="integrate-external-libraries/">View Integrating Third-Party Libraries</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Porting F´ To a New Platform</strong></span></p>
-<hr />
-<p>This how to will walk you through porting F´ to a new platform.</p>
-<p><a class="md-button md-button--primary" href="porting-guide/">View Porting Guide</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Implement a Framing Protocol</strong></span></p>
-<hr />
-<p>This guide shows you how to implement a custom framing protocol in F Prime flight software and integrate it with the F Prime GDS.</p>
-<p><a class="md-button md-button--primary" href="custom-framing/">View Implement a Framing Protocol</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Generate Data Products</strong></span></p>
-<hr />
-<p>This guide shows you when to use data products, how to generate them, how to test them, and how to integrate them into your topology and ground system.</p>
-<p><a class="md-button md-button--primary" href="data-products/">View Generate Data Products</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Define State Machines</strong></span></p>
-<hr />
-<p>This guide shows you how to define and use state machines in F Prime with FPP so complex component behavior is explicit, testable, and maintainable.</p>
-<p><a class="md-button md-button--primary" href="define-state-machines/">View Define State Machines</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Create Ground-Derived Channels</strong></span></p>
-<hr />
-<p>This guide shows you how to compute telemetry-derived values on the ground and publish them through the F Prime GDS plugin system.</p>
-<p><a class="md-button md-button--primary" href="derive-channels-on-ground/">View Create Ground-Derived Channels</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Develop a Device Driver</strong></span></p>
-<hr />
-<p>This guide shows you how to build a new device driver in F Prime using the application-manager-driver pattern.</p>
-<p><a class="md-button md-button--primary" href="develop-device-driver/">View Develop a Device Driver</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Develop a Subtopology</strong></span></p>
-<hr />
-<p>This guide shows you how to organize reusable topology architecture into subtopologies that can be imported into deployments.</p>
-<p><a class="md-button md-button--primary" href="develop-subtopologies/">View Develop a Subtopology</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Implement an OS Abstraction Layer</strong></span></p>
-<hr />
-<p>This guide shows you how to implement a new OS Abstraction Layer for F´ so the framework can run on another operating system.</p>
-<p><a class="md-button md-button--primary" href="implement-osal/">View Implement an OS Abstraction Layer</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Implement a Radio Manager Component</strong></span></p>
-<hr />
-<p>This guide shows you how to implement a radio manager component using the communications adapter interface.</p>
-<p><a class="md-button md-button--primary" href="implement-radio-manager/">View Implement a Radio Manager Component</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Develop Components in Python</strong></span></p>
-<hr />
-<p>This guide shows you how to develop Python-based F Prime applications and integrate Python components into a larger system.</p>
-<p><a class="md-button md-button--primary" href="python-development/">View Develop Components in Python</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Write Rule-Based Tests</strong></span></p>
-<hr />
-<p>This guide shows you how to write rule-based unit tests for F Prime components using the RuleDemo example component.</p>
-<p><a class="md-button md-button--primary" href="rule-based-testing/">View Write Rule-Based Tests</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Test-Driven Development</strong></span></p>
-<hr />
-<p>This guide shows you a practical test-driven development loop for building an F´ component from model to implementation.</p>
-<p><a class="md-button md-button--primary" href="test-driven-development/">View Test-Driven Development</a></p>
-</li>
-<li>
-<p><span class="card-title"><strong>Import Parameters in Batch</strong></span></p>
-<hr />
-<p>This guide covers two methods of updating parameters: through a <code>.dat</code> file that PrmDb loads directly, or by generating a command sequence (<code>.seq</code> file) to dispatch a series of commands.</p>
-<p><a class="md-button md-button--primary" href="prm-write-how-to/">View Import Parameters in Batch</a></p>
-</li>
-</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><strong>← Navigation pane</strong><br />
+Use the navigation pane on the left to explore the different chapters of the How-To documentation. If the navigation pane is not visible, click on the menu icon (three horizontal lines) at the top left corner of the page. The navigation pane is hidden on narrow screens or if zoomed in.</p>
 </div>
+<h2 id="table-of-contents">Table of Contents</h2>
+<details>
+<summary><strong>Dev</strong> — Learn how to develop components, libraries, and other F´ artifacts.</summary>
+<ul>
+<li><a href="dev/data-products/">How-To: Generate Data Products</a></li>
+<li><a href="dev/define-state-machines/">How-To: Define State Machines in F Prime</a></li>
+<li><a href="dev/develop-device-driver/">Develop a Device Driver</a></li>
+<li><a href="dev/develop-fprime-libraries/">Develop an F´ Library</a></li>
+<li><a href="dev/develop-subtopologies/">Develop a Subtopology</a></li>
+<li><a href="dev/implement-radio-manager/">How-To: Implement a Radio Manager Component</a></li>
+<li><a href="dev/python-development/">How-To: Develop Components in Python</a></li>
+</ul>
+</details>
+<details>
+<summary><strong>Integrate</strong> — Learn how to integrate F´ with external libraries and platforms.</summary>
+<ul>
+<li><a href="integrate/custom-framing/">Implement a Framing Protocol</a></li>
+<li><a href="integrate/implement-osal/">How-To: Implement an OS Abstraction Layer</a></li>
+<li><a href="integrate/integrate-external-libraries/">Integrate a Third-Party Library</a></li>
+<li><a href="integrate/porting-guide/">Porting to new platforms</a></li>
+</ul>
+</details>
+<details>
+<summary><strong>Ops</strong> — Learn how to operate F´ applications and the Ground Data System.</summary>
+<ul>
+<li><a href="ops/derive-channels-on-ground/">Create Ground-Derived Channels in F Prime GDS</a></li>
+<li><a href="ops/develop-gds-plugins/">Develop a GDS Plugin</a></li>
+<li><a href="ops/prm-write-how-to/">How-To: Load Parameters in Batch</a></li>
+</ul>
+</details>
+<details>
+<summary><strong>Test</strong> — Learn how to test F´ components and applications.</summary>
+<ul>
+<li><a href="test/rule-based-testing/">How-To: Write Rule-Based Tests for F Prime Components</a></li>
+<li><a href="test/test-driven-development/">How-To: Test-Driven Development in F Prime (F´)</a></li>
+</ul>
+</details>
 
   
 

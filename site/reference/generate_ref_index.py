@@ -12,6 +12,11 @@ REFERENCE_DIR = Path(__file__).parent
 # Output file
 OUTPUT_FILE = REFERENCE_DIR / "index.md"
 
+# Section blurbs shown next to each top-level entry. Keys are section directory names.
+SECTION_DESCRIPTIONS = {
+    # Add your section descriptions here
+}
+
 
 
 def read_h1(md_file: Path) -> str | None:
@@ -98,10 +103,13 @@ def main():
     content.append("## Table of Contents\n\n")
 
     for section_path, title, is_file in get_sections():
+        description = SECTION_DESCRIPTIONS.get(section_path.name, "")
+        suffix = f" — {description}" if description else ""
+
         if is_file:
             # Standalone markdown file — simple bullet point link
             file_url = section_path.name
-            content.append(f"- [**{title}**]({file_url})\n\n")
+            content.append(f"- [**{title}**]({file_url}){suffix}\n\n")
         else:
             # Directory section — collect all pages
             pages = list(list_pages(section_path))
@@ -109,14 +117,14 @@ def main():
             if pages:
                 # Directory with children — collapsible <details> box
                 content.append('<details markdown="1">\n')
-                content.append(f"<summary><strong>{title}</strong></summary>\n\n")
+                content.append(f"<summary><strong>{title}</strong>{suffix}</summary>\n\n")
                 for page_title, page_url in pages:
                     content.append(f"- [{page_title}]({page_url})\n")
                 content.append("\n</details>\n\n")
             else:
                 # Empty directory or only has index.md — simple bullet point link
                 index_url = f"{section_path.name}/index.md"
-                content.append(f"- [**{title}**]({index_url})\n\n")
+                content.append(f"- [**{title}**]({index_url}){suffix}\n\n")
 
     # Write to output file
     OUTPUT_FILE.write_text("".join(content), encoding="utf-8")

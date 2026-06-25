@@ -5103,23 +5103,23 @@ You are not viewing the documentation for the latest release of F Prime.
 
 
 <h1 id="how-to-implement-an-os-abstraction-layer">How-To: Implement an OS Abstraction Layer</h1>
-<p>This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the <a href="../../../Os/docs/sdd/">OSAL Software Design Document</a>.</p>
+<p>This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the <a href="../../../../Os/docs/sdd/">OSAL Software Design Document</a>.</p>
 <hr />
 <h2 id="prerequisites">Prerequisites</h2>
 <p>Before starting, you should have:</p>
 <ul>
-<li>An understanding of the <a href="../../../Os/docs/sdd/#5-implementation-architecture">OSAL architecture</a>, specifically the <a href="../../../Os/docs/sdd/#51-delegate-pattern">delegate pattern</a>.</li>
+<li>An understanding of the <a href="../../../../Os/docs/sdd/#5-implementation-architecture">OSAL architecture</a>, specifically the <a href="../../../../Os/docs/sdd/#51-delegate-pattern">delegate pattern</a>.</li>
 <li>A working F´ build environment for testing.</li>
-<li>Familiarity with <a href="../develop-fprime-libraries/">F´ libraries</a> and <a href="../develop-fprime-libraries/#optional-platform-folder-and-platform-files">F´ platform files</a>.</li>
+<li>Familiarity with <a href="../../dev/develop-fprime-libraries/">F´ libraries</a> and <a href="../../dev/develop-fprime-libraries/#optional-platform-folder-and-platform-files">F´ platform files</a>.</li>
 <li>Knowledge of your target OS APIs (e.g., mutex, task creation, file I/O).</li>
 </ul>
 <hr />
 <h2 id="overview">Overview</h2>
-<p>The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL <em>service</em> (Mutex, File, Task, etc.) has three layers: an <strong>interface class</strong> defining the contract, a <strong>wrapper class</strong> (e.g., <code>Os::Mutex</code>) that application code uses, and a <strong>platform-specific implementation</strong> that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the <a href="../../../Os/docs/sdd/">OSAL Software Design Document</a> — in particular the <a href="../../../Os/docs/sdd/#51-delegate-pattern">delegate pattern</a> and <a href="../../../Os/docs/sdd/#5-implementation-architecture">implementation architecture</a> sections — as this guide assumes familiarity with those concepts.</p>
+<p>The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL <em>service</em> (Mutex, File, Task, etc.) has three layers: an <strong>interface class</strong> defining the contract, a <strong>wrapper class</strong> (e.g., <code>Os::Mutex</code>) that application code uses, and a <strong>platform-specific implementation</strong> that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the <a href="../../../../Os/docs/sdd/">OSAL Software Design Document</a> — in particular the <a href="../../../../Os/docs/sdd/#51-delegate-pattern">delegate pattern</a> and <a href="../../../../Os/docs/sdd/#5-implementation-architecture">implementation architecture</a> sections — as this guide assumes familiarity with those concepts.</p>
 <p>This guide walks through implementing an OSAL for a hypothetical OS called <strong>"MyOs"</strong>, and walks through the implementation of the <code>Os::Mutex</code> service as the example. The same process applies for all other OSAL services. Reference implementations are linked in the <a href="#additional-resources">Additional Resources</a> section below.</p>
 <hr />
 <h2 id="step-1-set-up-the-library">Step 1 — Set Up the Library</h2>
-<p>An OSAL implementation is packaged as an <a href="../develop-fprime-libraries/">F´ library</a>. Create the following directory structure:</p>
+<p>An OSAL implementation is packaged as an <a href="../../dev/develop-fprime-libraries/">F´ library</a>. Create the following directory structure:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>fprime-my-os/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── FprimeMyOs/
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   └── Os/
@@ -5180,7 +5180,7 @@ You are not viewing the documentation for the latest release of F Prime.
 </span></code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Look at each interface header in <code>Os/</code> (e.g., <code>Os/Mutex.hpp</code>, <code>Os/File.hpp</code>, <code>Os/Task.hpp</code>) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a <code>Status</code> enum — your implementation must return the appropriate <a href="../../../Os/docs/sdd/#24-error-handling">status values</a>.</p>
+<p>Look at each interface header in <code>Os/</code> (e.g., <code>Os/Mutex.hpp</code>, <code>Os/File.hpp</code>, <code>Os/Task.hpp</code>) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a <code>Status</code> enum — your implementation must return the appropriate <a href="../../../../Os/docs/sdd/#24-error-handling">status values</a>.</p>
 </div>
 <h3 id="22-implement-the-methods">2.2 — Implement the Methods</h3>
 <p>Create <code>FprimeMyOs/Os/Mutex.cpp</code>:</p>
@@ -5297,7 +5297,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <p class="admonition-title">Note</p>
 <p>F´ provides <code>Os_Generic_PriorityQueue</code>, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.</p>
 </div>
-<p>The full set of <a href="../../../Os/docs/sdd/#2-core-services">OSAL modules</a> that can be implemented is:</p>
+<p>The full set of <a href="../../../../Os/docs/sdd/#2-core-services">OSAL modules</a> that can be implemented is:</p>
 <table>
 <thead>
 <tr>
@@ -5381,7 +5381,7 @@ You are not viewing the documentation for the latest release of F Prime.
 <hr />
 <h2 id="best-practices">Best Practices</h2>
 <ul>
-<li><strong>Start with Stubs.</strong> Only implement the modules you need. The <a href="../../../Os/Stub">Stub backend</a> returns <code>NOT_SUPPORTED</code> for unimplemented services, allowing you to bring up an OSAL incrementally.</li>
+<li><strong>Start with Stubs.</strong> Only implement the modules you need. The <a href="../../../../Os/Stub">Stub backend</a> returns <code>NOT_SUPPORTED</code> for unimplemented services, allowing you to bring up an OSAL incrementally.</li>
 <li><strong>Map error codes consistently.</strong> Create a shared error-translation module (like <code>Os/Posix/error.hpp</code>) that converts your OS's native error codes to the F´ Os <code>Status</code> enums. This keeps error handling centralized and testable.</li>
 <li><strong>Watch the handle size.</strong> Each implementation object must fit in the fixed-size handle storage. If your native OS primitives are large, override <code>FW_MUTEX_HANDLE_MAX_SIZE</code> (or equivalent) in your platform configuration.</li>
 <li><strong>Use other implementations as references.</strong> The <code>Os/Posix/</code> directory is the most complete OSAL implementation in F´ and serves as the canonical example for all modules. Other implementations exist (see links above, or in the resources below)</li>
@@ -5390,8 +5390,8 @@ You are not viewing the documentation for the latest release of F Prime.
 <hr />
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li><a href="../../../Os/docs/sdd/">OSAL Software Design Document</a> — Architecture details and design rationale.</li>
-<li><a href="../develop-fprime-libraries/">Develop an F´ Library</a> — Library structure, toolchain, and platform files.</li>
+<li><a href="../../../../Os/docs/sdd/">OSAL Software Design Document</a> — Architecture details and design rationale.</li>
+<li><a href="../../dev/develop-fprime-libraries/">Develop an F´ Library</a> — Library structure, toolchain, and platform files.</li>
 <li><a href="../porting-guide/">Porting Guide</a> — High-level checklist for porting F´ to a new platform.</li>
 <li><a href="https://github.com/nasa/fprime/tree/devel/Os/Posix">Posix OSAL implementation</a> — Reference implementation for POSIX systems.</li>
 <li><a href="https://github.com/fprime-community/fprime-zephyr">fprime-zephyr</a> — OSAL implementation for Zephyr RTOS.</li>

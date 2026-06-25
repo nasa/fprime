@@ -5103,7 +5103,7 @@ You are not viewing the documentation for the latest release of F Prime.
 
 
 <h1 id="how-to-implement-a-radio-manager-component">How-To: Implement a Radio Manager Component</h1>
-<p>This guide provides step-by-step instructions for implementing a radio manager component using the <a href="../../reference/communication-adapter-interface/">Svc.Com Communications Adapter Interface</a>. A radio manager handles communication with radio hardware, managing both outgoing transmissions (downlink) and incoming receptions (uplink).</p>
+<p>This guide provides step-by-step instructions for implementing a radio manager component using the <a href="../../../reference/communication-adapter-interface/">Svc.Com Communications Adapter Interface</a>. A radio manager handles communication with radio hardware, managing both outgoing transmissions (downlink) and incoming receptions (uplink).</p>
 <hr />
 <h2 id="prerequisites">Prerequisites</h2>
 <p>Before starting, you should have:</p>
@@ -5111,18 +5111,18 @@ You are not viewing the documentation for the latest release of F Prime.
 <li>Completed the <a href="https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/">LedBlinker Tutorial</a>.</li>
 <li>A general understanding of <a href="https://nasa.github.io/fpp/fpp-users-guide.html">FPP component modeling</a>.</li>
 <li>Experience creating commands, events, and telemetry in FPP.</li>
-<li>Read the <a href="../../reference/communication-adapter-interface/">Communication Adapter Interface</a> reference documentation.</li>
+<li>Read the <a href="../../../reference/communication-adapter-interface/">Communication Adapter Interface</a> reference documentation.</li>
 </ul>
 <hr />
 <h2 id="overview">Overview</h2>
-<p>A radio manager component bridges the F´ communication stack and radio hardware. To integrate with F´ standard uplink and downlink components, the radio manager must implement the <a href="../../reference/communication-adapter-interface/">Communications Adapter Interface</a>.</p>
+<p>A radio manager component bridges the F´ communication stack and radio hardware. To integrate with F´ standard uplink and downlink components, the radio manager must implement the <a href="../../../reference/communication-adapter-interface/">Communications Adapter Interface</a>.</p>
 <p>A common approach is to use an intermediate driver component (e.g., <code>Drv.ByteStreamDriver</code>) to communicate with radio hardware. This provides modularity and allows the same radio manager to work across different platforms by swapping the underlying driver.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For the curious reader: Some systems may not have a radio, for example if communications are done over a wired interface or local network (e.g. TCP/UDP). In this case, a component must still exist to implement the Communications Adapter Interface and act as a bridge to whichever hardware interface is used. An example of such a component is <code>Svc.ComStub</code> - it implements the Communications Adapter Interface and acts as a pass-through to a <code>Drv.ByteStreamDriver</code> for read/writes. This is the default configuration when creating new deployments! And because F´ ships with 3 common ByteStreamDriver implementations (<code>TcpClient</code>, <code>TcpServer</code> and <code>UART</code>), that is why you have three communication driver options to choose from when creating a new deployment.</p>
 </div>
 <h2 id="step-0-read-the-reference-documentation">Step 0 - Read the Reference Documentation</h2>
-<p>Before starting, read the <a href="../../reference/communication-adapter-interface/">Communication Adapter Interface</a> reference documentation. This How-To Guide is essentially walking through the implementation of the interface, and much of the information we are going to cover is explained at length in the reference documentation.</p>
+<p>Before starting, read the <a href="../../../reference/communication-adapter-interface/">Communication Adapter Interface</a> reference documentation. This How-To Guide is essentially walking through the implementation of the interface, and much of the information we are going to cover is explained at length in the reference documentation.</p>
 <h2 id="step-1-component-definition">Step 1 - Component Definition</h2>
 <p>Create a new component using <code>fprime-util new --component</code>. Define the component to import the <code>Svc.Com</code> interface. Next, identify the hardware communication protocol you will be using to interface with the radio hardware, and add the ports required to connect to a driver of said protocol. For our example, we will be using a UART radio, and therefore we are connecting to a UART driver (<code>ByteStreamDriver</code> interface).</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">module</span> <span class="n">MyProject</span> <span class="p">{</span>
@@ -5136,15 +5136,15 @@ You are not viewing the documentation for the latest release of F Prime.
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">}</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>See <a href="../../../Svc/ComStub/ComStub.fpp"><code>Svc.ComStub</code></a> for a complete reference implementation.</p>
+<p>See <a href="../../../../Svc/ComStub/ComStub.fpp"><code>Svc.ComStub</code></a> for a complete reference implementation.</p>
 <hr />
 <h2 id="step-2-component-implementation">Step 2 - Component Implementation</h2>
 <p>Run <code>fprime-util impl</code> to generate the component implementation files. Implement the required port handlers:</p>
 <h3 id="outgoing-downlink-data-datain">Outgoing (downlink) data: <strong><code>dataIn</code></strong></h3>
 <p>This port is receiving data from the communication stack and sending it to the hardware for outgoing communications. When done sending the data:</p>
 <ul>
-<li>the input buffer <strong>must</strong> be returned through the <code>dataReturnOut</code> port (for memory ownership, see <a href="../../user-manual/framework/memory-management/buffer-pool/#design-pattern-return-to-sender">Design Pattern: Return-To-Sender</a>) </li>
-<li>a status <strong>must</strong> be sent via <code>comStatusOut</code>. Only a <code>Fw::Success::SUCCESS</code> value will trigger the ComQueue to send new outgoing data. <code>Fw::Success::SUCCESS</code> is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission, and (3) after a previous <code>Fw::Success::FAILURE</code> to indicate recovery. See <a href="../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a> for more detail.</li>
+<li>the input buffer <strong>must</strong> be returned through the <code>dataReturnOut</code> port (for memory ownership, see <a href="../../../user-manual/framework/memory-management/buffer-pool/#design-pattern-return-to-sender">Design Pattern: Return-To-Sender</a>) </li>
+<li>a status <strong>must</strong> be sent via <code>comStatusOut</code>. Only a <code>Fw::Success::SUCCESS</code> value will trigger the ComQueue to send new outgoing data. <code>Fw::Success::SUCCESS</code> is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission, and (3) after a previous <code>Fw::Success::FAILURE</code> to indicate recovery. See <a href="../../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a> for more detail.</li>
 </ul>
 <p><strong>Example:</strong></p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1">// Note: Code is simplified for clarity. In practice, you may want to implement a</span>
@@ -5190,7 +5190,7 @@ You are not viewing the documentation for the latest release of F Prime.
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="p">}</span>
 </span></code></pre></div>
 <h3 id="initiate-downlink-data-flow">Initiate downlink data flow</h3>
-<p>As detailed in the <a href="../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a>, the F´ downlink stack expects to receive an initial <code>Fw::Success::SUCCESS</code> message via our Com Adapter component's <code>comStatusOut</code> port to initiate data flow. This initial SUCCESS is not in response to any data — it tells <code>Svc::ComQueue</code> that the adapter is ready to accept its first message. Similarly, after a <code>Fw::Success::FAILURE</code>, the adapter must eventually emit a recovery <code>Fw::Success::SUCCESS</code> to resume data flow. Projects may implement this as is relevant for their specific radio.</p>
+<p>As detailed in the <a href="../../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a>, the F´ downlink stack expects to receive an initial <code>Fw::Success::SUCCESS</code> message via our Com Adapter component's <code>comStatusOut</code> port to initiate data flow. This initial SUCCESS is not in response to any data — it tells <code>Svc::ComQueue</code> that the adapter is ready to accept its first message. Similarly, after a <code>Fw::Success::FAILURE</code>, the adapter must eventually emit a recovery <code>Fw::Success::SUCCESS</code> to resume data flow. Projects may implement this as is relevant for their specific radio.</p>
 <p>In our example, we will leverage the ByteStreamDriver's <code>ready</code> port, which signals when the driver is ready to receive data.</p>
 <p><strong>Example:</strong></p>
 <div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">RadioManager::drvConnected_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
@@ -5198,12 +5198,12 @@ You are not viewing the documentation for the latest release of F Prime.
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">comStatusOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">radioSuccess</span><span class="p">);</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>Refer to <a href="../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub</code> implementation</a> for detailed examples of each handler</p>
+<p>Refer to <a href="../../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub</code> implementation</a> for detailed examples of each handler</p>
 <hr />
 <h2 id="step-3-integrate-into-topology">Step 3 - Integrate into Topology</h2>
 <p>As discussed in the Overview, new deployments are by default created with a <code>Svc.ComStub</code> implementing the Com Adapter interface. We must replace this with our radio manager instead.</p>
 <h3 id="remove-comstub">Remove ComStub</h3>
-<p>First, we need to take out ComStub of our topology. This is done by using the <code>ComCcsds.FramingSubtopology</code> instead of the default <code>ComCcsds.Subtopology</code>. Refer to the <a href="../../../Svc/Subtopologies/ComCcsds/ComCcsds.fpp">ComCcsds definition</a> for more detail</p>
+<p>First, we need to take out ComStub of our topology. This is done by using the <code>ComCcsds.FramingSubtopology</code> instead of the default <code>ComCcsds.Subtopology</code>. Refer to the <a href="../../../../Svc/Subtopologies/ComCcsds/ComCcsds.fpp">ComCcsds definition</a> for more detail</p>
 <div class="language-diff highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="w"> </span> # ----------------------------------------------------------------------
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w"> </span> # Subtopology imports
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w"> </span> # ----------------------------------------------------------------------
@@ -5272,14 +5272,14 @@ You are not viewing the documentation for the latest release of F Prime.
 <hr />
 <h2 id="advanced-features">Advanced Features</h2>
 <h3 id="asynchronous-transmission">Asynchronous Transmission</h3>
-<p>For asynchronous byte stream drivers, use the async send ports and store the context for the callback. See <a href="../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub</code> async implementation</a> for a complete example.</p>
+<p>For asynchronous byte stream drivers, use the async send ports and store the context for the callback. See <a href="../../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub</code> async implementation</a> for a complete example.</p>
 <h3 id="retry-logic">Retry Logic</h3>
-<p>Implement retry logic for transient failures. See <a href="../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub::handleSynchronousSend</code></a> for an example with retry limits</p>
+<p>Implement retry logic for transient failures. See <a href="../../../../Svc/ComStub/ComStub.cpp"><code>Svc.ComStub::handleSynchronousSend</code></a> for an example with retry limits</p>
 <hr />
 <h2 id="best-practices">Best Practices</h2>
 <ul>
 <li>
-<p><strong>Follow the protocol</strong>: Review the <a href="../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a> requirements carefully.</p>
+<p><strong>Follow the protocol</strong>: Review the <a href="../../../reference/communication-adapter-interface/#communication-adapter-protocol">Communication Adapter Protocol</a> requirements carefully.</p>
 </li>
 <li>
 <p><strong>Return buffers promptly</strong>: Return ownership via <code>*Return*</code> ports immediately after transmission.</p>
@@ -5288,10 +5288,10 @@ You are not viewing the documentation for the latest release of F Prime.
 <h2 id="-handle-errors-gracefully-emit-fwsuccessfailure-to-pause-data-flow-then-emit-a-recovery-fwsuccesssuccess-when-the-communication-path-has-been-restored">- <strong>Handle errors gracefully</strong>: Emit <code>Fw::Success::FAILURE</code> to pause data flow, then emit a recovery <code>Fw::Success::SUCCESS</code> when the communication path has been restored.</h2>
 <h2 id="additional-resources">Additional Resources</h2>
 <ul>
-<li>Reference: <a href="../../../Svc/ComStub/docs/sdd/">Svc.ComStub</a> - Com Adapter implementation passing through data from a ByteStreamDriver</li>
+<li>Reference: <a href="../../../../Svc/ComStub/docs/sdd/">Svc.ComStub</a> - Com Adapter implementation passing through data from a ByteStreamDriver</li>
 <li>Reference: <a href="https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/XBee/Components/XBeeManager">XBeeManager</a> - Com Adapter implementation for a <a href="https://www.digi.com/products/embedded-systems/digi-xbee/rf-modules">XBee radio</a></li>
-<li><a href="../../reference/communication-adapter-interface/">Communication Adapter Interface Reference</a> - Complete protocol specification</li>
-<li><a href="../../../Drv/ByteStreamDriverModel/docs/sdd/">Byte Stream Driver Model</a> - Driver interface documentation</li>
+<li><a href="../../../reference/communication-adapter-interface/">Communication Adapter Interface Reference</a> - Complete protocol specification</li>
+<li><a href="../../../../Drv/ByteStreamDriverModel/docs/sdd/">Byte Stream Driver Model</a> - Driver interface documentation</li>
 </ul>
 
 
