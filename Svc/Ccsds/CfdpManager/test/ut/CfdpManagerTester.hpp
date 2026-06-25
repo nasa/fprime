@@ -382,6 +382,60 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test StopPollDirectory command on active directory (fix verification)
     void testStopPollDirActive();
 
+    //! Test SendFile command with invalid channel ID
+    void testSendFileInvalidChannel();
+
+    //! Test PlaybackDirectory command with valid directory
+    void testPlaybackDirectoryNominal();
+
+    //! Test PlaybackDirectory command with invalid channel
+    void testPlaybackDirectoryInvalidChannel();
+
+    //! Test PlaybackDirectory command with nonexistent directory
+    void testPlaybackDirectoryOpenFailed();
+
+    //! Test PollDirectory command with valid directory
+    void testPollDirectoryNominal();
+
+    //! Test PollDirectory command with invalid channel
+    void testPollDirectoryInvalidChannel();
+
+    //! Test PollDirectory command when poll slot is busy
+    void testPollDirectoryBusy();
+
+    //! Test SetChannelFlow command with valid channel
+    void testSetChannelFlowNominal();
+
+    //! Test SetChannelFlow command with invalid channel
+    void testSetChannelFlowInvalidChannel();
+
+    //! Test SuspendResumeTransaction command - suspend and resume
+    void testSuspendResumeTransactionNominal();
+
+    //! Test SuspendResumeTransaction command with invalid channel
+    void testSuspendResumeTransactionInvalidChannel();
+
+    //! Test SuspendResumeTransaction command with nonexistent transaction
+    void testSuspendResumeTransactionNotFound();
+
+    //! Test CancelTransaction command
+    void testCancelTransactionNominal();
+
+    //! Test CancelTransaction command with invalid channel
+    void testCancelTransactionInvalidChannel();
+
+    //! Test AbandonTransaction command
+    void testAbandonTransactionNominal();
+
+    //! Test AbandonTransaction command with invalid channel
+    void testAbandonTransactionInvalidChannel();
+
+    //! Test ResetCounters command for single channel
+    void testResetCountersSingleChannel();
+
+    //! Test ResetCounters command for all channels
+    void testResetCountersAllChannels();
+
   public:
     // ----------------------------------------------------------------------
     // Miscellaneous Tests
