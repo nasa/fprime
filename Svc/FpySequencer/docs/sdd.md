@@ -49,14 +49,15 @@ The following diagram represents the states of the `FpySequencer`.
 stateDiagram-v2
   direction LR
   state "IDLE
-entry / clearBreakpoint, clearSequenceExecArgs
+entry / clearBreakpoint, setGoalState_IDLE, clearSequenceExecArgs
     ------------------------------------------------------
     cmd_SET_BREAKPOINT / setBreakpoint
-    cmd_CLEAR_BREAKPOINT / clearBreakpoint 
+    cmd_CLEAR_BREAKPOINT / clearBreakpoint
   " as IDLE
 
   state "VALIDATING
-    enter / report_seqStarted, validate
+    entry / report_seqStarted, signalEntered
+    entered / validate
     ------------------------------------------------------
     cmd_SET_BREAKPOINT / setBreakpoint
     cmd_CLEAR_BREAKPOINT / clearBreakpoint
@@ -65,64 +66,76 @@ entry / clearBreakpoint, clearSequenceExecArgs
   state VALID <<choice>>
 
   state "AWAITING_CMD_RUN_VALIDATED
-    enter / resp_OK
+    entry / sendCmdResponse_OK
     ------------------------------------------------------
     cmd_SET_BREAKPOINT / setBreakpoint
     cmd_CLEAR_BREAKPOINT / clearBreakpoint
   " as AWAITING_CMD_RUN_VALIDATED
 
-  state "RUNNING entry / resetRuntime
+  state "RUNNING
+    entry / resetRuntime, incrementSequenceCounter, pushArgsToStack
+    ------------------------------------------------------
+    cmd_BREAK / setBreakBeforeNextLine
+    cmd_SET_BREAKPOINT / setBreakpoint
+    cmd_CLEAR_BREAKPOINT / clearBreakpoint
   " as RUNNING {
     state BREAK_CHECK <<choice>>
 
     state "DISPATCH_STATEMENT
-      enter / dispatch 
+      entry / dispatchStatement
     " as DISPATCH_STATEMENT
 
+    state "AWAITING_STATEMENT_RESPONSE
+      checkTimersIn / checkStatementTimeout
+    " as AWAITING_STATEMENT_RESPONSE
+
+    state "SLEEPING
+      checkTimersIn / checkShouldWake, checkStatementTimeout
+    " as SLEEPING
+
     state "PAUSED
-      entry / clearBreakBeforeNextLine, if breakOnce: clearBreakpoint
-      -------------------------------------------------------------
+      entry / signalEntered, clearBreakBeforeNextLine
+      entered / if breakOnce: clearBreakpoint
     " as PAUSED
 
     [*] --> BREAK_CHECK
-    BREAK_CHECK --> PAUSED: if break
-    BREAK_CHECK --> DISPATCH_STATEMENT: if not break
+    BREAK_CHECK --> PAUSED: if shouldBreak / report_seqBroken
+    BREAK_CHECK --> DISPATCH_STATEMENT: else
 
     PAUSED --> DISPATCH_STATEMENT: cmd_CONTINUE
-    PAUSED --> DISPATCH_STATEMENT: cmdSTEP/setBreakBeforeNextLine
+    PAUSED --> DISPATCH_STATEMENT: cmd_STEP / setBreakBeforeNextLine
 
-    DISPATCH_STATEMENT --> [*]: noMoreStatements/resp_OK
-    DISPATCH_STATEMENT --> [*]: failure/resp_EXECUTION_ERROR 
-    DISPATCH_STATEMENT --> AWAITING_STATEMENT_RESPONSE: success
+    DISPATCH_STATEMENT --> [*]: result_dispatchStatement_noMoreStatements / report_seqSucceeded, sendCmdResponse_OK
+    DISPATCH_STATEMENT --> [*]: result_dispatchStatement_failure / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
+    DISPATCH_STATEMENT --> AWAITING_STATEMENT_RESPONSE: result_dispatchStatement_success
 
+    AWAITING_STATEMENT_RESPONSE --> BREAK_CHECK: stmtResponse_success
+    AWAITING_STATEMENT_RESPONSE --> SLEEPING: stmtResponse_beginSleep
+    AWAITING_STATEMENT_RESPONSE --> [*]: stmtResponse_failure / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
+    AWAITING_STATEMENT_RESPONSE --> [*]: result_checkStatementTimeout_statementTimeout / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
+    AWAITING_STATEMENT_RESPONSE --> [*]: result_timeOpFailed / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
 
-    AWAITING_STATEMENT_RESPONSE --> [*]: failure/resp_EXECUTION_ERROR 
-    AWAITING_STATEMENT_RESPONSE --> [*]: timeout
-    AWAITING_STATEMENT_RESPONSE --> SLEEPING: beginSleep
-    AWAITING_STATEMENT_RESPONSE --> BREAK_CHECK: success
-
-    SLEEPING --> [*]: timeout/resp_EXECUTION_ERROR
-    SLEEPING --> [*]: error/resp_EXECUTION_ERROR
-
-    SLEEPING --> BREAK_CHECK: shouldWake
+    SLEEPING --> BREAK_CHECK: result_checkShouldWake_wakeup
+    SLEEPING --> [*]: result_checkStatementTimeout_statementTimeout / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
+    SLEEPING --> [*]: result_timeOpFailed / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
 
   }
 
-  IDLE --> VALIDATING: cmd_VALIDATE/setSequenceExecArgs
-  IDLE --> VALIDATING: cmd_RUN/setSequenceExecArgs
+  IDLE --> VALIDATING: cmd_VALIDATE / setGoalState_VALID, setSequenceExecArgs
+  IDLE --> VALIDATING: cmd_RUN / setGoalState_RUNNING, setSequenceExecArgs
 
-  VALID --> RUNNING: if cmd_RUN
-  VALID --> AWAITING_CMD_RUN_VALIDATED: if cmd_VALIDATE
+  VALID --> RUNNING: if goalStateIs_RUNNING
+  VALID --> AWAITING_CMD_RUN_VALIDATED: else
 
-  VALIDATING --> IDLE:  failure/seqFailed,resp_EXECUTION_ERROR
-  VALIDATING --> VALID: success
-  VALIDATING --> IDLE: cmd_CANCEL/seqCancelled,resp_EXECUTION_ERROR
+  VALIDATING --> VALID: result_success
+  VALIDATING --> IDLE: result_failure / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
+  VALIDATING --> IDLE: cmd_CANCEL / report_seqCancelled, sendCmdResponse_EXECUTION_ERROR
 
-  AWAITING_CMD_RUN_VALIDATED --> IDLE: cmd_CANCEL/seqCancelled
-  AWAITING_CMD_RUN_VALIDATED --> RUNNING: cmd_RUN_VALIDATED
+  AWAITING_CMD_RUN_VALIDATED --> RUNNING: cmd_RUN_VALIDATED / setSequenceExecArgs
+  AWAITING_CMD_RUN_VALIDATED --> IDLE: cmd_CANCEL / report_seqCancelled
 
-  RUNNING --> IDLE: failure
-  RUNNING --> IDLE: noMoreStatements
+  RUNNING --> IDLE: cmd_CANCEL / report_seqCancelled, sendCmdResponse_EXECUTION_ERROR
+  RUNNING --> IDLE: stmtResponse_unexpected / report_seqFailed, sendCmdResponse_EXECUTION_ERROR
 
 ```
 
