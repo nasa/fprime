@@ -438,6 +438,117 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // Parameter Tests
+    // ----------------------------------------------------------------------
+
+    //! Test LocalEid parameter set/get
+    void testParamLocalEidSetGet();
+
+    //! Test LocalEid parameter default value
+    void testParamLocalEidDefault();
+
+    //! Test OutgoingFileChunkSize parameter set/get
+    void testParamOutgoingFileChunkSizeSetGet();
+
+    //! Test OutgoingFileChunkSize parameter default value
+    void testParamOutgoingFileChunkSizeDefault();
+
+    //! Test RxCrcCalcBytesPerCycle parameter set/get
+    void testParamRxCrcCalcBytesPerCycleSetGet();
+
+    //! Test RxCrcCalcBytesPerCycle parameter default value
+    void testParamRxCrcCalcBytesPerCycleDefault();
+
+    //! Test FileInDefaultChannel parameter set/get
+    void testParamFileInDefaultChannelSetGet();
+
+    //! Test FileInDefaultChannel parameter default value
+    void testParamFileInDefaultChannelDefault();
+
+    //! Test FileInDefaultDestEntityId parameter set/get
+    void testParamFileInDefaultDestEntityIdSetGet();
+
+    //! Test FileInDefaultDestEntityId parameter default value
+    void testParamFileInDefaultDestEntityIdDefault();
+
+    //! Test FileInDefaultClass parameter set/get
+    void testParamFileInDefaultClassSetGet();
+
+    //! Test FileInDefaultClass parameter default value
+    void testParamFileInDefaultClassDefault();
+
+    //! Test FileInDefaultKeep parameter set/get
+    void testParamFileInDefaultKeepSetGet();
+
+    //! Test FileInDefaultKeep parameter default value
+    void testParamFileInDefaultKeepDefault();
+
+    //! Test FileInDefaultPriority parameter set/get
+    void testParamFileInDefaultPrioritySetGet();
+
+    //! Test FileInDefaultPriority parameter default value
+    void testParamFileInDefaultPriorityDefault();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Port Tests
+    // ----------------------------------------------------------------------
+
+    //! Test dataReturnIn port on channel 0
+    void testDataReturnInChannel0();
+
+    //! Test dataReturnIn port on channel 1
+    void testDataReturnInChannel1();
+
+    //! Test Class 1 RX transaction on channel 1
+    void testClass1RxNominalChannel1();
+
+    //! Test Class 2 RX transaction on channel 1
+    void testClass2RxNominalChannel1();
+
+  public:
+    // ----------------------------------------------------------------------
+    // Event Coverage Tests
+    // ----------------------------------------------------------------------
+
+    // Transaction Activity Events
+    void testTxFileQueuedEvent();
+    void testTxFileTransferStartedEvent();
+    void testMetadataReceivedEvent();
+
+    // Buffer Management Events
+    void testBuffersExhaustedEvent();
+
+    // PDU Deserialization Failure Events
+    void testFailPduHeaderDeserializationEvent();
+    void testFailMetadataPduDeserializationEvent();
+
+    // RX Error Events
+    void testRxFileCreateFailedEvent();
+    void testRxCrcMismatchEvent();
+    void testRxFileSizeMismatchEvent();
+    void testRxEofCancelReceivedEvent();
+    void testRxTransactionLimitReachedEvent();
+    void testInvalidDestinationEidEvent();
+
+    // TX Error Events
+    void testTxZeroLengthFileEvent();
+    void testTxFileOpenFailedEvent();
+    void testMaxTxTransactionsReachedEvent();
+
+    // File Management Events
+    void testFileRemovedFailedEvent();
+    void testPlaybackDirOpenFailedEvent();
+
+    // Transaction Management Events (covered by command tests)
+    void testTransactionSuspendedEvent();
+    void testTransactionResumedEvent();
+    void testTransactionCanceledEvent();
+    void testTransactionAbandonedEvent();
+    void testTransactionNotFoundEvent();
+
+  public:
+    // ----------------------------------------------------------------------
     // Miscellaneous Tests
     // ----------------------------------------------------------------------
 

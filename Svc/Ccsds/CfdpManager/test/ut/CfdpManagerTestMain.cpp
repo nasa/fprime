@@ -222,6 +222,258 @@ TEST(Command, ResetCountersAllChannels) {
     delete tester;
 }
 
+TEST(Parameter, LocalEidSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamLocalEidSetGet();
+    delete tester;
+}
+
+TEST(Parameter, LocalEidDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamLocalEidDefault();
+    delete tester;
+}
+
+TEST(Parameter, OutgoingFileChunkSizeSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamOutgoingFileChunkSizeSetGet();
+    delete tester;
+}
+
+TEST(Parameter, OutgoingFileChunkSizeDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamOutgoingFileChunkSizeDefault();
+    delete tester;
+}
+
+TEST(Parameter, RxCrcCalcBytesPerCycleSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamRxCrcCalcBytesPerCycleSetGet();
+    delete tester;
+}
+
+TEST(Parameter, RxCrcCalcBytesPerCycleDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamRxCrcCalcBytesPerCycleDefault();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultChannelSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultChannelSetGet();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultChannelDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultChannelDefault();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultDestEntityIdSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultDestEntityIdSetGet();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultDestEntityIdDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultDestEntityIdDefault();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultClassSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultClassSetGet();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultClassDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultClassDefault();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultKeepSetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultKeepSetGet();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultKeepDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultKeepDefault();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultPrioritySetGet) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultPrioritySetGet();
+    delete tester;
+}
+
+TEST(Parameter, FileInDefaultPriorityDefault) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testParamFileInDefaultPriorityDefault();
+    delete tester;
+}
+
+TEST(Port, DataReturnInChannel0) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testDataReturnInChannel0();
+    delete tester;
+}
+
+TEST(Port, DataReturnInChannel1) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testDataReturnInChannel1();
+    delete tester;
+}
+
+TEST(MultiChannel, Class1RxNominalChannel1) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testClass1RxNominalChannel1();
+    delete tester;
+}
+
+TEST(MultiChannel, Class2RxNominalChannel1) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testClass2RxNominalChannel1();
+    delete tester;
+}
+
+TEST(Event, TxFileQueued) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTxFileQueuedEvent();
+    delete tester;
+}
+
+TEST(Event, TxFileTransferStarted) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTxFileTransferStartedEvent();
+    delete tester;
+}
+
+TEST(Event, MetadataReceived) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testMetadataReceivedEvent();
+    delete tester;
+}
+
+TEST(Event, BuffersExhausted) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testBuffersExhaustedEvent();
+    delete tester;
+}
+
+TEST(Event, FailPduHeaderDeserialization) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testFailPduHeaderDeserializationEvent();
+    delete tester;
+}
+
+TEST(Event, FailMetadataPduDeserialization) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testFailMetadataPduDeserializationEvent();
+    delete tester;
+}
+
+TEST(Event, RxFileCreateFailed) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxFileCreateFailedEvent();
+    delete tester;
+}
+
+TEST(Event, RxCrcMismatch) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxCrcMismatchEvent();
+    delete tester;
+}
+
+TEST(Event, RxFileSizeMismatch) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxFileSizeMismatchEvent();
+    delete tester;
+}
+
+TEST(Event, RxEofCancelReceived) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxEofCancelReceivedEvent();
+    delete tester;
+}
+
+TEST(Event, RxTransactionLimitReached) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxTransactionLimitReachedEvent();
+    delete tester;
+}
+
+TEST(Event, InvalidDestinationEid) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testInvalidDestinationEidEvent();
+    delete tester;
+}
+
+TEST(Event, TxZeroLengthFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTxZeroLengthFileEvent();
+    delete tester;
+}
+
+TEST(Event, TxFileOpenFailed) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTxFileOpenFailedEvent();
+    delete tester;
+}
+
+TEST(Event, MaxTxTransactionsReached) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testMaxTxTransactionsReachedEvent();
+    delete tester;
+}
+
+TEST(Event, FileRemoveFailed) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testFileRemovedFailedEvent();
+    delete tester;
+}
+
+TEST(Event, PlaybackDirOpenFailed) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testPlaybackDirOpenFailedEvent();
+    delete tester;
+}
+
+TEST(Event, TransactionSuspended) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTransactionSuspendedEvent();
+    delete tester;
+}
+
+TEST(Event, TransactionResumed) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTransactionResumedEvent();
+    delete tester;
+}
+
+TEST(Event, TransactionCanceled) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTransactionCanceledEvent();
+    delete tester;
+}
+
+TEST(Event, TransactionAbandoned) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTransactionAbandonedEvent();
+    delete tester;
+}
+
+TEST(Event, TransactionNotFound) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testTransactionNotFoundEvent();
+    delete tester;
+}
+
 TEST(Miscellaneous, Ping) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testPing();

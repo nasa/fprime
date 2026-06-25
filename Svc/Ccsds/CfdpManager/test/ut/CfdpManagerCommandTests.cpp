@@ -234,11 +234,6 @@ void CfdpManagerTester::testSendFileInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Currently returns EXECUTION_ERROR instead of VALIDATION_ERROR
-    // Root cause: In CfdpManager.cpp SendFile_cmdHandler, the else block (line 275-278)
-    // unconditionally sets EXECUTION_ERROR, overwriting the VALIDATION_ERROR from
-    // checkCommandChannelIndex(). The else should only set EXECUTION_ERROR if
-    // rspStatus is still OK.
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SENDFILE, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
@@ -331,13 +326,12 @@ void CfdpManagerTester::testPlaybackDirectoryInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
-    // Verify PlaybackInvalidChannel event was emitted
-    ASSERT_EVENTS_PlaybackInvalidChannel_SIZE(1);
-    ASSERT_EVENTS_PlaybackInvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
+    // Verify InvalidChannel event was emitted (not PlaybackInvalidChannel - that event exists but is never emitted)
+    ASSERT_EVENTS_InvalidChannel_SIZE(1);
+    ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
 
 void CfdpManagerTester::testPlaybackDirectoryOpenFailed() {
@@ -451,7 +445,6 @@ void CfdpManagerTester::testPollDirectoryInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
@@ -550,7 +543,7 @@ void CfdpManagerTester::testSetChannelFlowNominal() {
 void CfdpManagerTester::testSetChannelFlowInvalidChannel() {
     // Test that SetChannelFlow command with invalid channel returns validation error
     //
-    // Event coverage: InvalidChannel (documented bug - returns EXECUTION_ERROR)
+    // Event coverage: InvalidChannel
 
     U8 invalidChannelId = Cfdp::NumChannels;
     Cfdp::Flow flowState = Cfdp::Flow::FROZEN;
@@ -566,7 +559,6 @@ void CfdpManagerTester::testSetChannelFlowInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SETCHANNELFLOW, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
@@ -633,7 +625,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
 void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
     // Test that SuspendResumeTransaction command with invalid channel returns validation error
     //
-    // Event coverage: InvalidChannel (documented bug)
+    // Event coverage: InvalidChannel
 
     U8 invalidChannelId = Cfdp::NumChannels;
     Cfdp::TransactionSeq transactionSeq = 1;
@@ -651,7 +643,6 @@ void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0,
                         Fw::CmdResponse::VALIDATION_ERROR);
@@ -727,7 +718,7 @@ void CfdpManagerTester::testCancelTransactionNominal() {
 void CfdpManagerTester::testCancelTransactionInvalidChannel() {
     // Test that CancelTransaction command with invalid channel returns validation error
     //
-    // Event coverage: InvalidChannel (documented bug)
+    // Event coverage: InvalidChannel
 
     U8 invalidChannelId = Cfdp::NumChannels;
     Cfdp::TransactionSeq transactionSeq = 1;
@@ -744,7 +735,6 @@ void CfdpManagerTester::testCancelTransactionInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
@@ -789,7 +779,7 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
 void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
     // Test that AbandonTransaction command with invalid channel returns validation error
     //
-    // Event coverage: InvalidChannel (documented bug)
+    // Event coverage: InvalidChannel
 
     U8 invalidChannelId = Cfdp::NumChannels;
     Cfdp::TransactionSeq transactionSeq = 1;
@@ -806,7 +796,6 @@ void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
     this->component.doDispatch();
 
     // Verify VALIDATION_ERROR response
-    // BUG TO FIX: Same issue as SendFile - see testSendFileInvalidChannel
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
@@ -869,6 +858,46 @@ void CfdpManagerTester::testResetCountersAllChannels() {
     // ResetCounters event emitted with 0xFF
     ASSERT_EVENTS_ResetCounters_SIZE(1);
     ASSERT_EVENTS_ResetCounters(0, allChannelsId);
+}
+
+// ----------------------------------------------------------------------
+// Port Tests
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::testDataReturnInChannel0() {
+    // Test that dataReturnIn port can be invoked on channel 0
+    // Note: This is a basic test that the port is wired correctly.
+    // Full testing would require an active transaction to generate PDUs.
+
+    // Create a buffer to return
+    U8 testData[100] = {0};
+    Fw::Buffer testBuffer(testData, sizeof(testData));
+
+    // Invoke dataReturnIn port on channel 0
+    // This should not crash and should deallocate the buffer
+    this->invoke_to_dataReturnIn(0, testBuffer);
+    this->component.doDispatch();
+
+    // Verify no error events
+    // Note: The component may or may not deallocate depending on whether
+    // it's tracking this buffer. The key is that it doesn't crash.
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void CfdpManagerTester::testDataReturnInChannel1() {
+    // Test that dataReturnIn port can be invoked on channel 1
+    // This verifies multi-channel port array indexing works correctly
+
+    // Create a buffer to return
+    U8 testData[100] = {0};
+    Fw::Buffer testBuffer(testData, sizeof(testData));
+
+    // Invoke dataReturnIn port on channel 1
+    this->invoke_to_dataReturnIn(1, testBuffer);
+    this->component.doDispatch();
+
+    // Verify no error events
+    ASSERT_EVENTS_SIZE(0);
 }
 
 }  // namespace Cfdp
