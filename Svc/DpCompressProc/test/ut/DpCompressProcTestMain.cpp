@@ -15,6 +15,18 @@ TEST(Nominal, Compressible) {
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x55),
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x23)};
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
+
+    Svc::Testers::procRequest.CompressTest();
+}
+
+TEST(Nominal, Disabled) {
+    const FwSizeType chunk_size = 4096;
+    std::vector<Svc::AbstractState::Chunk> chunks = {Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0xA5),
+                                                     Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x55),
+                                                     Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x23)};
+    Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = false;
 
     Svc::Testers::procRequest.CompressTest();
 }
@@ -26,6 +38,7 @@ TEST(Nominal, MinimalCompressible) {
         Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x55),
         Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x23)};
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
 
     Svc::Testers::procRequest.CompressTest();
 }
@@ -47,6 +60,7 @@ TEST(Nominal, Uncompressible) {
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::UNCOMPRESSED, 0x55),
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::UNCOMPRESSED, 0x23)};
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
 
     Svc::Testers::procRequest.CompressTest();
 }
@@ -68,6 +82,7 @@ TEST(Nominal, MixedFirstUncompressible) {
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x55),
                                                      Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0x23)};
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
 
     Svc::Testers::procRequest.CompressTest();
 }
@@ -85,6 +100,7 @@ TEST(Nominal, FailureHelper) {
         chunks.push_back(chunk);
     };
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
 
     Svc::Testers::procRequest.CompressTest();
 }
@@ -118,6 +134,7 @@ TEST(Nominal, Random) {
         }
 
         Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+        Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
 
         Svc::Testers::procRequest.CompressTest();
         if (!Svc::Testers::procRequest.testState.abstractState.success_) {

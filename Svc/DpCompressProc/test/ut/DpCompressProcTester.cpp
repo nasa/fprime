@@ -222,4 +222,27 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
     abstractState.success_ = true;
 }
 
+void DpCompressProcTester::test_chunks_disabled(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks) {
+    Fw::Buffer container_buf = this->abstractState.build_compress_buffer(chunk_size, chunks);
+
+    test_chunks_helper(chunk_size, chunks, container_buf);
+
+    this->clearHistory();
+
+    abstractState.success_ = false;
+    abstractState.reset_compressed_size_state();
+
+    paramSet_CHUNK_SIZE(4096, Fw::ParamValid::VALID);
+    paramSet_ENABLE(Fw::Enabled::DISABLED, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const FwSizeType pre_comp_size = container_buf.getSize();
+
+    this->invoke_to_procRequest(0, container_buf);
+
+    ASSERT_EQ(container_buf.getSize(), pre_comp_size);
+
+    delete[] container_buf.getData();
+}
+
 }  // namespace Svc

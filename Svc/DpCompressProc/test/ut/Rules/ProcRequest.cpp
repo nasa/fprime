@@ -29,7 +29,11 @@ bool TestState ::precondition__ProcRequest__Compressible() const {
 
 void TestState ::action__ProcRequest__Compressible() {
     this->clearHistory();
-    test_chunks(abstractState.chunk_size_, abstractState.chunks_);
+    if (abstractState.param_enabled_) {
+        test_chunks(abstractState.chunk_size_, abstractState.chunks_);
+    } else {
+        test_chunks_disabled(abstractState.chunk_size_, abstractState.chunks_);
+    }
 }
 
 namespace ProcRequest {

@@ -40,6 +40,8 @@ class DpCompressProcTester : public DpCompressProcGTestBase {
 
     void test_chunks(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks);
 
+    void test_chunks_disabled(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks);
+
   public:
     // ----------------------------------------------------------------------
     // Tests

@@ -36,7 +36,9 @@ class AbstractState {
     // ----------------------------------------------------------------------
 
     //! Construct an AbstractState object
-    AbstractState() {}
+    AbstractState() {
+        param_enabled_ = true;
+    }
 
     enum Compressible { UNCOMPRESSED = 'U', COMPRESSED = 'C', MINIMAL_COMPRESSED = 'M', MAXIMAL_COMPRESSED = 'X' };
 
@@ -73,6 +75,8 @@ class AbstractState {
         }
         last_uncompressed_ = compressible == AbstractState::UNCOMPRESSED;
     }
+
+    bool param_enabled_;
 
   public:
     // ----------------------------------------------------------------------
