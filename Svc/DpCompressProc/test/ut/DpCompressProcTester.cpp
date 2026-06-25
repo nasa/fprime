@@ -203,6 +203,8 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
         ASSERT_EQ(uncompressed_data.size(), chunk_size * chunks.size());
 
         abstractState.check_uncompressed_data(uncompressed_data, chunk_size, chunks);
+
+        ASSERT_EVENTS_CompressionComplete_SIZE(1);
     } else {
         ASSERT_EQ(container_out.getDataSize(), chunk_size * chunks.size());
 
@@ -213,6 +215,8 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
                   0);
 
         delete[] exp_buf.getData();
+
+        ASSERT_EVENTS_CompressionComplete_SIZE(0);
     }
 
     abstractState.success_ = true;
