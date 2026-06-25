@@ -70,7 +70,8 @@ void ComStub::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port 
         this->m_reinitialize = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
         this->m_retry_count = 0;  // Reset retry count
         if (sendStatus.e == Drv::ByteStreamStatus::OP_OK) {
-            this->comStatusOut_out(0, Fw::Success::SUCCESS);
+            Fw::Success comSuccess = Fw::Success::SUCCESS;
+            this->comStatusOut_out(0, comSuccess);
         } else {
             this->requestDriverReinitialization();
         }
@@ -132,7 +133,8 @@ void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
     } else {
         // Exceeded retry limit - drop the stale packet and keep the queue moving
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-        this->comStatusOut_out(0, Fw::Success::SUCCESS);
+        Fw::Success comSuccess = Fw::Success::SUCCESS;
+        this->comStatusOut_out(0, comSuccess);
         Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
         this->m_retry_count = 0;  // Reset retry count
     }
