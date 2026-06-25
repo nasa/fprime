@@ -81,6 +81,9 @@ class ComStub final : public ComStubComponentBase {
     //! Handle retry logic for asynchronous sends
     void handleAsyncRetry(Fw::Buffer& fwBuffer);
 
+    //! Ask the driver to reinitialize and signal readiness when done
+    void requestDriverReinitialization();
+
     // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------

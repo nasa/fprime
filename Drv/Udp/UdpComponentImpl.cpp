@@ -100,4 +100,8 @@ void UdpComponentImpl::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwB
     this->deallocate_out(0, fwBuffer);
 }
 
+void UdpComponentImpl::reinitializationRequestIn_handler(const FwIndexType portNum) {
+    this->connected();
+}
+
 }  // end namespace Drv

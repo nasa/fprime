@@ -327,6 +327,12 @@ void LinuxUartDriver::recvReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBu
     this->deallocate_out(0, fwBuffer);
 }
 
+void LinuxUartDriver::reinitializationRequestIn_handler(const FwIndexType portNum) {
+    if (this->isConnected_ready_OutputPort(0)) {
+        this->ready_out(0);
+    }
+}
+
 void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
     Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017

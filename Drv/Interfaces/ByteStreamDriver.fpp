@@ -14,6 +14,9 @@ module Drv {
         @ Status is returned, and ownership of the buffer is retained by the caller
         guarded input port $send: Drv.ByteStreamSend
 
+        @ Request driver reinitialization after a send failure
+        guarded input port reinitializationRequestIn: Drv.ByteStreamReinitialize
+
         @ Port receiving back ownership of data sent out on $recv port
         guarded input port recvReturnIn: Fw.BufferSend
     }
@@ -37,5 +40,8 @@ module Drv {
 
         @ Send (write) data to the driver
         output port drvSendOut: Drv.ByteStreamSend
+
+        @ Request driver reinitialization after a send failure
+        output port drvReinitializationRequestOut: Drv.ByteStreamReinitialize
     }
 }

@@ -85,8 +85,10 @@ void ComStubTester ::test_fail() {
     if (this->m_test_mode == TestMode::SYNC) {
         this->m_sync_send_status = Drv::ByteStreamStatus::OTHER_ERROR;
         invoke_to_dataIn(0, buffer, context);
-        ASSERT_from_drvSendOut_SIZE(1);     // no retry on error (only one send)
-        ASSERT_from_dataReturnOut_SIZE(1);  // no drvSendOut sent when failure
+        ASSERT_from_drvSendOut_SIZE(1);
+        ASSERT_from_dataReturnOut_SIZE(1);
+        ASSERT_from_drvReinitializationRequestOut_SIZE(1);
+        ASSERT_from_comStatusOut_SIZE(0);
     } else if (this->m_test_mode == TestMode::ASYNC) {
         invoke_to_dataIn(0, buffer, context);
         ASSERT_from_drvAsyncSendOut_SIZE(1);
@@ -126,6 +128,8 @@ void ComStubTester ::test_retry_async() {
     ASSERT_from_drvAsyncSendOut_SIZE(
         static_cast<U32>(this->component.RETRY_LIMIT));  // no drvAsyncSendOut sent when SEND_RETRY
     ASSERT_from_dataReturnOut_SIZE(1);                   // buffer ownership was returned
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success::SUCCESS);
     ASSERT_EQ(this->component.m_retry_count, 0);
 }
 
@@ -144,7 +148,24 @@ void ComStubTester ::test_retry_sync() {
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_from_dataReturnOut(0, buffer, context);
     ASSERT_from_comStatusOut_SIZE(1);
-    ASSERT_from_comStatusOut(0, Fw::Success::FAILURE);
+    ASSERT_from_comStatusOut(0, Fw::Success::SUCCESS);
+}
+
+void ComStubTester ::test_error_reinitialization() {
+    this->test_initial();
+    U8 storage[8];
+    Fw::Buffer buffer(storage, sizeof(storage));
+    this->fill(buffer);
+    ComCfg::FrameContext context;
+
+    this->m_sync_send_status = Drv::ByteStreamStatus::OTHER_ERROR;
+    invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_drvReinitializationRequestOut_SIZE(1);
+    ASSERT_from_comStatusOut_SIZE(0);
+
+    invoke_to_drvConnected(0);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success::SUCCESS);
 }
 
 void ComStubTester ::test_retry_reset_sync() {
@@ -234,6 +255,7 @@ void ComStubTester ::connectPortsWithTestMode(TestMode mode) {
     this->component.set_dataOut_OutputPort(0, this->get_from_dataOut(0));
     this->component.set_dataReturnOut_OutputPort(0, this->get_from_dataReturnOut(0));
     this->component.set_drvReceiveReturnOut_OutputPort(0, this->get_from_drvReceiveReturnOut(0));
+    this->component.set_drvReinitializationRequestOut_OutputPort(0, this->get_from_drvReinitializationRequestOut(0));
     if (mode == TestMode::SYNC) {
         // Connect synchronous send port
         this->component.set_drvSendOut_OutputPort(0, this->get_from_drvSendOut(0));
@@ -258,6 +280,10 @@ Drv::ByteStreamStatus ComStubTester ::from_drvSendOut_handler(const FwIndexType 
         return Drv::ByteStreamStatus::OP_OK;  // if limit exceeded and no retry fail, return success
     }
     return this->m_sync_send_status;
+}
+
+void ComStubTester ::from_drvReinitializationRequestOut_handler(const FwIndexType portNum) {
+    this->pushFromPortEntry_drvReinitializationRequestOut();
 }
 
 }  // end namespace Svc

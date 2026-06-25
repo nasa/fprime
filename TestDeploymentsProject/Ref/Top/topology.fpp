@@ -123,6 +123,7 @@ module Ref {
       # ComStub <-> ComDriver (Downlink)
       ComCcsds.Subtopology.drvSendOut -> comDriver.$send
       comDriver.ready                 -> ComCcsds.Subtopology.drvConnected
+      ComCcsds.Subtopology.drvReinitializationRequestOut -> comDriver.reinitializationRequestIn
     }
 
     connections Ref {

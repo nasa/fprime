@@ -172,6 +172,8 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
                               Fw::Buffer& fwBuffer  //!< The buffer
                               ) override;
 
+    void reinitializationRequestIn_handler(const FwIndexType portNum) override;
+
     Drv::TcpServerSocket m_socket;  //!< Socket implementation
 
     FwSizeType m_allocation_size;  //!< Member variable to store the buffer size

@@ -202,6 +202,9 @@ module ComFprime {
         @ Input port receiving the ready signal when the ByteStream driver has connected
         port drvConnected        = comStub.drvConnected
 
+        @ Output port requesting driver reinitialization after a send failure
+        port drvReinitializationRequestOut = comStub.drvReinitializationRequestOut
+
         # Buffer management for ComDriver
         @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
         port commsBufferGetCallee = commsBufferManager.bufferGetCallee

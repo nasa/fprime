@@ -24,4 +24,7 @@ module Drv {
     @ Signal indicating the driver is ready to send and received data
     port ByteStreamReady()
 
+    @ Request that the driver reinitialize and signal readiness when done
+    port ByteStreamReinitialize()
+
 }

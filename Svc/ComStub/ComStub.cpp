@@ -69,10 +69,11 @@ void ComStub::drvAsyncSendReturnIn_handler(FwIndexType portNum,   //!< The port 
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
         this->m_reinitialize = (sendStatus.e != Drv::ByteStreamStatus::OP_OK);
         this->m_retry_count = 0;  // Reset retry count
-        // Send Com status
-        Fw::Success comSuccess =
-            (sendStatus.e == Drv::ByteStreamStatus::OP_OK) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;
-        this->comStatusOut_out(0, comSuccess);
+        if (sendStatus.e == Drv::ByteStreamStatus::OP_OK) {
+            this->comStatusOut_out(0, Fw::Success::SUCCESS);
+        } else {
+            this->requestDriverReinitialization();
+        }
     }
 }
 
@@ -83,6 +84,12 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, c
 // ----------------------------------------------------------------------
 // Helper method implementations
 // ----------------------------------------------------------------------
+
+void ComStub::requestDriverReinitialization() {
+    if (this->isConnected_drvReinitializationRequestOut_OutputPort(0)) {
+        this->drvReinitializationRequestOut_out(0);
+    }
+}
 
 void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
     Drv::ByteStreamStatus sendStatus = Drv::ByteStreamStatus::SEND_RETRY;
@@ -98,14 +105,18 @@ void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameC
         comSuccess = Fw::Success::SUCCESS;
     } else if (sendStatus == Drv::ByteStreamStatus::SEND_RETRY) {
         Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
+        comSuccess = Fw::Success::SUCCESS;
     } else {
-        // Other error - need to reinitialize
+        // Other error - wait for the driver to reinitialize before unblocking the queue
         this->m_reinitialize = true;
+        this->requestDriverReinitialization();
     }
 
-    // Return buffer and send status
+    // Return buffer ownership
     this->dataReturnOut_out(0, sendBuffer, context);
-    this->comStatusOut_out(0, comSuccess);
+    if (sendStatus == Drv::ByteStreamStatus::OP_OK || sendStatus == Drv::ByteStreamStatus::SEND_RETRY) {
+        this->comStatusOut_out(0, comSuccess);
+    }
 }
 
 void ComStub::handleAsynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
@@ -119,10 +130,9 @@ void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
         this->m_retry_count++;
         this->drvAsyncSendOut_out(0, fwBuffer);
     } else {
-        // Exceeded retry limit - return buffer and notify failure
+        // Exceeded retry limit - drop the stale packet and keep the queue moving
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
-        Fw::Success comStatus = Fw::Success::FAILURE;
-        this->comStatusOut_out(0, comStatus);
+        this->comStatusOut_out(0, Fw::Success::SUCCESS);
         Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
         this->m_retry_count = 0;  // Reset retry count
     }

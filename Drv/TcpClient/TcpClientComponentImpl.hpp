@@ -138,6 +138,8 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
                               Fw::Buffer& fwBuffer  //!< The buffer
                               ) override;
 
+    void reinitializationRequestIn_handler(const FwIndexType portNum) override;
+
     Drv::TcpClientSocket m_socket;  //!< Socket implementation
 
     // Member variable to store the buffer size

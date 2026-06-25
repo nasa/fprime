@@ -89,4 +89,8 @@ void TcpClientComponentImpl::recvReturnIn_handler(FwIndexType portNum, Fw::Buffe
     this->deallocate_out(0, fwBuffer);
 }
 
+void TcpClientComponentImpl::reinitializationRequestIn_handler(const FwIndexType portNum) {
+    this->connected();
+}
+
 }  // end namespace Drv

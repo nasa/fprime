@@ -43,6 +43,11 @@ TEST(Sync, RetryReset) {
     tester.test_retry_reset_sync();
 }
 
+TEST(Sync, ErrorReinitialization) {
+    Svc::ComStubTester tester(Svc::ComStubTester::TestMode::SYNC);
+    tester.test_error_reinitialization();
+}
+
 TEST(Async, Retry) {
     Svc::ComStubTester tester(Svc::ComStubTester::TestMode::ASYNC);
     tester.test_retry_async();

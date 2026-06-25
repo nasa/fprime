@@ -67,6 +67,10 @@ class ComStubTester : public ComStubGTestBase {
     //!
     void test_buffer_return();
 
+    //! Tests driver reinitialization after a send error
+    //!
+    void test_error_reinitialization();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports (test harness)
@@ -74,6 +78,9 @@ class ComStubTester : public ComStubGTestBase {
 
     //! Handler for from_drvSendOut
     Drv::ByteStreamStatus from_drvSendOut_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer);
+
+    //! Handler for from_drvReinitializationRequestOut
+    void from_drvReinitializationRequestOut_handler(const FwIndexType portNum);
 
   private:
     // ----------------------------------------------------------------------
