@@ -32,14 +32,6 @@
     "generate-args": "-DFW_ASSERT_LEVEL=4"
   },
   {
-    "name": "ampcs-compatible",
-    "generate-args": "-DFW_AMPCS_COMPATIBLE=1"
-  },
-  {
-    "name": "no-printf",
-    "generate-args": "-DFW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING=0"
-  },
-  {
     "name": "no-port-serialization",
     "generate-args": "-DFW_PORT_SERIALIZATION=0"
   },

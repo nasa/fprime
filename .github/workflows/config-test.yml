@@ -7,26 +7,14 @@ name: "Config Test"
 on:
   push:
     branches: [ devel, release/** ]
-    paths:
-      - 'default/config/**'
-      - 'Fw/**'
-      - 'Svc/**'
-      - 'Drv/**'
-      - 'Os/**'
-      - 'cmake/**'
-      - 'ci/config-profiles.json'
-      - '.github/workflows/config-test.yml'
   pull_request:
     branches: [ devel, release/** ]
-    paths:
-      - 'default/config/**'
-      - 'Fw/**'
-      - 'Svc/**'
-      - 'Drv/**'
-      - 'Os/**'
-      - 'cmake/**'
-      - 'ci/config-profiles.json'
-      - '.github/workflows/config-test.yml'
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
   workflow_dispatch:
     inputs:
       profiles:
