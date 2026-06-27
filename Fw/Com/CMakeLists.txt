@@ -10,7 +10,6 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/Com.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/ComPacket.cpp"
-    "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ComBuffer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/ComPacket.hpp"
