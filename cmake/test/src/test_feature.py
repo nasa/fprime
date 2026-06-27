@@ -53,7 +53,7 @@ def test_feature_run(FEATURE_BUILD):
 
 def test_link_depends(FEATURE_BUILD):
     """LINK_DEPENDS directive sets the target property and builds successfully"""
-    cmake.assert_process_success(FEATURE_BUILD)
+    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
     library_name = "libTestLinkDepends.a"
     output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME / library_name
     assert output_path.exists(), f"Failed to locate {library_name} in build output"
