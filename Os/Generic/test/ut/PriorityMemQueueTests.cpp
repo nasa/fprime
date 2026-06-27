@@ -605,9 +605,10 @@ static Os::Generic::PriorityMemQueue* setupPartialPriorityQueue(FwEnumStoreType 
                                                                 bool required,
                                                                 const char* queueName) {
     PriorityMemQueueTestHelper::resetConfig();
+    // using static to ensure the config persists for the lifetime of the queue in the test
     static Os::Generic::PriorityMemQueue::QueuePriorityConfig cfgs[] = {{0, 64, 10}, {2, 32, 5}};
-    Os::Generic::PriorityMemQueue::QueueConfig qCfg = {queueId, 2, cfgs};
-    Os::Generic::PriorityMemQueue::QueueConfig qCfgs[] = {qCfg};
+    static Os::Generic::PriorityMemQueue::QueueConfig qCfgs[1];
+    qCfgs[0] = {queueId, 2, cfgs};
     Os::Generic::PriorityMemQueue::configure(qCfgs, 1, required,
                                              Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
