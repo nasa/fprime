@@ -28,6 +28,9 @@ void connectPorts(Svc::EventManager& impl, Svc::EventManagerTester& tester) {
 
     impl.set_PktSend_OutputPort(0, tester.get_from_PktSend(0));
 
+    impl.set_Time_OutputPort(0, tester.get_from_Time(0));
+    impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
+
 #if FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
 #endif

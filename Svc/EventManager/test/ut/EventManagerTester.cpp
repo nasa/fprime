@@ -341,7 +341,8 @@ void EventManagerTester::runFilterDump() {
     this->m_impl.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_DUMP_FILTER_STATE, cmdSeq, Fw::CmdResponse::OK);
-    ASSERT_EVENTS_SIZE(6 + 3);
+    // 6 severity filters + 3 ID filters + 1 dropped count
+    ASSERT_EVENTS_SIZE(6 + 3 + 1);
     ASSERT_EVENTS_SEVERITY_FILTER_STATE_SIZE(6);
     ASSERT_EVENTS_SEVERITY_FILTER_STATE(0, FilterSeverity::WARNING_HI, true);
     ASSERT_EVENTS_SEVERITY_FILTER_STATE(1, FilterSeverity::WARNING_LO, false);
@@ -349,6 +350,11 @@ void EventManagerTester::runFilterDump() {
     ASSERT_EVENTS_SEVERITY_FILTER_STATE(3, FilterSeverity::ACTIVITY_HI, false);
     ASSERT_EVENTS_SEVERITY_FILTER_STATE(4, FilterSeverity::ACTIVITY_LO, true);
     ASSERT_EVENTS_SEVERITY_FILTER_STATE(5, FilterSeverity::DIAGNOSTIC, true);
+    ASSERT_EVENTS_EVENTS_DROPPED_SIZE(1);
+    ASSERT_EVENTS_EVENTS_DROPPED(0, 0);
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_EventsDropped_SIZE(1);
+    ASSERT_TLM_EventsDropped(0, 0);
 }
 
 void EventManagerTester::runEventFatal() {

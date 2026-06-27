@@ -77,6 +77,9 @@ module Svc {
     @ Port for emitting text events
     text event port LogText
 
+    @ Port for emitting telemetry
+    telemetry port Tlm
+
     @ Port for getting the time
     time get port Time
 
@@ -101,6 +104,13 @@ module Svc {
     @ Dump the filter states via events
     async command DUMP_FILTER_STATE \
       opcode 3
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ Number of events dropped due to queue full
+    telemetry EventsDropped: U32 update on change
 
     # ----------------------------------------------------------------------
     # Events
@@ -146,6 +156,14 @@ module Svc {
       severity warning low \
       id 4 \
       format "ID filter ID {} not found."
+
+    @ Report number of events dropped due to queue full
+    event EVENTS_DROPPED(
+                           count: U32 @< Number of events dropped
+                         ) \
+      severity activity low \
+      id 5 \
+      format "{} events dropped due to queue full"
 
   }
 
