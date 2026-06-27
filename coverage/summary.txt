@@ -31,9 +31,7 @@ Drv/TcpClient/TcpClientComponentImpl.cpp      40      30    75%   53-54,56,75-77
 Drv/TcpServer/TcpServerComponentImpl.cpp      72      61    84%   60,101-103,123-125,129-131,134
 Drv/Udp/UdpComponentImpl.cpp                  47      32    68%   41-42,61-62,64,83-88,92-94,97
 Fw/Buffer/Buffer.cpp                          96      81    84%   120,124,128,138,144,148,158,160-161,165-170
-Fw/Cmd/CmdArgBuffer.cpp                       24      13    54%   6-9,15-18,22,34-35
 Fw/Cmd/CmdPacket.cpp                          23      19    82%   21,23-24,40
-Fw/Com/ComBuffer.cpp                          24      21    87%   22,34-35
 Fw/Com/ComPacket.cpp                          10      10   100%
 Fw/Comp/ActiveComponentBase.cpp               62       6     9%   11,13,15,30-31,35,39,42,48-52,54-59,61-62,65-66,69-70,72,77,80-83,86-88,90,93-96,98-102,104,106-108,111-112,114,116,118-119,121,126
 Fw/Comp/PassiveComponentBase.cpp              25      10    40%   12-13,16-20,22,27-28,30,35,46-48
@@ -81,7 +79,6 @@ Fw/FilePacket/PathName.cpp                    26      22    84%   36,46,60,69
 Fw/FilePacket/StartPacket.cpp                 40      33    82%   44,52,60,74,82,90,98
 Fw/Fpy/StatementArgBuffer.cpp                 38      25    65%   7-10,23,35-36,49,59-60,68,70-71
 Fw/LanguageHelpers.hpp                        14      14   100%
-Fw/Log/LogBuffer.cpp                          24      13    54%   6-9,15-18,22,34-35
 Fw/Log/LogPacket.cpp                          46      40    87%   22,27,32,42,47,52
 Fw/Logger/Logger.cpp                          15      15   100%
 Fw/Logger/Logger.hpp                           1       1   100%
@@ -92,15 +89,12 @@ Fw/Port/InputSerializePort.cpp                18      16    88%   37-38
 Fw/Port/OutputPortBase.cpp                    17      15    88%   37-38
 Fw/Port/OutputSerializePort.cpp                7       5    71%   20-21
 Fw/Port/PortBase.cpp                          45      17    37%   9-11,48-49,52,57,64-66,68-71,76-77,80-81,83,87,92,95,97,101,103-105,107
-Fw/Prm/PrmBuffer.cpp                          24      17    70%   6-9,22,34-35
 Fw/SerializableFile/SerializableFile.cpp      50      45    90%   45-46,56,77-78
-Fw/Sm/SmSignalBuffer.cpp                      30       0     0%   6-11,13,15,17-19,21-23,25-27,30-31,33-35,38-39,42-43,46-47,50-51
 Fw/Test/String.hpp                            10       0     0%   25,29,31-33,41-43,46,48
 Fw/Test/UnitTestAssert.cpp                    47       0     0%   22-32,34-35,37,39-40,42-43,47,49,51,63,65-73,75,84-93,95-96,99-101
 Fw/Time/Time.cpp                             158     158   100%
 Fw/Time/TimeInterval.cpp                      86      80    93%   60,62,65,67,102-103
 Fw/Time/TimeInterval.hpp                       2       2   100%
-Fw/Tlm/TlmBuffer.cpp                          24      13    54%   6-9,15-18,22,34-35
 Fw/Tlm/TlmPacket.cpp                          69      46    66%   41,45,75,81,87,109,115,121,127,129-131,134,137,139-141,144-146,148-149,151
 Fw/Types/Assert.cpp                           96      74    77%   17,19-21,73-75,77,86-87,90-91,93-94,124-125,127-128,194-195,207-208
 Fw/Types/Assert.hpp                            2       2   100%
@@ -109,6 +103,7 @@ Fw/Types/ByteArray.hpp                         2       2   100%
 Fw/Types/ConstExternalString.hpp              12      12   100%
 Fw/Types/ConstStringBase.cpp                  44      35    79%   40-41,44-45,86,89,100-102
 Fw/Types/ExternalString.hpp                   24      24   100%
+Fw/Types/LinearBufferTemplate.hpp             19      18    94%   46
 Fw/Types/MallocAllocator.cpp                  10       9    90%   26
 Fw/Types/MallocAllocator.hpp                   2       2   100%
 Fw/Types/MemAllocator.cpp                     32      31    96%   62
@@ -357,5 +352,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17663   14327    81%
+TOTAL                                      17532   14268    81%
 ------------------------------------------------------------------------------

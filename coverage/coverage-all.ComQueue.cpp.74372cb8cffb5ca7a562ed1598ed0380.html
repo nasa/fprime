@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-27 00:48:37</td>
+      <td>2026-06-27 03:27:12</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>165</td>
-      <td>185</td>
-      <td class="coverage-medium">89.2%</td>
+      <td>164</td>
+      <td>184</td>
+      <td class="coverage-medium">89.1%</td>
     </tr>
   </table>
 </div>
@@ -78,7 +78,7 @@
     <tr><td><a href="#l222">Svc::ComQueue::bufferQueueIn_handler(short, Fw::Buffer&amp;) (line 222)</a></td><td>called 22 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l299">Svc::ComQueue::bufferQueueIn_overflowHook(short, Fw::Buffer&amp;) (line 299)</a></td><td>called 2 times</td><td>90.0%</td></tr>
     <tr><td><a href="#l50">Svc::ComQueue::cleanup() (line 50)</a></td><td>called 22 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l216">Svc::ComQueue::comPacketQueueIn_handler(short, Fw::ComBuffer&amp;, unsigned int) (line 216)</a></td><td>called 41 times</td><td>74.0%</td></tr>
+    <tr><td><a href="#l216">Svc::ComQueue::comPacketQueueIn_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 216)</a></td><td>called 41 times</td><td>74.0%</td></tr>
     <tr><td><a href="#l235">Svc::ComQueue::comStatusIn_handler(short, Fw::Success&amp;) (line 235)</a></td><td>called 55 times</td><td>67.0%</td></tr>
     <tr><td><a href="#l57">Svc::ComQueue::configure(Svc::ComQueue::QueueConfigurationTable, int, Fw::MemAllocator&amp;) (line 57)</a></td><td>called 21 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l275">Svc::ComQueue::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 275)</a></td><td>called 44 times</td><td>87.0%</td></tr>
@@ -88,7 +88,7 @@
     <tr><td><a href="#l420">Svc::ComQueue::processQueue() (line 420)</a></td><td>called 49 times</td><td>91.0%</td></tr>
     <tr><td><a href="#l257">Svc::ComQueue::run_handler(short, unsigned int) (line 257)</a></td><td>called 1 time</td><td>78.0%</td></tr>
     <tr><td><a href="#l379">Svc::ComQueue::sendBuffer(Fw::Buffer&amp;, short) (line 379)</a></td><td>called 16 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l361">Svc::ComQueue::sendComBuffer(Fw::ComBuffer&amp;, short) (line 361)</a></td><td>called 28 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l361">Svc::ComQueue::sendComBuffer(Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, short) (line 361)</a></td><td>called 28 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l48">Svc::ComQueue::~ComQueue() (line 48)</a></td><td>called 22 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -3084,11 +3084,10 @@
       <td class="lineno"><a id="l363" href="#l363">363</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 28 times.</div>
-            <div class="takenBranch">&check; Branch 12 taken 28 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 28 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 28 times.</div>
           </div>
         </details>
       </td>

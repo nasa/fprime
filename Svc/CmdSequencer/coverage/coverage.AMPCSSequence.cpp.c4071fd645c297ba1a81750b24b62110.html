@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-27 00:50:15</td>
+      <td>2026-06-27 03:29:02</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>111</td>
-      <td>130</td>
-      <td class="coverage-medium">85.4%</td>
+      <td>110</td>
+      <td>129</td>
+      <td class="coverage-medium">85.3%</td>
     </tr>
   </table>
 </div>
@@ -88,7 +88,7 @@
     <tr><td><a href="#l75">Svc::AMPCSSequence::readSequenceFile(Fw::ConstStringBase const&amp;) (line 75)</a></td><td>called 33 times</td><td>74.0%</td></tr>
     <tr><td><a href="#l196">Svc::AMPCSSequence::readSequenceHeader() (line 196)</a></td><td>called 33 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l139">Svc::AMPCSSequence::reset() (line 139)</a></td><td>called 29 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l311">Svc::AMPCSSequence::translateCommand(Fw::ComBuffer&amp;, unsigned short) (line 311)</a></td><td>called 165 times</td><td>90.0%</td></tr>
+    <tr><td><a href="#l311">Svc::AMPCSSequence::translateCommand(Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned short) (line 311)</a></td><td>called 165 times</td><td>90.0%</td></tr>
     <tr><td><a href="#l95">Svc::AMPCSSequence::validateCRC() (line 95)</a></td><td>called 29 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l105">Svc::AMPCSSequence::validateRecords() (line 105)</a></td><td>called 28 times</td><td>94.0%</td></tr>
   </table>
@@ -2906,12 +2906,6 @@
     <tr class="source-line">
       <td class="lineno"><a id="l336" href="#l336">336</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 165 times.</div>
-          </div>
-        </details>
       </td>
       <td class="linecount coveredLine">165</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">comBuffer</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">();</span></td>

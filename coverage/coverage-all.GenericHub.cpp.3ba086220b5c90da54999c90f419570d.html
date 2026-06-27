@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-06-27 00:48:37</td>
+      <td>2026-06-27 03:27:12</td>
     </tr>
   </table>
 </div>
@@ -52,8 +52,8 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>155</td>
-      <td>181</td>
+      <td>154</td>
+      <td>180</td>
       <td class="coverage-medium">85.6%</td>
     </tr>
   </table>
@@ -73,13 +73,13 @@
     <tr><td><a href="#l27">Svc::GenericHub::GenericHub(char const*) (line 27)</a></td><td>called 14 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l52">Svc::GenericHub::bufferIn_handler(short, Fw::Buffer&amp;) (line 52)</a></td><td>called 4992 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l57">Svc::GenericHub::bufferOutReturn_handler(short, Fw::Buffer&amp;) (line 57)</a></td><td>called 4992 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l62">Svc::GenericHub::cmdDispIn_handler(short, Fw::ComBuffer&amp;, unsigned int) (line 62)</a></td><td>called 1 time</td><td>82.0%</td></tr>
+    <tr><td><a href="#l62">Svc::GenericHub::cmdDispIn_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 62)</a></td><td>called 1 time</td><td>82.0%</td></tr>
     <tr><td><a href="#l79">Svc::GenericHub::cmdRespIn_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 79)</a></td><td>called 1 time</td><td>78.0%</td></tr>
-    <tr><td><a href="#l257">Svc::GenericHub::eventIn_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::LogBuffer&amp;) (line 257)</a></td><td>called 1 time</td><td>80.0%</td></tr>
+    <tr><td><a href="#l257">Svc::GenericHub::eventIn_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 257)</a></td><td>called 1 time</td><td>80.0%</td></tr>
     <tr><td><a href="#l99">Svc::GenericHub::fromBufferDriver_handler(short, Fw::Buffer&amp;) (line 99)</a></td><td>called 10031 times</td><td>84.0%</td></tr>
     <tr><td><a href="#l31">Svc::GenericHub::send_data(Svc::GenericHub::HubType, short, unsigned char const*, unsigned long) (line 31)</a></td><td>called 10024 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l298">Svc::GenericHub::serialIn_handler(short, Fw::LinearBufferBase&amp;) (line 298)</a></td><td>called 5028 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l279">Svc::GenericHub::tlmIn_handler(short, unsigned int, Fw::Time&amp;, Fw::TlmBuffer&amp;) (line 279)</a></td><td>called 1 time</td><td>79.0%</td></tr>
+    <tr><td><a href="#l279">Svc::GenericHub::tlmIn_handler(short, unsigned int, Fw::Time&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 279)</a></td><td>called 1 time</td><td>79.0%</td></tr>
     <tr><td><a href="#l252">Svc::GenericHub::toBufferDriverReturn_handler(short, Fw::Buffer&amp;) (line 252)</a></td><td>called 10031 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l29">Svc::GenericHub::~GenericHub() (line 29)</a></td><td>called 14 times</td><td>100.0%</td></tr>
   </table>
@@ -637,11 +637,10 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 12 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 1 times.</div>
           </div>
         </details>
       </td>
