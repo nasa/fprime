@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include "Os/ValidateFile.hpp"
+#include "Os/ValidatedFile.hpp"
 #include "Svc/BufferLogger/BufferLogger.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -164,51 +164,18 @@ bool BufferLogger::File ::writeBytes(const void* const data, const FwSizeType le
     return status;
 }
 
-Os::ValidateFile::Status BufferLogger::File ::translateHashFileStatus(const Os::File::Status fileStatus) {
-    switch (fileStatus) {
-        case Os::File::OP_OK:
-            return Os::ValidateFile::VALIDATION_OK;
-        case Os::File::DOESNT_EXIST:
-            return Os::ValidateFile::VALIDATION_FILE_DOESNT_EXIST;
-        case Os::File::NO_PERMISSION:
-            return Os::ValidateFile::VALIDATION_FILE_NO_PERMISSION;
-        case Os::File::NO_SPACE:
-            return Os::ValidateFile::NO_SPACE;
-        case Os::File::BAD_SIZE:
-            return Os::ValidateFile::VALIDATION_FILE_BAD_SIZE;
-        default:
-            return Os::ValidateFile::OTHER_ERROR;
-    }
-}
-
 void BufferLogger::File ::writeHashFile() {
     // Finalize the incrementally computed hash
     Utils::HashBuffer hashBuffer;
     this->m_hash.finalize(hashBuffer);
 
-    // Generate hash file name
-    Fw::String hashFileName;
-    Utils::Hash::addFileExtension(this->m_name, hashFileName);
-
-    // Write hash to file
-    Os::File hashFile;
-    Os::File::Status status = hashFile.open(hashFileName.toChar(), Os::File::OPEN_WRITE);
-    if (status != Os::File::OP_OK) {
-        Fw::LogStringArg logStringArg(hashFileName.toChar());
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
-                                                                      this->translateHashFileStatus(status));
-        return;
+    // Write hash file via ValidatedFile
+    Os::ValidatedFile validatedFile(this->m_name.toChar());
+    const Os::ValidateFile::Status status = validatedFile.createHashFile(hashBuffer);
+    if (status != Os::ValidateFile::VALIDATION_OK) {
+        Fw::LogStringArg logStringArg(validatedFile.getHashFileName().toChar());
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, status);
     }
-
-    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getSize());
-    status = hashFile.write(hashBuffer.getBuffAddr(), size);
-    if (status != Os::File::OP_OK || static_cast<FwSizeType>(size) != hashBuffer.getSize()) {
-        Fw::LogStringArg logStringArg(hashFileName.toChar());
-        Os::ValidateFile::Status valStatus = (status != Os::File::OP_OK) ? this->translateHashFileStatus(status)
-                                                                         : Os::ValidateFile::VALIDATION_FILE_BAD_SIZE;
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, valStatus);
-    }
-    hashFile.close();
 }
 
 bool BufferLogger::File ::flush() {
