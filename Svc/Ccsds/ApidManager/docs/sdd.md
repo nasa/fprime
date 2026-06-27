@@ -6,8 +6,7 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 ## Functionality
 
-- Maintains a `Fw::ArrayMap` of APIDs and their associated 14-bit sequence counts.
-- Expects the APID table to be large enough to hold all valid configured APID values. An assertion failure occurs if the table is full when a new APID is inserted.
+- Maintains a `Fw::ArrayMap` of APIDs and their associated 14-bit sequence counts. The map is sized to the number of APIDs configured in the ComCfg.Apid enum.
 - Provides a way to retrieve the current sequence count for a given APID through a port call.
 - Provides a way to validate a received sequence count for a given APID through a port call.
 
