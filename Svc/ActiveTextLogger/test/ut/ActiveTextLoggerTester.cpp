@@ -378,7 +378,7 @@ void ActiveTextLoggerTester ::testSeverityFilter() {
     Fw::Time timeTag(TimeBase::TB_NONE, 1, 0);
 
     // Disable WARNING_LO severity
-    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, false);
+    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, Fw::Enabled::DISABLED);
 
     // Send WARNING_LO event (filtered) followed by WARNING_HI event (passes)
     // Only WARNING_HI should appear in output.
@@ -409,7 +409,7 @@ void ActiveTextLoggerTester ::testSeverityFilter() {
     ASSERT_EQ(1U, lineCount);
 
     // Re-enable WARNING_LO
-    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, true);
+    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, Fw::Enabled::ENABLED);
 
     // Clean up
     remove("test_severity_filter");
@@ -426,7 +426,7 @@ void ActiveTextLoggerTester ::testSeverityFilterDiagnosticDisabled() {
     ASSERT_TRUE(stat);
 
     // Disable DIAGNOSTIC severity
-    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, false);
+    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::DISABLED);
 
     FwEventIdType id = 1;
     Fw::Time timeTag(TimeBase::TB_NONE, 1, 0);
@@ -457,7 +457,7 @@ void ActiveTextLoggerTester ::testSeverityFilterDiagnosticDisabled() {
     ASSERT_EQ(1U, lineCount);
 
     // Re-enable DIAGNOSTIC
-    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, true);
+    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::ENABLED);
 
     // Clean up
     remove("test_diag_filter");

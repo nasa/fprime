@@ -5,31 +5,31 @@ namespace Svc {
 
 EventSeverityFilter::EventSeverityFilter() {
     for (FwSizeType i = 0; i < NUM_FILTER_LEVELS; i++) {
-        this->m_enabled[i] = true;
+        this->m_enabled[i] = Fw::Enabled::ENABLED;
     }
 }
 
-void EventSeverityFilter::setFilter(Fw::LogSeverity severity, bool enabled) {
+void EventSeverityFilter::setFilter(Fw::LogSeverity severity, Fw::Enabled enabled) {
     FwSizeType index = 0;
-    if (toIndex(severity, index)) {
+    if (toIndex(severity, index) == Fw::Success::SUCCESS) {
         this->m_enabled[index] = enabled;
     }
 }
 
 bool EventSeverityFilter::isFiltered(Fw::LogSeverity severity) const {
     FwSizeType index = 0;
-    if (!toIndex(severity, index)) {
-        // FATAL is never filtered
+    if (toIndex(severity, index) != Fw::Success::SUCCESS) {
+        // FATAL / unknown are never filtered
         return false;
     }
-    return !this->m_enabled[index];
+    return this->m_enabled[index] == Fw::Enabled::DISABLED;
 }
 
-bool EventSeverityFilter::isEnabled(Fw::LogSeverity severity) const {
+Fw::Enabled EventSeverityFilter::isEnabled(Fw::LogSeverity severity) const {
     FwSizeType index = 0;
-    if (!toIndex(severity, index)) {
+    if (toIndex(severity, index) != Fw::Success::SUCCESS) {
         // FATAL is always enabled
-        return true;
+        return Fw::Enabled::ENABLED;
     }
     return this->m_enabled[index];
 }
@@ -39,36 +39,36 @@ const Fw::LogSeverity::t EventSeverityFilter::SEVERITY_ORDER[NUM_FILTER_LEVELS] 
     Fw::LogSeverity::ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_LO, Fw::LogSeverity::DIAGNOSTIC,
 };
 
-bool EventSeverityFilter::fromIndex(FwSizeType index, Fw::LogSeverity& severity) {
+Fw::Success EventSeverityFilter::fromIndex(FwSizeType index, Fw::LogSeverity& severity) {
     if (index >= NUM_FILTER_LEVELS) {
-        return false;
+        return Fw::Success::FAILURE;
     }
     severity = SEVERITY_ORDER[index];
-    return true;
+    return Fw::Success::SUCCESS;
 }
 
-bool EventSeverityFilter::toIndex(Fw::LogSeverity severity, FwSizeType& index) {
+Fw::Success EventSeverityFilter::toIndex(Fw::LogSeverity severity, FwSizeType& index) {
     switch (severity.e) {
         case Fw::LogSeverity::WARNING_HI:
             index = 0;
-            return true;
+            return Fw::Success::SUCCESS;
         case Fw::LogSeverity::WARNING_LO:
             index = 1;
-            return true;
+            return Fw::Success::SUCCESS;
         case Fw::LogSeverity::COMMAND:
             index = 2;
-            return true;
+            return Fw::Success::SUCCESS;
         case Fw::LogSeverity::ACTIVITY_HI:
             index = 3;
-            return true;
+            return Fw::Success::SUCCESS;
         case Fw::LogSeverity::ACTIVITY_LO:
             index = 4;
-            return true;
+            return Fw::Success::SUCCESS;
         case Fw::LogSeverity::DIAGNOSTIC:
             index = 5;
-            return true;
+            return Fw::Success::SUCCESS;
         default:
-            return false;
+            return Fw::Success::FAILURE;
     }
 }
 

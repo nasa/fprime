@@ -18,8 +18,8 @@ class ConsoleTextLoggerImpl final : public PassiveTextLoggerComponentBase {
 
     //! Set the filter state for a severity level
     //! \param severity The severity level to configure (FATAL is ignored)
-    //! \param enabled true = events pass through, false = events are dropped
-    void setSeverityFilter(Fw::LogSeverity severity, bool enabled);
+    //! \param enabled ENABLED = events pass through, DISABLED = events are dropped
+    void setSeverityFilter(Fw::LogSeverity severity, Fw::Enabled enabled);
 
   private:
     // downcalls for input ports

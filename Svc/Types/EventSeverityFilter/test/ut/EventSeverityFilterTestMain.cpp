@@ -7,13 +7,13 @@ TEST(EventSeverityFilter, DefaultState) {
     EventSeverityFilter filter;
 
     // All severity levels should be enabled by default
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::WARNING_HI));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::WARNING_LO));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::COMMAND));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::ACTIVITY_HI));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::ACTIVITY_LO));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::DIAGNOSTIC));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::FATAL));
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::WARNING_HI), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::WARNING_LO), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::COMMAND), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::ACTIVITY_HI), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::ACTIVITY_LO), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::DIAGNOSTIC), Fw::Enabled::ENABLED);
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::FATAL), Fw::Enabled::ENABLED);
 
     // Nothing should be filtered in default state
     ASSERT_FALSE(filter.isFiltered(Fw::LogSeverity::WARNING_HI));
@@ -26,7 +26,6 @@ TEST(EventSeverityFilter, DefaultState) {
 }
 
 TEST(EventSeverityFilter, DisableEachSeverity) {
-    // Verify each severity level can be individually disabled
     const Fw::LogSeverity::t severities[] = {
         Fw::LogSeverity::WARNING_HI,  Fw::LogSeverity::WARNING_LO,  Fw::LogSeverity::COMMAND,
         Fw::LogSeverity::ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_LO, Fw::LogSeverity::DIAGNOSTIC,
@@ -34,17 +33,15 @@ TEST(EventSeverityFilter, DisableEachSeverity) {
 
     for (const auto sev : severities) {
         EventSeverityFilter filter;
-        filter.setFilter(sev, false);
+        filter.setFilter(sev, Fw::Enabled::DISABLED);
 
-        // Only the disabled severity should be filtered
         ASSERT_TRUE(filter.isFiltered(sev));
-        ASSERT_FALSE(filter.isEnabled(sev));
+        ASSERT_EQ(filter.isEnabled(sev), Fw::Enabled::DISABLED);
 
-        // All other severities should still pass
         for (const auto otherSev : severities) {
             if (otherSev != sev) {
                 ASSERT_FALSE(filter.isFiltered(otherSev));
-                ASSERT_TRUE(filter.isEnabled(otherSev));
+                ASSERT_EQ(filter.isEnabled(otherSev), Fw::Enabled::ENABLED);
             }
         }
     }
@@ -53,48 +50,43 @@ TEST(EventSeverityFilter, DisableEachSeverity) {
 TEST(EventSeverityFilter, FatalNeverFiltered) {
     EventSeverityFilter filter;
 
-    // Disable all non-FATAL severities
-    filter.setFilter(Fw::LogSeverity::WARNING_HI, false);
-    filter.setFilter(Fw::LogSeverity::WARNING_LO, false);
-    filter.setFilter(Fw::LogSeverity::COMMAND, false);
-    filter.setFilter(Fw::LogSeverity::ACTIVITY_HI, false);
-    filter.setFilter(Fw::LogSeverity::ACTIVITY_LO, false);
-    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, false);
+    filter.setFilter(Fw::LogSeverity::WARNING_HI, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::WARNING_LO, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::COMMAND, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::ACTIVITY_HI, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::ACTIVITY_LO, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::DISABLED);
 
-    // FATAL should still pass through
     ASSERT_FALSE(filter.isFiltered(Fw::LogSeverity::FATAL));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::FATAL));
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::FATAL), Fw::Enabled::ENABLED);
 
     // Attempting to disable FATAL should have no effect
-    filter.setFilter(Fw::LogSeverity::FATAL, false);
+    filter.setFilter(Fw::LogSeverity::FATAL, Fw::Enabled::DISABLED);
     ASSERT_FALSE(filter.isFiltered(Fw::LogSeverity::FATAL));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::FATAL));
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::FATAL), Fw::Enabled::ENABLED);
 }
 
 TEST(EventSeverityFilter, EnableAfterDisable) {
     EventSeverityFilter filter;
 
-    // Disable DIAGNOSTIC
-    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, false);
+    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::DISABLED);
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::DIAGNOSTIC));
 
-    // Re-enable DIAGNOSTIC
-    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, true);
+    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::ENABLED);
     ASSERT_FALSE(filter.isFiltered(Fw::LogSeverity::DIAGNOSTIC));
-    ASSERT_TRUE(filter.isEnabled(Fw::LogSeverity::DIAGNOSTIC));
+    ASSERT_EQ(filter.isEnabled(Fw::LogSeverity::DIAGNOSTIC), Fw::Enabled::ENABLED);
 }
 
 TEST(EventSeverityFilter, DisableAllNonFatal) {
     EventSeverityFilter filter;
 
-    filter.setFilter(Fw::LogSeverity::WARNING_HI, false);
-    filter.setFilter(Fw::LogSeverity::WARNING_LO, false);
-    filter.setFilter(Fw::LogSeverity::COMMAND, false);
-    filter.setFilter(Fw::LogSeverity::ACTIVITY_HI, false);
-    filter.setFilter(Fw::LogSeverity::ACTIVITY_LO, false);
-    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, false);
+    filter.setFilter(Fw::LogSeverity::WARNING_HI, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::WARNING_LO, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::COMMAND, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::ACTIVITY_HI, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::ACTIVITY_LO, Fw::Enabled::DISABLED);
+    filter.setFilter(Fw::LogSeverity::DIAGNOSTIC, Fw::Enabled::DISABLED);
 
-    // All non-FATAL should be filtered
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::WARNING_HI));
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::WARNING_LO));
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::COMMAND));
@@ -102,7 +94,6 @@ TEST(EventSeverityFilter, DisableAllNonFatal) {
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::ACTIVITY_LO));
     ASSERT_TRUE(filter.isFiltered(Fw::LogSeverity::DIAGNOSTIC));
 
-    // FATAL should still pass
     ASSERT_FALSE(filter.isFiltered(Fw::LogSeverity::FATAL));
 }
 

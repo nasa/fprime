@@ -10,12 +10,12 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= PASSIVE_TEXT_LOGGER_ID_F
 ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName)
     : PassiveTextLoggerComponentBase(compName), m_numFilteredIDs(0), m_severityFilter() {
     // Set severity filter defaults from config
-    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, PASSIVE_TEXT_LOGGER_FILTER_WARNING_HI_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, PASSIVE_TEXT_LOGGER_FILTER_WARNING_LO_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, PASSIVE_TEXT_LOGGER_FILTER_COMMAND_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, PASSIVE_TEXT_LOGGER_FILTER_ACTIVITY_HI_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, PASSIVE_TEXT_LOGGER_FILTER_ACTIVITY_LO_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, PASSIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, PassiveTextLoggerCfg::FILTER_WARNING_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, PassiveTextLoggerCfg::FILTER_WARNING_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, PassiveTextLoggerCfg::FILTER_COMMAND_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, PassiveTextLoggerCfg::FILTER_ACTIVITY_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, PassiveTextLoggerCfg::FILTER_ACTIVITY_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, PassiveTextLoggerCfg::FILTER_DIAGNOSTIC_DEFAULT);
 }
 
 ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
@@ -30,7 +30,7 @@ void ConsoleTextLoggerImpl::configure(const FwEventIdType* filteredIds, FwSizeTy
     }
 }
 
-void ConsoleTextLoggerImpl::setSeverityFilter(Fw::LogSeverity severity, bool enabled) {
+void ConsoleTextLoggerImpl::setSeverityFilter(Fw::LogSeverity severity, Fw::Enabled enabled) {
     this->m_severityFilter.setFilter(severity, enabled);
 }
 

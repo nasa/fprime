@@ -1,20 +1,22 @@
 #ifndef Config_PassiveTextLoggerCfg_HPP_
 #define Config_PassiveTextLoggerCfg_HPP_
 
+#include <Fw/Types/EnabledEnumAc.hpp>
+
 enum {
     PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE = 25,  //!< Size of event ID filter
 };
 
 // Severity filter defaults for PassiveTextLogger
-// true = events of this severity pass through (are logged)
-// false = events of this severity are filtered out (dropped)
-enum {
-    PASSIVE_TEXT_LOGGER_FILTER_WARNING_HI_DEFAULT = true,   //!< WARNING HI events pass through
-    PASSIVE_TEXT_LOGGER_FILTER_WARNING_LO_DEFAULT = true,   //!< WARNING LO events pass through
-    PASSIVE_TEXT_LOGGER_FILTER_COMMAND_DEFAULT = true,      //!< COMMAND events pass through
-    PASSIVE_TEXT_LOGGER_FILTER_ACTIVITY_HI_DEFAULT = true,  //!< ACTIVITY HI events pass through
-    PASSIVE_TEXT_LOGGER_FILTER_ACTIVITY_LO_DEFAULT = true,  //!< ACTIVITY LO events pass through
-    PASSIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT = true,   //!< DIAGNOSTIC events pass through
-};
+// Fw::Enabled::ENABLED  = events pass through (are logged)
+// Fw::Enabled::DISABLED = events are filtered out (dropped)
+namespace PassiveTextLoggerCfg {
+static const Fw::Enabled FILTER_WARNING_HI_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_WARNING_LO_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_COMMAND_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_ACTIVITY_HI_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_ACTIVITY_LO_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_DIAGNOSTIC_DEFAULT = Fw::Enabled::ENABLED;
+}  // namespace PassiveTextLoggerCfg
 
 #endif /* Config_PassiveTextLoggerCfg_HPP_ */

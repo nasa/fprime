@@ -8,16 +8,19 @@
 #ifndef Config_EventManagerCfg_HPP_
 #define Config_EventManagerCfg_HPP_
 
-// set default filters
+#include <Fw/Types/EnabledEnumAc.hpp>
 
-enum {
-    FILTER_WARNING_HI_DEFAULT = true,   //!< WARNING HI events are filtered at input
-    FILTER_WARNING_LO_DEFAULT = true,   //!< WARNING LO events are filtered at input
-    FILTER_COMMAND_DEFAULT = true,      //!< COMMAND events are filtered at input
-    FILTER_ACTIVITY_HI_DEFAULT = true,  //!< ACTIVITY HI events are filtered at input
-    FILTER_ACTIVITY_LO_DEFAULT = true,  //!< ACTIVITY LO  events are filtered at input
-    FILTER_DIAGNOSTIC_DEFAULT = false,  //!< DIAGNOSTIC events are filtered at input
-};
+// Severity filter defaults
+// Fw::Enabled::ENABLED  = events pass through
+// Fw::Enabled::DISABLED = events are filtered out
+namespace EventManagerCfg {
+static const Fw::Enabled FILTER_WARNING_HI_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_WARNING_LO_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_COMMAND_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_ACTIVITY_HI_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_ACTIVITY_LO_DEFAULT = Fw::Enabled::ENABLED;
+static const Fw::Enabled FILTER_DIAGNOSTIC_DEFAULT = Fw::Enabled::DISABLED;
+}  // namespace EventManagerCfg
 
 enum {
     TELEM_ID_FILTER_SIZE = 25,  //!< Size of telemetry ID filter
