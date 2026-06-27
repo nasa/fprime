@@ -5,11 +5,11 @@ namespace Svc {
 
 EventSeverityFilter::EventSeverityFilter() {
     for (FwSizeType i = 0; i < NUM_FILTER_LEVELS; i++) {
-        this->m_enabled[i] = Fw::Enabled::ENABLED;
+        this->m_enabled[i] = true;
     }
 }
 
-void EventSeverityFilter::setFilter(Fw::LogSeverity severity, Fw::Enabled enabled) {
+void EventSeverityFilter::setFilter(Fw::LogSeverity severity, bool enabled) {
     FwSizeType index = 0;
     if (toIndex(severity, index) == Fw::Success::SUCCESS) {
         this->m_enabled[index] = enabled;
@@ -22,14 +22,14 @@ bool EventSeverityFilter::isFiltered(Fw::LogSeverity severity) const {
         // FATAL / unknown are never filtered
         return false;
     }
-    return this->m_enabled[index] == Fw::Enabled::DISABLED;
+    return !this->m_enabled[index];
 }
 
-Fw::Enabled EventSeverityFilter::isEnabled(Fw::LogSeverity severity) const {
+bool EventSeverityFilter::isEnabled(Fw::LogSeverity severity) const {
     FwSizeType index = 0;
     if (toIndex(severity, index) != Fw::Success::SUCCESS) {
         // FATAL is always enabled
-        return Fw::Enabled::ENABLED;
+        return true;
     }
     return this->m_enabled[index];
 }

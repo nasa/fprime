@@ -17,12 +17,12 @@ typedef EventManager_FilterSeverity FilterSeverity;
 
 EventManager::EventManager(const char* name) : EventManagerComponentBase(name), m_severityFilter() {
     // set filter defaults
-    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, EventManagerCfg::FILTER_WARNING_HI_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, EventManagerCfg::FILTER_WARNING_LO_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, EventManagerCfg::FILTER_COMMAND_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, EventManagerCfg::FILTER_ACTIVITY_HI_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, EventManagerCfg::FILTER_ACTIVITY_LO_DEFAULT);
-    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, EventManagerCfg::FILTER_DIAGNOSTIC_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, FILTER_WARNING_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, FILTER_WARNING_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, FILTER_COMMAND_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, FILTER_ACTIVITY_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, FILTER_ACTIVITY_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, FILTER_DIAGNOSTIC_DEFAULT);
 }
 
 EventManager::~EventManager() {}
@@ -84,8 +84,7 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
     Fw::LogSeverity logSeverity;
     Fw::Success status = EventSeverityFilter::fromIndex(static_cast<FwSizeType>(filterLevel.e), logSeverity);
     FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(filterLevel.e));
-    Fw::Enabled enabled = (filterEnable.e == Enabled::ENABLED) ? Fw::Enabled::ENABLED : Fw::Enabled::DISABLED;
-    this->m_severityFilter.setFilter(logSeverity, enabled);
+    this->m_severityFilter.setFilter(logSeverity, filterEnable.e == Enabled::ENABLED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -124,8 +123,7 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
         Fw::LogSeverity logSeverity;
         Fw::Success status = EventSeverityFilter::fromIndex(static_cast<FwSizeType>(filter), logSeverity);
         FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(filter));
-        this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(
-            filterState, this->m_severityFilter.isEnabled(logSeverity) == Fw::Enabled::ENABLED);
+        this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(filterState, this->m_severityFilter.isEnabled(logSeverity));
     }
 
     // iterate through ID filter

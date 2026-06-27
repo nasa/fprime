@@ -3,7 +3,6 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Log/LogSeverityEnumAc.hpp>
-#include <Fw/Types/EnabledEnumAc.hpp>
 #include <Fw/Types/SuccessEnumAc.hpp>
 
 namespace Svc {
@@ -23,8 +22,8 @@ class EventSeverityFilter {
 
     //! Set the filter state for a severity level
     //! \param severity The severity level to configure (FATAL is ignored)
-    //! \param enabled ENABLED = events pass through, DISABLED = events are dropped
-    void setFilter(Fw::LogSeverity severity, Fw::Enabled enabled);
+    //! \param enabled true = events pass through, false = events are dropped
+    void setFilter(Fw::LogSeverity severity, bool enabled);
 
     //! Check if an event with the given severity should be filtered out
     //! \param severity The severity of the event
@@ -32,9 +31,9 @@ class EventSeverityFilter {
     bool isFiltered(Fw::LogSeverity severity) const;
 
     //! Query the filter state for a severity level
-    //! \param severity The severity level to query (FATAL always returns ENABLED)
-    //! \return ENABLED if events pass through, DISABLED if events are dropped
-    Fw::Enabled isEnabled(Fw::LogSeverity severity) const;
+    //! \param severity The severity level to query (FATAL always returns true)
+    //! \return true if events pass through, false if events are dropped
+    bool isEnabled(Fw::LogSeverity severity) const;
 
     //! Map a filter index (0-5) to the corresponding LogSeverity
     //! \param index The filter index
@@ -53,7 +52,7 @@ class EventSeverityFilter {
     static const Fw::LogSeverity::t SEVERITY_ORDER[NUM_FILTER_LEVELS];
 
     //! Per-severity enabled state
-    Fw::Enabled m_enabled[NUM_FILTER_LEVELS];
+    bool m_enabled[NUM_FILTER_LEVELS];
 };
 
 }  // namespace Svc
