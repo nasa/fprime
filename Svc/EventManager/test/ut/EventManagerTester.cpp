@@ -452,6 +452,18 @@ void EventManagerTester::runEventFatal() {
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, FilterSeverity::DIAGNOSTIC, Enabled::ENABLED);
 }
 
+void EventManagerTester::runDroppedTelemetry() {
+    this->clearHistory();
+
+    // invoke Run port to trigger telemetry write
+    this->invoke_to_Run(0, 0);
+    this->m_impl.doDispatch();
+
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_EventsDropped_SIZE(1);
+    ASSERT_TLM_EventsDropped(0, 0);
+}
+
 void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {
     Fw::LogBuffer buff;
 

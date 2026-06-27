@@ -31,6 +31,8 @@ void connectPorts(Svc::EventManager& impl, Svc::EventManagerTester& tester) {
     impl.set_Time_OutputPort(0, tester.get_from_Time(0));
     impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
 
+    tester.connect_to_Run(0, impl.get_Run_InputPort(0));
+
 #if FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
 #endif
@@ -121,6 +123,23 @@ TEST(EventManagerTest, InvalidCommands) {
     connectPorts(impl, tester);
 
     tester.runFilterInvalidCommands();
+}
+
+TEST(EventManagerTest, DroppedTelemetry) {
+    TEST_CASE(100.3.1, "Dropped event telemetry via rate group");
+
+    Svc::EventManager impl("EventManager");
+
+    impl.init(10, 0);
+
+    Svc::EventManagerTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runDroppedTelemetry();
 }
 
 TEST(EventManagerTest, FatalTesting) {

@@ -52,6 +52,9 @@ module Svc {
     @ FATAL event announce port
     output port FatalAnnounce: Svc.FatalEvent
 
+    @ Rate group input port for telemetry
+    async input port Run: Svc.Sched drop
+
     @ Ping input port
     async input port pingIn: Svc.Ping
 
