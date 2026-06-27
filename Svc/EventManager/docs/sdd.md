@@ -66,9 +66,9 @@ the F´ ground format and sent out using the `PktSend` port.
 
 #### 3.2.3 Dropped Event Reporting
 
-The `EventManager` component reports the number of events dropped due to internal queue overflow. The count is available
-via the `EventsDropped` telemetry channel and is also reported as an event when the `DUMP_FILTER_STATE` command is
-invoked. Events can be dropped when many events arrive simultaneously and the internal queue is full.
+The `EventManager` component reports the number of events dropped due to internal queue overflow via the
+`EventsDropped` telemetry channel. This channel updates on change, incrementing whenever the internal queue is full
+and an event is dropped.
 
 
 

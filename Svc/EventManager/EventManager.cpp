@@ -85,6 +85,9 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
     // send event to the logger thread
     this->loqQueue_internalInterfaceInvoke(id, timeTag, severity, args);
 
+    // report dropped event count via telemetry
+    this->tlmWrite_EventsDropped(this->getNumMsgsDropped());
+
     // if connected, announce the FATAL
     if (Fw::LogSeverity::FATAL == severity.e) {
         if (this->isConnected_FatalAnnounce_OutputPort(0)) {
@@ -158,11 +161,6 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     for (FwEventIdType ID : m_filteredIDs) {
         this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
     }
-
-    // report number of dropped events
-    const U32 numDropped = static_cast<U32>(this->getNumMsgsDropped());
-    this->log_ACTIVITY_LO_EVENTS_DROPPED(numDropped);
-    this->tlmWrite_EventsDropped(numDropped);
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

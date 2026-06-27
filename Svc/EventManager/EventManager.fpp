@@ -110,7 +110,7 @@ module Svc {
     # ----------------------------------------------------------------------
 
     @ Number of events dropped due to queue full
-    telemetry EventsDropped: U32 update on change
+    telemetry EventsDropped: FwSizeType update on change
 
     # ----------------------------------------------------------------------
     # Events
@@ -156,14 +156,6 @@ module Svc {
       severity warning low \
       id 4 \
       format "ID filter ID {} not found."
-
-    @ Report number of events dropped due to queue full
-    event EVENTS_DROPPED(
-                           count: U32 @< Number of events dropped
-                         ) \
-      severity activity low \
-      id 5 \
-      format "{} events dropped due to queue full"
 
   }
 
