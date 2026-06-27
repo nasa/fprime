@@ -17,6 +17,7 @@
 #include "Fw/Types/String.hpp"
 #include "Os/File.hpp"
 #include "Os/Mutex.hpp"
+#include "Os/ValidateFile.hpp"
 #include "Svc/BufferLogger/BufferLoggerComponentAc.hpp"
 #include "Utils/Hash/Hash.hpp"
 
@@ -111,6 +112,9 @@ class BufferLogger final : public BufferLoggerComponentBase {
         bool writeBytes(const void* const data,  //!< The data
                         const FwSizeType length  //!< The number of bytes to write
         );
+
+        //! Translate Os::File::Status to Os::ValidateFile::Status for hash file operations
+        static Os::ValidateFile::Status translateHashFileStatus(const Os::File::Status fileStatus);
 
         //! Write a hash file
         void writeHashFile();
