@@ -184,7 +184,7 @@ void BufferLogger::File ::writeHashFile() {
     }
 
     FwSizeType size = static_cast<FwSizeType>(hashBuffer.getSize());
-    status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
+    status = hashFile.write(hashBuffer.getBuffAddr(), size);
     if (status != Os::File::OP_OK || static_cast<FwSizeType>(size) != hashBuffer.getSize()) {
         Fw::LogStringArg logStringArg(hashFileName.toChar());
         this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
