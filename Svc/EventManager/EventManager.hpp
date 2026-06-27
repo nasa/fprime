@@ -54,9 +54,6 @@ class EventManager final : public EventManagerComponentBase {
                         U32 key                    /*!< Value to return to pinger*/
     );
 
-    //! Map FilterSeverity command enum to Fw::LogSeverity
-    static Fw::LogSeverity filterSeverityToLogSeverity(EventManager_FilterSeverity filterLevel);
-
     // Severity filter state (shared implementation)
     EventSeverityFilter m_severityFilter;
 

@@ -34,6 +34,19 @@ bool EventSeverityFilter::isEnabled(Fw::LogSeverity severity) const {
     return this->m_enabled[index];
 }
 
+const Fw::LogSeverity::t EventSeverityFilter::SEVERITY_ORDER[NUM_FILTER_LEVELS] = {
+    Fw::LogSeverity::WARNING_HI,  Fw::LogSeverity::WARNING_LO,  Fw::LogSeverity::COMMAND,
+    Fw::LogSeverity::ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_LO, Fw::LogSeverity::DIAGNOSTIC,
+};
+
+bool EventSeverityFilter::fromIndex(FwSizeType index, Fw::LogSeverity& severity) {
+    if (index >= NUM_FILTER_LEVELS) {
+        return false;
+    }
+    severity = SEVERITY_ORDER[index];
+    return true;
+}
+
 bool EventSeverityFilter::toIndex(Fw::LogSeverity severity, FwSizeType& index) {
     switch (severity.e) {
         case Fw::LogSeverity::WARNING_HI:

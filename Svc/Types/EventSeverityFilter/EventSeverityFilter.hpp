@@ -36,12 +36,21 @@ class EventSeverityFilter {
     //! \return true if events of this severity pass through
     bool isEnabled(Fw::LogSeverity severity) const;
 
+    //! Map a filter index (0-5) to the corresponding LogSeverity
+    //! \param index The filter index
+    //! \param severity Output: the corresponding LogSeverity
+    //! \return true if index is valid (0 to NUM_FILTER_LEVELS-1), false otherwise
+    static bool fromIndex(FwSizeType index, Fw::LogSeverity& severity);
+
   private:
     //! Map a LogSeverity to a filter array index
     //! \param severity The severity to map
     //! \param index Output: the resulting index
     //! \return true if severity is filterable (not FATAL), false otherwise
     static bool toIndex(Fw::LogSeverity severity, FwSizeType& index);
+
+    //! Severity values in filter index order
+    static const Fw::LogSeverity::t SEVERITY_ORDER[NUM_FILTER_LEVELS];
 
     //! Per-severity enabled state. true = events pass through.
     bool m_enabled[NUM_FILTER_LEVELS];

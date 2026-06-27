@@ -27,26 +27,6 @@ EventManager::EventManager(const char* name) : EventManagerComponentBase(name), 
 
 EventManager::~EventManager() {}
 
-Fw::LogSeverity EventManager::filterSeverityToLogSeverity(FilterSeverity filterLevel) {
-    switch (filterLevel.e) {
-        case FilterSeverity::WARNING_HI:
-            return Fw::LogSeverity::WARNING_HI;
-        case FilterSeverity::WARNING_LO:
-            return Fw::LogSeverity::WARNING_LO;
-        case FilterSeverity::COMMAND:
-            return Fw::LogSeverity::COMMAND;
-        case FilterSeverity::ACTIVITY_HI:
-            return Fw::LogSeverity::ACTIVITY_HI;
-        case FilterSeverity::ACTIVITY_LO:
-            return Fw::LogSeverity::ACTIVITY_LO;
-        case FilterSeverity::DIAGNOSTIC:
-            return Fw::LogSeverity::DIAGNOSTIC;
-        default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(filterLevel.e));
-            return Fw::LogSeverity::WARNING_HI;
-    }
-}
-
 void EventManager::LogRecv_handler(FwIndexType portNum,
                                    FwEventIdType id,
                                    Fw::Time& timeTag,
@@ -101,7 +81,9 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                FilterSeverity filterLevel,
                                                Enabled filterEnable) {
-    Fw::LogSeverity logSeverity = filterSeverityToLogSeverity(filterLevel);
+    Fw::LogSeverity logSeverity;
+    bool valid = EventSeverityFilter::fromIndex(static_cast<FwSizeType>(filterLevel.e), logSeverity);
+    FW_ASSERT(valid, static_cast<FwAssertArgType>(filterLevel.e));
     this->m_severityFilter.setFilter(logSeverity, filterEnable.e == Enabled::ENABLED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -138,7 +120,9 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     // first, iterate through severity filters
     for (FwEnumStoreType filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
         FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
-        Fw::LogSeverity logSeverity = filterSeverityToLogSeverity(filterState);
+        Fw::LogSeverity logSeverity;
+        bool valid = EventSeverityFilter::fromIndex(static_cast<FwSizeType>(filter), logSeverity);
+        FW_ASSERT(valid, static_cast<FwAssertArgType>(filter));
         this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(filterState, this->m_severityFilter.isEnabled(logSeverity));
     }
 
