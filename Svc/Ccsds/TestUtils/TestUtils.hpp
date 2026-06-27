@@ -4,6 +4,9 @@
 // \brief  Test utilities for CCSDS
 // ======================================================================
 
+#ifndef Svc_Ccsds_TestUtils_TestUtils_HPP
+#define Svc_Ccsds_TestUtils_TestUtils_HPP
+
 #include "Fw/Types/Optional.hpp"
 #include "config/ApidEnumAc.hpp"
 
@@ -21,3 +24,5 @@ Fw::Optional<ComCfg::Apid::T> getRandomApid();
 }  // namespace CcsdsTestUtils
 
 }  // namespace Svc
+
+#endif

@@ -6,8 +6,6 @@
 // These rules exercise the getApidSeqCountIn port.
 // ======================================================================
 
-#include <cstdio>
-
 #include "Svc/Ccsds/ApidManager/test/ut/ApidManagerTester.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
