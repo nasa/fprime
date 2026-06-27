@@ -28,12 +28,8 @@ TEST(EventSeverityFilter, DefaultState) {
 TEST(EventSeverityFilter, DisableEachSeverity) {
     // Verify each severity level can be individually disabled
     const Fw::LogSeverity::t severities[] = {
-        Fw::LogSeverity::WARNING_HI,
-        Fw::LogSeverity::WARNING_LO,
-        Fw::LogSeverity::COMMAND,
-        Fw::LogSeverity::ACTIVITY_HI,
-        Fw::LogSeverity::ACTIVITY_LO,
-        Fw::LogSeverity::DIAGNOSTIC,
+        Fw::LogSeverity::WARNING_HI,  Fw::LogSeverity::WARNING_LO,  Fw::LogSeverity::COMMAND,
+        Fw::LogSeverity::ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_LO, Fw::LogSeverity::DIAGNOSTIC,
     };
 
     for (const auto sev : severities) {
