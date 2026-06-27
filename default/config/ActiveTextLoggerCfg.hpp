@@ -14,7 +14,7 @@ enum {
     ACTIVE_TEXT_LOGGER_FILTER_COMMAND_DEFAULT = true,      //!< COMMAND events pass through
     ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_HI_DEFAULT = true,  //!< ACTIVITY HI events pass through
     ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_LO_DEFAULT = true,  //!< ACTIVITY LO events pass through
-    ACTIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT = true,   //!< DIAGNOSTIC events pass through
+    ACTIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT = false,  //!< DIAGNOSTIC events are filtered out
 };
 
 #endif /* Config_ActiveTextLoggerCfg_HPP_ */
