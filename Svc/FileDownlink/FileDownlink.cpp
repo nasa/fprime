@@ -12,6 +12,7 @@
 #include <Svc/FileDownlink/FileDownlink.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <FpConfig.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/QueueString.hpp>
 #include <limits>
@@ -45,13 +46,23 @@ namespace Svc {
 
   void FileDownlink ::
     configure(
-        U32 timeout,
+        U32 /*timeout*/,
         U32 cooldown,
         U32 cycleTime,
         U32 fileQueueDepth
     )
   {
-    this->m_timeout = timeout;
+    Fw::Logger::log("[WARNING] FileDownlink timeout is unused");
+    configure(cooldown, cycleTime, fileQueueDepth);
+  }
+
+  void FileDownlink ::
+    configure(
+        U32 cooldown,
+        U32 cycleTime,
+        U32 fileQueueDepth
+    )
+  {
     this->m_cooldown = cooldown;
     this->m_cycleTime = cycleTime;
     this->m_configured = true;
@@ -121,15 +132,7 @@ namespace Svc {
         break;
       }
       case Mode::WAIT: {
-        //If current timeout is too-high and we are waiting for a packet, issue a timeout
-        if (this->m_curTimer >= this->m_timeout) {
-          this->m_curTimer = 0;
-          this->log_WARNING_HI_DownlinkTimeout(this->m_file.getSourceName(), this->m_file.getDestName());
-          this->enterCooldown();
-          this->sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
-        } else { //Otherwise update the current counter
-          this->m_curTimer += m_cycleTime;
-        }
+        this->m_curTimer += m_cycleTime;
         break;
       }
       default:
@@ -184,16 +187,17 @@ namespace Svc {
         Fw::Buffer &fwBuffer
     )
   {
-	  //If this is a stale buffer (old, timed-out, or both), then ignore its return.
-	  //File downlink actions only respond to the return of the most-recently-sent buffer.
-	  if (this->m_lastBufferId != fwBuffer.getContext() + 1 ||
-	      this->m_mode.get() == Mode::IDLE) {
-		  return;
-	  }
-	  //Non-ignored buffers cannot be returned in "DOWNLINK" and "IDLE" state.  Only in "WAIT", "CANCEL" state.
-	  FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL, this->m_mode.get());
+      //If this is a stale buffer (old, timed-out, or both), then ignore its return.
+      //File downlink actions only respond to the return of the most-recently-sent buffer.
+      if (this->m_lastBufferId != fwBuffer.getContext() + 1 ||
+          this->m_mode.get() == Mode::IDLE ||
+          this->m_mode.get() == Mode::COOLDOWN) {
+          return;
+      }
+      //Non-ignored buffers cannot be returned in "DOWNLINK", "IDLE", or "COOLDOWN" state.  Only in "WAIT", "CANCEL" state.
+      FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL, this->m_mode.get());
       //If the last packet has been sent (and is returning now) then finish the file
-	  if (this->m_lastCompletedType == Fw::FilePacket::T_END ||
+      if (this->m_lastCompletedType == Fw::FilePacket::T_END ||
           this->m_lastCompletedType == Fw::FilePacket::T_CANCEL) {
           finishHelper(this->m_lastCompletedType == Fw::FilePacket::T_CANCEL);
           return;
@@ -501,7 +505,7 @@ namespace Svc {
           this->sendCancelPacket();
           this->m_lastCompletedType = Fw::FilePacket::T_CANCEL;
       }
-      //If in downlink mode and currently downlinking data then continue with the next packer
+      //If in downlink mode and currently downlinking data then continue with the next packet
       else if (this->m_mode.get() == Mode::DOWNLINK && this->m_lastCompletedType == Fw::FilePacket::T_START) {
           //Send the next packet, or fail doing so
           const Os::File::Status status = this->sendDataPacket(this->m_byteOffset);
