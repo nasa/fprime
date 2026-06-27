@@ -164,7 +164,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             set("LIST_${CURRENT_LIST_NAME}")
         # Check that file types' files exist
         elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${RESOLVED_ARGUMENT}")
-            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
+            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a ${CURRENT_LIST_NAME}")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)
             list(APPEND "LIST_${CURRENT_LIST_NAME}" "${ARGUMENT}")
