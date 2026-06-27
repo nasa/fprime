@@ -178,8 +178,7 @@ void BufferLogger::File ::writeHashFile() {
     Os::File::Status status = hashFile.open(hashFileName.toChar(), Os::File::OPEN_WRITE);
     if (status != Os::File::OP_OK) {
         Fw::LogStringArg logStringArg(hashFileName.toChar());
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
-                                                                     Os::ValidateFile::OTHER_ERROR);
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, Os::ValidateFile::OTHER_ERROR);
         return;
     }
 
@@ -187,8 +186,7 @@ void BufferLogger::File ::writeHashFile() {
     status = hashFile.write(hashBuffer.getBuffAddr(), size);
     if (status != Os::File::OP_OK || static_cast<FwSizeType>(size) != hashBuffer.getSize()) {
         Fw::LogStringArg logStringArg(hashFileName.toChar());
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
-                                                                     Os::ValidateFile::OTHER_ERROR);
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, Os::ValidateFile::OTHER_ERROR);
     }
     hashFile.close();
 }
