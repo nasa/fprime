@@ -11,8 +11,8 @@
 // ======================================================================
 
 #include "Os/ValidateFile.hpp"
-#include "Os/ValidatedFile.hpp"
 #include "Svc/BufferLogger/BufferLogger.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 
@@ -116,6 +116,8 @@ void BufferLogger::File ::open() {
         this->m_fileCounter++;
         // Reset bytes written
         this->m_bytesWritten = 0;
+        // Initialize incremental hash
+        this->m_hash.init();
         // Set mode
         this->m_mode = File::Mode::OPEN;
     } else {
@@ -150,6 +152,7 @@ bool BufferLogger::File ::writeBytes(const void* const data, const FwSizeType le
     bool status;
     if (fileStatus == Os::File::OP_OK && static_cast<FwSizeType>(size) == length) {
         this->m_bytesWritten += length;
+        this->m_hash.update(data, length);
         status = true;
     } else {
         Fw::LogStringArg string(this->m_name.toChar());
@@ -162,13 +165,32 @@ bool BufferLogger::File ::writeBytes(const void* const data, const FwSizeType le
 }
 
 void BufferLogger::File ::writeHashFile() {
-    Os::ValidatedFile validatedFile(this->m_name.toChar());
-    const Os::ValidateFile::Status status = validatedFile.createHashFile();
-    if (status != Os::ValidateFile::VALIDATION_OK) {
-        const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
+    // Finalize the incrementally computed hash
+    Utils::HashBuffer hashBuffer;
+    this->m_hash.finalize(hashBuffer);
+
+    // Generate hash file name
+    Fw::String hashFileName;
+    Utils::Hash::addFileExtension(this->m_name, hashFileName);
+
+    // Write hash to file
+    Os::File hashFile;
+    Os::File::Status status = hashFile.open(hashFileName.toChar(), Os::File::OPEN_WRITE);
+    if (status != Os::File::OP_OK) {
         Fw::LogStringArg logStringArg(hashFileName.toChar());
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, status);
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
+                                                                     Os::ValidateFile::OTHER_ERROR);
+        return;
     }
+
+    FwSizeType size = static_cast<FwSizeType>(hashBuffer.getSize());
+    status = hashFile.write(hashBuffer.getBuffAddr(), size, Os::File::WaitType::NO_WAIT);
+    if (status != Os::File::OP_OK || static_cast<FwSizeType>(size) != hashBuffer.getSize()) {
+        Fw::LogStringArg logStringArg(hashFileName.toChar());
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg,
+                                                                     Os::ValidateFile::OTHER_ERROR);
+    }
+    hashFile.close();
 }
 
 bool BufferLogger::File ::flush() {
