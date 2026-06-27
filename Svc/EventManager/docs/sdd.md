@@ -110,7 +110,7 @@ Date | Description
 9/7/2015 | Unit Test updates 
 10/28/2015 | Added FATAL announce port
 12/1/2020 | Removed event buffers and post-filter
-6/27/2026 | Added EventsDropped telemetry channel and EVENTS_DROPPED event
+6/27/2026 | Added EventsDropped telemetry channel and rate group port
 
 
 
