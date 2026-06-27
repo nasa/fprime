@@ -52,8 +52,11 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
                                    Fw::LogBuffer& args) {
-    // Assert valid severity value
+    // Assert and guard against invalid severity values
     FW_ASSERT(severity.isValid(), static_cast<FwAssertArgType>(severity.e));
+    if (!severity.isValid()) {
+        return;
+    }
 
     // Check severity filter (FATAL always passes through)
     if (this->m_severityFilter.isFiltered(severity)) {
