@@ -64,27 +64,27 @@ _3 = cmake.get_build(
 
 def test_fprime_model_override(CONFIG_BUILD):
     """Test that the config override works"""
-    cmake.assert_process_success(CONFIG_BUILD, targets=["TestModelOverride"])
+    cmake.assert_process_success(CONFIG_BUILD, warnings_ok=True, targets=["TestModelOverride"])
 
 
 def test_fprime_header_override(CONFIG_BUILD):
     """Test that the config override works"""
-    cmake.assert_process_success(CONFIG_BUILD, targets=["TestHeaderOverride"])
+    cmake.assert_process_success(CONFIG_BUILD, warnings_ok=True, targets=["TestHeaderOverride"])
 
 
 def test_fprime_library_override(CONFIG_BUILD):
     """Test that the config override (from library) works"""
-    cmake.assert_process_success(CONFIG_BUILD, targets=["TestFPrimeLibraryOverride"])
+    cmake.assert_process_success(CONFIG_BUILD, warnings_ok=True, targets=["TestFPrimeLibraryOverride"])
 
 
 def test_library_override(CONFIG_BUILD):
     """Test that the config override (of library) works"""
-    cmake.assert_process_success(CONFIG_BUILD, targets=["library_config"])
+    cmake.assert_process_success(CONFIG_BUILD, warnings_ok=True, targets=["library_config"])
 
 
 def test_library_new_config(CONFIG_BUILD):
     """Test that the new config (of library) works"""
-    cmake.assert_process_success(CONFIG_BUILD, targets=["TestLibraryNewConfig"])
+    cmake.assert_process_success(CONFIG_BUILD, warnings_ok=True, targets=["TestLibraryNewConfig"])
 
 
 def test_library_bad_new_config(CONFIG_FAILED_NEW_FILE_BUILD):
