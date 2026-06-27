@@ -6,6 +6,7 @@
 #
 ####
 register_fprime_module(
+  INTERFACE
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/SmSignalBuffer.hpp"
   DEPENDS
