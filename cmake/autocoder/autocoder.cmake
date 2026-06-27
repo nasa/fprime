@@ -35,6 +35,9 @@ function (run_ac_set BUILD_TARGET_NAME)
     endif()
     # Do not init GENERATED_FILE_LIST as it is read from previous AC runs above
     
+    # Save the original user-supplied autocoder inputs for validation after all autocoders run
+    set(ORIGINAL_AUTOCODER_INPUT_SOURCES "${AUTOCODER_INPUT_SOURCES}")
+
     # Create a hash of the autocoder set to isolate results
     string(SHA1 "AC_SET_HASH" "${AC_LIST}")
     
@@ -43,7 +46,24 @@ function (run_ac_set BUILD_TARGET_NAME)
         get_property(AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_AUTOCODER_INPUTS")
         list(APPEND AUTOCODER_INPUT_SOURCES ${AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES})
     endforeach()
-    
+
+    # Track which original autocoder inputs were handled by at least one autocoder in this run.
+    # This information is accumulated across all run_ac_set calls on this target and validated later
+    # by _validate_all_autocoder_inputs_handled (called after all targets have been processed).
+    # Skip tracking in sub-builds since validation is also skipped there.
+    if (NOT FPRIME_IS_SUB_BUILD AND ORIGINAL_AUTOCODER_INPUT_SOURCES AND AC_LIST)
+        normalize_paths(NORMALIZED_ORIGINAL_SOURCES "${ORIGINAL_AUTOCODER_INPUT_SOURCES}")
+        foreach(SOURCE IN LISTS NORMALIZED_ORIGINAL_SOURCES)
+            foreach(AC_CMAKE IN LISTS AC_LIST)
+                plugin_include_helper(AC_NAME "${AC_CMAKE}" is_supported setup_autocode get_generated_files get_dependencies)
+                cmake_language(CALL "${AC_NAME}_is_supported" "${SOURCE}")
+                if (IS_SUPPORTED)
+                    append_list_property("${SOURCE}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_HANDLED_AUTOCODER_INPUTS)
+                    break()
+                endif()
+            endforeach()
+        endforeach()
+    endif()
 
     # Read from hash-specific properties for this autocoder set
     get_property(AUTOCODER_GENERATED_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED")
@@ -232,6 +252,60 @@ function(_filter_sources OUTPUT_NAME)
     endforeach()
     set(${OUTPUT_NAME} "${OUTPUT_LIST}" PARENT_SCOPE)
 endfunction(_filter_sources)
+
+####
+# _validate_all_autocoder_inputs_handled:
+#
+# Validates that all user-supplied autocoder input sources were handled by at least one registered autocoder
+# across all run_ac_set calls on this target. This should be called after all targets have been processed
+# (i.e. after setup_module_targets / fprime_attach_custom_targets).
+#
+# Header files (.h, .hpp, .hh, .hxx) are excluded from this check as they may appear in AUTOCODER_INPUTS
+# for legacy compatibility with the old SOURCE_FILES interface.
+#
+# BUILD_TARGET_NAME: the build target to validate
+####
+function(_validate_all_autocoder_inputs_handled BUILD_TARGET_NAME)
+    # Sub-builds only perform specific tasks (dependency analysis, etc.) and do not register
+    # the full set of autocoders. Skip validation in that context.
+    if (FPRIME_IS_SUB_BUILD)
+        return()
+    endif()
+
+    # Get the originally-supplied autocoder inputs
+    get_target_property(SUPPLIED_AUTOCODER_INPUTS "${BUILD_TARGET_NAME}" SUPPLIED_AUTOCODER_INPUTS)
+    if (NOT SUPPLIED_AUTOCODER_INPUTS)
+        return()
+    endif()
+
+    # Get the list of sources that were handled by at least one autocoder
+    get_target_property(HANDLED_INPUTS "${BUILD_TARGET_NAME}" FPRIME_HANDLED_AUTOCODER_INPUTS)
+    if (NOT HANDLED_INPUTS)
+        set(HANDLED_INPUTS)
+    endif()
+
+    # Normalize for consistent comparison
+    normalize_paths(NORMALIZED_SUPPLIED "${SUPPLIED_AUTOCODER_INPUTS}")
+
+    foreach(SOURCE IN LISTS NORMALIZED_SUPPLIED)
+        # Skip header files - these end up in AUTOCODER_INPUTS for legacy compatibility
+        # with the old SOURCE_FILES interface but are not intended to be autocoded.
+        # Also skip .fppi files which are FPP include fragments listed in AUTOCODER_INPUTS
+        # for dependency tracking but processed indirectly through their parent .fpp files.
+        if (SOURCE MATCHES ".*\\.(h|hpp|hh|hxx|fppi)$")
+            continue()
+        endif()
+
+        # Check if this source was handled by any autocoder across all run_ac_set calls
+        list(FIND HANDLED_INPUTS "${SOURCE}" FOUND_INDEX)
+        if (FOUND_INDEX EQUAL -1)
+            message(FATAL_ERROR
+                "Source file '${SOURCE}' in AUTOCODER_INPUTS is not supported by any registered autocoder.\n"
+                "Please check the file extension and ensure it matches a supported autocoder format (e.g., .fpp)."
+            )
+        endif()
+    endforeach()
+endfunction()
 
 ####
 # __ac_process_sources:
