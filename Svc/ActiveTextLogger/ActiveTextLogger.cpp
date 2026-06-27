@@ -17,7 +17,15 @@ static_assert(std::numeric_limits<FwSizeType>::max() >= ACTIVE_TEXT_LOGGER_ID_FI
 // ----------------------------------------------------------------------
 
 ActiveTextLogger::ActiveTextLogger(const char* name)
-    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0) {}
+    : ActiveTextLoggerComponentBase(name), m_log_file(), m_numFilteredIDs(0), m_severityFilter() {
+    // Set severity filter defaults from config
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_HI, ACTIVE_TEXT_LOGGER_FILTER_WARNING_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::WARNING_LO, ACTIVE_TEXT_LOGGER_FILTER_WARNING_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::COMMAND, ACTIVE_TEXT_LOGGER_FILTER_COMMAND_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_HI, ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_HI_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::ACTIVITY_LO, ACTIVE_TEXT_LOGGER_FILTER_ACTIVITY_LO_DEFAULT);
+    this->m_severityFilter.setFilter(Fw::LogSeverity::DIAGNOSTIC, ACTIVE_TEXT_LOGGER_FILTER_DIAGNOSTIC_DEFAULT);
+}
 
 ActiveTextLogger::~ActiveTextLogger() {}
 
@@ -31,6 +39,10 @@ void ActiveTextLogger::configure(const FwEventIdType* filteredIds, FwSizeType co
     }
 }
 
+void ActiveTextLogger::setSeverityFilter(Fw::LogSeverity severity, bool enabled) {
+    this->m_severityFilter.setFilter(severity, enabled);
+}
+
 // ----------------------------------------------------------------------
 // Handlers to implement for typed input ports
 // ----------------------------------------------------------------------
@@ -40,11 +52,11 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
                                           Fw::Time& timeTag,
                                           const Fw::LogSeverity& severity,
                                           Fw::TextLogString& text) {
-    // Currently not doing any input filtering
-    // TKC - 5/3/2018 - remove diagnostic
-    if (Fw::LogSeverity::DIAGNOSTIC == severity.e) {
+    // Check severity filter
+    if (this->m_severityFilter.isFiltered(severity)) {
         return;
     }
+
     // Check event ID filters
     for (FwSizeType i = 0; i < this->m_numFilteredIDs; i++) {
         if (this->m_filteredIDs[i] == id) {
