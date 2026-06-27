@@ -10,7 +10,6 @@ import platform
 from . import cmake
 from . import settings
 
-
 TOOLCHAIN_NAME = "generic-native"
 
 
