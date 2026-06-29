@@ -6,11 +6,13 @@ import re # for reg expression matching of nav: block in mkdocs.yml
 MKDOCS_YML = Path("mkdocs.yml")
 output_file = "mkdocs_nav.yml"
 root = "docs"
-excluded_folders = {"Home", "docs-venv", "doxygen", "index", "INSTALL", "tutorials-hello-world", "tutorials-led-blinker", "tutorials-arduino-led-blinker", "tutorials-math-component"} # TO-DO: excl of INSTALL does not work yet
+excluded_folders = {"Home", "docs-venv", "doxygen", "index", "INSTALL", "tutorials-hello-world", "tutorials-led-blinker", "tutorials-arduino-led-blinker", "tutorials-math-component"}
+
+tab_order = ["getting-started", "tutorials", "user-manual", "how-to", "reference"]
 
 def build_nav_tree(path):
     nav = []
-    entries = sorted(os.listdir(path))
+    entries = sorted(os.listdir(path), key=lambda x: tab_order.index(x) if x in tab_order else len(tab_order))
 
     # Detect folder index.md first
     index_md_path = os.path.join(path, "index.md")
