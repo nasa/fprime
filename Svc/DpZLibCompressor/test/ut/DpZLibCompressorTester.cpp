@@ -64,6 +64,11 @@ void DpZLibCompressorTester ::compress(const std::vector<U8>& data,
         ASSERT_EQ(uncomp_data.size(), data.size());
 
         ASSERT_EQ(memcmp(uncomp_data.data(), data.data(), data.size()), 0);
+
+        ASSERT_EVENTS_ZLibMemoryUsage_SIZE(1);
+
+        ASSERT_EVENTS_ZLibCompression_SIZE(1);
+        ASSERT_EVENTS_ZLibCompression(0, buffer_data.size(), uncomp_buffer.getSize() - write_offset);
     } else {
         ASSERT_EQ(memcmp(uncomp_buffer.getData(), data.data(), data.size()), 0);
 
@@ -75,6 +80,12 @@ void DpZLibCompressorTester ::compress(const std::vector<U8>& data,
         if (!do_alloc_zlib_buffer_) {
             ASSERT_EVENTS_ZLibAllocBadBuffer_SIZE(1);
             ASSERT_EVENTS_ZLibAllocBadBuffer(0, zlib_alloc_size);
+        }
+
+        if (do_alloc_compression_buffer_ &&
+            do_alloc_zlib_buffer_) {
+            ASSERT_EVENTS_ZLibNoCompression_SIZE(1);
+            ASSERT_EVENTS_ZLibNoCompression(0, uncomp_buffer.getSize(), min_compression);
         }
     }
 
