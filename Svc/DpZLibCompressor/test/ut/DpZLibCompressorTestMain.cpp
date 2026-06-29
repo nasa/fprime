@@ -56,16 +56,6 @@ TEST(Uncompressed, RandomData) {
                     6);
 }
 
-TEST(Uncompressed, InsufficientZLibMem) {
-    Svc::DpZLibCompressorTester tester;
-
-    std::vector<U8> zeros(32 * 1024);
-
-    tester.compress(zeros, Svc::CompressionAlgorithm::UNCOMPRESSED, zeros.size(), header_size,
-                    // Need 268096 bytes for compression at level 6
-                    268095, 6);
-}
-
 TEST(Uncompressed, AboveMinSize) {
     Svc::DpZLibCompressorTester tester;
 
@@ -92,6 +82,16 @@ TEST(OffNominal, BadZLibAlloc) {
     std::vector<U8> zeros(32 * 1024);
 
     tester.compress(zeros, Svc::CompressionAlgorithm::UNCOMPRESSED, zeros.size(), header_size, 1 * 1024 * 1024, 6);
+}
+
+TEST(OffNominal, InsufficientZLibMem) {
+    Svc::DpZLibCompressorTester tester;
+
+    std::vector<U8> zeros(32 * 1024);
+
+    tester.compress_zlibiniterror(zeros, Svc::CompressionAlgorithm::UNCOMPRESSED, zeros.size(), header_size,
+                    // Need 268096 bytes for compression at level 6
+                    268095, 6);
 }
 
 int main(int argc, char** argv) {

@@ -99,4 +99,23 @@ std::vector<U8> DpZLibCompressorTester::zlib_inflate(const Fw::Buffer& comp_buff
     }
 }
 
+void DpZLibCompressorTester ::compress_zlibiniterror(
+                                       const std::vector<U8>& data,
+                                       const CompressionAlgorithm exp_alg,
+                                       const FwSizeType min_compression,
+                                       const FwSizeType write_offset,
+                                       const FwSizeType zlib_alloc_size,
+                                       const I8 compression_level) {
+    paramSet_ZLibBufferSize(zlib_alloc_size, Fw::ParamValid::VALID);
+    paramSet_CompressionLevel(compression_level, Fw::ParamValid::VALID);
+
+    this->component.loadParameters();
+
+    std::vector<U8> buffer_data = data;
+    Fw::Buffer uncomp_buffer(buffer_data.data(), buffer_data.size());
+    const CompressionAlgorithm alg = invoke_to_compressChunk(0, uncomp_buffer, min_compression, write_offset);
+    ASSERT_EVENTS_ZLibInitError_SIZE(1);
+    ASSERT_EQ(alg, exp_alg);
+}
+
 }  // namespace Svc
