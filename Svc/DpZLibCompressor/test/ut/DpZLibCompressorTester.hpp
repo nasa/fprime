@@ -57,13 +57,12 @@ class DpZLibCompressorTester final : public DpZLibCompressorGTestBase {
                   const I8 compression_level);
 
     //! Run compression and check results
-    void compress_zlibiniterror(
-                  const std::vector<U8>& data,
-                  const CompressionAlgorithm exp_alg,
-                  const FwSizeType min_compression,
-                  const FwSizeType write_offset,
-                  const FwSizeType zlib_alloc_size,
-                  const I8 compression_level);
+    void compress_zlibiniterror(const std::vector<U8>& data,
+                                const CompressionAlgorithm exp_alg,
+                                const FwSizeType min_compression,
+                                const FwSizeType write_offset,
+                                const FwSizeType zlib_alloc_size,
+                                const I8 compression_level);
 
   private:
     // ----------------------------------------------------------------------

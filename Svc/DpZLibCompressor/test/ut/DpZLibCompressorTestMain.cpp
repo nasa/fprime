@@ -90,8 +90,8 @@ TEST(OffNominal, InsufficientZLibMem) {
     std::vector<U8> zeros(32 * 1024);
 
     tester.compress_zlibiniterror(zeros, Svc::CompressionAlgorithm::UNCOMPRESSED, zeros.size(), header_size,
-                    // Need 268096 bytes for compression at level 6
-                    268095, 6);
+                                  // Need 268096 bytes for compression at level 6
+                                  268095, 6);
 }
 
 int main(int argc, char** argv) {

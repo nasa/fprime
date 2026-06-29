@@ -82,8 +82,7 @@ void DpZLibCompressorTester ::compress(const std::vector<U8>& data,
             ASSERT_EVENTS_ZLibAllocBadBuffer(0, zlib_alloc_size);
         }
 
-        if (do_alloc_compression_buffer_ &&
-            do_alloc_zlib_buffer_) {
+        if (do_alloc_compression_buffer_ && do_alloc_zlib_buffer_) {
             ASSERT_EVENTS_ZLibNoCompression_SIZE(1);
             ASSERT_EVENTS_ZLibNoCompression(0, uncomp_buffer.getSize(), min_compression);
         }
@@ -110,13 +109,12 @@ std::vector<U8> DpZLibCompressorTester::zlib_inflate(const Fw::Buffer& comp_buff
     }
 }
 
-void DpZLibCompressorTester ::compress_zlibiniterror(
-                                       const std::vector<U8>& data,
-                                       const CompressionAlgorithm exp_alg,
-                                       const FwSizeType min_compression,
-                                       const FwSizeType write_offset,
-                                       const FwSizeType zlib_alloc_size,
-                                       const I8 compression_level) {
+void DpZLibCompressorTester ::compress_zlibiniterror(const std::vector<U8>& data,
+                                                     const CompressionAlgorithm exp_alg,
+                                                     const FwSizeType min_compression,
+                                                     const FwSizeType write_offset,
+                                                     const FwSizeType zlib_alloc_size,
+                                                     const I8 compression_level) {
     paramSet_ZLibBufferSize(zlib_alloc_size, Fw::ParamValid::VALID);
     paramSet_CompressionLevel(compression_level, Fw::ParamValid::VALID);
 

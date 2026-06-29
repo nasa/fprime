@@ -222,7 +222,8 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
     abstractState.success_ = true;
 }
 
-void DpCompressProcTester::test_chunks_disabled(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks) {
+void DpCompressProcTester::test_chunks_disabled(const FwSizeStoreType chunk_size,
+                                                std::vector<AbstractState::Chunk> chunks) {
     Fw::Buffer container_buf = this->abstractState.build_compress_buffer(chunk_size, chunks);
 
     test_chunks_helper(chunk_size, chunks, container_buf);

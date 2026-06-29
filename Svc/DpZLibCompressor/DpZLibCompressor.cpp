@@ -145,8 +145,7 @@ voidpf DpZLibCompressor::zlib_alloc_fn(voidpf opaque, uInt items, uInt size) {
               static_cast<FwAssertArgType>(ctx->zlib_alloc_buffer.getSize()));
     const FwSizeType free_space = ctx->zlib_alloc_buffer.getSize() - ctx->bump_allocator;
 
-    const FwSizeType alloc_size = static_cast<FwSizeType>(items) *
-                                  static_cast<FwSizeType>(size);
+    const FwSizeType alloc_size = static_cast<FwSizeType>(items) * static_cast<FwSizeType>(size);
 
     if (free_space < alloc_size) {
         return Z_NULL;
