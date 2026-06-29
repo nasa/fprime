@@ -47,6 +47,7 @@ module ComCfg {
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
         apid: Apid                  @< 11 bits APID in CCSDS
+        hasSecHdr: bool             @< Secondary header flag for SpacePacketFramer
         sequenceCount: U16          @< 14 bit Sequence count - sequence count is incremented per APID
         vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
         pvn: Pvn                    @< Packet Version Number - used for AOS deframing to identify packet type
@@ -55,6 +56,7 @@ module ComCfg {
     } default {
         comQueueIndex = 0
         apid = Apid.FW_PACKET_UNKNOWN
+        hasSecHdr = false
         sequenceCount = 0
         vcId = 1
         pvn = Pvn.INVALID_UNINITIALIZED

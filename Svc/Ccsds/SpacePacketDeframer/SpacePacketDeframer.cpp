@@ -81,6 +81,10 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
 
+    // Extract secondary header flag
+    bool hasSecHdr = (header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) != 0;
+    contextCopy.set_hasSecHdr(hasSecHdr);
+
     // Validate with the ApidManager that the sequence count is correct
     U16 receivedSequenceCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
     (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);

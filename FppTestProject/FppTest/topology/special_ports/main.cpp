@@ -45,7 +45,7 @@ class FrameworkTester : public CompTester, public testing::Test {
             auto status = framework.queue_field.dequeue(got);           \
             EXPECT_EQ(status, Fw::Success::SUCCESS) << "Index: " << i;  \
             EXPECT_EQ(expected, got) << "Index: " << i;                 \
-            i += 1;                                                     \
+            i++;                                                        \
         }                                                               \
     }
 

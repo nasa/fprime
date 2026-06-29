@@ -30,6 +30,34 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
 with a ;. The example file above goes into a greater explanation of the sample commands.
 
+### Command Arguments
+
+Commands can accept various argument types:
+
+**Simple arguments** (strings, numbers, booleans):
+```
+R01:00:01.050 CMD_NO_OP_STRING "Awesome string!"
+R00:00:00 CMD_WITH_NUMBER 42
+R00:00:00 CMD_WITH_BOOL true
+```
+
+**Array arguments** use square brackets:
+```
+R00:00:00 CMD_WITH_ARRAY [1, 2, 3, 4]
+R00:00:00 CMD_WITH_STRING_ARRAY ["alpha", "beta", "gamma"]
+```
+
+**Struct/Object arguments** use curly braces with unquoted keys:
+```
+R00:00:00 CMD_WITH_STRUCT {fieldName: "value", count: 10}
+R00:00:00 CMD_WITH_NESTED {outer: {inner: 5}, flag: true}
+```
+
+**Multiple arguments** are comma-separated:
+```
+R00:00:00 CMD_MULTI_ARG "simple", [1, 2, 3], {key: "value"}
+```
+
 ## Compiling A Sample Sequence
 
 The `fprime-seqgen` command can compile the sequence into a binary format that F´ flight software can execute. To do

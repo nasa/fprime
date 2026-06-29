@@ -6,6 +6,16 @@ It receives data containing a Space Packet on its input port and extracts the Sp
 
 The `Svc::Ccsds::SpacePacketDeframer` is typically used downstream of a component that removes transfer frame headers, such as the `Svc::Ccsds::TcDeframer`. It validates the Space Packet header and extracts the payload.
 
+## CCSDS Header Field Extraction
+
+The `Svc::Ccsds::SpacePacketDeframer` extracts the following fields from the CCSDS Space Packet Primary Header and populates them in the output `FrameContext`:
+
+| Field | Context Field | Description |
+|---|---|---|
+| Application Process Identifier (APID) | `apid` | Extracted from bits [10:0] of the Packet Identification field |
+| Secondary Header Flag | `hasSecHdr` | Extracted from bit [11] of the Packet Identification field |
+| Packet Sequence Count | `sequenceCount` | Extracted from bits [13:0] of the Packet Sequence Control field |
+
 ## Port Descriptions
 
 | Kind | Name | Port Type | Description |

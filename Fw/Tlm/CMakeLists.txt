@@ -9,7 +9,6 @@ register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Tlm.fpp"
   SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/TlmPacket.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/TlmBuffer.hpp"

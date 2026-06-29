@@ -28,6 +28,7 @@ add_fprime_subdirectory(./TestHeaderAutocoder)
 add_fprime_subdirectory(./TestTargetAutocoder)
 add_fprime_subdirectory(./TestChainedAutocoder)
 add_fprime_subdirectory(./TestRelative)
+add_fprime_subdirectory(./TestLinkDepends)
 
 register_fprime_deployment(
   SOURCES

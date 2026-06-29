@@ -31,8 +31,14 @@ if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/_fprime_packages")
     endif()
 endif()
 
+# Clear the locations metadata files at the start of the generate
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_SOURCE_LOCATIONS_FILE}" "")
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BINARY_LOCATIONS_FILE}" "")
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "")
+
 # Adds the historical locations to the global interface target.
 fprime_add_historical_locations()
+fprime_cmake_status("[FPRIME] Default installation directory: ${FPRIME_INSTALL_DEST}")
 
 include(platform/platform) # Now that module locations are known, load platform settings
 fprime_validate_platform()
