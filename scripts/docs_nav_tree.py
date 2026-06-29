@@ -73,8 +73,12 @@ def build_nav_tree(path):
 def reformat_entry(entry):
     if entry.startswith("How-To: "):
         return entry.replace("How-To: ", "")
+    if entry.startswith("Getting Started with F Prime"):
+        return entry.replace("Getting Started with F Prime", "Getting Started")
     elif entry.islower():
         entry = entry.replace("-", " ")
+        entry = entry.replace("dev", "develop")
+        entry = entry.replace("ops", "operate")
         entry = entry.title()
         entry = entry.replace("Gds", "GDS")
         return entry

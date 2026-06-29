@@ -5,7 +5,7 @@ hide:
 
 # Reference
 
-Technical reference for the F Prime C++ API, CMake API, FPP language specification and more.
+Reference documentation for F Prime APIs and components.
 
 > [!TIP]
 > **← Navigation pane**  

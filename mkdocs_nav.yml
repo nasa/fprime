@@ -1,11 +1,11 @@
 - Documentation: index.md
-- Getting Started with F Prime:
-  - Getting Started with F Prime: getting-started/index.md
+- Getting Started:
+  - Getting Started: getting-started/index.md
   - F´ Features: getting-started/features.md
   - Installing F´: getting-started/installing-fprime.md
 - How-To:
   - How-To: how-to/index.md
-  - Dev:
+  - Develop:
     - Generate Data Products: how-to/dev/data-products.md
     - Define State Machines in F Prime: how-to/dev/define-state-machines.md
     - Develop a Device Driver: how-to/dev/develop-device-driver.md
@@ -18,7 +18,7 @@
     - Implement an OS Abstraction Layer: how-to/integrate/implement-osal.md
     - Integrate a Third-Party Library: how-to/integrate/integrate-external-libraries.md
     - Porting to new platforms: how-to/integrate/porting-guide.md
-  - Ops:
+  - Operate:
     - Create Ground-Derived Channels in F Prime GDS: how-to/ops/derive-channels-on-ground.md
     - Develop a GDS Plugin: how-to/ops/develop-gds-plugins.md
     - Load Parameters in Batch: how-to/ops/prm-write-how-to.md

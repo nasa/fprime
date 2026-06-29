@@ -5,11 +5,11 @@ hide:
 
 # User Manual
 
-The User Manual dives into F Prime concepts and usage, providing a deep understanding of how the framework operates. The different chapters are listed below.
+The User Manual provides comprehensive documentation for understanding and using F Prime.
 
 > [!TIP]
 > **← Navigation pane**  
-> Use the navigation pane on the left to explore the different chapters of the User Manual. If the navigation pane is not visible, click on the menu icon (three horizontal lines) at the top left corner of the page. The navigation pane is hidden on narrow screens or if zoomed in.
+> Use the navigation pane on the left to explore the different chapters of the User Manual documentation. If the navigation pane is not visible, click on the menu icon (three horizontal lines) at the top left corner of the page. The navigation pane is hidden on narrow screens or if zoomed in.
 
 ## Table of Contents
 
