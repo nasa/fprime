@@ -1642,14 +1642,14 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
 Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
                                                       DirectiveError& error) {
     // Validate port index is in range (using enum constant value)
-    constexpr U32 MAX_PORTS = static_cast<U32>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
-    if (directive.get_portIndex() >= MAX_PORTS) {
-        error = DirectiveError::INVALID_PORT_INDEX;
+    constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    const FwIndexType portIndex = directive.get_portIndex();
+
+    // Check for negative port index or out of bounds
+    if (portIndex < 0 || portIndex >= MAX_PORTS) {
+        error = DirectiveError::SERIAL_PORT_INVALID_INDEX;
         return Signal::stmtResponse_failure;
     }
-
-    // Cast port index to FwIndexType for port call
-    const FwIndexType portIndex = static_cast<FwIndexType>(directive.get_portIndex());
 
     // Check port is connected
     if (!this->isConnected_serialOut_OutputPort(portIndex)) {

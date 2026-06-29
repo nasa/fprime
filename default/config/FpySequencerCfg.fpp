@@ -13,10 +13,8 @@ module Svc {
         @ the rules of Os::File::open. trailing slash optional
         dictionary constant DEFAULT_SEQ_BASE_DIR = ""
 
-        @ Serial port indices for FpySequencer serializablePop port array.
-        @ These are examples - projects should define their own application-specific port names.
-        @ IMPORTANT: MAX_SERIAL_PORTS must be defined with this exact name for the Fpy
-        @ compiler to use it for compile-time bounds checking.
+        @ Serial port indices for FpySequencer serialOut port array.
+        @ MAX_SERIAL_PORTS must be defined with this exact name for Fpy compiler bounds checking.
         dictionary enum SerialPortIndex : U8 {
             @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
             EXAMPLE_PORT_0 = 0
@@ -29,8 +27,6 @@ module Svc {
             @ Example serial port 4 - rename to application-specific name
             EXAMPLE_PORT_4 = 4
             @ REQUIRED: Maximum number of serial ports. This sentinel value MUST be named
-            @ MAX_SERIAL_PORTS for the Fpy compiler to perform compile-time bounds checking.
-            @ Adjust the value based on how many ports your deployment needs.
             MAX_SERIAL_PORTS = 5
         }
     }

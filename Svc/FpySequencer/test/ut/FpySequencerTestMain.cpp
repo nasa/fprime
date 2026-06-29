@@ -5035,7 +5035,7 @@ TEST_F(FpySequencerTester, popSerializable_portIndexOutOfBounds) {
     Signal result = tester_popSerializable_directiveHandler(directive, err);
 
     ASSERT_EQ(result, Signal::stmtResponse_failure);
-    ASSERT_EQ(err, DirectiveError::INVALID_PORT_INDEX);
+    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_INVALID_INDEX);
     ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);  // Stack unchanged
 }
 

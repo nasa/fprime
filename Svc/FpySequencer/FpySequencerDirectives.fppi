@@ -198,7 +198,7 @@ struct PopEventDirective {
 @ pops serialized data from stack and sends to serial output port
 struct PopSerializableDirective {
     @ the port index to send data to
-    portIndex: U32
+    portIndex: FwIndexType
     @ size of serialized data on stack
     $size: Fpy.StackSizeType
 }

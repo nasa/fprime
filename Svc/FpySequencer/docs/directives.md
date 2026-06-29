@@ -1152,13 +1152,13 @@ Pops serialized data from the stack and sends it to an external component via a 
 4. Send the popped bytes to the target component via `serialOut[port_index]`.
 
 **Error Conditions:**
-- If `port_index >= MAX_SERIAL_PORTS`: `INVALID_PORT_INDEX`
+- If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
 - If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
 - If `len(stack) < size`: `STACK_UNDERFLOW`
 
 | Arg Name     | Arg Type       | Source     | Description |
 |--------------|----------------|------------|-------------|
-| port_index   | U32            | hardcoded  | Index of the serialOut port array to use. |
+| port_index   | FwIndexType    | hardcoded  | Index of the serialOut port array to use. |
 | size         | StackSizeType  | hardcoded  | Number of bytes to pop and send. |
 | value        | bytes          | stack      | Serialized data to send (popped from stack). |
 

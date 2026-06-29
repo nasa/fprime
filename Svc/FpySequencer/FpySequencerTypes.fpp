@@ -132,7 +132,7 @@ module Svc {
             INVALID_ARG = 16
             CMD_FAIL = 17
             SERIAL_PORT_NOT_CONNECTED = 18
-            INVALID_PORT_INDEX = 19
+            SERIAL_PORT_INVALID_INDEX = 19
         }
 
         @ Maximum length for argument or type names in arg_specs
