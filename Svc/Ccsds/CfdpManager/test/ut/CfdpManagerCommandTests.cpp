@@ -303,7 +303,7 @@ void CfdpManagerTester::testPlaybackDirectoryNominal() {
 void CfdpManagerTester::testPlaybackDirectoryInvalidChannel() {
     // Test that PlaybackDirectory command with invalid channel returns VALIDATION_ERROR
     //
-    // Event coverage: PlaybackInvalidChannel
+    // Event coverage: InvalidChannel
 
     const char* srcDir = "test/ut/output/playback_src";
     const char* dstDir = "test/ut/output/playback_dst";
@@ -329,7 +329,7 @@ void CfdpManagerTester::testPlaybackDirectoryInvalidChannel() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
-    // Verify InvalidChannel event was emitted (not PlaybackInvalidChannel - that event exists but is never emitted)
+    // Verify InvalidChannel event was emitted
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
