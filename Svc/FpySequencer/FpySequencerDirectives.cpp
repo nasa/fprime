@@ -1641,6 +1641,8 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
 
 Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
                                                       DirectiveError& error) {
+    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, directive.get_size());
+
     // Validate port index is in range (using enum constant value)
     constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
     const FwIndexType portIndex = directive.get_portIndex();
@@ -1666,10 +1668,14 @@ Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSeri
     // Create external buffer referencing stack data (no copy)
     U8* dataPtr = this->m_runtime.stack.top() - directive.get_size();
     Fw::ExternalSerializeBuffer buf(dataPtr, directive.get_size());
-    buf.setBuffLen(directive.get_size());
 
-    // Call output port
-    this->serialOut_out(portIndex, buf);
+    // Set buffer length and verify success
+    Fw::SerializeStatus stat = buf.setBuffLen(directive.get_size());
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // Call output port and verify serialization succeeds
+    Fw::SerializeStatus portStatus = this->serialOut_out(portIndex, buf);
+    FW_ASSERT(portStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(portStatus));
 
     // Pop data from stack
     this->m_runtime.stack.size -= directive.get_size();
