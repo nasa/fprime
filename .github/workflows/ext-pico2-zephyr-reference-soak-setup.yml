@@ -23,7 +23,7 @@ permissions:
 jobs:
   cross-compilation:
     name: "Cross Compilation"
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, macOS]  # Use Mac runner
     steps:
       - name: "Setup external repository + overlay F´"
         uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
@@ -32,20 +32,34 @@ jobs:
           # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
 
-      - name: "Install Zephyr SDK and dependencies"
+      - name: "Install Zephyr SDK and dependencies (macOS)"
         run: |
-          # Install Zephyr dependencies
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            git cmake ninja-build gperf \
-            ccache dfu-util device-tree-compiler wget \
-            python3-dev python3-pip python3-setuptools python3-tk python3-wheel \
-            xz-utils file make gcc gcc-multilib g++-multilib libsdl2-dev libmagic1
+          # Check if Homebrew is installed
+          if ! command -v brew &> /dev/null; then
+            echo "Homebrew not found. Please install from https://brew.sh"
+            exit 1
+          fi
+
+          # Install Zephyr dependencies via Homebrew
+          brew install cmake ninja gperf python3 ccache qemu dtc wget
 
           # Install west
-          pip3 install west
+          pip3 install --user west
 
-          # Note: Zephyr SDK should already be installed in the container or by fprime-zephyr setup
+          # Note: Zephyr SDK for macOS should be installed manually or via setup script
+          # Download from: https://github.com/zephyrproject-rtos/sdk-ng/releases
+
+          # Check if Zephyr SDK is installed
+          if [ -z "${ZEPHYR_SDK_INSTALL_DIR:-}" ]; then
+            echo "ZEPHYR_SDK_INSTALL_DIR not set. Checking default location..."
+            if [ -d "${HOME}/zephyr-sdk-0.16.8" ]; then
+              echo "Found Zephyr SDK at ${HOME}/zephyr-sdk-0.16.8"
+              export ZEPHYR_SDK_INSTALL_DIR="${HOME}/zephyr-sdk-0.16.8"
+            else
+              echo "::warning::Zephyr SDK not found. Build may fail."
+              echo "Install from: https://github.com/zephyrproject-rtos/sdk-ng/releases"
+            fi
+          fi
 
       - name: "Cross compile for Pico 2"
         run: |
