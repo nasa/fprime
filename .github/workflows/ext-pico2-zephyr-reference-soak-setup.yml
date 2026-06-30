@@ -25,6 +25,14 @@ jobs:
     name: "Cross Compilation"
     runs-on: [self-hosted, macOS]  # Use Mac runner
     steps:
+      - name: "Clean stale git locks (macOS)"
+        run: |
+          # Remove any stale git lock files from previous runs
+          if [ -d "${{ github.workspace }}" ]; then
+            find "${{ github.workspace }}" -name "*.lock" -type f -delete 2>/dev/null || true
+          fi
+        continue-on-error: true
+
       - name: "Setup external repository + overlay F´"
         uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
         with:
