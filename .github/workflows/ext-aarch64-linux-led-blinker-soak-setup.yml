@@ -63,4 +63,8 @@ jobs:
       - name: "Deploy FSW + persistent GDS services"
         uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
-          platform: linux
+          platform: linux-remote
+          fsw-host: "fprime"
+          fsw-ip: "192.168.10.2"
+          fsw-args: "-a 0.0.0.0 -p 50000"
+          gds-args: "--ip ${{ secrets.FSW_PI_IP }} --port 50000"
