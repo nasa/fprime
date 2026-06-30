@@ -268,13 +268,12 @@ void CfdpManager ::SendFile_cmdHandler(FwOpcodeType opCode,
     rspStatus = this->checkCommandChannelIndex(channelId);
     FW_ASSERT(this->m_engine != nullptr);
 
-    if ((rspStatus == Fw::CmdResponse::OK) &&
-        (Status::SUCCESS ==
-         this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e, channelId, priority, destId))) {
-        rspStatus = Fw::CmdResponse::OK;
-    } else {
-        // Engine emits specific failure reason EVR (e.g., MaxTxTransactionsReached)
-        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+    if (rspStatus == Fw::CmdResponse::OK) {
+        if (Status::SUCCESS !=
+            this->m_engine->txFile(sourceFileName, destFileName, cfdpClass.e, keep.e, channelId, priority, destId)) {
+            // Engine emits specific failure reason EVR (e.g., MaxTxTransactionsReached)
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
@@ -294,13 +293,15 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode,
     FW_ASSERT(this->m_engine != nullptr);
     // Check channel index is in range
     rspStatus = this->checkCommandChannelIndex(channelId);
-    if ((rspStatus == Fw::CmdResponse::OK) &&
-        (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
-                                                        keep.e, channelId, priority, destId))) {
-        this->log_ACTIVITY_LO_PlaybackInitiated(sourceDirectory);
-    } else {
-        // Engine emits specific failure reason EVR (e.g., PlaybackDirOpenFailed, PlaybackDirSlotUnavailable)
-        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+
+    if (rspStatus == Fw::CmdResponse::OK) {
+        if (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
+                                                           keep.e, channelId, priority, destId)) {
+            this->log_ACTIVITY_LO_PlaybackInitiated(sourceDirectory);
+        } else {
+            // Engine emits specific failure reason EVR (e.g., PlaybackDirOpenFailed, PlaybackDirSlotUnavailable)
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
@@ -325,13 +326,14 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode,
         rspStatus = this->checkCommandChannelPollIndex(pollId);
     }
 
-    if ((rspStatus == Fw::CmdResponse::OK) &&
-        (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory, cfdpClass.e,
-                                                         priority, destId, interval))) {
-        this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory);
-    } else {
-        // Failure EVR was already emitted
-        rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+    if (rspStatus == Fw::CmdResponse::OK) {
+        if (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory, cfdpClass.e,
+                                                            priority, destId, interval)) {
+            this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory);
+        } else {
+            // Failure EVR was already emitted
+            rspStatus = Fw::CmdResponse::EXECUTION_ERROR;
+        }
     }
 
     this->cmdResponse_out(opCode, cmdSeq, rspStatus);
