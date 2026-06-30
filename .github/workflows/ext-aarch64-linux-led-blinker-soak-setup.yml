@@ -67,4 +67,4 @@ jobs:
           fsw-host: "fprime@192.168.10.2"
           fsw-ip: "192.168.10.2"
           fsw-args: "-a 0.0.0.0 -p 50000"
-          gds-args: "--comm-adapter ip --ip-address 192.168.10.2 --ip-port 50000"
+          gds-args: "--communication-selection ip --ip-address 192.168.10.2 --ip-port 50000 --ip-client"
