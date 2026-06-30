@@ -1,8 +1,7 @@
 # Soak-test setup for the Zephyr Reference deployment on Raspberry Pi Pico 2.
 #
-# Cross-compiles https://github.com/fprime-community/fprime-zephyr-reference
-# using the SAME fprime-ci flow as the official CI, then deploys to a self-hosted
-# runner with Pico 2 attached.
+# Does a run of reusable-project-ci.yml to build, flash,
+# and initially test the Pico 2, then deploys a persistent GDS service for soak testing.
 #
 # Pairs with ext-pico2-zephyr-reference-soak-test.yml.
 
@@ -13,7 +12,6 @@ on:
     types: [published]
   workflow_dispatch:
 
-# Group shared with soak test workflow, new setup should cancel all old setup and tests
 concurrency:
   group: pico2-soak
   cancel-in-progress: true
@@ -22,77 +20,34 @@ permissions:
   contents: read
 
 jobs:
-  # Build using the EXACT same setup as the official Zephyr CI
-  cross-compilation:
-    name: "Cross Compilation"
-    runs-on: [self-hosted, macOS]  # Mac runner for building
-    env:
-      CI_CONFIG_FILE: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
+  build:
+    name: "Zephyr Build"
+    uses: ./.github/workflows/reusable-project-ci.yml
+    with:
+      target_repository: fprime-community/fprime-zephyr-reference
+      target_ref: ${{ github.event.release.tag_name || 'devel' }}
+      ci_config_file: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
+      runs_on_int: pico2-soak
+
+  # Now start the persistent GDS service for soak testing
+  start-persistent-gds:
+    name: "Start Soak GDS"
+    needs: build
+    runs-on: [self-hosted, pico2-soak]
     steps:
-      - name: "Clean stale git locks (macOS)"
-        run: |
-          if [ -d "${{ github.workspace }}" ]; then
-            find "${{ github.workspace }}" -name "*.lock" -type f -delete 2>/dev/null || true
-          fi
-        continue-on-error: true
-
-      # Same as official CI: clones target repo + overlays fprime + installs fprime-ci
-      - name: "Set up target repository"
-        uses: nasa/fprime-actions/external-repository-setup@devel
-        with:
-          target_repository: fprime-community/fprime-zephyr-reference
-          target_ref: ${{ github.event.release.tag_name || 'devel' }}
-          stage: build
-
-      # Use fprime-ci to build (same as official CI)
-      # This calls fprime-util generate + build with the Zephyr toolchain
-      - name: "Build Binary"
-        run: |
-          CCACHE_DISABLE=1 fprime-ci -c ${CI_CONFIG_FILE} --add-stage build
-
-      - name: "Archive Results"
-        uses: actions/upload-artifact@v4
-        with:
-          name: pico2-soak-archive
-          path: ./archive.tar.gz
-          retention-days: 5
-
-  # Deploy to hardware using the SAME preload stage as official CI
-  # This is where we differ: instead of just running tests once, we deploy
-  # the FSW persistently and let it run continuously
-  deploy:
-    name: "Deploy Soak Services"
-    runs-on: [self-hosted, ARM64, pico2-soak]
-    needs: cross-compilation
-    env:
-      CI_CONFIG_FILE: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
-    steps:
-      # Same setup as official CI int-tests stage
-      - name: "Set up target repository"
+      - name: "Set up target repository (for tests + dictionary)"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-zephyr-reference
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
           stage: int
 
-      - name: "Upgrade fprime-gds"
-        uses: nasa/fprime-actions/upgrade-package@devel
-        with:
-          repository: nasa/fprime-gds
-
       - name: "Pull Archive Results"
         uses: actions/download-artifact@v4
         with:
-          name: pico2-soak-archive
+          name: archive.tar.gz
 
-      # Use fprime-ci preload stage to flash Pico 2 via OpenOCD
-      # The pico2.yml config has the flash-command with OpenOCD commands
-      - name: "Flash Pico 2 via OpenOCD (fprime-ci preload)"
-        run: |
-          fprime-ci -c ${CI_CONFIG_FILE} --add-stage preload
-
-      # Now set up persistent GDS for continuous soak testing
-      - name: "Deploy persistent GDS service"
+      - name: "Deploy Soak GDS service"
         uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
           deployment-name: pico2-ref
