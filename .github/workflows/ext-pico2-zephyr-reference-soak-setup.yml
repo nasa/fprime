@@ -48,11 +48,11 @@ jobs:
             exit 1
           fi
 
-          # Install Zephyr dependencies via Homebrew
-          brew install cmake ninja gperf python3 ccache qemu dtc wget
+          # Install Zephyr dependencies via Homebrew (ignore if already installed)
+          brew install cmake ninja gperf python3 ccache qemu dtc wget || true
 
-          # Install west
-          pip3 install --user west
+          # Install west (without --user flag in GitHub Actions)
+          pip3 install west
 
           # Note: Zephyr SDK for macOS should be installed manually or via setup script
           # Download from: https://github.com/zephyrproject-rtos/sdk-ng/releases
@@ -62,7 +62,10 @@ jobs:
             echo "ZEPHYR_SDK_INSTALL_DIR not set. Checking default location..."
             if [ -d "${HOME}/zephyr-sdk-0.16.8" ]; then
               echo "Found Zephyr SDK at ${HOME}/zephyr-sdk-0.16.8"
-              export ZEPHYR_SDK_INSTALL_DIR="${HOME}/zephyr-sdk-0.16.8"
+              echo "ZEPHYR_SDK_INSTALL_DIR=${HOME}/zephyr-sdk-0.16.8" >> $GITHUB_ENV
+            elif [ -d "/opt/zephyr-sdk-0.16.8" ]; then
+              echo "Found Zephyr SDK at /opt/zephyr-sdk-0.16.8"
+              echo "ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk-0.16.8" >> $GITHUB_ENV
             else
               echo "::warning::Zephyr SDK not found. Build may fail."
               echo "Install from: https://github.com/zephyrproject-rtos/sdk-ng/releases"
