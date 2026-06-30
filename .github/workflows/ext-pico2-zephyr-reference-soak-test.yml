@@ -24,4 +24,4 @@ jobs:
     steps:
       - uses: moisesmata/fprime-actions/soak-test@soak-actions-improvements
         with:
-          deployment-name: pico2-ref
+          deployment-name: zephyr-reference

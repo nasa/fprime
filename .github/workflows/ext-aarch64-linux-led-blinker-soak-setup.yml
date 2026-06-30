@@ -65,7 +65,4 @@ jobs:
         with:
           deployment-name: ledblinker
           platform: linux-remote
-          fsw-host: "fprime@192.168.10.2"
           fsw-ip: "192.168.10.2"
-          fsw-args: "-a 0.0.0.0 -p 50000"
-          gds-args: "--communication-selection ip --ip-address 192.168.10.2 --ip-port 50000 --ip-client --zmq-transport ipc:///tmp/fprime-server-ledblinker-in ipc:///tmp/fprime-server-ledblinker-out"

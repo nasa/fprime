@@ -50,7 +50,5 @@ jobs:
       - name: "Deploy Soak GDS service"
         uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
-          deployment-name: pico2-ref
-          platform: pico2-fprime-ci
-          fsw-device: /dev/pico2
-          gds-args: "--communication-selection uart --uart-device /dev/pico2 --uart-baud 115200 --uart-skip-port-check --zmq-transport ipc:///tmp/fprime-server-pico2-ref-in ipc:///tmp/fprime-server-pico2-ref-out"
+          deployment-name: zephyr-reference
+          platform: pico2
