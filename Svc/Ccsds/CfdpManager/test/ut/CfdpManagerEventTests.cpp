@@ -8,6 +8,7 @@
 #include "CfdpManagerTester.hpp"
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
+#include "Os/FileSystem.hpp"
 
 namespace Svc {
 namespace Ccsds {
@@ -24,8 +25,34 @@ namespace Cfdp {
 // ----------------------------------------------------------------------
 
 void CfdpManagerTester::testTxFileQueuedEvent() {
-    // TxFileQueued event already covered by existing transaction tests
-    // This test documents that the event is tested
+    // TxFileQueued event emitted when file is queued for transmission
+
+    const char* srcFile = "test/ut/output/tx_queued_test.bin";
+    const char* destFile = "/dest/tx_queued.bin";
+
+    // Create source file
+    Os::File file;
+    file.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    U8 testData[10] = {1, 2, 3};
+    FwSizeType sizeToWrite = 3;
+    file.write(testData, sizeToWrite);
+    file.close();
+
+    this->clearEvents();
+
+    // Queue file for transfer
+    Fw::String srcFileStr(srcFile);
+    Fw::String destFileStr(destFile);
+    this->sendCmd_SendFile(0, 0, 0, TEST_GROUND_EID,
+                          Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
+                          srcFileStr, destFileStr);
+    this->component.doDispatch();
+
+    // Verify TxFileQueued event
+    ASSERT_EVENTS_TxFileQueued_SIZE(1);
+
+    // Clean up test file
+    Os::FileSystem::removeFile(srcFile);
 }
 
 void CfdpManagerTester::testTxFileTransferStartedEvent() {
@@ -158,9 +185,8 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxFileCreateFailed event (may also get other error events)
-    // Event might not fire if metadata already rejected the path
-    // This test documents the event exists
+    // Verify RxFileCreateFailed event
+    ASSERT_EVENTS_RxFileCreateFailed_SIZE(1);
 }
 
 void CfdpManagerTester::testRxCrcMismatchEvent() {
@@ -204,8 +230,11 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
     }
 
     // Verify RxCrcMismatch event
-    // Note: Event emission depends on CRC calculation completing
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
+
+    // Note: RxFileTransferFailed may not be emitted immediately after CRC mismatch
+    // It requires the transaction to fully complete/finalize which may need additional cycles
+    // or specific PDU sequencing. Consider testing in a more complete transaction scenario.
 }
 
 void CfdpManagerTester::testRxFileSizeMismatchEvent() {
