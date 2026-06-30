@@ -1,27 +1,27 @@
-# Scheduled soak test for the LedBlinker deployment on AArch64 Linux.
+# Scheduled soak test for the Zephyr Reference deployment on Raspberry Pi Pico 2.
 #
 # Analyzes captured ComLogger telemetry for FATALs and degradation trends, then runs the integration tests.
 
-name: "Soak Test: AArch64 Linux LedBlinker"
+name: "Soak Test: Pico 2 Zephyr Reference"
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/30 * * * *"  # Every 30 minutes
   workflow_dispatch:
 
 permissions:
   contents: read
 
-# Shared with the soak-setup workflow so a test queues behind any setup. 
+# Shared with the soak-setup workflow so a test queues behind any setup.
 concurrency:
-  group: ledblinker-soak
+  group: pico2-soak
   cancel-in-progress: false
 
 jobs:
   soak-test:
     name: "Soak Test"
-    runs-on: [self-hosted, ARM64, soak-test]
+    runs-on: [self-hosted, ARM64, pico2-soak]
     steps:
       - uses: moisesmata/fprime-actions/soak-test@soak-actions-improvements
         with:
-          deployment-name: ledblinker
+          deployment-name: pico2-ref

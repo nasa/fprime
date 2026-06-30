@@ -1,0 +1,92 @@
+# Soak-test setup for the Zephyr Reference deployment on Raspberry Pi Pico 2.
+#
+# Cross-compiles https://github.com/fprime-community/fprime-zephyr-reference
+# and flashes it to a Pico 2 connected to the self-hosted runner via UART + SWD.
+#
+# Pairs with ext-pico2-zephyr-reference-soak-test.yml.
+
+name: "Soak Setup: Pico 2 Zephyr Reference"
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+# Group shared with soak test workflow, new setup should cancel all old setup and tests
+concurrency:
+  group: pico2-soak
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  cross-compilation:
+    name: "Cross Compilation"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Setup external repository + overlay F´"
+        uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
+        with:
+          target_repository: fprime-community/fprime-zephyr-reference
+          # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
+
+      - name: "Install Zephyr SDK and dependencies"
+        run: |
+          # Install Zephyr dependencies
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            git cmake ninja-build gperf \
+            ccache dfu-util device-tree-compiler wget \
+            python3-dev python3-pip python3-setuptools python3-tk python3-wheel \
+            xz-utils file make gcc gcc-multilib g++-multilib libsdl2-dev libmagic1
+
+          # Install west
+          pip3 install west
+
+          # Note: Zephyr SDK should already be installed in the container or by fprime-zephyr setup
+
+      - name: "Cross compile for Pico 2"
+        run: |
+          fprime-util generate -DBOARD=rpi_pico2/rp2350a/m33
+          fprime-util build --target FprimeZephyrReference_ReferenceDeployment
+
+      - name: "Stage artifacts for soak"
+        run: |
+          mkdir -p artifacts/build-artifacts
+          # Copy hex file
+          cp build-artifacts/zephyr.hex artifacts/build-artifacts/
+          # Copy dictionary
+          mkdir -p artifacts/build-artifacts/zephyr/fprime-zephyr-deployment/dict
+          cp build-artifacts/zephyr/fprime-zephyr-deployment/dict/*TopologyDictionary.json \
+            artifacts/build-artifacts/zephyr/fprime-zephyr-deployment/dict/
+          # Copy integration tests
+          cp -r FprimeZephyrReference/ReferenceDeployment/test/int artifacts/int
+
+      - name: "Archive soak artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: pico2-soak-artifact
+          path: artifacts/
+          retention-days: 5
+
+  deploy:
+    name: "Deploy Soak Services"
+    runs-on: [self-hosted, ARM64, pico2-soak]
+    needs: cross-compilation
+    steps:
+      - name: "Download soak artifact"
+        uses: actions/download-artifact@v4
+        with:
+          name: pico2-soak-artifact
+          path: artifacts
+
+      - name: "Deploy FSW + persistent GDS services"
+        uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
+        with:
+          deployment-name: pico2-ref
+          platform: pico2
+          fsw-device: /dev/pico2
+          fsw-hex: artifacts/build-artifacts/zephyr.hex
+          gds-args: "--communication-selection uart --uart-device /dev/pico2 --uart-baud 115200 --uart-skip-port-check --zmq-transport ipc:///tmp/fprime-server-pico2-in ipc:///tmp/fprime-server-pico2-out"
