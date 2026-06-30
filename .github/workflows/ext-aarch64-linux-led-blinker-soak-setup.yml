@@ -64,7 +64,7 @@ jobs:
         uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
           platform: linux-remote
-          fsw-host: "fprime"
+          fsw-host: "fprime@192.168.10.2"
           fsw-ip: "192.168.10.2"
           fsw-args: "-a 0.0.0.0 -p 50000"
           gds-args: "--ip 192.168.10.2 --port 50000"
