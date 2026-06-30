@@ -48,7 +48,8 @@ void CfdpManagerTester::testTxFileQueuedEvent() {
                           srcFileStr, destFileStr);
     this->component.doDispatch();
 
-    // Verify TxFileQueued event
+    // Verify exact event count and TxFileQueued event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxFileQueued_SIZE(1);
 
     // Clean up test file
@@ -85,7 +86,8 @@ void CfdpManagerTester::testTxFileTransferStartedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify TxFileTransferStarted event
+    // Verify TxFileTransferStarted event exists
+    // Note: Multiple events emitted (TxFileQueued, TxFileTransferStarted, and potentially others)
     ASSERT_EVENTS_TxFileTransferStarted_SIZE(1);
 }
 
@@ -108,7 +110,8 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
-    // Verify MetadataReceived event
+    // Verify exact event count and MetadataReceived event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
     // Note: Payload verification not available - no ASSERT macro with parameters generated
 }
@@ -186,6 +189,7 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
     }
 
     // Verify RxFileCreateFailed event
+    // Note: Multiple events emitted during RX transaction setup and failure
     ASSERT_EVENTS_RxFileCreateFailed_SIZE(1);
 }
 
@@ -230,6 +234,7 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
     }
 
     // Verify RxCrcMismatch event
+    // Note: Multiple events emitted during RX transaction (Metadata, potential completion events)
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
 
     // Note: RxFileTransferFailed may not be emitted immediately after CRC mismatch
@@ -272,6 +277,7 @@ void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     }
 
     // Verify RxFileSizeMismatch event
+    // Note: Multiple events emitted (MetadataReceived, size mismatch detection, etc.)
     ASSERT_EVENTS_RxFileSizeMismatch_SIZE(1);
 }
 
@@ -308,6 +314,7 @@ void CfdpManagerTester::testRxEofCancelReceivedEvent() {
     }
 
     // Verify RxEofCancelReceived event
+    // Note: Multiple events emitted (MetadataReceived, RxEofCancelReceived, potentially RxFileTransferFailed)
     ASSERT_EVENTS_RxEofCancelReceived_SIZE(1);
 }
 
@@ -338,7 +345,8 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
-    // Verify InvalidDestinationEid event
+    // Verify exact event count and InvalidDestinationEid event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidDestinationEid_SIZE(1);
     // Note: Payload verification not available for this event - no ASSERT macro generated
 }
@@ -400,7 +408,8 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify PlaybackDirOpenFailed event
+    // Verify exact event count and PlaybackDirOpenFailed event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirOpenFailed_SIZE(1);
 }
 
