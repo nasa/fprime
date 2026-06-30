@@ -1,7 +1,8 @@
 # Soak-test setup for the Zephyr Reference deployment on Raspberry Pi Pico 2.
 #
 # Cross-compiles https://github.com/fprime-community/fprime-zephyr-reference
-# and flashes it to a Pico 2 connected to the self-hosted runner via UART + SWD.
+# using the SAME fprime-ci flow as the official CI, then deploys to a self-hosted
+# runner with Pico 2 attached.
 #
 # Pairs with ext-pico2-zephyr-reference-soak-test.yml.
 
@@ -21,97 +22,80 @@ permissions:
   contents: read
 
 jobs:
+  # Build using the EXACT same setup as the official Zephyr CI
   cross-compilation:
     name: "Cross Compilation"
-    runs-on: [self-hosted, macOS]  # Use Mac runner
+    runs-on: [self-hosted, macOS]  # Mac runner for building
+    env:
+      CI_CONFIG_FILE: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
     steps:
       - name: "Clean stale git locks (macOS)"
         run: |
-          # Remove any stale git lock files from previous runs
           if [ -d "${{ github.workspace }}" ]; then
             find "${{ github.workspace }}" -name "*.lock" -type f -delete 2>/dev/null || true
           fi
         continue-on-error: true
 
-      - name: "Setup external repository + overlay F´"
-        uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
+      # Same as official CI: clones target repo + overlays fprime + installs fprime-ci
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-zephyr-reference
-          # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
+          stage: build
 
-      - name: "Install Zephyr SDK and dependencies (macOS)"
+      # Use fprime-ci to build (same as official CI)
+      # This calls fprime-util generate + build with the Zephyr toolchain
+      - name: "Build Binary"
         run: |
-          # Check if Homebrew is installed
-          if ! command -v brew &> /dev/null; then
-            echo "Homebrew not found. Please install from https://brew.sh"
-            exit 1
-          fi
+          CCACHE_DISABLE=1 fprime-ci -c ${CI_CONFIG_FILE} --add-stage build
 
-          # Install Zephyr dependencies via Homebrew (ignore if already installed)
-          brew install cmake ninja gperf python3 ccache qemu dtc wget || true
-
-          # Install west (without --user flag in GitHub Actions)
-          pip3 install west
-
-          # Note: Zephyr SDK for macOS should be installed manually or via setup script
-          # Download from: https://github.com/zephyrproject-rtos/sdk-ng/releases
-
-          # Check if Zephyr SDK is installed
-          if [ -z "${ZEPHYR_SDK_INSTALL_DIR:-}" ]; then
-            echo "ZEPHYR_SDK_INSTALL_DIR not set. Checking default location..."
-            if [ -d "${HOME}/zephyr-sdk-0.16.8" ]; then
-              echo "Found Zephyr SDK at ${HOME}/zephyr-sdk-0.16.8"
-              echo "ZEPHYR_SDK_INSTALL_DIR=${HOME}/zephyr-sdk-0.16.8" >> $GITHUB_ENV
-            elif [ -d "/opt/zephyr-sdk-0.16.8" ]; then
-              echo "Found Zephyr SDK at /opt/zephyr-sdk-0.16.8"
-              echo "ZEPHYR_SDK_INSTALL_DIR=/opt/zephyr-sdk-0.16.8" >> $GITHUB_ENV
-            else
-              echo "::warning::Zephyr SDK not found. Build may fail."
-              echo "Install from: https://github.com/zephyrproject-rtos/sdk-ng/releases"
-            fi
-          fi
-
-      - name: "Cross compile for Pico 2"
-        run: |
-          fprime-util generate -DBOARD=rpi_pico2/rp2350a/m33
-          fprime-util build --target FprimeZephyrReference_ReferenceDeployment
-
-      - name: "Stage artifacts for soak"
-        run: |
-          mkdir -p artifacts/build-artifacts
-          # Copy hex file
-          cp build-artifacts/zephyr.hex artifacts/build-artifacts/
-          # Copy dictionary
-          mkdir -p artifacts/build-artifacts/zephyr/fprime-zephyr-deployment/dict
-          cp build-artifacts/zephyr/fprime-zephyr-deployment/dict/*TopologyDictionary.json \
-            artifacts/build-artifacts/zephyr/fprime-zephyr-deployment/dict/
-          # Copy integration tests
-          cp -r FprimeZephyrReference/ReferenceDeployment/test/int artifacts/int
-
-      - name: "Archive soak artifact"
+      - name: "Archive Results"
         uses: actions/upload-artifact@v4
         with:
-          name: pico2-soak-artifact
-          path: artifacts/
+          name: pico2-soak-archive
+          path: ./archive.tar.gz
           retention-days: 5
 
+  # Deploy to hardware using the SAME preload stage as official CI
+  # This is where we differ: instead of just running tests once, we deploy
+  # the FSW persistently and let it run continuously
   deploy:
     name: "Deploy Soak Services"
     runs-on: [self-hosted, ARM64, pico2-soak]
     needs: cross-compilation
+    env:
+      CI_CONFIG_FILE: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
     steps:
-      - name: "Download soak artifact"
+      # Same setup as official CI int-tests stage
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-zephyr-reference
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
+          stage: int
+
+      - name: "Upgrade fprime-gds"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+
+      - name: "Pull Archive Results"
         uses: actions/download-artifact@v4
         with:
-          name: pico2-soak-artifact
-          path: artifacts
+          name: pico2-soak-archive
 
-      - name: "Deploy FSW + persistent GDS services"
+      # Use fprime-ci preload stage to flash Pico 2 via OpenOCD
+      # The pico2.yml config has the flash-command with OpenOCD commands
+      - name: "Flash Pico 2 via OpenOCD (fprime-ci preload)"
+        run: |
+          fprime-ci -c ${CI_CONFIG_FILE} --add-stage preload
+
+      # Now set up persistent GDS for continuous soak testing
+      - name: "Deploy persistent GDS service"
         uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
         with:
           deployment-name: pico2-ref
-          platform: pico2
+          platform: pico2-fprime-ci
           fsw-device: /dev/pico2
-          fsw-hex: artifacts/build-artifacts/zephyr.hex
-          gds-args: "--communication-selection uart --uart-device /dev/pico2 --uart-baud 115200 --uart-skip-port-check --zmq-transport ipc:///tmp/fprime-server-pico2-in ipc:///tmp/fprime-server-pico2-out"
+          gds-args: "--communication-selection uart --uart-device /dev/pico2 --uart-baud 115200 --uart-skip-port-check --zmq-transport ipc:///tmp/fprime-server-pico2-ref-in ipc:///tmp/fprime-server-pico2-ref-out"
