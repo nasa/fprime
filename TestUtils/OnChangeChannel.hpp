@@ -16,7 +16,7 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <cstring>
 
-#include "TestUtils/Option.hpp"
+#include <Fw/Types/Optional.hpp>
 
 namespace TestUtils {
 
@@ -31,10 +31,10 @@ class OnChangeChannel {
     explicit OnChangeChannel(T a_value) : value(a_value) {}
     //! Update the previous value
     OnChangeStatus updatePrev() {
-        const auto status = ((!this->prev.hasValue()) || (this->value != this->prev.get()))
+        const auto status = ((!this->prev.has_value()) || (this->value != this->prev.value()))
                                 ? OnChangeStatus::CHANGED
                                 : OnChangeStatus::NOT_CHANGED;
-        this->prev.set(this->value);
+        this->prev = this->value;
         return status;
     }
 
@@ -44,7 +44,7 @@ class OnChangeChannel {
 
   private:
     //! The previous value
-    Option<T> prev;
+    Fw::Optional<T> prev;
 };
 
 }  // namespace TestUtils

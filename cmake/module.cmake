@@ -13,7 +13,7 @@ include(implementation)
 include(target/ut) # For FPRIME__INTERNAL_UT_TARGET variable
 include(utilities)
 include(fprime-util)
-set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS" CACHE INTERNAL "Base set of control directives for module registration" FORCE)
+set(FPRIME__INTERNAL_BASE_CONTROL_SETS "HEADERS" "SOURCES" "DEPENDS" "EXCLUDE_FROM_ALL" "AUTOCODER_INPUTS" "REQUIRES_IMPLEMENTATIONS" "LINK_DEPENDS" CACHE INTERNAL "Base set of control directives for module registration" FORCE)
 
 set(FPRIME__INTERNAL_EMPTY_CPP "${FPRIME_FRAMEWORK_PATH}/cmake/empty.cpp" CACHE INTERNAL "Empty cpp file to attach to targets before autocoding" FORCE)
 
@@ -43,7 +43,8 @@ function(fprime__internal_add_build_target BUILD_TARGET_TYPE_STRING EXTRA_CONTRO
     fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "${BUILD_TARGET_TYPE_STRING}" "${INTERNAL_SOURCES}"
                                              "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
                                              "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
-                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}"
+                                             "${INTERNAL_LINK_DEPENDS}")
     set(INTERNAL_MODULE_NAME "${INTERNAL_MODULE_NAME}" PARENT_SCOPE)
     foreach(DIRECTIVE IN LISTS EXTRA_CONTROL_DIRECTIVES FPRIME__INTERNAL_BASE_CONTROL_SETS)
         if (DEFINED "INTERNAL_${DIRECTIVE}")
@@ -75,7 +76,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
     # List of control words, file-based control words, and CMAKE control words from (add_library and add_executable)
     set(FPRIME_CONTROL_SETS)
     set(CONTROL_SETS ${FPRIME__INTERNAL_BASE_CONTROL_SETS} ${ADDITIONAL_CONTROL_SETS})
-    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS")
+    set(FILE_CONTROL_SETS "HEADERS" "SOURCES" "AUTOCODER_INPUTS" "LINK_DEPENDS")
     set(FPRIME_CMAKE_ADD_OPTIONS "WIN32" "MACOSX_BUNDLE" "OBJECT" "INTERFACE" "IMPORTED" "ALIAS" "GLOBAL"
         "STATIC" "SHARED" "MODULE" "EXCLUDE_FROM_ALL")
     set(FPRIME_FLAG_CONTROL_SETS ${FPRIME_CMAKE_ADD_OPTIONS} "BASE_CONFIG" "UT_AUTO_HELPERS" "INCLUDE_GTEST")
@@ -163,7 +164,7 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             set("LIST_${CURRENT_LIST_NAME}")
         # Check that file types' files exist
         elseif(DEFINED CURRENT_LIST_NAME AND CURRENT_LIST_NAME IN_LIST FILE_CONTROL_SETS AND NOT EXISTS "${RESOLVED_ARGUMENT}")
-            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a SOURCE/HEADER/AUTOCODER_INPUT")
+            fprime_cmake_fatal_error("${ARGUMENT} does not exist but was specified as a ${CURRENT_LIST_NAME}")
         # Add in an element to the active control list
         elseif(DEFINED CURRENT_LIST_NAME)
             list(APPEND "LIST_${CURRENT_LIST_NAME}" "${ARGUMENT}")
@@ -250,6 +251,12 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
 
     # Add the link libraries safely in both real and INTERFACE libraries
     fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS})
+
+    # Set extra link dependencies when supplied
+    set(EXTRA_LINK_DEPENDS "${ARGV9}")
+    if (EXTRA_LINK_DEPENDS)
+        set_target_properties("${TARGET_NAME}" PROPERTIES LINK_DEPENDS "${EXTRA_LINK_DEPENDS}")
+    endif()
 
     # Set F Prime target properties
     set_target_properties("${TARGET_NAME}"
