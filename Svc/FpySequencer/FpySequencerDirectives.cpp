@@ -1641,7 +1641,7 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
 
 Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
                                                       DirectiveError& error) {
-    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, directive.get_size());
+    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(directive.get_size()));
 
     // Validate port index is in range (using enum constant value)
     constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
