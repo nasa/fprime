@@ -573,53 +573,85 @@ void CfdpManagerTester::testSetChannelFlowInvalidChannel() {
 
 void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     // Test that SuspendResumeTransaction command can suspend and resume a transaction
-    // Note: This is a simplified test - full transaction testing would require
-    // setting up an active transaction
     //
-    // Event coverage: TransactionSuspended, TransactionResumed, TransactionNotFound
+    // Event coverage: TransactionSuspended, TransactionResumed
 
+    const char* srcFile = "test/ut/output/suspend_resume_test.bin";
+    const char* destFile = "/dest/suspend_resume.bin";
     U8 channelId = 0;
-    Cfdp::TransactionSeq transactionSeq = 1;
-    Cfdp::EntityId entityId = 100;
+    EntityId destEid = TEST_GROUND_EID;
 
-    // Clear events
+    // Create source file for transaction
+    Os::File file;
+    file.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    U8 testData[100];
+    for (U8 i = 0; i < 100; i++) {
+        testData[i] = i;
+    }
+    FwSizeType sizeToWrite = 100;
+    file.write(testData, sizeToWrite);
+    file.close();
+
     this->clearEvents();
+    this->clearHistory();
 
-    // Attempt to suspend a nonexistent transaction (no transaction is running)
-    // This should succeed but emit TransactionNotFound event
+    // Start a file transfer to create an active transaction
+    Fw::String srcFileStr(srcFile);
+    Fw::String destFileStr(destFile);
+    this->sendCmd_SendFile(0, 0, channelId, destEid,
+                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
+                          srcFileStr, destFileStr);
+    this->component.doDispatch();
+
+    // Run cycles to start transaction (but not complete it)
+    for (U32 i = 0; i < 3; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Get the transaction sequence number from the component's local entity ID
+    Cfdp::EntityId localEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 1;  // First transaction
+
+    // Clear events before suspend command
+    this->clearEvents();
+    this->clearHistory();
+
+    // Suspend the active transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           channelId, transactionSeq, entityId,
+                                           channelId, transactionSeq, localEid,
                                            Cfdp::SuspendResume::SUSPEND);
 
     this->component.doDispatch();
 
-    // Command returns EXECUTION_ERROR (transaction not found)
+    // Command should succeed
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::OK);
 
-    // TransactionNotFound event emitted (since no transaction exists)
-    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
-    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+    // TransactionSuspended event emitted
+    ASSERT_EVENTS_TransactionSuspended_SIZE(1);
 
     // Clear for resume test
     this->clearEvents();
     this->clearHistory();
 
-    // Attempt to resume - also returns EXECUTION_ERROR with TransactionNotFound
+    // Resume the suspended transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           channelId, transactionSeq, entityId,
+                                           channelId, transactionSeq, localEid,
                                            Cfdp::SuspendResume::RESUME);
 
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::OK);
 
-    // TransactionNotFound event emitted
-    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
-    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+    // TransactionResumed event emitted
+    ASSERT_EVENTS_TransactionResumed_SIZE(1);
+
+    // Clean up test file
+    Os::FileSystem::removeFile(srcFile);
 }
 
 void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
@@ -687,32 +719,67 @@ void CfdpManagerTester::testSuspendResumeTransactionNotFound() {
 // ----------------------------------------------------------------------
 
 void CfdpManagerTester::testCancelTransactionNominal() {
-    // Test that CancelTransaction command is accepted
-    // Note: Without an active transaction, TransactionNotFound will be emitted
+    // Test that CancelTransaction command cancels an active transaction
     //
-    // Event coverage: TransactionCanceled, TransactionNotFound
+    // Event coverage: TransactionCanceled
 
+    const char* srcFile = "test/ut/output/cancel_test.bin";
+    const char* destFile = "/dest/cancel.bin";
     U8 channelId = 0;
-    Cfdp::TransactionSeq transactionSeq = 1;
-    Cfdp::EntityId entityId = 100;
+    EntityId destEid = TEST_GROUND_EID;
 
-    // Clear events
+    // Create source file for transaction
+    Os::File file;
+    file.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    U8 testData[100];
+    for (U8 i = 0; i < 100; i++) {
+        testData[i] = i;
+    }
+    FwSizeType sizeToWrite = 100;
+    file.write(testData, sizeToWrite);
+    file.close();
+
     this->clearEvents();
+    this->clearHistory();
 
-    // Attempt to cancel a nonexistent transaction
+    // Start a file transfer to create an active transaction
+    Fw::String srcFileStr(srcFile);
+    Fw::String destFileStr(destFile);
+    this->sendCmd_SendFile(0, 0, channelId, destEid,
+                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
+                          srcFileStr, destFileStr);
+    this->component.doDispatch();
+
+    // Run cycles to start transaction
+    for (U32 i = 0; i < 3; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Get transaction information
+    Cfdp::EntityId localEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 1;
+
+    // Clear events before cancel command
+    this->clearEvents();
+    this->clearHistory();
+
+    // Cancel the active transaction
     this->sendCmd_CancelTransaction(0,  // Instance
                                     0,  // cmdSeq
-                                    channelId, transactionSeq, entityId);
+                                    channelId, transactionSeq, localEid);
 
     this->component.doDispatch();
 
-    // Command returns EXECUTION_ERROR (transaction not found)
+    // Command should succeed
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::OK);
 
-    // TransactionNotFound event emitted (since no transaction exists)
-    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
-    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+    // TransactionCanceled event emitted
+    ASSERT_EVENTS_TransactionCanceled_SIZE(1);
+
+    // Clean up test file
+    Os::FileSystem::removeFile(srcFile);
 }
 
 void CfdpManagerTester::testCancelTransactionInvalidChannel() {
@@ -748,32 +815,67 @@ void CfdpManagerTester::testCancelTransactionInvalidChannel() {
 // ----------------------------------------------------------------------
 
 void CfdpManagerTester::testAbandonTransactionNominal() {
-    // Test that AbandonTransaction command is accepted
-    // Note: Without an active transaction, TransactionNotFound will be emitted
+    // Test that AbandonTransaction command abandons an active transaction
     //
-    // Event coverage: TransactionAbandoned, TransactionNotFound
+    // Event coverage: TransactionAbandoned
 
+    const char* srcFile = "test/ut/output/abandon_test.bin";
+    const char* destFile = "/dest/abandon.bin";
     U8 channelId = 0;
-    Cfdp::TransactionSeq transactionSeq = 1;
-    Cfdp::EntityId entityId = 100;
+    EntityId destEid = TEST_GROUND_EID;
 
-    // Clear events
+    // Create source file for transaction
+    Os::File file;
+    file.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    U8 testData[100];
+    for (U8 i = 0; i < 100; i++) {
+        testData[i] = i;
+    }
+    FwSizeType sizeToWrite = 100;
+    file.write(testData, sizeToWrite);
+    file.close();
+
     this->clearEvents();
+    this->clearHistory();
 
-    // Attempt to abandon a nonexistent transaction
+    // Start a file transfer to create an active transaction
+    Fw::String srcFileStr(srcFile);
+    Fw::String destFileStr(destFile);
+    this->sendCmd_SendFile(0, 0, channelId, destEid,
+                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
+                          srcFileStr, destFileStr);
+    this->component.doDispatch();
+
+    // Run cycles to start transaction
+    for (U32 i = 0; i < 3; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+
+    // Get transaction information
+    Cfdp::EntityId localEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 1;
+
+    // Clear events before abandon command
+    this->clearEvents();
+    this->clearHistory();
+
+    // Abandon the active transaction
     this->sendCmd_AbandonTransaction(0,  // Instance
                                      0,  // cmdSeq
-                                     channelId, transactionSeq, entityId);
+                                     channelId, transactionSeq, localEid);
 
     this->component.doDispatch();
 
-    // Command returns EXECUTION_ERROR (transaction not found)
+    // Command should succeed
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::OK);
 
-    // TransactionNotFound event emitted (since no transaction exists)
-    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
-    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+    // TransactionAbandoned event emitted
+    ASSERT_EVENTS_TransactionAbandoned_SIZE(1);
+
+    // Clean up test file
+    Os::FileSystem::removeFile(srcFile);
 }
 
 void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
