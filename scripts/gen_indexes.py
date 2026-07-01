@@ -98,7 +98,16 @@ def get_section_title(section_dir: Path) -> str:
 
 def get_sections(source_dir: Path):
     """Yield (section_path, title, is_file) for each section in the given directory."""
-    for entry in sorted(source_dir.iterdir()):
+    section_name = source_dir.name
+    desired_order = list(SECTION_DESCRIPTIONS.get(section_name, {}).keys())
+
+    def sort_key(entry):
+        if entry.name in desired_order:
+            return (0, desired_order.index(entry.name))
+        else:
+            return (1, entry.name)  # unlisted items go last, alphabetically
+
+    for entry in sorted(source_dir.iterdir(), key=sort_key):
         if entry.name.startswith((".", "_")) or entry.name == "index.md" or entry.suffix == ".py":
             continue
         if entry.is_dir():

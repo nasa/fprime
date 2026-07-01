@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 import re # for reg expression matching of nav: block in mkdocs.yml
 
-MKDOCS_YML = Path("mkdocs.yml")
+MKDOCS_YML = Path("docs/mkdocs.yml")
 output_file = "mkdocs_nav.yml"
 root = "docs"
 excluded_folders = {"Home", "docs-venv", "doxygen", "index", "INSTALL", "tutorials-hello-world", "tutorials-led-blinker", "tutorials-arduino-led-blinker", "tutorials-math-component"}
