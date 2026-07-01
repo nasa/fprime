@@ -455,13 +455,42 @@ void EventManagerTester::runEventFatal() {
 void EventManagerTester::runDroppedTelemetry() {
     this->clearHistory();
 
-    // invoke Run port to trigger telemetry write
+    // verify baseline: no drops yet
+    this->invoke_to_Run(0, 0);
+    this->m_impl.doDispatch();
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_EventsDropped_SIZE(1);
+    ASSERT_TLM_EventsDropped(0, 0);
+
+    // fill the queue (size 10) without dispatching to cause drops
+    Fw::LogBuffer buff;
+    Fw::SerializeStatus stat = buff.serializeFrom(static_cast<U32>(0));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    Fw::Time timeTag(TimeBase::TB_NONE, 0, 0);
+
+    const FwSizeType queueDepth = 10;
+    for (FwSizeType i = 0; i < queueDepth; i++) {
+        this->invoke_to_LogRecv(0, static_cast<FwEventIdType>(i), timeTag, Fw::LogSeverity::ACTIVITY_HI, buff);
+    }
+    // queue is now full; next events will be dropped
+    const FwSizeType numDropped = 3;
+    for (FwSizeType i = 0; i < numDropped; i++) {
+        this->invoke_to_LogRecv(0, static_cast<FwEventIdType>(100 + i), timeTag, Fw::LogSeverity::ACTIVITY_HI, buff);
+    }
+
+    // drain the queue
+    for (FwSizeType i = 0; i < queueDepth; i++) {
+        this->m_impl.doDispatch();
+    }
+
+    // invoke Run to emit telemetry and dispatch it
+    this->clearTlm();
     this->invoke_to_Run(0, 0);
     this->m_impl.doDispatch();
 
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_EventsDropped_SIZE(1);
-    ASSERT_TLM_EventsDropped(0, 0);
+    ASSERT_TLM_EventsDropped(0, numDropped);
 }
 
 void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {
