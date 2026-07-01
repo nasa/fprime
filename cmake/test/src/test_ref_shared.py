@@ -12,6 +12,7 @@ from pathlib import Path
 from . import cmake
 from . import settings
 
+
 if platform.system() == "Darwin":
     pytestmark = pytest.mark.skip(reason="Shared modules are not supported on macOS")
 
@@ -27,12 +28,12 @@ MODULES = settings.FRAMEWORK_MODULES + settings.STANDARD_MODULES
 
 def test_ref_run(REF_BUILD):
     """Basic run test for ref"""
-    cmake.assert_process_success(REF_BUILD, warnings_ok=True)
+    cmake.assert_process_success(REF_BUILD)
 
 
 def test_ref_targets(REF_BUILD):
     """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(REF_BUILD, warnings_ok=True)
+    cmake.assert_process_success(REF_BUILD)
     for module in MODULES:
         library_name = (
             f"lib{module}{'.so' if platform.system() != 'Darwin' else '.dylib'}"
@@ -45,7 +46,7 @@ def test_ref_targets(REF_BUILD):
 
 def test_ref_installation(REF_BUILD):
     """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(REF_BUILD, warnings_ok=True)
+    cmake.assert_process_success(REF_BUILD)
     for module in MODULES:
         library_name = (
             f"lib{module}{'.so' if platform.system() != 'Darwin' else '.dylib'}"
@@ -60,7 +61,7 @@ def test_ref_installation(REF_BUILD):
 
 def test_ref_dictionary_json(REF_BUILD):
     """Build Ref and assert JSON dictionary exists"""
-    cmake.assert_process_success(REF_BUILD, warnings_ok=True)
+    cmake.assert_process_success(REF_BUILD)
     output_path = (
         REF_BUILD["install"]
         / platform.system()

@@ -10,6 +10,7 @@ import platform
 from . import cmake
 from . import settings
 
+
 TOOLCHAIN_NAME = "generic-native"
 
 
@@ -48,12 +49,12 @@ FEATURE_BUILD_RESULT = cmake.get_build(
 
 def test_feature_run(FEATURE_BUILD):
     """Basic run test for feature build"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
 
 
 def test_link_depends(FEATURE_BUILD):
     """LINK_DEPENDS directive sets the target property and builds successfully"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     library_name = "libTestLinkDepends.a"
     output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME / library_name
     assert output_path.exists(), f"Failed to locate {library_name} in build output"
@@ -61,7 +62,7 @@ def test_link_depends(FEATURE_BUILD):
 
 def test_feature_framework(FEATURE_BUILD):
     """Feature build check framework properly detected"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     for module in settings.FRAMEWORK_MODULES + ["Svc_CmdDispatcher"]:
         library_name = f"lib{module}.a"
         output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME / library_name
@@ -70,7 +71,7 @@ def test_feature_framework(FEATURE_BUILD):
 
 def test_feature_library(FEATURE_BUILD):
     """Feature build check libraries properly detected"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     modules = ["TestLibrary_TestComponent", "TestLibrary2_TestComponent"]
     for module in modules:
         library_name = f"lib{module}.a"
@@ -80,7 +81,7 @@ def test_feature_library(FEATURE_BUILD):
 
 def test_feature_deployment(FEATURE_BUILD):
     """Feature build check deployment properly detected"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     library_name = "TestDeployment"
     output_path = FEATURE_BUILD["build"] / "bin" / TOOLCHAIN_NAME / library_name
     assert output_path.exists(), f"Failed to locate {library_name} in build output"
@@ -88,7 +89,7 @@ def test_feature_deployment(FEATURE_BUILD):
 
 def test_feature_autocoder(FEATURE_BUILD):
     """Feature build check deployment properly detected"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     for output_file in ["test-ac-1", "test-ac-2"]:
         output_path = FEATURE_BUILD["build"] / output_file
         assert output_path.exists(), f"Failed to locate {output_file} in build output"
@@ -96,7 +97,7 @@ def test_feature_autocoder(FEATURE_BUILD):
 
 def test_feature_targets(FEATURE_BUILD):
     """Feature build check deployment properly detected"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     for output_file in [
         "global-test",
         "deployment-test",
@@ -108,7 +109,7 @@ def test_feature_targets(FEATURE_BUILD):
 
 def test_feature_version_info(FEATURE_BUILD):
     """Build and assert version files validity"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     version_hpp = FEATURE_BUILD["build"] / "versions" / "version.hpp"
     version_json = FEATURE_BUILD["build"] / "versions" / "version.json"
     assert version_hpp.exists(), "Failed to locate version.hpp in build output"
@@ -134,7 +135,7 @@ def test_feature_version_info(FEATURE_BUILD):
 
 def test_feature_installation(FEATURE_BUILD):
     """Run reference and assert reference targets exit"""
-    cmake.assert_process_success(FEATURE_BUILD, warnings_ok=True)
+    cmake.assert_process_success(FEATURE_BUILD)
     deployment_name = "TestDeployment"
     for module in settings.FRAMEWORK_MODULES + [
         "Svc_CmdDispatcher",

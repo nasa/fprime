@@ -25,23 +25,17 @@ _ = cmake.get_build(
 
 def test_build_autocoder(AUTOCODER_BUILD):
     """Test that a build-autocoder works"""
-    cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestBuildAutocoderModule"]
-    )
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestBuildAutocoderModule"])
 
 
 def test_target_autocoder(AUTOCODER_BUILD):
     """Test that a target-triggered autocoder works"""
-    cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestTargetAutocoderModule"]
-    )
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestTargetAutocoderModule"])
 
 
 def test_autocoder_non_build_files(AUTOCODER_BUILD):
     """Test that a target-triggered autocoder works"""
-    cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestTargetAutocoderModule"]
-    )
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestTargetAutocoderModule"])
     build_cache_path = (
         AUTOCODER_BUILD["build"] / "TestDeployment" / "TestTargetAutocoder"
     )
@@ -58,7 +52,7 @@ def test_autocoder_non_build_files(AUTOCODER_BUILD):
 def test_autocoder_chaining(AUTOCODER_BUILD):
     """Test that autocoder chaining works - where one autocoder's output becomes another's input"""
     cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestChainedAutocoderModule"]
+        AUTOCODER_BUILD, targets=["TestChainedAutocoderModule"]
     )
     build_cache_path = (
         AUTOCODER_BUILD["build"] / "TestDeployment" / "TestChainedAutocoder"
@@ -85,16 +79,12 @@ def test_autocoder_chaining(AUTOCODER_BUILD):
 
 def test_autocoder_header_as_sources(AUTOCODER_BUILD):
     """Test that autocoders can generate header files that are treated as sources"""
-    cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestHeaderAutocoderModule"]
-    )
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestHeaderAutocoderModule"])
 
 
 def test_autocoder_rerun_autocoder(AUTOCODER_BUILD):
     """Test that autocoders can generate header files that are treated as sources"""
-    cmake.assert_process_success(
-        AUTOCODER_BUILD, warnings_ok=True, targets=["TestBuildAutocoderModule"]
-    )
+    cmake.assert_process_success(AUTOCODER_BUILD, targets=["TestBuildAutocoderModule"])
     build_cache_path = (
         AUTOCODER_BUILD["build"] / "TestDeployment" / "TestBuildAutocoder"
     )
