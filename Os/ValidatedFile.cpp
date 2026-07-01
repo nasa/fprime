@@ -31,6 +31,13 @@ Os::ValidateFile::Status ValidatedFile ::createHashFile() {
     return status;
 }
 
+Os::ValidateFile::Status ValidatedFile ::createHashFile(const Utils::HashBuffer& hashBuffer) {
+    this->m_hashBuffer = hashBuffer;
+    const Os::ValidateFile::Status status =
+        Os::ValidateFile::createValidation(this->m_hashFileName.toChar(), this->m_hashBuffer);
+    return status;
+}
+
 const Fw::ConstStringBase& ValidatedFile ::getFileName() const {
     return this->m_fileName;
 }
