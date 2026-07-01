@@ -210,6 +210,8 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
                 // Connection reset or bad file descriptor.
                 req_read = 0;
                 return SOCK_DISCONNECTED;  // Or a more specific error like SOCK_READ_ERROR
+            } else if (errno == EINTR) {
+                continue;
             } else {
                 // Other socket read error.
                 req_read = 0;
