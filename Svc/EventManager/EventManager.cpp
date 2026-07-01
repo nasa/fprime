@@ -81,9 +81,16 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                FilterSeverity filterLevel,
                                                Enabled filterEnable) {
+    // Verify FilterSeverity enum values match EventSeverityFilter index ordering
+    static_assert(static_cast<FwSizeType>(FilterSeverity::WARNING_HI) == 0, "FilterSeverity ordering mismatch");
+    static_assert(static_cast<FwSizeType>(FilterSeverity::DIAGNOSTIC) == 5, "FilterSeverity ordering mismatch");
+
     Fw::LogSeverity logSeverity;
     Fw::Success status = EventSeverityFilter::fromIndex(static_cast<FwSizeType>(filterLevel.e), logSeverity);
-    FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(filterLevel.e));
+    if (status != Fw::Success::SUCCESS) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     this->m_severityFilter.setFilter(logSeverity, filterEnable.e == Enabled::ENABLED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

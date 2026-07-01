@@ -19,3 +19,12 @@ register_fprime_module(
     Fw_Logger
     Svc_Types_EventSeverityFilter
 )
+
+### UTs ###
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveConsoleTextLoggerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveConsoleTextLoggerTestMain.cpp"
+)
