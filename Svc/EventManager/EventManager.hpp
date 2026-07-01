@@ -48,7 +48,7 @@ class EventManager final : public EventManagerComponentBase {
     );
 
     //! Handler for rate group port — writes dropped-event telemetry
-    void Run_handler(FwIndexType portNum, U32 context);
+    void run_handler(FwIndexType portNum, U32 context);
 
     //! Handler implementation for pingIn
     //!

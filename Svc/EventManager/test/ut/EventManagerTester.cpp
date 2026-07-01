@@ -456,7 +456,7 @@ void EventManagerTester::runDroppedTelemetry() {
     this->clearHistory();
 
     // verify baseline: no drops yet
-    this->invoke_to_Run(0, 0);
+    this->invoke_to_run(0, 0);
     this->m_impl.doDispatch();
     ASSERT_TLM_SIZE(1);
     ASSERT_TLM_EventsDropped_SIZE(1);
@@ -483,9 +483,9 @@ void EventManagerTester::runDroppedTelemetry() {
         this->m_impl.doDispatch();
     }
 
-    // invoke Run to emit telemetry and dispatch it
+    // invoke run to emit telemetry and dispatch it
     this->clearTlm();
-    this->invoke_to_Run(0, 0);
+    this->invoke_to_run(0, 0);
     this->m_impl.doDispatch();
 
     ASSERT_TLM_SIZE(1);

@@ -36,7 +36,7 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Log`](../../../Fw/Log/docs/sdd.md) | LogRecv | Input | Synchronous | Receive events from components
 [`Fw::Com`](../../../Fw/Log/docs/sdd.md) | PktSend | Output | n/a | Send event packets to external user
 [`Svc::FatalEvent`](../../../Svc/Fatal/docs/sdd.md) | FatalAnnounce | Output | n/a | Send FATAL event (to health)
-[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | Run | Input | Async (drop) | Rate group driven telemetry updates
+[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | run | Input | Async (drop) | Rate group driven telemetry updates
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Tlm | Output | n/a | Send telemetry channels
 
 ### 3.2 Functional Description
@@ -68,7 +68,7 @@ the F´ ground format and sent out using the `PktSend` port.
 #### 3.2.3 Dropped Event Reporting
 
 The `EventManager` component reports the number of events dropped due to internal queue overflow via the
-`EventsDropped` telemetry channel. The channel is written from the `Run` port handler, which should be connected to a
+`EventsDropped` telemetry channel. The channel is written from the `run` port handler, which should be connected to a
 rate group for periodic updates. The channel uses update-on-change semantics.
 
 
