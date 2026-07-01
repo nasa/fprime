@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: "Setup external repository + overlay F´"
-        uses: moisesmata/fprime-actions/external-repository-setup@soak-actions-improvements
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-workshop-led-blinker
           # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
@@ -61,7 +61,7 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
+        uses: moisesmata/fprime-actions/soak-setup@split-RPI-pico2
         with:
           deployment-name: ledblinker
           platform: linux-remote

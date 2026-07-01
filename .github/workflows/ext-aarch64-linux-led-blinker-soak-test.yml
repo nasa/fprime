@@ -22,6 +22,6 @@ jobs:
     name: "Soak Test"
     runs-on: [self-hosted, ARM64, soak-test]
     steps:
-      - uses: moisesmata/fprime-actions/soak-test@soak-actions-improvements
+      - uses: moisesmata/fprime-actions/soak-test@split-RPI-pico2
         with:
           deployment-name: ledblinker

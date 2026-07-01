@@ -48,7 +48,7 @@ jobs:
           name: archive.tar.gz
 
       - name: "Deploy Soak GDS service"
-        uses: moisesmata/fprime-actions/soak-setup@soak-actions-improvements
+        uses: moisesmata/fprime-actions/soak-setup@split-RPI-pico2
         with:
           deployment-name: zephyr-reference
           platform: pico2
