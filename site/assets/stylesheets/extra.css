@@ -27,6 +27,49 @@
     --md-code-bg-color: hsla(var(--md-hue), 15%, 10%, 1);
 }
 
+/* --------------- Tooltip Styling --------------- */
+/* Hide default Material tooltip to prevent duplicate */
+
+
+/* --------------- Header Icon Colors --------------- */
+/* Force header icons and buttons to be white */
+.md-header__button,
+.md-header__button svg {
+    color: var(--md-header-text-color) !important;
+    fill: var(--md-header-text-color) !important;
+}
+
+/* Force search button and icon to be white */
+.md-search__icon,
+.md-search__icon svg {
+    color: var(--md-header-text-color) !important;
+    fill: var(--md-header-text-color) !important;
+}
+
+/* Force search bar input text to be white */
+.md-search__input {
+    color: var(--md-header-text-color) !important;
+}
+
+/* Force search bar placeholder text to be white */
+.md-search__input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Force GitHub repo link text to be white */
+.md-source,
+.md-source__repository,
+.md-source__fact {
+    color: var(--md-header-text-color) !important;
+}
+
+/* Force all header icons and SVGs to be white */
+.md-header svg,
+.md-header__inner svg {
+    color: var(--md-header-text-color) !important;
+    fill: var(--md-header-text-color) !important;
+}
+
 .md-typeset h1 {
     color: var(--md-default-fg-color);
 }
@@ -69,9 +112,15 @@ a {
 }
 
 /* --------------- Header/Footer Custom CSS --------------- */
-/* Adjusts color of footer */
+/* Adjusts color of footer meta */
 .md-footer-meta {
-    background-color: #15203D;
+    background-color: #15203D !important;
+}
+
+/* Force footer meta background in both color schemes */
+[data-md-color-scheme="default"] .md-footer-meta,
+[data-md-color-scheme="slate"] .md-footer-meta {
+    background-color: #15203D !important;
 }
 
 .md-header{

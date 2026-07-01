@@ -16,52 +16,52 @@
         <loc>https://fprime.jpl.nasa.gov/latest/how-to/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/custom-framing/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/data-products/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/data-products/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/define-state-machines/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/define-state-machines/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/develop-device-driver/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/derive-channels-on-ground/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/develop-fprime-libraries/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/develop-device-driver/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/develop-subtopologies/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/develop-fprime-libraries/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/implement-radio-manager/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/develop-gds-plugins/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/dev/python-development/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/develop-subtopologies/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/integrate/custom-framing/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/implement-osal/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/integrate/implement-osal/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/implement-radio-manager/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/integrate/integrate-external-libraries/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/integrate-external-libraries/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/integrate/porting-guide/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/porting-guide/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/ops/derive-channels-on-ground/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/prm-write-how-to/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/ops/develop-gds-plugins/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/python-development/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/ops/prm-write-how-to/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/rule-based-testing/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/test/rule-based-testing/</loc>
       </url>
       <url>
-        <loc>https://fprime.jpl.nasa.gov/latest/how-to/test-driven-development/</loc>
+        <loc>https://fprime.jpl.nasa.gov/latest/how-to/test/test-driven-development/</loc>
       </url>
       <url>
         <loc>https://fprime.jpl.nasa.gov/latest/reference/</loc>

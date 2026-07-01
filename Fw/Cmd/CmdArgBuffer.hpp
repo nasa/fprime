@@ -1,44 +1,17 @@
-/*
- *
- *
- *  Created on: March 1, 2014
- *      Author: T. Canham
- */
+// ======================================================================
+// @file   CmdArgBuffer.hpp
+// @author F Prime
+// @brief  A buffer sized for command arguments
+// ======================================================================
 
-/*
- * Description:
- * This object contains the CmdARgBuffer type, used for holding the serialized arguments of commands
- */
 #ifndef FW_CMD_ARG_BUFFER_HPP
 #define FW_CMD_ARG_BUFFER_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
+#include "Fw/Types/LinearBufferTemplate.hpp"
 
 namespace Fw {
 
-class CmdArgBuffer final : public LinearBufferBase {
-  public:
-    enum {
-        SERIALIZED_SIZE =
-            STATIC_SERIALIZED_SIZE(FW_CMD_ARG_BUFFER_MAX_SIZE)  //!< size when serialized. Buffer + size of buffer
-    };
-
-    CmdArgBuffer(const U8* args, FwSizeType size);       //!< buffer source constructor
-    CmdArgBuffer();                                      //!< default constructor
-    CmdArgBuffer(const CmdArgBuffer& other);             //!< other arg buffer constructor
-    virtual ~CmdArgBuffer();                             //!< destructor
-    CmdArgBuffer& operator=(const CmdArgBuffer& other);  //!< Equal operator
-
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;  //!< return capacity of buffer (how much it can hold)
-
-    U8* getBuffAddr();              //!< return address of buffer (non const version)
-    const U8* getBuffAddr() const;  //!< return address of buffer (const version)
-
-  private:
-    U8 m_bufferData[FW_CMD_ARG_BUFFER_MAX_SIZE];  //!< command argument buffer
-};
+using CmdArgBuffer = LinearBufferTemplate<FW_CMD_ARG_BUFFER_MAX_SIZE>;
 
 }  // namespace Fw
 

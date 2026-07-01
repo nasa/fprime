@@ -1,40 +1,17 @@
-/*
- * TlmBuffer.hpp
- *
- *      Author: tcanham
- */
+// ======================================================================
+// @file   TlmBuffer.hpp
+// @author F Prime
+// @brief  A buffer sized for telemetry
+// ======================================================================
 
-/*
- * Description:
- * This object contains the TlmBuffer type, used for storing telemetry
- */
 #ifndef FW_TLM_BUFFER_HPP
 #define FW_TLM_BUFFER_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
+#include "Fw/Types/LinearBufferTemplate.hpp"
 
 namespace Fw {
 
-class TlmBuffer final : public LinearBufferBase {
-  public:
-    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_TLM_BUFFER_MAX_SIZE) };
-
-    TlmBuffer(const U8* args, FwSizeType size);
-    TlmBuffer();
-    TlmBuffer(const TlmBuffer& other);
-    virtual ~TlmBuffer();
-    TlmBuffer& operator=(const TlmBuffer& other);
-
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
-
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
-
-  private:
-    U8 m_bufferData[FW_TLM_BUFFER_MAX_SIZE];  // command argument buffer
-};
+using TlmBuffer = LinearBufferTemplate<FW_TLM_BUFFER_MAX_SIZE>;
 
 }  // namespace Fw
 

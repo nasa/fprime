@@ -1,8 +1,0 @@
-.DS_Store
-.vscode
-venv
-fprime-venv
-**/build-artifacts
-**/build-fprime-*
-**-template
-**/logs

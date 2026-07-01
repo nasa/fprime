@@ -41,7 +41,7 @@ jobs:
       - name: "Stage fprime-gds.yml"
         run: cp LedBlinker/LedBlinkerDeployment/fprime-gds.yml fprime-gds.yml
       - name: "Archive soak artifact"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ledblinker-soak-artifact
           path: |
@@ -56,7 +56,7 @@ jobs:
     needs: cross-compilation
     steps:
       - name: "Download soak artifact"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ledblinker-soak-artifact
           path: artifacts
