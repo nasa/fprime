@@ -152,11 +152,11 @@ def write_nav_into_mkdocs(nav: list) -> None:
 def build_tutorials():
     return {
         "Tutorials": [
-            {"Tutorials Index": "tutorials/index.md"},
+            {"Tutorials Index": "docs/tutorials/index.md"},
             {"Hello World": "tutorials/tutorials-hello-world/docs/hello-world.md"},
             {"LED Blinker": "tutorials/tutorials-led-blinker/docs/led-blinker.md"},
             {"MathComponent": "tutorials/tutorials-math-component/docs/math-component.md"},
-            {"Cross-Compilation Setup": "tutorials/cross-compilation.md"},
+            {"Cross-Compilation Setup": "docs/tutorials/cross-compilation.md"},
             {"Arduino LED Blinker": "tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker.md"},
         ]
     }
