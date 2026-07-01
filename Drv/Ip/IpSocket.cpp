@@ -117,7 +117,9 @@ SocketIpStatus IpSocket::addressToIp4(const char* const ipv4_address, void* cons
 }
 
 void IpSocket::close(const SocketDescriptor& socketDescriptor) {
-    (void)::close(socketDescriptor.fd);
+    if (socketDescriptor.fd >= 0) {
+        (void)::close(socketDescriptor.fd);
+    }
 }
 
 void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {

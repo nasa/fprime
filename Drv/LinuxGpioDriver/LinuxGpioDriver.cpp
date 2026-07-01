@@ -123,7 +123,9 @@ U32 configuration_to_event_flags(Drv::LinuxGpioDriver::GpioConfiguration configu
 }
 
 LinuxGpioDriver ::~LinuxGpioDriver() {
-    (void)::close(this->m_fd);
+    if (this->m_fd >= 0) {
+        (void)::close(this->m_fd);
+    }
 }
 
 // ----------------------------------------------------------------------
