@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""At website runtime, git clone tutorials markdown files into fprime/docs/tutorials
+"""At website runtime, git clone tutorials markdown files into fprime/docs/tutorials.
+This was initially written for Zensical integration.
 """
 from __future__ import annotations
 
