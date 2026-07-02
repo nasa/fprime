@@ -10,6 +10,12 @@
 //
 // ======================================================================
 
+// If this is compiled for unix, include unistd to check user id
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#define UNISTD_INCLUDED
+#include <unistd.h>
+#endif
+
 #include <cstdlib>
 
 #include "Errors.hpp"
@@ -132,6 +138,13 @@ void BufferLoggerTester ::LogFileWrite() {
 }
 
 void BufferLoggerTester ::LogFileValidation() {
+    // Skip test if running as root, since root bypasses Unix permission checks
+#if UNISTD_INCLUDED
+    if (getuid() == 0) {
+        GTEST_SKIP() << "Test skipped when running as root (permission checks are bypassed)";
+    }
+#endif
+
     this->component.m_file.m_baseName = Fw::String("LogFileValidation");
 
     // Send data
