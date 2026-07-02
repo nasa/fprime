@@ -194,16 +194,10 @@ void SpacePacketDeframerTester ::testInvalidPacketIdentificationControlFields() 
     U8 payload[2] = {0xAA, 0xBB};
     ComCfg::FrameContext nullContext;
 
-    Fw::Buffer buffer = this->assemblePacketWithControlFields(
-        0x1,  // invalid PVN for Space Packet Protocol in this component
-        0x0,
-        0x0,
-        static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM),
-        0x3,
-        0x0012,
-        static_cast<U16>(sizeof(payload) - 1),
-        payload,
-        sizeof(payload));
+    Fw::Buffer buffer =
+        this->assemblePacketWithControlFields(0x1,  // invalid PVN for Space Packet Protocol in this component
+                                              0x0, 0x0, static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM), 0x3, 0x0012,
+                                              static_cast<U16>(sizeof(payload) - 1), payload, sizeof(payload));
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
@@ -242,15 +236,8 @@ void SpacePacketDeframerTester ::testControlFieldAccepted(U16 pvn,
     ComCfg::FrameContext nullContext;
 
     Fw::Buffer buffer = this->assemblePacketWithControlFields(
-        pvn,
-        packetType,
-        secondaryHeaderFlag,
-        static_cast<U16>(expectedApid),
-        sequenceFlags,
-        seqCount,
-        static_cast<U16>(sizeof(payload) - 1),
-        payload,
-        sizeof(payload));
+        pvn, packetType, secondaryHeaderFlag, static_cast<U16>(expectedApid), sequenceFlags, seqCount,
+        static_cast<U16>(sizeof(payload) - 1), payload, sizeof(payload));
 
     this->invoke_to_dataIn(0, buffer, nullContext);
 
@@ -283,16 +270,14 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacketWithControlFields(U16 pvn,
                                                                        U8* packetData,
                                                                        U16 packetDataLen) {
     SpacePacketHeader header;
-    const U16 packetIdentification =
-        static_cast<U16>(((pvn << SpacePacketSubfields::PvnOffset) & SpacePacketSubfields::PvnMask) |
-                         ((packetType << SpacePacketSubfields::PktTypeOffset) & SpacePacketSubfields::PktTypeMask) |
-                         ((secondaryHeaderFlag << SpacePacketSubfields::SecHdrOffset) &
-                          SpacePacketSubfields::SecHdrMask) |
-                         (apid & SpacePacketSubfields::ApidMask));
-    const U16 packetSequenceControl =
-        static_cast<U16>(((sequenceFlags << SpacePacketSubfields::SeqFlagsOffset) &
-                          SpacePacketSubfields::SeqFlagsMask) |
-                         (seqCount & SpacePacketSubfields::SeqCountMask));
+    const U16 packetIdentification = static_cast<U16>(
+        ((pvn << SpacePacketSubfields::PvnOffset) & SpacePacketSubfields::PvnMask) |
+        ((packetType << SpacePacketSubfields::PktTypeOffset) & SpacePacketSubfields::PktTypeMask) |
+        ((secondaryHeaderFlag << SpacePacketSubfields::SecHdrOffset) & SpacePacketSubfields::SecHdrMask) |
+        (apid & SpacePacketSubfields::ApidMask));
+    const U16 packetSequenceControl = static_cast<U16>(
+        ((sequenceFlags << SpacePacketSubfields::SeqFlagsOffset) & SpacePacketSubfields::SeqFlagsMask) |
+        (seqCount & SpacePacketSubfields::SeqCountMask));
 
     header.set_packetIdentification(packetIdentification);
     header.set_packetSequenceControl(packetSequenceControl);
