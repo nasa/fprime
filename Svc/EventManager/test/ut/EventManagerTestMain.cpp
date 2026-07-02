@@ -31,7 +31,7 @@ void connectPorts(Svc::EventManager& impl, Svc::EventManagerTester& tester) {
     impl.set_Time_OutputPort(0, tester.get_from_Time(0));
     impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
 
-    tester.connect_to_Run(0, impl.get_Run_InputPort(0));
+    tester.connect_to_run(0, impl.get_run_InputPort(0));
 
 #if FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
