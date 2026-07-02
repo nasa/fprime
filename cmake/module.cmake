@@ -193,7 +193,21 @@ function(fprime__process_module_setup FPRIME_MODULE_TYPE ADDITIONAL_CONTROL_SETS
             #
             # Thus to make life easier on tool developers, we automatically resolve all paths as part of the interface
             # ensuring that this step is not required on each tool integration.
-            resolve_path_variables(LIST_${CONTROL_SET})
+            if (CONTROL_SET STREQUAL "DEPENDS")
+                set(RESOLVED_DEPENDS)
+                foreach(DEPENDENCY IN LISTS LIST_${CONTROL_SET})
+                    if (IS_ABSOLUTE "${DEPENDENCY}")
+                        set(RESOLVED_DEPENDENCY "${DEPENDENCY}")
+                        resolve_path_variables(RESOLVED_DEPENDENCY)
+                        list(APPEND RESOLVED_DEPENDS "${RESOLVED_DEPENDENCY}")
+                    else()
+                        list(APPEND RESOLVED_DEPENDS "${DEPENDENCY}")
+                    endif()
+                endforeach()
+                set(LIST_${CONTROL_SET} "${RESOLVED_DEPENDS}")
+            else()
+                resolve_path_variables(LIST_${CONTROL_SET})
+            endif()
             set(INTERNAL_${CONTROL_SET} "${LIST_${CONTROL_SET}}" PARENT_SCOPE)
         endif()
     endforeach(CONTROL_SET IN LISTS CONTROL_SETS)
