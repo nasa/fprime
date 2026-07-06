@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-06 19:13:17</td>
+      <td>2026-07-06 19:27:16</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>929</td>
-      <td>1080</td>
+      <td>930</td>
+      <td>1082</td>
       <td class="coverage-medium">86.0%</td>
     </tr>
     <tr>
@@ -52,8 +52,8 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>681</td>
-      <td>865</td>
+      <td>682</td>
+      <td>867</td>
       <td class="coverage-medium">78.7%</td>
     </tr>
   </table>
@@ -164,8 +164,8 @@
     <tr><td><a href="#l946">Svc::FpySequencer::op_ziext_32_64() (line 946)</a></td><td>called 3 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l930">Svc::FpySequencer::op_ziext_8_64() (line 930)</a></td><td>called 4 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l1398">Svc::FpySequencer::peek_directiveHandler(Svc::FpySequencer_PeekDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1398)</a></td><td>called 9 times</td><td>92.0%</td></tr>
-    <tr><td><a href="#l1592">Svc::FpySequencer::popEvent_directiveHandler(Svc::FpySequencer_PopEventDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1592)</a></td><td>called 11 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l1656">Svc::FpySequencer::popSerializable_directiveHandler(Svc::FpySequencer_PopSerializableDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1656)</a></td><td>called 9 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l1592">Svc::FpySequencer::popEvent_directiveHandler(Svc::FpySequencer_PopEventDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1592)</a></td><td>called 12 times</td><td>84.0%</td></tr>
+    <tr><td><a href="#l1660">Svc::FpySequencer::popSerializable_directiveHandler(Svc::FpySequencer_PopSerializableDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1660)</a></td><td>called 9 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l430">Svc::FpySequencer::pushPrm_directiveHandler(Svc::FpySequencer_PushPrmDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 430)</a></td><td>called 4 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l1342">Svc::FpySequencer::pushRand_directiveHandler(Svc::FpySequencer_PushRandDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1342)</a></td><td>called 7 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l1310">Svc::FpySequencer::pushTime_directiveHandler(Svc::FpySequencer_PushTimeDirective const&amp;, Svc::Fpy::DirectiveErrorCode&amp;) (line 1310)</a></td><td>called 4 times</td><td>78.0%</td></tr>
@@ -13575,7 +13575,7 @@
       <td class="lineno"><a id="l1592" href="#l1592">1592</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::popEvent_directiveHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FpySequencer_PopEventDirective</span><span class="o">&amp;</span><span class="w"> </span><span class="n">directive</span><span class="p">,</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">&amp;</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -13592,11 +13592,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 11 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -13632,11 +13632,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 11 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">10</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">messageSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="o">&lt;</span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="o">&gt;</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -13650,101 +13650,117 @@
       <td class="lineno"><a id="l1600" href="#l1600">1600</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Need message_size bytes + sizeof(LogSeverity serial type) for severity</span></td>
+      <td class="linecount coveredLine">11</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">severitySize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1601" href="#l1601">1601</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 9 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">messageSize</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1602" href="#l1602">1602</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">STACK_UNDERFLOW</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1603" href="#l1603">1603</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1604" href="#l1604">1604</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1605" href="#l1605">1605</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
+      <td class="lineno"><a id="l1602" href="#l1602">1602</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Need message_size bytes + sizeof(LogSeverity serial type) for severity</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1603" href="#l1603">1603</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">3/4</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 11 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 11 taken 9 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount partialCoveredLine">11</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">severitySize</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">severitySize</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">messageSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1604" href="#l1604">1604</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">STACK_UNDERFLOW</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1605" href="#l1605">1605</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
       <td class="lineno"><a id="l1606" href="#l1606">1606</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Pop message bytes first</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1607" href="#l1607">1607</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">messageBuf</span><span class="p">[</span><span class="n">FW_LOG_STRING_MAX_SIZE</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1608" href="#l1608">1608</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// don&#39;t read in more than (log string size) - 1 bytes</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Pop message bytes first</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1609" href="#l1609">1609</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">clampedSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">messageSize</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">FW_LOG_STRING_MAX_SIZE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">messageBuf</span><span class="p">[</span><span class="n">FW_LOG_STRING_MAX_SIZE</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1610" href="#l1610">1610</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// If message is larger than buffer, discard the excess bytes first (from top of stack, which is the end of the</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// don&#39;t read in more than (log string size) - 1 bytes</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1611" href="#l1611">1611</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">clampedSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">messageSize</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">FW_LOG_STRING_MAX_SIZE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1612" href="#l1612">1612</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// If message is larger than buffer, discard the excess bytes first (from top of stack, which is the end of the</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1613" href="#l1613">1613</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// message)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1612" href="#l1612">1612</a></td>
+      <td class="lineno"><a id="l1614" href="#l1614">1614</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -13758,59 +13774,39 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">messageSize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">clampedSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1613" href="#l1613">1613</a></td>
+      <td class="lineno"><a id="l1615" href="#l1615">1615</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">excess</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">messageSize</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">clampedSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1614" href="#l1614">1614</a></td>
+      <td class="lineno"><a id="l1616" href="#l1616">1616</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">excess</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="p">),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1617" href="#l1617">1617</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                  </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">excess</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1618" href="#l1618">1618</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">excess</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1615" href="#l1615">1615</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1616" href="#l1616">1616</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 9 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">messageBuf</span><span class="p">,</span><span class="w"> </span><span class="n">clampedSize</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1617" href="#l1617">1617</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">messageBuf</span><span class="p">[</span><span class="n">clampedSize</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1618" href="#l1618">1618</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l1619" href="#l1619">1619</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Pop severity</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1620" href="#l1620">1620</a></td>
@@ -13823,24 +13819,58 @@
         </details>
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="w"> </span><span class="n">severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="o">&lt;</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="o">&gt;</span><span class="p">();</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">messageBuf</span><span class="p">,</span><span class="w"> </span><span class="n">clampedSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1621" href="#l1621">1621</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">messageBuf</span><span class="p">[</span><span class="n">clampedSize</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1622" href="#l1622">1622</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Construct the message string</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1623" href="#l1623">1623</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Pop severity</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1624" href="#l1624">1624</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 9 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="w"> </span><span class="n">severity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="o">&lt;</span><span class="n">Fw</span><span class="o">::</span><span class="n">LogSeverity</span><span class="o">::</span><span class="n">SerialType</span><span class="o">&gt;</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1625" href="#l1625">1625</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1626" href="#l1626">1626</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Construct the message string</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1627" href="#l1627">1627</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -13853,21 +13883,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">messageStr</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">messageBuf</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1624" href="#l1624">1624</a></td>
+      <td class="lineno"><a id="l1628" href="#l1628">1628</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1625" href="#l1625">1625</a></td>
+      <td class="lineno"><a id="l1629" href="#l1629">1629</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Emit the appropriate event based on severity</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1626" href="#l1626">1626</a></td>
+      <td class="lineno"><a id="l1630" href="#l1630">1630</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">8/8</summary>
@@ -13887,14 +13917,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">severity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1627" href="#l1627">1627</a></td>
+      <td class="lineno"><a id="l1631" href="#l1631">1631</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">FATAL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1628" href="#l1628">1628</a></td>
+      <td class="lineno"><a id="l1632" href="#l1632">1632</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -13907,21 +13937,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_FATAL_LogFatal</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1629" href="#l1629">1629</a></td>
+      <td class="lineno"><a id="l1633" href="#l1633">1633</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1630" href="#l1630">1630</a></td>
+      <td class="lineno"><a id="l1634" href="#l1634">1634</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">WARNING_HI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1631" href="#l1631">1631</a></td>
+      <td class="lineno"><a id="l1635" href="#l1635">1635</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -13934,21 +13964,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_LogWarningHi</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1632" href="#l1632">1632</a></td>
+      <td class="lineno"><a id="l1636" href="#l1636">1636</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1633" href="#l1633">1633</a></td>
+      <td class="lineno"><a id="l1637" href="#l1637">1637</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">WARNING_LO</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1634" href="#l1634">1634</a></td>
+      <td class="lineno"><a id="l1638" href="#l1638">1638</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -13961,21 +13991,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_LogWarningLo</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1635" href="#l1635">1635</a></td>
+      <td class="lineno"><a id="l1639" href="#l1639">1639</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1636" href="#l1636">1636</a></td>
+      <td class="lineno"><a id="l1640" href="#l1640">1640</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">COMMAND</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1637" href="#l1637">1637</a></td>
+      <td class="lineno"><a id="l1641" href="#l1641">1641</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -13988,21 +14018,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_COMMAND_LogCommand</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1638" href="#l1638">1638</a></td>
+      <td class="lineno"><a id="l1642" href="#l1642">1642</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1639" href="#l1639">1639</a></td>
+      <td class="lineno"><a id="l1643" href="#l1643">1643</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">ACTIVITY_HI</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1640" href="#l1640">1640</a></td>
+      <td class="lineno"><a id="l1644" href="#l1644">1644</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14015,21 +14045,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_LogActivityHi</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1641" href="#l1641">1641</a></td>
+      <td class="lineno"><a id="l1645" href="#l1645">1645</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1642" href="#l1642">1642</a></td>
+      <td class="lineno"><a id="l1646" href="#l1646">1646</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">ACTIVITY_LO</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1643" href="#l1643">1643</a></td>
+      <td class="lineno"><a id="l1647" href="#l1647">1647</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14042,21 +14072,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_LogActivityLo</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1644" href="#l1644">1644</a></td>
+      <td class="lineno"><a id="l1648" href="#l1648">1648</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1645" href="#l1645">1645</a></td>
+      <td class="lineno"><a id="l1649" href="#l1649">1649</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Fw</span><span class="o">::</span><span class="no">LogSeverity</span><span class="o">::</span><span class="no">DIAGNOSTIC</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1646" href="#l1646">1646</a></td>
+      <td class="lineno"><a id="l1650" href="#l1650">1650</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14069,21 +14099,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_DIAGNOSTIC_LogDiagnostic</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceFilePath</span><span class="p">,</span><span class="w"> </span><span class="n">messageStr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1647" href="#l1647">1647</a></td>
+      <td class="lineno"><a id="l1651" href="#l1651">1651</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1648" href="#l1648">1648</a></td>
+      <td class="lineno"><a id="l1652" href="#l1652">1652</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">default</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1649" href="#l1649">1649</a></td>
+      <td class="lineno"><a id="l1653" href="#l1653">1653</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14096,67 +14126,39 @@
       <td class="src coveredLine"><span class="w">            </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">INVALID_ARG</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1650" href="#l1650">1650</a></td>
+      <td class="lineno"><a id="l1654" href="#l1654">1654</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1651" href="#l1651">1651</a></td>
+      <td class="lineno"><a id="l1655" href="#l1655">1655</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1652" href="#l1652">1652</a></td>
+      <td class="lineno"><a id="l1656" href="#l1656">1656</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1653" href="#l1653">1653</a></td>
+      <td class="lineno"><a id="l1657" href="#l1657">1657</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_success</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1654" href="#l1654">1654</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1655" href="#l1655">1655</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1656" href="#l1656">1656</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::popSerializable_directiveHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FpySequencer_PopSerializableDirective</span><span class="o">&amp;</span><span class="w"> </span><span class="n">directive</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1657" href="#l1657">1657</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                      </span><span class="n">DirectiveError</span><span class="o">&amp;</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l1658" href="#l1658">1658</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">MAX_STACK_SIZE</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">()));</span></td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1659" href="#l1659">1659</a></td>
@@ -14169,22 +14171,22 @@
       <td class="lineno"><a id="l1660" href="#l1660">1660</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Validate port index is in range (using enum constant value)</span></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="n">Signal</span><span class="w"> </span><span class="nf">FpySequencer::popSerializable_directiveHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FpySequencer_PopSerializableDirective</span><span class="o">&amp;</span><span class="w"> </span><span class="n">directive</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1661" href="#l1661">1661</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">MAX_PORTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Svc</span><span class="o">::</span><span class="n">Fpy</span><span class="o">::</span><span class="n">SerialPortIndex</span><span class="o">::</span><span class="n">MAX_SERIAL_PORTS</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                      </span><span class="n">DirectiveError</span><span class="o">&amp;</span><span class="w"> </span><span class="n">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1662" href="#l1662">1662</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_portIndex</span><span class="p">();</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">MAX_STACK_SIZE</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">()));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1663" href="#l1663">1663</a></td>
@@ -14198,10 +14200,38 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Check for negative port index or out of bounds</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Validate port index is in range (using enum constant value)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1665" href="#l1665">1665</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">MAX_PORTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Svc</span><span class="o">::</span><span class="n">Fpy</span><span class="o">::</span><span class="n">SerialPortIndex</span><span class="o">::</span><span class="n">MAX_SERIAL_PORTS</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1666" href="#l1666">1666</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_portIndex</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1667" href="#l1667">1667</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1668" href="#l1668">1668</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Check for negative port index or out of bounds</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1669" href="#l1669">1669</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -14217,7 +14247,7 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">portIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">portIndex</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">MAX_PORTS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1666" href="#l1666">1666</a></td>
+      <td class="lineno"><a id="l1670" href="#l1670">1670</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14230,35 +14260,35 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">SERIAL_PORT_INVALID_INDEX</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1667" href="#l1667">1667</a></td>
+      <td class="lineno"><a id="l1671" href="#l1671">1671</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1668" href="#l1668">1668</a></td>
+      <td class="lineno"><a id="l1672" href="#l1672">1672</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1669" href="#l1669">1669</a></td>
+      <td class="lineno"><a id="l1673" href="#l1673">1673</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1670" href="#l1670">1670</a></td>
+      <td class="lineno"><a id="l1674" href="#l1674">1674</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Check port is connected</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1671" href="#l1671">1671</a></td>
+      <td class="lineno"><a id="l1675" href="#l1675">1675</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -14273,7 +14303,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">isConnected_serialOut_OutputPort</span><span class="p">(</span><span class="n">portIndex</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1672" href="#l1672">1672</a></td>
+      <td class="lineno"><a id="l1676" href="#l1676">1676</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14286,35 +14316,35 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">SERIAL_PORT_NOT_CONNECTED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1673" href="#l1673">1673</a></td>
+      <td class="lineno"><a id="l1677" href="#l1677">1677</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1674" href="#l1674">1674</a></td>
+      <td class="lineno"><a id="l1678" href="#l1678">1678</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1675" href="#l1675">1675</a></td>
+      <td class="lineno"><a id="l1679" href="#l1679">1679</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1676" href="#l1676">1676</a></td>
+      <td class="lineno"><a id="l1680" href="#l1680">1680</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Validate data size on stack</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1677" href="#l1677">1677</a></td>
+      <td class="lineno"><a id="l1681" href="#l1681">1681</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -14328,7 +14358,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1678" href="#l1678">1678</a></td>
+      <td class="lineno"><a id="l1682" href="#l1682">1682</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14341,58 +14371,18 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DirectiveError</span><span class="o">::</span><span class="n">STACK_UNDERFLOW</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1679" href="#l1679">1679</a></td>
+      <td class="lineno"><a id="l1683" href="#l1683">1683</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_failure</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1680" href="#l1680">1680</a></td>
+      <td class="lineno"><a id="l1684" href="#l1684">1684</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1681" href="#l1681">1681</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1682" href="#l1682">1682</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Create external buffer referencing stack data (no copy)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1683" href="#l1683">1683</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">dataPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">top</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1684" href="#l1684">1684</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 6 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="n">buf</span><span class="p">(</span><span class="n">dataPtr</span><span class="p">,</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1685" href="#l1685">1685</a></td>
@@ -14406,10 +14396,23 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Set buffer length and verify success</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Create external buffer referencing stack data (no copy)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1687" href="#l1687">1687</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 6 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">dataPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">top</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1688" href="#l1688">1688</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -14419,14 +14422,7 @@
         </details>
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buf</span><span class="p">.</span><span class="n">setBuffLen</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">());</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1688" href="#l1688">1688</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="n">buf</span><span class="p">(</span><span class="n">dataPtr</span><span class="p">,</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1689" href="#l1689">1689</a></td>
@@ -14440,7 +14436,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Call output port and verify serialization succeeds</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Set buffer length and verify success</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1691" href="#l1691">1691</a></td>
@@ -14448,19 +14444,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 6 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 6 times.</div>
           </div>
         </details>
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">portStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">serialOut_out</span><span class="p">(</span><span class="n">portIndex</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buf</span><span class="p">.</span><span class="n">setBuffLen</span><span class="p">(</span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1692" href="#l1692">1692</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">portStatus</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">portStatus</span><span class="p">));</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">stat</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1693" href="#l1693">1693</a></td>
@@ -14474,52 +14470,86 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Pop data from stack</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Call output port and verify serialization succeeds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1695" href="#l1695">1695</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 5 taken 6 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">portStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">serialOut_out</span><span class="p">(</span><span class="n">portIndex</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1696" href="#l1696">1696</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">portStatus</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">portStatus</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1697" href="#l1697">1697</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1698" href="#l1698">1698</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Pop data from stack</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1699" href="#l1699">1699</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">stack</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">directive</span><span class="p">.</span><span class="n">get_size</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1696" href="#l1696">1696</a></td>
+      <td class="lineno"><a id="l1700" href="#l1700">1700</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1697" href="#l1697">1697</a></td>
+      <td class="lineno"><a id="l1701" href="#l1701">1701</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Signal</span><span class="o">::</span><span class="n">stmtResponse_success</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1698" href="#l1698">1698</a></td>
+      <td class="lineno"><a id="l1702" href="#l1702">1702</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1699" href="#l1699">1699</a></td>
+      <td class="lineno"><a id="l1703" href="#l1703">1703</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1700" href="#l1700">1700</a></td>
+      <td class="lineno"><a id="l1704" href="#l1704">1704</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1701" href="#l1701">1701</a></td>
+      <td class="lineno"><a id="l1705" href="#l1705">1705</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
