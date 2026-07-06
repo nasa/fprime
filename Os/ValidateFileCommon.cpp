@@ -221,4 +221,15 @@ ValidateFile::Status ValidateFile::createValidation(const char* fileName, const 
     return createValidation(fileName, hashFileName, hashBuffer);
 }
 
+ValidateFile::Status ValidateFile::createValidation(const char* hashFileName, const Utils::HashBuffer& hashBuffer) {
+    File::Status status;
+
+    status = writeHash(hashFileName, hashBuffer);
+    if (File::OP_OK != status) {
+        return translateStatus(status, HashFileType);
+    }
+
+    return ValidateFile::VALIDATION_OK;
+}
+
 }  // namespace Os
