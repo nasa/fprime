@@ -26,9 +26,6 @@
 #include <cstdlib>
 #include <cstring>
 
-static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
-              "Cannot use SPI driver without full string formatting");
-
 namespace Drv {
 
 // ----------------------------------------------------------------------
