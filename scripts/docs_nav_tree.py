@@ -3,9 +3,12 @@ from pathlib import Path
 import yaml
 import re # for reg expression matching of nav: block in mkdocs.yml
 
-MKDOCS_YML = Path("docs/mkdocs.yml")
+# Get the directory where this script is located
+SCRIPT_DIR = Path(__file__).parent.parent
+
+MKDOCS_YML = SCRIPT_DIR / "docs/mkdocs.yml"
 output_file = "mkdocs_nav.yml"
-root = "docs"
+root = str(SCRIPT_DIR / "docs")
 excluded_folders = {"Home", "docs-venv", "doxygen", "index", "INSTALL", "tutorials-hello-world", "tutorials-led-blinker", "tutorials-arduino-led-blinker", "tutorials-math-component"}
 
 tab_order = ["getting-started", "tutorials", "user-manual", "how-to", "reference"]
