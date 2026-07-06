@@ -9,8 +9,46 @@
 #include <Drv/Ip/test/ut/SocketTestHelper.hpp>
 #include <Fw/Logger/Logger.hpp>
 #include <Os/Console.hpp>
+#include <cerrno>
 
 Os::Console logger;
+
+class InterruptOnceSocket final : public Drv::IpSocket {
+  public:
+    U32 recv_calls = 0;
+
+  private:
+    Drv::SocketIpStatus openProtocol(Drv::SocketDescriptor& fd) override {
+        fd.fd = 0;
+        return Drv::SOCK_SUCCESS;
+    }
+
+    FwSignedSizeType sendProtocol(const Drv::SocketDescriptor&, const U8* const, const FwSizeType size) override {
+        return static_cast<FwSignedSizeType>(size);
+    }
+
+    FwSignedSizeType recvProtocol(const Drv::SocketDescriptor&, U8* const data, const FwSizeType) override {
+        this->recv_calls++;
+        if (this->recv_calls == 1) {
+            errno = EINTR;
+            return -1;
+        }
+        data[0] = 0xA5;
+        return 1;
+    }
+};
+
+TEST(ErrorHandling, TestRecvRetriesEintr) {
+    InterruptOnceSocket socket;
+    Drv::SocketDescriptor fd;
+    U8 data[1] = {0};
+    FwSizeType size = sizeof data;
+
+    EXPECT_EQ(socket.recv(fd, data, size), Drv::SOCK_SUCCESS);
+    EXPECT_EQ(socket.recv_calls, 2u);
+    EXPECT_EQ(size, 1u);
+    EXPECT_EQ(data[0], 0xA5);
+}
 
 void test_with_loop(U32 iterations) {
     Drv::SocketIpStatus status1 = Drv::SOCK_SUCCESS;
