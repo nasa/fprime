@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include "config/SerialPortIndexEnumAc.hpp"
 
 namespace Svc {
 
@@ -278,6 +279,21 @@ void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
+}
+
+//! Internal interface handler for directive_popEvent
+void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popEvent_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
+}
+
+//! Internal interface handler for directive_popSerializable
+void FpySequencer::directive_popSerializable_internalInterfaceHandler(
+    const Svc::FpySequencer_PopSerializableDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popSerializable_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_SERIALIZABLE, error);
 }
 
 //! Internal interface handler for directive_waitRel
@@ -1559,13 +1575,6 @@ Signal FpySequencer::storeAbsConstOffset_directiveHandler(const FpySequencer_Sto
     return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
 }
 
-//! Internal interface handler for directive_popEvent
-void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->popEvent_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
-}
-
 Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error) {
     // Pop messageSize from the stack
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
@@ -1626,6 +1635,50 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
             error = DirectiveError::INVALID_ARG;
             return Signal::stmtResponse_failure;
     }
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                                      DirectiveError& error) {
+    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(directive.get_size()));
+
+    // Validate port index is in range (using enum constant value)
+    constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    const FwIndexType portIndex = directive.get_portIndex();
+
+    // Check for negative port index or out of bounds
+    if (portIndex < 0 || portIndex >= MAX_PORTS) {
+        error = DirectiveError::SERIAL_PORT_INVALID_INDEX;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Check port is connected
+    if (!this->isConnected_serialOut_OutputPort(portIndex)) {
+        error = DirectiveError::SERIAL_PORT_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Validate data size on stack
+    if (this->m_runtime.stack.size < directive.get_size()) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Create external buffer referencing stack data (no copy)
+    U8* dataPtr = this->m_runtime.stack.top() - directive.get_size();
+    Fw::ExternalSerializeBuffer buf(dataPtr, directive.get_size());
+
+    // Set buffer length and verify success
+    Fw::SerializeStatus stat = buf.setBuffLen(directive.get_size());
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // Call output port and verify serialization succeeds
+    Fw::SerializeStatus portStatus = this->serialOut_out(portIndex, buf);
+    FW_ASSERT(portStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(portStatus));
+
+    // Pop data from stack
+    this->m_runtime.stack.size -= directive.get_size();
 
     return Signal::stmtResponse_success;
 }

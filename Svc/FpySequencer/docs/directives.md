@@ -1136,3 +1136,30 @@ If this is called without the seed being manually set beforehand, then the seed 
 | Stack Result Type | Description |
 | ------------------|-------------|
 | U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
+
+## POP_SERIALIZABLE (78)
+Pops serialized data from the stack and sends it to an external component via a serial output port.
+
+**Preconditions:**
+- `port_index < MAX_SERIAL_PORTS` (from `FpySequencerCfg.SerialPortIndex` enum)
+- `serialOut[port_index]` is connected to a target component
+- `len(stack) >= size`
+
+**Semantics:**
+1. Validate port index is within bounds.
+2. Check that the specified port is connected.
+3. Pop `size` bytes from the stack.
+4. Send the popped bytes to the target component via `serialOut[port_index]`.
+
+**Error Conditions:**
+- If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
+- If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
+- If `len(stack) < size`: `STACK_UNDERFLOW`
+
+| Arg Name     | Arg Type       | Source     | Description |
+|--------------|----------------|------------|-------------|
+| port_index   | FwIndexType    | hardcoded  | Index of the serialOut port array to use. |
+| size         | StackSizeType  | hardcoded  | Number of bytes to pop and send. |
+| value        | bytes          | stack      | Serialized data to send (popped from stack). |
+
+**Requirement:** FPY-SEQ-019

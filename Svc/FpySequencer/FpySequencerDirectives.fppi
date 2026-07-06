@@ -195,6 +195,14 @@ struct PopEventDirective {
     _empty: U8
 }
 
+@ pops serialized data from stack and sends to serial output port
+struct PopSerializableDirective {
+    @ the port index to send data to
+    portIndex: FwIndexType
+    @ size of serialized data on stack
+    $size: Fpy.StackSizeType
+}
+
 internal port directive_waitRel(directive: WaitRelDirective) priority 6 assert
 
 internal port directive_waitAbs(directive: WaitAbsDirective) priority 6 assert
@@ -254,3 +262,5 @@ internal port directive_storeAbs(directive: StoreAbsDirective) priority 6 assert
 internal port directive_storeAbsConstOffset(directive: StoreAbsConstOffsetDirective) priority 6 assert
 
 internal port directive_popEvent(directive: PopEventDirective) priority 6 assert
+
+internal port directive_popSerializable(directive: PopSerializableDirective) priority 6 assert
