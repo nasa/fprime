@@ -83,7 +83,7 @@ class SandboxedFile {
     //! \param path: c-string path to open
     //! \param mode: file operation mode
     //! \param overwrite: overwrite existing file on create
-    //! \return status of the open (NO_PERMISSION if path validation fails)
+    //! \return status of the open (OUTSIDE_SANDBOX if path validation fails)
     //!
     Os::FileInterface::Status open(const char* path,
                                    Os::FileInterface::Mode mode,

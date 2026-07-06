@@ -42,7 +42,7 @@ TEST_F(SandboxedFileTest, OpenOutsideSandboxRejected) {
     Os::SandboxedFile file;
     file.configure("/tmp/sandbox_test/");
     auto status = file.open("/tmp/outside_sandbox.bin", Os::File::OPEN_CREATE);
-    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
     ASSERT_FALSE(file.isOpen());
 }
 
@@ -50,7 +50,7 @@ TEST_F(SandboxedFileTest, TraversalAttackRejected) {
     Os::SandboxedFile file;
     file.configure("/tmp/sandbox_test/");
     auto status = file.open("/tmp/sandbox_test/../../etc/passwd", Os::File::OPEN_READ);
-    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
     ASSERT_FALSE(file.isOpen());
 }
 
@@ -98,7 +98,7 @@ TEST_F(SandboxedFileTest, OpenEmptyPathRejected) {
     Os::SandboxedFile file;
     file.configure("/tmp/sandbox_test/");
     auto status = file.open("", Os::File::OPEN_READ);
-    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
     ASSERT_FALSE(file.isOpen());
 }
 
@@ -111,7 +111,7 @@ TEST_F(SandboxedFileTest, OpenOverlongPathRejected) {
     longPath[0] = '/';
     longPath[sizeof(longPath) - 1] = '\0';
     auto status = file.open(longPath, Os::File::OPEN_READ);
-    ASSERT_EQ(Os::File::NO_PERMISSION, status);
+    ASSERT_EQ(Os::File::OUTSIDE_SANDBOX, status);
     ASSERT_FALSE(file.isOpen());
 }
 

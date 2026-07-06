@@ -6,7 +6,12 @@ module FileHandling {
     instance fileUplink: Svc.FileUplink base id FileHandlingConfig.BASE_ID + 0x00000 \
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
-        priority FileHandlingConfig.Priorities.fileUplink 
+        priority FileHandlingConfig.Priorities.fileUplink \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        FileHandling::fileUplink.configure("/tmp/uplink/");
+        """
+    }
 
     instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \

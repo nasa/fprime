@@ -50,18 +50,18 @@ Os::FileInterface::Status SandboxedFile::open(const char* path,
     FW_ASSERT(path != nullptr);
 
     if (!m_configured) {
-        return Os::FileInterface::Status::NO_PERMISSION;
+        return Os::FileInterface::Status::OUTSIDE_SANDBOX;
     }
 
     // Resolve path against CWD then check containment
     char resolvedPath[FilePathUtils::MAX_PATH_LENGTH];
     const FilePathUtils::Status resolveStatus = FilePathUtils::resolveFromCwd(path, resolvedPath, sizeof(resolvedPath));
     if (resolveStatus != FilePathUtils::VALID) {
-        return Os::FileInterface::Status::NO_PERMISSION;
+        return Os::FileInterface::Status::OUTSIDE_SANDBOX;
     }
 
     if (FilePathUtils::checkContainment(resolvedPath, m_allowedDirectory.toChar()) != FilePathUtils::VALID) {
-        return Os::FileInterface::Status::NO_PERMISSION;
+        return Os::FileInterface::Status::OUTSIDE_SANDBOX;
     }
 
     return m_file.open(resolvedPath, mode, overwrite);
