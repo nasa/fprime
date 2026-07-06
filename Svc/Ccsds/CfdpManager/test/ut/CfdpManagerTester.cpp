@@ -25,7 +25,10 @@ constexpr FwSizeType CfdpManagerTester::MAX_PDU_COPIES;
 // ----------------------------------------------------------------------
 
 CfdpManagerTester ::CfdpManagerTester()
-    : CfdpManagerGTestBase("CfdpManagerTester", MAX_HISTORY_SIZE), component("CfdpManager"), m_pduCopyCount(0) {
+    : CfdpManagerGTestBase("CfdpManagerTester", MAX_HISTORY_SIZE),
+      component("CfdpManager"),
+      m_pduCopyCount(0),
+      m_failBufferAllocation(false) {
     this->connectPorts();
     this->initComponents();
     this->component.loadParameters();
@@ -43,6 +46,11 @@ CfdpManagerTester ::~CfdpManagerTester() {
 // ----------------------------------------------------------------------
 
 Fw::Buffer CfdpManagerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
+    // Simulate allocation failure if flag is set
+    if (this->m_failBufferAllocation) {
+        return Fw::Buffer();
+    }
+
     EXPECT_LT(size, MaxPduSize) << "Buffer size request is too large";
     if (size >= MaxPduSize) {
         return Fw::Buffer();
@@ -343,6 +351,10 @@ void CfdpManagerTester::cleanupTestFile(const char* filePath) {
     // File may already be deleted by CFDP (keep=DELETE), which is acceptable
     EXPECT_TRUE(fsStatus == Os::FileSystem::OP_OK || fsStatus == Os::FileSystem::DOESNT_EXIST)
         << "Should remove test file or file already deleted";
+}
+
+void CfdpManagerTester::setFailBufferAllocation(bool fail) {
+    this->m_failBufferAllocation = fail;
 }
 
 void CfdpManagerTester::verifyReceivedFile(const char* filePath, const U8* expectedData, FwSizeType expectedSize) {

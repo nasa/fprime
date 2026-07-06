@@ -518,27 +518,56 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     // Buffer Management Events
     void testBuffersExhaustedEvent();
+    void testChunklistUnavailableEvent();
 
     // PDU Deserialization Failure Events
     void testFailPduHeaderDeserializationEvent();
     void testFailMetadataPduDeserializationEvent();
+    void testFailFileDataPduDeserializationEvent();
+    void testFailEofPduDeserializationEvent();
+    void testFailAckPduDeserializationEvent();
+    void testFailFinPduDeserializationEvent();
+    void testFailNakPduDeserializationEvent();
+
+    // PDU Processing and Serialization Failure Events
+    void testFailKeepFileMoveEvent();
+    void testFailPduSerializationEvent();
+    void testFailPollFileMoveEvent();
+    void testFileDataSegmentMetadataEvent();
 
     // RX Error Events
     void testRxFileCreateFailedEvent();
     void testRxCrcMismatchEvent();
     void testRxFileSizeMismatchEvent();
     void testRxEofCancelReceivedEvent();
+    void testRxEofWithErrorEvent();
+    void testRxEofMdSizeMismatchEvent();
     void testRxTransactionLimitReachedEvent();
+    void testRxInvalidDirectiveCodeEvent();
+    void testRxInvalidEofPduEvent();
+    void testRxInactivityTimeoutEvent();
+    void testRxAckLimitReachedEvent();
+    void testRxNakLimitReachedEvent();
     void testInvalidDestinationEidEvent();
+    void testUnhandledPduInIdleStateEvent();
 
     // TX Error Events
     void testTxZeroLengthFileEvent();
     void testTxFileOpenFailedEvent();
+    void testTxInvalidDirectiveCodeEvent();
+    void testTxEarlyFinReceivedEvent();
+    void testTxNonFileDirectivePduReceivedEvent();
+    void testTxInvalidNakPduEvent();
+    void testTxInvalidSegmentRequestsEvent();
+    void testTxInactivityTimeoutEvent();
+    void testTxAckLimitReachedEvent();
     void testMaxTxTransactionsReachedEvent();
 
     // File Management Events
-    void testFileRemovedFailedEvent();
+    void testFileRemoveFailedEvent();
     void testPlaybackDirOpenFailedEvent();
+    void testPlaybackDirReadFailedEvent();
+    void testPlaybackDirSlotUnavailableEvent();
 
     // Transaction Management Events (covered by command tests)
     void testTransactionSuspendedEvent();
@@ -546,6 +575,28 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testTransactionCanceledEvent();
     void testTransactionAbandonedEvent();
     void testTransactionNotFoundEvent();
+
+    // Critical Error Path Events
+    void testRxWriteFailedEvent();
+    void testRxSeekFailedEvent();
+    void testRxFileRenameFailedEvent();
+    void testRxFileReopenFailedEvent();
+    void testTxFileSeekFailedEvent();
+    void testTxSendMetadataFailedEvent();
+
+    // Informational/Diagnostic Events
+    void testRxTempFileCreatedEvent();
+    void testDanglingFileHandleClosedEvent();
+    void testResetFreedTransactionEvent();
+
+    // RX CRC and Validation Events
+    void testRxSeekCrcFailedEvent();
+    void testRxReadCrcFailedEvent();
+
+    // Port and Command Input Validation
+    void testUnsupportedSendFileArgumentsEvent();
+    void testSendFileInitiateFailEvent();
+    void testInvalidChannelPollEvent();
 
   public:
     // ----------------------------------------------------------------------
@@ -695,6 +746,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Verify received file matches expected data
     void verifyReceivedFile(const char* filePath, const U8* expectedData, FwSizeType expectedSize);
 
+    //! Set buffer allocation failure flag for testing
+    void setFailBufferAllocation(bool fail);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -713,6 +767,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     static constexpr FwSizeType MAX_PDU_COPIES = 100;
     U8 m_pduCopyStorage[MAX_PDU_COPIES][MaxPduSize];
     FwSizeType m_pduCopyCount;
+
+    //! Flag to simulate buffer allocation failure for testing
+    bool m_failBufferAllocation;
 };
 
 }  // namespace Cfdp
