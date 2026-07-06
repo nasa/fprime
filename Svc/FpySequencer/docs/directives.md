@@ -460,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
+Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and also yields a DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -486,7 +486,7 @@ Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will
 **Requirement:**  FPY-SEQ-002
 
 ## SMOD (38)
-Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
+Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 overflows the intermediate division and also yields a DOMAIN_ERROR.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
