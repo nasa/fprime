@@ -4,8 +4,8 @@
 // \brief  cpp file for SpacePacketFramer component test harness implementation class
 // ======================================================================
 
-#include "STest/Random/Random.hpp"
 #include "SpacePacketFramerTester.hpp"
+#include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/TestUtils/TestUtils.hpp"
 #include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
