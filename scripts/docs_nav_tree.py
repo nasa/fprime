@@ -157,7 +157,7 @@ def build_tutorials():
             {"LED Blinker": "../../tutorials/tutorials-led-blinker/docs/led-blinker.md"},
             {"MathComponent": "../../tutorials/tutorials-math-component/docs/math-component.md"},
             {"Cross-Compilation Setup": "docs/tutorials/cross-compilation.md"},
-            {"Arduino LED Blinker": "tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker.md"},
+            {"Arduino LED Blinker": "../..//tutorials-arduino-led-blinker/docs/arduino-led-blinker.md"},
         ]
     }
 
