@@ -72,22 +72,31 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // add up entries for each defined packet
         for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
             FwChanIdType id = packetList.list[pktEntry]->list[tlmEntry].id;
+            const FwSizeType channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             FwSizeType entryIndex = 0;
             if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
                 // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
                 entryIndex = this->m_numChannels++;
                 this->m_channels[entryIndex].id = id;
                 this->m_channels[entryIndex].hasValue = false;
+                this->m_channels[entryIndex].channelSize = channelSize;
                 for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
                     this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
                 }
                 const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
                 FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
+            } else {
+                // Existing channel - a channel ID may repeat across packets, but its definition (size) must match.
+                // A conflicting size would corrupt the packet offsets computed from the earlier definition and
+                // overflow the fill buffer during TlmRecv/TlmGet copies, so reject the misconfiguration here.
+                FW_ASSERT(this->m_channels[entryIndex].channelSize == channelSize, static_cast<FwAssertArgType>(id),
+                          static_cast<FwAssertArgType>(channelSize),
+                          static_cast<FwAssertArgType>(this->m_channels[entryIndex].channelSize));
             }
             // not ignored channel - update entry in place via reference
             TlmEntry& entry = this->m_channels[entryIndex];
             entry.ignored = false;
-            entry.channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
+            entry.channelSize = channelSize;
             // the offset into the buffer will be the current packet length
             // the offset must fit within FwSignedSizeType to allow for negative values
             FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
