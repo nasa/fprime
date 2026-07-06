@@ -2,6 +2,7 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
+#include <cmath>
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
@@ -1226,6 +1227,18 @@ TEST_F(FpySequencerTester, smod_domain_error) {
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
 }
+TEST_F(FpySequencerTester, sdiv_overflow_domain_error) {
+    // INT64_MIN / -1 overflows I64 (would be INT64_MAX + 1); it is UB (SIGFPE on x86)
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, smod_overflow_domain_error) {
+    // INT64_MIN % -1 is UB (SIGFPE on x86) even though the mathematical result is 0
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
+}
 TEST_F(FpySequencerTester, flog_domain_error) {
     // log(0) is undefined
     tester_push<F64>(0.0);
@@ -1234,10 +1247,12 @@ TEST_F(FpySequencerTester, flog_domain_error) {
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_flog(), DirectiveError::DOMAIN_ERROR);
 }
-TEST_F(FpySequencerTester, fmod_domain_error) {
+TEST_F(FpySequencerTester, fmod_zero_divisor_yields_nan) {
+    // A zero divisor is not an error for floats; the result is NaN, matching Rust and C#.
     tester_push<F64>(1.0);
     tester_push<F64>(0.0);
-    ASSERT_EQ(tester_op_fmod(), DirectiveError::DOMAIN_ERROR);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_TRUE(std::isnan(tester_pop<F64>()));
 }
 
 // ======================================================================
@@ -1261,6 +1276,28 @@ TEST_F(FpySequencerTester, smod_python_adjustment_neg_remainder_pos_divisor) {
     tester_push<I64>(3);
     ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 2);
+}
+
+// ======================================================================
+// fmod Python-adjustment special case (same floored-modulo semantics as smod)
+// ======================================================================
+
+TEST_F(FpySequencerTester, fmod_python_adjustment_pos_remainder_neg_divisor) {
+    // frem: fmod(7.5, -2.5) = 0.0... take a case with a nonzero remainder.
+    // frem: fmod(7.0, -3.0) = 1.0 (positive remainder, negative divisor)
+    // Python: 7.0 % -3.0 = -2.0 (adjusted: 1.0 + (-3.0) = -2.0)
+    tester_push<F64>(7.0);
+    tester_push<F64>(-3.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), -2.0);
+}
+TEST_F(FpySequencerTester, fmod_python_adjustment_neg_remainder_pos_divisor) {
+    // frem: fmod(-7.0, 3.0) = -1.0 (negative remainder, positive divisor)
+    // Python: -7.0 % 3.0 = 2.0 (adjusted: -1.0 + 3.0 = 2.0)
+    tester_push<F64>(-7.0);
+    tester_push<F64>(3.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 2.0);
 }
 
 TEST_F(FpySequencerTester, exit) {
