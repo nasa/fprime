@@ -1559,6 +1559,34 @@ TEST(TypesTest, FormatSpecifierTest) {
     ASSERT_STREQ(str.toChar(), "CHAR: A");
 }
 
+namespace {
+struct ArrayElementsHolder {
+    U32 m_items[4];
+    FwSizeType count() const {
+        // Member array (this->member) in a constant expression. This is the case
+        // a by-reference helper could not handle ("use of 'this' pointer ...
+        // constexpr"); the sizeof form does not evaluate the argument.
+        static_assert(FW_NUM_ARRAY_ELEMENTS(this->m_items) == 4, "member array count");
+        return static_cast<FwSizeType>(FW_NUM_ARRAY_ELEMENTS(this->m_items));
+    }
+};
+}  // namespace
+
+TEST(TypesTest, NumArrayElements) {
+    // FW_NUM_ARRAY_ELEMENTS reports the element count of a C-style array.
+    U32 ids[7] = {0};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(ids), static_cast<std::size_t>(7));
+
+    // For a multi-dimensional array it returns the outer extent, matching the
+    // old sizeof-based behavior.
+    U8 grid[3][5] = {{0}};
+    ASSERT_EQ(FW_NUM_ARRAY_ELEMENTS(grid), static_cast<std::size_t>(3));
+
+    // Member array used through this-> in a constant expression.
+    ArrayElementsHolder holder{};
+    ASSERT_EQ(holder.count(), static_cast<FwSizeType>(4));
+}
+
 TEST(PerformanceTest, F64SerPerfTest) {
     SerializeTestBuffer buff;
 

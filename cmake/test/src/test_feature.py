@@ -42,6 +42,7 @@ FEATURE_BUILD_RESULT = cmake.get_build(
         "TestLibrary_TestComponent_test",
         "version",
         "TestRelative",
+        "TestLinkDepends",
     ],
 )
 
@@ -49,6 +50,14 @@ FEATURE_BUILD_RESULT = cmake.get_build(
 def test_feature_run(FEATURE_BUILD):
     """Basic run test for feature build"""
     cmake.assert_process_success(FEATURE_BUILD)
+
+
+def test_link_depends(FEATURE_BUILD):
+    """LINK_DEPENDS directive sets the target property and builds successfully"""
+    cmake.assert_process_success(FEATURE_BUILD)
+    library_name = "libTestLinkDepends.a"
+    output_path = FEATURE_BUILD["build"] / "lib" / TOOLCHAIN_NAME / library_name
+    assert output_path.exists(), f"Failed to locate {library_name} in build output"
 
 
 def test_feature_framework(FEATURE_BUILD):

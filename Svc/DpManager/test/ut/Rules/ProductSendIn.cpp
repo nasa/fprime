@@ -45,7 +45,7 @@ void TestState ::action__ProductSendIn__OK() {
     // Check product send out
     ASSERT_from_productSendOut_SIZE(1);
     ASSERT_from_productSendOut(0, buffer);
-    ASSERT_EQ(this->abstractState.productSendOutPortNumOpt.get(), portNum);
+    ASSERT_EQ(this->abstractState.productSendOutPortNumOpt.value(), portNum);
 }
 
 namespace ProductSendIn {
