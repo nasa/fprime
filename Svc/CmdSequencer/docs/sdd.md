@@ -260,7 +260,18 @@ where:
 
 `MNEMONIC` - Command mnemonic in dictionary
 
-`A1,A2...AN` - any arguments for the command
+`A1,A2...AN` - any arguments for the command. Arguments can be:
+  - Simple types: strings (`"text"`), numbers (`42`), booleans (`true`, `false`)
+  - Arrays: `[value1, value2, ...]`
+  - Structs: `{key1: value1, key2: value2}` (note: keys are unquoted)
+
+Examples:
+```
+R00:00:00 CMD_SIMPLE "string arg", 42, true
+R00:00:00 CMD_ARRAY [1, 2, 3]
+R00:00:00 CMD_STRUCT {field: "value", count: 10}
+R00:00:00 CMD_MIXED "text", [1, 2], {key: "val"}
+```
 
 __Immediate Command:__
 
@@ -291,7 +302,7 @@ where:
 
 `MNEMONIC` - Command mnemonic in dictionary
 
-`A1,A2...AN` - any arguments for the command
+`A1,A2...AN` - any arguments for the command (see argument syntax in Relative Time Command section above)
 
 Note that the time is encoded in UTC with an epoch of 1/1/1970.
 

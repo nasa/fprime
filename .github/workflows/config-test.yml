@@ -1,0 +1,148 @@
+# Verify that F' builds and passes unit tests under non-default configuration
+# parameter settings.  Each "profile" in ci/config-profiles.json defines a set
+# of -D compile-definition overrides applied via generate-args.
+
+name: "Config Test"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+  workflow_dispatch:
+    inputs:
+      profiles:
+        description: >
+          Comma-separated list of config profile names to test, or 'all'.
+          Names must match the "name" field in ci/config-profiles.json.
+        required: false
+        default: "all"
+      extra-cmake-args:
+        description: "Additional CMake args appended to every profile (e.g. -DSOME_FLAG=1)"
+        required: false
+        default: ""
+      runner:
+        description: "Runner label override (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: ""
+      jobs:
+        description: "Parallel job count: a number, 'random' (1-32), or empty for random"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Generate the build matrix from ci/config-profiles.json
+  # ---------------------------------------------------------------------------
+  generate-matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: ci/config-profiles.json
+          sparse-checkout-cone-mode: false
+
+      - name: "Build matrix JSON"
+        id: set-matrix
+        shell: bash
+        env:
+          SELECTED: ${{ github.event.inputs.profiles || 'all' }}
+        run: |
+          ALL_PROFILES=$(cat ci/config-profiles.json | jq -c '[.[] | select(.disabled != true)]')
+          if [ "$SELECTED" = "all" ]; then
+            MATRIX="$ALL_PROFILES"
+          else
+            MATRIX=$(echo "$ALL_PROFILES" | jq -c \
+              --arg sel "$SELECTED" \
+              '[.[] | select(.name as $n | ($sel | split(",") | map(gsub("^ +| +$";"")) | index($n)))]')
+          fi
+          echo "matrix={\"include\":$(echo "$MATRIX" | jq -c .)}" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------
+  # Build framework + Ref with each config profile
+  # ---------------------------------------------------------------------------
+  config-build:
+    name: "Build [${{ matrix.name }}]"
+    needs: generate-matrix
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-22.04' }}
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+
+      - name: "Build Framework [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+
+      - name: "Build Ref [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+
+  # ---------------------------------------------------------------------------
+  # Run unit tests with each config profile
+  # ---------------------------------------------------------------------------
+  config-ut:
+    name: "UTs [${{ matrix.name }}]"
+    needs: generate-matrix
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-22.04' }}
+    timeout-minutes: 45
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+
+      - name: "Run Framework UTs [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+
+      - name: "Run Ref UTs [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}

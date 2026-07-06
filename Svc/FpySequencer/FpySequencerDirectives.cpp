@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "Fw/Com/ComPacket.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+#include "config/SerialPortIndexEnumAc.hpp"
 
 namespace Svc {
 
@@ -278,6 +279,21 @@ void FpySequencer::directive_storeAbsConstOffset_internalInterfaceHandler(
     DirectiveError error = DirectiveError::NO_ERROR;
     this->sendSignal(this->storeAbsConstOffset_directiveHandler(directive, error));
     handleDirectiveErrorCode(Fpy::DirectiveId::STORE_ABS_CONST_OFFSET, error);
+}
+
+//! Internal interface handler for directive_popEvent
+void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popEvent_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
+}
+
+//! Internal interface handler for directive_popSerializable
+void FpySequencer::directive_popSerializable_internalInterfaceHandler(
+    const Svc::FpySequencer_PopSerializableDirective& directive) {
+    DirectiveError error = DirectiveError::NO_ERROR;
+    this->sendSignal(this->popSerializable_directiveHandler(directive, error));
+    handleDirectiveErrorCode(Fpy::DirectiveId::POP_SERIALIZABLE, error);
 }
 
 //! Internal interface handler for directive_waitRel
@@ -770,6 +786,10 @@ DirectiveError FpySequencer::op_sdiv() {
     if (rhs == 0) {
         return DirectiveError::DOMAIN_ERROR;
     }
+    // Prevent signed overflow: INT64_MIN / -1 is undefined behavior (SIGFPE on x86)
+    if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     this->m_runtime.stack.push(static_cast<I64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
 }
@@ -794,6 +814,10 @@ DirectiveError FpySequencer::op_smod() {
         return DirectiveError::DOMAIN_ERROR;
     }
     I64 lhs = this->m_runtime.stack.pop<I64>();
+    // Prevent signed overflow: INT64_MIN % -1 is undefined behavior (SIGFPE on x86)
+    if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     I64 res = static_cast<I64>(lhs % rhs);
     // in order to match Python's behavior,
     // if the signs of the remainder and divisor differ, adjust the result.
@@ -866,11 +890,17 @@ DirectiveError FpySequencer::op_fmod() {
         return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
-    if (rhs == 0.0) {
-        return DirectiveError::DOMAIN_ERROR;
-    }
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<F64>(lhs - rhs * std::floor(lhs / rhs)));
+    // std::fmod computes the exact truncated remainder (sign of lhs) with no
+    // intermediate rounding. A zero divisor yields NaN, matching Rust and C#.
+    F64 res = std::fmod(lhs, rhs);
+    // Adjust to match Python's floored-modulo semantics: if the signs of the
+    // remainder and divisor differ, add the divisor once. This mirrors op_smod
+    // and is the exact frem + fadd the VM model computes (at most one rounded add).
+    if ((res > 0 && rhs < 0) || (res < 0 && rhs > 0)) {
+        res += rhs;
+    }
+    this->m_runtime.stack.push(res);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_8_64() {
@@ -1559,13 +1589,6 @@ Signal FpySequencer::storeAbsConstOffset_directiveHandler(const FpySequencer_Sto
     return this->storeHelper(directive.get_globalOffset(), directive.get_size(), error);
 }
 
-//! Internal interface handler for directive_popEvent
-void FpySequencer::directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) {
-    DirectiveError error = DirectiveError::NO_ERROR;
-    this->sendSignal(this->popEvent_directiveHandler(directive, error));
-    handleDirectiveErrorCode(Fpy::DirectiveId::POP_EVENT, error);
-}
-
 Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error) {
     // Pop messageSize from the stack
     if (this->m_runtime.stack.size < sizeof(Fpy::StackSizeType)) {
@@ -1574,8 +1597,10 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
     }
     Fpy::StackSizeType messageSize = this->m_runtime.stack.pop<Fpy::StackSizeType>();
 
+    const Fpy::StackSizeType severitySize = static_cast<Fpy::StackSizeType>(sizeof(Fw::LogSeverity::SerialType));
+
     // Need message_size bytes + sizeof(LogSeverity serial type) for severity
-    if (this->m_runtime.stack.size < messageSize + sizeof(Fw::LogSeverity::SerialType)) {
+    if (this->m_runtime.stack.size < severitySize || this->m_runtime.stack.size - severitySize < messageSize) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
@@ -1588,6 +1613,8 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
     // message)
     if (messageSize > clampedSize) {
         Fpy::StackSizeType excess = messageSize - clampedSize;
+        FW_ASSERT(this->m_runtime.stack.size >= excess, static_cast<FwAssertArgType>(this->m_runtime.stack.size),
+                  static_cast<FwAssertArgType>(excess));
         this->m_runtime.stack.size -= excess;
     }
     this->m_runtime.stack.pop(messageBuf, clampedSize);
@@ -1626,6 +1653,50 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
             error = DirectiveError::INVALID_ARG;
             return Signal::stmtResponse_failure;
     }
+
+    return Signal::stmtResponse_success;
+}
+
+Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                                      DirectiveError& error) {
+    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(directive.get_size()));
+
+    // Validate port index is in range (using enum constant value)
+    constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    const FwIndexType portIndex = directive.get_portIndex();
+
+    // Check for negative port index or out of bounds
+    if (portIndex < 0 || portIndex >= MAX_PORTS) {
+        error = DirectiveError::SERIAL_PORT_INVALID_INDEX;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Check port is connected
+    if (!this->isConnected_serialOut_OutputPort(portIndex)) {
+        error = DirectiveError::SERIAL_PORT_NOT_CONNECTED;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Validate data size on stack
+    if (this->m_runtime.stack.size < directive.get_size()) {
+        error = DirectiveError::STACK_UNDERFLOW;
+        return Signal::stmtResponse_failure;
+    }
+
+    // Create external buffer referencing stack data (no copy)
+    U8* dataPtr = this->m_runtime.stack.top() - directive.get_size();
+    Fw::ExternalSerializeBuffer buf(dataPtr, directive.get_size());
+
+    // Set buffer length and verify success
+    Fw::SerializeStatus stat = buf.setBuffLen(directive.get_size());
+    FW_ASSERT(stat == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
+
+    // Call output port and verify serialization succeeds
+    Fw::SerializeStatus portStatus = this->serialOut_out(portIndex, buf);
+    FW_ASSERT(portStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(portStatus));
+
+    // Pop data from stack
+    this->m_runtime.stack.size -= directive.get_size();
 
     return Signal::stmtResponse_success;
 }

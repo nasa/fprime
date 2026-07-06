@@ -67,6 +67,9 @@ module Svc {
         @ port for getting param values and storing them in sequence serRegs
         output port getParam: Fw.PrmGet
 
+        @ Output ports for popping serializable data from stack to downstream components
+        output port serialOut: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

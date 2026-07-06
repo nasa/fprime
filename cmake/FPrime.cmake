@@ -12,6 +12,7 @@ include(utilities)
 include(options)
 include(sanitizers) # Enable sanitizers if they are requested
 include(required)
+include(global_interface)
 include(config_assembler)
 include(fprime-util)
 
@@ -30,21 +31,15 @@ if (IS_DIRECTORY "${FPRIME_PROJECT_ROOT}/_fprime_packages")
     endif()
 endif()
 
-# Setup fprime library locations
-list(REMOVE_DUPLICATES FPRIME_LIBRARY_LOCATIONS)
+# Clear the locations metadata files at the start of the generate
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_SOURCE_LOCATIONS_FILE}" "")
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_BINARY_LOCATIONS_FILE}" "")
+file(WRITE "${CMAKE_BINARY_DIR}/${FPRIME__INTERNAL_UTILITY_ALL_LOCATIONS_FILE}" "")
 
-# F Prime build locations represent the root of the module paths in F Prime. This allows us to detect module names from the
-# paths to given files.
-# Now that modules can build within the build cache, the build cache locations (root, F-Prime) are added to the list of
-# locations. This allows for the detection of modules that are built within the build cache.
-set(FPRIME_BUILD_LOCATIONS "${FPRIME_FRAMEWORK_PATH}" ${FPRIME_LIBRARY_LOCATIONS} "${FPRIME_PROJECT_ROOT}"
-    "${CMAKE_BINARY_DIR}/F-Prime" "${CMAKE_BINARY_DIR}" CACHE INTERNAL "List of root locations for F Prime modules" FORCE)
-list(REMOVE_DUPLICATES FPRIME_BUILD_LOCATIONS)
-resolve_path_variables(FPRIME_BUILD_LOCATIONS)
+# Adds the historical locations to the global interface target.
+fprime_add_historical_locations()
+fprime_cmake_status("[FPRIME] Default installation directory: ${FPRIME_INSTALL_DEST}")
 
-# Message describing the fprime setup
-fprime_cmake_status("[FPRIME] Module locations: ${FPRIME_BUILD_LOCATIONS}")
-fprime_cmake_status("[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
 include(platform/platform) # Now that module locations are known, load platform settings
 fprime_validate_platform()
 
@@ -66,21 +61,6 @@ include(API)
 include(sub-build/sub-build)
 # C and C++ settings for building the framework
 include(settings)
-####
-# Function `fprime_setup_global_includes`:
-#
-# Adds basic include directories that make fprime work. This ensures that configuration, framework, and project all
-# function as expected. This will also include the internal build-cache directories.
-####
-function(fprime_setup_global_includes)
-    # Setup the global include directories that exist outside of the build cache
-    include_directories("${FPRIME_FRAMEWORK_PATH}")
-    include_directories("${FPRIME_PROJECT_ROOT}")
-
-    # Setup the include directories that exist within the build-cache
-    include_directories("${CMAKE_BINARY_DIR}")
-    include_directories("${CMAKE_BINARY_DIR}/F-Prime")
-endfunction(fprime_setup_global_includes)
 
 ####
 # Function `fprime_detect_libraries`:
@@ -162,7 +142,6 @@ macro(fprime_initialize_build_system)
     get_property(_FPRIME_BUILD_SYSTEM_LOADED GLOBAL PROPERTY FPRIME_BUILD_SYSTEM_LOADED)
     if (NOT _FPRIME_BUILD_SYSTEM_LOADED)
         cmake_minimum_required(VERSION 3.18)
-        fprime_setup_global_includes()
         fprime_detect_libraries()
         fprime_setup_standard_targets()
         fprime_setup_override_targets()
@@ -178,6 +157,9 @@ macro(fprime_initialize_build_system)
             run_sub_build(info-cache ${SUB_BUILD_TARGETS})
             # Import the pre-computed properties!
             include("${CMAKE_BINARY_DIR}/fprime_module_info.cmake")
+            get_property(FPRIME_SUB_BUILD_LOCATIONS TARGET ${FPRIME_GLOBAL_INTERFACE_TARGET} PROPERTY FPRIME_SUB_BUILD_LOCATIONS)
+            fprime_cmake_status("[FPRIME] Module locations: ${FPRIME_SUB_BUILD_LOCATIONS}")
+            fprime_cmake_status("[FPRIME] Installation directory: ${CMAKE_INSTALL_PREFIX}")
         endif()
     endif()
 endmacro(fprime_initialize_build_system)

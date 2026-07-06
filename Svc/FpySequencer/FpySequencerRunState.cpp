@@ -655,6 +655,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_popEvent_internalInterfaceInvoke(directive.popEvent);
             return;
         }
+        case Fpy::DirectiveId::POP_SERIALIZABLE: {
+            this->directive_popSerializable_internalInterfaceInvoke(directive.popSerializable);
+            return;
+        }
     }
     // coding err
     FW_ASSERT(0, static_cast<FwAssertArgType>(id));

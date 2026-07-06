@@ -21,12 +21,17 @@ namespace Drain {
 
 class BufferAccumulatorTester : public Svc::BufferAccumulatorTester {
   public:
+    using Svc::BufferAccumulatorTester::BufferAccumulatorTester;
+
     // ----------------------------------------------------------------------
     // Tests
     // ----------------------------------------------------------------------
 
     //! Send some buffers
     void OK(void);
+
+    //! Initialize the accumulator in drain mode
+    void InitialMode(void);
 
     //! Run PartialDrain command in nominal way
     void PartialDrainOK(void);

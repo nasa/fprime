@@ -3,6 +3,7 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/TestComponent.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/TestComponent.cpp"
+  DEPENDS
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/TestComponent.hpp"
 )

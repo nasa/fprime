@@ -45,6 +45,26 @@ TEST(SpacePacketDeframer, testBufferSingleByte) {
     tester.testBufferSingleByte();
 }
 
+TEST(SpacePacketDeframer, testInvalidPacketIdentificationControlFields) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testInvalidPacketIdentificationControlFields();
+}
+
+TEST(SpacePacketDeframer, testCommandPacketTypeAccepted) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testCommandPacketTypeAccepted();
+}
+
+TEST(SpacePacketDeframer, testSecondaryHeaderFlagAccepted) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testSecondaryHeaderFlagAccepted();
+}
+
+TEST(SpacePacketDeframer, testSequenceFlagsAccepted) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testSequenceFlagsAccepted();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
