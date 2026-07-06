@@ -28,12 +28,12 @@ DpZLibCompressorTester ::DpZLibCompressorTester()
 }
 
 DpZLibCompressorTester ::~DpZLibCompressorTester() {
-    if (active_compression_buffer_.hasValue()) {
-        delete[] active_compression_buffer_.get();
+    if (active_compression_buffer_.has_value()) {
+        delete[] active_compression_buffer_.value();
     }
 
-    if (active_zlib_buffer_.hasValue()) {
-        delete[] active_zlib_buffer_.get();
+    if (active_zlib_buffer_.has_value()) {
+        delete[] active_zlib_buffer_.value();
     }
 }
 
@@ -88,8 +88,8 @@ void DpZLibCompressorTester ::compress(const std::vector<U8>& data,
         }
     }
 
-    ASSERT_FALSE(active_compression_buffer_.hasValue());
-    ASSERT_FALSE(active_zlib_buffer_.hasValue());
+    ASSERT_FALSE(active_compression_buffer_.has_value());
+    ASSERT_FALSE(active_zlib_buffer_.has_value());
 }
 
 std::vector<U8> DpZLibCompressorTester::zlib_inflate(const Fw::Buffer& comp_buffer,

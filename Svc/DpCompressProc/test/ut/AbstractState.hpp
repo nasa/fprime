@@ -20,7 +20,6 @@
 #include "STest/Pick/Pick.hpp"
 #include "Svc/DpCompressProc/DpCompressProc.hpp"
 #include "TestUtils/OnChangeChannel.hpp"
-#include "TestUtils/Option.hpp"
 
 namespace Svc {
 
