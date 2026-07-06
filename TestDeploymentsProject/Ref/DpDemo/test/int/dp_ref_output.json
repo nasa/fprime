@@ -24,8 +24,8 @@
       "type": "Time",
       "base": 2,
       "context": 0,
-      "seconds": 1769129275,
-      "microseconds": 673015
+      "seconds": 1782315578,
+      "microseconds": 58161
     },
     "ProcTypes": {
       "format": "{}",
@@ -39,135 +39,40 @@
       "name": "UserData",
       "type": "UserData",
       "size": 32,
+      "value_type": "U8",
       "values": [
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        },
-        {
-          "value": 0,
-          "type": "U8"
-        }
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
       ]
     },
     "DpState": {
@@ -185,7 +90,7 @@
     "Checksum": {
       "format": "{}",
       "description": "Header checksum",
-      "value": 4208292838,
+      "value": 2581277129,
       "type": "U32"
     }
   },
@@ -260,27 +165,13 @@
         "type": "Ref.DpDemo.U32Array",
         "size": 5,
         "format": "{}",
+        "value_type": "U32",
         "values": [
-          {
-            "value": 1,
-            "type": "U32"
-          },
-          {
-            "value": 2,
-            "type": "U32"
-          },
-          {
-            "value": 3,
-            "type": "U32"
-          },
-          {
-            "value": 4,
-            "type": "U32"
-          },
-          {
-            "value": 5,
-            "type": "U32"
-          }
+          1,
+          2,
+          3,
+          4,
+          5
         ]
       }
     },
@@ -298,19 +189,11 @@
         "type": "Ref.DpDemo.F32Array",
         "size": 3,
         "format": "{}",
+        "value_type": "F32",
         "values": [
-          {
-            "value": 1.100000023841858,
-            "type": "F32"
-          },
-          {
-            "value": 2.200000047683716,
-            "type": "F32"
-          },
-          {
-            "value": 3.299999952316284,
-            "type": "F32"
-          }
+          1.100000023841858,
+          2.200000047683716,
+          3.299999952316284
         ]
       }
     },
@@ -328,15 +211,10 @@
         "type": "Ref.DpDemo.BooleanArray",
         "size": 2,
         "format": "{}",
+        "value_type": "Bool",
         "values": [
-          {
-            "value": true,
-            "type": "Bool"
-          },
-          {
-            "value": false,
-            "type": "Bool"
-          }
+          true,
+          false
         ]
       }
     },
@@ -349,21 +227,18 @@
         "is_array": true,
         "description": "Data product record - string array record"
       },
-      "Size": 3,
-      "Data": [
-        {
-          "value": "String array element 0",
-          "type": "String_80"
-        },
-        {
-          "value": "String array element 1",
-          "type": "String_80"
-        },
-        {
-          "value": "String array element 2",
-          "type": "String_80"
-        }
-      ]
+      "Data": {
+        "name": "Ref.dpDemo.StringArrayRecord_3",
+        "type": "Ref.dpDemo.StringArrayRecord_3",
+        "size": 3,
+        "format": "{}",
+        "value_type": "String_80",
+        "values": [
+          "String array element 0",
+          "String array element 1",
+          "String array element 2"
+        ]
+      }
     },
     {
       "Record": {
@@ -374,25 +249,19 @@
         "is_array": true,
         "description": "Data product record - array record (arrays)"
       },
-      "Size": 1,
-      "Data": [
-        {
-          "name": "Ref.DpDemo.StringArray",
-          "type": "Ref.DpDemo.StringArray",
-          "size": 2,
-          "format": "{}",
-          "values": [
-            {
-              "value": "0 - String array record element 0",
-              "type": "String_80"
-            },
-            {
-              "value": "0 - String array record element 1",
-              "type": "String_80"
-            }
+      "Data": {
+        "name": "Ref.dpDemo.ArrayArrayRecord_1",
+        "type": "Ref.dpDemo.ArrayArrayRecord_1",
+        "size": 1,
+        "format": "{}",
+        "value_type": "Ref.DpDemo.StringArray",
+        "values": [
+          [
+            "0 - String array record element 0",
+            "0 - String array record element 1"
           ]
-        }
-      ]
+        ]
+      }
     },
     {
       "Record": {
@@ -403,59 +272,29 @@
         "is_array": true,
         "description": "Data product record - array record (structs)"
       },
-      "Size": 2,
-      "Data": [
-        {
-          "stringMember": {
-            "format": "{}",
-            "description": "",
-            "value": "0 - String member",
-            "type": "String_80"
+      "Data": {
+        "name": "Ref.dpDemo.StructArrayRecord_2",
+        "type": "Ref.dpDemo.StructArrayRecord_2",
+        "size": 2,
+        "format": "{}",
+        "value_type": "Ref.DpDemo.StructWithStringMembers",
+        "values": [
+          {
+            "stringMember": "0 - String member",
+            "stringArrayMember": [
+              "0 - String array element 0",
+              "0 - String array element 1"
+            ]
           },
-          "stringArrayMember": {
-            "format": "{}",
-            "description": "",
-            "name": "Ref.DpDemo.StringArray",
-            "type": "Ref.DpDemo.StringArray",
-            "size": 2,
-            "values": [
-              {
-                "value": "0 - String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "0 - String array element 1",
-                "type": "String_80"
-              }
+          {
+            "stringMember": "1 - String member",
+            "stringArrayMember": [
+              "1 - String array element 0",
+              "1 - String array element 1"
             ]
           }
-        },
-        {
-          "stringMember": {
-            "format": "{}",
-            "description": "",
-            "value": "1 - String member",
-            "type": "String_80"
-          },
-          "stringArrayMember": {
-            "format": "{}",
-            "description": "",
-            "name": "Ref.DpDemo.StringArray",
-            "type": "Ref.DpDemo.StringArray",
-            "size": 2,
-            "values": [
-              {
-                "value": "1 - String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "1 - String array element 1",
-                "type": "String_80"
-              }
-            ]
-          }
-        }
-      ]
+        ]
+      }
     },
     {
       "Record": {
@@ -471,55 +310,20 @@
         "type": "Ref.DpDemo.ArrayOfStringArray",
         "size": 3,
         "format": "{}",
+        "value_type": "Ref.DpDemo.StringArray",
         "values": [
-          {
-            "name": "Ref.DpDemo.StringArray",
-            "type": "Ref.DpDemo.StringArray",
-            "size": 2,
-            "format": "{}",
-            "values": [
-              {
-                "value": "0 - String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "0 - String array element 1",
-                "type": "String_80"
-              }
-            ]
-          },
-          {
-            "name": "Ref.DpDemo.StringArray",
-            "type": "Ref.DpDemo.StringArray",
-            "size": 2,
-            "format": "{}",
-            "values": [
-              {
-                "value": "1 - String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "1 - String array element 1",
-                "type": "String_80"
-              }
-            ]
-          },
-          {
-            "name": "Ref.DpDemo.StringArray",
-            "type": "Ref.DpDemo.StringArray",
-            "size": 2,
-            "format": "{}",
-            "values": [
-              {
-                "value": "2 - String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "2 - String array element 1",
-                "type": "String_80"
-              }
-            ]
-          }
+          [
+            "0 - String array element 0",
+            "0 - String array element 1"
+          ],
+          [
+            "1 - String array element 0",
+            "1 - String array element 1"
+          ],
+          [
+            "2 - String array element 0",
+            "2 - String array element 1"
+          ]
         ]
       }
     },
@@ -537,81 +341,28 @@
         "type": "Ref.DpDemo.ArrayOfStructs",
         "size": 3,
         "format": "{}",
+        "value_type": "Ref.DpDemo.StructWithStringMembers",
         "values": [
           {
-            "stringMember": {
-              "format": "{}",
-              "description": "",
-              "value": "0 - String member",
-              "type": "String_80"
-            },
-            "stringArrayMember": {
-              "format": "{}",
-              "description": "",
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "values": [
-                {
-                  "value": "0 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "0 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            }
+            "stringMember": "0 - String member",
+            "stringArrayMember": [
+              "0 - String array element 0",
+              "0 - String array element 1"
+            ]
           },
           {
-            "stringMember": {
-              "format": "{}",
-              "description": "",
-              "value": "1 - String member",
-              "type": "String_80"
-            },
-            "stringArrayMember": {
-              "format": "{}",
-              "description": "",
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "values": [
-                {
-                  "value": "1 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "1 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            }
+            "stringMember": "1 - String member",
+            "stringArrayMember": [
+              "1 - String array element 0",
+              "1 - String array element 1"
+            ]
           },
           {
-            "stringMember": {
-              "format": "{}",
-              "description": "",
-              "value": "2 - String member",
-              "type": "String_80"
-            },
-            "stringArrayMember": {
-              "format": "{}",
-              "description": "",
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "values": [
-                {
-                  "value": "2 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "2 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            }
+            "stringMember": "2 - String member",
+            "stringArrayMember": [
+              "2 - String array element 0",
+              "2 - String array element 1"
+            ]
           }
         ]
       }
@@ -630,19 +381,11 @@
         "type": "Ref.DpDemo.EnumArray",
         "size": 3,
         "format": "{}",
+        "value_type": "Ref.DpDemo.ColorEnum",
         "values": [
-          {
-            "value": "RED",
-            "type": "Ref.DpDemo.ColorEnum"
-          },
-          {
-            "value": "GREEN",
-            "type": "Ref.DpDemo.ColorEnum"
-          },
-          {
-            "value": "BLUE",
-            "type": "Ref.DpDemo.ColorEnum"
-          }
+          "RED",
+          "GREEN",
+          "BLUE"
         ]
       }
     },
@@ -692,63 +435,22 @@
           "name": "Array_Ref.DpDemo.U32Array_2",
           "type": "Array_Ref.DpDemo.U32Array_2",
           "size": 2,
+          "value_type": "Ref.DpDemo.U32Array",
           "values": [
-            {
-              "name": "Ref.DpDemo.U32Array",
-              "type": "Ref.DpDemo.U32Array",
-              "size": 5,
-              "format": "{}",
-              "values": [
-                {
-                  "value": 1,
-                  "type": "U32"
-                },
-                {
-                  "value": 2,
-                  "type": "U32"
-                },
-                {
-                  "value": 3,
-                  "type": "U32"
-                },
-                {
-                  "value": 4,
-                  "type": "U32"
-                },
-                {
-                  "value": 5,
-                  "type": "U32"
-                }
-              ]
-            },
-            {
-              "name": "Ref.DpDemo.U32Array",
-              "type": "Ref.DpDemo.U32Array",
-              "size": 5,
-              "format": "{}",
-              "values": [
-                {
-                  "value": 6,
-                  "type": "U32"
-                },
-                {
-                  "value": 7,
-                  "type": "U32"
-                },
-                {
-                  "value": 8,
-                  "type": "U32"
-                },
-                {
-                  "value": 9,
-                  "type": "U32"
-                },
-                {
-                  "value": 10,
-                  "type": "U32"
-                }
-              ]
-            }
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
           ]
         },
         "F32Array": {
@@ -757,19 +459,11 @@
           "name": "Ref.DpDemo.F32Array",
           "type": "Ref.DpDemo.F32Array",
           "size": 3,
+          "value_type": "F32",
           "values": [
-            {
-              "value": 4.400000095367432,
-              "type": "F32"
-            },
-            {
-              "value": 5.5,
-              "type": "F32"
-            },
-            {
-              "value": 6.599999904632568,
-              "type": "F32"
-            }
+            4.400000095367432,
+            5.5,
+            6.599999904632568
           ]
         },
         "U32Array": {
@@ -778,27 +472,13 @@
           "name": "Ref.DpDemo.U32Array",
           "type": "Ref.DpDemo.U32Array",
           "size": 5,
+          "value_type": "U32",
           "values": [
-            {
-              "value": 6,
-              "type": "U32"
-            },
-            {
-              "value": 7,
-              "type": "U32"
-            },
-            {
-              "value": 8,
-              "type": "U32"
-            },
-            {
-              "value": 9,
-              "type": "U32"
-            },
-            {
-              "value": 10,
-              "type": "U32"
-            }
+            6,
+            7,
+            8,
+            9,
+            10
           ]
         },
         "enumArray": {
@@ -807,19 +487,11 @@
           "name": "Ref.DpDemo.EnumArray",
           "type": "Ref.DpDemo.EnumArray",
           "size": 3,
+          "value_type": "Ref.DpDemo.ColorEnum",
           "values": [
-            {
-              "value": "RED",
-              "type": "Ref.DpDemo.ColorEnum"
-            },
-            {
-              "value": "GREEN",
-              "type": "Ref.DpDemo.ColorEnum"
-            },
-            {
-              "value": "BLUE",
-              "type": "Ref.DpDemo.ColorEnum"
-            }
+            "RED",
+            "GREEN",
+            "BLUE"
           ]
         },
         "stringArray": {
@@ -828,15 +500,10 @@
           "name": "Ref.DpDemo.StringArray",
           "type": "Ref.DpDemo.StringArray",
           "size": 2,
+          "value_type": "String_80",
           "values": [
-            {
-              "value": "String array element 0",
-              "type": "String_80"
-            },
-            {
-              "value": "String array element 1",
-              "type": "String_80"
-            }
+            "String array element 0",
+            "String array element 1"
           ]
         },
         "booleanArray": {
@@ -845,15 +512,10 @@
           "name": "Ref.DpDemo.BooleanArray",
           "type": "Ref.DpDemo.BooleanArray",
           "size": 2,
+          "value_type": "Bool",
           "values": [
-            {
-              "value": true,
-              "type": "Bool"
-            },
-            {
-              "value": false,
-              "type": "Bool"
-            }
+            true,
+            false
           ]
         },
         "structWithStrings": {
@@ -871,15 +533,10 @@
             "name": "Ref.DpDemo.StringArray",
             "type": "Ref.DpDemo.StringArray",
             "size": 2,
+            "value_type": "String_80",
             "values": [
-              {
-                "value": "String array element 0",
-                "type": "String_80"
-              },
-              {
-                "value": "String array element 1",
-                "type": "String_80"
-              }
+              "String array element 0",
+              "String array element 1"
             ]
           }
         },
@@ -889,55 +546,20 @@
           "name": "Ref.DpDemo.ArrayOfStringArray",
           "type": "Ref.DpDemo.ArrayOfStringArray",
           "size": 3,
+          "value_type": "Ref.DpDemo.StringArray",
           "values": [
-            {
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "format": "{}",
-              "values": [
-                {
-                  "value": "0 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "0 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            },
-            {
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "format": "{}",
-              "values": [
-                {
-                  "value": "1 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "1 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            },
-            {
-              "name": "Ref.DpDemo.StringArray",
-              "type": "Ref.DpDemo.StringArray",
-              "size": 2,
-              "format": "{}",
-              "values": [
-                {
-                  "value": "2 - String array element 0",
-                  "type": "String_80"
-                },
-                {
-                  "value": "2 - String array element 1",
-                  "type": "String_80"
-                }
-              ]
-            }
+            [
+              "0 - String array element 0",
+              "0 - String array element 1"
+            ],
+            [
+              "1 - String array element 0",
+              "1 - String array element 1"
+            ],
+            [
+              "2 - String array element 0",
+              "2 - String array element 1"
+            ]
           ]
         }
       }

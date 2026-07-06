@@ -20,8 +20,8 @@ def test_dp_send(fprime_test_api):
         "DataProducts.dpWriter.FileWritten", start=0, timeout=10
     )
     dp_file_path = file_result.get_display_text().split().pop()
-    # Verify that the file exists
-    # Assumes that we are running the test from the Ref directory
+    # Verify that the file exists. The FSW writes ./DpCat relative to its
+    # working directory, so the test must run from that same directory.
     assert Path(dp_file_path).is_file()
 
 
@@ -35,8 +35,8 @@ def test_dp_decode(fprime_test_api):
         "DataProducts.dpWriter.FileWritten", start=0, timeout=10
     )
     dp_file_path = file_result.get_display_text().split().pop()
-    # Verify that the file exists
-    # Assumes that we are running the test from the Ref directory
+    # Verify that the file exists. The FSW writes ./DpCat relative to its
+    # working directory, so the test must run from that same directory.
     assert Path(dp_file_path).is_file(), "Dp file not downlinked correctly"
     # Decode DP file
     decoded_file_name = Path(dp_file_path).name.replace(".fdp", ".json")

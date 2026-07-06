@@ -152,6 +152,9 @@ class BufferLogger final : public BufferLoggerComponentBase {
         //! The number of bytes written to the current file
         FwSizeType m_bytesWritten;
 
+        //! Running hash computed incrementally as data is written
+        Utils::Hash m_hash;
+
     };  // class File
 
   public:
