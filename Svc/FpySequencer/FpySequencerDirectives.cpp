@@ -770,6 +770,10 @@ DirectiveError FpySequencer::op_sdiv() {
     if (rhs == 0) {
         return DirectiveError::DOMAIN_ERROR;
     }
+    // Prevent signed overflow: INT64_MIN / -1 is undefined behavior (SIGFPE on x86)
+    if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     this->m_runtime.stack.push(static_cast<I64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
 }
@@ -794,6 +798,10 @@ DirectiveError FpySequencer::op_smod() {
         return DirectiveError::DOMAIN_ERROR;
     }
     I64 lhs = this->m_runtime.stack.pop<I64>();
+    // Prevent signed overflow: INT64_MIN % -1 is undefined behavior (SIGFPE on x86)
+    if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     I64 res = static_cast<I64>(lhs % rhs);
     // in order to match Python's behavior,
     // if the signs of the remainder and divisor differ, adjust the result.

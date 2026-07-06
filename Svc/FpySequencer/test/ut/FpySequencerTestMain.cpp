@@ -1225,6 +1225,18 @@ TEST_F(FpySequencerTester, smod_domain_error) {
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
 }
+TEST_F(FpySequencerTester, sdiv_overflow_domain_error) {
+    // INT64_MIN / -1 overflows I64 (would be INT64_MAX + 1); it is UB (SIGFPE on x86)
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, smod_overflow_domain_error) {
+    // INT64_MIN % -1 is UB (SIGFPE on x86) even though the mathematical result is 0
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
+}
 TEST_F(FpySequencerTester, flog_domain_error) {
     // log(0) is undefined
     tester_push<F64>(0.0);
