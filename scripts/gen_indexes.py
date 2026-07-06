@@ -4,6 +4,7 @@ Generates docs/<section>/index.md from the filesystem structure.
 """
 # Run before docs_nav_tree.py so index.md are properly included in the nav tree
 
+from __future__ import annotations
 from pathlib import Path
 
 # Get the directory where this script is located
