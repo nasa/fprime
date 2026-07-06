@@ -576,7 +576,7 @@ Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR
 **Requirement:**  FPY-SEQ-002
 
 ## FMOD (45)
-Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in a DOMAIN_ERROR. A NaN will produce a NaN result or infinity as either argument yields NaN.
+Performs float modulo, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs. A 0 divisor (rhs) yields a NaN result, not an error. A NaN will produce a NaN result or infinity as either argument yields NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |

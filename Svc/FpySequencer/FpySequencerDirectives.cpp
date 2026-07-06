@@ -874,11 +874,17 @@ DirectiveError FpySequencer::op_fmod() {
         return DirectiveError::STACK_UNDERFLOW;
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
-    if (rhs == 0.0) {
-        return DirectiveError::DOMAIN_ERROR;
-    }
     F64 lhs = this->m_runtime.stack.pop<F64>();
-    this->m_runtime.stack.push(static_cast<F64>(lhs - rhs * std::floor(lhs / rhs)));
+    // std::fmod computes the exact truncated remainder (sign of lhs) with no
+    // intermediate rounding. A zero divisor yields NaN, matching Rust and C#.
+    F64 res = std::fmod(lhs, rhs);
+    // Adjust to match Python's floored-modulo semantics: if the signs of the
+    // remainder and divisor differ, add the divisor once. This mirrors op_smod
+    // and is the exact frem + fadd the VM model computes (at most one rounded add).
+    if ((res > 0 && rhs < 0) || (res < 0 && rhs > 0)) {
+        res += rhs;
+    }
+    this->m_runtime.stack.push(res);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_siext_8_64() {
