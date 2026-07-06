@@ -4,8 +4,8 @@ Generates docs/<section>/index.md from the filesystem structure.
 """
 # Run before docs_nav_tree.py so index.md are properly included in the nav tree
 
-from __future__ import annotations
 from pathlib import Path
+from typing import Optional
 
 # Get the directory where this script is located
 SCRIPT_DIR = Path(__file__).parent.parent
@@ -53,7 +53,7 @@ SECTION_METADATA = {
 
 
 
-def read_h1(md_file: Path) -> str | None:
+def read_h1(md_file: Path) -> Optional[str]:
     """Return the first H1 (header) line in a markdown file, skipping YAML frontmatter."""
     text = md_file.read_text(encoding="utf-8")
     if text.startswith("---\n"):
