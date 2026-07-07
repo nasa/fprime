@@ -244,12 +244,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     // Move the serializer past the uncompressed chunk manually
                     ser_stat = data_reser.serializeSkip(uncompressed_size);
-                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));
 
                     ser_stat = data_reser.serializeFrom(comp_data_ptr, compressed_size, Fw::Serialization::OMIT_LENGTH);
-                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
                     break;
                 case LAST_COMPRESSED:
                     // Case B
@@ -258,7 +258,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));
 
                     ser_stat = data_reser.serializeFrom(comp_data_ptr, compressed_size, Fw::Serialization::OMIT_LENGTH);
-                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
                     break;
                 case LAST_UNCOMPRESSED:
                     // Case E
@@ -272,12 +272,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     FW_ASSERT(uncompressed_head != nullptr);
                     ser_stat = data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
-                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));
 
                     ser_stat = data_reser.serializeFrom(comp_data_ptr, compressed_size, Fw::Serialization::OMIT_LENGTH);
-                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+                    FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
                     break;
                 default:
                     FW_ASSERT(false, state);
@@ -346,7 +346,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
             FW_ASSERT(uncompressed_head != nullptr);
             ser_stat = data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
-            FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK);
+            FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
             /* FALLTHRU */
         case LAST_COMPRESSED:
