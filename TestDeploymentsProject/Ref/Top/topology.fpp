@@ -109,6 +109,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.Subtopology.dpBufferManagerSchedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.Subtopology.dpWriterSchedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.Subtopology.dpMgrSchedIn
+      rateGroup3Comp.RateGroupMemberOut[7] -> CdhCore.Subtopology.eventsRun
     }
 
     connections Communications {
