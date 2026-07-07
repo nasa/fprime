@@ -138,14 +138,12 @@ class PriorityMemQueue : public Os::QueueInterface {
                           FwSizeType numQueueConfigs,
                           bool required,
                           FwEnumStoreType allocatorId);
-    Os / Generic /
-        PriorityMemQueue.cpp
-        //! \brief Reset static configuration (test environments only)
-        //!
-        //! Deallocates internal config tracking memory and resets state.
-        //! \warning Only call this in test harnesses after all queues are destroyed
-        static void
-        resetConfig();
+
+    //! \brief Reset static configuration (test environments only)
+    //!
+    //! Deallocates internal config tracking memory and resets state.
+    //! \warning Only call this in test harnesses after all queues are destroyed
+    static void resetConfig();
 
   public:
     //! \brief queue interface constructor - initializes handle
