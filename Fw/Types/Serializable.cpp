@@ -46,12 +46,14 @@ LinearBufferBase::~LinearBufferBase() {}
 void LinearBufferBase::copyFrom(const LinearBufferBase& src) {
     this->m_serLoc = src.m_serLoc;
     this->m_deserLoc = src.m_deserLoc;
-    FW_ASSERT(src.getBuffAddr());
-    FW_ASSERT(this->getBuffAddr());
+    const U8* srcBuffAddr = src.getBuffAddr();
+    U8* thisBuffAddr = this->getBuffAddr();
+    FW_ASSERT(srcBuffAddr != nullptr);
+    FW_ASSERT(thisBuffAddr != nullptr);
     // destination has to be same or bigger
     FW_ASSERT(src.getSize() <= this->getCapacity(), static_cast<FwAssertArgType>(src.getSize()),
               static_cast<FwAssertArgType>(this->getSize()));
-    (void)memcpy(this->getBuffAddr(), src.getBuffAddr(), static_cast<size_t>(this->m_serLoc));
+    (void)memcpy(thisBuffAddr, srcBuffAddr, static_cast<size_t>(this->m_serLoc));
 }
 
 // Copy constructor doesn't make sense in this virtual class as there is nothing to copy. Derived classes should
@@ -67,8 +69,9 @@ SerializeStatus LinearBufferBase::serializeFrom(U8 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
-    FW_ASSERT(this->getBuffAddr());
-    this->getBuffAddr()[this->m_serLoc] = val;
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    buffAddr[this->m_serLoc] = val;
     this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(val));
     this->m_deserLoc = 0;
 
@@ -84,17 +87,18 @@ SerializeStatus LinearBufferBase::serializeFrom(U16 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val);
             break;
         case Endianness::LITTLE:
             // LSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
             break;
         default:
             FW_ASSERT(false);
@@ -114,21 +118,22 @@ SerializeStatus LinearBufferBase::serializeFrom(U32 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
-            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
-            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val >> 24);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val >> 16);
+            buffAddr[this->m_serLoc + 2] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 3] = static_cast<U8>(val);
             break;
         case Endianness::LITTLE:
             // LSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
-            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
-            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
+            buffAddr[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
             break;
         default:
             FW_ASSERT(false);
@@ -149,29 +154,30 @@ SerializeStatus LinearBufferBase::serializeFrom(U64 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->getCapacity()) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
-            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
-            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
-            this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
-            this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
-            this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
-            this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val >> 56);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val >> 48);
+            buffAddr[this->m_serLoc + 2] = static_cast<U8>(val >> 40);
+            buffAddr[this->m_serLoc + 3] = static_cast<U8>(val >> 32);
+            buffAddr[this->m_serLoc + 4] = static_cast<U8>(val >> 24);
+            buffAddr[this->m_serLoc + 5] = static_cast<U8>(val >> 16);
+            buffAddr[this->m_serLoc + 6] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 7] = static_cast<U8>(val);
             break;
         case Endianness::LITTLE:
             // LSB first
-            this->getBuffAddr()[this->m_serLoc + 0] = static_cast<U8>(val);
-            this->getBuffAddr()[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
-            this->getBuffAddr()[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
-            this->getBuffAddr()[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
-            this->getBuffAddr()[this->m_serLoc + 4] = static_cast<U8>(val >> 32);
-            this->getBuffAddr()[this->m_serLoc + 5] = static_cast<U8>(val >> 40);
-            this->getBuffAddr()[this->m_serLoc + 6] = static_cast<U8>(val >> 48);
-            this->getBuffAddr()[this->m_serLoc + 7] = static_cast<U8>(val >> 56);
+            buffAddr[this->m_serLoc + 0] = static_cast<U8>(val);
+            buffAddr[this->m_serLoc + 1] = static_cast<U8>(val >> 8);
+            buffAddr[this->m_serLoc + 2] = static_cast<U8>(val >> 16);
+            buffAddr[this->m_serLoc + 3] = static_cast<U8>(val >> 24);
+            buffAddr[this->m_serLoc + 4] = static_cast<U8>(val >> 32);
+            buffAddr[this->m_serLoc + 5] = static_cast<U8>(val >> 40);
+            buffAddr[this->m_serLoc + 6] = static_cast<U8>(val >> 48);
+            buffAddr[this->m_serLoc + 7] = static_cast<U8>(val >> 56);
             break;
         default:
             FW_ASSERT(false);
@@ -206,11 +212,12 @@ SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     if (val) {
-        this->getBuffAddr()[this->m_serLoc + 0] = FW_SERIALIZE_TRUE_VALUE;
+        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_TRUE_VALUE;
     } else {
-        this->getBuffAddr()[this->m_serLoc + 0] = FW_SERIALIZE_FALSE_VALUE;
+        buffAddr[this->m_serLoc + 0] = FW_SERIALIZE_FALSE_VALUE;
     }
 
     this->m_serLoc += static_cast<Serializable::SizeType>(sizeof(U8));
@@ -250,9 +257,10 @@ SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
     if (length > 0) {
         FW_ASSERT(buff);
     }
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     // copy buffer to our buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
+    (void)memcpy(&buffAddr[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
     this->m_deserLoc = 0;
 
@@ -275,10 +283,12 @@ SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val, End
         return stat;
     }
 
-    FW_ASSERT(this->getBuffAddr());
-    FW_ASSERT(val.getBuffAddr());
+    U8* thisBuffAddr = this->getBuffAddr();
+    const U8* valBuffAddr = val.getBuffAddr();
+    FW_ASSERT(thisBuffAddr != nullptr);
+    FW_ASSERT(valBuffAddr != nullptr);
     // serialize buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], val.getBuffAddr(), static_cast<size_t>(size));
+    (void)memcpy(&thisBuffAddr[this->m_serLoc], valBuffAddr, static_cast<size_t>(size));
     this->m_serLoc += size;
     this->m_deserLoc = 0;
 
@@ -300,28 +310,32 @@ SerializeStatus LinearBufferBase::serializeSize(const FwSizeType size, Endiannes
 
 SerializeStatus LinearBufferBase::deserializeTo(U8& val, Endianness mode) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
+    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
-    val = this->getBuffAddr()[this->m_deserLoc + 0];
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    val = buffAddr[this->m_deserLoc + 0];
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
     return FW_SERIALIZE_OK;
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(I8& val, Endianness mode) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
+    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
-    val = static_cast<I8>(this->getBuffAddr()[this->m_deserLoc + 0]);
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    val = static_cast<I8>(buffAddr[this->m_deserLoc + 0]);
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
     return FW_SERIALIZE_OK;
 }
@@ -329,23 +343,23 @@ SerializeStatus LinearBufferBase::deserializeTo(I8& val, Endianness mode) {
 #if FW_HAS_16_BIT == 1
 SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
+    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            val = static_cast<U16>(((this->getBuffAddr()[this->m_deserLoc + 1]) << 0) |
-                                   ((this->getBuffAddr()[this->m_deserLoc + 0]) << 8));
+            val = static_cast<U16>(((buffAddr[this->m_deserLoc + 1]) << 0) | ((buffAddr[this->m_deserLoc + 0]) << 8));
             break;
         case Endianness::LITTLE:
             // LSB first
-            val = static_cast<U16>(((this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                                   ((this->getBuffAddr()[this->m_deserLoc + 1]) << 8));
+            val = static_cast<U16>(((buffAddr[this->m_deserLoc + 0]) << 0) | ((buffAddr[this->m_deserLoc + 1]) << 8));
             break;
         default:
             FW_ASSERT(false);
@@ -367,27 +381,29 @@ SerializeStatus LinearBufferBase::deserializeTo(I16& val, Endianness mode) {
 #if FW_HAS_32_BIT == 1
 SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
+    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            val = (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 0) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 8) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 16) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 24);
+            val = (static_cast<U32>(buffAddr[this->m_deserLoc + 3]) << 0) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 2]) << 8) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 1]) << 16) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 0]) << 24);
             break;
         case Endianness::LITTLE:
             // LSB first
-            val = (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
-                  (static_cast<U32>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24);
+            val = (static_cast<U32>(buffAddr[this->m_deserLoc + 0]) << 0) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 1]) << 8) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 2]) << 16) |
+                  (static_cast<U32>(buffAddr[this->m_deserLoc + 3]) << 24);
             break;
         default:
             FW_ASSERT(false);
@@ -474,16 +490,19 @@ SerializeStatus LinearBufferBase::deserializeTo(F64& val, Endianness mode) {
 
 SerializeStatus LinearBufferBase::deserializeTo(bool& val, Endianness mode) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(U8))) {
+    } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(U8))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
-    if (FW_SERIALIZE_TRUE_VALUE == this->getBuffAddr()[this->m_deserLoc + 0]) {
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    const U8 byteVal = buffAddr[this->m_deserLoc + 0];
+    if (FW_SERIALIZE_TRUE_VALUE == byteVal) {
         val = true;
-    } else if (FW_SERIALIZE_FALSE_VALUE == this->getBuffAddr()[this->m_deserLoc + 0]) {
+    } else if (FW_SERIALIZE_FALSE_VALUE == byteVal) {
         val = false;
     } else {
         return FW_DESERIALIZE_FORMAT_ERROR;
@@ -526,7 +545,8 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                 Serializable::SizeType& length,
                                                 Serialization::t lengthMode,
                                                 Endianness endianMode) {
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
         FwSizeStoreType storedLength = 0;
@@ -545,7 +565,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         if (storedLength > 0) {
             FW_ASSERT(buff);
         }
-        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
+        (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(storedLength));
 
         length = static_cast<FwSizeType>(storedLength);
 
@@ -558,7 +578,7 @@ SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         if (length > 0) {
             FW_ASSERT(buff);
         }
-        (void)memcpy(buff, &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(length));
+        (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(length));
     }
 
     this->m_deserLoc += static_cast<Serializable::SizeType>(length);
@@ -570,7 +590,8 @@ SerializeStatus LinearBufferBase::deserializeTo(Serializable& val, Endianness mo
 }
 
 SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endianness mode) {
-    FW_ASSERT(val.getBuffAddr());
+    U8* valBuffAddr = val.getBuffAddr();
+    FW_ASSERT(valBuffAddr != nullptr);
     SerializeStatus stat = FW_SERIALIZE_OK;
 
     FwSizeStoreType storedLength = 0;
@@ -587,8 +608,9 @@ SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endiannes
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
-    FW_ASSERT(this->getBuffAddr());
-    (void)memcpy(val.getBuffAddr(), &this->getBuffAddr()[this->m_deserLoc], static_cast<size_t>(storedLength));
+    U8* thisBuffAddr = this->getBuffAddr();
+    FW_ASSERT(thisBuffAddr != nullptr);
+    (void)memcpy(valBuffAddr, &thisBuffAddr[this->m_deserLoc], static_cast<size_t>(storedLength));
 
     stat = val.setBuffLen(storedLength);
 
@@ -635,9 +657,10 @@ SerializeStatus LinearBufferBase::serializeSkip(FwSizeType numBytesToSkip) {
 
 SerializeStatus LinearBufferBase::deserializeSkip(FwSizeType numBytesToSkip) {
     // check for room
-    if (this->getSize() == this->m_deserLoc) {
+    const Serializable::SizeType size = this->getSize();
+    if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
-    } else if (this->getSize() - this->m_deserLoc < numBytesToSkip) {
+    } else if (size - this->m_deserLoc < numBytesToSkip) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // update location in buffer to skip the value
@@ -667,8 +690,9 @@ SerializeStatus LinearBufferBase::setBuff(const U8* src, Serializable::SizeType 
         return FW_SERIALIZE_NO_ROOM_LEFT;
     } else {
         FW_ASSERT(src);
-        FW_ASSERT(this->getBuffAddr());
-        (void)memcpy(this->getBuffAddr(), src, static_cast<size_t>(length));
+        U8* buffAddr = this->getBuffAddr();
+        FW_ASSERT(buffAddr != nullptr);
+        (void)memcpy(buffAddr, src, static_cast<size_t>(length));
         this->m_serLoc = length;
         this->m_deserLoc = 0;
         return FW_SERIALIZE_OK;
@@ -708,7 +732,10 @@ SerializeStatus LinearBufferBase::copyRaw(SerialBufferBase& dest, Serializable::
     }
 
     // otherwise, set destination buffer to data from deserialization pointer plus size
-    SerializeStatus stat = dest.setBuff(&this->getBuffAddr()[this->m_deserLoc], size);
+    U8* buffAddr = this->getBuffAddr();
+
+    FW_ASSERT(buffAddr);
+    SerializeStatus stat = dest.setBuff(&buffAddr[this->m_deserLoc], size);
     if (stat == FW_SERIALIZE_OK) {
         this->m_deserLoc += size;
     }
@@ -717,7 +744,9 @@ SerializeStatus LinearBufferBase::copyRaw(SerialBufferBase& dest, Serializable::
 
 SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest, Serializable::SizeType size) {
     // make sure there is sufficient size in destination
-    if (dest.getCapacity() < size + dest.getSize()) {
+    const Serializable::SizeType destCapacity = dest.getCapacity();
+    const Serializable::SizeType destSize = dest.getSize();
+    if (destCapacity < size + destSize) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
     // make sure there is sufficient buffer in source
@@ -726,7 +755,8 @@ SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest, Serializ
     }
 
     // otherwise, serialize bytes to destination without writing length
-    SerializeStatus stat = dest.serializeFrom(&this->getBuffAddr()[this->m_deserLoc], size, Serialization::OMIT_LENGTH);
+    U8* buffAddr = this->getBuffAddr();
+    SerializeStatus stat = dest.serializeFrom(&buffAddr[this->m_deserLoc], size, Serialization::OMIT_LENGTH);
     if (stat == FW_SERIALIZE_OK) {
         this->m_deserLoc += size;
     }
