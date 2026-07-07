@@ -82,8 +82,6 @@ def reformat_entry(entry):
         return entry.replace("Getting Started with F Prime", "Getting Started")
     elif entry.islower():
         entry = entry.replace("-", " ")
-        entry = entry.replace("dev", "develop")
-        entry = entry.replace("ops", "operate")
         entry = entry.title()
         entry = entry.replace("Gds", "GDS")
         return entry

@@ -143,7 +143,7 @@ First this code filters out unwanted channels. Then it performs a translation on
 
 ## Running It
 
-Install the plugin as directed in the plugin development How-To section [packaging and testing plugins ](./develop-gds-plugins.md#packaging-and-testing-plugins).  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
+Install the plugin as directed in the plugin development How-To section [packaging and testing plugins ](develop-gds-plugins.md#packaging-and-testing-plugins).  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
 
 **Merging Dictionaries**
 ```bash

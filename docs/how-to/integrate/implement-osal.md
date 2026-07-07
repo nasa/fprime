@@ -1,4 +1,4 @@
-# How-To: Implement an OS Abstraction Layer
+# Implement an OS Abstraction Layer
 
 This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the [OSAL Software Design Document](../../../Os/docs/sdd.md).
 
@@ -10,7 +10,7 @@ Before starting, you should have:
 
 * An understanding of the [OSAL architecture](../../../Os/docs/sdd.md#5-implementation-architecture), specifically the [delegate pattern](../../../Os/docs/sdd.md#51-delegate-pattern).
 * A working F´ build environment for testing.
-* Familiarity with [F´ libraries](../dev/develop-fprime-libraries.md) and [F´ platform files](../dev/develop-fprime-libraries.md#optional-platform-folder-and-platform-files).
+* Familiarity with [F´ libraries](../develop/develop-fprime-libraries.md) and [F´ platform files](../develop/develop-fprime-libraries.md#optional-platform-folder-and-platform-files).
 * Knowledge of your target OS APIs (e.g., mutex, task creation, file I/O).
 
 ---
@@ -25,7 +25,7 @@ This guide walks through implementing an OSAL for a hypothetical OS called **"My
 
 ## Step 1 — Set Up the Library
 
-An OSAL implementation is packaged as an [F´ library](../dev/develop-fprime-libraries.md). Create the following directory structure:
+An OSAL implementation is packaged as an [F´ library](../develop/develop-fprime-libraries.md). Create the following directory structure:
 
 ```
 fprime-my-os/
@@ -283,7 +283,7 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 ## Additional Resources
 
 - [OSAL Software Design Document](../../../Os/docs/sdd.md) — Architecture details and design rationale.
-- [Develop an F´ Library](../dev/develop-fprime-libraries.md) — Library structure, toolchain, and platform files.
+- [Develop an F´ Library](../develop/develop-fprime-libraries.md) — Library structure, toolchain, and platform files.
 - [Porting Guide](porting-guide.md) — High-level checklist for porting F´ to a new platform.
 - [Posix OSAL implementation](https://github.com/nasa/fprime/tree/devel/Os/Posix) — Reference implementation for POSIX systems.
 - [fprime-zephyr](https://github.com/fprime-community/fprime-zephyr) — OSAL implementation for Zephyr RTOS.

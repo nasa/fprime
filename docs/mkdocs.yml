@@ -154,12 +154,12 @@ nav:
     - Installing F´: getting-started/installing-fprime.md
     - F´ Features: getting-started/features.md
   - Tutorials:
-    - Tutorials Index: tutorials/index.md
-    - Hello World: tutorials/tutorials-hello-world/docs/hello-world.md
-    - LED Blinker: tutorials/tutorials-led-blinker/docs/led-blinker.md
-    - MathComponent: tutorials/tutorials-math-component/docs/math-component.md
-    - Cross-Compilation Setup: tutorials/cross-compilation.md
-    - Arduino LED Blinker: tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
+    - Tutorials Index: docs/tutorials/index.md
+    - Hello World: ../../tutorials/tutorials-hello-world/docs/hello-world.md
+    - LED Blinker: ../../tutorials/tutorials-led-blinker/docs/led-blinker.md
+    - MathComponent: ../../tutorials/tutorials-math-component/docs/math-component.md
+    - Cross-Compilation Setup: docs/tutorials/cross-compilation.md
+    - Arduino LED Blinker: ../..//tutorials-arduino-led-blinker/docs/arduino-led-blinker.md
   - User Manual:
     - User Manual: user-manual/index.md
     - Framework:
@@ -219,6 +219,14 @@ nav:
       - F´ and CMake Platforms: user-manual/build-system/cmake-platforms.md
   - How-To:
     - How-To: how-to/index.md
+    - Develop:
+      - Define State Machines in F Prime: how-to/develop/define-state-machines.md
+      - Develop a Device Driver: how-to/develop/develop-device-driver.md
+      - Develop Components in Python: how-to/develop/python-development.md
+      - Implement a Radio Manager Component: how-to/develop/implement-radio-manager.md
+      - Develop an F´ Library: how-to/develop/develop-fprime-libraries.md
+      - Generate Data Products: how-to/develop/data-products.md
+      - Develop a Subtopology: how-to/develop/develop-subtopologies.md
     - Test:
       - Test-Driven Development in F Prime (F´): how-to/test/test-driven-development.md
       - Write Rule-Based Tests for F Prime Components: how-to/test/rule-based-testing.md
@@ -227,18 +235,10 @@ nav:
       - Porting to new platforms: how-to/integrate/porting-guide.md
       - Integrate a Third-Party Library: how-to/integrate/integrate-external-libraries.md
       - Implement a Framing Protocol: how-to/integrate/custom-framing.md
-    - Develop:
-      - Define State Machines in F Prime: how-to/dev/define-state-machines.md
-      - Develop a Device Driver: how-to/dev/develop-device-driver.md
-      - Develop Components in Python: how-to/dev/python-development.md
-      - Implement a Radio Manager Component: how-to/dev/implement-radio-manager.md
-      - Develop an F´ Library: how-to/dev/develop-fprime-libraries.md
-      - Generate Data Products: how-to/dev/data-products.md
-      - Develop a Subtopology: how-to/dev/develop-subtopologies.md
     - Operate:
-      - Develop a GDS Plugin: how-to/ops/develop-gds-plugins.md
-      - Load Parameters in Batch: how-to/ops/prm-write-how-to.md
-      - Create Ground-Derived Channels in F Prime GDS: how-to/ops/derive-channels-on-ground.md
+      - Develop a GDS Plugin: how-to/operate/develop-gds-plugins.md
+      - Load Parameters in Batch: how-to/operate/prm-write-how-to.md
+      - Create Ground-Derived Channels in F Prime GDS: how-to/operate/derive-channels-on-ground.md
   - Reference:
     - Reference: reference/index.md
     - FPP JSON Dictionary Specification: reference/fpp-json-dict.md

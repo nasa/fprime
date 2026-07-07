@@ -77,7 +77,7 @@ know what I2C hardware it is talking to.
 
 ## How-To Guide
 
-A detailed How-To guide for implementing the Manager-Driver pattern can be found here: [How-To Implement a Device Driver](../../how-to/dev/develop-device-driver.md)
+A detailed How-To guide for implementing the Manager-Driver pattern can be found here: [How-To Implement a Device Driver](../../how-to/develop/develop-device-driver.md)
 
 ## Conclusion
 

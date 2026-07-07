@@ -1,4 +1,4 @@
-# How-To: Write Rule-Based Tests for F Prime Components
+# Write Rule-Based Tests for F Prime Components
 
 This guide shows how to write Rule-Based Testing (RBT) unit tests for an F Prime component.
 

@@ -16,13 +16,13 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 <details markdown="1">
 <summary><strong>Develop</strong> — Learn how to develop components, libraries, and other F´ artifacts.</summary>
 
-- [Generate Data Products](dev/data-products.md)
-- [Define State Machines in F Prime](dev/define-state-machines.md)
-- [Develop a Device Driver](dev/develop-device-driver.md)
-- [Develop an F´ Library](dev/develop-fprime-libraries.md)
-- [Develop a Subtopology](dev/develop-subtopologies.md)
-- [Implement a Radio Manager Component](dev/implement-radio-manager.md)
-- [Develop Components in Python](dev/python-development.md)
+- [Generate Data Products](develop/data-products.md)
+- [Define State Machines in F Prime](develop/define-state-machines.md)
+- [Develop a Device Driver](develop/develop-device-driver.md)
+- [Develop an F´ Library](develop/develop-fprime-libraries.md)
+- [Develop a Subtopology](develop/develop-subtopologies.md)
+- [Implement a Radio Manager Component](develop/implement-radio-manager.md)
+- [Develop Components in Python](develop/python-development.md)
 
 </details>
 
@@ -39,9 +39,9 @@ How-To guides offer step-by-step instructions for specific development tasks in 
 <details markdown="1">
 <summary><strong>Operate</strong> — Learn how to operate F´ applications and the Ground Data System.</summary>
 
-- [Create Ground-Derived Channels in F Prime GDS](ops/derive-channels-on-ground.md)
-- [Develop a GDS Plugin](ops/develop-gds-plugins.md)
-- [Load Parameters in Batch](ops/prm-write-how-to.md)
+- [Create Ground-Derived Channels in F Prime GDS](operate/derive-channels-on-ground.md)
+- [Develop a GDS Plugin](operate/develop-gds-plugins.md)
+- [Load Parameters in Batch](operate/prm-write-how-to.md)
 
 </details>
 

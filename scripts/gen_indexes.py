@@ -24,9 +24,9 @@ SECTION_DESCRIPTIONS = { # note: these are not automated, new sections will be p
         "security": "Security considerations when designing and developing F´ applications.",
     },
     "how-to": {
-        "dev": "Learn how to develop components, libraries, and other F´ artifacts.",
+        "develop": "Learn how to develop components, libraries, and other F´ artifacts.",
         "integrate": "Learn how to integrate F´ with external libraries and platforms.",
-        "ops": "Learn how to operate F´ applications and the Ground Data System.",
+        "operate": "Learn how to operate F´ applications and the Ground Data System.",
         "test": "Learn how to test F´ components and applications.",
     },
     "reference": {
@@ -124,8 +124,6 @@ def reformat_entry(entry):
         return entry.replace("How-To: ", "")
     elif entry.islower():
         entry = entry.replace("-", " ")
-        entry = entry.replace("dev", "develop")
-        entry = entry.replace("ops", "operate")
         entry = entry.title()
         entry = entry.replace("Gds", "GDS")
         return entry

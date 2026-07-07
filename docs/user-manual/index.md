@@ -14,30 +14,18 @@ The User Manual provides comprehensive documentation for understanding and using
 ## Table of Contents
 
 <details markdown="1">
-<summary><strong>Build System</strong> — Learn about the F´ build system and how to customize it.</summary>
+<summary><strong>Overview</strong> — Technical overview of the F´ ecosystem.</summary>
 
-- [F´ CMake Build System](build-system/01-cmake-intro.md)
-- [CMake API Reference](build-system/cmake-api.md)
-- [CMake Customization](build-system/cmake-customization.md)
-- [CMake Implementations](build-system/cmake-implementations.md)
-- [F´ and CMake Platforms](build-system/cmake-platforms.md)
-- [Targets](build-system/cmake-targets.md)
-- [CMake Toolchain Files](build-system/cmake-toolchains.md)
-- [CMake Build System Unit Tests](build-system/cmake-uts.md)
-- [`settings.ini`: Build Settings Configuration](build-system/settings.md)
-
-</details>
-
-<details markdown="1">
-<summary><strong>Design Patterns</strong> — Learn about common design patterns used in F´ applications.</summary>
-
-- [Application-Manager-Driver Architecture](design-patterns/app-man-drv.md)
-- [Common Port Design Patterns](design-patterns/common-port-patterns.md)
-- [Health Checking Pattern](design-patterns/health-checking.md)
-- [A Quick Look at the Hub Pattern](design-patterns/hub-pattern.md)
-- [The Manager/Worker Pattern](design-patterns/manager-worker.md)
-- [Rate Groups and Timeliness](design-patterns/rate-group.md)
-- [Subtopologies](design-patterns/subtopologies.md)
+- [Introduction To F´](overview/01-full-intro.md)
+- [F´ Software Architecture](overview/02-fprime-architecture.md)
+- [Core Constructs: Ports, Components, and Topologies](overview/03-port-comp-top.md)
+- [Data Constructs: Commands, Events, Channels, and Parameters](overview/04-cmd-evt-chn-prm.md)
+- [Data Structures and Types](overview/05-enum-arr-ser.md)
+- [F´ Development Process](overview/development-practice.md)
+- [The F´ Ground Data System](overview/gds-introduction.md)
+- [Projects and Deployments](overview/proj-dep.md)
+- [A Tour of the Source Tree](overview/source-tree.md)
+- [Unit Testing in F´](overview/unit-testing.md)
 
 </details>
 
@@ -73,18 +61,30 @@ The User Manual provides comprehensive documentation for understanding and using
 </details>
 
 <details markdown="1">
-<summary><strong>Overview</strong> — Technical overview of the F´ ecosystem.</summary>
+<summary><strong>Design Patterns</strong> — Learn about common design patterns used in F´ applications.</summary>
 
-- [Introduction To F´](overview/01-full-intro.md)
-- [F´ Software Architecture](overview/02-fprime-architecture.md)
-- [Core Constructs: Ports, Components, and Topologies](overview/03-port-comp-top.md)
-- [Data Constructs: Commands, Events, Channels, and Parameters](overview/04-cmd-evt-chn-prm.md)
-- [Data Structures and Types](overview/05-enum-arr-ser.md)
-- [F´ Development Process](overview/development-practice.md)
-- [The F´ Ground Data System](overview/gds-introduction.md)
-- [Projects and Deployments](overview/proj-dep.md)
-- [A Tour of the Source Tree](overview/source-tree.md)
-- [Unit Testing in F´](overview/unit-testing.md)
+- [Application-Manager-Driver Architecture](design-patterns/app-man-drv.md)
+- [Common Port Design Patterns](design-patterns/common-port-patterns.md)
+- [Health Checking Pattern](design-patterns/health-checking.md)
+- [A Quick Look at the Hub Pattern](design-patterns/hub-pattern.md)
+- [The Manager/Worker Pattern](design-patterns/manager-worker.md)
+- [Rate Groups and Timeliness](design-patterns/rate-group.md)
+- [Subtopologies](design-patterns/subtopologies.md)
+
+</details>
+
+<details markdown="1">
+<summary><strong>Build System</strong> — Learn about the F´ build system and how to customize it.</summary>
+
+- [F´ CMake Build System](build-system/01-cmake-intro.md)
+- [CMake API Reference](build-system/cmake-api.md)
+- [CMake Customization](build-system/cmake-customization.md)
+- [CMake Implementations](build-system/cmake-implementations.md)
+- [F´ and CMake Platforms](build-system/cmake-platforms.md)
+- [Targets](build-system/cmake-targets.md)
+- [CMake Toolchain Files](build-system/cmake-toolchains.md)
+- [CMake Build System Unit Tests](build-system/cmake-uts.md)
+- [`settings.ini`: Build Settings Configuration](build-system/settings.md)
 
 </details>
 

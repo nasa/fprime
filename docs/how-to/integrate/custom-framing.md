@@ -215,7 +215,7 @@ Before implementing, consider these best practices:
 
 ## F´ GDS Implementation
 
-To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the `FramerDeframer`. This is further documented in the [How-To Develop a GDS Plugin Guide](../ops/develop-gds-plugins.md) and [F Prime GDS Framing Plugin reference](../../reference/gds-plugins/framing.md).
+To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the `FramerDeframer`. This is further documented in the [How-To Develop a GDS Plugin Guide](../operate/develop-gds-plugins.md) and [F Prime GDS Framing Plugin reference](../../reference/gds-plugins/framing.md).
 
 For example, in Python:
 
@@ -239,7 +239,7 @@ class MyCustomFramerDeframer(FramerDeframer):
         return "MyCustomProtocol"
 ```
 
-Make sure to [package and install the plugin in your virtual environment](../ops/develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
+Make sure to [package and install the plugin in your virtual environment](../operate/develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
 
 ```
 fprime-gds --framing-selection MyCustomProtocol
