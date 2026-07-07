@@ -35,7 +35,7 @@ Fw/Cmd/CmdPacket.cpp                          23      19    82%   21,23-24,40
 Fw/Com/ComPacket.cpp                          10      10   100%
 Fw/Comp/ActiveComponentBase.cpp               62       6     9%   11,13,15,30-31,35,39,42,48-52,54-59,61-62,65-66,69-70,72,77,80-83,86-88,90,93-96,98-102,104,106-108,111-112,114,116,118-119,121,126
 Fw/Comp/PassiveComponentBase.cpp              25      10    40%   12-13,16-20,22,27-28,30,35,46-48
-Fw/Comp/QueuedComponentBase.cpp               28      16    57%   23-24,38-39,46-52,55
+Fw/Comp/QueuedComponentBase.cpp               28      18    64%   23-24,46-52,55
 Fw/DataStructures/Array.hpp                   43      43   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
@@ -170,7 +170,7 @@ Os/Os.cpp                                      7       7   100%
 Os/Posix/ConditionVariable.cpp                20      18    90%   35-36
 Os/Posix/Console.cpp                          20      11    55%   14,18-21,23,37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      33    89%   43-44,67-68
+Os/Posix/CountingSemaphore.cpp                37      35    94%   67-68
 Os/Posix/DefaultConsole.cpp                    2       2   100%
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -280,7 +280,7 @@ Svc/DpCatalog/DpCatalog.cpp                  449     348    77%   59,127-129,134
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
 Svc/DpManager/DpManager.cpp                   39      38    97%   91
 Svc/DpWriter/DpWriter.cpp                    124     121    97%   26-28
-Svc/EventManager/EventManager.cpp             94      88    93%   74-76,165,167-168
+Svc/EventManager/EventManager.cpp             97      91    93%   74-76,169,171-172
 Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
                                                3       0     0%   22-23,25
 Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
@@ -352,5 +352,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17596   14321    81%
+TOTAL                                      17599   14328    81%
 ------------------------------------------------------------------------------

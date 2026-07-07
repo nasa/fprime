@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-06 20:07:26</td>
+      <td>2026-07-07 00:27:33</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l14">Os::Posix::Mutex::PosixConditionVariable::PosixConditionVariable() (line 14)</a></td><td>called 2291 times</td><td>65.0%</td></tr>
+    <tr><td><a href="#l14">Os::Posix::Mutex::PosixConditionVariable::PosixConditionVariable() (line 14)</a></td><td>called 2293 times</td><td>65.0%</td></tr>
     <tr><td><a href="#l35">Os::Posix::Mutex::PosixConditionVariable::getHandle() (line 35)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l28">Os::Posix::Mutex::PosixConditionVariable::notify() (line 28)</a></td><td>called 327124 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l28">Os::Posix::Mutex::PosixConditionVariable::notify() (line 28)</a></td><td>called 162856 times</td><td>75.0%</td></tr>
     <tr><td><a href="#l31">Os::Posix::Mutex::PosixConditionVariable::notifyAll() (line 31)</a></td><td>called 1 time</td><td>75.0%</td></tr>
     <tr><td><a href="#l22">Os::Posix::Mutex::PosixConditionVariable::pend(Os::Mutex&amp;) (line 22)</a></td><td>called 11 times</td><td>82.0%</td></tr>
-    <tr><td><a href="#l18">Os::Posix::Mutex::PosixConditionVariable::~PosixConditionVariable() (line 18)</a></td><td>called 2291 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l18">Os::Posix::Mutex::PosixConditionVariable::~PosixConditionVariable() (line 18)</a></td><td>called 2293 times</td><td>92.0%</td></tr>
   </table>
 </details>
 
@@ -184,7 +184,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2291</td>
+      <td class="linecount coveredLine">2293</td>
       <td class="src coveredLine"><span class="n">PosixConditionVariable</span><span class="o">::</span><span class="n">PosixConditionVariable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -194,32 +194,32 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2291 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2293 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2291</td>
+      <td class="linecount partialCoveredLine">2293</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_cond_init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_condition</span><span class="p">,</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2291</td>
+      <td class="linecount coveredLine">2293</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span><span class="w">  </span><span class="c1">// If this fails, something horrible happened.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2291</td>
+      <td class="linecount coveredLine">2293</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4582</td>
+      <td class="linecount coveredLine">4586</td>
       <td class="src coveredLine"><span class="n">PosixConditionVariable</span><span class="o">::~</span><span class="n">PosixConditionVariable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -229,18 +229,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2291 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2293 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">4582</td>
+      <td class="linecount partialCoveredLine">4586</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">pthread_cond_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_condition</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4582</td>
+      <td class="linecount coveredLine">4586</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -305,21 +305,21 @@
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">327124</td>
+      <td class="linecount coveredLine">162856</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PosixConditionVariable</span><span class="o">::</span><span class="n">notify</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">327124</td>
+      <td class="linecount coveredLine">162856</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">pthread_cond_signal</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_condition</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">327124</td>
+      <td class="linecount coveredLine">162856</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
