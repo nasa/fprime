@@ -83,7 +83,7 @@ class FailAllocator : public Fw::MemAllocator {
 // Partial failure allocator - fails after N successful allocations
 class PartialFailAllocator : public Fw::MemAllocator {
   public:
-    PartialFailAllocator(U32 failAfter) : m_failAfter(failAfter), m_allocCount(0) {}
+    explicit PartialFailAllocator(U32 failAfter) : m_failAfter(failAfter), m_allocCount(0) {}
 
     void* allocate(const FwEnumStoreType identifier,
                    FwSizeType& size,

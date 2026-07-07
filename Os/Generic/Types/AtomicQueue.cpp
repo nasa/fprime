@@ -37,8 +37,7 @@ AtomicQueue::AtomicQueue()
       m_dequeuePos(0),
       m_allocator(nullptr),
       m_allocatorId(0),
-      m_notFullSem(nullptr),
-      m_id(0) {}
+      m_notFullSem(nullptr){}
 
 AtomicQueue::~AtomicQueue() {
     this->teardown();
@@ -55,14 +54,11 @@ void AtomicQueue::create(FwSizeType numBuffers,
     this->m_bufferSize = bufferSize;
     this->m_allocator = &allocator;
     this->m_allocatorId = allocatorId;
-    this->m_id = allocatorId;  // Store for diagnostic logging
 
     // Optimization: use bitwise AND for power-of-2, otherwise modulo
     bool isPowerOf2 = (numBuffers & (numBuffers - 1)) == 0;
     this->m_mask = isPowerOf2 ? (numBuffers - 1) : 0;
 
-    // Allocate slot array
-    FwSizeType slotsSize = numBuffers * sizeof(Slot);
     // Allocate slot array (with overflow check)
     FW_ASSERT(numBuffers <= std::numeric_limits<FwSizeType>::max() / sizeof(Slot),
               static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(sizeof(Slot)));
@@ -79,8 +75,9 @@ void AtomicQueue::create(FwSizeType numBuffers,
     FW_ASSERT(bufferMem != nullptr, static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(bufferSize));
     this->m_bufferMemory = static_cast<U8*>(bufferMem);
 
+    // Initialize all slots with placement new and assign buffer pointers
+    for (FwSizeType i = 0; i < numBuffers; ++i) {
         Slot* slot = new (&this->m_slots[i]) Slot();
-        FW_ASSERT(slot != nullptr, static_cast<FwAssertArgType>(i));
 
         // Assign buffer from contiguous memory block
         slot->buffer = this->m_bufferMemory + (i * bufferSize);

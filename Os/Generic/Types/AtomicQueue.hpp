@@ -202,9 +202,8 @@ class AtomicQueue {
     std::atomic<FwSizeType> m_enqueuePos;  // Next enqueue position (producer cursor)
     std::atomic<FwSizeType> m_dequeuePos;  // Next dequeue position (consumer cursor)
     Fw::MemAllocator* m_allocator;         // Memory allocator (nullptr if not using allocator)
-    FwEnumStoreType m_allocatorId;         // Allocator identifier for deallocation
+    FwEnumStoreType m_allocatorId;         // Allocator identifier for deallocation (also used to identify asserts)
     Os::CountingSemaphore* m_notFullSem;   // Semaphore for blocking enqueue (all platforms)
-    FwEnumStoreType m_id;                  // Queue identifier for logging
 };
 
 }  // namespace Types
