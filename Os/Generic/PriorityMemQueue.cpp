@@ -322,8 +322,26 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
         }
     }
 
-    // Store configuration
-    s_configs = queueConfigs;
+    // Deep copy into a single contiguous block: QueueConfig[] followed by all QueuePriorityConfig[] sub-arrays.
+    static_assert(sizeof(QueueConfig) % alignof(QueuePriorityConfig) == 0,
+                  "QueueConfig array must be naturally aligned with QueuePriorityConfig");
+    if (numQueueConfigs > 0) {
+        FwSizeType totalSize = numQueueConfigs * sizeof(QueueConfig);
+        for (FwSizeType i = 0; i < numQueueConfigs; ++i) {
+            totalSize += queueConfigs[i].numPriorities * sizeof(QueuePriorityConfig);
+        }
+        void* configsMem = allocator.checkedAllocate(allocatorId, totalSize, alignof(QueueConfig));
+        FW_ASSERT(configsMem != nullptr);
+        s_configs = static_cast<QueueConfig*>(configsMem);
+        QueuePriorityConfig* priorityBase = reinterpret_cast<QueuePriorityConfig*>(s_configs + numQueueConfigs);
+        for (FwSizeType i = 0; i < numQueueConfigs; ++i) {
+            s_configs[i] = queueConfigs[i];
+            FwSizeType priorityConfigsSize = queueConfigs[i].numPriorities * sizeof(QueuePriorityConfig);
+            memcpy(priorityBase, queueConfigs[i].priorityConfigs, priorityConfigsSize);
+            s_configs[i].priorityConfigs = priorityBase;
+            priorityBase += queueConfigs[i].numPriorities;
+        }
+    }
     s_numConfigs = numQueueConfigs;
     s_requirePrioritySizing = required;
     s_allocatorId = allocatorId;
@@ -331,15 +349,22 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
 
 void PriorityMemQueue::resetConfig() {
     // Only call this in test environments after all queues are destroyed
-    if (s_configsUsed != nullptr) {
+    if (s_configsUsed != nullptr || s_configs != nullptr) {
         // Get allocator (same as used in config())
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
         FwEnumStoreType allocatorId = s_allocatorId;
 
         // Deallocate the tracking array
-        allocator.deallocate(allocatorId, s_configsUsed);
-        s_configsUsed = nullptr;
+        if (s_configsUsed != nullptr) {
+            allocator.deallocate(allocatorId, s_configsUsed);
+            s_configsUsed = nullptr;
+        }
+
+        // Deallocate the single contiguous config block (QueueConfig[] + all QueuePriorityConfig[] sub-arrays)
+        if (s_configs != nullptr) {
+            allocator.deallocate(allocatorId, s_configs);
+        }
     }
 
     // Reset all static state
@@ -687,9 +712,7 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
             }
             // Look up priority in sparse map
             I8 index = this->m_handle.getPriorityIndex(testPriority);
-            if (index < 0) {
-                continue;  // Priority not configured
-            }
+            FW_ASSERT(index >= 0, index, testPriority, this->m_handle.m_id);
             FW_ASSERT(this->m_handle.m_atomicQueues != nullptr, this->m_handle.m_id, testPriority);
             Types::AtomicQueue* aq = &this->m_handle.m_atomicQueues[index];
             FW_ASSERT(aq->isCreated(), this->m_handle.m_id, testPriority);

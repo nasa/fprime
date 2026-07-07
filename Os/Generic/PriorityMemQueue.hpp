@@ -43,8 +43,8 @@ class PriorityMemQueue;
 struct PriorityMemQueueHandle : public QueueHandle {
     // Sparse priority support: map priority→index into m_atomicQueues
     // Reduces memory waste when using non-consecutive priorities (e.g., {0, 15, 31})
-    I8 m_priorityMap[Queue::MAX_PRIORITIES];         // Priority→index mapping (-1 = unused)
-    Types::AtomicQueue* m_atomicQueues = nullptr;    // Array sized to actual configured priorities
+    I8 m_priorityMap[Queue::MAX_PRIORITIES];       // Priority→index mapping (-1 = unused)
+    Types::AtomicQueue* m_atomicQueues = nullptr;  // Array sized to actual configured priorities
 
     // Rule of Five: prevent accidental copy/move of resource-owning handle
     PriorityMemQueueHandle(const PriorityMemQueueHandle&) = delete;
@@ -128,6 +128,8 @@ class PriorityMemQueue : public Os::QueueInterface {
     //! \brief Register per-priority sizes for component instances which do
     //! queueing with multiple priorities
     //! \warning This function must be called before any queues are created
+    //! \note Queue size is specified separately from create() to avoid changes
+    //! to the Os::Queue interface
     //! \param queueConfigs: configuration for the queue
     //! \param numQueueConfigs: number of queue configurations
     //! \param required: If true, fatal if a non-default priority is enqueued
@@ -136,12 +138,14 @@ class PriorityMemQueue : public Os::QueueInterface {
                           FwSizeType numQueueConfigs,
                           bool required,
                           FwEnumStoreType allocatorId);
-
-    //! \brief Reset static configuration (test environments only)
-    //!
-    //! Deallocates internal config tracking memory and resets state.
-    //! \warning Only call this in test harnesses after all queues are destroyed
-    static void resetConfig();
+    Os / Generic /
+        PriorityMemQueue.cpp
+        //! \brief Reset static configuration (test environments only)
+        //!
+        //! Deallocates internal config tracking memory and resets state.
+        //! \warning Only call this in test harnesses after all queues are destroyed
+        static void
+        resetConfig();
 
   public:
     //! \brief queue interface constructor - initializes handle
