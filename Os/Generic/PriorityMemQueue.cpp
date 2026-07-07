@@ -313,7 +313,7 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
     // Allocate memory for tracking used configurations
     if (numQueueConfigs > 0) {
         FwSizeType expSize = numQueueConfigs * sizeof(std::atomic<bool>);
-        s_configsUsed = reinterpret_cast<std::atomic<bool>*>(
+        s_configsUsed = static_cast<std::atomic<bool>*>(
             allocator.checkedAllocate(allocatorId, expSize, alignof(std::atomic<bool>)));
         FW_ASSERT(s_configsUsed != nullptr);
         // Initialize all entries to false using placement new

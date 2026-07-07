@@ -63,19 +63,21 @@ void AtomicQueue::create(FwSizeType numBuffers,
 
     // Allocate slot array
     FwSizeType slotsSize = numBuffers * sizeof(Slot);
+    // Allocate slot array (with overflow check)
+    FW_ASSERT(numBuffers <= std::numeric_limits<FwSizeType>::max() / sizeof(Slot),
+              static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(sizeof(Slot)));
+    FwSizeType slotsSize = numBuffers * sizeof(Slot);
     void* slotMem = allocator.checkedAllocate(allocatorId, slotsSize, alignof(Slot));
     FW_ASSERT(slotMem != nullptr, static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(bufferSize));
     this->m_slots = static_cast<Slot*>(slotMem);
 
-    // Allocate contiguous buffer memory for all slots
+    // Allocate contiguous buffer memory for all slots (with overflow check)
+    FW_ASSERT(numBuffers <= std::numeric_limits<FwSizeType>::max() / bufferSize,
+              static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(bufferSize));
     FwSizeType totalBufferSize = numBuffers * bufferSize;
     void* bufferMem = allocator.checkedAllocate(allocatorId, totalBufferSize, 64);
     FW_ASSERT(bufferMem != nullptr, static_cast<FwAssertArgType>(numBuffers), static_cast<FwAssertArgType>(bufferSize));
     this->m_bufferMemory = static_cast<U8*>(bufferMem);
-
-    // Initialize all slots with placement new and assign buffer pointers
-    for (FwSizeType i = 0; i < numBuffers; ++i) {
-        FW_ASSERT(i < numBuffers, static_cast<FwAssertArgType>(i), static_cast<FwAssertArgType>(numBuffers));
 
         Slot* slot = new (&this->m_slots[i]) Slot();
         FW_ASSERT(slot != nullptr, static_cast<FwAssertArgType>(i));

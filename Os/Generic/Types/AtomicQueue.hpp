@@ -57,6 +57,12 @@ class AtomicQueue {
     //! \brief AtomicQueue destructor
     ~AtomicQueue();
 
+    // Rule of Five: prevent accidental copy/move of resource-managing class
+    AtomicQueue(const AtomicQueue&) = delete;
+    AtomicQueue& operator=(const AtomicQueue&) = delete;
+    AtomicQueue(AtomicQueue&&) = delete;
+    AtomicQueue& operator=(AtomicQueue&&) = delete;
+
     //! \brief Create the queue with embedded buffer storage
     //!
     //! Creates queue with blocking semaphore support for enqueueBlocking().
