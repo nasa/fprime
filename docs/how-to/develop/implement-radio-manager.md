@@ -1,4 +1,4 @@
-# How-To: Implement a Radio Manager Component
+# Implement a Radio Manager Component
 
 This guide provides step-by-step instructions for implementing a radio manager component using the [Svc.Com Communications Adapter Interface](../../reference/communication-adapter-interface.md). A radio manager handles communication with radio hardware, managing both outgoing transmissions (downlink) and incoming receptions (uplink).
 
