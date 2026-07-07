@@ -1,4 +1,4 @@
-# Build https://github.com/fprime-community/fprime_cfs_reference
+# Build https://github.com/JPL-Devin/fprime_cfs_reference
 # Builds the CFS reference against the current F´ revision and runs integration tests
 
 name: "External Repo: CFS Reference"
@@ -28,7 +28,7 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: fprime-community/fprime_cfs_reference
+      target_repository: JPL-Devin/fprime_cfs_reference
 
   build-and-test:
     name: "CFS Reference Build and Integration Tests"
@@ -40,7 +40,7 @@ jobs:
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: fprime-community/fprime_cfs_reference
+          target_repository: JPL-Devin/fprime_cfs_reference
           fprime_location: ./libs/fprime
           target_ref: ${{ needs.get-branch.outputs.target-branch }}
       # Upgrade GDS to devel or pr-xxxx branch if it exists
