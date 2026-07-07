@@ -1972,6 +1972,7 @@ TEST_F(PriorityMemQueueTestFixture, EnableDisableRaceCondition) {
 
     // Verify no crash and some operations succeeded
     EXPECT_GT(sendAttempts.load(), 0);
+    EXPECT_GT(sendSuccesses.load(), 0) << "queue accepted no sends during concurrent enable/disable";
     // Some sends may fail due to disabled priority, but no crash/corruption
 
     queue.teardown();
