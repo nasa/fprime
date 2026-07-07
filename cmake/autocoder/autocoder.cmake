@@ -43,7 +43,6 @@ function (run_ac_set BUILD_TARGET_NAME)
         get_property(AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED_AUTOCODER_INPUTS")
         list(APPEND AUTOCODER_INPUT_SOURCES ${AUTOCODER_GENERATED_AUTOCODER_INPUTS_VALUES})
     endforeach()
-    
 
     # Read from hash-specific properties for this autocoder set
     get_property(AUTOCODER_GENERATED_VALUES TARGET "${BUILD_TARGET_NAME}" PROPERTY "${AC_SET_HASH}_AUTOCODER_GENERATED")
@@ -95,6 +94,11 @@ function(run_ac BUILD_TARGET_NAME AUTOCODER_CMAKE SOURCES GENERATED_FILE_LIST HA
     # Normalize and filter source paths so that what we intend to run is in a standard form
     normalize_paths(AC_INPUT_SOURCES "${SOURCES}")
     _filter_sources(AC_INPUT_SOURCES "${AC_INPUT_SOURCES}")
+
+    # Record which sources this autocoder handles (used by _validate_all_autocoder_inputs_handled)
+    if (NOT FPRIME_IS_SUB_BUILD AND AC_INPUT_SOURCES)
+        append_list_property("${AC_INPUT_SOURCES}" TARGET "${BUILD_TARGET_NAME}" PROPERTY FPRIME_HANDLED_AUTOCODER_INPUTS)
+    endif()
 
     # Break early if there are no sources, no need to autocode nothing
     if (NOT AC_INPUT_SOURCES)
@@ -232,6 +236,45 @@ function(_filter_sources OUTPUT_NAME)
     endforeach()
     set(${OUTPUT_NAME} "${OUTPUT_LIST}" PARENT_SCOPE)
 endfunction(_filter_sources)
+
+####
+# _validate_all_autocoder_inputs_handled:
+#
+# Validates that all user-supplied autocoder input sources were handled by at least one registered autocoder
+# across all run_ac_set calls on this target. This should be called after all targets have been processed
+# (i.e. after setup_module_targets / fprime_attach_custom_targets).
+#
+# BUILD_TARGET_NAME: the build target to validate
+####
+function(_validate_all_autocoder_inputs_handled BUILD_TARGET_NAME)
+    # Sub-builds only perform specific tasks (dependency analysis, etc.) and do not register
+    # the full set of autocoders. Skip validation in that context.
+    if (FPRIME_IS_SUB_BUILD)
+        return()
+    endif()
+
+    # Get the originally-supplied autocoder inputs
+    get_target_property(SUPPLIED_AUTOCODER_INPUTS "${BUILD_TARGET_NAME}" SUPPLIED_AUTOCODER_INPUTS)
+    if (NOT SUPPLIED_AUTOCODER_INPUTS)
+        return()
+    endif()
+
+    # Get the list of sources that were handled by at least one autocoder
+    get_target_property(HANDLED_INPUTS "${BUILD_TARGET_NAME}" FPRIME_HANDLED_AUTOCODER_INPUTS)
+    if (NOT HANDLED_INPUTS)
+        set(HANDLED_INPUTS)
+    endif()
+
+    # Normalize for consistent comparison
+    normalize_paths(NORMALIZED_SUPPLIED "${SUPPLIED_AUTOCODER_INPUTS}")
+
+    foreach(SOURCE IN LISTS NORMALIZED_SUPPLIED)
+        list(FIND HANDLED_INPUTS "${SOURCE}" FOUND_INDEX)
+        if (FOUND_INDEX EQUAL -1)
+            fprime_cmake_warning("'${SOURCE}' in AUTOCODER_INPUTS is not supported by any registered autocoder.")
+        endif()
+    endforeach()
+endfunction()
 
 ####
 # __ac_process_sources:
