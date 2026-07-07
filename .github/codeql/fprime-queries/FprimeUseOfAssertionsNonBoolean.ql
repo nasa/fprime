@@ -11,5 +11,5 @@
 import FprimeAssertions
 
 from Assertion a
-where a.getAsserted().getType() instanceof PointerType
+where not a.getAsserted().getUnspecifiedType() instanceof BoolType
 select a.getAsserted(), "Assertions should be defined as Boolean tests."
