@@ -117,7 +117,9 @@ SocketIpStatus IpSocket::addressToIp4(const char* const ipv4_address, void* cons
 }
 
 void IpSocket::close(const SocketDescriptor& socketDescriptor) {
-    (void)::close(socketDescriptor.fd);
+    if (socketDescriptor.fd >= 0) {
+        (void)::close(socketDescriptor.fd);
+    }
 }
 
 void IpSocket::shutdown(const SocketDescriptor& socketDescriptor) {
@@ -208,6 +210,8 @@ SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data
                 // Connection reset or bad file descriptor.
                 req_read = 0;
                 return SOCK_DISCONNECTED;  // Or a more specific error like SOCK_READ_ERROR
+            } else if (errno == EINTR) {
+                continue;
             } else {
                 // Other socket read error.
                 req_read = 0;

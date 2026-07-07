@@ -158,6 +158,17 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
                                                                //!< Unmodified if param not found.
                                          ) override;
 
+    // Test helpers for serialOut port
+    struct SerialOutCall {
+        FwIndexType portNum;
+        U8 data[Fpy::MAX_STACK_SIZE];
+        FwSizeType dataSize;
+    };
+    std::vector<SerialOutCall> m_serialOutHistory;
+
+    // Default handler implementation for from_serialOut_handler
+    void from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) override;
+
     // Access to private and protected FpySequencer methods and members for UTs
     Signal tester_noOp_directiveHandler(const FpySequencer_NoOpDirective& directive, DirectiveError& err);
     Signal tester_waitRel_directiveHandler(const FpySequencer_WaitRelDirective& directive, DirectiveError& err);
@@ -192,6 +203,8 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Signal tester_storeRelConstOffset_directiveHandler(const FpySequencer_StoreRelConstOffsetDirective& directive,
                                                        DirectiveError& err);
     Signal tester_pushVal_directiveHandler(const FpySequencer_PushValDirective& directive, DirectiveError& err);
+    Signal tester_popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                                   DirectiveError& err);
     DirectiveError tester_op_or();
     DirectiveError tester_op_and();
     DirectiveError tester_op_ieq();

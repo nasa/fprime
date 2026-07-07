@@ -71,14 +71,6 @@ extern "C" {
 #define FW_QUEUE_REGISTRATION (1)  //!< Indicates whether or not queue registration is used
 #endif
 
-// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
-// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
-// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
-// unchanged.
-#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
-#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING (1)
-#endif
-
 // Port Facilities
 
 // This allows tracing calls through ports for debugging

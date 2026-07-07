@@ -37,5 +37,4 @@ register_fprime_ut(
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestMain.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FpySequencerTestSequences.cpp"
-  UT_AUTO_HELPERS
 )
