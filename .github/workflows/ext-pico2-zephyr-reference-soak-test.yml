@@ -5,8 +5,9 @@
 name: "Soak Test: Pico 2 Zephyr Reference"
 
 on:
-  schedule:
-    - cron: "*/30 * * * *" 
+  #schedule:
+    # Staggered against the AArch64 Linux LedBlinker soak 
+    #- cron: "15,45 * * * *"
   workflow_dispatch:
 
 permissions:
