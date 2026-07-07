@@ -21,6 +21,13 @@
 #include "Errors.hpp"
 #include "Os/ValidatedFile.hpp"
 
+// If this is compiled for unix, include unistd to check user id
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#define UNISTD_INCLUDED
+#include <unistd.h>
+#else
+#endif
+
 namespace Svc {
 
 namespace Errors {
@@ -138,14 +145,21 @@ void BufferLoggerTester ::LogFileWrite() {
 }
 
 void BufferLoggerTester ::LogFileValidation() {
+<<<<<<< Updated upstream
     // Skip test if running as root, since root bypasses Unix permission checks
 #if UNISTD_INCLUDED
-    if (getuid() == 0) {
+    == == == =
+    // Skip test if running as root, since root bypasses Unix permission checks
+#ifdef UNISTD_INCLUDED
+                 >>>>>>> Stashed changes if (getuid() == 0) {
         GTEST_SKIP() << "Test skipped when running as root (permission checks are bypassed)";
     }
 #endif
+    < < < < < < < Updated upstream
 
-    this->component.m_file.m_baseName = Fw::String("LogFileValidation");
+=======
+>>>>>>> Stashed changes
+                  this->component.m_file.m_baseName = Fw::String("LogFileValidation");
 
     // Send data
     this->sendComBuffers(1);
