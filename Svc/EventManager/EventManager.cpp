@@ -162,6 +162,10 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void EventManager::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_EventsDropped(this->getNumMsgsDropped());
+}
+
 void EventManager::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
