@@ -96,7 +96,8 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
 
     U16 apidValue = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
-    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(apidValue);
+    ComCfg::Apid::T apid = ComCfg::Apid::isValid(apidValue) ? static_cast<ComCfg::Apid::T>(apidValue)
+                                                            : ComCfg::Apid::INVALID_UNINITIALIZED;
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
 

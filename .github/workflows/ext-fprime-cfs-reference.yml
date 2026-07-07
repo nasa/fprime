@@ -1,0 +1,74 @@
+# Build https://github.com/fprime-community/fprime_cfs_reference
+# Builds the CFS reference against the current F´ revision and runs integration tests
+
+name: "External Repo: cFS Reference"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime_cfs_reference
+
+  build-and-test:
+    name: "cFS Build and Integration Tests"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Make Space"
+        uses: nasa/fprime-actions/make-space@devel
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime_cfs_reference
+          fprime_location: ./libs/fprime
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      # Upgrade GDS to devel or pr-xxxx branch if it exists
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+      - name: "Build cFS Reference"
+        run: |
+          make SIMULATION=native prep
+          make
+          make install
+      - name: "Run Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: build-artifacts/exe/cpu1
+          test-working-directory: test/int
+          binary: ./core-cpu1
+          binary-args: ""
+          gds-args: >-
+            --ip-client --ip-port 15010
+            --dictionary ${{ github.workspace }}/build-artifacts/exe/Linux/fprime_app/dict/FPrimeDeploymentTopologyDictionary.json
+          pytest-args: >-
+            --dictionary ${{ github.workspace }}/build-artifacts/exe/Linux/fprime_app/dict/FPrimeDeploymentTopologyDictionary.json
+      - name: "Archive logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: cfs-reference-logs
+          path: build-artifacts/exe/cpu1/gds-logs
+          retention-days: 5

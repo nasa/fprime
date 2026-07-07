@@ -22,22 +22,21 @@ namespace Enum {
 
 // Populate an array with enum values
 template <typename EnumType>
-void setEnumValArray(typename EnumType::T (&a)[EnumType::NUM_CONSTANTS + 1]) {
-    for (U32 i = 0; i < EnumType::NUM_CONSTANTS + 1; i++) {
+void setEnumValArray(typename EnumType::T (&a)[EnumType::NUM_CONSTANTS]) {
+    for (U32 i = 0; i < EnumType::NUM_CONSTANTS; i++) {
         a[i] = static_cast<typename EnumType::T>(i);
     }
 }
 
 template <>
-void setEnumValArray<Explicit>(Explicit::T (&a)[Explicit::NUM_CONSTANTS + 1]) {
+void setEnumValArray<Explicit>(Explicit::T (&a)[Explicit::NUM_CONSTANTS]) {
     a[0] = Explicit::A;
     a[1] = Explicit::B;
     a[2] = Explicit::C;
-    a[3] = static_cast<Explicit::T>(11);
 }
 
 template <>
-void setEnumValArray<Interval>(Interval::T (&a)[Interval::NUM_CONSTANTS + 1]) {
+void setEnumValArray<Interval>(Interval::T (&a)[Interval::NUM_CONSTANTS]) {
     a[0] = Interval::A;
     a[1] = Interval::B;
     a[2] = Interval::C;
@@ -45,30 +44,27 @@ void setEnumValArray<Interval>(Interval::T (&a)[Interval::NUM_CONSTANTS + 1]) {
     a[4] = Interval::E;
     a[5] = Interval::F;
     a[6] = Interval::G;
-    a[7] = static_cast<Interval::T>(11);
 }
 
 // Populate an array with strings representing enum values
 template <typename EnumType>
-void setEnumStrArray(std::string (&a)[EnumType::NUM_CONSTANTS + 1]) {
+void setEnumStrArray(std::string (&a)[EnumType::NUM_CONSTANTS]) {
     a[0] = "A (0)";
     a[1] = "B (1)";
     a[2] = "C (2)";
     a[3] = "D (3)";
     a[4] = "E (4)";
-    a[5] = "[invalid] (5)";
 }
 
 template <>
-void setEnumStrArray<Explicit>(std::string (&a)[Explicit::NUM_CONSTANTS + 1]) {
+void setEnumStrArray<Explicit>(std::string (&a)[Explicit::NUM_CONSTANTS]) {
     a[0] = "A (-1952875139)";
     a[1] = "B (2)";
     a[2] = "C (2000999333)";
-    a[3] = "[invalid] (11)";
 }
 
 template <>
-void setEnumStrArray<Interval>(std::string (&a)[Interval::NUM_CONSTANTS + 1]) {
+void setEnumStrArray<Interval>(std::string (&a)[Interval::NUM_CONSTANTS]) {
     a[0] = "A (0)";
     a[1] = "B (3)";
     a[2] = "C (4)";
@@ -76,7 +72,6 @@ void setEnumStrArray<Interval>(std::string (&a)[Interval::NUM_CONSTANTS + 1]) {
     a[4] = "E (10)";
     a[5] = "F (100)";
     a[6] = "G (101)";
-    a[7] = "[invalid] (11)";
 }
 
 // Test enum string functions
@@ -91,8 +86,8 @@ class EnumToStringTest : public ::testing::Test {
     EnumType e;
     std::stringstream buf;
 
-    typename EnumType::T vals[EnumType::NUM_CONSTANTS + 1];
-    std::string strs[EnumType::NUM_CONSTANTS + 1];
+    typename EnumType::T vals[EnumType::NUM_CONSTANTS];
+    std::string strs[EnumType::NUM_CONSTANTS];
 };
 
 // Specify type parameters for this test suite
@@ -101,7 +96,7 @@ TYPED_TEST_SUITE(EnumToStringTest, EnumTypes);
 
 // Test enum toString() and ostream operator functions
 TYPED_TEST(EnumToStringTest, ToString) {
-    for (U32 i = 0; i < TypeParam::NUM_CONSTANTS + 1; i++) {
+    for (U32 i = 0; i < TypeParam::NUM_CONSTANTS; i++) {
         this->e = this->vals[i];
         this->buf << this->e;
 

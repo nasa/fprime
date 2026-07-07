@@ -30,6 +30,7 @@ register_fprime_ut(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/ApidManager.fpp"
   DEPENDS
+    Svc_Ccsds_TestUtils
     Svc_Ccsds_Types
     STest
   UT_AUTO_HELPERS
