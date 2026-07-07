@@ -70,7 +70,11 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
     // Check output context (header info)
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(context.get_apid(), apid);
+    if (ComCfg::Apid::isValid(apid)) {
+        ASSERT_EQ(context.get_apid(), apid);
+    } else {
+        ASSERT_EQ(context.get_apid(), ComCfg::Apid::INVALID_UNINITIALIZED);
+    }
     ASSERT_EQ(context.get_sequenceCount(), seqCount);
     ASSERT_EQ(context.get_hasSecHdr(), hasSecHdr);
 
