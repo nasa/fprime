@@ -432,6 +432,17 @@ Transaction* Channel::findUnusedTransaction(Direction direction) {
         // Indicate that this was freshly pulled from the free list
         // notably this state is distinguishable from items still on the free list
         txn->m_state = TxnState::TXN_STATE_INIT;
+
+        // Clear the FREE tag now that this transaction has been taken off the FREE
+        // list. freeTransaction() marks q_index == QueueId::FREE for anything sitting
+        // on the free list; leaving that tag set on an acquired-but-not-yet-enqueued
+        // transaction would break the invariant relied on by
+        // Engine::finishTransaction()'s double-free guard (a live txn must never look
+        // FREE). The caller (startRxTransaction / txFileInitiate) will assign the real
+        // queue via insertSortPrio()/direct assignment; until then PEND (0) is the
+        // neutral, not-on-FREE-list default that matches reset()'s zeroed m_flags.
+        txn->m_flags.com.q_index = QueueId::PEND;
+
         txn->m_history->dir = direction;
         txn->m_chan = this;  // Set channel pointer
 
@@ -596,6 +607,15 @@ void Channel::freeTransaction(Transaction* txn) {
     // Initialize the linked list node for the FREE queue
     CfdpCListInitNode(&txn->m_cl_node);
     this->insertBackInQueue(QueueId::FREE, &txn->m_cl_node);
+
+    // Mark the transaction as residing on the FREE list. insertBackInQueue() only
+    // performs the list insertion (unlike insertSortPrio(), which also updates
+    // q_index), and txn->reset() zeroes m_flags so q_index would otherwise be left
+    // at 0 (== QueueId::PEND). Without this, a freed transaction is never tagged
+    // FREE, and Engine::finishTransaction()'s double-free guard
+    // (q_index == QueueId::FREE) can never fire. Setting it here upholds the
+    // invariant: "a transaction on the FREE list has q_index == FREE".
+    txn->m_flags.com.q_index = QueueId::FREE;
 }
 
 void Channel::recycleTransaction(Transaction* txn) {

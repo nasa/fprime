@@ -50,6 +50,15 @@ Transaction* CfdpManagerTester::setupTestTransaction(TxnState state,
     txn->m_cfdpManager = &this->component;
     txn->m_history = history;
 
+    // Mark this as a live (in-use) transaction. This helper grabs a raw transaction
+    // slot directly instead of going through Channel::findUnusedTransaction(), so it
+    // must clear the FREE tag that freeTransaction() leaves on transactions parked on
+    // the FREE list after engine init. Otherwise q_index == QueueId::FREE would make
+    // finishTransaction()'s double-free guard trip on an intentionally-live transaction.
+    // PEND (0) is the neutral not-on-FREE-list default the engine uses before a queue
+    // is assigned.
+    txn->m_flags.com.q_index = QueueId::PEND;
+
     // Set transaction class based on state
     // S2/R2 are Class 2, S1/R1 are Class 1
     if ((state == TxnState::TXN_STATE_S2) || (state == TxnState::TXN_STATE_R2)) {

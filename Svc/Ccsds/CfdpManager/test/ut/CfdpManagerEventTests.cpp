@@ -2021,24 +2021,28 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
 }
 
 void CfdpManagerTester::testResetFreedTransactionEvent() {
-    // ResetFreedTransaction emitted when finishTransaction called on already-freed transaction.
-    //
-    // SKIPPED: this test exposes a production bug that must be fixed before the test can
-    // pass. finishTransaction() (Engine.cpp) detects an already-freed transaction with
-    //     if (txn->m_flags.com.q_index == QueueId::FREE) { ...ResetFreedTransaction... }
-    // but Channel::freeTransaction() (Channel.cpp) never sets q_index to QueueId::FREE - it
-    // calls txn->reset() (which zeroes m_flags, so q_index becomes 0) and then
-    // insertBackInQueue(QueueId::FREE, ...) WITHOUT updating q_index (only insertSortPrio()
-    // sets q_index). As a result the double-free guard is effectively dead code: after a
-    // real free, q_index == 0 (not FREE), so ResetFreedTransaction is never emitted in
-    // production. The fix belongs in freeTransaction() (set q_index = QueueId::FREE); until
-    // that production change is made, this event cannot be triggered. Do NOT "fix" this by
-    // poking q_index in the test - that would mask the real defect.
+    // ResetFreedTransaction (DIAGNOSTIC) is emitted when finishTransaction() is called on a
+    // transaction that has already been freed. The double-free guard in
+    // Engine::finishTransaction() keys off q_index == QueueId::FREE, and
+    // Channel::freeTransaction() now tags freed transactions with that queue id.
 
-    GTEST_SKIP() << "Blocked by production bug: Channel::freeTransaction() does not set "
-                 << "q_index = QueueId::FREE, so finishTransaction()'s already-freed guard "
-                 << "(q_index == FREE) never fires and ResetFreedTransaction is never emitted. "
-                 << "Fix freeTransaction() to set q_index before enabling this test.";
+    // Acquire a transaction and put it into a live sender state.
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, TEST_CHANNEL_ID_0,
+                                            "/test/src.bin", "/test/dst.bin", 100, 1200, TEST_GROUND_EID);
+
+    // Free the transaction back onto the FREE list. After the fix this tags q_index == FREE.
+    Channel* chan = component.m_engine->m_channels[TEST_CHANNEL_ID_0];
+    chan->freeTransaction(txn);
+    ASSERT_EQ(QueueId::FREE, txn->m_flags.com.q_index);
+
+    this->clearEvents();
+
+    // Calling finishTransaction() on the already-freed transaction must trip the double-free
+    // guard and emit exactly one ResetFreedTransaction diagnostic (and nothing else).
+    component.m_engine->finishTransaction(txn, false);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_ResetFreedTransaction_SIZE(1);
 }
 
 // ----------------------------------------------------------------------
