@@ -37,7 +37,7 @@ AtomicQueue::AtomicQueue()
       m_dequeuePos(0),
       m_allocator(nullptr),
       m_allocatorId(0),
-      m_notFullSem(nullptr){}
+      m_notFullSem(nullptr) {}
 
 AtomicQueue::~AtomicQueue() {
     this->teardown();
