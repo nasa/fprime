@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-07 00:27:33</td>
+      <td>2026-07-07 22:49:04</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>53</td>
-      <td>53</td>
+      <td>54</td>
+      <td>54</td>
       <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>47</td>
-      <td>48</td>
-      <td class="coverage-high">97.9%</td>
+      <td>50</td>
+      <td>50</td>
+      <td class="coverage-high">100.0%</td>
     </tr>
   </table>
 </div>
@@ -72,7 +72,7 @@
     </tr>
     <tr><td><a href="#l20">Svc::FprimeDeframer::FprimeDeframer(char const*) (line 20)</a></td><td>called 8 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l28">Svc::FprimeDeframer::dataIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 28)</a></td><td>called 7 times</td><td>85.0%</td></tr>
-    <tr><td><a href="#l112">Svc::FprimeDeframer::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 112)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l114">Svc::FprimeDeframer::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 114)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l22">Svc::FprimeDeframer::~FprimeDeframer() (line 22)</a></td><td>called 8 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -717,15 +717,16 @@
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/2</summary>
+          <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
-            <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2</td>
-      <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">packetDescriptor</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">INVALID_UNINITIALIZED</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">isValid</span><span class="p">(</span><span class="n">packetDescriptor</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
@@ -733,11 +734,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2</td>
+      <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">contextCopy</span><span class="p">.</span><span class="n">set_apid</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">packetDescriptor</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -745,38 +746,58 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 1 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="n">contextCopy</span><span class="p">.</span><span class="n">set_apid</span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">INVALID_UNINITIALIZED</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ---------------- Validate Frame Trailer ----------------</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ---------------- Validate Frame Trailer ----------------</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Deserialize transmitted trailer: trailer is at offset = len(header) + len(body)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -789,14 +810,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deserializer</span><span class="p">.</span><span class="n">moveDeserToOffset</span><span class="p">(</span><span class="n">FprimeProtocol</span><span class="o">::</span><span class="n">FrameHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="n">get_lengthField</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -809,21 +830,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">trailer</span><span class="p">.</span><span class="n">deserializeFrom</span><span class="p">(</span><span class="n">deserializer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Compute CRC over the transmitted data (header + body)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -836,7 +857,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Utils</span><span class="o">::</span><span class="n">Hash</span><span class="w"> </span><span class="n">hash</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -849,14 +870,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Utils</span><span class="o">::</span><span class="n">HashBuffer</span><span class="w"> </span><span class="n">computedCrc</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">fieldToHashSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="n">get_lengthField</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">FprimeProtocol</span><span class="o">::</span><span class="n">FrameHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -869,14 +890,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">hash</span><span class="p">.</span><span class="n">init</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Add byte by byte to the hash</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -890,7 +911,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">fieldToHashSize</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -904,14 +925,14 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">hash</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -924,14 +945,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">hash</span><span class="p">.</span><span class="n">finalize</span><span class="p">(</span><span class="n">computedCrc</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l95" href="#l95">95</a></td>
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Check that the CRC in the trailer of the frame matches the computed CRC</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -946,7 +967,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">trailer</span><span class="p">.</span><span class="n">get_crcField</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">computedCrc</span><span class="p">.</span><span class="n">asBigEndianU32</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l97" href="#l97">97</a></td>
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -959,7 +980,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_InvalidChecksum</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l98" href="#l98">98</a></td>
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -972,42 +993,42 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dataReturnOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">);</span><span class="w">  </span><span class="c1">// drop the frame</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l99" href="#l99">99</a></td>
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l100" href="#l100">100</a></td>
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// ---------------- Extract payload from frame ----------------</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Shift data pointer to effectively remove the header</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1021,14 +1042,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">data</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">FprimeProtocol</span><span class="o">::</span><span class="n">FrameHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Shrink size to effectively remove the trailer (also removes the header)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1042,21 +1063,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">data</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">FprimeProtocol</span><span class="o">::</span><span class="n">FrameHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="w"> </span><span class="o">-</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                 </span><span class="n">FprimeProtocol</span><span class="o">::</span><span class="n">FrameTrailer</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l108" href="#l108">108</a></td>
+      <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Emit the deframed data</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l109" href="#l109">109</a></td>
+      <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1069,70 +1090,70 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dataOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">contextCopy</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l110" href="#l110">110</a></td>
+      <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">17</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l111" href="#l111">111</a></td>
+      <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l112" href="#l112">112</a></td>
+      <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FprimeDeframer</span><span class="w"> </span><span class="o">::</span><span class="n">dataReturnIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l113" href="#l113">113</a></td>
+      <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l114" href="#l114">114</a></td>
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">FrameContext</span><span class="o">&amp;</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">dataReturnOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

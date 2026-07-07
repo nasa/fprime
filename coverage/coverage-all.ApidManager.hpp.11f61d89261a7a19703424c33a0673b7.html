@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-07 00:27:33</td>
+      <td>2026-07-07 22:49:04</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l50">Svc::Ccsds::ApidManager::~ApidManager() (line 50)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l49">Svc::Ccsds::ApidManager::~ApidManager() (line 49)</a></td><td>called 3 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -362,395 +362,388 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="n">U16</span><span class="w"> </span><span class="n">SEQUENCE_COUNT_ERROR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Component construction and destruction</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Component construction and destruction</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Construct ApidManager object</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Construct ApidManager object</span></td>
+      <td class="src "><span class="w">    </span><span class="n">ApidManager</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">compName</span><span class="w">  </span><span class="c1">//!&lt; The component name</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ApidManager</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">compName</span><span class="w">  </span><span class="c1">//!&lt; The component name</span></td>
+      <td class="src "><span class="w">    </span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Destroy ApidManager object</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Destroy ApidManager object</span></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ApidManager</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">8</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ApidManager</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Handler implementations for typed input ports</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Handler implementations for typed input ports</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Handler implementation for validateApidSeqCountIn</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Handler implementation for validateApidSeqCountIn</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">validateApidSeqCountIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The port number</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">validateApidSeqCountIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The port number</span></td>
+      <td class="src "><span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">&amp;</span><span class="w"> </span><span class="n">apid</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                       </span><span class="k">const</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">&amp;</span><span class="w"> </span><span class="n">apid</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                       </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                       </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Handler implementation for validateApidSeqCountIn</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Handler implementation for validateApidSeqCountIn</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">getApidSeqCountIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The port number</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">getApidSeqCountIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The port number</span></td>
+      <td class="src "><span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">&amp;</span><span class="w"> </span><span class="n">apid</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">&amp;</span><span class="w"> </span><span class="n">apid</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                  </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                  </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Helpers</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Helpers</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the sequence count for a given APID and increment it for the next.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the sequence count for a given APID and increment it for the next.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Wraps around at 14 bits. Returns SEQUENCE_COUNT_ERROR and logs ApidTableFull event</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Wraps around at 14 bits. Returns SEQUENCE_COUNT_ERROR and logs ApidTableFull event</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! if the APID is not yet tracked and the table is full.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! if the APID is not yet tracked and the table is full.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">getAndIncrementSeqCount</span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">apid</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">getAndIncrementSeqCount</span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="n">apid</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Helper function for wrapping around at 14 bits when calculating the next sequence count</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Helper function for wrapping around at 14 bits when calculating the next sequence count</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">calculateNextSeqCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="nf">calculateNextSeqCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U16</span><span class="w"> </span><span class="n">seqCount</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ArrayMap with internal storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ArrayMap with internal storage</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Key: APID</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Key: APID</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Value: sequence count</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Value: sequence count</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Capacity: MAX_TRACKED_APIDS</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Capacity: MAX_TRACKED_APIDS</span></td>
+      <td class="src "><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">MapType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ArrayMap</span><span class="o">&lt;</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">U16</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_TRACKED_APIDS</span><span class="o">&gt;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">MapType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ArrayMap</span><span class="o">&lt;</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">U16</span><span class="p">,</span><span class="w"> </span><span class="n">MAX_TRACKED_APIDS</span><span class="o">&gt;</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Member variables</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Member variables</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="n">MapType</span><span class="w"> </span><span class="n">m_apidSequences</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">MapType</span><span class="w"> </span><span class="n">m_apidSequences</span><span class="p">;</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l95" href="#l95">95</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
