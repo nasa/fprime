@@ -13,7 +13,6 @@ module Cfdp {
         REC_PDU_FSIZE_MISMATCH_ERROR @< Receive PDU: EOF file size mismatch
         REC_PDU_BAD_EOF_ERROR @< Receive PDU: Invalid EOF packet
         SEND_PDU_NO_BUF_AVAIL_ERROR @< Send PDU: No send buffer available, throttling limit reached
-        SEND_PDU_ERROR @< Send PDU: Send failed
     }
 
     @ PDU type enumeration

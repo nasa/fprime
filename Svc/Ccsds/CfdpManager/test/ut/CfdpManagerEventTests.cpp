@@ -1909,29 +1909,25 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
 }
 
 void CfdpManagerTester::testTxSendMetadataFailedEvent() {
-    // TxSendMetadataFailed emitted when metadata PDU send fails during TX initialization.
-    //
-    // SKIPPED: the event is currently unreachable, and the original strategy (fail buffer
-    // allocation) cannot trigger it. The emission site (TransactionTx.cpp) is:
-    //     status = this->m_engine->sendMd(this);
-    //     if (status == Cfdp::Status::SEND_PDU_ERROR) { ...TxSendMetadataFailed... }
-    // but sendMd() -> serializeAndSendPdu() only ever returns:
-    //   - SEND_PDU_NO_BUF_AVAIL_ERROR on buffer-allocation failure (handled as a silent
-    //     retry-next-cycle, NOT this event), or
-    //   - Cfdp::Status::ERROR (generic) on serialization failure, or
-    //   - SUCCESS.
-    // It never returns SEND_PDU_ERROR, so the guard never matches. This gap is already
-    // flagged in production by the "TODO JMP What if status==Cfdp::Status::ERROR" comment
-    // immediately after the check. Until serializeAndSendPdu()/sendMd() return
-    // SEND_PDU_ERROR (or the guard is broadened to Cfdp::Status::ERROR), this event cannot
-    // be emitted through any path. Do NOT force it by calling log_* directly - that would
-    // not exercise the real code path.
-
-    GTEST_SKIP() << "Unreachable event: sendMd()/serializeAndSendPdu() never return "
-                 << "SEND_PDU_ERROR (buffer failure -> SEND_PDU_NO_BUF_AVAIL_ERROR retry; "
-                 << "serialization failure -> generic ERROR), so the TxSendMetadataFailed "
-                 << "guard (== SEND_PDU_ERROR) never matches. See the 'TODO JMP What if "
-                 << "status==Cfdp::Status::ERROR' note in TransactionTx.cpp.";
+    GTEST_SKIP()
+        << "TxSendMetadataFailed is emitted by Transaction::sSubstateSendMetadata() only when "
+           "m_engine->sendMd() returns Cfdp::Status::ERROR. The "
+           "TransactionTx.cpp guard is correct and covers the generic ERROR case, but that "
+           "failure status is unreachable white-box for the metadata path: sendMd() builds a "
+           "well-formed MetadataPdu and calls serializeAndSendPdu(), which allocates exactly "
+           "pdu.getBufferSize() bytes (getPduBuffer() gates on buffer.getSize() == requested "
+           "size, so an undersized allocation yields SEND_PDU_NO_BUF_AVAIL_ERROR -> retry, not "
+           "ERROR). MetadataPdu::getBufferSize() counts header + 2 flag bytes + sizeof(FileSize) "
+           "+ (1 + srcLen) + (1 + dstLen), matching toSerialBuffer() byte-for-byte, so a "
+           "well-formed MetadataPdu can never fail to serialize. The only way to make the byte "
+           "counts disagree is an over-long filename, but MetadataPdu::initialize() FW_ASSERTs "
+           "length <= MaxFilePathSize (200) (and Fw::String caps at 256), which aborts rather "
+           "than returning ERROR. Thus no legally-constructable transaction state makes sendMd() "
+           "return a failing status. The generic serialization-failure emission path "
+           "(serializeAndSendPdu -> FailPduSerialization -> ERROR) is already covered by "
+           "testFailPduSerializationEvent via a directly-injected OversizedTestPdu. Reaching this "
+           "specific event would require a production serialization seam that the metadata path "
+           "does not have.";
 }
 
 // ----------------------------------------------------------------------

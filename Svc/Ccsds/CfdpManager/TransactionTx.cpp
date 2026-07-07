@@ -439,13 +439,14 @@ Status::T Transaction::sCheckAndRespondNak(bool* nakProcessed) {
 
     if (this->m_flags.tx.md_need_send) {
         sret = this->m_engine->sendMd(this);
-        if (sret == Cfdp::Status::SEND_PDU_ERROR) {
-            ret = Cfdp::Status::ERROR;  // error occurred
+        if (sret == Cfdp::Status::ERROR) {
+            ret = Cfdp::Status::ERROR;  // serialization failure -- fail the transaction
         } else {
             if (sret == Cfdp::Status::SUCCESS) {
                 this->m_flags.tx.md_need_send = false;
             }
-            // unless SEND_PDU_ERROR, return 1 to keep caller from sending file data
+            // On SUCCESS or SEND_PDU_NO_BUF_AVAIL_ERROR (throttled, retry next cycle),
+            // mark nak processed to keep caller from sending file data this cycle
             *nakProcessed = true;  // nak processed, so don't send filedata
         }
     } else {
@@ -522,8 +523,8 @@ void Transaction::sSubstateSendMetadata() {
 
     if (success) {
         status = this->m_engine->sendMd(this);
-        if (status == Cfdp::Status::SEND_PDU_ERROR) {
-            /* failed to send md */
+        if (status == Cfdp::Status::ERROR) {
+            /* failed to send md (generic ERROR from a PDU serialization failure) */
             this->m_cfdpManager->log_WARNING_LO_TxSendMetadataFailed(this->getClass(), this->m_history->src_eid,
                                                                      this->m_history->seq_num);
             success = false;
@@ -536,8 +537,8 @@ void Transaction::sSubstateSendMetadata() {
                 this->m_history->fnames.src_filename, this->m_history->peer_eid, this->m_history->fnames.dst_filename,
                 static_cast<U32>(this->m_fsize));
         }
-        /* if status==Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR, then try to send md again next cycle */
-        /* TODO JMP What if status==Cfdp::Status::ERROR*/
+        /* if status==Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR, then the send buffer is throttled;
+           leave success==true and retry the metadata send on the next cycle */
     }
 
     if (!success) {

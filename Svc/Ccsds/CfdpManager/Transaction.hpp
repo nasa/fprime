@@ -403,7 +403,7 @@ class Transaction {
      *
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
-     * @retval SEND_PDU_ERROR if an error occurred while building the packet.
+     * @retval Cfdp::Status::ERROR if an error occurred while building/serializing the packet.
      */
     Status::T sSendEof();
 
