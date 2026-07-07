@@ -2,11 +2,13 @@
 // TestMain.cpp
 // ----------------------------------------------------------------------
 
+#include <cmath>
 #include "FpySequencerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/MallocAllocator.hpp"
 #include "Os/FileSystem.hpp"
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
+#include "config/SerialPortIndexEnumAc.hpp"
 
 namespace Svc {
 
@@ -1225,6 +1227,18 @@ TEST_F(FpySequencerTester, smod_domain_error) {
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
 }
+TEST_F(FpySequencerTester, sdiv_overflow_domain_error) {
+    // INT64_MIN / -1 overflows I64 (would be INT64_MAX + 1); it is UB (SIGFPE on x86)
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::DOMAIN_ERROR);
+}
+TEST_F(FpySequencerTester, smod_overflow_domain_error) {
+    // INT64_MIN % -1 is UB (SIGFPE on x86) even though the mathematical result is 0
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
+}
 TEST_F(FpySequencerTester, flog_domain_error) {
     // log(0) is undefined
     tester_push<F64>(0.0);
@@ -1233,10 +1247,12 @@ TEST_F(FpySequencerTester, flog_domain_error) {
     tester_push<F64>(-1.0);
     ASSERT_EQ(tester_op_flog(), DirectiveError::DOMAIN_ERROR);
 }
-TEST_F(FpySequencerTester, fmod_domain_error) {
+TEST_F(FpySequencerTester, fmod_zero_divisor_yields_nan) {
+    // A zero divisor is not an error for floats; the result is NaN, matching Rust and C#.
     tester_push<F64>(1.0);
     tester_push<F64>(0.0);
-    ASSERT_EQ(tester_op_fmod(), DirectiveError::DOMAIN_ERROR);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_TRUE(std::isnan(tester_pop<F64>()));
 }
 
 // ======================================================================
@@ -1260,6 +1276,28 @@ TEST_F(FpySequencerTester, smod_python_adjustment_neg_remainder_pos_divisor) {
     tester_push<I64>(3);
     ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 2);
+}
+
+// ======================================================================
+// fmod Python-adjustment special case (same floored-modulo semantics as smod)
+// ======================================================================
+
+TEST_F(FpySequencerTester, fmod_python_adjustment_pos_remainder_neg_divisor) {
+    // frem: fmod(7.5, -2.5) = 0.0... take a case with a nonzero remainder.
+    // frem: fmod(7.0, -3.0) = 1.0 (positive remainder, negative divisor)
+    // Python: 7.0 % -3.0 = -2.0 (adjusted: 1.0 + (-3.0) = -2.0)
+    tester_push<F64>(7.0);
+    tester_push<F64>(-3.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), -2.0);
+}
+TEST_F(FpySequencerTester, fmod_python_adjustment_neg_remainder_pos_divisor) {
+    // frem: fmod(-7.0, 3.0) = -1.0 (negative remainder, positive divisor)
+    // Python: -7.0 % 3.0 = 2.0 (adjusted: -1.0 + 3.0 = 2.0)
+    tester_push<F64>(-7.0);
+    tester_push<F64>(3.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 2.0);
 }
 
 TEST_F(FpySequencerTester, exit) {
@@ -4918,6 +4956,19 @@ TEST_F(FpySequencerTester, popEvent) {
         tester_get_m_runtime_ptr()->stack.size = 0;
     }
 
+    // Test message size overflow doesn't happen (nasa/fprime#5307)
+    {
+        // Push only the severity, no message bytes, then push messageSize claiming 10 bytes
+        tester_push<Fw::LogSeverity::SerialType>(Fw::LogSeverity::ACTIVITY_HI);
+        tester_push<Fpy::StackSizeType>(0xFFFFFFFF);  // claims 10 bytes of message
+        DirectiveError err = DirectiveError::NO_ERROR;
+        Signal result = tester_popEvent_directiveHandler(directive, err);
+        ASSERT_EQ(result, Signal::stmtResponse_failure);
+        ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+        // Clean up stack
+        tester_get_m_runtime_ptr()->stack.size = 0;
+    }
+
     // Test empty stack underflow (can't even pop messageSize)
     {
         DirectiveError err = DirectiveError::NO_ERROR;
@@ -4995,6 +5046,174 @@ TEST_F(FpySequencerTester, CrcHardcodedValue_Hello) {
     U32 finalCrc = tester_finalize_m_computedCRC();
     // Standard CRC32 of "Hello" = 0xF7D18982
     ASSERT_EQ(finalCrc, static_cast<U32>(0xF7D18982)) << "FpySequencer CRC of \"Hello\" must equal 0xF7D18982";
+}
+
+TEST_F(FpySequencerTester, popSerializable_success) {
+    // Test successful pop with valid port and data
+    FpySequencer_PopSerializableDirective directive(0, 4);  // port 0, 4 bytes
+
+    // Push test data onto stack
+    tester_push<U32>(0x12345678);
+
+    m_serialOutHistory.clear();
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);  // Stack should be empty
+
+    // Verify serialOut was called correctly
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].portNum, 0);
+    ASSERT_EQ(m_serialOutHistory[0].dataSize, 4);
+    // Verify data (big-endian: 0x12, 0x34, 0x56, 0x78)
+    ASSERT_EQ(m_serialOutHistory[0].data[0], 0x12);
+    ASSERT_EQ(m_serialOutHistory[0].data[1], 0x34);
+    ASSERT_EQ(m_serialOutHistory[0].data[2], 0x56);
+    ASSERT_EQ(m_serialOutHistory[0].data[3], 0x78);
+}
+
+TEST_F(FpySequencerTester, popSerializable_portIndexOutOfBounds) {
+    // Test port index exceeds MAX_SERIAL_PORTS
+    constexpr U32 MAX_PORTS = static_cast<U32>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    FpySequencer_PopSerializableDirective directive(MAX_PORTS, 4);  // port index = MAX (out of bounds)
+
+    tester_push<U32>(0xDEADBEEF);
+
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_INVALID_INDEX);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);  // Stack unchanged
+}
+
+TEST_F(FpySequencerTester, popSerializable_portNotConnected) {
+    // Port 1 is intentionally left disconnected in connectPorts() for this test
+    FpySequencer_PopSerializableDirective directive(1, 4);
+    tester_push<U32>(0xABCD1234);
+
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::SERIAL_PORT_NOT_CONNECTED);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);  // Stack unchanged
+}
+
+TEST_F(FpySequencerTester, popSerializable_stackUnderflow) {
+    // Test not enough bytes on stack
+    FpySequencer_PopSerializableDirective directive(0, 10);  // Request 10 bytes
+
+    tester_push<U32>(0x12345678);  // Only 4 bytes available
+
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::STACK_UNDERFLOW);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 4);  // Stack unchanged
+}
+
+TEST_F(FpySequencerTester, popSerializable_multipleTypes) {
+    // Test popping different types - push all data first, then pop one at a time
+
+    // Push data for all three types onto stack (LIFO order - last pushed is popped first)
+    // 1. First push: U8 (1 byte) - will be at bottom
+    tester_push<U8>(0xAB);
+
+    // 2. Second push: Fw::Time (11 bytes) - will be in middle
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 7, 123, 456);
+    U8* stackTop = tester_get_m_runtime_ptr()->stack.top();
+    Fw::ExternalSerializeBuffer timeBuf(stackTop, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EQ(timeBuf.serializeFrom(testTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    tester_get_m_runtime_ptr()->stack.size += Fw::Time::SERIALIZED_SIZE;
+
+    // 3. Third push: DirectiveError enum (1 byte as U8 representation) - will be at top
+    tester_push<U8>(static_cast<U8>(DirectiveError::STACK_OVERFLOW));
+
+    // Verify initial stack state: 1 + 11 + 1 = 13 bytes
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 13);
+
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result;
+
+    // Pop 1: DirectiveError enum (top of stack, 1 byte)
+    m_serialOutHistory.clear();
+    FpySequencer_PopSerializableDirective directive1(0, sizeof(U8));
+    result = tester_popSerializable_directiveHandler(directive1, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 12);  // 13 - 1 = 12
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].dataSize, sizeof(U8));
+
+    // Deserialize and verify enum (U8 representation)
+    Fw::ExternalSerializeBuffer enumBuf(m_serialOutHistory[0].data, m_serialOutHistory[0].dataSize);
+    enumBuf.setBuffLen(m_serialOutHistory[0].dataSize);
+    U8 receivedEnumRaw;
+    ASSERT_EQ(enumBuf.deserializeTo(receivedEnumRaw), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    DirectiveError receivedEnum = static_cast<DirectiveError::T>(receivedEnumRaw);
+    ASSERT_EQ(receivedEnum, DirectiveError::STACK_OVERFLOW);
+
+    // Pop 2: Fw::Time (now at top, 11 bytes)
+    m_serialOutHistory.clear();
+    FpySequencer_PopSerializableDirective directive2(0, Fw::Time::SERIALIZED_SIZE);
+    result = tester_popSerializable_directiveHandler(directive2, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 1);  // 12 - 11 = 1
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].dataSize, Fw::Time::SERIALIZED_SIZE);
+
+    // Deserialize and verify Time
+    Fw::ExternalSerializeBuffer recvTimeBuf(m_serialOutHistory[0].data, m_serialOutHistory[0].dataSize);
+    recvTimeBuf.setBuffLen(m_serialOutHistory[0].dataSize);
+    Fw::Time receivedTime;
+    ASSERT_EQ(recvTimeBuf.deserializeTo(receivedTime), Fw::SerializeStatus::FW_SERIALIZE_OK);
+    ASSERT_EQ(receivedTime, testTime);
+
+    // Pop 3: U8 (last item, 1 byte)
+    m_serialOutHistory.clear();
+    FpySequencer_PopSerializableDirective directive3(0, 1);
+    result = tester_popSerializable_directiveHandler(directive3, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, 0);  // 1 - 1 = 0, stack empty
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].data[0], 0xAB);
+}
+
+TEST_F(FpySequencerTester, popSerializable_differentPorts) {
+    // Test sending to different port indices
+
+    // Port 0
+    FpySequencer_PopSerializableDirective directive0(0, 2);
+    tester_push<U16>(0x1234);
+
+    m_serialOutHistory.clear();
+    DirectiveError err = DirectiveError::NO_ERROR;
+    Signal result = tester_popSerializable_directiveHandler(directive0, err);
+
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].portNum, 0);
+
+    // Port 4 (last valid port, MAX_SERIAL_PORTS - 1) - also connected in test harness
+    constexpr U32 MAX_PORTS = static_cast<U32>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);
+    FpySequencer_PopSerializableDirective directive4(MAX_PORTS - 1, 2);
+    tester_push<U16>(0x5678);
+
+    m_serialOutHistory.clear();
+    result = tester_popSerializable_directiveHandler(directive4, err);
+    ASSERT_EQ(result, Signal::stmtResponse_success);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(m_serialOutHistory.size(), 1);
+    ASSERT_EQ(m_serialOutHistory[0].portNum, 4);
 }
 
 }  // namespace Svc
