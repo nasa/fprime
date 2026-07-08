@@ -2,6 +2,7 @@
 """
 Generates docs/<section>/index.md from the filesystem structure.
 """
+
 # Run before docs_nav_tree.py so index.md are properly included in the nav tree
 
 from pathlib import Path
@@ -10,10 +11,14 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent.parent
 
 # Source of truth: filesystem walk of docs/<section>/
-SOURCE_DIRS = [SCRIPT_DIR /"docs"/"user-manual", SCRIPT_DIR /"docs"/"how-to", SCRIPT_DIR /"docs"/"reference"]
+SOURCE_DIRS = [
+    SCRIPT_DIR / "docs" / "user-manual",
+    SCRIPT_DIR / "docs" / "how-to",
+    SCRIPT_DIR / "docs" / "reference",
+]
 
 # Section blurbs shown next to each top-level entry. Keys are section directory names.
-SECTION_DESCRIPTIONS = { # note: these are not automated, new sections will be populated without descriptions unless defined below
+SECTION_DESCRIPTIONS = {  # note: these are not automated, new sections will be populated without descriptions unless defined below
     "user-manual": {
         "overview": "Technical overview of the F´ ecosystem.",
         "framework": "Learn concepts and mechanisms needed to build and use an F´ application.",
@@ -51,14 +56,13 @@ SECTION_METADATA = {
 }
 
 
-
 def read_h1(md_file: Path) -> str | None:
     """Return the first H1 (header) line in a markdown file, skipping YAML frontmatter."""
     text = md_file.read_text(encoding="utf-8")
     if text.startswith("---\n"):
         end = text.find("\n---\n", 4)
         if end != -1:
-            text = text[end + 5:]
+            text = text[end + 5 :]
     for line in text.splitlines():
         stripped = line.strip()
         if stripped.startswith("# "):
@@ -108,7 +112,11 @@ def get_sections(source_dir: Path):
             return (1, entry.name)  # unlisted items go last, alphabetically
 
     for entry in sorted(source_dir.iterdir(), key=sort_key):
-        if entry.name.startswith((".", "_")) or entry.name == "index.md" or entry.suffix == ".py":
+        if (
+            entry.name.startswith((".", "_"))
+            or entry.name == "index.md"
+            or entry.suffix == ".py"
+        ):
             continue
         if entry.is_dir():
             yield entry, get_section_title(entry), False
@@ -126,9 +134,11 @@ def reformat_entry(entry):
         entry = entry.replace("-", " ")
         entry = entry.title()
         entry = entry.replace("Gds", "GDS")
+        entry = entry.replace("Api", "API")
         return entry
     else:
         return entry
+
 
 def generate_index_for_section(source_dir: Path):
     """Generate the index page for a given documentation section."""
@@ -173,7 +183,9 @@ def generate_index_for_section(source_dir: Path):
             if pages:
                 # Directory with children — collapsible <details> box
                 content.append('<details markdown="1">\n')
-                content.append(f"<summary><strong>{title}</strong>{suffix}</summary>\n\n")
+                content.append(
+                    f"<summary><strong>{title}</strong>{suffix}</summary>\n\n"
+                )
                 for page_title, page_url in pages:
                     content.append(f"- [{page_title}]({page_url})\n")
                 content.append("\n</details>\n\n")

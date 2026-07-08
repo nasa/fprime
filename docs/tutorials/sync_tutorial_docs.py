@@ -2,11 +2,13 @@
 """At website runtime, git clone tutorials markdown files into fprime/docs/tutorials.
 This was initially written for Zensical integration.
 """
+
 from __future__ import annotations
 
 import shutil
 import subprocess
 from pathlib import Path
+
 
 def tutorials() -> None:
     # Get the tutorials directory (fprime/docs/tutorials/)
@@ -36,6 +38,7 @@ def tutorials() -> None:
         if git_dir.exists():
             shutil.rmtree(git_dir)
             print(f"Removed .git directory from {target_path}")
+
 
 if __name__ == "__main__":
     tutorials()
