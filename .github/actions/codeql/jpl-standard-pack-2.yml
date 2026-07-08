@@ -6,6 +6,10 @@ packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
   - codeql/cpp-queries:JPL_C
 
+queries:
+  # FW_ASSERT-aware replacements for the Rule 16 assertion queries
+  - uses: ./.github/codeql/fprime-queries
+
 query-filters:
   - exclude:
       problem.severity:
@@ -18,3 +22,8 @@ query-filters:
   - exclude:
       id:
         - cpp/jpl-c/basic-int-types
+  # Excluded in favor of the FW_ASSERT-aware replacement above, which
+  # recognizes F Prime's FW_ASSERT macro as an assertion
+  - exclude:
+      id:
+        - cpp/jpl-c/use-of-assertions-density

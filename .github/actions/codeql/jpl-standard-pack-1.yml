@@ -6,7 +6,18 @@ packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
   - codeql/cpp-queries:JPL_C
 
+queries:
+  # FW_ASSERT-aware replacements for the Rule 16 assertion queries
+  - uses: ./.github/codeql/fprime-queries
+
 query-filters:
   - exclude:
       problem.severity:
         - recommendation
+  # Excluded in favor of the FW_ASSERT-aware replacements above, which
+  # recognize F Prime's FW_ASSERT macro as an assertion
+  - exclude:
+      id:
+        - cpp/jpl-c/use-of-assertions-constant
+        - cpp/jpl-c/use-of-assertions-non-boolean
+        - cpp/jpl-c/use-of-assertions-side-effect
