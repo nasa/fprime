@@ -35,7 +35,8 @@ SECTION_DESCRIPTIONS = {  # note: these are not automated, new sections will be 
         "test": "Learn how to test F´ components and applications.",
     },
     "reference": {
-        # fill in later
+        "software-design-documents": "Software Design Documents (SDD) capture the design of the F´ core components.",
+        "fpp-language-specification": "This document describes F Prime Prime, also known as FPP or F Double Prime."
     },
 }
 
