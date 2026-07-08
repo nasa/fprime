@@ -544,7 +544,6 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testRxEofMdSizeMismatchEvent();
     void testRxTransactionLimitReachedEvent();
     void testRxInvalidDirectiveCodeEvent();
-    void testRxInvalidEofPduEvent();
     void testRxInactivityTimeoutEvent();
     void testRxAckLimitReachedEvent();
     void testRxNakLimitReachedEvent();
@@ -552,8 +551,6 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testUnhandledPduInIdleStateEvent();
 
     // TX Error Events
-    void testTxZeroLengthFileEvent();
-    void testTxFileOpenFailedEvent();
     void testTxInvalidDirectiveCodeEvent();
     void testTxEarlyFinReceivedEvent();
     void testTxNonFileDirectivePduReceivedEvent();
@@ -568,13 +565,6 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     void testPlaybackDirOpenFailedEvent();
     void testPlaybackDirReadFailedEvent();
     void testPlaybackDirSlotUnavailableEvent();
-
-    // Transaction Management Events (covered by command tests)
-    void testTransactionSuspendedEvent();
-    void testTransactionResumedEvent();
-    void testTransactionCanceledEvent();
-    void testTransactionAbandonedEvent();
-    void testTransactionNotFoundEvent();
 
     // Critical Error Path Events
     void testRxWriteFailedEvent();

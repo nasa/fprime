@@ -1621,40 +1621,6 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
 }
 
 // ----------------------------------------------------------------------
-// Transaction Management Events (already covered by command tests)
-// ----------------------------------------------------------------------
-
-void CfdpManagerTester::testTransactionSuspendedEvent() {
-    // TransactionSuspended is exercised in Command.SuspendResumeTransactionNominal;
-    // retained only for coverage tracking.
-    GTEST_SKIP() << "TransactionSuspended covered by Command.SuspendResumeTransactionNominal";
-}
-
-void CfdpManagerTester::testTransactionResumedEvent() {
-    // TransactionResumed is exercised in Command.SuspendResumeTransactionNominal;
-    // retained only for coverage tracking.
-    GTEST_SKIP() << "TransactionResumed covered by Command.SuspendResumeTransactionNominal";
-}
-
-void CfdpManagerTester::testTransactionCanceledEvent() {
-    // TransactionCanceled is exercised in Command.CancelTransactionNominal;
-    // retained only for coverage tracking.
-    GTEST_SKIP() << "TransactionCanceled covered by Command.CancelTransactionNominal";
-}
-
-void CfdpManagerTester::testTransactionAbandonedEvent() {
-    // TransactionAbandoned is exercised in Command.AbandonTransactionNominal;
-    // retained only for coverage tracking.
-    GTEST_SKIP() << "TransactionAbandoned covered by Command.AbandonTransactionNominal";
-}
-
-void CfdpManagerTester::testTransactionNotFoundEvent() {
-    // TransactionNotFound is exercised in Command.SuspendResumeTransactionNotFound;
-    // retained only for coverage tracking.
-    GTEST_SKIP() << "TransactionNotFound covered by Command.SuspendResumeTransactionNotFound";
-}
-
-// ----------------------------------------------------------------------
 // Critical Error Path Events
 // ----------------------------------------------------------------------
 

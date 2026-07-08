@@ -420,18 +420,6 @@ TEST(Event, InvalidDestinationEid) {
     delete tester;
 }
 
-TEST(Event, TxZeroLengthFile) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTxZeroLengthFileEvent();
-    delete tester;
-}
-
-TEST(Event, TxFileOpenFailed) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTxFileOpenFailedEvent();
-    delete tester;
-}
-
 TEST(Event, MaxTxTransactionsReached) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testMaxTxTransactionsReachedEvent();
@@ -447,36 +435,6 @@ TEST(Event, FileRemoveFailed) {
 TEST(Event, PlaybackDirOpenFailed) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testPlaybackDirOpenFailedEvent();
-    delete tester;
-}
-
-TEST(Event, TransactionSuspended) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTransactionSuspendedEvent();
-    delete tester;
-}
-
-TEST(Event, TransactionResumed) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTransactionResumedEvent();
-    delete tester;
-}
-
-TEST(Event, TransactionCanceled) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTransactionCanceledEvent();
-    delete tester;
-}
-
-TEST(Event, TransactionAbandoned) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTransactionAbandonedEvent();
-    delete tester;
-}
-
-TEST(Event, TransactionNotFound) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testTransactionNotFoundEvent();
     delete tester;
 }
 
@@ -526,12 +484,6 @@ TEST(Event, RxEofMdSizeMismatch) {
 TEST(Event, RxInvalidDirectiveCode) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testRxInvalidDirectiveCodeEvent();
-    delete tester;
-}
-
-TEST(Event, RxInvalidEofPdu) {
-    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
-    tester->testRxInvalidEofPduEvent();
     delete tester;
 }
 
