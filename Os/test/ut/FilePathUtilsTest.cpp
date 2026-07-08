@@ -3,9 +3,9 @@
 // \brief Unit tests for Os::FilePathUtils
 // ======================================================================
 #include <gtest/gtest.h>
-#include <cstring>
 #include <Fw/Types/FileNameString.hpp>
 #include <Os/FilePathUtils.hpp>
+#include <cstring>
 
 // ======================================================================
 // FilePathUtils::resolvePath tests

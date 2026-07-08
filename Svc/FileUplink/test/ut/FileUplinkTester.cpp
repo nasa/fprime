@@ -14,9 +14,9 @@
 #include <cerrno>
 #include <cstring>
 
+#include <Os/FilePathUtils.hpp>
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
-#include <Os/FilePathUtils.hpp>
 
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10

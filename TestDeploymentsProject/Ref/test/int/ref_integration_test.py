@@ -359,17 +359,13 @@ def test_file_uplink_sandbox(fprime_test_api):
         fprime_test_api.uplink_file(local_file, destination="/tmp/evil/escaped.bin")
 
         # Expect a FileOpenError warning because the path is outside /tmp/uplink/
-        fprime_test_api.await_event(
-            "FileHandling.fileUplink.FileOpenError", timeout=10
-        )
+        fprime_test_api.await_event("FileHandling.fileUplink.FileOpenError", timeout=10)
 
         # --- Test 2: uplink to a path INSIDE the sandbox should succeed ---
         fprime_test_api.clear_histories()
         fprime_test_api.uplink_file(local_file, destination="/tmp/uplink/test.bin")
 
-        fprime_test_api.await_event(
-            "FileHandling.fileUplink.FileReceived", timeout=10
-        )
+        fprime_test_api.await_event("FileHandling.fileUplink.FileReceived", timeout=10)
     finally:
         os.unlink(local_file)
         # Clean up uploaded file
