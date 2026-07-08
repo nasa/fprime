@@ -16,7 +16,6 @@
 #include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
 #include <config/PassiveRateGroupCfg.hpp>
-#include "default/config/PassiveRateGroupCfg.hpp"
 
 namespace Svc {
 PassiveRateGroup::PassiveRateGroup(const char* compName)
@@ -51,7 +50,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
             Os::RawTime portStart;
             Os::RawTime portEnd;
             if (Svc::PassiveRateGroupCfg::PortCycleTime) {
-                portStart.now();
+                (void)portStart.now();
             }
 
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
