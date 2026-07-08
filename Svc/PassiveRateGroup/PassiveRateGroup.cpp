@@ -15,6 +15,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
+#include <config/PassiveRateGroupCfg.hpp>
 
 namespace Svc {
 PassiveRateGroup::PassiveRateGroup(const char* compName)
@@ -41,11 +42,28 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     Os::RawTime endTime;
     FW_ASSERT(this->m_numContexts);
 
+#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
+    PassiveRateGroup_CycleTime portTimes;
+#endif
+
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
+        Os::RawTime portStart;
+        Os::RawTime portEnd;
+        portStart.now();
+#endif
+
         if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
         }
+
+#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
+        portEnd.now();
+        U32 cycleTime;
+        (void)portEnd.getDiffUsec(portStart, cycleTime);
+        portTimes[portNum] = static_cast<U16>(cycleTime);
+#endif
     }
 
     // grab timer for endTime of cycle
@@ -60,6 +78,11 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     if (cycleTime > this->m_maxTime) {
         this->m_maxTime = cycleTime;
     }
+
+#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
+    this->tlmWrite_PortCycleTime(portTimes);
+#endif
+
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
     this->tlmWrite_CycleTime(cycleTime);
     this->tlmWrite_CycleCount(++this->m_cycles);

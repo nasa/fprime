@@ -18,6 +18,9 @@ module Svc {
     @ Count of number of cycles
     telemetry CycleCount: U32
 
+    array CycleTime = [PassiveRateGroupOutputPorts] U16 default 0
+    telemetry PortCycleTime: CycleTime
+
     # Standard ports
     @ A port for getting the time
     time get port Time
