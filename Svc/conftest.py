@@ -40,9 +40,3 @@ def setup_test_files():
                 print(f"Warning: Could not copy {filename} to /tmp/: {e}")
 
     yield
-
-    # Cleanup is optional - comment out if you want files to persist
-    # for filename in test_files:
-    #     dest = Path("/tmp") / filename
-    #     if dest.exists():
-    #         dest.unlink()
