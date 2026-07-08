@@ -28,6 +28,12 @@ module Ccsds {
         DECRYPTION_FAILURE = 4  @< Decryption operation failed
     }
 
+    @ A single security association index to port index mapping entry
+    struct SaMapEntry {
+        securityAssociationIndex: U16,  @< Security association index
+        portIndex: FwIndexType          @< Port index
+    }
+
     # ------------------------------------------------
     # SpacePacket
     # ------------------------------------------------
