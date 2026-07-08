@@ -9,7 +9,7 @@ name: "Config Test Nightly"
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 10 * * *"  # 2:00 AM PST
   workflow_dispatch:
     inputs:
       profiles:
