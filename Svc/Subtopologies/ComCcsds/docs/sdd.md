@@ -58,6 +58,10 @@ alternative stacks (e.g., inserting an SDLS security layer between them) while r
 | `FramingSubtopology` | `SpacePacketFraming` composed with `TmTcFraming` (variant B).                                      |
 | `Subtopology`        | `FramingSubtopology` plus `comStub` (variant A).                                                    |
 
+Each layer topology exposes its open boundary as **topology ports** (e.g. `SpacePacketFraming.dataOut`,
+`TmTcFraming.framedDataIn`, `FramingSubtopology.comStatusIn`), so composing topologies and deployments wire
+to the layer's ports rather than to individual component instances.
+
 ### 2.2 Required Inputs for Operation
 
 * **Rate Groups:** Connect a rate group to **`comQueue.run`**. This is not required for the subtopology to function, but defines the rate at which ComQueue will send telemetry.
@@ -119,14 +123,14 @@ topology Flight {
 
   # (B3) Wire your ComInterface between the driver and the ComCcsds framer/deframer
   connections Link {
-    # Downlink: TM framer -> your ComInterface
-    ComCcsds.framer.dataOut         -> radio.dataIn
-    radio.dataReturnOut               -> ComCcsds.framer.dataReturnIn
-    radio.comStatusOut                -> ComCcsds.framer.comStatusIn
+    # Downlink: framing layer -> your ComInterface
+    ComCcsds.FramingSubtopology.dataOut       -> radio.dataIn
+    radio.dataReturnOut                       -> ComCcsds.FramingSubtopology.dataReturnIn
+    radio.comStatusOut                        -> ComCcsds.FramingSubtopology.comStatusIn
 
-    # Uplink: your ComInterface -> frame accumulator
-    radio.dataOut                     -> ComCcsds.frameAccumulator.dataIn
-    ComCcsds.frameAccumulator.dataReturnOut -> radio.dataReturnIn
+    # Uplink: your ComInterface -> framing layer
+    radio.dataOut                             -> ComCcsds.FramingSubtopology.dataIn
+    ComCcsds.FramingSubtopology.dataReturnOut -> radio.dataReturnIn
   }
 }
 ```

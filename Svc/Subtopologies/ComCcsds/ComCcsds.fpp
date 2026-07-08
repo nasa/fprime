@@ -119,12 +119,12 @@ module ComCcsds {
         # framing layer or a component implementing the Svc.Com (Svc/Interfaces/Com.fpp) interface:
         #
         # 1) Outputs:
-        #     - ComCcsds.aggregator.dataOut                -> [downstream].dataIn
-        #     - ComCcsds.spacePacketDeframer.dataReturnOut -> [downstream].dataReturnIn
+        #     - ComCcsds.SpacePacketFraming.dataOut       -> [downstream].dataIn
+        #     - ComCcsds.SpacePacketFraming.dataReturnOut -> [downstream].dataReturnIn
         # 2) Inputs:
-        #     - [downstream].dataReturnOut -> ComCcsds.aggregator.dataReturnIn
-        #     - [downstream].comStatusOut  -> ComCcsds.aggregator.comStatusIn
-        #     - [downstream].dataOut       -> ComCcsds.spacePacketDeframer.dataIn
+        #     - [downstream].dataReturnOut -> ComCcsds.SpacePacketFraming.dataReturnIn
+        #     - [downstream].comStatusOut  -> ComCcsds.SpacePacketFraming.comStatusIn
+        #     - [downstream].dataOut       -> ComCcsds.SpacePacketFraming.dataIn
 
         # Active Components
         instance comQueue
@@ -163,6 +163,32 @@ module ComCcsds {
             spacePacketDeframer.dataOut -> fprimeRouter.dataIn
             fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
         }
+
+        # ----------------------------------------------------------------------
+        # Topology ports (open framing boundary)
+        # ----------------------------------------------------------------------
+
+        @ Output port sending aggregated space packets to the downstream framing layer
+        port dataOut       = aggregator.dataOut
+
+        @ Input port receiving back ownership of downlinked buffers from the downstream framing layer
+        port dataReturnIn  = aggregator.dataReturnIn
+
+        @ Input port receiving com status from the downstream framing layer
+        port comStatusIn   = aggregator.comStatusIn
+
+        @ Input port receiving space packets from the downstream framing layer for deframing
+        port dataIn        = spacePacketDeframer.dataIn
+
+        @ Output port returning ownership of uplinked buffers to the downstream framing layer
+        port dataReturnOut = spacePacketDeframer.dataReturnOut
+
+        # Buffer management boundary
+        @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
+        port bufferGetCallee = commsBufferManager.bufferGetCallee
+
+        @ Input port for deallocating Fw::Buffers back into the comms buffer pool
+        port bufferSendIn    = commsBufferManager.bufferSendIn
     } # end SpacePacketFraming
 
     # This subtopology uses SpacePacketFraming with a ComStub component for Com Interface,
@@ -173,14 +199,14 @@ module ComCcsds {
         instance comStub
 
         connections SpacePacketComStub {
-            # Aggregator <-> ComStub (Downlink)
-            ComCcsds.aggregator.dataOut -> comStub.dataIn
-            comStub.dataReturnOut       -> ComCcsds.aggregator.dataReturnIn
-            comStub.comStatusOut        -> ComCcsds.aggregator.comStatusIn
+            # SpacePacketFraming <-> ComStub (Downlink)
+            SpacePacketFraming.dataOut -> comStub.dataIn
+            comStub.dataReturnOut      -> SpacePacketFraming.dataReturnIn
+            comStub.comStatusOut       -> SpacePacketFraming.comStatusIn
 
-            # ComStub <-> SpacePacketDeframer (Uplink)
-            comStub.dataOut -> ComCcsds.spacePacketDeframer.dataIn
-            ComCcsds.spacePacketDeframer.dataReturnOut -> comStub.dataReturnIn
+            # ComStub <-> SpacePacketFraming (Uplink)
+            comStub.dataOut -> SpacePacketFraming.dataIn
+            SpacePacketFraming.dataReturnOut -> comStub.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
@@ -250,20 +276,20 @@ module ComCcsds {
         # When importing this subtopology, users shall establish the following external connections:
         #
         # 1) Upstream (packet layer, e.g. SpacePacketFraming):
-        #     - [upstream].dataOut                -> ComCcsds.framer.dataIn
-        #     - ComCcsds.framer.dataReturnOut     -> [upstream].dataReturnIn
-        #     - ComCcsds.framer.comStatusOut      -> [upstream].comStatusIn
-        #     - ComCcsds.tcDeframer.dataOut       -> [upstream].dataIn (deframed data)
-        #     - [upstream].dataReturnOut          -> ComCcsds.tcDeframer.dataReturnIn
+        #     - [upstream].dataOut                          -> ComCcsds.TmTcFraming.dataIn
+        #     - ComCcsds.TmTcFraming.dataReturnOut          -> [upstream].dataReturnIn
+        #     - ComCcsds.TmTcFraming.comStatusOut           -> [upstream].comStatusIn
+        #     - ComCcsds.TmTcFraming.dataOut                -> [upstream].dataIn (deframed data)
+        #     - [upstream].dataReturnOut                    -> ComCcsds.TmTcFraming.dataReturnIn
         # 2) Downstream (a component implementing the Svc.Com interface):
-        #     - ComCcsds.framer.dataOut                 -> [Svc.Com].dataIn
-        #     - ComCcsds.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
-        #     - [Svc.Com].dataReturnOut -> ComCcsds.framer.dataReturnIn
-        #     - [Svc.Com].comStatusOut  -> ComCcsds.framer.comStatusIn
-        #     - [Svc.Com].dataOut       -> ComCcsds.frameAccumulator.dataIn
+        #     - ComCcsds.TmTcFraming.framedDataOut          -> [Svc.Com].dataIn
+        #     - ComCcsds.TmTcFraming.framedDataReturnOut    -> [Svc.Com].dataReturnIn
+        #     - [Svc.Com].dataReturnOut -> ComCcsds.TmTcFraming.framedDataReturnIn
+        #     - [Svc.Com].comStatusOut  -> ComCcsds.TmTcFraming.framedComStatusIn
+        #     - [Svc.Com].dataOut       -> ComCcsds.TmTcFraming.framedDataIn
         # 3) Buffer management (e.g. a Svc.BufferManager):
-        #     - ComCcsds.frameAccumulator.bufferAllocate   -> [BufferManager].bufferGetCallee
-        #     - ComCcsds.frameAccumulator.bufferDeallocate -> [BufferManager].bufferSendIn
+        #     - ComCcsds.TmTcFraming.bufferAllocate   -> [BufferManager].bufferGetCallee
+        #     - ComCcsds.TmTcFraming.bufferDeallocate -> [BufferManager].bufferSendIn
 
         instance framer
         instance tcDeframer
@@ -274,6 +300,49 @@ module ComCcsds {
             frameAccumulator.dataOut -> tcDeframer.dataIn
             tcDeframer.dataReturnOut -> frameAccumulator.dataReturnIn
         }
+
+        # ----------------------------------------------------------------------
+        # Topology ports
+        # ----------------------------------------------------------------------
+
+        # Upstream boundary (packet layer)
+        @ Input port receiving space packets from the packet layer for TM framing
+        port dataIn        = framer.dataIn
+
+        @ Output port returning ownership of downlinked buffers to the packet layer
+        port dataReturnOut = framer.dataReturnOut
+
+        @ Output port forwarding com status to the packet layer
+        port comStatusOut  = framer.comStatusOut
+
+        @ Output port sending TC-deframed data to the packet layer
+        port dataOut       = tcDeframer.dataOut
+
+        @ Input port receiving back ownership of uplinked buffers from the packet layer
+        port dataReturnIn  = tcDeframer.dataReturnIn
+
+        # Downstream boundary (Svc.Com interface)
+        @ Output port sending TM transfer frames to the com interface
+        port framedDataOut       = framer.dataOut
+
+        @ Input port receiving back ownership of transmitted frame buffers from the com interface
+        port framedDataReturnIn  = framer.dataReturnIn
+
+        @ Input port receiving com status from the com interface
+        port framedComStatusIn   = framer.comStatusIn
+
+        @ Input port receiving raw uplink data from the com interface
+        port framedDataIn        = frameAccumulator.dataIn
+
+        @ Output port returning ownership of received uplink buffers to the com interface
+        port framedDataReturnOut = frameAccumulator.dataReturnOut
+
+        # Buffer management boundary
+        @ Output port for allocating accumulation buffers
+        port bufferAllocate   = frameAccumulator.bufferAllocate
+
+        @ Output port for deallocating accumulation buffers
+        port bufferDeallocate = frameAccumulator.bufferDeallocate
     } # end TmTcFraming
 
     # This subtopology composes the SpacePacketFraming packet layer with the TmTcFraming
@@ -285,12 +354,12 @@ module ComCcsds {
         # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
         #
         # 1) Outputs:
-        #     - ComCcsds.framer.dataOut                 -> [Svc.Com].dataIn
-        #     - ComCcsds.frameAccumulator.dataReturnOut -> [Svc.Com].dataReturnIn
+        #     - ComCcsds.FramingSubtopology.dataOut       -> [Svc.Com].dataIn
+        #     - ComCcsds.FramingSubtopology.dataReturnOut -> [Svc.Com].dataReturnIn
         # 2) Inputs:
-        #     - [Svc.Com].dataReturnOut -> ComCcsds.framer.dataReturnIn
-        #     - [Svc.Com].comStatusOut  -> ComCcsds.framer.comStatusIn
-        #     - [Svc.Com].dataOut       -> ComCcsds.frameAccumulator.dataIn
+        #     - [Svc.Com].dataReturnOut -> ComCcsds.FramingSubtopology.dataReturnIn
+        #     - [Svc.Com].comStatusOut  -> ComCcsds.FramingSubtopology.comStatusIn
+        #     - [Svc.Com].dataOut       -> ComCcsds.FramingSubtopology.dataIn
 
         # Packet layer (router, ComQueue, space packet framer/deframer, buffer manager)
         import SpacePacketFraming
@@ -299,24 +368,43 @@ module ComCcsds {
         import TmTcFraming
 
         connections Downlink {
-            # Aggregator <-> TmFramer
-            aggregator.dataOut   -> framer.dataIn
-            framer.dataReturnOut -> aggregator.dataReturnIn
+            # SpacePacketFraming <-> TmTcFraming
+            SpacePacketFraming.dataOut -> TmTcFraming.dataIn
+            TmTcFraming.dataReturnOut  -> SpacePacketFraming.dataReturnIn
 
             # ComStatus
-            framer.comStatusOut -> aggregator.comStatusIn
-            # (Outgoing) Framer <-> ComInterface connections shall be established by the user
+            TmTcFraming.comStatusOut -> SpacePacketFraming.comStatusIn
+            # (Outgoing) TmTcFraming <-> ComInterface connections shall be established by the user
         }
 
         connections Uplink {
-            # (Incoming) ComInterface <-> FrameAccumulator connections shall be established by the user
-            # FrameAccumulator buffer allocations
-            frameAccumulator.bufferDeallocate -> commsBufferManager.bufferSendIn
-            frameAccumulator.bufferAllocate   -> commsBufferManager.bufferGetCallee
-            # TcDeframer <-> SpacePacketDeframer
-            tcDeframer.dataOut                -> spacePacketDeframer.dataIn
-            spacePacketDeframer.dataReturnOut -> tcDeframer.dataReturnIn
+            # (Incoming) ComInterface <-> TmTcFraming connections shall be established by the user
+            # TmTcFraming buffer allocations
+            TmTcFraming.bufferDeallocate -> SpacePacketFraming.bufferSendIn
+            TmTcFraming.bufferAllocate   -> SpacePacketFraming.bufferGetCallee
+            # TmTcFraming <-> SpacePacketFraming
+            TmTcFraming.dataOut               -> SpacePacketFraming.dataIn
+            SpacePacketFraming.dataReturnOut  -> TmTcFraming.dataReturnIn
         }
+
+        # ----------------------------------------------------------------------
+        # Topology ports (Svc.Com boundary)
+        # ----------------------------------------------------------------------
+
+        @ Output port sending TM transfer frames to the com interface
+        port dataOut       = framer.dataOut
+
+        @ Input port receiving back ownership of transmitted frame buffers from the com interface
+        port dataReturnIn  = framer.dataReturnIn
+
+        @ Input port receiving com status from the com interface
+        port comStatusIn   = framer.comStatusIn
+
+        @ Input port receiving raw uplink data from the com interface
+        port dataIn        = frameAccumulator.dataIn
+
+        @ Output port returning ownership of received uplink buffers to the com interface
+        port dataReturnOut = frameAccumulator.dataReturnOut
     } # end FramingSubtopology
 
     # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
@@ -326,14 +414,14 @@ module ComCcsds {
         instance comStub
 
         connections ComStub {
-            # Framer <-> ComStub (Downlink)
-            ComCcsds.framer.dataOut -> comStub.dataIn
-            comStub.dataReturnOut   -> ComCcsds.framer.dataReturnIn
-            comStub.comStatusOut    -> ComCcsds.framer.comStatusIn
+            # FramingSubtopology <-> ComStub (Downlink)
+            FramingSubtopology.dataOut -> comStub.dataIn
+            comStub.dataReturnOut      -> FramingSubtopology.dataReturnIn
+            comStub.comStatusOut       -> FramingSubtopology.comStatusIn
 
-            # ComStub <-> FrameAccumulator (Uplink)
-            comStub.dataOut -> ComCcsds.frameAccumulator.dataIn
-            ComCcsds.frameAccumulator.dataReturnOut -> comStub.dataReturnIn
+            # ComStub <-> FramingSubtopology (Uplink)
+            comStub.dataOut -> FramingSubtopology.dataIn
+            FramingSubtopology.dataReturnOut -> comStub.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
