@@ -314,8 +314,12 @@ class Engine {
      * @retval Cfdp::Status::SUCCESS on success.
      * @retval Cfdp::Status::SEND_PDU_NO_BUF_AVAIL_ERROR if message buffer cannot be obtained.
      * @retval Cfdp::Status::ERROR if serialization fails.
+     *
+     * @note virtual solely to allow a unit-test override that forces the
+     *       metadata-send failure path (TxSendMetadataFailed), which is
+     *       otherwise unreachable with a well-formed MetadataPdu.
      */
-    Status::T sendMd(Transaction* txn);
+    virtual Status::T sendMd(Transaction* txn);
 
     /**
      * @brief Encode and send a File Data PDU

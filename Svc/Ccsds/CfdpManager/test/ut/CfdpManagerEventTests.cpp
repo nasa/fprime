@@ -70,6 +70,17 @@ class OversizedTestPdu : public Cfdp::PduBase {
     }
 };
 
+// Test engine that forces the metadata-send failure branch. sSubstateSendMetadata()
+// emits TxSendMetadataFailed only when sendMd() returns ERROR, which is unreachable for
+// a well-formed MetadataPdu. Overriding sendMd() to return ERROR is
+// the minimal seam to cover that guard; setTxnStatus()/finishTransaction() (called on
+// the failure tail) fall through to the real Engine implementations.
+class SendMdFailEngine : public Engine {
+  public:
+    explicit SendMdFailEngine(CfdpManager* mgr) : Engine(mgr) {}
+    Status::T sendMd(Transaction*) override { return Cfdp::Status::ERROR; }
+};
+
 }  // anonymous namespace
 
 // ----------------------------------------------------------------------
@@ -1909,25 +1920,89 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
 }
 
 void CfdpManagerTester::testTxSendMetadataFailedEvent() {
-    GTEST_SKIP()
-        << "TxSendMetadataFailed is emitted by Transaction::sSubstateSendMetadata() only when "
-           "m_engine->sendMd() returns Cfdp::Status::ERROR. The "
-           "TransactionTx.cpp guard is correct and covers the generic ERROR case, but that "
-           "failure status is unreachable white-box for the metadata path: sendMd() builds a "
-           "well-formed MetadataPdu and calls serializeAndSendPdu(), which allocates exactly "
-           "pdu.getBufferSize() bytes (getPduBuffer() gates on buffer.getSize() == requested "
-           "size, so an undersized allocation yields SEND_PDU_NO_BUF_AVAIL_ERROR -> retry, not "
-           "ERROR). MetadataPdu::getBufferSize() counts header + 2 flag bytes + sizeof(FileSize) "
-           "+ (1 + srcLen) + (1 + dstLen), matching toSerialBuffer() byte-for-byte, so a "
-           "well-formed MetadataPdu can never fail to serialize. The only way to make the byte "
-           "counts disagree is an over-long filename, but MetadataPdu::initialize() FW_ASSERTs "
-           "length <= MaxFilePathSize (200) (and Fw::String caps at 256), which aborts rather "
-           "than returning ERROR. Thus no legally-constructable transaction state makes sendMd() "
-           "return a failing status. The generic serialization-failure emission path "
-           "(serializeAndSendPdu -> FailPduSerialization -> ERROR) is already covered by "
-           "testFailPduSerializationEvent via a directly-injected OversizedTestPdu. Reaching this "
-           "specific event would require a production serialization seam that the metadata path "
-           "does not have.";
+    // TxSendMetadataFailed is emitted by sSubstateSendMetadata() only when sendMd() returns
+    // ERROR. That status is unreachable for a well-formed MetadataPdu (its
+    // getBufferSize() matches toSerialBuffer() byte-for-byte, and buffer exhaustion yields the
+    // retry status SEND_PDU_NO_BUF_AVAIL_ERROR, not ERROR). We therefore substitute a
+    // SendMdFailEngine whose sendMd() override returns ERROR, driving the real substate through
+    // the failure guard. Because success==false, the substate then runs setTxnStatus(
+    // FILESTORE_REJECTION) + finishTransaction(), which additionally emits TxFileTransferFailed.
+
+    const char* srcFile = "test/ut/output/tx_send_md_failed.bin";
+    const char* dstFile = "/ground/tx_send_md_failed.bin";
+    U32 fileSize = 3;
+    U32 sequenceId = 4200;
+    U32 localEid = this->component.getLocalEidParam();
+
+    // Create a real, non-empty source file so sSubstateSendMetadata() opens it and reaches
+    // sendMd() (a missing/zero-length file would divert to TxFileOpenFailed/TxZeroLengthFile).
+    Os::File file;
+    file.open(srcFile, Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    U8 testData[3] = {1, 2, 3};
+    FwSizeType sizeToWrite = 3;
+    file.write(testData, sizeToWrite);
+    file.close();
+
+    this->clearHistory();
+    this->clearEvents();
+
+    // Class 1 TX transaction (S1 sender state).
+    Transaction* txn = setupTestTransaction(
+        TxnState::TXN_STATE_S1,
+        TEST_CHANNEL_ID_0,
+        srcFile,
+        dstFile,
+        fileSize,
+        sequenceId,
+        TEST_GROUND_EID);
+    ASSERT_NE(txn, nullptr) << "Transaction should be created";
+
+    // Set source entity ID (setupTestTransaction doesn't initialize this).
+    txn->m_history->src_eid = localEid;
+
+    // Keep the source file so the post-event finishTransaction() -> handleNotKeepFile() does
+    // not delete/move it (which could emit FileRemoveFailed/FailKeepFileMove).
+    txn->m_keep = Keep::KEEP;
+
+    // Substitute an engine whose sendMd() forces the failure branch. It borrows the real
+    // allocator so ~Engine()'s FW_ASSERT(m_allocator != nullptr) is satisfied; all of its
+    // m_channels are null, so the destructor cleanup loop is a no-op. m_chan must point at a
+    // real channel because finishTransaction() dereferences it.
+    SendMdFailEngine failEngine(&this->component);
+    failEngine.m_allocator = this->component.m_engine->m_allocator;
+    txn->m_engine = &failEngine;
+    txn->m_chan = this->component.m_engine->m_channels[TEST_CHANNEL_ID_0];
+
+    // Drive the metadata substate.
+    txn->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_METADATA;
+    if (txn->m_fd.isOpen()) {
+        txn->m_fd.close();
+    }
+
+    this->clearEvents();
+
+    // Direct substate call: no async message is queued, so do NOT call doDispatch().
+    txn->sSubstateSendMetadata();
+
+    // Restore the real engine before the transaction pool slot can be reused.
+    txn->m_engine = this->component.m_engine;
+
+    // Verify events: TxSendMetadataFailed from the guard, plus TxFileTransferFailed from the
+    // finishTransaction() failure tail.
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_TxSendMetadataFailed_SIZE(1);
+    ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
+
+    // Verify TxSendMetadataFailed parameters.
+    ASSERT_EVENTS_TxSendMetadataFailed(
+        0,                     // index
+        Cfdp::Class::CLASS_1,  // cfdpClass
+        localEid,              // srcEid
+        sequenceId             // seqNum
+    );
+
+    // Cleanup.
+    Os::FileSystem::removeFile(srcFile);
 }
 
 // ----------------------------------------------------------------------
