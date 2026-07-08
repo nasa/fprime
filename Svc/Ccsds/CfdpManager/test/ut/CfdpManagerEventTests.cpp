@@ -104,7 +104,7 @@ void CfdpManagerTester::testTxFileQueuedEvent() {
     file.write(testData, sizeToWrite);
     file.close();
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Queue file for transfer
     Fw::String srcFileStr(srcFile);
@@ -135,7 +135,7 @@ void CfdpManagerTester::testTxFileTransferStartedEvent() {
     file.write(testData, sizeToWrite);
     file.close();
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Initiate transfer
     Fw::String srcFileStr(srcFile);
@@ -169,7 +169,7 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
     const char* dstFile = "test/ut/output/metadata_test_rx.bin";
     Cfdp::FileSize fileSize = 100;
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -217,6 +217,7 @@ void CfdpManagerTester::testBuffersExhaustedEvent() {
     ASSERT_EQ(Status::SEND_PDU_NO_BUF_AVAIL_ERROR, status);
 
     // Verify BuffersExhausted event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_BuffersExhausted_SIZE(1);
 
     // Reset flag for subsequent tests
@@ -247,7 +248,7 @@ void CfdpManagerTester::testFailPduHeaderDeserializationEvent() {
     truncatedData[4] = 0x00;  // PDU length LSB
     truncatedData[5] = 0x00;  // eidTsnLengths byte
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send truncated PDU on channel 0 - should fail header deserialization
     this->invoke_to_dataIn(0, truncatedBuffer);
@@ -277,7 +278,6 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Create a Metadata PDU using the helper
     Cfdp::MetadataPdu metadataPdu;
@@ -312,7 +312,8 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     this->invoke_to_dataIn(channelId, pduBuffer);
     this->component.doDispatch();
 
-    // Verify FailMetadataPduDeserialization event
+    // Verify FailMetadataPduDeserialization event (a second recovery event also fires)
+    ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_FailMetadataPduDeserialization_SIZE(1);
 }
 
@@ -329,13 +330,13 @@ void CfdpManagerTester::testFailFileDataPduDeserializationEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // First establish transaction with Metadata
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
                           Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Create a valid FileData PDU
@@ -389,7 +390,6 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
     Cfdp::FileSize fileSize = 50;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Step 1: Establish RX transaction with Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -405,6 +405,7 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
     this->component.doDispatch();
 
     // Now transaction is expecting EOF
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Step 3: Create a valid EOF PDU
@@ -472,7 +473,7 @@ void CfdpManagerTester::testFailAckPduDeserializationEvent() {
     U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Directly call s2EofAck with malformed buffer
     txn->s2EofAck(malformedBuffer);
@@ -499,7 +500,7 @@ void CfdpManagerTester::testFailFinPduDeserializationEvent() {
     U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Directly call s2Fin with malformed buffer
     txn->s2Fin(malformedBuffer);
@@ -526,7 +527,7 @@ void CfdpManagerTester::testFailNakPduDeserializationEvent() {
     U8 malformedData[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
     Fw::Buffer malformedBuffer(malformedData, sizeof(malformedData));
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Directly call s2Nak with malformed buffer
     txn->s2Nak(malformedBuffer);
@@ -553,7 +554,7 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
     const char* dstFile = "/nonexistent_dir/subdir/file.bin";
     Cfdp::FileSize fileSize = 10;
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU with invalid destination
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -589,7 +590,7 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
     U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Cfdp::FileSize fileSize = sizeof(testData);
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -635,7 +636,7 @@ void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     Cfdp::FileSize metadataSize = 1000;
     Cfdp::FileSize eofSize = 500;  // Different!
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU claiming file is 1000 bytes
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, metadataSize, srcFile, dstFile,
@@ -670,7 +671,7 @@ void CfdpManagerTester::testRxEofCancelReceivedEvent() {
     const char* dstFile = "test/ut/output/cancel_rx.bin";
     Cfdp::FileSize fileSize = 100;
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -707,13 +708,13 @@ void CfdpManagerTester::testRxEofWithErrorEvent() {
     Cfdp::FileSize fileSize = 50;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Send Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
                           Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send EOF with CHECK_LIMIT_REACHED error condition
@@ -728,7 +729,8 @@ void CfdpManagerTester::testRxEofWithErrorEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxEofWithError event
+    // Verify RxEofWithError event (a second event also fires during EOF handling)
+    ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_RxEofWithError_SIZE(1);
 }
 
@@ -773,6 +775,7 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
 
     Fw::Buffer pduBuffer(tempBuffer, sb.getSize());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Directly call r2RecvMd
@@ -805,7 +808,6 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Exhaust all transaction slots in the FREE pool
     // Channel::findUnusedTransaction() pulls from the shared FREE pool regardless of direction
@@ -816,6 +818,7 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
         this->component.doDispatch();
     }
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send one more PDU - this should trigger RxTransactionLimitReached
@@ -879,6 +882,7 @@ void CfdpManagerTester::testRxInvalidEofPduEvent() {
     //
     // Note: RxEofWithError is a different event (triggered by non-zero condition code)
     // and is already tested by testRxEofWithErrorEvent().
+    GTEST_SKIP() << "RxInvalidEofPdu is dead code (Engine::recvEof() always returns SUCCESS)";
 }
 
 void CfdpManagerTester::testRxInactivityTimeoutEvent() {
@@ -894,13 +898,13 @@ void CfdpManagerTester::testRxInactivityTimeoutEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Establish RX transaction with metadata
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
                           Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Find the transaction
@@ -932,13 +936,13 @@ void CfdpManagerTester::testRxAckLimitReachedEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Establish Class 2 RX transaction with metadata
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
                           Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Find the transaction
@@ -991,13 +995,13 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
     Cfdp::FileSize fileSize = 1000;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Establish Class 2 RX transaction with metadata
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
                           Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Find the transaction
@@ -1018,6 +1022,7 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
     this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, 100, testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Set acknak_count to one less than the limit
@@ -1048,7 +1053,7 @@ void CfdpManagerTester::testUnhandledPduInIdleStateEvent() {
     U32 checksum = 0x12345678;
     Cfdp::FileSize fileSize = 100;
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send EOF PDU with no prior Metadata PDU (no active transaction)
     // This is an unexpected PDU type in INIT state
@@ -1056,7 +1061,8 @@ void CfdpManagerTester::testUnhandledPduInIdleStateEvent() {
                      Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
-    // Verify UnhandledPduInIdleState event
+    // Verify UnhandledPduInIdleState event (a second event also fires for the orphan PDU)
+    ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_UnhandledPduInIdleState_SIZE(1);
 }
 
@@ -1071,7 +1077,7 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
     const char* dstFile = "test/ut/output/wrong_dest.bin";
     Cfdp::FileSize fileSize = 50;
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send Metadata PDU with wrong destination EID
     this->sendMetadataPdu(channelId, sourceEid, wrongDestEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -1175,7 +1181,7 @@ void CfdpManagerTester::testTxEarlyFinReceivedEvent() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
     Fw::Buffer finBuffer(finPduBuffer, sb.getSize());
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Directly call s2EarlyFin with valid FIN PDU buffer
     txn->s2EarlyFin(finBuffer);
@@ -1225,7 +1231,7 @@ void CfdpManagerTester::testTxNonFileDirectivePduReceivedEvent() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
     Fw::Buffer fdBuffer(pduBuffer, sb.getSize());
 
-    this->clearEvents();
+    this->clearHistory();
 
     // 5. Call sDispatchRecv directly (bypasses routing, triggers event check)
     txn->sDispatchRecv(fdBuffer, nullptr);
@@ -1281,6 +1287,7 @@ void CfdpManagerTester::testTxInvalidNakPduEvent() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
     Fw::Buffer nakBuffer(nakPduBuffer, sb.getSize());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // 6. Directly call s2Nak with NAK PDU containing zero segments
@@ -1357,6 +1364,7 @@ void CfdpManagerTester::testTxInvalidSegmentRequestsEvent() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, status);
     Fw::Buffer nakBuffer(nakPduBuffer, sb.getSize());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // 7. Directly call s2Nak with NAK PDU containing invalid segments
@@ -1388,7 +1396,6 @@ void CfdpManagerTester::testTxInactivityTimeoutEvent() {
     U32 localEid = this->component.getLocalEidParam();
 
     this->clearHistory();
-    this->clearEvents();
 
     // Create Class 2 TX transaction in S2 state
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender state
@@ -1414,6 +1421,7 @@ void CfdpManagerTester::testTxInactivityTimeoutEvent() {
     txn->m_inactivity_timer.setTimer(1);
     ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::RUNNING) << "Timer should be RUNNING before sTick()";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Call sTick() - will expire timer and emit event
@@ -1445,7 +1453,6 @@ void CfdpManagerTester::testTxAckLimitReachedEvent() {
     U32 localEid = this->component.getLocalEidParam();
 
     this->clearHistory();
-    this->clearEvents();
 
     // Step 1: Create Class 2 TX transaction
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
@@ -1476,6 +1483,7 @@ void CfdpManagerTester::testTxAckLimitReachedEvent() {
     txn->m_ack_timer.setTimer(1);
     ASSERT_EQ(txn->m_ack_timer.getStatus(), Timer::RUNNING) << "Timer should be RUNNING";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Step 6: Call sAckTimerTick() FIRST time - expires the timer
@@ -1510,7 +1518,6 @@ void CfdpManagerTester::testMaxTxTransactionsReachedEvent() {
     const char* destFile = "/dest/tx_limit.bin";
 
     this->clearHistory();
-    this->clearEvents();
 
     // Directly set the channel's commanded TX counter to the limit
     // This simulates having CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
@@ -1549,7 +1556,6 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
     Cfdp::FileSize fileSize = 50;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Start RX transaction to get a real transaction object
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -1560,6 +1566,7 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
     Transaction* txn = this->findTransaction(channelId, transactionSeq);
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Modify transaction to point to a file in a protected/nonexistent location
@@ -1585,7 +1592,7 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
     Fw::String nonexistentDir("/nonexistent/playback/dir");
     Fw::String destPath("/dest");
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Try to playback nonexistent directory
     this->sendCmd_PlaybackDirectory(0, 0, 0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
@@ -1655,6 +1662,7 @@ void CfdpManagerTester::testRxWriteFailedEvent() {
     // Close the file to cause write failure
     setup.txn->m_fd.close();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send FileData PDU - write will fail
@@ -1682,6 +1690,7 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
     // Close file to cause seek failure
     setup.txn->m_fd.close();
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send FileData PDU with non-zero offset requiring seek
@@ -1762,6 +1771,7 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     metadataPdu.serializeTo(sb);
     Fw::Buffer pduBuffer(tempBuffer, sb.getSize());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Directly call r2RecvMd -> parses MD (MetadataReceived) then moveFile fails (RxFileRenameFailed)
@@ -1808,7 +1818,6 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
     U32 localEid = this->component.getLocalEidParam();
 
     this->clearHistory();
-    this->clearEvents();
 
     // Create a Class 2 TX transaction (S2 sender state)
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
@@ -1830,6 +1839,7 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
         txn->m_fd.close();
     }
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Direct substate call: no async message is queued, so do NOT call doDispatch().
@@ -1870,7 +1880,6 @@ void CfdpManagerTester::testTxSendMetadataFailedEvent() {
     file.close();
 
     this->clearHistory();
-    this->clearEvents();
 
     // Class 1 TX transaction (S1 sender state).
     Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, TEST_CHANNEL_ID_0, srcFile, dstFile, fileSize,
@@ -1899,6 +1908,7 @@ void CfdpManagerTester::testTxSendMetadataFailedEvent() {
         txn->m_fd.close();
     }
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Direct substate call: no async message is queued, so do NOT call doDispatch().
@@ -1931,7 +1941,7 @@ void CfdpManagerTester::testTxSendMetadataFailedEvent() {
 void CfdpManagerTester::testRxTempFileCreatedEvent() {
     // RxTempFileCreated emitted when temporary file created for Class 2 RX without metadata
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send FileData PDU before Metadata PDU to trigger temp file creation
     U8 testData[32] = {1, 2, 3};
@@ -1940,6 +1950,7 @@ void CfdpManagerTester::testRxTempFileCreatedEvent() {
     component.doDispatch();
 
     // Verify RxTempFileCreated event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxTempFileCreated_SIZE(1);
 
     // Cleanup temp file (temp file format: <tmpDir>/<src_eid>:<seq_num>.tmp)
@@ -1977,7 +1988,6 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
     file.close();
 
     this->clearHistory();
-    this->clearEvents();
 
     // Establish a real RX transaction (placed on QueueId::RX with a valid chunk list)
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, "/ground/dangling_src.bin", testFile,
@@ -1995,6 +2005,7 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
     ASSERT_EQ(Os::File::OP_OK, fileStatus);
     ASSERT_TRUE(txn->m_fd.isOpen());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Recycle the transaction with the file still open -> DanglingFileHandleClosed
@@ -2002,6 +2013,7 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
     chan->recycleTransaction(txn);
 
     // Verify DanglingFileHandleClosed event
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DanglingFileHandleClosed_SIZE(1);
 
     // Cleanup
@@ -2023,6 +2035,7 @@ void CfdpManagerTester::testResetFreedTransactionEvent() {
     chan->freeTransaction(txn);
     ASSERT_EQ(QueueId::FREE, txn->m_flags.com.q_index);
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Calling finishTransaction() on the already-freed transaction must trip the double-free
@@ -2052,7 +2065,6 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     Cfdp::FileSize fileSize = 70000;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Create test file
     Os::File file;
@@ -2070,6 +2082,7 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     // Set up a Class 2 RX transaction using setupTestTransaction helper
     Transaction* txn =
         setupTestTransaction(TxnState::TXN_STATE_R2, channelId, srcFile, dstFile, fileSize, transactionSeq, sourceEid);
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
@@ -2133,7 +2146,6 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     Cfdp::FileSize fileSize = 131072;  // 128KB
 
     this->clearHistory();
-    this->clearEvents();
 
     // Create test file
     Os::File file;
@@ -2151,6 +2163,7 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     // Set up a Class 2 RX transaction using setupTestTransaction helper
     Transaction* txn =
         setupTestTransaction(TxnState::TXN_STATE_R2, channelId, srcFile, dstFile, fileSize, transactionSeq, sourceEid);
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
@@ -2208,7 +2221,7 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
 void CfdpManagerTester::testUnsupportedSendFileArgumentsEvent() {
     // UnsupportedSendFileArguments emitted when fileIn port called with non-zero offset/length
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Create a simple test file first
     const char* testFile = "test/ut/output/unsupported_args_test.bin";
@@ -2253,6 +2266,7 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     FW_ASSERT(chan != nullptr);
     chan->m_numCmdTx = CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN;
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     Fw::String source("test/ut/output/send_file_initiate_fail.bin");
@@ -2264,13 +2278,16 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     invoke_to_fileIn(0, source, dest, 0, 0);
 
     // Verify SendFileInitiateFail event
+    // txFile()'s slot-exhaustion path also emits MaxTxTransactionsReached (Engine.cpp),
+    // so the deterministic total is 2 (MaxTxTransactionsReached + SendFileInitiateFail).
+    ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_SendFileInitiateFail_SIZE(1);
 }
 
 void CfdpManagerTester::testInvalidChannelPollEvent() {
     // InvalidChannelPoll emitted when poll command with invalid index
 
-    this->clearEvents();
+    this->clearHistory();
 
     // Send PollDirectory with pollIndex out of range
     U8 invalidPollIndex = 255;  // Guaranteed to be >= CFDP_MAX_POLLING_DIR_PER_CHAN
@@ -2293,7 +2310,6 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
     Cfdp::EntityId destEid = this->component.getLocalEidParam();
 
     this->clearHistory();
-    this->clearEvents();
 
     // White-box: Get direct access to channel
     Channel* chan = this->component.m_engine->m_channels[channelId];
@@ -2312,6 +2328,7 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
     CfdpChunkWrapper* shouldBeNull = chan->findUnusedChunks(Direction::DIRECTION_RX);
     ASSERT_EQ(shouldBeNull, nullptr);
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Send FileData PDU for a new transaction
@@ -2414,6 +2431,7 @@ void CfdpManagerTester::testFailKeepFileMoveEvent() {
         << "move_dir parameter should have propagated to the component via paramSend + doDispatch";
 
     // Step 5: Clear event history and call handleNotKeepFile directly
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     component.m_engine->handleNotKeepFile(txn);
@@ -2450,6 +2468,7 @@ void CfdpManagerTester::testFailPduSerializationEvent() {
     OversizedTestPdu oversizedPdu(reportedSize, actualSize);
 
     // Clear event history before test
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Execute: Call serializeAndSendPdu
@@ -2463,6 +2482,7 @@ void CfdpManagerTester::testFailPduSerializationEvent() {
     ASSERT_EQ(Cfdp::Status::ERROR, status);
 
     // Verify: FailPduSerialization event was emitted with correct parameters
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailPduSerialization_SIZE(1);
     ASSERT_EVENTS_FailPduSerialization(0,                                               // Event index
                                        TEST_CHANNEL_ID_0,                               // Channel ID
@@ -2491,7 +2511,6 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     const char* dstFile = "/ground/poll_move_dst.bin";
 
     this->clearHistory();
-    this->clearEvents();
 
     // Step 1: Create a real source file (CWD is the component dir)
     Os::File testFile;
@@ -2538,6 +2557,7 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     Fw::String failDir = component.getFailDirParam(channelId);
     ASSERT_GT(failDir.length(), 0u) << "fail_dir default must be non-empty";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Step 7: Direct engine call (nothing queued -> no doDispatch)
@@ -2580,7 +2600,6 @@ void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     Cfdp::FileSize fileSize = 100;
 
     this->clearHistory();
-    this->clearEvents();
 
     // Step 1: Establish an RX transaction with a Metadata PDU
     this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
@@ -2622,12 +2641,14 @@ void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     ASSERT_TRUE(fd2.asHeader().hasSegmentMetadata())
         << "Modified FileData PDU header should report segment metadata present";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Step 6: Call recvFd directly - should log the event and return ERROR
     Cfdp::Status::T st = this->component.m_engine->recvFd(txn, fd2);
 
     // Verify FileDataSegmentMetadata event was emitted and ERROR returned
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileDataSegmentMetadata_SIZE(1);
     ASSERT_EQ(Cfdp::Status::ERROR, st);
 
@@ -2653,7 +2674,6 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     Fw::String dstDir("/dest");
 
     this->clearHistory();
-    this->clearEvents();
 
     // Initiate a real playback: opens the directory successfully and marks the slot busy.
     Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDir, dstDir, Cfdp::Class::CLASS_1,
@@ -2681,6 +2701,7 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     ASSERT_FALSE(pb->dir.isOpen());
     ASSERT_TRUE(pb->diropen) << "diropen must remain set so the scan attempts a read";
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Drive the 1Hz cycle that runs processPlaybackDirectory -> pb->dir.read() (fails).
@@ -2688,6 +2709,7 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     this->component.doDispatch();
 
     // Verify PlaybackDirReadFailed event was emitted.
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(1);
 }
 
@@ -2702,7 +2724,6 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
     Fw::String dstDir("/dest");
 
     this->clearHistory();
-    this->clearEvents();
 
     // Consume every playback slot on the channel. Each call opens the real
     // directory successfully, setting pb->busy = true for that slot.
@@ -2713,6 +2734,7 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
     }
 
     // Only assert on the event emitted by the final (failing) call.
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // All slots are now busy; this call must fail and emit the event.
@@ -2720,6 +2742,7 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
                                                                    Cfdp::Keep::DELETE, channelId, 0, TEST_GROUND_EID);
 
     ASSERT_EQ(status, Cfdp::Status::ERROR) << "playbackDir should fail when all slots are busy";
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirSlotUnavailable_SIZE(1);
 }
 
@@ -2796,6 +2819,7 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     metadataPdu.serializeTo(sb);
     Fw::Buffer pduBuffer(tempBuffer, sb.getSize());
 
+    // preserve port/tlm history from setup; reset only events
     this->clearEvents();
 
     // Directly call r2RecvMd -> parses MD (MetadataReceived), rename of the directory succeeds,

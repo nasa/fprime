@@ -46,7 +46,7 @@ void CfdpManagerTester::testSendFileZeroLength() {
     Fw::String dstFilename(dstFile);
 
     // Clear any previous events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command to transfer zero-length file
     // If the fix works, this will not crash (the key test)
@@ -69,6 +69,8 @@ void CfdpManagerTester::testSendFileZeroLength() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SENDFILE, 0, Fw::CmdResponse::OK);
 
     // Verify TxZeroLengthFile event was emitted with correct filename
+    // Total event count intentionally not pinned: running run1Hz cycles drives the
+    // transaction state machine, which emits additional state-dependent events.
     ASSERT_EVENTS_TxZeroLengthFile_SIZE(1);
     EventEntry_TxZeroLengthFile entry = this->eventHistory_TxZeroLengthFile->at(0);
     ASSERT_STREQ(zeroLengthFile, entry.filename.toChar()) << "Event should report the zero-length filename";
@@ -91,7 +93,7 @@ void CfdpManagerTester::testSendFileNonExistent() {
     Fw::String dstFilename(dstFile);
 
     // Clear any previous events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command to transfer nonexistent file
     this->sendCmd_SendFile(0,  // Instance
@@ -114,6 +116,8 @@ void CfdpManagerTester::testSendFileNonExistent() {
 
     // Transaction should emit TxFileOpenFailed event when it tries to open nonexistent file
     // This demonstrates graceful error handling - command accepted, transaction fails with event
+    // Total event count intentionally not pinned: running run1Hz cycles drives the
+    // transaction state machine, which emits additional state-dependent events.
     ASSERT_EVENTS_TxFileOpenFailed_SIZE(1);
     ASSERT_EVENTS_TxFileOpenFailed(0, Cfdp::Class::CLASS_1, this->component.getLocalEidParam(), 1, nonExistentFile,
                                    Os::File::DOESNT_EXIST);
@@ -130,7 +134,7 @@ void CfdpManagerTester::testStopPollDirNotActive() {
     U8 pollId = 0;
 
     // Clear any previous events
-    this->clearEvents();
+    this->clearHistory();
 
     // Attempt to stop a poll directory that was never started
     this->sendCmd_StopPollDirectory(0,  // Instance
@@ -145,6 +149,7 @@ void CfdpManagerTester::testStopPollDirNotActive() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_STOPPOLLDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // PollDirNotActive event should have been emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PollDirNotActive_SIZE(1);
     ASSERT_EVENTS_PollDirNotActive(0, channelId, pollId);
 }
@@ -168,7 +173,7 @@ void CfdpManagerTester::testStopPollDirActive() {
     ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Start a polling directory
     this->sendCmd_PollDirectory(0,  // Instance
@@ -182,7 +187,6 @@ void CfdpManagerTester::testStopPollDirActive() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // Clear for stop command
-    this->clearEvents();
     this->clearHistory();
 
     // Now stop the polling directory - this tests the fix
@@ -198,6 +202,7 @@ void CfdpManagerTester::testStopPollDirActive() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_STOPPOLLDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // Verify PollDirStopped event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PollDirStopped_SIZE(1);
     ASSERT_EVENTS_PollDirStopped(0, channelId, pollId);
 
@@ -217,7 +222,7 @@ void CfdpManagerTester::testSendFileInvalidChannel() {
     const char* dstFile = "dummy_dst.bin";
 
     // Clear any previous events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID (>= NumChannels)
     U8 invalidChannelId = Cfdp::NumChannels;  // First invalid channel
@@ -238,6 +243,7 @@ void CfdpManagerTester::testSendFileInvalidChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SENDFILE, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted with correct parameters
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -271,7 +277,7 @@ void CfdpManagerTester::testPlaybackDirectoryNominal() {
     file.close();
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send PlaybackDirectory command
     U8 channelId = 0;
@@ -292,6 +298,7 @@ void CfdpManagerTester::testPlaybackDirectoryNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // Verify PlaybackInitiated event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackInitiated_SIZE(1);
     ASSERT_EVENTS_PlaybackInitiated(0, srcDir);
 
@@ -309,7 +316,7 @@ void CfdpManagerTester::testPlaybackDirectoryInvalidChannel() {
     const char* dstDir = "test/ut/output/playback_dst";
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     U8 invalidChannelId = Cfdp::NumChannels;
@@ -330,6 +337,7 @@ void CfdpManagerTester::testPlaybackDirectoryInvalidChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -347,7 +355,7 @@ void CfdpManagerTester::testPlaybackDirectoryOpenFailed() {
     Os::FileSystem::removeDirectory(nonexistentDir);
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with nonexistent directory
     U8 channelId = 0;
@@ -368,6 +376,7 @@ void CfdpManagerTester::testPlaybackDirectoryOpenFailed() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_PLAYBACKDIRECTORY, 0, Fw::CmdResponse::EXECUTION_ERROR);
 
     // Verify PlaybackDirOpenFailed event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirOpenFailed_SIZE(1);
 }
 
@@ -393,7 +402,7 @@ void CfdpManagerTester::testPollDirectoryNominal() {
     ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send PollDirectory command
     this->sendCmd_PollDirectory(0,  // Instance
@@ -407,11 +416,11 @@ void CfdpManagerTester::testPollDirectoryNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // Verify PollDirInitiated event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PollDirInitiated_SIZE(1);
     ASSERT_EVENTS_PollDirInitiated(0, srcDir.toChar());
 
     // Clean up - stop the poll
-    this->clearEvents();
     this->clearHistory();
     this->sendCmd_StopPollDirectory(0, 0, channelId, pollId);
     this->component.doDispatch();
@@ -434,7 +443,7 @@ void CfdpManagerTester::testPollDirectoryInvalidChannel() {
     Fw::String dstDir("test/ut/output/poll_dst");
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     this->sendCmd_PollDirectory(0,  // Instance
@@ -450,6 +459,9 @@ void CfdpManagerTester::testPollDirectoryInvalidChannel() {
 
     // InvalidChannel event should be emitted for invalid channel
     // (or poll-specific invalid channel event if one exists)
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidChannel_SIZE(1);
+    ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
 
 void CfdpManagerTester::testPollDirectoryBusy() {
@@ -470,7 +482,7 @@ void CfdpManagerTester::testPollDirectoryBusy() {
     ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Start first poll on channel 0, pollId 0
     this->sendCmd_PollDirectory(0,  // Instance
@@ -484,7 +496,6 @@ void CfdpManagerTester::testPollDirectoryBusy() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::OK);
 
     // Clear for second attempt
-    this->clearEvents();
     this->clearHistory();
 
     // Attempt to start another poll on the same channel 0, pollId 0
@@ -496,11 +507,11 @@ void CfdpManagerTester::testPollDirectoryBusy() {
 
     // Command may be accepted or rejected depending on implementation
     // But PollDirBusy event should be emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PollDirBusy_SIZE(1);
     ASSERT_EVENTS_PollDirBusy(0, channelId, pollId);
 
     // Clean up - stop the first poll
-    this->clearEvents();
     this->clearHistory();
     this->sendCmd_StopPollDirectory(0, 0, channelId, pollId);
     this->component.doDispatch();
@@ -522,7 +533,7 @@ void CfdpManagerTester::testSetChannelFlowNominal() {
     Cfdp::Flow flowState = Cfdp::Flow::FROZEN;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send SetChannelFlow command
     this->sendCmd_SetChannelFlow(0,  // Instance
@@ -536,6 +547,7 @@ void CfdpManagerTester::testSetChannelFlowNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SETCHANNELFLOW, 0, Fw::CmdResponse::OK);
 
     // Verify SetFlowState event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_SetFlowState_SIZE(1);
     ASSERT_EVENTS_SetFlowState(0, channelId, flowState);
 }
@@ -549,7 +561,7 @@ void CfdpManagerTester::testSetChannelFlowInvalidChannel() {
     Cfdp::Flow flowState = Cfdp::Flow::FROZEN;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     this->sendCmd_SetChannelFlow(0,  // Instance
@@ -563,6 +575,7 @@ void CfdpManagerTester::testSetChannelFlowInvalidChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SETCHANNELFLOW, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -592,7 +605,6 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     file.write(testData, sizeToWrite);
     file.close();
 
-    this->clearEvents();
     this->clearHistory();
 
     // Start a file transfer to create an active transaction
@@ -613,7 +625,6 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     Cfdp::TransactionSeq transactionSeq = 1;  // First transaction
 
     // Clear events before suspend command
-    this->clearEvents();
     this->clearHistory();
 
     // Suspend the active transaction
@@ -628,10 +639,10 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::OK);
 
     // TransactionSuspended event emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TransactionSuspended_SIZE(1);
 
     // Clear for resume test
-    this->clearEvents();
     this->clearHistory();
 
     // Resume the suspended transaction
@@ -645,6 +656,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::OK);
 
     // TransactionResumed event emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TransactionResumed_SIZE(1);
 
     // Clean up test file
@@ -661,7 +673,7 @@ void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
     Cfdp::EntityId entityId = 100;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
@@ -676,6 +688,7 @@ void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
                         Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -691,7 +704,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNotFound() {
     Cfdp::EntityId entityId = 100;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Attempt to suspend nonexistent transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
@@ -706,6 +719,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNotFound() {
                         Fw::CmdResponse::EXECUTION_ERROR);
 
     // TransactionNotFound event should be emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TransactionNotFound_SIZE(1);
     ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
 }
@@ -735,7 +749,6 @@ void CfdpManagerTester::testCancelTransactionNominal() {
     file.write(testData, sizeToWrite);
     file.close();
 
-    this->clearEvents();
     this->clearHistory();
 
     // Start a file transfer to create an active transaction
@@ -756,7 +769,6 @@ void CfdpManagerTester::testCancelTransactionNominal() {
     Cfdp::TransactionSeq transactionSeq = 1;
 
     // Clear events before cancel command
-    this->clearEvents();
     this->clearHistory();
 
     // Cancel the active transaction
@@ -771,6 +783,7 @@ void CfdpManagerTester::testCancelTransactionNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::OK);
 
     // TransactionCanceled event emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TransactionCanceled_SIZE(1);
 
     // Clean up test file
@@ -787,7 +800,7 @@ void CfdpManagerTester::testCancelTransactionInvalidChannel() {
     Cfdp::EntityId entityId = 100;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     this->sendCmd_CancelTransaction(0,  // Instance
@@ -801,6 +814,7 @@ void CfdpManagerTester::testCancelTransactionInvalidChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -830,7 +844,6 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
     file.write(testData, sizeToWrite);
     file.close();
 
-    this->clearEvents();
     this->clearHistory();
 
     // Start a file transfer to create an active transaction
@@ -851,7 +864,6 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
     Cfdp::TransactionSeq transactionSeq = 1;
 
     // Clear events before abandon command
-    this->clearEvents();
     this->clearHistory();
 
     // Abandon the active transaction
@@ -866,6 +878,8 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::OK);
 
     // TransactionAbandoned event emitted
+    // Total event count intentionally not pinned: abandoning an active transaction
+    // cascades additional state-dependent transaction lifecycle events.
     ASSERT_EVENTS_TransactionAbandoned_SIZE(1);
 
     // Clean up test file
@@ -882,7 +896,7 @@ void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
     Cfdp::EntityId entityId = 100;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send command with invalid channel ID
     this->sendCmd_AbandonTransaction(0,  // Instance
@@ -896,6 +910,7 @@ void CfdpManagerTester::testAbandonTransactionInvalidChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::VALIDATION_ERROR);
 
     // Verify InvalidChannel event was emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannel_SIZE(1);
     ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels);
 }
@@ -912,7 +927,7 @@ void CfdpManagerTester::testResetCountersSingleChannel() {
     U8 channelId = 0;
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send ResetCounters command for specific channel
     this->sendCmd_ResetCounters(0,  // Instance
@@ -926,6 +941,7 @@ void CfdpManagerTester::testResetCountersSingleChannel() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_RESETCOUNTERS, 0, Fw::CmdResponse::OK);
 
     // ResetCounters event emitted
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ResetCounters_SIZE(1);
     ASSERT_EVENTS_ResetCounters(0, channelId);
 }
@@ -938,7 +954,7 @@ void CfdpManagerTester::testResetCountersAllChannels() {
     U8 allChannelsId = 0xFF;  // Special value for "all channels"
 
     // Clear events
-    this->clearEvents();
+    this->clearHistory();
 
     // Send ResetCounters command for all channels
     this->sendCmd_ResetCounters(0,  // Instance
@@ -952,6 +968,7 @@ void CfdpManagerTester::testResetCountersAllChannels() {
     ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_RESETCOUNTERS, 0, Fw::CmdResponse::OK);
 
     // ResetCounters event emitted with 0xFF
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_ResetCounters_SIZE(1);
     ASSERT_EVENTS_ResetCounters(0, allChannelsId);
 }
