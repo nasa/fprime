@@ -113,7 +113,9 @@ where
   unsafeUse(p, va) and
   uncheckedFlow(p, va) and
   not checkingAccess(p, va) and
-  not p.getFunction().isStatic()
+  // Skip internal-linkage (file-scope static) functions; static member
+  // functions are part of a class's API and are still checked.
+  (p.getFunction() instanceof MemberFunction or not p.getFunction().isStatic())
 select va,
   "Parameter " + p.getName() + " is " + useDescription(p) +
     " without first being checked (e.g. with FW_ASSERT or a condition)."
