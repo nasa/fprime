@@ -230,6 +230,12 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
         fprime_target_implementations("${TARGET_NAME}" ${CHOOSES_IMPLEMENTATIONS})
     elseif(TYPE STREQUAL "Library")
         add_library("${TARGET_NAME}" ${FPRIME_CMAKE_ADD_OPTIONS} ${SOURCES})
+        if (NOT (INTERFACE IN_LIST FPRIME_CMAKE_ADD_OPTIONS) AND NOT SOURCES AND NOT AUTOCODER_INPUTS)
+            fprime_cmake_warning(
+                "F Prime library target '${TARGET_NAME}' has no SOURCES or AUTOCODER_INPUTS.\n"
+                "This may indicate an uninitialized submodule or misconfigured module."
+            )
+        endif()
     else()
         fprime_cmake_fatal_error("Cannot register compilation target of type ${TYPE}")
     endif()

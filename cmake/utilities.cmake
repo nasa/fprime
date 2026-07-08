@@ -569,6 +569,39 @@ function(fprime_cmake_warning)
 endfunction(fprime_cmake_warning)
 
 ####
+# Function `fprime_check_uninitialized_subdirectory`:
+#
+# Warn when a path added via add_fprime_subdirectory looks like an uninitialized git submodule.
+# See nasa/fprime#5054.
+#
+# - **SOURCE_DIR:** directory about to be added to the build
+####
+function(fprime_check_uninitialized_subdirectory SOURCE_DIR)
+    if (NOT IS_DIRECTORY "${SOURCE_DIR}")
+        return()
+    endif()
+    # Uninitialized submodule checkout: .git exists as a file (gitdir pointer), not a directory.
+    if (EXISTS "${SOURCE_DIR}/.git" AND NOT IS_DIRECTORY "${SOURCE_DIR}/.git")
+        fprime_cmake_warning(
+            "Submodule path '${SOURCE_DIR}' appears uninitialized.\n"
+            "Run: git submodule update --init --recursive"
+        )
+        return()
+    endif()
+    # Empty directory with no CMakeLists.txt is another common uninitialized submodule symptom.
+    if (NOT EXISTS "${SOURCE_DIR}/CMakeLists.txt")
+        file(GLOB SUBDIR_CONTENTS RELATIVE "${SOURCE_DIR}" "${SOURCE_DIR}/*")
+        list(LENGTH SUBDIR_CONTENTS CONTENT_COUNT)
+        if (CONTENT_COUNT EQUAL 0)
+            fprime_cmake_warning(
+                "Directory '${SOURCE_DIR}' is empty and may be an uninitialized submodule.\n"
+                "Run: git submodule update --init --recursive"
+            )
+        endif()
+    endif()
+endfunction(fprime_check_uninitialized_subdirectory)
+
+####
 # Function `fprime_cmake_status`:
 #
 # Prints a status message to the user that can be quieted with FPRIME_CMAKE_QUIET=ON.

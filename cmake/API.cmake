@@ -119,6 +119,7 @@ endmacro()
 function(add_fprime_subdirectory FP_SOURCE_DIR)
     get_module_name("${FP_SOURCE_DIR}")
     set(FPRIME_CURRENT_MODULE "${MODULE_NAME}")
+    fprime_check_uninitialized_subdirectory("${FP_SOURCE_DIR}")
 
     # Unset all variables that carry special meaning as it is dangerous to pass them through
     foreach (VARIABLE IN ITEMS SOURCE_FILES MOD_DEPS UT_SOURCE_FILES UT_MOD_DEPS EXECUTABLE_NAME)
