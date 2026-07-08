@@ -2,11 +2,6 @@ name: "CodeQL JPL Coding Standard - Errors and Warnings"
 
 disable-default-queries: true
 
-# Exclude generated code: autocoded C++ in build caches is not hand-maintained,
-# so JPL standard alerts there are not actionable in this repository
-paths-ignore:
-  - "**/build-fprime-*/**"
-
 packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
   - codeql/cpp-queries:JPL_C
@@ -28,3 +23,9 @@ query-filters:
         - cpp/jpl-c/use-of-assertions-non-boolean
         - cpp/jpl-c/use-of-assertions-side-effect
         - cpp/jpl-c/checking-parameter-values
+  # Temporarily moved to jpl-standard-known-issues.yml (with build paths
+  # excluded) until the autocoder emits boolean assertion expressions.
+  # See https://github.com/nasa/fpp/issues/1030
+  - exclude:
+      id:
+        - cpp/fprime/jpl-c/use-of-assertions-non-boolean
