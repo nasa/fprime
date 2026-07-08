@@ -1,8 +1,8 @@
-name: "CodeQL JPL Coding Standard - Known Build System Issues"
+name: "CodeQL JPL Coding Standard - Known Auto-Code Issues"
 
-# Rules in this run are known to be violated by generated code in the build
+# Rules in this run are known to be violated by auto-generated code in the build
 # directories, so they run here with build paths excluded instead of in the
-# standard packs. As autocoder issues are found, move the offending rule from
+# standard packs. As auto-code issues are found, move the offending rule from
 # its standard pack into this run; once the autocoder is fixed, move it back.
 
 disable-default-queries: true

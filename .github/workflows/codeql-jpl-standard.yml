@@ -33,7 +33,7 @@ jobs:
       fail-fast: false
       matrix:
         language: [ 'cpp' ]
-        config-file: ['jpl-standard-pack-1.yml', 'jpl-standard-pack-2.yml', 'jpl-standard-pack-3.yml', 'jpl-standard-known-issues.yml']
+        config-file: ['jpl-standard-pack-1.yml', 'jpl-standard-pack-2.yml', 'jpl-standard-pack-3.yml', 'jpl-standard-known-autocode-issues.yml']
 
     steps:
     - name: Checkout repository

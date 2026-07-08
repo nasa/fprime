@@ -23,7 +23,7 @@ query-filters:
         - cpp/jpl-c/use-of-assertions-non-boolean
         - cpp/jpl-c/use-of-assertions-side-effect
         - cpp/jpl-c/checking-parameter-values
-  # Temporarily moved to jpl-standard-known-issues.yml (with build paths
+  # Temporarily moved to jpl-standard-known-autocode-issues.yml (with build paths
   # excluded) until the autocoder emits boolean assertion expressions.
   # See https://github.com/nasa/fpp/issues/1030
   - exclude:
