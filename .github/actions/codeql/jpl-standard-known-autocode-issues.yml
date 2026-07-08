@@ -12,6 +12,10 @@ disable-default-queries: true
 paths-ignore:
   - "**/build-fprime-*/**"
 
+packs:
+  # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
+  - codeql/cpp-queries:JPL_C
+
 queries:
   - uses: ./.github/codeql/fprime-queries
 
@@ -27,3 +31,8 @@ query-filters:
         # assignment/increment operators, so only the genuine format() findings
         # remain. See https://github.com/nasa/fpp/issues/1031
         - cpp/fprime/jpl-c/checking-return-values
+        # The autocoder emits conditional-compilation directives (include
+        # guards, #ifdef) in generated headers, which trip the Rule 20
+        # "Conditional compilation" check. It runs here (build paths excluded)
+        # so it guards only hand-written sources.
+        - cpp/jpl-c/preprocessor-use-ifdef
