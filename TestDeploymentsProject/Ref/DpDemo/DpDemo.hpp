@@ -9,6 +9,8 @@
 
 #include "Ref/DpDemo/DpDemoComponentAc.hpp"
 
+#include "config/ProcTypeEnumAc.hpp"
+
 namespace Ref {
 
 class DpDemo final : public DpDemoComponentBase {
@@ -49,7 +51,8 @@ class DpDemo final : public DpDemoComponentBase {
     void Dp_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                        U32 cmdSeq,           //!< The command sequence number
                        DpDemo_DpReqType reqType,
-                       U32 priority) override;
+                       U32 priority,
+                       Fw::DpCfg::ProcType proc) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -68,6 +71,7 @@ class DpDemo final : public DpDemoComponentBase {
     DpDemo_ColorEnum selectedColor;
     U32 numRecords;
     U32 dpPriority;
+    Fw::DpCfg::ProcType dpProc;
     DpContainer dpContainer;
     bool dpInProgress;
 };

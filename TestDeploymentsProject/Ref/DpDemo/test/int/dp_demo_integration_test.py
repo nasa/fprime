@@ -8,7 +8,9 @@ def test_dp_send(fprime_test_api):
     """Test that DPs are generated and received on the ground"""
 
     # Run Dp command to send a data product
-    fprime_test_api.send_and_assert_command("Ref.dpDemo.Dp", ["IMMEDIATE", 1])
+    fprime_test_api.send_and_assert_command(
+        "Ref.dpDemo.Dp", ["IMMEDIATE", 1, "PROC_TYPE_NONE"]
+    )
     # Wait for DpStarted event
     result = fprime_test_api.await_event("Ref.dpDemo.DpStarted", start=0, timeout=5)
     assert result
@@ -29,7 +31,9 @@ def test_dp_decode(fprime_test_api):
     """Test that we can decode DPs on the ground via DataProductDecoder (`fprime-dp decode`)"""
 
     # Run Dp command to send a data product
-    fprime_test_api.send_and_assert_command("Ref.dpDemo.Dp", ["IMMEDIATE", 1])
+    fprime_test_api.send_and_assert_command(
+        "Ref.dpDemo.Dp", ["IMMEDIATE", 1, "PROC_TYPE_NONE"]
+    )
     # Check for FileWritten event and capture the name of the file that was created
     file_result = fprime_test_api.await_event(
         "DataProducts.dpWriter.FileWritten", start=0, timeout=10

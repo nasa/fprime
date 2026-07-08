@@ -25,6 +25,7 @@
 #include "Svc/Subtopologies/ComCcsds/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/DataProducts/SubtopologyTopologyDefs.hpp"
 #include "Svc/Subtopologies/FileHandling/SubtopologyTopologyDefs.hpp"
+// #include "Svc/Subtopologies/DpCompression/SubtopologyTopologyDefs.hpp"
 
 /**
  * \brief required ping constants
@@ -84,6 +85,7 @@ struct TopologyState {
     ComCcsds::SubtopologyState comCcsds;          //!< Subtopology state for ComCcsds
     DataProducts::SubtopologyState dataProducts;  //!< Subtopology state for DataProducts
     FileHandling::SubtopologyState fileHandling;  //!< Subtopology state for FileHandling
+    // DpCompression::SubtopologyState dpCompression;//!< Subtopology state for DpCompression
 };
 
 namespace PingEntries = ::PingEntries;

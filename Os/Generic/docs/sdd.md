@@ -4,7 +4,8 @@ This package provides generic implementations of various OSAL modules. These are
 
 Available implementations:
 
-1. [Os::PriorityQueue](#ospriorityqueue)
+1. [Os::PriorityQueue](#ospriorityqueue) - Heap-based priority queue implementation using Os::Mutex for thread safety
+2. [Os::PriorityMemQueue](#osprioritymemqueue) - ISR-safe, heap-based priority queue with per-priority memory pools and configuration
 
 
 ## Os::PriorityQueue
@@ -15,6 +16,32 @@ For memory protection, Os::PriorityQueue delegates to Os::Mutex and Os::Conditio
 
 > [!WARNING]
 > This Queue implementation is insufficient to be used for sending messages in ISR context due to the use of Os::Mutex as mentioned in above.
+
+**Priority Ordering**: Larger priority numbers have higher priority than lower priority numbers (i.e., priority 0 is the lowest priority, there is no upper bound on priority value).
+
+### Requirements
+
+The requirements for `Os::Generic::PriorityQueue` are as follows:
+
+Requirement | Description | Verification Method
+----------- | ----------- | -------------------
+PQ-001 | The PriorityQueue shall implement the Os::QueueInterface for compatibility with F´ components | Inspection, Unit Test
+PQ-002 | The PriorityQueue shall support message prioritization with higher priority messages dequeued before lower priority messages | Unit Test
+PQ-003 | The PriorityQueue shall allocate memory dynamically using new/delete during create and destruction | Inspection
+PQ-004 | The PriorityQueue shall use a single shared memory pool for all message priorities | Inspection
+PQ-005 | The PriorityQueue shall support blocking and non-blocking send operations | Unit Test
+PQ-006 | The PriorityQueue shall support blocking and non-blocking receive operations | Unit Test
+PQ-007 | The PriorityQueue shall use Os::Mutex for thread-safe access to queue data structures | Inspection
+PQ-008 | The PriorityQueue shall use Os::ConditionVariable to implement blocking send/receive | Inspection, Unit Test
+PQ-009 | The PriorityQueue shall track high water marks for message queue depth | Unit Test
+PQ-010 | The PriorityQueue shall validate message sizes against the configured maximum | Unit Test
+PQ-011 | The PriorityQueue shall use the F´ memory allocator registry for all dynamic allocations | Inspection
+PQ-012 | The PriorityQueue shall return appropriate error codes for queue full, empty, and size mismatch conditions | Unit Test
+PQ-013 | The PriorityQueue shall use a max-heap data structure for O(log n) priority ordering | Inspection
+PQ-014 | The PriorityQueue shall NOT be ISR-safe due to mutex usage | Inspection
+
+> [!NOTE]
+> Os::PriorityQueue is simpler than Os::PriorityMemQueue but lacks ISR safety and per-priority configuration capabilities.
 
 ### Os::PriorityQueue Key Algorithms
 
@@ -37,5 +64,263 @@ When an index is pushed into this structure, it starts at the first unused eleme
 When an index is pulled from this structure, the root is removed as it is the highest priority data structure. The last leaf of the tree is elevated to the root and `heapify` is then called to restore the max-heap invariant of the data structure.
 
 `heapify` starts at the newly ill-ordered root. It iteratively swaps this node with the highest-priority child until this node is the largest of the three (parent, left child, and right child) or until this node is swapped into a leaf position without children. The max-heap invariant is now restored.
+
+
+## Os::PriorityMemQueue
+
+Os::PriorityMemQueue is an ISR-safe and SMP-safe, priority-based memory queue implementation for F´ using lock-free atomic circular buffers (`AtomicQueue`). Each priority level has its own dedicated `AtomicQueue`, providing O(1) enqueue and dequeue without mutexes or interrupt disable.
+
+The key components are:
+
+1. **AtomicQueue** - One lock-free MPMC circular buffer per priority level for ISR-safe + SMP-safe message storage
+2. **Atomic Priority Mask** - Lock-free bitmask tracking which priorities are enabled
+3. **Counting Semaphore** - Notification mechanism for blocking receive operations
+4. **PriorityMemQueue** - Main queue implementation that implements Os::QueueInterface
+
+### Requirements
+
+The requirements for `Os::Generic::PriorityMemQueue` are as follows:
+
+Requirement | Description | Verification Method
+----------- | ----------- | -------------------
+PMQ-001 | The PriorityMemQueue shall implement the Os::QueueInterface for compatibility with F´ components | Inspection, Unit Test
+PMQ-002 | The PriorityMemQueue shall support up to 32 priority levels | Inspection, Unit Test
+PMQ-003 | The PriorityMemQueue shall allocate memory pools only for configured priority levels (sparse allocation) | Inspection, Unit Test
+PMQ-004 | The PriorityMemQueue shall support per-priority configuration of message size and depth | Inspection, Unit Test
+PMQ-005 | The PriorityMemQueue shall support blocking and non-blocking send operations | Unit Test
+PMQ-006 | The PriorityMemQueue shall support blocking and non-blocking receive operations | Unit Test
+PMQ-007 | The PriorityMemQueue shall dequeue messages in priority order, with the highest enabled priority serviced first | Unit Test
+PMQ-008 | The PriorityMemQueue shall support dynamic enable/disable of individual priority levels | Unit Test
+PMQ-009 | The PriorityMemQueue shall be configurable to be ISR-safe for message enqueue and dequeue operations | Platform dependent
+PMQ-010 | The PriorityMemQueue shall track high water marks for message queue depth | Unit Test
+PMQ-011 | The PriorityMemQueue shall validate message sizes against priority-specific limits | Unit Test
+PMQ-012 | The PriorityMemQueue shall use the F´ memory allocator registry for all dynamic allocations | Inspection
+PMQ-013 | The PriorityMemQueue shall return appropriate error codes for queue full, empty, and invalid priority conditions | Unit Test
+PMQ-014 | The PriorityMemQueue shall provide per-priority O(1) enqueue and dequeue operations | Inspection
+
+> [!WARNING]
+> Send/receive operations from ISR context must not use blocking behavior 
+
+> [!NOTE]
+> Os::PriorityMemQueue provides ISR safety and per-priority configuration at the cost of increased complexity and memory usage compared to Os::PriorityQueue.
+
+### AtomicQueue-Based Architecture
+
+#### Overview
+
+`PriorityMemQueue` uses `AtomicQueue` — a lock-free MPMC (multi-producer, multi-consumer) circular buffer — for message storage at each priority level. This provides:
+- **ISR Safety**: Enqueue and dequeue use only atomic CAS operations; no interrupt disable or mutex
+- **SMP Safety**: All position tracking uses `std::atomic` with acquire/release ordering on slot sequence numbers
+- **Generic**: No OS-specific APIs; works on any platform providing `std::atomic`
+
+#### Per-Priority AtomicQueues
+
+Each priority level has its own dedicated `AtomicQueue`, allocated via the F´ memory allocator:
+
+```cpp
+struct PriorityMemQueueHandle {
+    I8 m_priorityMap[32];                  // Priority→index mapping (-1 = unused)
+    Types::AtomicQueue* m_atomicQueues;    // Array sized to configured priorities
+    FwSizeType m_numActivePriorities;      // Number of configured priorities
+    std::atomic<U32> m_priorityMask;       // Bit mask of enabled priorities
+    Os::CountingSemaphore* m_notEmptySem;  // Semaphore for blocking receive
+    std::atomic<U32>* m_highWaterMarks;    // Per-priority peak depth
+};
+```
+
+#### Send Flow
+
+1. Look up priority in sparse map: `index = m_priorityMap[priority]`
+2. Resolve to `AtomicQueue` at mapped index (or fallback to default priority 0)
+3. Enqueue via lock-free CAS: `atomicQueue->enqueue(buffer, size)`
+4. Update per-priority high water mark
+5. Post semaphore to wake receiver: `m_notEmptySem->post()`
+
+#### Receive Flow
+
+1. Load enabled priority mask with `memory_order_acquire`
+2. Scan from highest to lowest priority:
+   - Check if priority is enabled in bitmask (skips disabled priorities)
+   - Look up priority in sparse map: `index = m_priorityMap[priority]`
+   - If priority not configured (`index < 0`), skip to next
+   - Get `AtomicQueue` at mapped index
+   - Call `getSize()` as a cheap pre-filter (2 relaxed loads)
+   - If `getSize() > 0`, attempt `dequeue()` via lock-free CAS
+   - On success, return message; on failure (MPSC contention), continue to next priority
+3. If no message found:
+   - BLOCKING: `wait()` on semaphore, then re-scan
+   - NONBLOCKING: return `EMPTY`
+
+Liveness is guaranteed by the semaphore — a spurious `getSize()` miss simply causes a re-scan after the next semaphore post.
+
+#### Sparse Priority Optimization
+
+When using non-consecutive priorities (e.g., {0, 15, 31}), allocating arrays sized to `maxPriority + 1` wastes significant memory on unused entries.
+
+To mitigate that, the priority queue uses a sparse priority map:
+- `m_priorityMap[32]`: Maps priority value → array index (-1 for unconfigured)
+- `m_atomicQueues`: Sized to `numActivePriorities` (not `maxPriority + 1`)
+- `m_highWaterMarks`: Sized to `numActivePriorities`
+
+**Memory Savings Example** (3 priorities: {0, 15, 31}):
+- Before: 32 × 84 bytes = 2,688 bytes per queue
+- After: 3 × 84 bytes + 32 bytes (map) = 284 bytes per queue
+- Savings: 89% reduction (2,404 bytes saved)
+
+For deployments with many queues using sparse priorities, this approach significantly reduces memory footprint and reduces the complexity of understanding how adding new queue priorities will
+impact memory use (each priority adds 84 bytes + message memory).
+
+Performance Impact: Negligible (<6 cycles for write operations, <2% overhead for worst case receive)
+
+### PriorityMemQueue Overview
+
+`PriorityMemQueue` is the main class that implements `Os::QueueInterface`. It provides a multi-priority message queue with configurable ISR-safe operations and flexible per-priority configuration.
+
+**Priority Ordering**: Larger priority numbers have higher priority than lower priority numbers (i.e., priority 0 is the lowest priority, priority 31 is the highest).
+
+**Key Features**:
+- **Multi-Priority Support**: Up to 32 independent priority levels (0-31)
+- **Sparse Priority Allocation**: Memory allocated only for configured priorities, reducing waste for non-consecutive priority values
+- **Per-Priority Memory Pools**: Each configured priority has dedicated buffer allocation 
+- **ISR-Safe Operations**: Non-blocking send/receive can be called from interrupt context (platform-dependent)
+- **Flexible Configuration**: Static configuration allows per-component, per-priority sizing
+- **Priority Management**: Runtime enable/disable of individual priority levels
+- **Blocking Support**: Optional blocking behavior for send and receive operations using counting semaphores
+- **High Water Mark Tracking**: Monitors peak queue usage for system analysis
+
+#### Synchronization
+
+**PriorityMemQueue** uses a counting semaphore for blocking receive operations:
+- **m_notEmpty**: Semaphore count represents number of messages available across all priorities
+  - Initialized to 0 (queue starts empty)
+  - `post()` called after successful enqueue to signal message availability
+  - `wait()` blocks receiver when count reaches 0 (queue empty)
+  - After `wait()` returns, receiver dequeues from highest priority with messages
+
+A semaphore is used (as opposed to a condition variable & mutex) because:
+- Semaphores are ISR safe (true for most RTOSs, including VxWorks, FreeRTOS, RTEMS, Greenhills Integrity, etc.)
+- Simplifies synchronization 
+    - No need for separate mutex acquisition before checking queue state
+    - No double-check pattern required to prevent lost notifications
+    - Semaphore count intrinsically tracks message availability
+
+### Configuration 
+
+The static configuration system allows per-component, per-priority queue sizing. This enables fine-grained memory allocation tailored to each component's messaging patterns.
+
+If a configuration is not provided for a given queue instance ID, then create() will use the message max size and depth arguments for priority Os::Queue::DEFAULT_PRIORITY (0).
+
+#### Using `priority_buffer_analyzer.py` for Message Size Calculation
+
+F´ provides `priority_buffer_analyzer.py` to automatically calculate the maximum message sizes for each priority level based on the topology's port connections. This eliminates manual calculation and ensures correct buffer sizing.
+
+**Script Location**: `${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/scripts/priority_buffer_analyzer.py`
+
+**Integration Steps**:
+
+1. **Add CMake hook in Deployment CMakeLists.txt**:
+   ```cmake
+   # Add hook for port priority analyzer
+   set(PRIORITY_BUFFER_HEADER_DIR "${CMAKE_BINARY_DIR}/${FPRIME_CURRENT_MODULE}/Top")
+   set(PRIORITY_BUFFER_HEADER "${PRIORITY_BUFFER_HEADER_DIR}/PriorityBufferSizesAc.hpp")
+   
+   add_custom_command(
+       OUTPUT "${PRIORITY_BUFFER_HEADER}"
+       COMMAND ${CMAKE_COMMAND} -E make_directory "${PRIORITY_BUFFER_HEADER_DIR}"
+       COMMAND ${PYTHON}
+           "${FPRIME_FRAMEWORK_PATH}/cmake/autocoder/scripts/priority_buffer_analyzer.py"
+           --build-dir "${CMAKE_BINARY_DIR}"
+           --topology-path "${PRIORITY_BUFFER_HEADER_DIR}"
+           --output "${PRIORITY_BUFFER_HEADER}"
+       COMMENT "Generating PriorityBufferSizesAc.hpp for ${FPRIME_CURRENT_MODULE} deployment"
+       VERBATIM
+   )
+   
+   add_custom_target(priority_buffer_header DEPENDS "${PRIORITY_BUFFER_HEADER}")
+   
+   # Ensure priority buffer header is generated before building deployment
+   add_dependencies(${FPRIME_CURRENT_MODULE} priority_buffer_header)
+   ```
+
+2. **Include generated header in Main.cpp**:
+   ```cpp
+   #include <Deployment/Top/PriorityBufferSizesAc.hpp>
+   ```
+
+3. **Use generated constants for configuration**:
+   ```cpp
+   // The script analyzes topology and generates constants per component/priority
+   Os::Generic::PriorityMemQueue::QueuePriorityConfig cmdDispPriorityConfigs[] = {
+       {Os::Generic::Queue::DEFAULT_PRIORITY, 
+        PriorityBufferConfig::F_Prime_Svc_CmdDispatcher::PRIORITY_0, 10},
+       {2, PriorityBufferConfig::F_Prime_Svc_CmdDispatcher::PRIORITY_2, 20},
+       {3, PriorityBufferConfig::F_Prime_Svc_CmdDispatcher::PRIORITY_3, 20},
+       {10, PriorityBufferConfig::F_Prime_Svc_CmdDispatcher::PRIORITY_10, 4},
+   };
+   
+   Os::Generic::PriorityMemQueue::QueueConfig queueConfigs[] = {
+       {Deployment::InstanceIds::CdhCore_cmdDisp, 
+        FW_NUM_ARRAY_ELEMENTS(cmdDispPriorityConfigs), 
+        &cmdDispPriorityConfigs[0]},
+   };
+   
+   Os::Generic::PriorityMemQueue::configure(queueConfigs, 
+                                            FW_NUM_ARRAY_ELEMENTS(queueConfigs), 
+                                            false, 
+                                            allocatorId);
+   ```
+
+**Generated Header Structure**:
+
+The script generates `PriorityBufferSizesAc.hpp` with constants for each component and priority level:
+```cpp
+namespace PriorityBufferConfig {
+    constexpr FwSizeType DATA_OFFSET = sizeof(FwEnumStoreType) + sizeof(FwIndexType);
+    
+    namespace F_Prime_Svc_CmdDispatcher {
+        // Maximum size for priority 0 messages (Cmd port)
+        static constexpr FwSizeType PRIORITY_0 = 
+            Fw::CmdPortBuffer::CAPACITY + DATA_OFFSET;
+        
+        // Maximum size for priority 2 messages (CmdResponse port)
+        static constexpr FwSizeType PRIORITY_2 = 
+            Fw::CmdResponsePortBuffer::CAPACITY + DATA_OFFSET;
+        // ... etc
+    }
+}
+```
+
+**How It Works**:
+1. Script parses topology dictionaries to identify all port connections by priority
+2. For each component and priority, finds maximum serialized size across all port types
+3. Adds `DATA_OFFSET` (priority + port ID overhead) to each size
+4. Generates namespaced constants for use in configuration
+
+**Benefits**:
+- Eliminates manual message size calculations
+- Automatically accounts for port buffer overhead (`DATA_OFFSET`)
+- Updates automatically when topology or port types change
+- Reduces risk of undersized buffers causing runtime assertions 
+
+### ISR Safety
+
+The `AtomicQueue`-based implementation provides ISR safety through:
+
+1. **Lock-free enqueue/dequeue**: Uses atomic CAS on slot sequence numbers; no mutex, no interrupt disable
+2. **Atomic priority mask**: `std::atomic<U32>` with acquire/release ordering — no spinlock needed
+3. **Non-blocking path**: With `NONBLOCKING`, send and receive never call any blocking OS primitive
+
+**ISR Usage Pattern**:
+```cpp
+// From ISR context - use NONBLOCKING
+queue.send(data, size, priority, QueueInterface::BlockingType::NONBLOCKING);
+queue.receive(dest, capacity, QueueInterface::BlockingType::NONBLOCKING, size, pri);
+```
+
+> [!WARNING]
+> **Blocking operations** (`BlockingType::BLOCKING`) use a counting semaphore (`post()`/`wait()`) and **must NOT** be called from ISR context. Semaphore blocking from ISR context is undefined behavior on most RTOSs.
+
+> [!NOTE]
+> ISR safety of `post()` (called by `send()`) depends on the platform's counting semaphore implementation. Verify `Os_CountingSemaphore` ISR safety for your target platform before using `send()` from ISR context.
 
 

@@ -124,6 +124,9 @@ module DataProducts{
         @ Input port for scheduling dpWriter telemetry output
         port dpWriterSchedIn        = dpWriter.schedIn
 
+        @ Output port for processing data products
+        port dpWriterProcOut        = dpWriter.procBufferSendOut
+
         @ Input port for scheduling dpMgr telemetry output
         port dpMgrSchedIn           = dpMgr.schedIn
 
