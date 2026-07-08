@@ -11,11 +11,16 @@
 
 import FprimeAssertions
 
-from Assertion a, string value, string msg
+from Assertion a, Expr asserted, string value, string msg
 where
-  value = a.getAsserted().getValue() and
-  // FW_ASSERT(0) is an allowed idiom for asserting an unreachable code path,
-  // so a constant value of exactly 0 is not flagged.
-  not value.toInt() = 0 and
-  msg = "This assertion is always true."
-select a.getAsserted(), msg
+  asserted = a.getAsserted() and
+  value = asserted.getValue() and
+  // FW_ASSERT(0) with a literal 0 is an allowed idiom for asserting an
+  // unreachable code path. A named constant/expression that merely folds to
+  // 0 is still flagged, since that is more likely an unintended always-false
+  // assertion.
+  not (asserted instanceof Literal and value.toInt() = 0) and
+  if value.toInt() = 0
+  then msg = "This assertion is always false."
+  else msg = "This assertion is always true."
+select asserted, msg
