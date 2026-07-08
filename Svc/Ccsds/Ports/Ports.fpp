@@ -9,7 +9,7 @@ module Ccsds {
 
     @ Port for performing SDLS (Space Data Link Security) encryption/decryption
     @ on a buffer containing the initialization vector, data, and security trailer
-    port CcsdsSdlsEncryption (securityAssociationIndex: U16, ref data: Fw.Buffer) -> SdlsStatus
+    port CcsdsSdlsEncryption (securityAssociationIndex: U16, ref data: Fw.Buffer, context: ComCfg.FrameContext) -> SdlsStatus
 
 }
 }
