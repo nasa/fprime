@@ -244,7 +244,7 @@ module ComCcsds {
 
     # This subtopology boxes the CCSDS TM/TC transfer frame layer: the TM framer (downlink),
     # and the frame accumulator + TC deframer (uplink).
-    topology CcsdsFraming {
+    topology TmTcFraming {
         # Usage Note:
         #
         # When importing this subtopology, users shall establish the following external connections:
@@ -274,9 +274,9 @@ module ComCcsds {
             frameAccumulator.dataOut -> tcDeframer.dataIn
             tcDeframer.dataReturnOut -> frameAccumulator.dataReturnIn
         }
-    } # end CcsdsFraming
+    } # end TmTcFraming
 
-    # This subtopology composes the SpacePacketFraming packet layer with the CcsdsFraming
+    # This subtopology composes the SpacePacketFraming packet layer with the TmTcFraming
     # TM/TC transfer frame layer to form the full CCSDS communications stack.
     topology FramingSubtopology {
         # Usage Note:
@@ -296,7 +296,7 @@ module ComCcsds {
         import SpacePacketFraming
 
         # TM/TC transfer frame layer (TM framer, frame accumulator, TC deframer)
-        import CcsdsFraming
+        import TmTcFraming
 
         connections Downlink {
             # Aggregator <-> TmFramer
