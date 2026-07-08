@@ -40,10 +40,15 @@ Each phase has a dedicated skill with detailed guidance:
    **stop and ask the user**. Wrong assumptions in flight software are
    costly.
 
-2. **Each phase gates the next.** Do not begin implementation before
-   the FPP model is confirmed. However, you can write tests against a
-   known/confirmed model following the test-driven development
-   pattern (see `docs/how-to/test-driven-development.md`).
+2. **Each phase gates the next — with explicit user approval.** Present
+   the requirements to the user and obtain approval before starting
+   design. Present the design (FPP model, port layout, behavior, and any
+   configuration) to the user and obtain **explicit confirmation before
+   writing any implementation or unit-test code**. This applies even to
+   trivial or pass-through components; simplicity does not waive the
+   gate. Once the model is confirmed, you may write tests against it
+   following the test-driven development pattern
+   (see `docs/how-to/test-driven-development.md`).
 
 3. **Reference the C++ design skill.** All implementation must comply
    with `fprime-cpp-design.skill.md` (CPP-1 through CPP-34). Consult
