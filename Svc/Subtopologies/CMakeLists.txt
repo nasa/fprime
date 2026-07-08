@@ -1,6 +1,4 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CdhCore/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SpacePacket/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CcsdsFraming/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComCcsds/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
@@ -12,10 +10,6 @@ add_custom_target(
     DEPENDS
         Svc_Subtopologies_CdhCore
         Svc_Subtopologies_CdhCore_CdhCoreConfig
-        Svc_Subtopologies_SpacePacket
-        Svc_Subtopologies_SpacePacket_SpacePacketConfig
-        Svc_Subtopologies_CcsdsFraming
-        Svc_Subtopologies_CcsdsFraming_CcsdsFramingConfig
         Svc_Subtopologies_ComCcsds
         Svc_Subtopologies_ComCcsds_ComCcsdsConfig
         Svc_Subtopologies_ComFprime

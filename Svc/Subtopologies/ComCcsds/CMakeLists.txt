@@ -10,7 +10,5 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/PingEntries.hpp"
     DEPENDS
         Svc_Subtopologies_ComCcsds_ComCcsdsConfig
-        Svc_Subtopologies_SpacePacket
-        Svc_Subtopologies_CcsdsFraming
     INTERFACE
 )

@@ -98,8 +98,8 @@ topology Flight {
 
   connections ComCcsds_CdhCore{
       # events and telemetry to comQueue
-      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[SpacePacket.Ports_ComPacketQueue.EVENTS]
-      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[SpacePacket.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
       ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff
