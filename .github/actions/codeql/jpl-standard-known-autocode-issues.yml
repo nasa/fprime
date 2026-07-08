@@ -22,3 +22,8 @@ query-filters:
         # The autocoder emits non-boolean FW_ASSERT expressions,
         # see https://github.com/nasa/fpp/issues/1030
         - cpp/fprime/jpl-c/use-of-assertions-non-boolean
+        # The autocoder ignores the Fw::FormatStatus returned by
+        # Fw::StringBase::format(). This F Prime refinement whitelists the
+        # assignment/increment operators, so only the genuine format() findings
+        # remain. See https://github.com/nasa/fpp/issues/1031
+        - cpp/fprime/jpl-c/checking-return-values
