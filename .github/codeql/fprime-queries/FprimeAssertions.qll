@@ -1,7 +1,7 @@
 /**
  * Extends the standard CodeQL assertion library with support for the F Prime
- * `FW_ASSERT` macro family, so that the JPL Coding Standard Rule 16 queries
- * recognize F Prime assertions.
+ * `FW_ASSERT` macro family, so that queries in this pack recognize F Prime
+ * assertions.
  */
 
 import cpp
