@@ -6,9 +6,11 @@
 // ======================================================================
 
 #include <sys/stat.h>
+#include <Fw/Com/ComPacket.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <Os/File.hpp>
 #include <Os/FileSystem.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
 #include "CfdpManagerTester.hpp"
 
 namespace Svc {
@@ -1011,6 +1013,234 @@ void CfdpManagerTester::testDataReturnInChannel1() {
 
     // Verify no error events
     ASSERT_EVENTS_SIZE(0);
+}
+
+// ----------------------------------------------------------------------
+// Coverage Tests
+// ----------------------------------------------------------------------
+
+void CfdpManagerTester::testDataInBufferTooSmall() {
+    // dataIn_handler early-return: buffer smaller than the 2-byte packet descriptor.
+    // The buffer is returned via dataInReturn and the engine is never invoked.
+
+    this->clearHistory();
+
+    U8 tinyData[1] = {0x00};
+    Fw::Buffer tinyBuffer(tinyData, sizeof(tinyData));
+
+    this->invoke_to_dataIn(0, tinyBuffer);
+    this->component.doDispatch();
+
+    // Buffer returned to the sender, no PDU processed, no events emitted
+    ASSERT_from_dataInReturn_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void CfdpManagerTester::testDataInWrongDescriptor() {
+    // dataIn_handler early-return: valid-size buffer whose leading descriptor is
+    // not FW_PACKET_FILE. The buffer is returned and the engine is never invoked.
+
+    this->clearHistory();
+
+    // First two bytes are a packet descriptor != FW_PACKET_FILE
+    const FwPacketDescriptorType wrongDescriptor =
+        static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND);
+    U8 data[8];
+    data[0] = static_cast<U8>((wrongDescriptor >> 8) & 0xFF);
+    data[1] = static_cast<U8>(wrongDescriptor & 0xFF);
+    memset(&data[2], 0, sizeof(data) - 2);
+    Fw::Buffer buffer(data, sizeof(data));
+
+    this->invoke_to_dataIn(0, buffer);
+    this->component.doDispatch();
+
+    ASSERT_from_dataInReturn_SIZE(1);
+    ASSERT_EVENTS_SIZE(0);
+}
+
+void CfdpManagerTester::testGetPduBufferMaxOutgoing() {
+    // getPduBuffer: when the channel's outgoing PDU counter has reached the
+    // per-cycle maximum, no buffer is allocated and SEND_PDU_NO_BUF_AVAIL_ERROR
+    // is returned.
+
+    this->clearHistory();
+
+    Channel* chan = this->component.m_engine->m_channels[0];
+    ASSERT_NE(nullptr, chan);
+
+    // Drive the outgoing counter up to the configured per-cycle maximum
+    U32 maxPdus = this->component.getMaxOutgoingPdusPerCycleParam(0);
+    while (chan->getOutgoingCounter() < maxPdus) {
+        chan->incrementOutgoingCounter();
+    }
+
+    this->clearHistory();
+
+    Fw::Buffer buffer;
+    Status::T status = this->component.getPduBuffer(buffer, *chan, 64);
+
+    EXPECT_EQ(Status::SEND_PDU_NO_BUF_AVAIL_ERROR, status);
+    EXPECT_EQ(0U, buffer.getSize());
+    // No allocation should have been attempted
+    ASSERT_from_bufferAllocate_SIZE(0);
+}
+
+void CfdpManagerTester::testCancelTransactionNotFound() {
+    // CancelTransaction on a nonexistent transaction returns EXECUTION_ERROR and
+    // emits TransactionNotFound.
+
+    U8 channelId = 0;
+    Cfdp::TransactionSeq transactionSeq = 999;  // Nonexistent transaction
+    Cfdp::EntityId entityId = 100;
+
+    this->clearHistory();
+
+    this->sendCmd_CancelTransaction(0,  // Instance
+                                    0,  // cmdSeq
+                                    channelId, transactionSeq, entityId);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_CANCELTRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
+    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+}
+
+void CfdpManagerTester::testAbandonTransactionNotFound() {
+    // AbandonTransaction on a nonexistent transaction returns EXECUTION_ERROR and
+    // emits TransactionNotFound.
+
+    U8 channelId = 0;
+    Cfdp::TransactionSeq transactionSeq = 999;  // Nonexistent transaction
+    Cfdp::EntityId entityId = 100;
+
+    this->clearHistory();
+
+    this->sendCmd_AbandonTransaction(0,  // Instance
+                                     0,  // cmdSeq
+                                     channelId, transactionSeq, entityId);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_ABANDONTRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TransactionNotFound_SIZE(1);
+    ASSERT_EVENTS_TransactionNotFound(0, transactionSeq, entityId);
+}
+
+void CfdpManagerTester::testResetCountersInvalidChannel() {
+    // ResetCounters with a channel that is neither 0xFF (all) nor in range returns
+    // VALIDATION_ERROR and emits InvalidChannel (early return, no telemetry write).
+
+    U8 invalidChannelId = Cfdp::NumChannels;  // First out-of-range channel
+
+    this->clearHistory();
+
+    this->sendCmd_ResetCounters(0,  // Instance
+                                0,  // cmdSeq
+                                invalidChannelId);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_RESETCOUNTERS, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidChannel_SIZE(1);
+    ASSERT_EVENTS_InvalidChannel(0, invalidChannelId, Cfdp::NumChannels - 1);
+}
+
+void CfdpManagerTester::testIncrementRecvDropped() {
+    // Telemetry helper coverage: incrementRecvDropped bumps the per-channel counter.
+    Cfdp::ChannelTelemetry& tlm = this->component.getChannelTelemetryRef(0);
+    U32 before = tlm.get_recvDropped();
+
+    this->component.incrementRecvDropped(0);
+
+    EXPECT_EQ(before + 1, this->component.getChannelTelemetryRef(0).get_recvDropped());
+}
+
+void CfdpManagerTester::testIncrementSentEofCanceled() {
+    // Telemetry helper coverage: incrementSentEofCanceled bumps the per-channel counter.
+    Cfdp::ChannelTelemetry& tlm = this->component.getChannelTelemetryRef(0);
+    U32 before = tlm.get_sentEofCanceled();
+
+    this->component.incrementSentEofCanceled(0);
+
+    EXPECT_EQ(before + 1, this->component.getChannelTelemetryRef(0).get_sentEofCanceled());
+}
+
+void CfdpManagerTester::testGetTxnStatusStates() {
+    // GetTxnStatus maps transaction state to ACK transaction status.
+    Transaction* txn = this->setupTestTransaction(TxnState::TXN_STATE_S2, 0, "src.bin", "dst.bin", 100, 1, 100);
+    ASSERT_NE(nullptr, txn);
+
+    // Active states
+    const TxnState activeStates[] = {TxnState::TXN_STATE_S1, TxnState::TXN_STATE_R1, TxnState::TXN_STATE_S2,
+                                     TxnState::TXN_STATE_R2};
+    for (const auto& state : activeStates) {
+        txn->m_state = state;
+        EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_ACTIVE, GetTxnStatus(txn))
+            << "Expected ACTIVE for state " << static_cast<int>(state);
+    }
+
+    // Terminated states
+    txn->m_state = TxnState::TXN_STATE_DROP;
+    EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_TERMINATED, GetTxnStatus(txn));
+    txn->m_state = TxnState::TXN_STATE_HOLD;
+    EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_TERMINATED, GetTxnStatus(txn));
+
+    // Any other state is INVALID (default arm)
+    txn->m_state = TxnState::TXN_STATE_INIT;
+    EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_INVALID, GetTxnStatus(txn));
+}
+
+void CfdpManagerTester::testFindBySequenceNumberCallback() {
+    // Transaction::findBySequenceNumberCallback matches on (src_eid, seq_num).
+    Transaction* txn = this->setupTestTransaction(TxnState::TXN_STATE_S2, 0, "src.bin", "dst.bin", 100, 42, 100);
+    ASSERT_NE(nullptr, txn);
+    txn->m_history->src_eid = 5;
+    txn->m_history->seq_num = 42;
+
+    // Matching search terminates traversal (EXIT) and sets the output pointer
+    CfdpTraverseTransSeqArg matchArg;
+    matchArg.transaction_sequence_number = 42;
+    matchArg.src_eid = 5;
+    matchArg.txn = nullptr;
+    EXPECT_EQ(CLIST_TRAVERSE_EXIT, Transaction::findBySequenceNumberCallback(&txn->m_cl_node, &matchArg));
+    EXPECT_EQ(txn, matchArg.txn);
+
+    // Non-matching search continues traversal and leaves the output pointer unchanged
+    CfdpTraverseTransSeqArg missArg;
+    missArg.transaction_sequence_number = 7;
+    missArg.src_eid = 5;
+    missArg.txn = nullptr;
+    EXPECT_EQ(CLIST_TRAVERSE_CONTINUE, Transaction::findBySequenceNumberCallback(&txn->m_cl_node, &missArg));
+    EXPECT_EQ(nullptr, missArg.txn);
+}
+
+void CfdpManagerTester::testPrioritySearchCallback() {
+    // Transaction::prioritySearchCallback finds the first transaction whose priority
+    // is <= the sought priority.
+    Transaction* txn = this->setupTestTransaction(TxnState::TXN_STATE_S2, 0, "src.bin", "dst.bin", 100, 1, 100);
+    ASSERT_NE(nullptr, txn);
+    txn->m_priority = 3;
+
+    // txn priority (3) <= sought (5): found -> EXIT
+    CfdpTraversePriorityArg hitArg;
+    hitArg.txn = nullptr;
+    hitArg.priority = 5;
+    EXPECT_EQ(CLIST_TRAVERSE_EXIT, Transaction::prioritySearchCallback(&txn->m_cl_node, &hitArg));
+    EXPECT_EQ(txn, hitArg.txn);
+
+    // txn priority (3) > sought (1): not found -> CONTINUE
+    CfdpTraversePriorityArg missArg;
+    missArg.txn = nullptr;
+    missArg.priority = 1;
+    EXPECT_EQ(CLIST_TRAVERSE_CONTINUE, Transaction::prioritySearchCallback(&txn->m_cl_node, &missArg));
+    EXPECT_EQ(nullptr, missArg.txn);
 }
 
 }  // namespace Cfdp

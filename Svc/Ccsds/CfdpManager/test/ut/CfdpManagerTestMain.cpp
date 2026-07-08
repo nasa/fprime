@@ -685,6 +685,76 @@ TEST(Miscellaneous, Ping) {
     delete tester;
 }
 
+// ----------------------------------------------------------------------
+// Coverage Tests
+// ----------------------------------------------------------------------
+
+TEST(Coverage, DataInBufferTooSmall) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testDataInBufferTooSmall();
+    delete tester;
+}
+
+TEST(Coverage, DataInWrongDescriptor) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testDataInWrongDescriptor();
+    delete tester;
+}
+
+TEST(Coverage, GetPduBufferMaxOutgoing) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testGetPduBufferMaxOutgoing();
+    delete tester;
+}
+
+TEST(Coverage, CancelTransactionNotFound) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testCancelTransactionNotFound();
+    delete tester;
+}
+
+TEST(Coverage, AbandonTransactionNotFound) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testAbandonTransactionNotFound();
+    delete tester;
+}
+
+TEST(Coverage, ResetCountersInvalidChannel) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testResetCountersInvalidChannel();
+    delete tester;
+}
+
+TEST(Coverage, IncrementRecvDropped) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testIncrementRecvDropped();
+    delete tester;
+}
+
+TEST(Coverage, IncrementSentEofCanceled) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testIncrementSentEofCanceled();
+    delete tester;
+}
+
+TEST(Coverage, GetTxnStatusStates) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testGetTxnStatusStates();
+    delete tester;
+}
+
+TEST(Coverage, FindBySequenceNumberCallback) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testFindBySequenceNumberCallback();
+    delete tester;
+}
+
+TEST(Coverage, PrioritySearchCallback) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testPrioritySearchCallback();
+    delete tester;
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

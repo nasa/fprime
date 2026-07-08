@@ -590,6 +590,47 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // Coverage Tests
+    //
+    // Target trivial paths in CfdpManager.cpp/.hpp and transaction-dependent
+    // Utils.cpp helpers that are not otherwise exercised.
+    // ----------------------------------------------------------------------
+
+    //! dataIn_handler: buffer smaller than the 2-byte packet descriptor
+    void testDataInBufferTooSmall();
+
+    //! dataIn_handler: packet descriptor is not FW_PACKET_FILE
+    void testDataInWrongDescriptor();
+
+    //! getPduBuffer: max outgoing PDUs per cycle reached
+    void testGetPduBufferMaxOutgoing();
+
+    //! CancelTransaction command on a nonexistent transaction
+    void testCancelTransactionNotFound();
+
+    //! AbandonTransaction command on a nonexistent transaction
+    void testAbandonTransactionNotFound();
+
+    //! ResetCounters command with an invalid (non-0xFF, out-of-range) channel
+    void testResetCountersInvalidChannel();
+
+    //! Telemetry helper: incrementRecvDropped
+    void testIncrementRecvDropped();
+
+    //! Telemetry helper: incrementSentEofCanceled
+    void testIncrementSentEofCanceled();
+
+    //! GetTxnStatus over the transaction-state branches
+    void testGetTxnStatusStates();
+
+    //! Transaction::findBySequenceNumberCallback match and non-match
+    void testFindBySequenceNumberCallback();
+
+    //! Transaction::prioritySearchCallback match and non-match
+    void testPrioritySearchCallback();
+
+  public:
+    // ----------------------------------------------------------------------
     // Miscellaneous Tests
     // ----------------------------------------------------------------------
 
