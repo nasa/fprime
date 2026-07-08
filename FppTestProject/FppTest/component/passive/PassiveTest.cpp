@@ -4,8 +4,8 @@
 // \brief  cpp file for PassiveTest component implementation class
 // ======================================================================
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include "PassiveTest.hpp"
+#include <Fw/FPrimeBasicTypes.hpp>
 
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction

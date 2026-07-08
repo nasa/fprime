@@ -4,8 +4,8 @@
 // \brief  cpp file for QueuedTest component implementation class
 // ======================================================================
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include "QueuedTest.hpp"
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 

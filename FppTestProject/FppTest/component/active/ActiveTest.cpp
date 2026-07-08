@@ -4,8 +4,8 @@
 // \brief  cpp file for ActiveTest component implementation class
 // ======================================================================
 
-#include <Fw/FPrimeBasicTypes.hpp>
 #include "ActiveTest.hpp"
+#include <Fw/FPrimeBasicTypes.hpp>
 
 #include "FppTest/component/active/SerialPortIndexEnumAc.hpp"
 
