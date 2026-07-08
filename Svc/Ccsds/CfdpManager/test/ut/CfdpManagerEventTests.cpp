@@ -865,8 +865,8 @@ void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
     // Build a directive PDU: valid header (directive type) + an unrecognized directive code byte.
     Cfdp::PduHeader header;
     header.initialize(Cfdp::PduTypeEnum::END_OF_FILE,  // any directive type -> directive PDU header
-                      Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, testSrcEid,
-                      testSequenceId, this->component.getLocalEidParam());
+                      Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, testSrcEid, testSequenceId,
+                      this->component.getLocalEidParam());
 
     U8 pduBuffer[64];
     Fw::SerialBuffer sb(pduBuffer, sizeof(pduBuffer));
@@ -881,11 +881,11 @@ void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxInvalidDirectiveCode_SIZE(1);
-    ASSERT_EVENTS_RxInvalidDirectiveCode(0,                     // index
-                                         Cfdp::Class::CLASS_2,  // cfdpClass
-                                         testSrcEid,            // srcEid
-                                         testSequenceId,        // seqNum
-                                         invalidDirectiveCode,  // directiveCode
+    ASSERT_EVENTS_RxInvalidDirectiveCode(0,                                                  // index
+                                         Cfdp::Class::CLASS_2,                               // cfdpClass
+                                         testSrcEid,                                         // srcEid
+                                         testSequenceId,                                     // seqNum
+                                         invalidDirectiveCode,                               // directiveCode
                                          static_cast<U8>(RxSubState::RX_SUB_STATE_FILEDATA)  // substate
     );
 }
@@ -1144,11 +1144,11 @@ void CfdpManagerTester::testTxInvalidDirectiveCodeEvent() {
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxInvalidDirectiveCode_SIZE(1);
-    ASSERT_EVENTS_TxInvalidDirectiveCode(0,                     // index
-                                         Cfdp::Class::CLASS_2,  // cfdpClass
-                                         testSrcEid,            // srcEid
-                                         testSequenceId,        // seqNum
-                                         invalidDirectiveCode,  // directiveCode
+    ASSERT_EVENTS_TxInvalidDirectiveCode(0,                                             // index
+                                         Cfdp::Class::CLASS_2,                          // cfdpClass
+                                         testSrcEid,                                    // srcEid
+                                         testSequenceId,                                // seqNum
+                                         invalidDirectiveCode,                          // directiveCode
                                          static_cast<U8>(TxSubState::TX_SUB_STATE_EOF)  // substate
     );
 }
