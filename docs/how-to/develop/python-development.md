@@ -1,4 +1,4 @@
-# How-To: Develop Components in Python
+# Develop Components in Python
 
 This guide is a starting point for developing Python-based F Prime applications by constructing select components using Python.
 
