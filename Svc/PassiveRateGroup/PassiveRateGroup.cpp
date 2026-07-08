@@ -16,6 +16,7 @@
 #include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
 #include <config/PassiveRateGroupCfg.hpp>
+#include "config/FwSizeTypeAliasAc.h"
 
 namespace Svc {
 PassiveRateGroup::PassiveRateGroup(const char* compName)
@@ -59,7 +60,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
                 portEnd.now();
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
-                portTimes[port] = static_cast<U16>(cycleTime);
+                portTimes[static_cast<FwSizeType>(port)] = static_cast<U16>(cycleTime);
             }
         }
     }
