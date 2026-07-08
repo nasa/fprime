@@ -55,8 +55,8 @@ topology Flight {
 
   connections ComCcsds_FileHandling {
     # File Downlink <-> ComQueue
-    FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-    ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
+    FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[SpacePacket.Ports_ComBufferQueue.FILE]
+    ComCcsds.Subtopology.bufferReturnOut[SpacePacket.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
     
     # Router <-> FileUplink
     ComCcsds.Subtopology.fileUplinkOut                    -> FileHandling.Subtopology.fileUplinkBufferSendIn

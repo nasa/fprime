@@ -177,11 +177,11 @@ topology MyTopology {
 
     connections RadioManager {
         # Com Adapter Interface ports to F´ Comms stack (in ComCcsds subtopology)
-        ComCcsds.framer.dataOut    -> radioManager.dataIn
-        radioManager.dataReturnOut -> ComCcsds.framer.dataReturnIn
-        radioManager.comStatusOut  -> ComCcsds.framer.comStatusIn
-        radioManager.dataOut       -> ComCcsds.frameAccumulator.dataIn
-        ComCcsds.frameAccumulator.dataReturnOut -> radioManager.dataReturnIn
+        CcsdsFraming.framer.dataOut    -> radioManager.dataIn
+        radioManager.dataReturnOut -> CcsdsFraming.framer.dataReturnIn
+        radioManager.comStatusOut  -> CcsdsFraming.framer.comStatusIn
+        radioManager.dataOut       -> CcsdsFraming.frameAccumulator.dataIn
+        CcsdsFraming.frameAccumulator.dataReturnOut -> radioManager.dataReturnIn
         # RadioManager ports to driver (project-defined)
         # If you are using a different driver, these ports may be different
         radioManager.drvSendOut          -> uartDriver.send
