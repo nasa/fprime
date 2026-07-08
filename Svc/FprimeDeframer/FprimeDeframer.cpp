@@ -71,8 +71,10 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
         status = deserializer.deserializeTo(packetDescriptor);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK, status);
         // If a valid descriptor is deserialized, set it in the context
-        if ((packetDescriptor < ComCfg::Apid::INVALID_UNINITIALIZED)) {
+        if (ComCfg::Apid::isValid(packetDescriptor)) {
             contextCopy.set_apid(static_cast<ComCfg::Apid::T>(packetDescriptor));
+        } else {
+            contextCopy.set_apid(ComCfg::Apid::INVALID_UNINITIALIZED);
         }
     }
 

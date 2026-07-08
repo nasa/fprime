@@ -79,12 +79,11 @@ List the distinct behaviors the component can exhibit. For `ApidManager`, this w
 | Behavior To Test | Action To Take | Expected outcome |
 |---|---|---|
 | Get count for existing APID | `getApidSeqCountIn` with tracked APID | Returns next count, no event |
-| Get count for new APID (table has room) | `getApidSeqCountIn` with untracked APID | Returns 0, registers APID, no event |
-| Get count for new APID (table is full) | `getApidSeqCountIn` with untracked APID | Returns `SEQUENCE_COUNT_ERROR`, sends `ApidTableFull` event |
+| Get count for new APID | `getApidSeqCountIn` with untracked APID | Returns 0, registers APID, no event |
 | Validate correct count | `validateApidSeqCountIn` with expected count | No event |
 | Validate wrong count | `validateApidSeqCountIn` with unexpected count | Sends `UnexpectedSequenceCount` event |
 
-Each row maps to one rule. The internal state of ApidManager is simple and linear: its table goes from empty, to in-filling, to full.  
+Each row maps to one rule. The internal state of ApidManager is simple: its table tracks APIDs and their sequence counts.  
 For components defining state machines, you would usually have at least one rule per transition, and preconditions naturally check against a specific state of the state machine.
 
 ### Step 2: Add test-state and rule directories
@@ -115,16 +114,12 @@ class ApidManagerTestState {
     //! Mirrors the component's internal APID-to-sequence-count map.
     std::map<ComCfg::Apid::T, U16> shadow_seqCounts;
 
-    //! True once shadow_seqCounts has reached MAX_TRACKED_APIDS entries.
-    bool shadow_isTableFull = false;
-
     // Shadow operations that mirror component behavior
     U16  shadow_getAndIncrementSeqCount(ComCfg::Apid::T apid);
     void shadow_validateApidSeqCount(ComCfg::Apid::T apid, U16 seqCount);
     
     // Helper methods for test randomization
     ComCfg::Apid::T shadow_getRandomTrackedApid() const;
-    ComCfg::Apid::T shadow_getRandomUntrackedApid() const;
 };
 ```
 
@@ -168,14 +163,13 @@ Include `TestUtils/RuleBasedTesting.hpp` in your ComponentTester header, then de
 +  public:
 +    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, Existing);
 +    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewOk);
-+    FW_RBT_DEFINE_RULE(ApidManagerTester, GetSeqCount, NewTableFull);
 +
 +    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Ok);
 +    FW_RBT_DEFINE_RULE(ApidManagerTester, ValidateSeqCount, Failure);
  };
 ```
 
-The above defines 5 rules. Three in the `GetSeqCount` group, and two in the `ValidateSeqCount` group. It is recommended to split rules into logical groups. Here, the groups are based on the input port they exercise.
+The above defines 4 rules. Two in the `GetSeqCount` group, and two in the `ValidateSeqCount` group. It is recommended to split rules into logical groups. Here, the groups are based on the input port they exercise.
 
 ### Step 5: Implement rules
 
@@ -232,12 +226,11 @@ TEST(ApidManager, RandomizedTesting) {
     ApidManagerTester tester;
     ApidManagerTester::GetSeqCount__Existing     ruleGetExisting;
     ApidManagerTester::GetSeqCount__NewOk        ruleGetNewOk;
-    ApidManagerTester::GetSeqCount__NewTableFull ruleGetNewTableFull;
     ApidManagerTester::ValidateSeqCount__Ok      ruleValidateOk;
     ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
     // Create an array of rule pointers to pass to the scenario
     STest::Rule<ApidManagerTester>* rules[] = {
-        &ruleGetExisting, &ruleGetNewOk, &ruleGetNewTableFull,
+        &ruleGetExisting, &ruleGetNewOk,
         &ruleValidateOk,  &ruleValidateFailure,
     };
     // Run the specified rules in a random sequence for 10,000 iterations
