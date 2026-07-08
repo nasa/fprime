@@ -138,7 +138,9 @@ void BufferLoggerTester ::LogFileWrite() {
 void BufferLoggerTester ::LogFileValidation() {
 // Skip test if running as root, since root bypasses Unix permission checks
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
-    GTEST_SKIP() << "Test skipped when running as root (permission checks are bypassed)";
+    if (getuid() == 0) {
+        GTEST_SKIP() << "Test skipped when running as root (permission checks are bypassed)";
+    }
 #endif
     this->component.m_file.m_baseName = Fw::String("LogFileValidation");
 
