@@ -492,7 +492,6 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxSeekFailed | warning low | RX transaction failed to seek to offset |
 | RxWriteFailed | warning low | RX transaction write failed: expected bytes vs actual bytes |
 | RxFileSizeMismatch | warning low | RX transaction EOF file size mismatch: expected vs actual |
-| RxInvalidEofPdu | warning low | RX transaction received invalid EOF PDU |
 | RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
 | RxReadCrcFailed | warning low | RX transaction failed to read during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |

@@ -545,6 +545,11 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
     }
 
     if (ret == Cfdp::Status::SUCCESS) {
+        // NOTE: Engine::recvEof() currently always returns SUCCESS, so the failure branch is
+        // omitted here. Once recvEof() performs real EOF-level validation (see the TLV
+        // "Future enhancement" TODO in Engine::recvEof) and can return an error status, add an
+        // else branch that emits log_WARNING_LO_RxInvalidEofPdu, increments recvErrors, and sets
+        // Cfdp::Status::REC_PDU_BAD_EOF_ERROR for the failure case.
         if (!this->m_engine->recvEof(this, eof)) {
             /* this function is only entered for PDUs identified as EOF type */
             ConditionCode cc = eof.getConditionCode();
@@ -579,11 +584,6 @@ Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
                                                                        this->m_history->seq_num, static_cast<U8>(cc));
                 }
             }
-        } else {
-            this->m_cfdpManager->log_WARNING_LO_RxInvalidEofPdu(this->getClass(), this->m_history->src_eid,
-                                                                this->m_history->seq_num);
-            this->m_cfdpManager->incrementRecvErrors(this->m_chan_num);
-            ret = Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
         }
     }
 

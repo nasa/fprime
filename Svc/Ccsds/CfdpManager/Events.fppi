@@ -223,14 +223,6 @@ event RxFileSizeMismatch(
     severity warning low \
     format "RX class {} transaction {}:{} EOF file size mismatch: expected {} got {}"
 
-event RxInvalidEofPdu(
-    cfdpClass: Cfdp.Class @< CFDP class
-    srcEid: U32 @< Source entity ID
-    seqNum: U32 @< Transaction sequence number
-) \
-    severity warning low \
-    format "RX class {} transaction {}:{} received invalid EOF PDU"
-
 event RxEofCancelReceived(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID
