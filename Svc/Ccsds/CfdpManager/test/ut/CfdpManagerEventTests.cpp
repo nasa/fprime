@@ -860,6 +860,8 @@ void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
     //              and let rDispatchRecv() validation emit appropriate events
     //
     // TEST STATUS: Marked as not implemented due to architectural limitation
+    GTEST_SKIP() << "RxInvalidDirectiveCode unreachable via unit-test PDU construction "
+                    "(peekPduType filters unknown directive codes before validation)";
 }
 
 void CfdpManagerTester::testRxInvalidEofPduEvent() {
@@ -1087,13 +1089,16 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
 // ----------------------------------------------------------------------
 
 void CfdpManagerTester::testTxZeroLengthFileEvent() {
-    // TxZeroLengthFile already covered by Command.SendFileZeroLength
-    // This test documents that the event is tested
+    // TxZeroLengthFile is exercised with full argument verification in
+    // Command.SendFileZeroLength; this slot is retained only for event-coverage
+    // tracking, so skip rather than pass vacuously.
+    GTEST_SKIP() << "TxZeroLengthFile covered by Command.SendFileZeroLength";
 }
 
 void CfdpManagerTester::testTxFileOpenFailedEvent() {
-    // TxFileOpenFailed already covered by Command.SendFileNonExistent
-    // This test documents that the event is tested in command tests
+    // TxFileOpenFailed is exercised with full argument verification in
+    // Command.SendFileNonExistent; retained only for coverage tracking.
+    GTEST_SKIP() << "TxFileOpenFailed covered by Command.SendFileNonExistent";
 }
 
 void CfdpManagerTester::testTxInvalidDirectiveCodeEvent() {
@@ -1128,6 +1133,8 @@ void CfdpManagerTester::testTxInvalidDirectiveCodeEvent() {
     //
     // Recommend: Test via integration tests with malformed PDU injection, or accept that
     // this edge case is covered by code review rather than automated testing.
+    GTEST_SKIP() << "TxInvalidDirectiveCode unreachable via unit-test PDU construction "
+                    "(peekPduType returns NONE for codes >= FILE_DIRECTIVE_INVALID_MAX)";
 }
 
 void CfdpManagerTester::testTxEarlyFinReceivedEvent() {
@@ -1601,24 +1608,33 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
 // ----------------------------------------------------------------------
 
 void CfdpManagerTester::testTransactionSuspendedEvent() {
-    // TransactionSuspended already covered by Command.SuspendResumeTransactionNominal
-    // Included here for event coverage completeness tracking
+    // TransactionSuspended is exercised in Command.SuspendResumeTransactionNominal;
+    // retained only for coverage tracking.
+    GTEST_SKIP() << "TransactionSuspended covered by Command.SuspendResumeTransactionNominal";
 }
 
 void CfdpManagerTester::testTransactionResumedEvent() {
-    // TransactionResumed already covered by Command.SuspendResumeTransactionNominal
+    // TransactionResumed is exercised in Command.SuspendResumeTransactionNominal;
+    // retained only for coverage tracking.
+    GTEST_SKIP() << "TransactionResumed covered by Command.SuspendResumeTransactionNominal";
 }
 
 void CfdpManagerTester::testTransactionCanceledEvent() {
-    // TransactionCanceled already covered by Command.CancelTransactionNominal
+    // TransactionCanceled is exercised in Command.CancelTransactionNominal;
+    // retained only for coverage tracking.
+    GTEST_SKIP() << "TransactionCanceled covered by Command.CancelTransactionNominal";
 }
 
 void CfdpManagerTester::testTransactionAbandonedEvent() {
-    // TransactionAbandoned already covered by Command.AbandonTransactionNominal
+    // TransactionAbandoned is exercised in Command.AbandonTransactionNominal;
+    // retained only for coverage tracking.
+    GTEST_SKIP() << "TransactionAbandoned covered by Command.AbandonTransactionNominal";
 }
 
 void CfdpManagerTester::testTransactionNotFoundEvent() {
-    // TransactionNotFound already covered by Command.SuspendResumeTransactionNotFound
+    // TransactionNotFound is exercised in Command.SuspendResumeTransactionNotFound;
+    // retained only for coverage tracking.
+    GTEST_SKIP() << "TransactionNotFound covered by Command.SuspendResumeTransactionNotFound";
 }
 
 // ----------------------------------------------------------------------

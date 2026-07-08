@@ -78,9 +78,15 @@ TEST(Transaction, Class2RxNack) {
     delete tester;
 }
 
-TEST(Transaction, Class1TxPortBased) {
+TEST(Transaction, Class2TxPortBased) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testClass2TxPortBased();
+    delete tester;
+}
+
+TEST(Transaction, Class2TxPortBasedNack) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testClass2TxPortBasedNack();
     delete tester;
 }
 

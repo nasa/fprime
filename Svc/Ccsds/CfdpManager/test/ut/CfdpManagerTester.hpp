@@ -704,10 +704,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param dstFile Destination file path where received file will be written
     //! @param groundSrcFile Source filename from ground perspective
     //! @param expectedFileSize Expected size of file to receive
+    //! @param channelId CFDP channel to run the transfer on (default channel 0)
     void sendAndVerifyClass1Rx(const char* srcFile,
                                const char* dstFile,
                                const char* groundSrcFile,
-                               FwSizeType expectedFileSize);
+                               FwSizeType expectedFileSize,
+                               U8 channelId = TEST_CHANNEL_ID_0);
 
     //! Receive and verify a Class 2 RX transaction
     //! @param srcFile Local file to read test data from
@@ -715,11 +717,13 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param groundSrcFile Source filename from ground perspective
     //! @param expectedFileSize Expected size of file to receive
     //! @param simulateNak If true, simulate missing FileData to trigger NAK (optional, default false)
+    //! @param channelId CFDP channel to run the transfer on (default channel 0)
     void sendAndVerifyClass2Rx(const char* srcFile,
                                const char* dstFile,
                                const char* groundSrcFile,
                                FwSizeType expectedFileSize,
-                               bool simulateNak = false);
+                               bool simulateNak = false,
+                               U8 channelId = TEST_CHANNEL_ID_0);
 
     //! Verify FIN-ACK PDU at given index
     void verifyFinAckPdu(FwIndexType pduIndex, EntityId sourceEid, EntityId destEid, U32 expectedSeqNum);

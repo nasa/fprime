@@ -14,95 +14,169 @@ namespace Cfdp {
 // ----------------------------------------------------------------------
 // Parameter Tests
 // ----------------------------------------------------------------------
-
-// NOTE: F' GTest infrastructure does not auto-generate paramGet_* methods
-// for CfdpManager parameters. Additionally, paramSet/paramSend calls trigger
-// async operations that hang in unit tests without proper parameter infrastructure.
 //
-// These stub tests document that the 10 parameters exist and reserve test slots
-// for future behavioral parameter testing. Proper parameter tests would require:
-// 1. Mock parameter database or parameter port implementation
-// 2. Behavioral tests that verify parameter effects on component operation
-// 3. Integration tests that exercise parameter loading/saving
+// Each parameter has two tests:
+//   *Default : after loadParameters() (called in the tester constructor),
+//              component.paramGet_<Name>() returns the FPP-declared default and
+//              flags ParamValid::DEFAULT.
+//   *SetGet  : paramSet_<Name>() stages a value, paramSend_<Name>() commits it,
+//              verified via component.paramGet_<Name>() which then flags VALID.
+//
+// The tester is a friend of CfdpManager, so component.paramGet_<Name>() is
+// accessible directly. Parameter SET opcodes are handled synchronously inside
+// the generated cmdIn dispatch (unlike async user commands), so paramSend_*
+// applies the value immediately and no doDispatch() is needed afterward.
 
-void CfdpManagerTester::testParamLocalEidSetGet() {
-    // Stub: LocalEid parameter (default: 42)
-    // TODO: Add behavioral test verifying LocalEid affects transaction entity ID
-}
+// ---- LocalEid ----
 
 void CfdpManagerTester::testParamLocalEidDefault() {
-    // Stub: LocalEid default value test
-    // TODO: Verify default value of 42 is used when parameters loaded
+    Fw::ParamValid valid;
+    const EntityId value = this->component.paramGet_LocalEid(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(42u, value);
+}
+
+void CfdpManagerTester::testParamLocalEidSetGet() {
+    const EntityId newValue = 77;
+    this->paramSet_LocalEid(newValue, Fw::ParamValid::VALID);
+    this->paramSend_LocalEid(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_LocalEid(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
+}
+
+// ---- OutgoingFileChunkSize ----
+
+void CfdpManagerTester::testParamOutgoingFileChunkSizeDefault() {
+    Fw::ParamValid valid;
+    const U32 value = this->component.paramGet_OutgoingFileChunkSize(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(992u, value);
 }
 
 void CfdpManagerTester::testParamOutgoingFileChunkSizeSetGet() {
-    // Stub: OutgoingFileChunkSize parameter (default: 992)
-    // TODO: Verify FileData PDU size matches this parameter value
+    const U32 newValue = 512;
+    this->paramSet_OutgoingFileChunkSize(newValue, Fw::ParamValid::VALID);
+    this->paramSend_OutgoingFileChunkSize(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_OutgoingFileChunkSize(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamOutgoingFileChunkSizeDefault() {
-    // Stub: OutgoingFileChunkSize default value test
-    // TODO: Verify default value of 992 bytes is used
+// ---- RxCrcCalcBytesPerCycle ----
+
+void CfdpManagerTester::testParamRxCrcCalcBytesPerCycleDefault() {
+    Fw::ParamValid valid;
+    const U32 value = this->component.paramGet_RxCrcCalcBytesPerCycle(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(65536u, value);
 }
 
 void CfdpManagerTester::testParamRxCrcCalcBytesPerCycleSetGet() {
-    // Stub: RxCrcCalcBytesPerCycle parameter (default: 65536)
-    // TODO: Verify CRC calculation throttle behavior matches parameter
+    const U32 newValue = 32768;
+    this->paramSet_RxCrcCalcBytesPerCycle(newValue, Fw::ParamValid::VALID);
+    this->paramSend_RxCrcCalcBytesPerCycle(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_RxCrcCalcBytesPerCycle(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamRxCrcCalcBytesPerCycleDefault() {
-    // Stub: RxCrcCalcBytesPerCycle default value test
-    // TODO: Verify default value of 65536 bytes is used
+// ---- FileInDefaultChannel ----
+
+void CfdpManagerTester::testParamFileInDefaultChannelDefault() {
+    Fw::ParamValid valid;
+    const U8 value = this->component.paramGet_FileInDefaultChannel(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(0u, value);
 }
 
 void CfdpManagerTester::testParamFileInDefaultChannelSetGet() {
-    // Stub: FileInDefaultChannel parameter (default: 0)
-    // TODO: Verify port-based file transfers use this default channel
+    const U8 newValue = 1;
+    this->paramSet_FileInDefaultChannel(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultChannel(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_FileInDefaultChannel(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamFileInDefaultChannelDefault() {
-    // Stub: FileInDefaultChannel default value test
-    // TODO: Verify default channel 0 is used
+// ---- FileInDefaultDestEntityId ----
+
+void CfdpManagerTester::testParamFileInDefaultDestEntityIdDefault() {
+    Fw::ParamValid valid;
+    const EntityId value = this->component.paramGet_FileInDefaultDestEntityId(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(100u, value);
 }
 
 void CfdpManagerTester::testParamFileInDefaultDestEntityIdSetGet() {
-    // Stub: FileInDefaultDestEntityId parameter (default: 100)
-    // TODO: Verify port-based transfers use this default destination
+    const EntityId newValue = 200;
+    this->paramSet_FileInDefaultDestEntityId(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultDestEntityId(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_FileInDefaultDestEntityId(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamFileInDefaultDestEntityIdDefault() {
-    // Stub: FileInDefaultDestEntityId default value test
-    // TODO: Verify default entity ID 100 is used
+// ---- FileInDefaultClass ----
+
+void CfdpManagerTester::testParamFileInDefaultClassDefault() {
+    Fw::ParamValid valid;
+    const Cfdp::Class value = this->component.paramGet_FileInDefaultClass(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(Cfdp::Class::CLASS_2, value);
 }
 
 void CfdpManagerTester::testParamFileInDefaultClassSetGet() {
-    // Stub: FileInDefaultClass parameter (default: CLASS_2)
-    // TODO: Verify port-based transfers use this default class
+    const Cfdp::Class newValue = Cfdp::Class::CLASS_1;
+    this->paramSet_FileInDefaultClass(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultClass(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(Cfdp::Class::CLASS_1, this->component.paramGet_FileInDefaultClass(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamFileInDefaultClassDefault() {
-    // Stub: FileInDefaultClass default value test
-    // TODO: Verify default CLASS_2 is used
+// ---- FileInDefaultKeep ----
+
+void CfdpManagerTester::testParamFileInDefaultKeepDefault() {
+    Fw::ParamValid valid;
+    const Cfdp::Keep value = this->component.paramGet_FileInDefaultKeep(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(Cfdp::Keep::DELETE, value);
 }
 
 void CfdpManagerTester::testParamFileInDefaultKeepSetGet() {
-    // Stub: FileInDefaultKeep parameter (default: DELETE)
-    // TODO: Verify port-based transfers use this default keep policy
+    const Cfdp::Keep newValue = Cfdp::Keep::KEEP;
+    this->paramSet_FileInDefaultKeep(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultKeep(0, 0);
+
+    Fw::ParamValid valid;
+    ASSERT_EQ(Cfdp::Keep::KEEP, this->component.paramGet_FileInDefaultKeep(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
-void CfdpManagerTester::testParamFileInDefaultKeepDefault() {
-    // Stub: FileInDefaultKeep default value test
-    // TODO: Verify default DELETE policy is used
+// ---- FileInDefaultPriority ----
+
+void CfdpManagerTester::testParamFileInDefaultPriorityDefault() {
+    Fw::ParamValid valid;
+    const U8 value = this->component.paramGet_FileInDefaultPriority(valid);
+    ASSERT_EQ(Fw::ParamValid::DEFAULT, valid.e) << "Loaded default should flag DEFAULT";
+    ASSERT_EQ(0u, value);
 }
 
 void CfdpManagerTester::testParamFileInDefaultPrioritySetGet() {
-    // Stub: FileInDefaultPriority parameter (default: 0)
-    // TODO: Verify port-based transfers use this default priority
-}
+    const U8 newValue = 5;
+    this->paramSet_FileInDefaultPriority(newValue, Fw::ParamValid::VALID);
+    this->paramSend_FileInDefaultPriority(0, 0);
 
-void CfdpManagerTester::testParamFileInDefaultPriorityDefault() {
-    // Stub: FileInDefaultPriority default value test
-    // TODO: Verify default priority 0 is used
+    Fw::ParamValid valid;
+    ASSERT_EQ(newValue, this->component.paramGet_FileInDefaultPriority(valid));
+    ASSERT_EQ(Fw::ParamValid::VALID, valid.e);
 }
 
 }  // namespace Cfdp
