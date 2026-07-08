@@ -48,22 +48,22 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
-#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
-        Os::RawTime portStart;
-        Os::RawTime portEnd;
-        portStart.now();
-#endif
-
         if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
+#if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
+            Os::RawTime portStart;
+            Os::RawTime portEnd;
+            portStart.now();
+#endif
+
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
-        }
 
 #if SVC_PASSIVE_RATE_GROUP_PORT_CYCLE_TIME == 1
-        portEnd.now();
-        U32 cycleTime;
-        (void)portEnd.getDiffUsec(portStart, cycleTime);
-        portTimes[portNum] = static_cast<U16>(cycleTime);
+            portEnd.now();
+            U32 cycleTime;
+            (void)portEnd.getDiffUsec(portStart, cycleTime);
+            portTimes[portNum] = static_cast<U16>(cycleTime);
 #endif
+        }
     }
 
     // grab timer for endTime of cycle
