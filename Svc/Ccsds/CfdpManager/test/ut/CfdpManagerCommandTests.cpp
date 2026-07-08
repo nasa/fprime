@@ -687,7 +687,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNotFound() {
     // Event coverage: TransactionNotFound
 
     U8 channelId = 0;
-    Cfdp::TransactionSeq transactionSeq = 999;  // Non-existent transaction
+    Cfdp::TransactionSeq transactionSeq = 999;  // Nonexistent transaction
     Cfdp::EntityId entityId = 100;
 
     // Clear events

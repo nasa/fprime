@@ -1555,7 +1555,7 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
 
     this->clearEvents();
 
-    // Modify transaction to point to a file in a protected/non-existent location
+    // Modify transaction to point to a file in a protected/nonexistent location
     // Use /root which typically requires root permissions to write/delete
     txn->m_history->fnames.dst_filename = "/root/protected_file_that_cannot_be_deleted.bin";
     txn->m_history->dir = Direction::DIRECTION_RX;  // RX uses dst_filename
@@ -1580,7 +1580,7 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
 
     this->clearEvents();
 
-    // Try to playback non-existent directory
+    // Try to playback nonexistent directory
     this->sendCmd_PlaybackDirectory(0, 0, 0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
                                     nonexistentDir, destPath);
     this->component.doDispatch();
@@ -1691,7 +1691,7 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     //   moveFile(fname /*src*/, dst_filename /*dst*/);   // fails -> RxFileRenameFailed
     //
     // Strategy: the move SOURCE (the txn's initial dst_filename) must be a real file on disk,
-    // while the Metadata PDU's destination filename points to a non-existent directory so
+    // while the Metadata PDU's destination filename points to a nonexistent directory so
     // moveFile() fails. eof_recv is left false so the EOF/MD size-mismatch check is skipped
     // and control reaches the rename block with success==true.
 
@@ -1702,7 +1702,7 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
 
     // Move SOURCE: the transaction's initial dst_filename (must exist on disk before moveFile)
     const char* moveSource = "test/ut/output/rename_src.bin";
-    // Move DEST: comes from the Metadata PDU; point at a non-existent directory to force failure
+    // Move DEST: comes from the Metadata PDU; point at a nonexistent directory to force failure
     const char* badDest = "/nonexistent_dir/subdir/renamed.bin";
 
     // Create the move-source file on disk so moveFile()'s source is valid
