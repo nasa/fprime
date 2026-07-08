@@ -14,7 +14,8 @@ import FprimeAssertions
 from Assertion a, string value, string msg
 where
   value = a.getAsserted().getValue() and
-  if value.toInt() = 0
-  then msg = "This assertion is always false."
-  else msg = "This assertion is always true."
+  // FW_ASSERT(0) is an allowed idiom for asserting an unreachable code path,
+  // so a constant value of exactly 0 is not flagged.
+  not value.toInt() = 0 and
+  msg = "This assertion is always true."
 select a.getAsserted(), msg
