@@ -295,8 +295,8 @@ void CfdpManager ::PlaybackDirectory_cmdHandler(FwOpcodeType opCode,
     rspStatus = this->checkCommandChannelIndex(channelId);
 
     if (rspStatus == Fw::CmdResponse::OK) {
-        if (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(), cfdpClass.e,
-                                                           keep.e, channelId, priority, destId)) {
+        if (Status::SUCCESS == this->m_engine->playbackDir(sourceDirectory.toChar(), destDirectory.toChar(),
+                                                           cfdpClass.e, keep.e, channelId, priority, destId)) {
             this->log_ACTIVITY_LO_PlaybackInitiated(sourceDirectory);
         } else {
             // Engine emits specific failure reason EVR (e.g., PlaybackDirOpenFailed, PlaybackDirSlotUnavailable)
@@ -327,8 +327,8 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode,
     }
 
     if (rspStatus == Fw::CmdResponse::OK) {
-        if (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory, cfdpClass.e,
-                                                            priority, destId, interval)) {
+        if (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
+                                                            cfdpClass.e, priority, destId, interval)) {
             this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory);
         } else {
             // Failure EVR was already emitted

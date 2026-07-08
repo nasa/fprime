@@ -6,9 +6,9 @@
 // ======================================================================
 
 #include "CfdpManagerTester.hpp"
-#include "Fw/Types/StringUtils.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 
@@ -25,16 +25,13 @@ class OversizedTestPdu : public Cfdp::PduBase {
     U32 m_actualSize;    // What serializeTo() actually tries to write
 
   public:
-    OversizedTestPdu(U32 reportedSize, U32 actualSize)
-        : m_reportedSize(reportedSize), m_actualSize(actualSize) {
+    OversizedTestPdu(U32 reportedSize, U32 actualSize) : m_reportedSize(reportedSize), m_actualSize(actualSize) {
         // Initialize with dummy header - we just need a valid PDU type
-        this->m_header.initialize(
-            Cfdp::PduTypeEnum::ACKNOWLEDGMENT,
-            Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,
-            Cfdp::Class::CLASS_2,
-            1,  // sourceEid
-            1,  // transactionSeq
-            1   // destEid
+        this->m_header.initialize(Cfdp::PduTypeEnum::ACKNOWLEDGMENT, Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,
+                                  Cfdp::Class::CLASS_2,
+                                  1,  // sourceEid
+                                  1,  // transactionSeq
+                                  1   // destEid
         );
     }
 
@@ -43,7 +40,7 @@ class OversizedTestPdu : public Cfdp::PduBase {
     }
 
     Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
-                                   Fw::Endianness mode = Fw::Endianness::BIG) const override {
+                                    Fw::Endianness mode = Fw::Endianness::BIG) const override {
         // First serialize the header (this should succeed)
         Fw::SerializeStatus status = this->m_header.toSerialBuffer(buffer);
         if (status != Fw::FW_SERIALIZE_OK) {
@@ -64,7 +61,7 @@ class OversizedTestPdu : public Cfdp::PduBase {
     }
 
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
-                                       Fw::Endianness mode = Fw::Endianness::BIG) override {
+                                        Fw::Endianness mode = Fw::Endianness::BIG) override {
         // Not used in this test
         return Fw::FW_SERIALIZE_FORMAT_ERROR;
     }
@@ -112,9 +109,8 @@ void CfdpManagerTester::testTxFileQueuedEvent() {
     // Queue file for transfer
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, 0, TEST_GROUND_EID,
-                          Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, 0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Verify exact event count and TxFileQueued event
@@ -144,9 +140,8 @@ void CfdpManagerTester::testTxFileTransferStartedEvent() {
     // Initiate transfer
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, 0, TEST_GROUND_EID,
-                          Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, 0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Run cycles to start transfer
@@ -177,9 +172,8 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
     this->clearEvents();
 
     // Send Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Verify exact event count and MetadataReceived event
@@ -198,12 +192,12 @@ void CfdpManagerTester::testBuffersExhaustedEvent() {
 
     // Setup a minimal transaction to get a valid channel reference
     (void)setupTestTransaction(TxnState::TXN_STATE_S1,  // Sender, class 1
-                               TEST_CHANNEL_ID_0,        // Channel 0
-                               "/test/source.txt",       // Source file
-                               "/test/dest.txt",         // Dest file
-                               1024,                     // File size
-                               1,                        // Sequence ID
-                               TEST_GROUND_EID);         // Peer entity ID
+                               TEST_CHANNEL_ID_0,       // Channel 0
+                               "/test/source.txt",      // Source file
+                               "/test/dest.txt",        // Dest file
+                               1024,                    // File size
+                               1,                       // Sequence ID
+                               TEST_GROUND_EID);        // Peer entity ID
 
     // Get the channel directly from the engine
     Channel* chan = component.m_engine->m_channels[TEST_CHANNEL_ID_0];
@@ -264,10 +258,9 @@ void CfdpManagerTester::testFailPduHeaderDeserializationEvent() {
     // Verify FailPduHeaderDeserialization event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailPduHeaderDeserialization_SIZE(1);
-    ASSERT_EVENTS_FailPduHeaderDeserialization(
-        0,  // index
-        0,  // channelId
-        static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
+    ASSERT_EVENTS_FailPduHeaderDeserialization(0,                                                 // index
+                                               0,                                                 // channelId
+                                               static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
     );
 }
 
@@ -288,11 +281,9 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
 
     // Create a Metadata PDU using the helper
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-                          Cfdp::Class::CLASS_1,
-                          sourceEid, transactionSeq, destEid,
-                          fileSize, srcFile, dstFile,
-                          Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR, 0);
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, sourceEid,
+                           transactionSeq, destEid, fileSize, srcFile, dstFile,
+                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR, 0);
 
     // Serialize to a buffer
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -341,9 +332,8 @@ void CfdpManagerTester::testFailFileDataPduDeserializationEvent() {
     this->clearEvents();
 
     // First establish transaction with Metadata
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -351,10 +341,8 @@ void CfdpManagerTester::testFailFileDataPduDeserializationEvent() {
     // Create a valid FileData PDU
     Cfdp::FileDataPdu fileDataPdu;
     U8 testData[20] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-                          Cfdp::Class::CLASS_1,
-                          sourceEid, transactionSeq, destEid,
-                          0, 10, testData);  // offset, dataSize, data
+    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, sourceEid,
+                           transactionSeq, destEid, 0, 10, testData);  // offset, dataSize, data
 
     // Serialize to buffer with descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -404,9 +392,8 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
     this->clearEvents();
 
     // Step 1: Establish RX transaction with Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Step 2: Send some FileData to advance transaction state
@@ -414,8 +401,7 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
     for (U32 i = 0; i < 50; i++) {
         testData[i] = static_cast<U8>(i);
     }
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, 50, testData, Cfdp::Class::CLASS_1);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, 50, testData, Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
     // Now transaction is expecting EOF
@@ -423,12 +409,10 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
 
     // Step 3: Create a valid EOF PDU
     Cfdp::EofPdu eofPdu;
-    eofPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-                     Cfdp::Class::CLASS_1,
-                     sourceEid, transactionSeq, destEid,
-                     Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
-                     0x12345678,  // checksum
-                     fileSize);
+    eofPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, sourceEid, transactionSeq,
+                      destEid, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                      0x12345678,  // checksum
+                      fileSize);
 
     // Step 4: Serialize to buffer with descriptor
     const FwSizeType descriptorSize = sizeof(FwPacketDescriptorType);
@@ -475,14 +459,13 @@ void CfdpManagerTester::testFailAckPduDeserializationEvent() {
     // FailAckPduDeserialization emitted when ACK PDU deserialization fails
 
     // Set up minimal Class 2 TX transaction
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "dummy_src.txt",          // srcFilename
-        "dummy_dst.txt",          // dstFilename
-        100,                      // fileSize
-        1,                        // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "dummy_src.txt",         // srcFilename
+                                            "dummy_dst.txt",         // dstFilename
+                                            100,                     // fileSize
+                                            1,                       // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
 
     // Create malformed buffer (too short for valid ACK PDU)
@@ -503,14 +486,13 @@ void CfdpManagerTester::testFailFinPduDeserializationEvent() {
     // FailFinPduDeserialization emitted when FIN PDU deserialization fails
 
     // Set up minimal Class 2 TX transaction
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "dummy_src.txt",          // srcFilename
-        "dummy_dst.txt",          // dstFilename
-        100,                      // fileSize
-        1,                        // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "dummy_src.txt",         // srcFilename
+                                            "dummy_dst.txt",         // dstFilename
+                                            100,                     // fileSize
+                                            1,                       // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
 
     // Create malformed buffer (too short for valid FIN PDU)
@@ -531,14 +513,13 @@ void CfdpManagerTester::testFailNakPduDeserializationEvent() {
     // FailNakPduDeserialization emitted when NAK PDU deserialization fails
 
     // Set up minimal Class 2 TX transaction
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "dummy_src.txt",          // srcFilename
-        "dummy_dst.txt",          // dstFilename
-        100,                      // fileSize
-        1,                        // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "dummy_src.txt",         // srcFilename
+                                            "dummy_dst.txt",         // dstFilename
+                                            100,                     // fileSize
+                                            1,                       // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
 
     // Create malformed buffer (too short for valid NAK PDU)
@@ -575,15 +556,13 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
     this->clearEvents();
 
     // Send Metadata PDU with invalid destination
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Send file data (triggers file creation attempt)
     U8 testData[10] = {1, 2, 3};
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, 3, testData, Cfdp::Class::CLASS_1);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, 3, testData, Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
     // Run cycles to process
@@ -613,22 +592,19 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
     this->clearEvents();
 
     // Send Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_2, 1);  // Class 2 for CRC checking
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_2, 1);  // Class 2 for CRC checking
     this->component.doDispatch();
 
     // Send File Data PDU
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, static_cast<U16>(fileSize), testData,
-                         Cfdp::Class::CLASS_2);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
     // Send EOF with WRONG checksum (should cause mismatch)
     U32 wrongChecksum = 0xDEADBEEF;  // Intentionally wrong
-    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
-                    wrongChecksum, fileSize, Cfdp::Class::CLASS_2);
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     wrongChecksum, fileSize, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
     // Run cycles to complete CRC calculation and verification
@@ -662,16 +638,14 @@ void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     this->clearEvents();
 
     // Send Metadata PDU claiming file is 1000 bytes
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         metadataSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, metadataSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Send EOF claiming file is 500 bytes (mismatch!)
     U32 checksum = 0;
-    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
-                    checksum, eofSize, Cfdp::Class::CLASS_1);
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     checksum, eofSize, Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
     // Run cycles
@@ -699,16 +673,15 @@ void CfdpManagerTester::testRxEofCancelReceivedEvent() {
     this->clearEvents();
 
     // Send Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Send EOF with CANCEL_REQUEST_RECEIVED condition code
     U32 checksum = 0;
     this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED,
-                    checksum, fileSize, Cfdp::Class::CLASS_1);
+                     Cfdp::ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED, checksum, fileSize,
+                     Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
     // Run cycles
@@ -737,9 +710,8 @@ void CfdpManagerTester::testRxEofWithErrorEvent() {
     this->clearEvents();
 
     // Send Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -747,8 +719,7 @@ void CfdpManagerTester::testRxEofWithErrorEvent() {
     // Send EOF with CHECK_LIMIT_REACHED error condition
     U32 checksum = 0;
     this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_CHECK_LIMIT_REACHED,
-                    checksum, fileSize, Cfdp::Class::CLASS_1);
+                     Cfdp::ConditionCode::CONDITION_CODE_CHECK_LIMIT_REACHED, checksum, fileSize, Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
     // Run cycles
@@ -767,19 +738,18 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
     // metadata with different file size
 
     // Set up Class 2 receiver transaction
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_R2,  // Class 2 receiver
-        0,                        // channelId
-        "test_src.dat",           // srcFilename
-        "test_dst.dat",           // dstFilename
-        1000,                     // fileSize (metadata will claim this)
-        1,                        // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
+                                            0,                       // channelId
+                                            "test_src.dat",          // srcFilename
+                                            "test_dst.dat",          // dstFilename
+                                            1000,                    // fileSize (metadata will claim this)
+                                            1,                       // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
 
     // Simulate EOF already received with DIFFERENT size
     txn->m_flags.rx.eof_recv = true;
-    txn->m_flags.rx.md_recv = false;  // Metadata not yet received
+    txn->m_flags.rx.md_recv = false;               // Metadata not yet received
     txn->m_state_data.receive.r2.eof_size = 2000;  // Mismatch: 2000 != 1000
 
     // Ensure engine is set (should already be set from setupTestTransaction)
@@ -787,17 +757,13 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
 
     // Create Metadata PDU with file size = 1000
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-        Cfdp::Class::CLASS_2,
-        TEST_GROUND_EID,                          // sourceEid
-        1,                                        // transactionSeq
-        this->component.getLocalEidParam(),       // destEid
-        1000,                                     // fileSize (different from eof_size)
-        "test_src.dat",
-        "test_dst.dat",
-        Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
-        1                                         // closureRequested for Class 2
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                           TEST_GROUND_EID,                     // sourceEid
+                           1,                                   // transactionSeq
+                           this->component.getLocalEidParam(),  // destEid
+                           1000,                                // fileSize (different from eof_size)
+                           "test_src.dat", "test_dst.dat", Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
+                           1  // closureRequested for Class 2
     );
 
     // Serialize PDU to buffer
@@ -828,8 +794,8 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
     // From CfdpCfg.hpp:
     //   = CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
     //   + CFDP_MAX_SIMULTANEOUS_RX (5)
-    //   + (CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK
-    //   = 10 + 5 + (5 + 2) * 5 = 50
+    //   + (CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) *
+    //   CFDP_NUM_TRANSACTIONS_PER_PLAYBACK = 10 + 5 + (5 + 2) * 5 = 50
 
     U8 channelId = 0;
     Cfdp::EntityId sourceEid = TEST_GROUND_EID;
@@ -845,11 +811,8 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
     // Channel::findUnusedTransaction() pulls from the shared FREE pool regardless of direction
     for (U32 i = 0; i < CFDP_NUM_TRANSACTIONS_PER_CHANNEL; i++) {
         this->sendMetadataPdu(channelId, sourceEid, destEid,
-                             1000 + i,  // Unique transaction sequence
-                             fileSize,
-                             srcFile,
-                             dstFile,
-                             Cfdp::Class::CLASS_1, 1);
+                              1000 + i,  // Unique transaction sequence
+                              fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
         this->component.doDispatch();
     }
 
@@ -858,11 +821,8 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
     // Send one more PDU - this should trigger RxTransactionLimitReached
     // because all transaction slots (FREE pool) are exhausted
     this->sendMetadataPdu(channelId, sourceEid, destEid,
-                         9999,  // Different transaction sequence
-                         fileSize,
-                         srcFile,
-                         dstFile,
-                         Cfdp::Class::CLASS_1, 1);
+                          9999,  // Different transaction sequence
+                          fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
     this->component.doDispatch();
 
     // Verify the event was emitted
@@ -935,9 +895,8 @@ void CfdpManagerTester::testRxInactivityTimeoutEvent() {
     this->clearEvents();
 
     // Establish RX transaction with metadata
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_2, 1);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -974,9 +933,8 @@ void CfdpManagerTester::testRxAckLimitReachedEvent() {
     this->clearEvents();
 
     // Establish Class 2 RX transaction with metadata
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_2, 1);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -1034,9 +992,8 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
     this->clearEvents();
 
     // Establish Class 2 RX transaction with metadata
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_2, 1);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_2, 1);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -1056,8 +1013,7 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
     // Send data for offset 0-99, leaving gaps at 100-999
     U8 testData[100];
     memset(testData, 0xAB, sizeof(testData));
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, 100, testData, Cfdp::Class::CLASS_2);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, 100, testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
     this->clearEvents();
@@ -1094,8 +1050,7 @@ void CfdpManagerTester::testUnhandledPduInIdleStateEvent() {
 
     // Send EOF PDU with no prior Metadata PDU (no active transaction)
     // This is an unexpected PDU type in INIT state
-    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                     conditionCode, checksum, fileSize,
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, conditionCode, checksum, fileSize,
                      Cfdp::Class::CLASS_1);
     this->component.doDispatch();
 
@@ -1117,9 +1072,8 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
     this->clearEvents();
 
     // Send Metadata PDU with wrong destination EID
-    this->sendMetadataPdu(channelId, sourceEid, wrongDestEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, wrongDestEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     // Verify exact event count and InvalidDestinationEid event
@@ -1182,14 +1136,13 @@ void CfdpManagerTester::testTxEarlyFinReceivedEvent() {
     // Set up Class 2 TX transaction
     const U32 testSequenceId = 42;
     const U32 testSrcEid = component.getLocalEidParam();
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "test_src.txt",           // srcFilename
-        "test_dst.txt",           // dstFilename
-        1000,                     // fileSize
-        testSequenceId,           // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize
+                                            testSequenceId,          // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
     ASSERT_NE(txn, nullptr);
 
@@ -1198,15 +1151,14 @@ void CfdpManagerTester::testTxEarlyFinReceivedEvent() {
 
     // Create valid FIN PDU buffer
     Cfdp::FinPdu finPdu;
-    finPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // FIN is sent from receiver to sender
-        Cfdp::Class::CLASS_2,                         // FIN is only used in Class 2
-        TEST_GROUND_EID,                              // sourceEid (from receiver)
-        testSequenceId,                               // transactionSeq
-        testSrcEid,                                   // destEid (to sender)
-        Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, // conditionCode
-        Cfdp::FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE,  // deliveryCode
-        Cfdp::FinFileStatus::FIN_FILE_STATUS_RETAINED       // fileStatus
+    finPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,        // FIN is sent from receiver to sender
+                      Cfdp::Class::CLASS_2,                               // FIN is only used in Class 2
+                      TEST_GROUND_EID,                                    // sourceEid (from receiver)
+                      testSequenceId,                                     // transactionSeq
+                      testSrcEid,                                         // destEid (to sender)
+                      Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,       // conditionCode
+                      Cfdp::FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE,  // deliveryCode
+                      Cfdp::FinFileStatus::FIN_FILE_STATUS_RETAINED       // fileStatus
     );
 
     // Serialize FIN PDU to buffer
@@ -1233,14 +1185,13 @@ void CfdpManagerTester::testTxNonFileDirectivePduReceivedEvent() {
     // 1. Set up Class 2 TX transaction
     const U32 testSequenceId = 42;
     const U32 testSrcEid = component.getLocalEidParam();
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "test_src.txt",           // srcFilename
-        "test_dst.txt",           // dstFilename
-        1000,                     // fileSize
-        testSequenceId,           // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize
+                                            testSequenceId,          // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
     ASSERT_NE(txn, nullptr);
 
@@ -1250,15 +1201,14 @@ void CfdpManagerTester::testTxNonFileDirectivePduReceivedEvent() {
     // 3. Create File Data PDU (protocol violation - file data to sender!)
     U8 testData[] = {0x01, 0x02, 0x03, 0x04};  // Dummy file data
     Cfdp::FileDataPdu fileDataPdu;
-    fileDataPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // Going to sender (TX)
-        Cfdp::Class::CLASS_2,                         // Class 2
-        TEST_GROUND_EID,                              // sourceEid (from receiver)
-        testSequenceId,                               // transactionSeq
-        testSrcEid,                                   // destEid (to sender)
-        0,                                            // offset
-        sizeof(testData),                             // dataSize
-        testData                                      // data
+    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // Going to sender (TX)
+                           Cfdp::Class::CLASS_2,                         // Class 2
+                           TEST_GROUND_EID,                              // sourceEid (from receiver)
+                           testSequenceId,                               // transactionSeq
+                           testSrcEid,                                   // destEid (to sender)
+                           0,                                            // offset
+                           sizeof(testData),                             // dataSize
+                           testData                                      // data
     );
 
     // 4. Serialize File Data PDU to buffer
@@ -1276,11 +1226,10 @@ void CfdpManagerTester::testTxNonFileDirectivePduReceivedEvent() {
     // 6. Verify TxNonFileDirectivePduReceived event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxNonFileDirectivePduReceived_SIZE(1);
-    ASSERT_EVENTS_TxNonFileDirectivePduReceived(
-        0,                       // index
-        Cfdp::Class::CLASS_2,    // cfdpClass
-        testSrcEid,              // srcEid
-        testSequenceId           // seqNum
+    ASSERT_EVENTS_TxNonFileDirectivePduReceived(0,                     // index
+                                                Cfdp::Class::CLASS_2,  // cfdpClass
+                                                testSrcEid,            // srcEid
+                                                testSequenceId         // seqNum
     );
 }
 
@@ -1290,14 +1239,13 @@ void CfdpManagerTester::testTxInvalidNakPduEvent() {
     // 1. Set up Class 2 TX transaction
     const U32 testSequenceId = 42;
     const U32 testSrcEid = component.getLocalEidParam();
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "test_src.txt",           // srcFilename
-        "test_dst.txt",           // dstFilename
-        1000,                     // fileSize
-        testSequenceId,           // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize
+                                            testSequenceId,          // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
     ASSERT_NE(txn, nullptr);
 
@@ -1309,14 +1257,13 @@ void CfdpManagerTester::testTxInvalidNakPduEvent() {
 
     // 4. Create NAK PDU with zero segments (invalid condition)
     Cfdp::NakPdu nakPdu;
-    nakPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // NAK goes from receiver to sender
-        Cfdp::Class::CLASS_2,                         // NAK only used in Class 2
-        TEST_GROUND_EID,                              // sourceEid (from receiver)
-        testSequenceId,                               // transactionSeq
-        testSrcEid,                                   // destEid (to sender)
-        0,                                            // scopeStart
-        1000                                          // scopeEnd (file size)
+    nakPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // NAK goes from receiver to sender
+                      Cfdp::Class::CLASS_2,                         // NAK only used in Class 2
+                      TEST_GROUND_EID,                              // sourceEid (from receiver)
+                      testSequenceId,                               // transactionSeq
+                      testSrcEid,                                   // destEid (to sender)
+                      0,                                            // scopeStart
+                      1000                                          // scopeEnd (file size)
     );
     // DO NOT call nakPdu.addSegment() - leave segments at 0 (this is the invalid condition)
 
@@ -1335,11 +1282,10 @@ void CfdpManagerTester::testTxInvalidNakPduEvent() {
     // 7. Verify TxInvalidNakPdu event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxInvalidNakPdu_SIZE(1);
-    ASSERT_EVENTS_TxInvalidNakPdu(
-        0,                       // index
-        Cfdp::Class::CLASS_2,    // cfdpClass
-        testSrcEid,              // srcEid
-        testSequenceId           // seqNum
+    ASSERT_EVENTS_TxInvalidNakPdu(0,                     // index
+                                  Cfdp::Class::CLASS_2,  // cfdpClass
+                                  testSrcEid,            // srcEid
+                                  testSequenceId         // seqNum
     );
 }
 
@@ -1349,14 +1295,13 @@ void CfdpManagerTester::testTxInvalidSegmentRequestsEvent() {
     // 1. Set up Class 2 TX transaction
     const U32 testSequenceId = 43;
     const U32 testSrcEid = component.getLocalEidParam();
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        0,                        // channelId
-        "test_src.txt",           // srcFilename
-        "test_dst.txt",           // dstFilename
-        1000,                     // fileSize (used for overflow validation)
-        testSequenceId,           // sequenceId
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize (used for overflow validation)
+                                            testSequenceId,          // sequenceId
+                                            TEST_GROUND_EID          // peerId
     );
     ASSERT_NE(txn, nullptr);
 
@@ -1373,14 +1318,13 @@ void CfdpManagerTester::testTxInvalidSegmentRequestsEvent() {
 
     // 5. Create NAK PDU with mix of valid and invalid segments
     Cfdp::NakPdu nakPdu;
-    nakPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // NAK goes from receiver to sender
-        Cfdp::Class::CLASS_2,                         // NAK only used in Class 2
-        TEST_GROUND_EID,                              // sourceEid (from receiver)
-        testSequenceId,                               // transactionSeq
-        testSrcEid,                                   // destEid (to sender)
-        0,                                            // scopeStart
-        1000                                          // scopeEnd (file size)
+    nakPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_SENDER,  // NAK goes from receiver to sender
+                      Cfdp::Class::CLASS_2,                         // NAK only used in Class 2
+                      TEST_GROUND_EID,                              // sourceEid (from receiver)
+                      testSequenceId,                               // transactionSeq
+                      testSrcEid,                                   // destEid (to sender)
+                      0,                                            // scopeStart
+                      1000                                          // scopeEnd (file size)
     );
 
     // Add segments: mix of valid and invalid
@@ -1414,12 +1358,11 @@ void CfdpManagerTester::testTxInvalidSegmentRequestsEvent() {
     // 8. Verify TxInvalidSegmentRequests event was emitted with badCount = 2
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxInvalidSegmentRequests_SIZE(1);
-    ASSERT_EVENTS_TxInvalidSegmentRequests(
-        0,                       // index
-        Cfdp::Class::CLASS_2,    // cfdpClass
-        testSrcEid,              // srcEid
-        testSequenceId,          // seqNum
-        2                        // badCount (reversed + overflow)
+    ASSERT_EVENTS_TxInvalidSegmentRequests(0,                     // index
+                                           Cfdp::Class::CLASS_2,  // cfdpClass
+                                           testSrcEid,            // srcEid
+                                           testSequenceId,        // seqNum
+                                           2                      // badCount (reversed + overflow)
     );
 }
 
@@ -1441,15 +1384,8 @@ void CfdpManagerTester::testTxInactivityTimeoutEvent() {
     this->clearEvents();
 
     // Create Class 2 TX transaction in S2 state
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender state
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        sequenceId,
-        peerId
-    );
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender state
+                                            channelId, srcFile, dstFile, fileSize, sequenceId, peerId);
     ASSERT_NE(txn, nullptr) << "Transaction should be created";
 
     // Set source entity ID (setupTestTransaction doesn't initialize this)
@@ -1469,8 +1405,7 @@ void CfdpManagerTester::testTxInactivityTimeoutEvent() {
 
     // Set timer to 1 second - will expire when sTick calls run()
     txn->m_inactivity_timer.setTimer(1);
-    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::RUNNING)
-        << "Timer should be RUNNING before sTick()";
+    ASSERT_EQ(txn->m_inactivity_timer.getStatus(), Timer::RUNNING) << "Timer should be RUNNING before sTick()";
 
     this->clearEvents();
 
@@ -1483,11 +1418,10 @@ void CfdpManagerTester::testTxInactivityTimeoutEvent() {
     ASSERT_EVENTS_TxInactivityTimeout_SIZE(1);
 
     // Verify event parameters are correct
-    ASSERT_EVENTS_TxInactivityTimeout(
-        0,                     // index
-        Cfdp::Class::CLASS_2,  // cfdpClass
-        localEid,              // srcEid
-        sequenceId             // seqNum
+    ASSERT_EVENTS_TxInactivityTimeout(0,                     // index
+                                      Cfdp::Class::CLASS_2,  // cfdpClass
+                                      localEid,              // srcEid
+                                      sequenceId             // seqNum
     );
 }
 
@@ -1507,14 +1441,9 @@ void CfdpManagerTester::testTxAckLimitReachedEvent() {
     this->clearEvents();
 
     // Step 1: Create Class 2 TX transaction
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        transactionSeq,
-        TEST_GROUND_EID          // peerId
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            channelId, srcFile, dstFile, fileSize, transactionSeq,
+                                            TEST_GROUND_EID  // peerId
     );
     ASSERT_NE(txn, nullptr) << "Transaction should exist";
 
@@ -1559,11 +1488,10 @@ void CfdpManagerTester::testTxAckLimitReachedEvent() {
     ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
 
     // Step 8: Verify event parameters are correct
-    ASSERT_EVENTS_TxAckLimitReached(
-        0,                       // index
-        Cfdp::Class::CLASS_2,    // cfdpClass
-        localEid,                // srcEid
-        transactionSeq           // seqNum
+    ASSERT_EVENTS_TxAckLimitReached(0,                     // index
+                                    Cfdp::Class::CLASS_2,  // cfdpClass
+                                    localEid,              // srcEid
+                                    transactionSeq         // seqNum
     );
 }
 
@@ -1587,9 +1515,8 @@ void CfdpManagerTester::testMaxTxTransactionsReachedEvent() {
     // Try to send one more file - should trigger MaxTxTransactionsReached
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, channelId, TEST_GROUND_EID,
-                          Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Verify the event was emitted
@@ -1618,9 +1545,8 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
     this->clearEvents();
 
     // Start RX transaction to get a real transaction object
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);  // 0 = DELETE (not KEEP)
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);  // 0 = DELETE (not KEEP)
     this->component.doDispatch();
 
     // Find the transaction
@@ -1655,8 +1581,7 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
     this->clearEvents();
 
     // Try to playback non-existent directory
-    this->sendCmd_PlaybackDirectory(0, 0, 0, TEST_GROUND_EID,
-                                    Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
+    this->sendCmd_PlaybackDirectory(0, 0, 0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, 0,
                                     nonexistentDir, destPath);
     this->component.doDispatch();
 
@@ -1708,9 +1633,8 @@ void CfdpManagerTester::testRxWriteFailedEvent() {
     TransactionSetup setup;
 
     // Setup RX transaction receiving file data
-    setupRxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0,
-                      TEST_GROUND_EID, Cfdp::Class::CLASS_1,
-                      100, 600, TxnState::TXN_STATE_R1, setup);
+    setupRxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, 100, 600,
+                       TxnState::TXN_STATE_R1, setup);
 
     // Close the file to cause write failure
     setup.txn->m_fd.close();
@@ -1719,9 +1643,8 @@ void CfdpManagerTester::testRxWriteFailedEvent() {
 
     // Send FileData PDU - write will fail
     U8 testData[32] = {1, 2, 3};
-    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                   component.getLocalEidParam(), 600, 0, 32, testData,
-                   Cfdp::Class::CLASS_1);
+    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), 600, 0, 32, testData,
+                    Cfdp::Class::CLASS_1);
     component.doDispatch();
 
     // Verify RxWriteFailed event
@@ -1737,9 +1660,8 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
     TransactionSetup setup;
 
     // Setup RX transaction with closed file to cause seek failure
-    setupRxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0,
-                      TEST_GROUND_EID, Cfdp::Class::CLASS_1,
-                      100, 700, TxnState::TXN_STATE_R1, setup);
+    setupRxTransaction(srcFile, dstFile, TEST_CHANNEL_ID_0, TEST_GROUND_EID, Cfdp::Class::CLASS_1, 100, 700,
+                       TxnState::TXN_STATE_R1, setup);
 
     // Close file to cause seek failure
     setup.txn->m_fd.close();
@@ -1748,9 +1670,8 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
 
     // Send FileData PDU with non-zero offset requiring seek
     U8 testData[32] = {1, 2, 3};
-    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                   component.getLocalEidParam(), 700, 50, 32, testData,
-                   Cfdp::Class::CLASS_1);
+    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), 700, 50, 32, testData,
+                    Cfdp::Class::CLASS_1);
     component.doDispatch();
 
     // Verify RxSeekFailed event
@@ -1794,35 +1715,30 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     srcFile.close();
 
     // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_R2,  // Class 2 receiver
-        channelId,
-        "test_src.dat",          // srcFilename (unused for rename)
-        moveSource,              // dstFilename -> becomes the move SOURCE (fname)
-        fileSize,
-        seq,
-        sourceEid);
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
+                                            channelId,
+                                            "test_src.dat",  // srcFilename (unused for rename)
+                                            moveSource,      // dstFilename -> becomes the move SOURCE (fname)
+                                            fileSize, seq, sourceEid);
 
     txn->m_engine = this->component.m_engine;
     txn->m_history->src_eid = sourceEid;
 
     // Force the "metadata arriving late" rename path:
-    txn->m_flags.rx.md_recv = false;  // metadata not yet received -> enter rename branch
+    txn->m_flags.rx.md_recv = false;   // metadata not yet received -> enter rename branch
     txn->m_flags.rx.eof_recv = false;  // skip EOF/MD size-mismatch check -> keep success==true
 
     // Build the Metadata PDU whose destination filename is the (bad) rename target
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-        Cfdp::Class::CLASS_2,
-        sourceEid,                            // sourceEid
-        seq,                                  // transactionSeq
-        this->component.getLocalEidParam(),   // destEid
-        fileSize,                             // fileSize
-        "test_src.dat",                       // source filename
-        badDest,                              // dest filename -> move DEST (bad dir)
-        Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
-        1);                                   // closureRequested for Class 2
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                           sourceEid,                           // sourceEid
+                           seq,                                 // transactionSeq
+                           this->component.getLocalEidParam(),  // destEid
+                           fileSize,                            // fileSize
+                           "test_src.dat",                      // source filename
+                           badDest,                             // dest filename -> move DEST (bad dir)
+                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
+                           1);  // closureRequested for Class 2
 
     // Serialize PDU to buffer (direct r2RecvMd call: no packet descriptor prefix)
     U8 tempBuffer[300];
@@ -1879,14 +1795,8 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
     this->clearEvents();
 
     // Create a Class 2 TX transaction (S2 sender state)
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,  // Class 2 sender
-        channelId,
-        srcFile,
-        dstFile,
-        fileSize,
-        sequenceId,
-        TEST_GROUND_EID);
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            channelId, srcFile, dstFile, fileSize, sequenceId, TEST_GROUND_EID);
     ASSERT_NE(txn, nullptr) << "Transaction should be created";
 
     // Wire engine pointer (required for setTxnStatus / finishTransaction on failure)
@@ -1947,14 +1857,8 @@ void CfdpManagerTester::testTxSendMetadataFailedEvent() {
     this->clearEvents();
 
     // Class 1 TX transaction (S1 sender state).
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S1,
-        TEST_CHANNEL_ID_0,
-        srcFile,
-        dstFile,
-        fileSize,
-        sequenceId,
-        TEST_GROUND_EID);
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, TEST_CHANNEL_ID_0, srcFile, dstFile, fileSize,
+                                            sequenceId, TEST_GROUND_EID);
     ASSERT_NE(txn, nullptr) << "Transaction should be created";
 
     // Set source entity ID (setupTestTransaction doesn't initialize this).
@@ -1994,11 +1898,10 @@ void CfdpManagerTester::testTxSendMetadataFailedEvent() {
     ASSERT_EVENTS_TxFileTransferFailed_SIZE(1);
 
     // Verify TxSendMetadataFailed parameters.
-    ASSERT_EVENTS_TxSendMetadataFailed(
-        0,                     // index
-        Cfdp::Class::CLASS_1,  // cfdpClass
-        localEid,              // srcEid
-        sequenceId             // seqNum
+    ASSERT_EVENTS_TxSendMetadataFailed(0,                     // index
+                                       Cfdp::Class::CLASS_1,  // cfdpClass
+                                       localEid,              // srcEid
+                                       sequenceId             // seqNum
     );
 
     // Cleanup.
@@ -2016,9 +1919,8 @@ void CfdpManagerTester::testRxTempFileCreatedEvent() {
 
     // Send FileData PDU before Metadata PDU to trigger temp file creation
     U8 testData[32] = {1, 2, 3};
-    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID,
-                   component.getLocalEidParam(), 1000, 0, 32, testData,
-                   Cfdp::Class::CLASS_2);
+    sendFileDataPdu(TEST_CHANNEL_ID_0, TEST_GROUND_EID, component.getLocalEidParam(), 1000, 0, 32, testData,
+                    Cfdp::Class::CLASS_2);
     component.doDispatch();
 
     // Verify RxTempFileCreated event
@@ -2062,8 +1964,7 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
     this->clearEvents();
 
     // Establish a real RX transaction (placed on QueueId::RX with a valid chunk list)
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                          fileSize, "/ground/dangling_src.bin", testFile,
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, "/ground/dangling_src.bin", testFile,
                           Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
@@ -2098,8 +1999,8 @@ void CfdpManagerTester::testResetFreedTransactionEvent() {
     // Channel::freeTransaction() now tags freed transactions with that queue id.
 
     // Acquire a transaction and put it into a live sender state.
-    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, TEST_CHANNEL_ID_0,
-                                            "/test/src.bin", "/test/dst.bin", 100, 1200, TEST_GROUND_EID);
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1, TEST_CHANNEL_ID_0, "/test/src.bin", "/test/dst.bin",
+                                            100, 1200, TEST_GROUND_EID);
 
     // Free the transaction back onto the FREE list. After the fix this tags q_index == FREE.
     Channel* chan = component.m_engine->m_channels[TEST_CHANNEL_ID_0];
@@ -2151,11 +2052,8 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     file.close();
 
     // Set up a Class 2 RX transaction using setupTestTransaction helper
-    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,
-                                           channelId,
-                                           srcFile,
-                                           dstFile,
-                                           fileSize, transactionSeq, sourceEid);
+    Transaction* txn =
+        setupTestTransaction(TxnState::TXN_STATE_R2, channelId, srcFile, dstFile, fileSize, transactionSeq, sourceEid);
     this->clearEvents();
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
@@ -2167,7 +2065,7 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     txn->m_flags.rx.md_recv = true;
     txn->m_flags.rx.eof_recv = true;
     txn->m_fsize = fileSize;
-    txn->m_state_data.receive.r2.rx_crc_calc_bytes = 65536; // Simulate first CRC tick completed
+    txn->m_state_data.receive.r2.rx_crc_calc_bytes = 65536;  // Simulate first CRC tick completed
 
     // Close any existing file handle (transaction may have opened for metadata processing)
     if (txn->m_fd.isOpen()) {
@@ -2177,7 +2075,7 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     // Open the file in READ mode to simulate CRC calculation state
     fileStatus = txn->m_fd.open(dstFile, Os::File::OPEN_READ);
     ASSERT_EQ(Os::File::OP_OK, fileStatus);
-    txn->m_state_data.receive.cached_pos = 0; // Position mismatch will trigger seek
+    txn->m_state_data.receive.cached_pos = 0;  // Position mismatch will trigger seek
 
     // Close the file descriptor to make seek fail
     // (On Unix, deleting an open file keeps the fd valid, so we close it first)
@@ -2192,13 +2090,11 @@ void CfdpManagerTester::testRxSeekCrcFailedEvent() {
     // Verify RxSeekCrcFailed event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxSeekCrcFailed_SIZE(1);
-    ASSERT_EVENTS_RxSeekCrcFailed(
-        0,
-        Cfdp::Class::CLASS_2,
-        txn->m_history->src_eid,  // Use actual src_eid from transaction
-        transactionSeq,
-        65536, // The offset where seek failed
-        Os::File::Status::NOT_OPENED  // Closed file descriptor
+    ASSERT_EVENTS_RxSeekCrcFailed(0, Cfdp::Class::CLASS_2,
+                                  txn->m_history->src_eid,  // Use actual src_eid from transaction
+                                  transactionSeq,
+                                  65536,                        // The offset where seek failed
+                                  Os::File::Status::NOT_OPENED  // Closed file descriptor
     );
 
     // Cleanup
@@ -2218,7 +2114,7 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     const char* dstFile = "test/ut/output/crc_read_fail.bin";
 
     // File must be larger than RxCrcCalcBytesPerCycle (default 65536) to require multiple CRC ticks
-    Cfdp::FileSize fileSize = 131072; // 128KB
+    Cfdp::FileSize fileSize = 131072;  // 128KB
 
     this->clearHistory();
     this->clearEvents();
@@ -2237,11 +2133,8 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     file.close();
 
     // Set up a Class 2 RX transaction using setupTestTransaction helper
-    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,
-                                           channelId,
-                                           srcFile,
-                                           dstFile,
-                                           fileSize, transactionSeq, sourceEid);
+    Transaction* txn =
+        setupTestTransaction(TxnState::TXN_STATE_R2, channelId, srcFile, dstFile, fileSize, transactionSeq, sourceEid);
     this->clearEvents();
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
@@ -2253,8 +2146,8 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     txn->m_flags.rx.md_recv = true;
     txn->m_flags.rx.eof_recv = true;
     txn->m_fsize = fileSize;
-    txn->m_state_data.receive.r2.rx_crc_calc_bytes = 65536; // Simulate first CRC tick completed
-    txn->m_state_data.receive.cached_pos = 65536; // Match rx_crc_calc_bytes to skip seek
+    txn->m_state_data.receive.r2.rx_crc_calc_bytes = 65536;  // Simulate first CRC tick completed
+    txn->m_state_data.receive.cached_pos = 65536;            // Match rx_crc_calc_bytes to skip seek
 
     // Close any existing file handle (transaction may have opened for metadata processing)
     if (txn->m_fd.isOpen()) {
@@ -2278,13 +2171,11 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     // Verify RxReadCrcFailed event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxReadCrcFailed_SIZE(1);
-    ASSERT_EVENTS_RxReadCrcFailed(
-        0,
-        Cfdp::Class::CLASS_2,
-        txn->m_history->src_eid,  // Use actual src_eid from transaction
-        transactionSeq,
-        CFDP_R2_CRC_CHUNK_SIZE,  // Expected read size (CRC chunk buffer size, 1024)
-        0                        // Actual read size (read failed, returns 0)
+    ASSERT_EVENTS_RxReadCrcFailed(0, Cfdp::Class::CLASS_2,
+                                  txn->m_history->src_eid,  // Use actual src_eid from transaction
+                                  transactionSeq,
+                                  CFDP_R2_CRC_CHUNK_SIZE,  // Expected read size (CRC chunk buffer size, 1024)
+                                  0                        // Actual read size (read failed, returns 0)
     );
 
     // Cleanup
@@ -2366,11 +2257,9 @@ void CfdpManagerTester::testInvalidChannelPollEvent() {
     this->clearEvents();
 
     // Send PollDirectory with pollIndex out of range
-    U8 invalidPollIndex = 255; // Guaranteed to be >= CFDP_MAX_POLLING_DIR_PER_CHAN
-    sendCmd_PollDirectory(0, 0, TEST_CHANNEL_ID_0, invalidPollIndex,
-                         TEST_GROUND_EID, Cfdp::Class::CLASS_1, 0, 10,
-                         Fw::CmdStringArg("test/ut/output"),
-                         Fw::CmdStringArg("/dest"));
+    U8 invalidPollIndex = 255;  // Guaranteed to be >= CFDP_MAX_POLLING_DIR_PER_CHAN
+    sendCmd_PollDirectory(0, 0, TEST_CHANNEL_ID_0, invalidPollIndex, TEST_GROUND_EID, Cfdp::Class::CLASS_1, 0, 10,
+                          Fw::CmdStringArg("test/ut/output"), Fw::CmdStringArg("/dest"));
     component.doDispatch();
 
     // Verify InvalidChannelPoll event
@@ -2415,11 +2304,9 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
     // ChunklistUnavailable event emitted at line 509
     U8 testData[] = {0x01, 0x02, 0x03, 0x04};
     this->sendFileDataPdu(channelId, sourceEid, destEid,
-                         9999,           // New transaction sequence
-                         0,              // offset
-                         sizeof(testData),
-                         testData,
-                         Cfdp::Class::CLASS_2);
+                          9999,  // New transaction sequence
+                          0,     // offset
+                          sizeof(testData), testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
     // Verify ChunklistUnavailable event
@@ -2457,14 +2344,11 @@ void CfdpManagerTester::testFailKeepFileMoveEvent() {
     testFile.close();
 
     // Step 2: Setup TX transaction using white-box helper
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S1,  // Class 1 sender
-        channelId,
-        srcFile,
-        dstFile,
-        10,                      // File size
-        4000,                    // Transaction sequence
-        TEST_GROUND_EID         // Peer
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Class 1 sender
+                                            channelId, srcFile, dstFile,
+                                            10,              // File size
+                                            4000,            // Transaction sequence
+                                            TEST_GROUND_EID  // Peer
     );
 
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
@@ -2532,14 +2416,13 @@ void CfdpManagerTester::testFailPduSerializationEvent() {
 
     // Setup: Create minimal Class 2 sender transaction
     const U32 testSequenceId = 42;
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S2,    // Class 2 sender
-        TEST_CHANNEL_ID_0,          // Channel 0
-        "src.txt",                  // Source file
-        "dst.txt",                  // Dest file
-        1000,                       // File size
-        testSequenceId,
-        TEST_GROUND_EID             // Peer entity ID
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            TEST_CHANNEL_ID_0,       // Channel 0
+                                            "src.txt",               // Source file
+                                            "dst.txt",               // Dest file
+                                            1000,                    // File size
+                                            testSequenceId,
+                                            TEST_GROUND_EID  // Peer entity ID
     );
     ASSERT_NE(txn, nullptr);
 
@@ -2565,11 +2448,10 @@ void CfdpManagerTester::testFailPduSerializationEvent() {
 
     // Verify: FailPduSerialization event was emitted with correct parameters
     ASSERT_EVENTS_FailPduSerialization_SIZE(1);
-    ASSERT_EVENTS_FailPduSerialization(
-        0,                                      // Event index
-        TEST_CHANNEL_ID_0,                      // Channel ID
-        Cfdp::PduTypeEnum::ACKNOWLEDGMENT,      // PDU type
-        static_cast<I32>(Fw::FW_SERIALIZE_NO_ROOM_LEFT)  // Serialize status
+    ASSERT_EVENTS_FailPduSerialization(0,                                               // Event index
+                                       TEST_CHANNEL_ID_0,                               // Channel ID
+                                       Cfdp::PduTypeEnum::ACKNOWLEDGMENT,               // PDU type
+                                       static_cast<I32>(Fw::FW_SERIALIZE_NO_ROOM_LEFT)  // Serialize status
     );
 }
 
@@ -2606,14 +2488,11 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     testFile.close();
 
     // Step 2: Set up a TX transaction (Class 1 sender)
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_S1,  // Class 1 sender
-        channelId,
-        srcFile,
-        dstFile,
-        10,                      // File size
-        4100,                    // Transaction sequence
-        TEST_GROUND_EID          // Peer
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S1,  // Class 1 sender
+                                            channelId, srcFile, dstFile,
+                                            10,              // File size
+                                            4100,            // Transaction sequence
+                                            TEST_GROUND_EID  // Peer
     );
     ASSERT_TRUE(txn != nullptr) << "Transaction should exist";
 
@@ -2688,9 +2567,8 @@ void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     this->clearEvents();
 
     // Step 1: Establish an RX transaction with a Metadata PDU
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, srcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
     Transaction* txn = this->findTransaction(channelId, transactionSeq);
@@ -2699,10 +2577,8 @@ void CfdpManagerTester::testFileDataSegmentMetadataEvent() {
     // Step 2: Build a valid FileData PDU
     Cfdp::FileDataPdu fileDataPdu;
     U8 testData[20] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-                          Cfdp::Class::CLASS_1,
-                          sourceEid, transactionSeq, destEid,
-                          0, 10, testData);  // offset, dataSize, data
+    fileDataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_1, sourceEid,
+                           transactionSeq, destEid, 0, 10, testData);  // offset, dataSize, data
 
     // Step 3: Serialize it into a raw buffer (NO packet-descriptor prefix)
     U32 pduSize = fileDataPdu.getBufferSize();
@@ -2764,11 +2640,9 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     this->clearEvents();
 
     // Initiate a real playback: opens the directory successfully and marks the slot busy.
-    Cfdp::Status::T status = this->component.m_engine->playbackDir(
-        srcDir, dstDir, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE,
-        channelId, 0, TEST_GROUND_EID);
-    ASSERT_EQ(status, Cfdp::Status::SUCCESS)
-        << "playbackDir should succeed and open the directory";
+    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDir, dstDir, Cfdp::Class::CLASS_1,
+                                                                   Cfdp::Keep::DELETE, channelId, 0, TEST_GROUND_EID);
+    ASSERT_EQ(status, Cfdp::Status::SUCCESS) << "playbackDir should succeed and open the directory";
 
     // Locate the busy playback slot that just opened the directory (index 0 expected).
     Channel* chan = this->component.m_engine->m_channels[channelId];
@@ -2818,22 +2692,18 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
     // directory successfully, setting pb->busy = true for that slot.
     for (U32 i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i) {
         Cfdp::Status::T setupStatus = this->component.m_engine->playbackDir(
-            srcDir, dstDir, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE,
-            channelId, 0, TEST_GROUND_EID);
-        ASSERT_EQ(setupStatus, Cfdp::Status::SUCCESS)
-            << "Setup playbackDir call " << i << " should consume a slot";
+            srcDir, dstDir, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, channelId, 0, TEST_GROUND_EID);
+        ASSERT_EQ(setupStatus, Cfdp::Status::SUCCESS) << "Setup playbackDir call " << i << " should consume a slot";
     }
 
     // Only assert on the event emitted by the final (failing) call.
     this->clearEvents();
 
     // All slots are now busy; this call must fail and emit the event.
-    Cfdp::Status::T status = this->component.m_engine->playbackDir(
-        srcDir, dstDir, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE,
-        channelId, 0, TEST_GROUND_EID);
+    Cfdp::Status::T status = this->component.m_engine->playbackDir(srcDir, dstDir, Cfdp::Class::CLASS_1,
+                                                                   Cfdp::Keep::DELETE, channelId, 0, TEST_GROUND_EID);
 
-    ASSERT_EQ(status, Cfdp::Status::ERROR)
-        << "playbackDir should fail when all slots are busy";
+    ASSERT_EQ(status, Cfdp::Status::ERROR) << "playbackDir should fail when all slots are busy";
     ASSERT_EVENTS_PlaybackDirSlotUnavailable_SIZE(1);
 }
 
@@ -2879,14 +2749,11 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     ASSERT_EQ(Os::FileSystem::OP_OK, mkStatus);
 
     // Set up Class 2 receiver transaction; its dst_filename is the move SOURCE (the directory)
-    Transaction* txn = setupTestTransaction(
-        TxnState::TXN_STATE_R2,  // Class 2 receiver
-        channelId,
-        "test_src.dat",          // srcFilename (unused for rename)
-        moveSourceDir,           // dstFilename -> becomes the move SOURCE (fname)
-        fileSize,
-        seq,
-        sourceEid);
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
+                                            channelId,
+                                            "test_src.dat",  // srcFilename (unused for rename)
+                                            moveSourceDir,   // dstFilename -> becomes the move SOURCE (fname)
+                                            fileSize, seq, sourceEid);
 
     txn->m_engine = this->component.m_engine;
     txn->m_history->src_eid = sourceEid;
@@ -2897,17 +2764,15 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
 
     // Build the Metadata PDU whose destination filename is the rename target
     Cfdp::MetadataPdu metadataPdu;
-    metadataPdu.initialize(
-        Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
-        Cfdp::Class::CLASS_2,
-        sourceEid,                            // sourceEid
-        seq,                                  // transactionSeq
-        this->component.getLocalEidParam(),   // destEid
-        fileSize,                             // fileSize
-        "test_src.dat",                       // source filename
-        moveDest,                             // dest filename -> move DEST (becomes a directory)
-        Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
-        1);                                   // closureRequested for Class 2
+    metadataPdu.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2,
+                           sourceEid,                           // sourceEid
+                           seq,                                 // transactionSeq
+                           this->component.getLocalEidParam(),  // destEid
+                           fileSize,                            // fileSize
+                           "test_src.dat",                      // source filename
+                           moveDest,                            // dest filename -> move DEST (becomes a directory)
+                           Cfdp::ChecksumType::CHECKSUM_TYPE_MODULAR,
+                           1);  // closureRequested for Class 2
 
     // Serialize PDU to buffer (direct r2RecvMd call: no packet descriptor prefix)
     U8 tempBuffer[300];

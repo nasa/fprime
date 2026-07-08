@@ -598,9 +598,8 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     // Start a file transfer to create an active transaction
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, channelId, destEid,
-                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, channelId, destEid, Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Run cycles to start transaction (but not complete it)
@@ -620,8 +619,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     // Suspend the active transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           channelId, transactionSeq, localEid,
-                                           Cfdp::SuspendResume::SUSPEND);
+                                           channelId, transactionSeq, localEid, Cfdp::SuspendResume::SUSPEND);
 
     this->component.doDispatch();
 
@@ -639,8 +637,7 @@ void CfdpManagerTester::testSuspendResumeTransactionNominal() {
     // Resume the suspended transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           channelId, transactionSeq, localEid,
-                                           Cfdp::SuspendResume::RESUME);
+                                           channelId, transactionSeq, localEid, Cfdp::SuspendResume::RESUME);
 
     this->component.doDispatch();
 
@@ -669,8 +666,7 @@ void CfdpManagerTester::testSuspendResumeTransactionInvalidChannel() {
     // Send command with invalid channel ID
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           invalidChannelId, transactionSeq, entityId,
-                                           Cfdp::SuspendResume::SUSPEND);
+                                           invalidChannelId, transactionSeq, entityId, Cfdp::SuspendResume::SUSPEND);
 
     this->component.doDispatch();
 
@@ -700,14 +696,14 @@ void CfdpManagerTester::testSuspendResumeTransactionNotFound() {
     // Attempt to suspend nonexistent transaction
     this->sendCmd_SuspendResumeTransaction(0,  // Instance
                                            0,  // cmdSeq
-                                           channelId, transactionSeq, entityId,
-                                           Cfdp::SuspendResume::SUSPEND);
+                                           channelId, transactionSeq, entityId, Cfdp::SuspendResume::SUSPEND);
 
     this->component.doDispatch();
 
     // Command returns EXECUTION_ERROR (transaction not found)
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_SUSPENDRESUMETRANSACTION, 0,
+                        Fw::CmdResponse::EXECUTION_ERROR);
 
     // TransactionNotFound event should be emitted
     ASSERT_EVENTS_TransactionNotFound_SIZE(1);
@@ -745,9 +741,8 @@ void CfdpManagerTester::testCancelTransactionNominal() {
     // Start a file transfer to create an active transaction
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, channelId, destEid,
-                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, channelId, destEid, Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Run cycles to start transaction
@@ -841,9 +836,8 @@ void CfdpManagerTester::testAbandonTransactionNominal() {
     // Start a file transfer to create an active transaction
     Fw::String srcFileStr(srcFile);
     Fw::String destFileStr(destFile);
-    this->sendCmd_SendFile(0, 0, channelId, destEid,
-                          Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0,
-                          srcFileStr, destFileStr);
+    this->sendCmd_SendFile(0, 0, channelId, destEid, Cfdp::Class::CLASS_2, Cfdp::Keep::DELETE, 0, srcFileStr,
+                           destFileStr);
     this->component.doDispatch();
 
     // Run cycles to start transaction

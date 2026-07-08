@@ -232,7 +232,8 @@ void Transaction::sTick(I32* cont /* unused */) {
     bool should_recycle = false;
     if (this->m_flags.com.inactivity_fired) {
         if (this->m_state == TxnState::TXN_STATE_HOLD ||
-            (this->m_state == TxnState::TXN_STATE_S2 && this->m_state_data.send.sub_state == TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC) ||
+            (this->m_state == TxnState::TXN_STATE_S2 &&
+             this->m_state_data.send.sub_state == TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC) ||
             !pending_send) {
             should_recycle = true;
         }

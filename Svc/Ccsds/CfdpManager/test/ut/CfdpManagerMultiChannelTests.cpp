@@ -34,9 +34,8 @@ void CfdpManagerTester::testClass1RxNominalChannel1() {
     Cfdp::FileSize fileSize = 5;
 
     // Send Metadata PDU on channel 1
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, groundSrcFile, dstFile,
-                         Cfdp::Class::CLASS_1, 0);  // Class 1, no closure
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, groundSrcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);  // Class 1, no closure
 
     this->component.doDispatch();
 
@@ -44,17 +43,15 @@ void CfdpManagerTester::testClass1RxNominalChannel1() {
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
 
     // Send File Data PDU on channel 1
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, static_cast<U16>(fileSize), testData,
-                         Cfdp::Class::CLASS_1);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_1);
 
     this->component.doDispatch();
 
     // Send EOF PDU on channel 1
     U32 checksum = 0;  // Simplified - real test would calculate CRC
-    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, checksum, fileSize,
-                    Cfdp::Class::CLASS_1);
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     checksum, fileSize, Cfdp::Class::CLASS_1);
 
     // Run cycles to complete transaction
     for (U32 i = 0; i < 10; i++) {
@@ -86,9 +83,8 @@ void CfdpManagerTester::testClass2RxNominalChannel1() {
     Cfdp::FileSize fileSize = 5;
 
     // Send Metadata PDU on channel 1 with Class 2
-    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         fileSize, groundSrcFile, dstFile,
-                         Cfdp::Class::CLASS_2, 1);  // Class 2, with closure
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, fileSize, groundSrcFile, dstFile,
+                          Cfdp::Class::CLASS_2, 1);  // Class 2, with closure
 
     this->component.doDispatch();
 
@@ -96,17 +92,15 @@ void CfdpManagerTester::testClass2RxNominalChannel1() {
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
 
     // Send File Data PDU on channel 1
-    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq,
-                         0, static_cast<U16>(fileSize), testData,
-                         Cfdp::Class::CLASS_2);
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, 0, static_cast<U16>(fileSize), testData,
+                          Cfdp::Class::CLASS_2);
 
     this->component.doDispatch();
 
     // Send EOF PDU on channel 1
     U32 checksum = 0;  // Simplified
-    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq,
-                    Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, checksum, fileSize,
-                    Cfdp::Class::CLASS_2);
+    this->sendEofPdu(channelId, sourceEid, destEid, transactionSeq, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                     checksum, fileSize, Cfdp::Class::CLASS_2);
 
     this->component.doDispatch();
 
