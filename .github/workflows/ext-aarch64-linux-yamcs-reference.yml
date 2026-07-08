@@ -107,7 +107,13 @@ jobs:
             --use-yamcs \
             -v \
             --ignore=./int/test_yamcs_file_transfer.py \
+            --ignore=./int/test_cmd_health.py \
             ./int/ || rc=1
+          pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
+            --deployment-config ./int/int_config.json \
+            --use-yamcs \
+            -v \
+            ./int/test_cmd_health.py || rc=1
           exit $rc
 
       - name: "Run general Svc integration tests"
