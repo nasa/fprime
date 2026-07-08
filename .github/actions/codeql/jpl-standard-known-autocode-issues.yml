@@ -1,0 +1,29 @@
+name: "CodeQL JPL Coding Standard - Known Auto-Code Issues"
+
+# Rules in this run are known to be violated by auto-generated code in the build
+# directories, so they run here with build paths excluded instead of in the
+# standard packs. As auto-code issues are found, move the offending rule from
+# its standard pack into this run; once the autocoder is fixed, move it back.
+
+disable-default-queries: true
+
+# Autocoded C++ in build caches is not hand-maintained, so alerts there are
+# not actionable in this repository
+paths-ignore:
+  - "**/build-fprime-*/**"
+
+queries:
+  - uses: ./.github/codeql/fprime-queries
+
+query-filters:
+  # This run includes ONLY the rules listed here
+  - include:
+      id:
+        # The autocoder emits non-boolean FW_ASSERT expressions,
+        # see https://github.com/nasa/fpp/issues/1030
+        - cpp/fprime/jpl-c/use-of-assertions-non-boolean
+        # The autocoder ignores the Fw::FormatStatus returned by
+        # Fw::StringBase::format(). This F Prime refinement whitelists the
+        # assignment/increment operators, so only the genuine format() findings
+        # remain. See https://github.com/nasa/fpp/issues/1031
+        - cpp/fprime/jpl-c/checking-return-values

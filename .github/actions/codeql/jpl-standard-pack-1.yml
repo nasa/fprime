@@ -6,7 +6,44 @@ packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
   - codeql/cpp-queries:JPL_C
 
+queries:
+  # F Prime refinements: FW_ASSERT-aware replacements for the Rule 16
+  # assertion queries, and a Rule 15 parameter-checking query that only flags
+  # pointer dereferences and range-sensitive integer uses
+  - uses: ./.github/codeql/fprime-queries
+
 query-filters:
   - exclude:
       problem.severity:
         - recommendation
+  # Excluded in favor of the F Prime refinements above
+  - exclude:
+      id:
+        - cpp/jpl-c/use-of-assertions-constant
+        - cpp/jpl-c/use-of-assertions-non-boolean
+        - cpp/jpl-c/use-of-assertions-side-effect
+        - cpp/jpl-c/checking-parameter-values
+        - cpp/jpl-c/checking-return-values
+  # Temporarily moved to jpl-standard-known-autocode-issues.yml (with build paths
+  # excluded) until the autocoder emits boolean assertion expressions.
+  # See https://github.com/nasa/fpp/issues/1030
+  - exclude:
+      id:
+        - cpp/fprime/jpl-c/use-of-assertions-non-boolean
+  # The F Prime refinement cpp/fprime/jpl-c/checking-return-values whitelists the
+  # assignment/increment operators (operator=, operator+=, operator++, ...) whose
+  # chaining return value is idiomatically ignored, but it still flags the
+  # autocoder's unchecked Fw::StringBase::format() calls. It therefore runs in
+  # jpl-standard-known-autocode-issues.yml (with build paths excluded) until the
+  # autocoder is fixed. See https://github.com/nasa/fpp/issues/1031
+  - exclude:
+      id:
+        - cpp/fprime/jpl-c/checking-return-values
+
+paths-ignore:
+  # CMake-internal generated sources (try_compile checks, compiler id, feature
+  # tests) inside the build cache; the cache itself is still needed so that
+  # F Prime autocoded sources are built and analyzed
+  - "**/CMakeFiles/**"
+  # Third-party dependencies fetched by CMake (e.g. googletest via FetchContent)
+  - "**/_deps/**"
