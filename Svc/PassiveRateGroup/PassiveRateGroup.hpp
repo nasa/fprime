@@ -15,6 +15,7 @@
 #define SVC_PASSIVERATEGROUP_IMPL_HPP
 
 #include <Svc/PassiveRateGroup/PassiveRateGroupComponentAc.hpp>
+#include <config/PassiveRateGroupCfg.hpp>
 
 namespace Svc {
 
@@ -68,6 +69,9 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     U32 m_maxTime;                                        //!< maximum execution time in microseconds
     FwIndexType m_numContexts;                            //!< number of contexts
     U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
+#if PASSIVE_RATE_GROUP_ENABLE_COMPONENT_TIMING
+    U32 m_componentMaxTime[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Per-member max time when timing enabled
+#endif
 };
 
 }  // namespace Svc

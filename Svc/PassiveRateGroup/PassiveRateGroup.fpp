@@ -18,6 +18,15 @@ module Svc {
     @ Count of number of cycles
     telemetry CycleCount: U32
 
+    event port Log
+
+    text event port LogText
+
+    @ Emitted when per-component timing is enabled and a member sets a new max execution time
+    event ComponentMaxTimeUpdated(maxTimeUs: U32) \
+      severity activity high \
+      format "Rate group member new max execution time: {} us"
+
     # Standard ports
     @ A port for getting the time
     time get port Time

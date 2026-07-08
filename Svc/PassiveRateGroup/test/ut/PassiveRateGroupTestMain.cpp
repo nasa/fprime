@@ -29,6 +29,7 @@ void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& test
 
     impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
     impl.set_Time_OutputPort(0, tester.get_from_Time(0));
+    impl.set_Log_OutputPort(0, tester.get_from_Log(0));
 }
 
 TEST(PassiveRateGroupTest, NominalSchedule) {

@@ -15,10 +15,17 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Console.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroup.hpp>
+#include <config/PassiveRateGroupCfg.hpp>
 
 namespace Svc {
 PassiveRateGroup::PassiveRateGroup(const char* compName)
-    : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0), m_numContexts(0) {}
+    : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0), m_numContexts(0) {
+#if PASSIVE_RATE_GROUP_ENABLE_COMPONENT_TIMING
+    for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
+        this->m_componentMaxTime[port] = 0;
+    }
+#endif
+}
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
@@ -44,7 +51,21 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
         if (this->isConnected_RateGroupMemberOut_OutputPort(port)) {
+#if PASSIVE_RATE_GROUP_ENABLE_COMPONENT_TIMING
+            Os::RawTime componentStartTime;
+            componentStartTime.now();
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
+            Os::RawTime componentEndTime;
+            componentEndTime.now();
+            U32 componentTime = 0;
+            (void)componentEndTime.getDiffUsec(componentStartTime, componentTime);
+            if (componentTime > this->m_componentMaxTime[port]) {
+                this->m_componentMaxTime[port] = componentTime;
+                this->log_ACTIVITY_HI_ComponentMaxTimeUpdated(componentTime);
+            }
+#else
+            this->RateGroupMemberOut_out(port, this->m_contexts[port]);
+#endif
         }
     }
 
