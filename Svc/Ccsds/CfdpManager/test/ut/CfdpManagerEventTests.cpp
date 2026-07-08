@@ -837,52 +837,57 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
 }
 
 void CfdpManagerTester::testRxInvalidDirectiveCodeEvent() {
-    // RxInvalidDirectiveCode CANNOT be unit tested with current implementation
-    //
-    // ISSUE: The event is emitted when directiveCode >= FILE_DIRECTIVE_INVALID_MAX (13),
-    // but peekPduType() filters PDUs with unknown directive codes (returning NONE)
-    // BEFORE they reach the validation logic in rDispatchRecv().
-    //
-    // CODE FLOW:
-    // 1. dataIn_handler() receives PDU buffer
-    // 2. Engine::receivePdu() calls peekPduType() to identify PDU type
-    // 3. peekPduType() (PduHeader.cpp:230-284) reads directive code and maps via switch:
-    //    - Recognizes: 4 (EOF), 5 (FIN), 6 (ACK), 7 (METADATA), 8 (NAK)
-    //    - Returns NONE for all other codes (including >= 13)
-    // 4. TransactionRx.cpp:1120 checks: if (pduType != NONE) { validate directive }
-    // 5. Invalid codes filtered out, validation never runs, event never emitted
-    //
-    // ROOT CAUSE: peekPduType() serves dual purposes:
-    // - Type identification for dispatch routing
-    // - Implicit filtering of unknown codes
-    // This prevents proper error reporting for protocol violations.
-    //
-    // SOLUTIONS:
-    // - Short-term: Integration test with protocol-level PDU injection
-    // - Long-term: Refactor peekPduType() to pass through unknown directive codes
-    //              and let rDispatchRecv() validation emit appropriate events
-    //
-    // TEST STATUS: Marked as not implemented due to architectural limitation
-    GTEST_SKIP() << "RxInvalidDirectiveCode unreachable via unit-test PDU construction "
-                    "(peekPduType filters unknown directive codes before validation)";
-}
+    // RxInvalidDirectiveCode emitted when a directive PDU carries a directive code
+    // >= FILE_DIRECTIVE_INVALID_MAX (13). peekPduType() returns NONE for such a PDU, but
+    // rDispatchRecv() routes every non-file-data buffer through its directive-parsing branch,
+    // so the invalid code reaches the validation logic and the event is emitted.
 
-void CfdpManagerTester::testRxInvalidEofPduEvent() {
-    // RxInvalidEofPdu is DEAD CODE - never emitted in current implementation
-    //
-    // This event is only emitted when Engine::recvEof() returns ERROR status,
-    // but recvEof() ALWAYS returns SUCCESS (see Engine.cpp implementation).
-    //
-    // Event exists in Events.fppi but is unreachable with current validation logic.
-    //
-    // If EOF validation logic is added to Engine::recvEof() in the future,
-    // this test should send an EOF PDU with internally inconsistent fields
-    // (e.g., file size doesn't match received data) and assert:
-    // ASSERT_EVENTS_RxInvalidEofPdu_SIZE(1);
-    //
-    // Note: RxEofWithError is a different event (triggered by non-zero condition code)
-    // and is already tested by testRxEofWithErrorEvent().
-    GTEST_SKIP() << "RxInvalidEofPdu is dead code (Engine::recvEof() always returns SUCCESS)";
+    const U32 testSequenceId = 55;
+    const U32 testSrcEid = TEST_GROUND_EID;
+    const U8 invalidDirectiveCode = 0x0D;  // 13, outside the mapped directive range
+
+    // Set up a Class 2 RX transaction
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_R2,  // Class 2 receiver
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize
+                                            testSequenceId,          // sequenceId
+                                            testSrcEid               // peerId
+    );
+    ASSERT_NE(txn, nullptr);
+
+    // setupTestTransaction doesn't initialize src_eid or the receive substate; set them
+    // so the emitted event arguments are deterministic.
+    txn->m_history->src_eid = testSrcEid;
+    txn->m_state_data.receive.sub_state = RxSubState::RX_SUB_STATE_FILEDATA;
+
+    // Build a directive PDU: valid header (directive type) + an unrecognized directive code byte.
+    Cfdp::PduHeader header;
+    header.initialize(Cfdp::PduTypeEnum::END_OF_FILE,  // any directive type -> directive PDU header
+                      Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, testSrcEid,
+                      testSequenceId, this->component.getLocalEidParam());
+
+    U8 pduBuffer[64];
+    Fw::SerialBuffer sb(pduBuffer, sizeof(pduBuffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, header.toSerialBuffer(sb));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(invalidDirectiveCode));
+    Fw::Buffer directiveBuffer(pduBuffer, sb.getSize());
+
+    this->clearHistory();
+
+    // Dispatch directly (no handler table needed to reach the invalid-code check)
+    txn->rDispatchRecv(directiveBuffer, nullptr, nullptr);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_RxInvalidDirectiveCode_SIZE(1);
+    ASSERT_EVENTS_RxInvalidDirectiveCode(0,                     // index
+                                         Cfdp::Class::CLASS_2,  // cfdpClass
+                                         testSrcEid,            // srcEid
+                                         testSequenceId,        // seqNum
+                                         invalidDirectiveCode,  // directiveCode
+                                         static_cast<U8>(RxSubState::RX_SUB_STATE_FILEDATA)  // substate
+    );
 }
 
 void CfdpManagerTester::testRxInactivityTimeoutEvent() {
@@ -1094,53 +1099,58 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
 // TX Error Events
 // ----------------------------------------------------------------------
 
-void CfdpManagerTester::testTxZeroLengthFileEvent() {
-    // TxZeroLengthFile is exercised with full argument verification in
-    // Command.SendFileZeroLength; this slot is retained only for event-coverage
-    // tracking, so skip rather than pass vacuously.
-    GTEST_SKIP() << "TxZeroLengthFile covered by Command.SendFileZeroLength";
-}
-
-void CfdpManagerTester::testTxFileOpenFailedEvent() {
-    // TxFileOpenFailed is exercised with full argument verification in
-    // Command.SendFileNonExistent; retained only for coverage tracking.
-    GTEST_SKIP() << "TxFileOpenFailed covered by Command.SendFileNonExistent";
-}
-
 void CfdpManagerTester::testTxInvalidDirectiveCodeEvent() {
-    // TxInvalidDirectiveCode emitted when invalid directive code received during TX
-    //
-    // ANALYSIS: This event is difficult to trigger in unit tests due to the code structure.
-    //
-    // The event emission logic is in TransactionTx.cpp sDispatchRecv():
-    //   pduType = peekPduType(buffer);
-    //   if (pduType == FILE_DATA) {
-    //       // emit different event
-    //   } else if (pduType != NONE) {
-    //       // parse header and directive code
-    //       if (directiveCode >= FILE_DIRECTIVE_INVALID_MAX) {
-    //           log_WARNING_LO_TxInvalidDirectiveCode(...);  // <-- Event emitted here
-    //       }
-    //   }
-    //
-    // The problem: peekPduType() reads the directive code to determine the PDU type.
-    // For unrecognized directive codes (including >= 13), it returns PduTypeEnum::NONE.
-    // When pduType is NONE, the else-if block is skipped, so the event is never emitted.
-    //
-    // This creates an unreachable code path: to emit the event, we need directiveCode >= 13,
-    // but such codes cause peekPduType to return NONE, which skips the event emission logic.
-    //
-    // CONCLUSION: This event can only be triggered in scenarios where PDUs bypass peekPduType,
-    // or in integration tests with actual malformed PDUs from external sources.
-    //
-    // The event definition exists and is correct in Events.fppi. The emission logic exists
-    // in TransactionTx.cpp line 742-744. It's theoretically reachable but not through normal
-    // unit test PDU construction.
-    //
-    // Recommend: Test via integration tests with malformed PDU injection, or accept that
-    // this edge case is covered by code review rather than automated testing.
-    GTEST_SKIP() << "TxInvalidDirectiveCode unreachable via unit-test PDU construction "
-                    "(peekPduType returns NONE for codes >= FILE_DIRECTIVE_INVALID_MAX)";
+    // TxInvalidDirectiveCode emitted when a directive PDU received during TX carries a
+    // directive code >= FILE_DIRECTIVE_INVALID_MAX (13). peekPduType() returns NONE for such a
+    // PDU, but sDispatchRecv() routes every non-file-data buffer through its directive-parsing
+    // branch, so the invalid code reaches the validation logic and the event is emitted.
+
+    const U32 testSequenceId = 56;
+    const U32 testSrcEid = this->component.getLocalEidParam();
+    const U8 invalidDirectiveCode = 0x0D;  // 13, outside the mapped directive range
+
+    // Set up a Class 2 TX transaction
+    Transaction* txn = setupTestTransaction(TxnState::TXN_STATE_S2,  // Class 2 sender
+                                            0,                       // channelId
+                                            "test_src.txt",          // srcFilename
+                                            "test_dst.txt",          // dstFilename
+                                            1000,                    // fileSize
+                                            testSequenceId,          // sequenceId
+                                            TEST_GROUND_EID          // peerId
+    );
+    ASSERT_NE(txn, nullptr);
+
+    // setupTestTransaction doesn't initialize src_eid or the send substate; set them so the
+    // emitted event arguments are deterministic.
+    txn->m_history->src_eid = testSrcEid;
+    txn->m_state_data.send.sub_state = TxSubState::TX_SUB_STATE_EOF;
+
+    // Build a directive PDU: valid header (directive type) + an unrecognized directive code byte.
+    Cfdp::PduHeader header;
+    header.initialize(Cfdp::PduTypeEnum::FINISHED,  // any directive type -> directive PDU header
+                      Cfdp::PduDirection::DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, TEST_GROUND_EID,
+                      testSequenceId, testSrcEid);
+
+    U8 pduBuffer[64];
+    Fw::SerialBuffer sb(pduBuffer, sizeof(pduBuffer));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, header.toSerialBuffer(sb));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, sb.serializeFrom(invalidDirectiveCode));
+    Fw::Buffer directiveBuffer(pduBuffer, sb.getSize());
+
+    this->clearHistory();
+
+    // Dispatch directly (no handler table needed to reach the invalid-code check)
+    txn->sDispatchRecv(directiveBuffer, nullptr);
+
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TxInvalidDirectiveCode_SIZE(1);
+    ASSERT_EVENTS_TxInvalidDirectiveCode(0,                     // index
+                                         Cfdp::Class::CLASS_2,  // cfdpClass
+                                         testSrcEid,            // srcEid
+                                         testSequenceId,        // seqNum
+                                         invalidDirectiveCode,  // directiveCode
+                                         static_cast<U8>(TxSubState::TX_SUB_STATE_EOF)  // substate
+    );
 }
 
 void CfdpManagerTester::testTxEarlyFinReceivedEvent() {

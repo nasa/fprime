@@ -721,8 +721,8 @@ void Transaction::sDispatchRecv(const Fw::Buffer& buffer, const SSubstateRecvDis
     if (pduType == Cfdp::PduTypeEnum::FILE_DATA) {
         this->m_cfdpManager->log_WARNING_LO_TxNonFileDirectivePduReceived(this->getClass(), this->m_history->src_eid,
                                                                           this->m_history->seq_num);
-    } else if (pduType != Cfdp::PduTypeEnum::NONE) {
-        // It's a directive PDU - parse header to get directive code
+    } else {
+        // Not a file-data PDU - parse as a directive PDU to get the directive code.
         // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());

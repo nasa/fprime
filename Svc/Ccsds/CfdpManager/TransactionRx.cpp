@@ -1117,8 +1117,8 @@ void Transaction::rDispatchRecv(const Fw::Buffer& buffer, const RSubstateDispatc
         if (!TxnStatusIsError(this->m_history->txn_stat)) {
             selected_handler = fd_fn;
         }
-    } else if (pduType != Cfdp::PduTypeEnum::NONE) {
-        // It's a directive PDU - parse header to get directive code
+    } else {
+        // Not a file-data PDU - parse as a directive PDU to get the directive code.
         // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
         Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
         sb.setBuffLen(buffer.getSize());
