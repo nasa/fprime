@@ -11,3 +11,11 @@ query-filters:
   - include:
       id:
         - cpp/jpl-c/basic-int-types
+
+paths-ignore:
+  # CMake-internal generated sources (try_compile checks, compiler id, feature
+  # tests) inside the build cache; the cache itself is still needed so that
+  # F Prime autocoded sources are built and analyzed
+  - "**/CMakeFiles/**"
+  # Third-party dependencies fetched by CMake (e.g. googletest via FetchContent)
+  - "**/_deps/**"
