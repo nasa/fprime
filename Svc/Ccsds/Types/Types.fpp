@@ -19,6 +19,15 @@ module Ccsds {
         AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
     }
 
+    @ Status of an SDLS (Space Data Link Security) encryption/decryption request
+    enum SdlsStatus: U8 {
+        SUCCESS = 0             @< Request completed successfully
+        UNKNOWN_SA = 1          @< Security association index has no known mapping
+        UNKNOWN_PORT = 2        @< Mapped port index is out of range or unconnected
+        ENCRYPTION_FAILURE = 3  @< Encryption operation failed
+        DECRYPTION_FAILURE = 4  @< Decryption operation failed
+    }
+
     # ------------------------------------------------
     # SpacePacket
     # ------------------------------------------------
