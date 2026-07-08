@@ -96,6 +96,10 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //!
     void cancelInIdleMode();
 
+    //! Late buffer returns during COOLDOWN are ignored (no assert)
+    //!
+    void cooldownBufferReturnIgnored();
+
     //! Create a file F
     //! Downlink partial F
     //! Verify that the downlinked file matches F

@@ -209,10 +209,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
         U32 context;          // Context id of request, only set for PORT sources.
     };
 
-    //! Enumeration for packet types
-    //! Each type has a buffer to store it.
-    enum PacketType { FILE_PACKET, CANCEL_PACKET, COUNT_PACKET_TYPE };
-
   public:
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
@@ -328,7 +324,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void enterCooldown();
 
     // Function to acquire a buffer internally
-    void getBuffer(Fw::Buffer& buffer, PacketType type);
+    void getBuffer(Fw::Buffer& buffer);
     // Downlink the "next" packet
     void downlinkPacket();
     // Finish the file transfer
@@ -349,8 +345,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! File downlink queue
     Os::Queue m_fileQueue;
 
-    //! Buffer's memory backing
-    U8 m_memoryStore[COUNT_PACKET_TYPE][FILEDOWNLINK_INTERNAL_BUFFER_SIZE];
+    //! Buffer memory backing for outbound file packets
+    U8 m_memoryStore[FILEDOWNLINK_INTERNAL_BUFFER_SIZE];
 
     //! The mode
     Mode m_mode;
@@ -369,9 +365,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! The current sequence index
     U32 m_sequenceIndex;
-
-    //! Timeout threshold (milliseconds) while in WAIT state
-    U32 m_timeout;
 
     //! Cooldown (in ms) between finishing a downlink and starting the next file.
     U32 m_cooldown;

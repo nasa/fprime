@@ -24,6 +24,11 @@ TEST(FileDownlink, CancelInIdleMode) {
     tester.cancelInIdleMode();
 }
 
+TEST(FileDownlink, CooldownBufferReturnIgnored) {
+    Svc::FileDownlinkTester tester;
+    tester.cooldownBufferReturnIgnored();
+}
+
 TEST(FileDownlink, DownlinkPartial) {
     Svc::FileDownlinkTester tester;
     tester.downlinkPartial();

@@ -143,10 +143,12 @@ void FileDownlink ::pingIn_handler(const FwIndexType portNum, U32 key) {
 void FileDownlink ::bufferReturn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // If this is a stale buffer (old, timed-out, or both), then ignore its return.
     // File downlink actions only respond to the return of the most-recently-sent buffer.
-    if (this->m_lastBufferId != fwBuffer.getContext() + 1 || this->m_mode.get() == Mode::IDLE) {
+    if (this->m_lastBufferId != fwBuffer.getContext() + 1 || this->m_mode.get() == Mode::IDLE ||
+        this->m_mode.get() == Mode::COOLDOWN) {
         return;
     }
-    // Non-ignored buffers cannot be returned in "DOWNLINK" and "IDLE" state.  Only in "WAIT", "CANCEL" state.
+    // Non-ignored buffers cannot be returned in "DOWNLINK", "IDLE", or "COOLDOWN" state.
+    // Only in "WAIT", "CANCEL" state.
     FW_ASSERT(this->m_mode.get() == Mode::WAIT || this->m_mode.get() == Mode::CANCEL,
               static_cast<FwAssertArgType>(this->m_mode.get()));
     // If the last packet has been sent (and is returning now) then finish the file
@@ -316,7 +318,7 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
     }
 
     // Send file and switch to WAIT mode
-    this->getBuffer(this->m_buffer, FILE_PACKET);
+    this->getBuffer(this->m_buffer);
     this->sendStartPacket();
     this->m_mode.set(Mode::WAIT);
     this->m_sequenceIndex = 1;
@@ -366,28 +368,12 @@ Os::File::Status FileDownlink ::sendDataPacket(U32& byteOffset) {
 }
 
 void FileDownlink ::sendCancelPacket() {
-    Fw::Buffer buffer;
     Fw::FilePacket::CancelPacket cancelPacket;
     cancelPacket.initialize(this->m_sequenceIndex);
 
     Fw::FilePacket filePacket;
     filePacket.fromCancelPacket(cancelPacket);
-    this->getBuffer(buffer, CANCEL_PACKET);
-    FW_ASSERT(buffer.getSize() >= filePacket.bufferSize() + sizeof(FwPacketDescriptorType),
-              static_cast<FwAssertArgType>(buffer.getSize()),
-              static_cast<FwAssertArgType>(filePacket.bufferSize() + sizeof(FwPacketDescriptorType)));
-
-    // Serialize the packet descriptor FW_PACKET_FILE to the buffer
-    Fw::SerializeStatus status =
-        buffer.getSerializer().serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_FILE));
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    Fw::Buffer offsetBuffer(buffer.getData() + sizeof(FwPacketDescriptorType),
-                            buffer.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(FwPacketDescriptorType)));
-    // Serialize the filePacket content into the buffer
-    status = filePacket.toBuffer(offsetBuffer);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
-    this->bufferSendOut_out(0, buffer);
-    this->m_packetsSent.packetSent();
+    this->sendFilePacket(filePacket);
 }
 
 void FileDownlink ::sendEndPacket() {
@@ -485,13 +471,9 @@ void FileDownlink ::finishHelper(bool cancel) {
     sendResponse(SendFileStatus::STATUS_OK);
 }
 
-void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
-    // Check type is correct
-    FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
-    // Wrap the buffer around our indexed memory.
-    buffer.setData(this->m_memoryStore[type]);
+void FileDownlink ::getBuffer(Fw::Buffer& buffer) {
+    buffer.setData(this->m_memoryStore);
     buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
-    // Set a known ID to look for later
     buffer.setContext(m_lastBufferId);
     m_lastBufferId++;
 }

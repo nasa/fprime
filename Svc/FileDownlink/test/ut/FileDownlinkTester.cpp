@@ -151,6 +151,49 @@ void FileDownlinkTester ::cancelDownlink() {
 
     ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
 
+    // Cancel packets must use the serialized size, not FILEDOWNLINK_INTERNAL_BUFFER_SIZE (#5347)
+    ASSERT_GE(this->fromPortHistory_bufferSendOut->size(), 1U);
+    const Fw::Buffer& cancelBuffer =
+        this->fromPortHistory_bufferSendOut->at(this->fromPortHistory_bufferSendOut->size() - 1).fwBuffer;
+    Fw::FilePacket cancelFilePacket;
+    validateFilePacket(cancelBuffer, cancelFilePacket);
+    ASSERT_EQ(Fw::FilePacket::T_CANCEL, cancelFilePacket.asHeader().m_type);
+    const U32 expectedCancelSize =
+        cancelFilePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
+    ASSERT_EQ(expectedCancelSize, cancelBuffer.getSize());
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::cooldownBufferReturnIgnored() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->sendCmd_Cancel(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();
+    this->component.Run_handler(0, 0);
+    this->component.doDispatch();
+    this->component.doDispatch();
+    this->component.doDispatch();
+
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+
+    // Simulate a late buffer return during COOLDOWN; should be ignored without assert.
+    U8 backing[FILEDOWNLINK_INTERNAL_BUFFER_SIZE];
+    Fw::Buffer lateBuffer;
+    lateBuffer.setData(backing);
+    lateBuffer.setSize(16);
+    lateBuffer.setContext(this->component.m_lastBufferId);
+    this->component.bufferReturn_handler(0, lateBuffer);
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+
     this->removeFile(sourceFileName);
 }
 
