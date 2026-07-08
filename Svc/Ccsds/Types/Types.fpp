@@ -17,6 +17,7 @@ module Ccsds {
         AOS_INVALID_VERSION = 10   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
         AOS_INVALID_EPP = 11      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
         AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
+        SDLS_DECRYPTION_FAILURE = 13 @< SDLS decryption failed
     }
 
     @ Status of an SDLS (Space Data Link Security) encryption/decryption request
