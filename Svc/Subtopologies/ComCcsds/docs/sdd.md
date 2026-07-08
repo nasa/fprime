@@ -5,7 +5,7 @@ The **ComCcsds subtopologies** implement F´’s **CCSDS** communications stack 
 1. A variant that **supplies a `Svc::ComStub`** implementation of `Svc.ComInterface` and expects to be wired to a **`Drv::ByteStreamDriverModel`** (TCP/UDP/UART, etc.), and
 2. A variant that **expects an external implementation of [`Svc.ComInterface`](https://fprime.jpl.nasa.gov/latest/docs/reference/communication-adapter-interface/)** provided by the deployment.
 
-Both variants provide the standard **router + ComQueue + CCSDS framers/deframers** path and are tuned through **ComCcsdsConfig** instance properties.
+Both variants provide the standard **router + ComQueue + CCSDS framers/deframers** path. `ComCcsds` is **composed from two subtopologies**: the packet layer comes from **`SpacePacket`** (`Svc/Subtopologies/SpacePacket`) and the transfer-frame layer from **`CcsdsFraming`** (`Svc/Subtopologies/CcsdsFraming`); `ComCcsds` itself contributes only the composition wiring and the optional `Svc::ComStub`.
 
 > [!IMPORTANT]
 > `ComCcsds` provides framing/deframing for CCSDS SpacePackets inside TM/TC data transfer frames.
@@ -21,7 +21,8 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | SVC-COMCCSDS-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.            | Inspection |
 | SVC-COMCCSDS-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.     | Inspection |
 | SVC-COMCCSDS-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.     | Inspection |
-| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via the `SpacePacketConfig`, `CcsdsFramingConfig`, and `ComCcsdsConfig` modules. | Inspection |
+| SVC-COMCCSDS-007 | Be **composed from** the `SpacePacket` (packet layer) and `CcsdsFraming` (transfer-frame layer) subtopologies. | Inspection |
 
 ---
 
@@ -29,16 +30,16 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 
 ### 2.1 Instance Summary
 
-| Instance name         | Type (Svc/Drv)                  | Kind    | Purpose (core function)                                                                         |
-| --------------------- | ------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
-| `fprimeRouter`        | `Svc.FprimeRouter`              | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
-| `comQueue`            | `Svc.ComQueue`                  | Active  | Queues categorized COM data for framing (telemetry, events, file, etc.); exposes `run`.         |
-| `spacePacketFramer`   | `Svc.Ccsds.SpacePacketFramer`   | Passive | Builds **CCSDS Space Packets** from COM buffers (downlink step 1).                              |
-| `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from space packets and sends to the link (downlink step 2). |
-| `spacePacketDeframer` | `Svc.Ccsds.SpacePacketDeframer` | Passive | Deframes F Prime data from **CCSDS Space Packets** (uplink step 2).                             |
-| `tcDeframer`          | `Svc.Ccsds.tcFramer`            | Passive | Deframes **CCSDS Space Packets** from  **CCSDS TM Transfer Frames** (uplink step 1).            |
-| `frameAccumulator`    | `Svc.FrameAccumulator`          | Passive | Collects bytes from the link and emits complete frames/packets for deframing (uplink path).     |
-| `comStub`             | `Svc.ComStub`                   | Passive | (Variant A only) Implementation of `Svc.ComInterface`, adapting a `Drv::ByteStreamDriverModel`. |
+| Instance name                      | Type (Svc/Drv)                  | Kind    | Purpose (core function)                                                                         |
+| ---------------------------------- | ------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
+| `SpacePacket.fprimeRouter`         | `Svc.FprimeRouter`              | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
+| `SpacePacket.comQueue`             | `Svc.ComQueue`                  | Active  | Queues categorized COM data for framing (telemetry, events, file, etc.); exposes `run`.         |
+| `SpacePacket.spacePacketFramer`    | `Svc.Ccsds.SpacePacketFramer`   | Passive | Builds **CCSDS Space Packets** from COM buffers (downlink step 1).                              |
+| `CcsdsFraming.framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from space packets and sends to the link (downlink step 2). |
+| `SpacePacket.spacePacketDeframer`  | `Svc.Ccsds.SpacePacketDeframer` | Passive | Deframes F Prime data from **CCSDS Space Packets** (uplink step 2).                             |
+| `CcsdsFraming.tcDeframer`          | `Svc.Ccsds.TcDeframer`          | Passive | Deframes **CCSDS Space Packets** from  **CCSDS TM Transfer Frames** (uplink step 1).            |
+| `CcsdsFraming.frameAccumulator`    | `Svc.FrameAccumulator`          | Passive | Collects bytes from the link and emits complete frames/packets for deframing (uplink path).     |
+| `comStub`                          | `Svc.ComStub`                   | Passive | (Variant A only) Implementation of `Svc.ComInterface`, adapting a `Drv::ByteStreamDriverModel`. |
 
 > **Two variants:**
 > **A. “With ComStub”:** Subtopology **includes** `Svc::ComStub` and exposes **ByteStream** ports to your driver.
@@ -87,7 +88,7 @@ instance comDriver: <ByteStreamDriverInterface>
 ```
 
 > [!TIP]
-> `ComCcsds.commsBufferManager` and `ComCcsds.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
+> `ComCcsds.Subtopology.commsBufferGetCallee` and `ComCcsds.Subtopology.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComCcsds **without** `Svc::ComStub`
 
@@ -100,19 +101,19 @@ topology Flight {
 
   # (B2) Schedule ComQueue
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComCcsds.comQueue.run
+    rg.RateGroupMemberOut[0] -> SpacePacket.comQueue.run
   }
 
-  # (B3) Wire your ComInterface between the driver and the ComCcsds framer/deframer
+  # (B3) Wire your ComInterface between the driver and the CCSDS framer/deframer
   connections Link {
     # Downlink: TM framer -> your ComInterface
-    ComCcsds.framer.dataOut         -> radio.dataIn
-    radio.dataReturnOut               -> ComCcsds.framer.dataReturnIn
-    radio.comStatusOut                -> ComCcsds.framer.comStatusIn
+    CcsdsFraming.framer.dataOut       -> radio.dataIn
+    radio.dataReturnOut               -> CcsdsFraming.framer.dataReturnIn
+    radio.comStatusOut                -> CcsdsFraming.framer.comStatusIn
 
     # Uplink: your ComInterface -> frame accumulator
-    radio.dataOut                     -> ComCcsds.frameAccumulator.dataIn
-    ComCcsds.frameAccumulator.dataReturnOut -> radio.dataReturnIn
+    radio.dataOut                     -> CcsdsFraming.frameAccumulator.dataIn
+    CcsdsFraming.frameAccumulator.dataReturnOut -> radio.dataReturnIn
   }
 }
 ```
@@ -121,19 +122,11 @@ topology Flight {
 
 ## 4. Configuration
 
-> Configure **only the instance properties** owned by the ComCcsds subtopologies. All knobs live under:
-> `Svc/Subtopologies/ComCcsds/ComCcsdsConfig/ComCcsdsConfig.fpp`
-
-### 4.1 Component properties (`ComCcsdsConfig.fpp`)
-
-* **Base ID** — Base identifier for the subtopologies; instance IDs are offset from this base.
-* **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
-* **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
-* **Priorities** — RTOS priorities for active/queued components as applicable.
-
-### 4.2 Buffer Manager Bin Configuration
-
-`module BuffMgr` provides constants for the bins configured for `commsBufferManager`.
+> Configuration is split across the composed subtopologies:
+>
+> * `Svc/Subtopologies/ComCcsds/ComCcsdsConfig/ComCcsdsConfig.fpp` — base ID for the `comStub` instance owned by `ComCcsds` itself.
+> * `Svc/Subtopologies/SpacePacket/SpacePacketConfig/SpacePacketConfig.fpp` — packet-layer properties (ComQueue sizes/depths/priorities, aggregator, buffer manager bins).
+> * `Svc/Subtopologies/CcsdsFraming/CcsdsFramingConfig/CcsdsFramingConfig.fpp` — transfer-frame-layer properties (frame accumulator buffer size).
 
 ---
 
@@ -141,10 +134,11 @@ topology Flight {
 
 | Requirement ID   | Satisfied by (instance/type)                                                           |
 | ---------------- | -------------------------------------------------------------------------------------- |
-| SVC-COMCCSDS-001 | `spacePacketFramer` — `Svc.Ccsds.SpacePacketFramer`, `tmFramer` — `Svc.Ccsds.TmFramer` |
-| SVC-COMCCSDS-002 | `frameAccumulator` — `Svc.FrameAccumulator`                                            |
-| SVC-COMCCSDS-003 | `fprimeRouter` — `Svc.FprimeRouter`                                                    |
+| SVC-COMCCSDS-001 | `SpacePacket.spacePacketFramer` — `Svc.Ccsds.SpacePacketFramer`, `CcsdsFraming.framer` — `Svc.Ccsds.TmFramer` |
+| SVC-COMCCSDS-002 | `CcsdsFraming.frameAccumulator` — `Svc.FrameAccumulator`                               |
+| SVC-COMCCSDS-003 | `SpacePacket.fprimeRouter` — `Svc.FprimeRouter`                                        |
 | SVC-COMCCSDS-004 | `Subtopology` (variant including `Svc.ComStub`)                                        |
 | SVC-COMCCSDS-005 | `FramingSubtopology` (variant expecting external `Svc.ComInterface`)                   |
-| SVC-COMCCSDS-006 | `ComCcsdsConfig` module                                                                |
+| SVC-COMCCSDS-006 | `SpacePacketConfig`, `CcsdsFramingConfig`, and `ComCcsdsConfig` modules                |
+| SVC-COMCCSDS-007 | `import SpacePacket.FramingSubtopology`, `import CcsdsFraming.Subtopology`             |
 

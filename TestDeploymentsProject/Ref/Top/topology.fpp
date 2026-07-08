@@ -149,8 +149,8 @@ module Ref {
 
     connections ComCcsds_CdhCore {
       # Events and telemetry to comQueue
-      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[SpacePacket.Ports_ComPacketQueue.EVENTS]
+      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[SpacePacket.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
       ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff
@@ -161,8 +161,8 @@ module Ref {
 
     connections ComCcsds_FileHandling {
       # File Downlink <-> ComQueue
-      FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-      ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
+      FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[SpacePacket.Ports_ComBufferQueue.FILE]
+      ComCcsds.Subtopology.bufferReturnOut[SpacePacket.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
 
       # Router <-> FileUplink
       ComCcsds.Subtopology.fileUplinkOut                    -> FileHandling.Subtopology.fileUplinkBufferSendIn
