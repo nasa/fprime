@@ -252,7 +252,7 @@ SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
     }
     FW_ASSERT(this->getBuffAddr());
     // copy buffer to our buffer
-    (void)memcpy(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
+    (void)memmove(&this->getBuffAddr()[this->m_serLoc], buff, static_cast<size_t>(length));
     this->m_serLoc += static_cast<Serializable::SizeType>(length);
     this->m_deserLoc = 0;
 
