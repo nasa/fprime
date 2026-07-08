@@ -15,22 +15,13 @@
 
 namespace Fw {
 
-SerialBuffer ::SerialBuffer(U8* const data, const FwSizeType capacity) : m_data(data), m_capacity(capacity) {}
-
-FwSizeType SerialBuffer ::getCapacity() const {
-    return m_capacity;
+SerialBuffer ::SerialBuffer(U8* const data, const FwSizeType capacity) {
+    this->m_buffAddr = data;
+    this->m_capacity = capacity;
 }
 
 FwSizeType SerialBuffer ::getBuffCapacity() const {
     return this->getCapacity();
-}
-
-U8* SerialBuffer ::getBuffAddr() {
-    return m_data;
-}
-
-const U8* SerialBuffer ::getBuffAddr() const {
-    return m_data;
 }
 
 void SerialBuffer ::fill() {

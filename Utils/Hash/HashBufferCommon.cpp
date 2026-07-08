@@ -7,9 +7,14 @@
 
 namespace Utils {
 
-HashBuffer::HashBuffer() = default;
+HashBuffer::HashBuffer() : Fw::LinearBufferBase() {
+    this->m_buffAddr = this->m_bufferData;
+    this->m_capacity = sizeof(this->m_bufferData);
+}
 
 HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase() {
+    this->m_buffAddr = this->m_bufferData;
+    this->m_capacity = sizeof(this->m_bufferData);
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
@@ -17,7 +22,9 @@ HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase()
 HashBuffer::~HashBuffer() = default;
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::LinearBufferBase() {
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
+    this->m_buffAddr = this->m_bufferData;
+    this->m_capacity = sizeof(this->m_bufferData);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -26,13 +33,13 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
 bool HashBuffer::operator==(const HashBuffer& other) const {
-    if ((this->getSize() == other.getSize()) &&
+    if ((this->getSize() == other.m_serLoc) &&
         (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
         return false;
     }
@@ -41,18 +48,6 @@ bool HashBuffer::operator==(const HashBuffer& other) const {
 
 bool HashBuffer::operator!=(const HashBuffer& other) const {
     return !(*this == other);
-}
-
-const U8* HashBuffer::getBuffAddr() const {
-    return this->m_bufferData;
-}
-
-U8* HashBuffer::getBuffAddr() {
-    return this->m_bufferData;
-}
-
-FwSizeType HashBuffer::getCapacity() const {
-    return sizeof(this->m_bufferData);
 }
 
 FwSizeType HashBuffer::getBuffCapacity() const {

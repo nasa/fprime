@@ -27,11 +27,6 @@ class FileBuffer : public Fw::LinearBufferBase {
 
   public:
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-
-    const U8* getBuffAddr() const;
 
   private:
     U8 m_buff[CAPACITY];

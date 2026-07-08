@@ -59,6 +59,7 @@ function(fpp_ut_setup_autocode MODULE_NAME AC_INPUT_FILES)
         add_custom_command(
                 OUTPUT ${GENERATED_CPP}
                 COMMAND ${CLI_ARGS}
+                COMMAND ${PYTHON} ${FPRIME_FPP_STRIP_OVERRIDE} ${GENERATED_CPP}
                 DEPENDS ${FILE_DEPENDENCIES} ${MODULE_DEPENDENCIES}
         )
     endif()
