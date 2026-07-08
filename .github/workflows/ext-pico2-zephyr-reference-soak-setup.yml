@@ -24,8 +24,8 @@ jobs:
     name: "Zephyr Build"
     uses: ./.github/workflows/reusable-project-ci.yml
     with:
-      target_repository: moisesmata/fprime-zephyr-reference
-      target_ref: ${{ github.event.release.tag_name || 'fix/cdc-acm-fifo-bump' }}
+      target_repository: fprime-community/fprime-zephyr-reference
+      target_ref: ${{ github.event.release.tag_name || 'devel' }}
       ci_config_file: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
       runs_on_int: pico2-soak
 
@@ -38,8 +38,8 @@ jobs:
       - name: "Set up target repository (for tests + dictionary)"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: moisesmata/fprime-zephyr-reference
-          target_ref: ${{ github.event.release.tag_name || 'fix/cdc-acm-fifo-bump' }}
+          target_repository: fprime-community/fprime-zephyr-reference
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
           stage: int
 
       - name: "Pull Archive Results"
