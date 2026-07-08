@@ -58,3 +58,9 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      with:
+        # Only publish alerts to the GitHub code-scanning UI for the default
+        # branch (devel). The analysis still runs on other branches and PRs so
+        # regressions are caught, but results are not uploaded, preventing stale
+        # branches from accumulating alerts.
+        upload: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/devel') && 'always' || 'never' }}
