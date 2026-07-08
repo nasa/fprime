@@ -170,7 +170,7 @@ Os/Os.cpp                                      7       7   100%
 Os/Posix/ConditionVariable.cpp                20      18    90%   35-36
 Os/Posix/Console.cpp                          20      11    55%   14,18-21,23,37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      33    89%   43-44,67-68
+Os/Posix/CountingSemaphore.cpp                37      35    94%   67-68
 Os/Posix/DefaultConsole.cpp                    2       2   100%
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -187,7 +187,7 @@ Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            137     105    76%   54-55,83-85,89-91,108-109,114-117,120-121,126,162,208,216,230-232,234-236,255-257,261-262,264
+Os/Posix/Task.cpp                            137     106    77%   54-55,83-85,89-91,108-109,114-117,120-121,126,162,208,216,230-232,234-236,256-257,261-262,264
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -354,5 +354,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      17615   14341    81%
+TOTAL                                      17615   14344    81%
 ------------------------------------------------------------------------------
