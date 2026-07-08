@@ -2,6 +2,11 @@ name: "CodeQL JPL Coding Standard - Recommendations 1 of 2"
 
 disable-default-queries: true
 
+# Exclude generated code: autocoded C++ in build caches is not hand-maintained,
+# so JPL standard alerts there are not actionable in this repository
+paths-ignore:
+  - "**/build-fprime-*/**"
+
 packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
   - codeql/cpp-queries:JPL_C
