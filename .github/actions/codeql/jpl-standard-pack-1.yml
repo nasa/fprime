@@ -7,17 +7,25 @@ packs:
   - codeql/cpp-queries:JPL_C
 
 queries:
-  # FW_ASSERT-aware replacements for the Rule 16 assertion queries
+  # F Prime refinements: FW_ASSERT-aware replacements for the Rule 16
+  # assertion queries, and a Rule 15 parameter-checking query that only flags
+  # pointer dereferences and range-sensitive integer uses
   - uses: ./.github/codeql/fprime-queries
 
 query-filters:
   - exclude:
       problem.severity:
         - recommendation
-  # Excluded in favor of the FW_ASSERT-aware replacements above, which
-  # recognize F Prime's FW_ASSERT macro as an assertion
+  # Excluded in favor of the F Prime refinements above
   - exclude:
       id:
         - cpp/jpl-c/use-of-assertions-constant
         - cpp/jpl-c/use-of-assertions-non-boolean
         - cpp/jpl-c/use-of-assertions-side-effect
+        - cpp/jpl-c/checking-parameter-values
+  # Temporarily moved to jpl-standard-known-autocode-issues.yml (with build paths
+  # excluded) until the autocoder emits boolean assertion expressions.
+  # See https://github.com/nasa/fpp/issues/1030
+  - exclude:
+      id:
+        - cpp/fprime/jpl-c/use-of-assertions-non-boolean
