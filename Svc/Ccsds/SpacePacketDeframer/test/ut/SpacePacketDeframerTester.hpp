@@ -53,6 +53,7 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void testBufferSmallerThanHeaderSize();
     void testBufferSingleByte();
     void testInvalidPacketIdentificationControlFields();
+    void testInvalidPacketTypeForApid();
     void testCommandPacketTypeAccepted();
     void testSecondaryHeaderFlagAccepted();
     void testSequenceFlagsAccepted();

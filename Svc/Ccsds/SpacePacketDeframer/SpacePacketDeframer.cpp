@@ -28,6 +28,23 @@ bool isValidPacketVersionNumber(const SpacePacketHeader& header) {
     return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
 }
 
+bool isValidPacketTypeForApid(const SpacePacketHeader& header) {
+    const U16 packetIdentification = header.get_packetIdentification();
+    const U16 packetType = (packetIdentification & SpacePacketSubfields::PktTypeMask) >> SpacePacketSubfields::PktTypeOffset;
+    const U16 apidValue = packetIdentification & SpacePacketSubfields::ApidMask;
+    if (!ComCfg::Apid::isValid(apidValue)) {
+        return true;
+    }
+    const ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(apidValue);
+    if (apid == ComCfg::Apid::FW_PACKET_COMMAND) {
+        return packetType == 1U;
+    }
+    if (apid == ComCfg::Apid::FW_PACKET_TELEM) {
+        return packetType == 0U;
+    }
+    return true;
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -73,6 +90,15 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
 
     if (!isValidPacketVersionNumber(header)) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+
+    if (!isValidPacketTypeForApid(header)) {
         this->log_WARNING_HI_InvalidPacket();
         if (this->isConnected_errorNotify_OutputPort(0)) {
             this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);

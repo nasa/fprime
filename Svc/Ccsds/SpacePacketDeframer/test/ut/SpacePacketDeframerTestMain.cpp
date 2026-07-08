@@ -50,6 +50,11 @@ TEST(SpacePacketDeframer, testInvalidPacketIdentificationControlFields) {
     tester.testInvalidPacketIdentificationControlFields();
 }
 
+TEST(SpacePacketDeframer, testInvalidPacketTypeForApid) {
+    Svc::Ccsds::SpacePacketDeframerTester tester;
+    tester.testInvalidPacketTypeForApid();
+}
+
 TEST(SpacePacketDeframer, testCommandPacketTypeAccepted) {
     Svc::Ccsds::SpacePacketDeframerTester tester;
     tester.testCommandPacketTypeAccepted();

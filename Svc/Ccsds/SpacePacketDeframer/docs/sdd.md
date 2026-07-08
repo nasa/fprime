@@ -42,6 +42,7 @@ The `Svc::Ccsds::SpacePacketDeframer` extracts the following fields from the CCS
 | SVC-CCSDS-SPD-002 | The SpacePacketDeframer shall extract the user data field from valid Space Packets. | Unit Test |
 | SVC-CCSDS-SPD-003 | The SpacePacketDeframer shall validate the packet length of a Space Packet Primary Header. | Unit Test |
 | SVC-CCSDS-SPD-010 | The SpacePacketDeframer shall validate the Packet Version Number field and reject packets whose Packet Version Number does not match the CCSDS Space Packet Protocol, emitting `InvalidPacket` and returning the buffer. | Unit Test |
+| SVC-CCSDS-SPD-011 | The SpacePacketDeframer shall validate the Packet Type field against known APIDs and reject mismatched packets, emitting `InvalidPacket` and returning the buffer. | Unit Test |
 | SVC-CCSDS-SPD-009 | The SpacePacketDeframer shall emit an `InvalidLength` event if the packet length token in the header is cannot fit in the received data, and drop the received packet. | Unit Test |
 | SVC-CCSDS-SPD-004 | The SpacePacketDeframer shall receive incoming data containing Space Packets via the `dataIn` port. | Unit Test |
 | SVC-CCSDS-SPD-005 | The SpacePacketDeframer shall output the extracted Space Packet user data via the `dataOut` port. | Unit Test |

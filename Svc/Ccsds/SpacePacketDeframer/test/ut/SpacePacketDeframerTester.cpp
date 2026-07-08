@@ -214,6 +214,26 @@ void SpacePacketDeframerTester ::testInvalidPacketIdentificationControlFields() 
     ASSERT_EVENTS_InvalidPacket_SIZE(1);
 }
 
+void SpacePacketDeframerTester ::testInvalidPacketTypeForApid() {
+    U8 payload[2] = {0xAA, 0xBB};
+    ComCfg::FrameContext nullContext;
+
+    // Telemetry APID with telecommand packet type bit set
+    Fw::Buffer buffer = this->assemblePacketWithControlFields(
+        0x0, 0x1, 0x0, static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM), 0x3, 0x0012,
+        static_cast<U16>(sizeof(payload) - 1), payload, sizeof(payload));
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_validateApidSeqCount_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+}
+
 void SpacePacketDeframerTester ::testCommandPacketTypeAccepted() {
     this->testControlFieldAccepted(0x0, 0x1, 0x0, ComCfg::Apid::FW_PACKET_COMMAND, 0x3);
 }
