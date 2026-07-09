@@ -26,6 +26,9 @@ def test_send_version_command(fprime_test_api):
       version.ENABLE, [DISABLED/ENABLED]
     """
 
+    # Enable all telemetry packet groups so ProjectVersion/FrameworkVersion are emitted
+    fprime_test_api.set_tlm_packet_level(3)
+
     for count, value in enumerate(
         ["PROJECT", "FRAMEWORK", "LIBRARY", "CUSTOM", "ALL"], 1
     ):

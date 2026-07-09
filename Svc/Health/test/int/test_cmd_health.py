@@ -18,6 +18,9 @@ def test_send_health_command(fprime_test_api):
      health.HLTH_CHNG_PING,["FileManager",1,1]
     """
 
+    # Enable all telemetry packet groups so CommandErrors and PingLateWarnings are emitted
+    fprime_test_api.set_tlm_packet_level(3)
+
     cmd_events = fprime_test_api.get_event_pred(severity=EventSeverity.COMMAND)
     actHi_events = fprime_test_api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
     warnLo_events = fprime_test_api.get_event_pred(severity=EventSeverity.WARNING_LO)
