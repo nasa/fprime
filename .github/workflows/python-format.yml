@@ -2,10 +2,10 @@ name: Format Python
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [ zensical-integ, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
+    branches: [ zensical-integ, release/** ]
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

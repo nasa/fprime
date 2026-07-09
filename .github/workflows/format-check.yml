@@ -2,10 +2,10 @@ name: "Code Format Check"
 
 on:
   push:
-    branches: [ devel, release/**, ci/** ]
+    branches: [ zensical-integ, release/**, ci/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
+    branches: [ zensical-integ, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'

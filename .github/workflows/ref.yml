@@ -4,9 +4,9 @@ name: "Ref"
 
 on:
   push:
-    branches: [devel, release/**]
+    branches: [zensical-integ, release/**]
   pull_request:
-    branches: [devel, release/**]
+    branches: [zensical-integ, release/**]
     paths-ignore:
       - "docs/**"
       - "**.md"

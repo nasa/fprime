@@ -18,7 +18,7 @@ name: "Coverage Update"
 
 on:
   push:
-    branches: [ devel, release/** ]
+    branches: [ zensical-integ, release/** ]
     tags:     [ 'v*' ]
   workflow_dispatch:
 
