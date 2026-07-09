@@ -102,7 +102,11 @@ void DpDemo ::SelectColor_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Ref::DpDem
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, DpDemo_DpReqType reqType, U32 priority) {
+void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
+                            U32 cmdSeq,
+                            DpDemo_DpReqType reqType,
+                            U32 priority,
+                            Fw::DpCfg::ProcType proc) {
     // make sure DPs are available
     if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productRequestOut_OutputPort(0)) {
         this->log_WARNING_HI_DpsNotConnected();
@@ -121,6 +125,7 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, DpDemo_DpReqType re
                         DpDemo_ArrayOfStringArray::SERIALIZED_SIZE + (numRecords * sizeof(FwDpIdType));
 
     this->dpPriority = static_cast<FwDpPriorityType>(priority);
+    this->dpProc = proc;
     this->log_ACTIVITY_LO_DpMemRequested(dpSize);
     if (reqType == DpDemo_DpReqType::IMMEDIATE) {
         Fw::Success stat = this->dpGet_DpDemoContainer(dpSize, this->dpContainer);
@@ -134,6 +139,7 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, DpDemo_DpReqType re
             this->log_ACTIVITY_LO_DpMemReceived(this->dpContainer.getBuffer().getSize());
             // override priority with requested priority
             this->dpContainer.setPriority(priority);
+            this->dpContainer.setProcTypes(proc);
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         }
     } else if (reqType == DpDemo_DpReqType::ASYNC) {
@@ -155,6 +161,7 @@ void DpDemo ::dpRecv_DpDemoContainer_handler(DpContainer& container, Fw::Success
         this->dpInProgress = true;
         // set previously requested priority
         this->dpContainer.setPriority(this->dpPriority);
+        this->dpContainer.setProcTypes(this->dpProc);
         this->log_ACTIVITY_LO_DpStarted(this->numRecords);
     } else {
         this->log_WARNING_HI_DpMemoryFail();
