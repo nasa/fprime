@@ -5,10 +5,10 @@ name: "External Repo: cFS Reference"
 
 on:
   push:
-    branches: [ zensical-integ, release/** ]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ zensical-integ, release/** ]
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'

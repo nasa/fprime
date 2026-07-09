@@ -6,9 +6,9 @@ name: "Config Test"
 
 on:
   push:
-    branches: [ zensical-integ, release/** ]
+    branches: [ devel, release/** ]
   pull_request:
-    branches: [ zensical-integ, release/** ]
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'

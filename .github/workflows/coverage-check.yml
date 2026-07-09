@@ -22,7 +22,7 @@ name: "Coverage Check"
 
 on:
   pull_request:
-    branches: [ zensical-integ, release/** ]
+    branches: [ devel, release/** ]
     paths-ignore:
       - 'docs/**'
       - '**.md'

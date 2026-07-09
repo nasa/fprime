@@ -2,9 +2,9 @@ name: Check Markdown links
 
 on: 
   push:
-    branches: [zensical-integ, docs/new-website]
+    branches: [devel, docs/new-website]
   pull_request:
-    branches: [zensical-integ]
+    branches: [devel]
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
