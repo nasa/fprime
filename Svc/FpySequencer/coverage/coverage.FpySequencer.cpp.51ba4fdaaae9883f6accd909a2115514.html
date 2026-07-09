@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:41:16</td>
+      <td>2026-07-09 23:56:47</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>248</td>
-      <td>300</td>
-      <td class="coverage-medium">82.7%</td>
+      <td>238</td>
+      <td>288</td>
+      <td class="coverage-medium">82.6%</td>
     </tr>
   </table>
 </div>
@@ -76,15 +76,15 @@
     <tr><td><a href="#l196">Svc::FpySequencer::CONTINUE_cmdHandler(unsigned int, unsigned int) (line 196)</a></td><td>called 2 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l244">Svc::FpySequencer::DUMP_STACK_TO_FILE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 244)</a></td><td>called 3 times</td><td>66.0%</td></tr>
     <tr><td><a href="#l16">Svc::FpySequencer::FpySequencer(char const*) (line 16)</a></td><td>called 266 times</td><td>66.0%</td></tr>
-    <tr><td><a href="#l50">Svc::FpySequencer::RUN_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState, Svc::SeqArgs) (line 50)</a></td><td>called 42 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l112">Svc::FpySequencer::RUN_VALIDATED_cmdHandler(unsigned int, unsigned int, Svc::BlockState) (line 112)</a></td><td>called 5 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l41">Svc::FpySequencer::RUN_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState) (line 41)</a></td><td>called 40 times</td><td>68.0%</td></tr>
+    <tr><td><a href="#l50">Svc::FpySequencer::RUN_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState const&amp;, Svc::SeqArgs const&amp;) (line 50)</a></td><td>called 42 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l112">Svc::FpySequencer::RUN_VALIDATED_cmdHandler(unsigned int, unsigned int, Svc::BlockState const&amp;) (line 112)</a></td><td>called 5 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l41">Svc::FpySequencer::RUN_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState const&amp;) (line 41)</a></td><td>called 40 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l163">Svc::FpySequencer::SET_BREAKPOINT_cmdHandler(unsigned int, unsigned int, unsigned int, bool) (line 163)</a></td><td>called 1 time</td><td>72.0%</td></tr>
     <tr><td><a href="#l228">Svc::FpySequencer::STEP_cmdHandler(unsigned int, unsigned int) (line 228)</a></td><td>called 4 times</td><td>77.0%</td></tr>
-    <tr><td><a href="#l91">Svc::FpySequencer::VALIDATE_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::SeqArgs) (line 91)</a></td><td>called 16 times</td><td>79.0%</td></tr>
-    <tr><td><a href="#l81">Svc::FpySequencer::VALIDATE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 81)</a></td><td>called 9 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l91">Svc::FpySequencer::VALIDATE_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::SeqArgs const&amp;) (line 91)</a></td><td>called 16 times</td><td>79.0%</td></tr>
+    <tr><td><a href="#l81">Svc::FpySequencer::VALIDATE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 81)</a></td><td>called 9 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l273">Svc::FpySequencer::checkTimers_handler(short, unsigned int) (line 273)</a></td><td>called 4 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l287">Svc::FpySequencer::cmdResponseIn_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 287)</a></td><td>called 8 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l287">Svc::FpySequencer::cmdResponseIn_handler(short, unsigned int, unsigned int, Fw::CmdResponse const&amp;) (line 287)</a></td><td>called 8 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l514">Svc::FpySequencer::isRunningState(Svc::FpySequencer_SequencerStateMachine_State) (line 514)</a></td><td>called 11 times</td><td>66.0%</td></tr>
     <tr><td><a href="#l494">Svc::FpySequencer::parameterUpdated(unsigned int) (line 494)</a></td><td>called 11 times</td><td>66.0%</td></tr>
     <tr><td><a href="#l489">Svc::FpySequencer::parametersLoaded() (line 489)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -467,7 +467,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                  </span><span class="n">BlockState</span><span class="w"> </span><span class="n">block</span><span class="w">                   </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
+      <td class="src "><span class="w">                                  </span><span class="k">const</span><span class="w"> </span><span class="n">BlockState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">block</span><span class="w">            </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
@@ -487,11 +487,10 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 8 taken 40 times.</div>
             <div class="takenBranch">&check; Branch 12 taken 40 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 40 times.</div>
           </div>
         </details>
       </td>
@@ -538,14 +537,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                        </span><span class="n">Svc</span><span class="o">::</span><span class="n">BlockState</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
+      <td class="src "><span class="w">                                        </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">BlockState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                        </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="w"> </span><span class="n">args</span><span class="w">       </span><span class="c1">//!&lt; Arguments to pass to the sequencer</span></td>
+      <td class="src "><span class="w">                                        </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="o">&amp;</span><span class="w"> </span><span class="n">args</span><span class="w">       </span><span class="c1">//!&lt; Arguments to pass to the sequencer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
@@ -631,8 +630,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 40 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -687,8 +686,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 12 taken 41 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 41 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 41 times.</div>
+            <div class="takenBranch">&check; Branch 17 taken 41 times.</div>
           </div>
         </details>
       </td>
@@ -715,8 +714,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 40 times.</div>
           </div>
         </details>
       </td>
@@ -814,7 +813,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 8 taken 9 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 9 times.</div>
           </div>
         </details>
       </td>
@@ -882,7 +881,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                             </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                             </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
@@ -1037,21 +1036,21 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FpySequencer</span><span class="o">::</span><span class="n">RUN_VALIDATED_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The opcode</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FpySequencer</span><span class="o">::</span><span class="n">RUN_VALIDATED_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w">     </span><span class="c1">//!&lt; The opcode</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                            </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w">           </span><span class="c1">//!&lt; The command sequence number</span></td>
+      <td class="src "><span class="w">                                            </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w">              </span><span class="c1">//!&lt; The command sequence number</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                            </span><span class="n">BlockState</span><span class="w"> </span><span class="n">block</span><span class="w">      </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
+      <td class="src "><span class="w">                                            </span><span class="k">const</span><span class="w"> </span><span class="n">BlockState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">block</span><span class="w">  </span><span class="c1">//!&lt; Return command status when complete or not</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
@@ -1137,8 +1136,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1199,7 +1198,7 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 11 taken 4 times.</div>
+            <div class="takenBranch">&check; Branch 12 taken 4 times.</div>
           </div>
         </details>
       </td>
@@ -1226,8 +1225,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -2630,11 +2629,10 @@
       <td class="lineno"><a id="l297" href="#l297">297</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 11 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 18 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 14 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -2798,13 +2796,6 @@
     <tr class="source-line">
       <td class="lineno"><a id="l319" href="#l319">319</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
-          </div>
-        </details>
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_CmdResponseFromOldSequence</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">sequenceIndex</span><span class="p">,</span><span class="w"> </span><span class="n">currentSequenceIndex</span><span class="p">);</span></td>
@@ -2876,13 +2867,6 @@
     <tr class="source-line">
       <td class="lineno"><a id="l328" href="#l328">328</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
-          </div>
-        </details>
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_CmdResponseWhileNotAwaiting</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span></td>
@@ -3030,13 +3014,6 @@
     <tr class="source-line">
       <td class="lineno"><a id="l346" href="#l346">346</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 1 times.</div>
-          </div>
-        </details>
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_WrongCmdResponseOpcode</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_runtime</span><span class="p">.</span><span class="n">currentCmdOpcode</span><span class="p">);</span></td>
@@ -3163,13 +3140,6 @@
     <tr class="source-line">
       <td class="lineno"><a id="l363" href="#l363">363</a></td>
       <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
-          </div>
-        </details>
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_WrongCmdResponseIndex</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">,</span><span class="w"> </span><span class="n">cmdIndex</span><span class="p">,</span><span class="w"> </span><span class="n">currentCmdIndex</span><span class="p">);</span></td>

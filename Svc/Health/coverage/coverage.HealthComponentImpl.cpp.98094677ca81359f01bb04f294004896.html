@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:41:23</td>
+      <td>2026-07-09 23:56:54</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>86</td>
-      <td>97</td>
-      <td class="coverage-medium">88.7%</td>
+      <td>84</td>
+      <td>95</td>
+      <td class="coverage-medium">88.4%</td>
     </tr>
   </table>
 </div>
@@ -71,8 +71,8 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l176">Svc::HealthImpl::HLTH_CHNG_PING_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, unsigned int, unsigned int) (line 176)</a></td><td>called 28 times</td><td>77.0%</td></tr>
-    <tr><td><a href="#l143">Svc::HealthImpl::HLTH_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::Enabled) (line 143)</a></td><td>called 5 times</td><td>74.0%</td></tr>
-    <tr><td><a href="#l153">Svc::HealthImpl::HLTH_PING_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Fw::Enabled) (line 153)</a></td><td>called 52 times</td><td>74.0%</td></tr>
+    <tr><td><a href="#l143">Svc::HealthImpl::HLTH_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::Enabled const&amp;) (line 143)</a></td><td>called 5 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l153">Svc::HealthImpl::HLTH_PING_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Fw::Enabled const&amp;) (line 153)</a></td><td>called 52 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l23">Svc::HealthImpl::HealthImpl(char const*) (line 23)</a></td><td>called 10 times</td><td>64.0%</td></tr>
     <tr><td><a href="#l72">Svc::HealthImpl::PingReturn_handler(short, unsigned int) (line 72)</a></td><td>called 1826 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l84">Svc::HealthImpl::Run_handler(short, unsigned int) (line 84)</a></td><td>called 964 times</td><td>91.0%</td></tr>
@@ -1250,7 +1250,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">HLTH_ENABLE_cmdHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">HLTH_ENABLE_cmdHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">&amp;</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l144" href="#l144">144</a></td>
@@ -1284,8 +1284,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 3 times.</div>
           </div>
         </details>
       </td>
@@ -1316,10 +1316,9 @@
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 5 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
           </div>
         </details>
       </td>
@@ -1380,7 +1379,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                             </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                             </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">&amp;</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l157" href="#l157">157</a></td>
@@ -1491,8 +1490,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 25 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 26 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 25 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 26 times.</div>
           </div>
         </details>
       </td>
@@ -1549,10 +1548,9 @@
       <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 51 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 51 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 51 times.</div>
           </div>
         </details>
       </td>

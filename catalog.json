@@ -2,8 +2,8 @@
   "schema": 1,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "4c8b9c0b8692b0d47cbd5f2ccec61c74aa02b893",
-  "generated_at": "2026-07-09T17:41:56Z",
+  "commit": "1dc05f2c503acf1035bf989cde73b0d002ef76a5",
+  "generated_at": "2026-07-09T23:57:26Z",
   "overall": {
     "line_pct": 82.06,
     "line_covered": 15364,
@@ -11,9 +11,9 @@
     "function_pct": 62.68,
     "function_covered": 5463,
     "function_total": 8716,
-    "branch_pct": 71.88,
-    "branch_covered": 8785,
-    "branch_total": 12222,
+    "branch_pct": 71.82,
+    "branch_covered": 8750,
+    "branch_total": 12184,
     "report": "coverage/coverage-all.html"
   },
   "modules": [
@@ -403,14 +403,14 @@
       "has_coverage": true,
       "report": "Fw/DataStructures/coverage/index.html",
       "summary": "Fw/DataStructures/coverage/summary.json",
-      "line_pct": 98.03,
-      "line_covered": 1093,
+      "line_pct": 98.12,
+      "line_covered": 1094,
       "line_total": 1115,
       "function_pct": 97.14,
       "function_covered": 509,
       "function_total": 524,
-      "branch_pct": 82.47,
-      "branch_covered": 447,
+      "branch_pct": 82.66,
+      "branch_covered": 448,
       "branch_total": 542
     },
     {
@@ -659,8 +659,8 @@
       "function_pct": 88.16,
       "function_covered": 67,
       "function_total": 76,
-      "branch_pct": 73.11,
-      "branch_covered": 299,
+      "branch_pct": 73.59,
+      "branch_covered": 301,
       "branch_total": 409
     },
     {
@@ -697,8 +697,8 @@
       "function_pct": 84.21,
       "function_covered": 80,
       "function_total": 95,
-      "branch_pct": 44.34,
-      "branch_covered": 188,
+      "branch_pct": 44.1,
+      "branch_covered": 187,
       "branch_total": 424
     },
     {
@@ -841,9 +841,9 @@
       "function_pct": 91.67,
       "function_covered": 11,
       "function_total": 12,
-      "branch_pct": 91.75,
-      "branch_covered": 89,
-      "branch_total": 97
+      "branch_pct": 91.58,
+      "branch_covered": 87,
+      "branch_total": 95
     },
     {
       "path": "Svc/CmdSequencer",
@@ -943,9 +943,9 @@
       "function_pct": 100.0,
       "function_covered": 32,
       "function_total": 32,
-      "branch_pct": 65.8,
+      "branch_pct": 66.11,
       "branch_covered": 277,
-      "branch_total": 421
+      "branch_total": 419
     },
     {
       "path": "Svc/DpManager",
@@ -1133,9 +1133,9 @@
       "function_pct": 98.57,
       "function_covered": 207,
       "function_total": 210,
-      "branch_pct": 76.75,
-      "branch_covered": 1505,
-      "branch_total": 1961
+      "branch_pct": 76.73,
+      "branch_covered": 1494,
+      "branch_total": 1947
     },
     {
       "path": "Svc/GenericHub",
@@ -1165,9 +1165,9 @@
       "function_pct": 100.0,
       "function_covered": 10,
       "function_total": 10,
-      "branch_pct": 88.66,
-      "branch_covered": 86,
-      "branch_total": 97
+      "branch_pct": 88.42,
+      "branch_covered": 84,
+      "branch_total": 95
     },
     {
       "path": "Svc/Interfaces",
@@ -1315,9 +1315,9 @@
       "function_pct": 89.47,
       "function_covered": 17,
       "function_total": 19,
-      "branch_pct": 88.11,
-      "branch_covered": 326,
-      "branch_total": 370
+      "branch_pct": 87.98,
+      "branch_covered": 322,
+      "branch_total": 366
     },
     {
       "path": "Svc/RateGroupDriver",
@@ -1359,9 +1359,9 @@
       "function_pct": 80.0,
       "function_covered": 8,
       "function_total": 10,
-      "branch_pct": 71.05,
-      "branch_covered": 54,
-      "branch_total": 76
+      "branch_pct": 69.86,
+      "branch_covered": 51,
+      "branch_total": 73
     },
     {
       "path": "Svc/StaticMemory",
@@ -1465,9 +1465,9 @@
       "function_pct": 100.0,
       "function_covered": 20,
       "function_total": 20,
-      "branch_pct": 77.08,
+      "branch_pct": 77.85,
       "branch_covered": 232,
-      "branch_total": 301
+      "branch_total": 298
     },
     {
       "path": "Svc/Types/TlmPacketizerTypes",

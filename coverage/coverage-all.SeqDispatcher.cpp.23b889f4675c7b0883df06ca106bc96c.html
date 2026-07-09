@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:38:36</td>
+      <td>2026-07-09 23:54:10</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>54</td>
-      <td>76</td>
-      <td class="coverage-low">71.1%</td>
+      <td>51</td>
+      <td>73</td>
+      <td class="coverage-low">69.9%</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,9 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l180">Svc::SeqDispatcher::LOG_STATUS_cmdHandler(unsigned int, unsigned int) (line 180)</a></td><td>called 1 time</td><td>73.0%</td></tr>
-    <tr><td><a href="#l154">Svc::SeqDispatcher::RUN_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState, Svc::SeqArgs) (line 154)</a></td><td>called 13 times</td><td>81.0%</td></tr>
-    <tr><td><a href="#l144">Svc::SeqDispatcher::RUN_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState) (line 144)</a></td><td>called 5 times</td><td>60.0%</td></tr>
+    <tr><td><a href="#l180">Svc::SeqDispatcher::LOG_STATUS_cmdHandler(unsigned int, unsigned int) (line 180)</a></td><td>called 1 time</td><td>78.0%</td></tr>
+    <tr><td><a href="#l154">Svc::SeqDispatcher::RUN_ARGS_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState const&amp;, Svc::SeqArgs const&amp;) (line 154)</a></td><td>called 13 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l144">Svc::SeqDispatcher::RUN_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::BlockState const&amp;) (line 144)</a></td><td>called 5 times</td><td>73.0%</td></tr>
     <tr><td><a href="#l15">Svc::SeqDispatcher::SeqDispatcher(char const*) (line 15)</a></td><td>called 6 times</td><td>69.0%</td></tr>
     <tr><td><a href="#l19">Svc::SeqDispatcher::getNextAvailableSequencerIdx() (line 19)</a></td><td>called 13 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l29">Svc::SeqDispatcher::runSequence(short, Fw::ConstStringBase const&amp;, Svc::BlockState, Svc::SeqArgs const&amp;) (line 29)</a></td><td>called 11 times</td><td>83.0%</td></tr>
@@ -1226,7 +1226,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                    </span><span class="n">BlockState</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                    </span><span class="k">const</span><span class="w"> </span><span class="n">BlockState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l148" href="#l148">148</a></td>
@@ -1252,11 +1252,9 @@
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 5 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 5 times.</div>
-            <div class="takenBranch">&check; Branch 12 taken 5 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 5 times.</div>
           </div>
         </details>
       </td>
@@ -1310,14 +1308,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="n">BlockState</span><span class="w"> </span><span class="n">block</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="n">BlockState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">block</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">SeqArgs</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l159" href="#l159">159</a></td>
@@ -1416,8 +1414,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 7 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 7 times.</div>
           </div>
         </details>
       </td>
@@ -1533,10 +1531,9 @@
       <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 11 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 14 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>

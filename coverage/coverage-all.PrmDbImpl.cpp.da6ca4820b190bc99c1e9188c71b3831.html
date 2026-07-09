@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:38:36</td>
+      <td>2026-07-09 23:54:10</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>326</td>
-      <td>370</td>
-      <td class="coverage-medium">88.1%</td>
+      <td>322</td>
+      <td>366</td>
+      <td class="coverage-medium">88.0%</td>
     </tr>
   </table>
 </div>
@@ -73,9 +73,9 @@
     <tr><td><a href="#l28">Svc::(anonymous namespace)::WorkingBuffer::getBuffAddr() (line 28)</a></td><td>called 779 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l30">Svc::(anonymous namespace)::WorkingBuffer::getBuffAddr() const (line 30)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l26">Svc::(anonymous namespace)::WorkingBuffer::getCapacity() const (line 26)</a></td><td>called 116 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l359">Svc::PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(unsigned int, unsigned int) (line 359)</a></td><td>called 5 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l319">Svc::PrmDbImpl::PRM_LOAD_FILE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::PrmDb_Merge) (line 319)</a></td><td>called 4 times</td><td>68.0%</td></tr>
-    <tr><td><a href="#l119">Svc::PrmDbImpl::PRM_SAVE_FILE_cmdHandler(unsigned int, unsigned int) (line 119)</a></td><td>called 24 times</td><td>67.0%</td></tr>
+    <tr><td><a href="#l359">Svc::PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(unsigned int, unsigned int) (line 359)</a></td><td>called 5 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l319">Svc::PrmDbImpl::PRM_LOAD_FILE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Svc::PrmDb_Merge const&amp;) (line 319)</a></td><td>called 4 times</td><td>69.0%</td></tr>
+    <tr><td><a href="#l119">Svc::PrmDbImpl::PRM_SAVE_FILE_cmdHandler(unsigned int, unsigned int) (line 119)</a></td><td>called 24 times</td><td>66.0%</td></tr>
     <tr><td><a href="#l42">Svc::PrmDbImpl::PrmDbImpl(char const*) (line 42)</a></td><td>called 13 times</td><td>56.0%</td></tr>
     <tr><td><a href="#l609">Svc::PrmDbImpl::clearDb(Svc::PrmDb_PrmDbType) (line 609)</a></td><td>called 100 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l52">Svc::PrmDbImpl::configure(char const*) (line 52)</a></td><td>called 13 times</td><td>89.0%</td></tr>
@@ -85,8 +85,8 @@
     <tr><td><a href="#l77">Svc::PrmDbImpl::getPrm_handler(short, unsigned int, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 77)</a></td><td>called 31 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l114">Svc::PrmDbImpl::pingIn_handler(short, unsigned int) (line 114)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l57">Svc::PrmDbImpl::readParamFile() (line 57)</a></td><td>called 23 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l388">Svc::PrmDbImpl::readParamFileImpl(Fw::StringBase const&amp;, Svc::PrmDb_PrmDbType) (line 388)</a></td><td>called 25 times</td><td>71.0%</td></tr>
-    <tr><td><a href="#l94">Svc::PrmDbImpl::setPrm_handler(short, unsigned int, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 94)</a></td><td>called 59 times</td><td>79.0%</td></tr>
+    <tr><td><a href="#l388">Svc::PrmDbImpl::readParamFileImpl(Fw::StringBase const&amp;, Svc::PrmDb_PrmDbType) (line 388)</a></td><td>called 25 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l94">Svc::PrmDbImpl::setPrm_handler(short, unsigned int, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 94)</a></td><td>called 59 times</td><td>84.0%</td></tr>
     <tr><td><a href="#l576">Svc::PrmDbImpl::updateAddPrmImpl(unsigned int, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;, Svc::PrmDb_PrmDbType) (line 576)</a></td><td>called 81 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l50">Svc::PrmDbImpl::~PrmDbImpl() (line 50)</a></td><td>called 13 times</td><td>100.0%</td></tr>
   </table>
@@ -863,11 +863,10 @@
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 13 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1074,11 +1073,10 @@
       <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 13 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1201,7 +1199,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -1357,7 +1355,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1554,7 +1552,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1623,7 +1621,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -1848,7 +1846,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -1917,7 +1915,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -2161,7 +2159,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -2231,7 +2229,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -2408,7 +2406,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -2479,7 +2477,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -3059,7 +3057,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                         </span><span class="n">PrmDb_Merge</span><span class="w"> </span><span class="n">merge</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                         </span><span class="k">const</span><span class="w"> </span><span class="n">PrmDb_Merge</span><span class="o">&amp;</span><span class="w"> </span><span class="n">merge</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l323" href="#l323">323</a></td>
@@ -3086,11 +3084,10 @@
       <td class="lineno"><a id="l325" href="#l325">325</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
             <div class="takenBranch">&check; Branch 13 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -3166,8 +3163,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
-            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
@@ -3417,11 +3414,10 @@
       <td class="lineno"><a id="l362" href="#l362">362</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 3 times.</div>
             <div class="takenBranch">&check; Branch 13 taken 3 times.</div>
-            <div class="takenBranch">&check; Branch 16 taken 3 times.</div>
           </div>
         </details>
       </td>
@@ -3735,7 +3731,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -3845,7 +3841,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -3894,7 +3890,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -4044,7 +4040,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -4342,7 +4338,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -4391,7 +4387,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -4447,7 +4443,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -4551,7 +4547,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -4593,7 +4589,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -4746,7 +4742,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -4843,7 +4839,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -4885,7 +4881,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>
@@ -5096,7 +5092,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 2 times.</div>
           </div>
         </details>
       </td>
@@ -5145,7 +5141,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 9 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1 times.</div>
           </div>
         </details>
       </td>

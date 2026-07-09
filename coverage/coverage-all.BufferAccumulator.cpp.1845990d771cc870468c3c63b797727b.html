@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:38:36</td>
+      <td>2026-07-09 23:54:10</td>
     </tr>
   </table>
 </div>
@@ -70,8 +70,8 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l135">Svc::BufferAccumulator::BA_DrainBuffers_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::BufferAccumulator_BlockMode) (line 135)</a></td><td>called 24 times</td><td>55.0%</td></tr>
-    <tr><td><a href="#l111">Svc::BufferAccumulator::BA_SetMode_cmdHandler(unsigned int, unsigned int, Svc::BufferAccumulator_OpState) (line 111)</a></td><td>called 6 times</td><td>56.0%</td></tr>
+    <tr><td><a href="#l135">Svc::BufferAccumulator::BA_DrainBuffers_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::BufferAccumulator_BlockMode const&amp;) (line 135)</a></td><td>called 24 times</td><td>55.0%</td></tr>
+    <tr><td><a href="#l111">Svc::BufferAccumulator::BA_SetMode_cmdHandler(unsigned int, unsigned int, Svc::BufferAccumulator_OpState const&amp;) (line 111)</a></td><td>called 6 times</td><td>56.0%</td></tr>
     <tr><td><a href="#l26">Svc::BufferAccumulator::BufferAccumulator(char const*) (line 26)</a></td><td>called 7 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l46">Svc::BufferAccumulator::allocateQueue(int, Fw::MemAllocator&amp;, unsigned long, Svc::BufferAccumulator_OpState) (line 46)</a></td><td>called 7 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l72">Svc::BufferAccumulator::bufferSendInFill_handler(short, Fw::Buffer&amp;) (line 72)</a></td><td>called 66 times</td><td>93.0%</td></tr>
@@ -966,7 +966,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="n">BufferAccumulator_OpState</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                               </span><span class="k">const</span><span class="w"> </span><span class="n">BufferAccumulator_OpState</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
@@ -1051,8 +1051,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 4 times.</div>
           </div>
         </details>
       </td>
@@ -1171,7 +1171,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                    </span><span class="n">BufferAccumulator_BlockMode</span><span class="w"> </span><span class="n">blockMode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                                    </span><span class="k">const</span><span class="w"> </span><span class="n">BufferAccumulator_BlockMode</span><span class="o">&amp;</span><span class="w"> </span><span class="n">blockMode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l139" href="#l139">139</a></td>
@@ -1382,8 +1382,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 22 times.</div>
+            <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
+            <div class="takenBranch">&check; Branch 5 taken 22 times.</div>
           </div>
         </details>
       </td>

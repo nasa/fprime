@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-09 17:38:36</td>
+      <td>2026-07-09 23:54:10</td>
     </tr>
   </table>
 </div>
@@ -70,8 +70,8 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l71">Svc::Version::ENABLE_cmdHandler(unsigned int, unsigned int, Svc::VersionEnabled) (line 71)</a></td><td>called 3 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l78">Svc::Version::VERSION_cmdHandler(unsigned int, unsigned int, Svc::VersionType) (line 78)</a></td><td>called 5 times</td><td>79.0%</td></tr>
+    <tr><td><a href="#l71">Svc::Version::ENABLE_cmdHandler(unsigned int, unsigned int, Svc::VersionEnabled const&amp;) (line 71)</a></td><td>called 3 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l78">Svc::Version::VERSION_cmdHandler(unsigned int, unsigned int, Svc::VersionType const&amp;) (line 78)</a></td><td>called 5 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l18">Svc::Version::Version(char const*) (line 18)</a></td><td>called 3 times</td><td>53.0%</td></tr>
     <tr><td><a href="#l31">Svc::Version::config(bool) (line 31)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l185">Svc::Version::customVersion_tlm(Svc::Version::VersionSlot) (line 185)</a></td><td>called 60 times</td><td>78.0%</td></tr>
@@ -652,7 +652,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Version</span><span class="w"> </span><span class="o">::</span><span class="n">ENABLE_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">VersionEnabled</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Version</span><span class="w"> </span><span class="o">::</span><span class="n">ENABLE_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">VersionEnabled</span><span class="o">&amp;</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
@@ -708,7 +708,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Version</span><span class="w"> </span><span class="o">::</span><span class="n">VERSION_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">VersionType</span><span class="w"> </span><span class="n">version_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Version</span><span class="w"> </span><span class="o">::</span><span class="n">VERSION_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">VersionType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">version_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
@@ -730,12 +730,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">5/6</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 6 taken 1 times.</div>
             <div class="takenBranch">&check; Branch 7 taken 1 times.</div>
-            <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
+            <div class="takenBranch">&check; Branch 8 taken 1 times.</div>
+            <div class="notTakenBranch">&cross; Branch 9 not taken.</div>
           </div>
         </details>
       </td>
@@ -1715,7 +1715,7 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 15 taken 60 times.</div>
-            <div class="takenBranch">&check; Branch 18 taken 60 times.</div>
+            <div class="takenBranch">&check; Branch 19 taken 60 times.</div>
           </div>
         </details>
       </td>
