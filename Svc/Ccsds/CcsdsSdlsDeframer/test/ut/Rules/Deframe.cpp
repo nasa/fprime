@@ -42,7 +42,6 @@ void CcsdsSdlsDeframerTester::Deframe__Nominal__action() {
     Fw::Buffer buffer(storage, static_cast<Fw::Buffer::SizeType>(sizeof(U16) + payloadSize));
     ComCfg::FrameContext context;
 
-    this->m_decryptStatus = Svc::Ccsds::SdlsStatus::SUCCESS;
     this->invoke_to_dataIn(0, buffer, context);
 
     // The SA index and updated context must reach the decryption helper
@@ -99,31 +98,28 @@ bool CcsdsSdlsDeframerTester::Deframe__DecryptFailure__precondition() const {
 void CcsdsSdlsDeframerTester::Deframe__DecryptFailure__action() {
     this->clearHistory();
 
-    const U16 sa = static_cast<U16>(STest::Pick::lowerUpper(0, 0xFFFF));
     U8 storage[TEST_BUFFER_SIZE];
-    storage[0] = static_cast<U8>(sa >> 8);
-    storage[1] = static_cast<U8>(sa & 0xFF);
     Fw::Buffer buffer(storage, sizeof storage);
     ComCfg::FrameContext context;
 
-    // Stage a random non-SUCCESS status from the decryption helper
+    // Pick a random non-SUCCESS status passed forward by the decryption helper
     const Svc::Ccsds::SdlsStatus failures[] = {Svc::Ccsds::SdlsStatus::UNKNOWN_SA, Svc::Ccsds::SdlsStatus::UNKNOWN_PORT,
                                                Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE};
-    this->m_decryptStatus = failures[STest::Pick::lowerUpper(0, 2)];
+    const Svc::Ccsds::SdlsStatus status = failures[STest::Pick::lowerUpper(0, 2)];
 
-    this->invoke_to_dataIn(0, buffer, context);
+    this->invoke_to_decryptIn(0, status, buffer, context);
 
-    ASSERT_from_decryptOut_SIZE(1);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DecryptionFailed_SIZE(1);
-    ASSERT_EVENTS_DecryptionFailed(0, this->m_decryptStatus);
+    ASSERT_EVENTS_DecryptionFailed(0, status);
     ASSERT_from_errorNotify_SIZE(1);
     ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SDLS_DECRYPTION_FAILURE);
 
-    // The failing decryptor returns the buffer via bufferReturnIn: no direct return here
+    // The failed buffer is dropped: ownership returns to the decryption subsystem, no data downstream
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_decryptReturnOut_SIZE(1);
+    ASSERT_from_decryptReturnOut(0, buffer, context);
     ASSERT_from_dataReturnOut_SIZE(0);
-
-    this->m_decryptStatus = Svc::Ccsds::SdlsStatus::SUCCESS;
 }
 
 }  // namespace Ccsds

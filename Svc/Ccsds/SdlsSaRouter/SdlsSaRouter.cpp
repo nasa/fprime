@@ -30,20 +30,27 @@ SdlsSaRouter ::~SdlsSaRouter() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-Svc::Ccsds::SdlsStatus SdlsSaRouter ::decryptIn_handler(FwIndexType portNum,
-                                                        U16 securityAssociationIndex,
-                                                        Fw::Buffer& data,
-                                                        const ComCfg::FrameContext& context) {
+void SdlsSaRouter ::decryptIn_handler(FwIndexType portNum,
+                                      U16 securityAssociationIndex,
+                                      Fw::Buffer& data,
+                                      const ComCfg::FrameContext& context) {
     FwIndexType outputPort = 0;
     const Fw::Success found = this->m_saMap.find(securityAssociationIndex, outputPort);
-    if (found != Fw::Success::SUCCESS) {
-        return Svc::Ccsds::SdlsStatus::UNKNOWN_SA;
+    Svc::Ccsds::SdlsStatus errorStatus = Svc::Ccsds::SdlsStatus::UNKNOWN_SA;
+    if (found == Fw::Success::SUCCESS) {
+        if ((outputPort >= 0) && (outputPort < this->getNum_saDecryptOut_OutputPorts()) &&
+            (this->isConnected_saDecryptOut_OutputPort(outputPort))) {
+            this->saDecryptOut_out(outputPort, securityAssociationIndex, data, context);
+            return;
+        }
+        errorStatus = Svc::Ccsds::SdlsStatus::UNKNOWN_PORT;
     }
-    if ((outputPort < 0) || (outputPort >= this->getNum_saDecryptOut_OutputPorts()) ||
-        (!this->isConnected_saDecryptOut_OutputPort(outputPort))) {
-        return Svc::Ccsds::SdlsStatus::UNKNOWN_PORT;
-    }
-    return this->saDecryptOut_out(outputPort, securityAssociationIndex, data, context);
+    // Routing failed: pass the error status forward with the untouched buffer, tracking it
+    // so the eventual ownership return routes back upstream via bufferReturnOut
+    const Fw::Success inserted =
+        this->m_outstanding.insert(data.getData(), static_cast<FwIndexType>(ROUTER_ERROR_PORT));
+    FW_ASSERT(inserted == Fw::Success::SUCCESS);
+    this->decryptOut_out(0, errorStatus, data, context);
 }
 
 void SdlsSaRouter ::decryptReturnIn_handler(FwIndexType portNum,
@@ -53,7 +60,12 @@ void SdlsSaRouter ::decryptReturnIn_handler(FwIndexType portNum,
     const Fw::Success found = this->m_outstanding.find(data.getData(), outputPort);
     FW_ASSERT(found == Fw::Success::SUCCESS);
     (void)this->m_outstanding.remove(data.getData(), outputPort);
-    this->saDecryptReturnOut_out(outputPort, data, context);
+    if (outputPort == ROUTER_ERROR_PORT) {
+        // Buffer was forwarded by the router itself on a routing error: return it upstream
+        this->bufferReturnOut_out(0, data, context);
+    } else {
+        this->saDecryptReturnOut_out(outputPort, data, context);
+    }
 }
 
 void SdlsSaRouter ::saBufferReturnIn_handler(FwIndexType portNum,
@@ -62,10 +74,13 @@ void SdlsSaRouter ::saBufferReturnIn_handler(FwIndexType portNum,
     this->bufferReturnOut_out(0, data, context);
 }
 
-void SdlsSaRouter ::saDecryptIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    const Fw::Success status = this->m_outstanding.insert(data.getData(), portNum);
-    FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(portNum));
-    this->decryptOut_out(0, data, context);
+void SdlsSaRouter ::saDecryptIn_handler(FwIndexType portNum,
+                                        const Svc::Ccsds::SdlsStatus& status,
+                                        Fw::Buffer& data,
+                                        const ComCfg::FrameContext& context) {
+    const Fw::Success inserted = this->m_outstanding.insert(data.getData(), portNum);
+    FW_ASSERT(inserted == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(portNum));
+    this->decryptOut_out(0, status, data, context);
 }
 
 }  // namespace Ccsds

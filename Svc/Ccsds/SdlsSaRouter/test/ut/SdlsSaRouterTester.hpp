@@ -31,8 +31,11 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     //! Size of each test buffer in the pool
     static const FwSizeType TEST_BUFFER_SIZE = 64;
 
-    //! Downstream port left unconnected to exercise the UNKNOWN_PORT return
+    //! Downstream port left unconnected to exercise the UNKNOWN_PORT status
     static const FwIndexType UNCONNECTED_PORT = SdlsCfg::SaRouterPortCount - 1;
+
+    //! Shadow sentinel marking buffers forwarded by the router itself on routing errors
+    static const FwIndexType ROUTER_ERROR_PORT = -1;
 
   public:
     // ----------------------------------------------------------------------
@@ -50,11 +53,11 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     // Handler overrides for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Override recording the invoked port number and returning the staged status
-    Svc::Ccsds::SdlsStatus from_saDecryptOut_handler(FwIndexType portNum,
-                                                     U16 securityAssociationIndex,
-                                                     Fw::Buffer& data,
-                                                     const ComCfg::FrameContext& context) override;
+    //! Override recording the invoked port number
+    void from_saDecryptOut_handler(FwIndexType portNum,
+                                   U16 securityAssociationIndex,
+                                   Fw::Buffer& data,
+                                   const ComCfg::FrameContext& context) override;
 
     //! Override recording the invoked port number
     void from_saDecryptReturnOut_handler(FwIndexType portNum,
@@ -95,9 +98,6 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
 
     //! Shadow state for rule-based testing
     SdlsSaRouterTestState shadow;
-
-    //! Status returned by the downstream decryptor stub (from_saDecryptOut)
-    Svc::Ccsds::SdlsStatus m_downstreamStatus = Svc::Ccsds::SdlsStatus::SUCCESS;
 
     //! Port number of the last from_saDecryptOut invocation
     FwIndexType m_lastSaDecryptOutPort = -1;

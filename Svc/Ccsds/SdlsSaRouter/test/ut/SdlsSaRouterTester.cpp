@@ -36,13 +36,12 @@ SdlsSaRouterTester ::~SdlsSaRouterTester() {
 // Handler overrides for typed from ports
 // ----------------------------------------------------------------------
 
-Svc::Ccsds::SdlsStatus SdlsSaRouterTester ::from_saDecryptOut_handler(FwIndexType portNum,
-                                                                      U16 securityAssociationIndex,
-                                                                      Fw::Buffer& data,
-                                                                      const ComCfg::FrameContext& context) {
+void SdlsSaRouterTester ::from_saDecryptOut_handler(FwIndexType portNum,
+                                                    U16 securityAssociationIndex,
+                                                    Fw::Buffer& data,
+                                                    const ComCfg::FrameContext& context) {
     this->m_lastSaDecryptOutPort = portNum;
     this->pushFromPortEntry_saDecryptOut(securityAssociationIndex, data, context);
-    return this->m_downstreamStatus;
 }
 
 void SdlsSaRouterTester ::from_saDecryptReturnOut_handler(FwIndexType portNum,

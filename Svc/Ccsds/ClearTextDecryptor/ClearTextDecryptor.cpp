@@ -22,12 +22,11 @@ ClearTextDecryptor ::~ClearTextDecryptor() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-Svc::Ccsds::SdlsStatus ClearTextDecryptor ::decryptIn_handler(FwIndexType portNum,
-                                                              U16 securityAssociationIndex,
-                                                              Fw::Buffer& data,
-                                                              const ComCfg::FrameContext& context) {
-    this->decryptOut_out(0, data, context);
-    return Svc::Ccsds::SdlsStatus::SUCCESS;
+void ClearTextDecryptor ::decryptIn_handler(FwIndexType portNum,
+                                            U16 securityAssociationIndex,
+                                            Fw::Buffer& data,
+                                            const ComCfg::FrameContext& context) {
+    this->decryptOut_out(0, Svc::Ccsds::SdlsStatus::SUCCESS, data, context);
 }
 
 void ClearTextDecryptor ::decryptReturnIn_handler(FwIndexType portNum,

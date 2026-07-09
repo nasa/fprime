@@ -44,11 +44,10 @@ void ClearTextDecryptorTester ::testDecryptPassThrough() {
     ComCfg::FrameContext context;
     context.set_vcId(static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF)));
 
-    const Svc::Ccsds::SdlsStatus status = this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_decryptIn(0, sa, buffer, context);
 
-    ASSERT_EQ(status, Svc::Ccsds::SdlsStatus::SUCCESS);
     ASSERT_from_decryptOut_SIZE(1);
-    ASSERT_from_decryptOut(0, buffer, context);
+    ASSERT_from_decryptOut(0, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
     ASSERT_from_bufferReturnOut_SIZE(0);
     ASSERT_EQ(::memcmp(storage, original, TEST_BUFFER_SIZE), 0);
 }

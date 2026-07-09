@@ -37,10 +37,10 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
     //! Handler implementation for decryptIn
     //!
     //! Port to receive the security association index and iv/data buffer to decrypt
-    Svc::Ccsds::SdlsStatus decryptIn_handler(FwIndexType portNum,  //!< The port number
-                                             U16 securityAssociationIndex,
-                                             Fw::Buffer& data,
-                                             const ComCfg::FrameContext& context) override;
+    void decryptIn_handler(FwIndexType portNum,  //!< The port number
+                           U16 securityAssociationIndex,
+                           Fw::Buffer& data,
+                           const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for decryptReturnIn
     //!
@@ -58,8 +58,10 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
 
     //! Handler implementation for saDecryptIn
     //!
-    //! Ports for receiving decrypted data (possibly newly allocated) from downstream decryptors
+    //! Ports for receiving the operation status and decrypted data (possibly newly allocated) from downstream
+    //! decryptors
     void saDecryptIn_handler(FwIndexType portNum,  //!< The port number
+                             const Svc::Ccsds::SdlsStatus& status,
                              Fw::Buffer& data,
                              const ComCfg::FrameContext& context) override;
 
@@ -70,6 +72,13 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
 
     //! Map from SA index to downstream port index
     Fw::ArrayMap<U16, FwIndexType, SdlsCfg::SaRouterMapEntryCount> m_saMap;
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    //! Sentinel port index marking buffers forwarded by the router itself on routing errors
+    static constexpr FwIndexType ROUTER_ERROR_PORT = -1;
 
     //! Table of outstanding decrypted data buffers to their originating port index
     Fw::ArrayMap<const U8*, FwIndexType, SdlsCfg::SaRouterMaxOutstandingBuffers> m_outstanding;

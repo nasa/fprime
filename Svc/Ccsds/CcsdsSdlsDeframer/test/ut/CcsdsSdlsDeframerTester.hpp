@@ -46,11 +46,11 @@ class CcsdsSdlsDeframerTester : public CcsdsSdlsDeframerGTestBase {
     // Handler overrides for typed from ports
     // ----------------------------------------------------------------------
 
-    //! Override recording the request and returning the staged status
-    Svc::Ccsds::SdlsStatus from_decryptOut_handler(FwIndexType portNum,
-                                                   U16 securityAssociationIndex,
-                                                   Fw::Buffer& data,
-                                                   const ComCfg::FrameContext& context) override;
+    //! Override recording the decryption request
+    void from_decryptOut_handler(FwIndexType portNum,
+                                 U16 securityAssociationIndex,
+                                 Fw::Buffer& data,
+                                 const ComCfg::FrameContext& context) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -70,9 +70,6 @@ class CcsdsSdlsDeframerTester : public CcsdsSdlsDeframerGTestBase {
 
     //! The component under test
     CcsdsSdlsDeframer component;
-
-    //! Status returned by the decryption helper stub (from_decryptOut)
-    Svc::Ccsds::SdlsStatus m_decryptStatus = Svc::Ccsds::SdlsStatus::SUCCESS;
 
     //! Copy of the data forwarded on the last from_decryptOut invocation
     U8 m_lastDecryptData[TEST_BUFFER_SIZE];

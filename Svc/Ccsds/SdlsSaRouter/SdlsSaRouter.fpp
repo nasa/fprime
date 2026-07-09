@@ -17,8 +17,8 @@ module Ccsds {
         @ Ports for sending the SA index and iv/data buffer to the mapped downstream decryptor
         output port saDecryptOut: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption
 
-        @ Ports for receiving decrypted data (possibly newly allocated) from downstream decryptors
-        sync input port saDecryptIn: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
+        @ Ports for receiving the operation status and decrypted data (possibly newly allocated) from downstream decryptors
+        sync input port saDecryptIn: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData
 
         @ Ports for returning ownership of decrypted data buffers to downstream decryptors
         output port saDecryptReturnOut: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext

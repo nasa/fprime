@@ -1,30 +1,30 @@
 // ======================================================================
-// \title  CcsdsSdlsDeframer.hpp
-// \author mstarch
-// \brief  hpp file for CcsdsSdlsDeframer component implementation class
+// \title  CcsdsSdlsFramer.hpp
+// \author devin
+// \brief  hpp file for CcsdsSdlsFramer component implementation class
 // ======================================================================
 
-#ifndef Svc_Ccsds_CcsdsSdlsDeframer_HPP
-#define Svc_Ccsds_CcsdsSdlsDeframer_HPP
+#ifndef Svc_Ccsds_CcsdsSdlsFramer_HPP
+#define Svc_Ccsds_CcsdsSdlsFramer_HPP
 
-#include "Svc/Ccsds/CcsdsSdlsDeframer/CcsdsSdlsDeframerComponentAc.hpp"
+#include "Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramerComponentAc.hpp"
 
 namespace Svc {
 
 namespace Ccsds {
 
-class CcsdsSdlsDeframer final : public CcsdsSdlsDeframerComponentBase {
+class CcsdsSdlsFramer final : public CcsdsSdlsFramerComponentBase {
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------
 
-    //! Construct CcsdsSdlsDeframer object
-    CcsdsSdlsDeframer(const char* const compName  //!< The component name
+    //! Construct CcsdsSdlsFramer object
+    CcsdsSdlsFramer(const char* const compName  //!< The component name
     );
 
-    //! Destroy CcsdsSdlsDeframer object
-    ~CcsdsSdlsDeframer();
+    //! Destroy CcsdsSdlsFramer object
+    ~CcsdsSdlsFramer();
 
   private:
     // ----------------------------------------------------------------------
@@ -33,29 +33,35 @@ class CcsdsSdlsDeframer final : public CcsdsSdlsDeframerComponentBase {
 
     //! Handler implementation for bufferReturnIn
     //!
-    //! Port for receiving back the iv/data buffer sent on decryptOut for deallocation
+    //! Port for receiving back the iv/data buffer sent on encryptOut for deallocation
     void bufferReturnIn_handler(FwIndexType portNum,  //!< The port number
                                 Fw::Buffer& data,
                                 const ComCfg::FrameContext& context) override;
 
+    //! Handler implementation for comStatusIn
+    //!
+    //! Port receiving the general status from the downstream component
+    void comStatusIn_handler(FwIndexType portNum,  //!< The port number
+                             Fw::Success& condition) override;
+
     //! Handler implementation for dataIn
     //!
-    //! Port to receive framed data, with optional context
+    //! Port to receive data to frame, in a Fw::Buffer with optional context
     void dataIn_handler(FwIndexType portNum,  //!< The port number
                         Fw::Buffer& data,
                         const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for dataReturnIn
     //!
-    //! Port receiving back ownership of sent buffers
+    //! Port receiving back ownership of sent frame buffers
     void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
                               Fw::Buffer& data,
                               const ComCfg::FrameContext& context) override;
 
-    //! Handler implementation for decryptIn
+    //! Handler implementation for encryptIn
     //!
-    //! Port for receiving the operation status and decrypted data (possibly newly allocated)
-    void decryptIn_handler(FwIndexType portNum,  //!< The port number
+    //! Port for receiving the operation status and encrypted data (possibly newly allocated)
+    void encryptIn_handler(FwIndexType portNum,  //!< The port number
                            const Svc::Ccsds::SdlsStatus& status,
                            Fw::Buffer& data,
                            const ComCfg::FrameContext& context) override;

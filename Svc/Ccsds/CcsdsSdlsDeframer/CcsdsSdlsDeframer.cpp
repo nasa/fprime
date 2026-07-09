@@ -47,13 +47,7 @@ void CcsdsSdlsDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
         data.setData(data.getData() + sizeof(U16));
         data.setSize(data.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(U16)));
 
-        Svc::Ccsds::SdlsStatus decryptionStatus = this->decryptOut_out(0, saIndex, data, newContext);
-        if (decryptionStatus != Svc::Ccsds::SdlsStatus::SUCCESS) {
-            this->log_WARNING_HI_DecryptionFailed(decryptionStatus);
-            if (this->isConnected_errorNotify_OutputPort(0)) {
-                this->errorNotify_out(0, Svc::Ccsds::FrameError::SDLS_DECRYPTION_FAILURE);
-            }
-        }
+        this->decryptOut_out(0, saIndex, data, newContext);
     }
 }
 
@@ -64,9 +58,22 @@ void CcsdsSdlsDeframer ::dataReturnIn_handler(FwIndexType portNum,
     this->decryptReturnOut_out(0, data, context);
 }
 
-void CcsdsSdlsDeframer ::decryptIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    // Once the decryption has finished, we can route the decryption output to the dataOut port for further processing
-    this->dataOut_out(0, data, context);
+void CcsdsSdlsDeframer ::decryptIn_handler(FwIndexType portNum,
+                                           const Svc::Ccsds::SdlsStatus& status,
+                                           Fw::Buffer& data,
+                                           const ComCfg::FrameContext& context) {
+    if (status != Svc::Ccsds::SdlsStatus::SUCCESS) {
+        this->log_WARNING_HI_DecryptionFailed(status);
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SDLS_DECRYPTION_FAILURE);
+        }
+        // Return ownership of the failed buffer to the decryption subsystem
+        this->decryptReturnOut_out(0, data, context);
+    } else {
+        // Once the decryption has finished, we can route the decryption output to the dataOut port for further
+        // processing
+        this->dataOut_out(0, data, context);
+    }
 }
 
 }  // namespace Ccsds

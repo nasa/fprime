@@ -2,15 +2,16 @@ module Svc {
 module Ccsds {
 
     @ Interface for components performing CCSDS SDLS (Space Data Link Security) encryption:
-    @ receives a security association index and iv/data buffer with frame context, returning an SdlsStatus.
-    @ Encrypted data (possibly newly allocated) is sent out encryptOut and its ownership
+    @ receives a security association index and iv/data buffer with frame context.
+    @ Encrypted data (possibly newly allocated) is sent out encryptOut alongside the
+    @ operation status, and its ownership
     @ is returned via encryptReturnIn; incoming buffers are returned via bufferReturnOut.
     interface CcsdsSdlsEncrypt {
         @ Port to receive the security association index and iv/data buffer to encrypt
         guarded input port encryptIn: Svc.Ccsds.CcsdsSdlsEncryption
 
-        @ Port for sending encrypted data (possibly newly allocated) downstream
-        output port encryptOut: Svc.ComDataWithContext
+        @ Port for sending the operation status and encrypted data (possibly newly allocated) downstream
+        output port encryptOut: Svc.Ccsds.CcsdsSdlsData
 
         @ Port for receiving back ownership of buffers sent on encryptOut
         sync input port encryptReturnIn: Svc.ComDataWithContext
@@ -25,8 +26,8 @@ module Ccsds {
         @ Port for sending the security association index and iv/data buffer to encrypt
         output port encryptOut: Svc.Ccsds.CcsdsSdlsEncryption
 
-        @ Port for receiving encrypted data (possibly newly allocated)
-        sync input port encryptIn: Svc.ComDataWithContext
+        @ Port for receiving the operation status and encrypted data (possibly newly allocated)
+        sync input port encryptIn: Svc.Ccsds.CcsdsSdlsData
 
         @ Port for returning ownership of buffers received on encryptIn
         output port encryptReturnOut: Svc.ComDataWithContext

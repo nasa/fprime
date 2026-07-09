@@ -3,8 +3,8 @@
 // \author lestarch-autobot
 // \brief  Rule implementations for the Route rule group
 //
-// These rules exercise the decryptIn port: SA-to-port routing, status
-// pass-through, and the UNKNOWN_SA / UNKNOWN_PORT error returns.
+// These rules exercise the decryptIn port: SA-to-port routing and the
+// UNKNOWN_SA / UNKNOWN_PORT error statuses passed forward on decryptOut.
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
@@ -29,19 +29,16 @@ void SdlsSaRouterTester::Route__KnownSa__action() {
     const U16 sa = this->m_mapSas[pick];
     const FwIndexType expectedPort = this->m_mapPorts[pick];
 
-    // Stage a random downstream status to verify pass-through
-    this->m_downstreamStatus = (STest::Pick::lowerUpper(0, 1) == 0) ? Svc::Ccsds::SdlsStatus::SUCCESS
-                                                                    : Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE;
     U8 storage[TEST_BUFFER_SIZE];
     Fw::Buffer buffer(storage, sizeof storage);
     ComCfg::FrameContext context;
 
-    const Svc::Ccsds::SdlsStatus status = this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_decryptIn(0, sa, buffer, context);
 
-    ASSERT_EQ(status, this->m_downstreamStatus);
     ASSERT_from_saDecryptOut_SIZE(1);
     ASSERT_from_saDecryptOut(0, sa, buffer, context);
     ASSERT_EQ(this->m_lastSaDecryptOutPort, expectedPort);
+    ASSERT_from_decryptOut_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -49,7 +46,7 @@ void SdlsSaRouterTester::Route__KnownSa__action() {
 // ----------------------------------------------------------------------
 
 bool SdlsSaRouterTester::Route__UnknownSa__precondition() const {
-    return true;
+    return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
 void SdlsSaRouterTester::Route__UnknownSa__action() {
@@ -60,14 +57,18 @@ void SdlsSaRouterTester::Route__UnknownSa__action() {
     do {
         sa = static_cast<U16>(STest::Pick::lowerUpper(0, 0xFFFF));
     } while (this->isMappedSa(sa));
-    U8 storage[TEST_BUFFER_SIZE];
-    Fw::Buffer buffer(storage, sizeof storage);
+    U8* const storage = this->getFreePoolBuffer();
+    ASSERT_NE(storage, nullptr);
+    Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
     ComCfg::FrameContext context;
 
-    const Svc::Ccsds::SdlsStatus status = this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_decryptIn(0, sa, buffer, context);
 
-    ASSERT_EQ(status, Svc::Ccsds::SdlsStatus::UNKNOWN_SA);
+    // The error status is passed forward on decryptOut with the untouched buffer
     ASSERT_from_saDecryptOut_SIZE(0);
+    ASSERT_from_decryptOut_SIZE(1);
+    ASSERT_from_decryptOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_SA, buffer, context);
+    this->shadow.shadow_outstanding[storage] = ROUTER_ERROR_PORT;
 }
 
 // ----------------------------------------------------------------------
@@ -75,7 +76,7 @@ void SdlsSaRouterTester::Route__UnknownSa__action() {
 // ----------------------------------------------------------------------
 
 bool SdlsSaRouterTester::Route__UnknownPort__precondition() const {
-    return true;
+    return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
 void SdlsSaRouterTester::Route__UnknownPort__action() {
@@ -92,14 +93,18 @@ void SdlsSaRouterTester::Route__UnknownPort__action() {
         }
     }
     ASSERT_TRUE(found);
-    U8 storage[TEST_BUFFER_SIZE];
-    Fw::Buffer buffer(storage, sizeof storage);
+    U8* const storage = this->getFreePoolBuffer();
+    ASSERT_NE(storage, nullptr);
+    Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
     ComCfg::FrameContext context;
 
-    const Svc::Ccsds::SdlsStatus status = this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_decryptIn(0, sa, buffer, context);
 
-    ASSERT_EQ(status, Svc::Ccsds::SdlsStatus::UNKNOWN_PORT);
+    // The error status is passed forward on decryptOut with the untouched buffer
     ASSERT_from_saDecryptOut_SIZE(0);
+    ASSERT_from_decryptOut_SIZE(1);
+    ASSERT_from_decryptOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_PORT, buffer, context);
+    this->shadow.shadow_outstanding[storage] = ROUTER_ERROR_PORT;
 }
 
 }  // namespace Ccsds

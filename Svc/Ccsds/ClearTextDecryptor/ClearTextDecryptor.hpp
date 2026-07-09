@@ -34,10 +34,10 @@ class ClearTextDecryptor final : public ClearTextDecryptorComponentBase {
     //! Handler implementation for decryptIn
     //!
     //! Port to receive the security association index and iv/data buffer to decrypt
-    Svc::Ccsds::SdlsStatus decryptIn_handler(FwIndexType portNum,  //!< The port number
-                                             U16 securityAssociationIndex,
-                                             Fw::Buffer& data,
-                                             const ComCfg::FrameContext& context) override;
+    void decryptIn_handler(FwIndexType portNum,  //!< The port number
+                           U16 securityAssociationIndex,
+                           Fw::Buffer& data,
+                           const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for decryptReturnIn
     //!

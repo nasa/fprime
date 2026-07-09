@@ -8,21 +8,21 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 
 - Loads the compile-time `SdlsCfg.SaMap` into an internal `Fw::ArrayMap` from SA index to port index at construction.
 - Receives an SA index, iv/data buffer, and frame context on the guarded `decryptIn` port.
-- Looks up the SA index in the map; if found, forwards the request out the mapped `saDecryptOut` port and returns the downstream decryptor's `SdlsStatus` to the caller.
-- Returns `UNKNOWN_SA` if the SA index has no map entry, or `UNKNOWN_PORT` if the mapped port index is out of range or unconnected; the buffer is not forwarded in either case.
+- Looks up the SA index in the map; if found, forwards the request out the mapped `saDecryptOut` port.
+- Passes an `UNKNOWN_SA` status forward on `decryptOut` (with the untouched buffer) if the SA index has no map entry, or `UNKNOWN_PORT` if the mapped port index is out of range or unconnected; the buffer is not forwarded downstream in either case.
 - Passes buffers returned by downstream decryptors (deallocation path) upstream via `bufferReturnOut`.
-- Passes decrypted data emitted by downstream decryptors upstream via `decryptOut`, recording the originating port in an `Fw::ArrayMap` bookkeeping table (sized by `SdlsCfg.SaRouterMaxOutstandingBuffers`), and routes ownership returns received on `decryptReturnIn` back to the originating decryptor via `saDecryptReturnOut`.
+- Passes the operation status and decrypted data emitted by downstream decryptors upstream via `decryptOut`, recording the originating port in an `Fw::ArrayMap` bookkeeping table (sized by `SdlsCfg.SaRouterMaxOutstandingBuffers`), and routes ownership returns received on `decryptReturnIn` back to the originating decryptor via `saDecryptReturnOut` — or upstream via `bufferReturnOut` for buffers the router itself forwarded on routing errors.
 
 ## Port Descriptions
 
 | Kind          | Name               | Port Type                       | Description |
 |---------------|--------------------|---------------------------------|-------------|
 | guarded input | decryptIn          | Svc.Ccsds.CcsdsSdlsEncryption   | Receives the SA index and iv/data buffer to route (from `CcsdsSdlsDecrypt` interface). |
-| output        | decryptOut         | Svc.ComDataWithContext          | Sends decrypted data (possibly newly allocated) upstream. |
+| output        | decryptOut         | Svc.Ccsds.CcsdsSdlsData         | Sends the operation status and decrypted data (possibly newly allocated) upstream. |
 | sync input    | decryptReturnIn    | Svc.ComDataWithContext          | Receives back ownership of buffers sent on `decryptOut`. |
 | output        | bufferReturnOut    | Svc.ComDataWithContext          | Returns incoming iv/data buffers for deallocation. |
 | output        | saDecryptOut       | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption | Sends the SA index and iv/data buffer to the mapped downstream decryptor. |
-| sync input    | saDecryptIn        | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives decrypted data from downstream decryptors. |
+| sync input    | saDecryptIn        | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData | Receives the operation status and decrypted data from downstream decryptors. |
 | output        | saDecryptReturnOut | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Returns ownership of decrypted data buffers to downstream decryptors. |
 | sync input    | saBufferReturnIn   | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives back iv/data buffers from downstream decryptors for deallocation. |
 
@@ -44,10 +44,10 @@ All of the above are defined in the component-local configuration module `Svc/Cc
 |------|-------------|------------|
 | SVC-CCSDS-SDLS-SA-ROUTER-001 | The SdlsSaRouter shall accept an SA index and iv/data buffer via the `Svc.Ccsds.CcsdsSdlsDecrypt` interface (guarded `decryptIn`). | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-002 | The SdlsSaRouter shall map the incoming SA index to a downstream port index using a compile-time SA-to-port map: an FPP array of {U16 SA, FwIndexType port index} pairs (`SdlsCfg.SaMap`) defined in configuration. | Unit Test |
-| SVC-CCSDS-SDLS-SA-ROUTER-003 | The SdlsSaRouter shall forward the SA index and buffer out the mapped output port and shall return the downstream decryptor's `SdlsStatus` to its caller. | Unit Test |
+| SVC-CCSDS-SDLS-SA-ROUTER-003 | The SdlsSaRouter shall forward the SA index and buffer out the mapped output port, and shall pass the downstream decryptor's `SdlsStatus` forward alongside the decrypted data via `decryptOut`. | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-004 | The SdlsSaRouter shall receive returned iv/data buffers from downstream decryptors and pass them upstream via its return output. | Unit Test |
-| SVC-CCSDS-SDLS-SA-ROUTER-005 | Upon receiving an SA index with no map entry, the SdlsSaRouter shall return `UNKNOWN_SA` without forwarding the buffer. | Unit Test |
-| SVC-CCSDS-SDLS-SA-ROUTER-006 | Upon a map entry referencing an out-of-range or unconnected port index, the SdlsSaRouter shall return `UNKNOWN_PORT` without forwarding the buffer. | Unit Test |
+| SVC-CCSDS-SDLS-SA-ROUTER-005 | Upon receiving an SA index with no map entry, the SdlsSaRouter shall pass an `UNKNOWN_SA` status forward on `decryptOut` with the untouched buffer, without forwarding it downstream. | Unit Test |
+| SVC-CCSDS-SDLS-SA-ROUTER-006 | Upon a map entry referencing an out-of-range or unconnected port index, the SdlsSaRouter shall pass an `UNKNOWN_PORT` status forward on `decryptOut` with the untouched buffer, without forwarding it downstream. | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-007 | The downstream port arrays shall share a single dimension set by a constant in the component configuration module; the SA-map array dimension shall be an independent config constant. | Inspection |
 
 ## See Also

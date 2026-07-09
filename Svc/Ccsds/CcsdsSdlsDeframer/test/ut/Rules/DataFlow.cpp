@@ -30,7 +30,7 @@ void CcsdsSdlsDeframerTester::DataFlow__DecryptedData__action() {
     Fw::Buffer buffer(storage, sizeof storage);
     ComCfg::FrameContext context;
 
-    this->invoke_to_decryptIn(0, buffer, context);
+    this->invoke_to_decryptIn(0, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
 
     ASSERT_from_dataOut_SIZE(1);
     ASSERT_from_dataOut(0, buffer, context);

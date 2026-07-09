@@ -32,10 +32,15 @@ void SdlsSaRouterTester::DataFlow__DecryptData__action() {
     Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
     ComCfg::FrameContext context;
 
-    this->invoke_to_saDecryptIn(portNum, buffer, context);
+    // Pick a random status to verify pass-forward alongside the data
+    const Svc::Ccsds::SdlsStatus status = (STest::Pick::lowerUpper(0, 1) == 0)
+                                              ? Svc::Ccsds::SdlsStatus::SUCCESS
+                                              : Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE;
+
+    this->invoke_to_saDecryptIn(portNum, status, buffer, context);
 
     ASSERT_from_decryptOut_SIZE(1);
-    ASSERT_from_decryptOut(0, buffer, context);
+    ASSERT_from_decryptOut(0, status, buffer, context);
     this->shadow.shadow_outstanding[storage] = portNum;
 }
 
@@ -57,9 +62,16 @@ void SdlsSaRouterTester::DataFlow__DecryptReturn__action() {
 
     this->invoke_to_decryptReturnIn(0, buffer, context);
 
-    ASSERT_from_saDecryptReturnOut_SIZE(1);
-    ASSERT_from_saDecryptReturnOut(0, buffer, context);
-    ASSERT_EQ(this->m_lastSaDecryptReturnOutPort, expectedPort);
+    if (expectedPort == ROUTER_ERROR_PORT) {
+        // Buffer was forwarded by the router itself on a routing error: returned upstream
+        ASSERT_from_saDecryptReturnOut_SIZE(0);
+        ASSERT_from_bufferReturnOut_SIZE(1);
+        ASSERT_from_bufferReturnOut(0, buffer, context);
+    } else {
+        ASSERT_from_saDecryptReturnOut_SIZE(1);
+        ASSERT_from_saDecryptReturnOut(0, buffer, context);
+        ASSERT_EQ(this->m_lastSaDecryptReturnOutPort, expectedPort);
+    }
     this->shadow.shadow_outstanding.erase(storage);
 }
 
