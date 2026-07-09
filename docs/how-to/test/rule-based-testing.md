@@ -7,7 +7,7 @@ Rule-Based Testing is a methodology for unit testing where unit tests are constr
 1. A precondition that says when the rule can be applied
 2. An action that performs the test
 
-Rules are then assembled into different sequences to form the test, potentially at random and in very large numbers. This methodology provides broad coverage and high confidence in component behavior. The framework for authoring Rule-Based Testing is provided by the [`fprime/STest/` module](../../STest/README.md).
+Rules are then assembled into different sequences to form the test, potentially at random and in very large numbers. This methodology provides broad coverage and high confidence in component behavior. The framework for authoring Rule-Based Testing is provided by the [`fprime/STest/` module](../../../STest/README.md).
 
 ## Prerequisites
 

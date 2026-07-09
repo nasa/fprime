@@ -101,7 +101,7 @@ sent to the driver for handling. Downlink is implemented with a component implem
 
 ## Adding a Custom Wire Protocol
 
-To add custom protocols (e.g. CCSDS, custom telemetry formats, etc), users should follow the detailed [How-To Implement a Framing Protocol Guide](../../how-to/custom-framing.md)
+To add custom protocols (e.g. CCSDS, custom telemetry formats, etc), users should follow the detailed [How-To Implement a Framing Protocol Guide](../../how-to/integrate/custom-framing.md)
 
 ## Adding a Custom Driver 
 
