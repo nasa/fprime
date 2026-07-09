@@ -72,12 +72,11 @@ python -m pip install \
 echo -e "${GREEN}Building nested docs website only...${NC}"
 rm -rf "$SITE_DIR"
 
-python -m pip install zensical
 
 # Temporarily disable custom_dir since overrides/ doesn't exist in standalone fprime/ checkout
 sed 's/custom_dir:/#custom_dir:/' "$REPO_ROOT/mkdocs.yml" > "$REPO_ROOT/mkdocs.local.yml"
 
-zensical build --clean --config-file "$REPO_ROOT/mkdocs.local.yml"
+mkdocs build --clean --config-file "$REPO_ROOT/mkdocs.local.yml"
 
 if [ $? -ne 0 ]; then
 	echo -e "${RED}Error: Documentation build failed${NC}"
