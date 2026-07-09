@@ -17,12 +17,10 @@ For a working reference project, see the [F Prime Python Reference](https://gith
 - [Modeling](#modeling)
 - [Project Setup](#project-setup)
 - [Modeling](#modeling)
-- [Development Workflow](#development-workflow)
+- [Implementation](#implementation)
+- [Binding TopologyState](#binding-topologystate)
+- [Instantiation and Deployment Main (Entry Point)](#instantiation-and-deployment-main-(entry-point))
 - [Testing](#testing)
-- [Packaging and Distribution](#packaging-and-distribution)
-- [Integration with Flight Components](#integration-with-flight-components)
-- [Debugging](#debugging)
-- [Next Steps](#next-steps)
 
 ## When to Use This
 

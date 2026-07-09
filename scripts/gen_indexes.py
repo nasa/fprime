@@ -36,7 +36,7 @@ SECTION_DESCRIPTIONS = {  # note: these are not automated, new sections will be 
     },
     "reference": {
         "software-design-documents": "Software Design Documents (SDD) capture the design of the F´ core components.",
-        "fpp-language-specification": "This document describes F Prime Prime, also known as FPP or F Double Prime."
+        "fpp-language-specification": "This document describes F Prime Prime, also known as FPP or F Double Prime.",
     },
 }
 

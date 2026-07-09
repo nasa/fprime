@@ -9,7 +9,7 @@ This guide walks through the process of creating a basic plugin that listens to 
 
 > [!NOTE]
 > **Prerequisite**  
-> Before following this guide, you should first complete the [Develop GDS Plugins](../how-to/develop-gds-plugins.md) guide.  
+> Before following this guide, you should first complete the [Develop GDS Plugins](develop-gds-plugins.md) guide.  
 > It explains the plugin system, registration process, and runtime behavior essential to this example.
 
 A [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels) is provided to help users follow along.
@@ -160,6 +160,6 @@ fprime-gds --dictionary ./MergedDictionary.json --no-zmq
 
 ## See Also
 
-- [DataHandlerPlugin Reference](../reference/gds-plugins/data-handler.md)
-- [Plugin System Overview](../how-to/develop-gds-plugins.md)
+- [DataHandlerPlugin Reference](../../reference/gds-plugins/data-handler.md)
+- [Plugin System Overview](develop-gds-plugins.md)
 - [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels)

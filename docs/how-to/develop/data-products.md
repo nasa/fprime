@@ -266,4 +266,4 @@ fprime-dp decode --bin-file <data_product_file> --dictionary <path_to_dictionary
 
 Data products provide a structured, scalable way to generate and manage mission data in F Prime. By clearly modeling records and containers, carefully managing allocation and serialization, and thoroughly testing both nominal and failure paths, producers can remain simple, deterministic, and flight-worthy—while enabling powerful ground-side analysis.
 
-To dive deeper into the broader data products system in F´, see the [Data Products User Guide](../user-manual/framework/data-products.md) document.
+To dive deeper into the broader data products system in F´, see the [Data Products User Guide](../../user-manual/framework/data-products.md) document.
