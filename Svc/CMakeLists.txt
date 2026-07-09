@@ -1,5 +1,7 @@
 # Module subdirectories
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Types
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
 

@@ -44,6 +44,12 @@ async command INVOKE(
 @ Clear the WebAssembly store of all modules, tables, and memories to start fresh.
 async command CLEAR_STORE()
 
+@ Reinitialize the Wasm store. This clears the current store and reallocates the internal memory
+@ for holding modules. A maximum of 256 modules is supported.
+async command REINITIALIZE_STORE(
+    module_count: U16 @< Maximum number of modules that can be loaded into the store
+)
+
 # @ Loads and validates a sequence with arguments
 # # prio: lower than sm sig and CANCEL
 # async command VALIDATE_ARGS(
@@ -61,6 +67,8 @@ async command CANCEL()
 @ substates of the RUNNING state that are not RUNNING.PAUSED.
 async command BREAK()
 
-@ Continues the automatic execution of the sequence after it has been paused. If a breakpoint is still
-@ set, it may pause again on that breakpoint. This command is only valid in the RUNNING.PAUSED state.
+@ Dump a stack trace as an event
+async command TRACE()
+
+@ 
 async command CONTINUE()

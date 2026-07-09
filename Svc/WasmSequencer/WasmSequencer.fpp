@@ -2,7 +2,8 @@ module Svc {
     @ A sequence engine based around a WebAssembly interpreter
     active component WasmSequencer {
 
-        include "WasmSequencerCommands.fppi"
+        # include "WasmSequencerCommands.fppi"
+        # include "WasmSequencerStateMachine.fppi"
 
         @ Port for dispatching commands
         output port cmdOut: Fw.Com
