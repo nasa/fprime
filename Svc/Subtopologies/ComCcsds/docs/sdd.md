@@ -22,6 +22,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 | SVC-COMCCSDS-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.     | Inspection |
 | SVC-COMCCSDS-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.     | Inspection |
 | SVC-COMCCSDS-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComCcsdsConfig`. | Inspection |
+| SVC-COMCCSDS-007 | Provide **composable layer topologies**: a Space Packet packet layer (`SpacePacketFraming`, `SpacePacket`) and a TM/TC transfer frame layer (`TmTcFraming`), from which the full stack is composed. | Inspection |
 
 ---
 
@@ -43,6 +44,23 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 > **Two variants:**
 > **A. “With ComStub”:** Subtopology **includes** `Svc::ComStub` and exposes **ByteStream** ports to your driver.
 > **B. “With External ComInterface”:** Subtopology **does not include** `Svc::ComStub`; you **provide** one in the deployment.
+
+### 2.1.1 Layered Topologies
+
+The module also exposes the two layers of the stack as importable topologies, allowing projects to compose
+alternative stacks (e.g., inserting an SDLS security layer between them) while reusing the same instances:
+
+| Topology             | Contents                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| `SpacePacketFraming` | Packet layer: `comQueue`, `fprimeRouter`, `spacePacketFramer`, `spacePacketDeframer`, `apidManager`, `aggregator`, `commsBufferManager`. Open framing boundary. |
+| `SpacePacket`        | `SpacePacketFraming` plus `comStub` — a space-packet-only stack with no transfer frame layer.      |
+| `TmTcFraming`       | Transfer frame layer: `framer` (TM), `tcDeframer`, `frameAccumulator`. Open upstream/downstream boundaries. |
+| `FramingSubtopology` | `SpacePacketFraming` composed with `TmTcFraming` (variant B).                                      |
+| `Subtopology`        | `FramingSubtopology` plus `comStub` (variant A).                                                    |
+
+Each layer topology exposes its open boundary as **topology ports** (e.g. `SpacePacketFraming.dataOut`,
+`TmTcFraming.framedDataIn`, `FramingSubtopology.comStatusIn`), so composing topologies and deployments wire
+to the layer's ports rather than to individual component instances.
 
 ### 2.2 Required Inputs for Operation
 
@@ -105,14 +123,14 @@ topology Flight {
 
   # (B3) Wire your ComInterface between the driver and the ComCcsds framer/deframer
   connections Link {
-    # Downlink: TM framer -> your ComInterface
-    ComCcsds.framer.dataOut         -> radio.dataIn
-    radio.dataReturnOut               -> ComCcsds.framer.dataReturnIn
-    radio.comStatusOut                -> ComCcsds.framer.comStatusIn
+    # Downlink: framing layer -> your ComInterface
+    ComCcsds.FramingSubtopology.dataOut       -> radio.dataIn
+    radio.dataReturnOut                       -> ComCcsds.FramingSubtopology.dataReturnIn
+    radio.comStatusOut                        -> ComCcsds.FramingSubtopology.comStatusIn
 
-    # Uplink: your ComInterface -> frame accumulator
-    radio.dataOut                     -> ComCcsds.frameAccumulator.dataIn
-    ComCcsds.frameAccumulator.dataReturnOut -> radio.dataReturnIn
+    # Uplink: your ComInterface -> framing layer
+    radio.dataOut                             -> ComCcsds.FramingSubtopology.dataIn
+    ComCcsds.FramingSubtopology.dataReturnOut -> radio.dataReturnIn
   }
 }
 ```
@@ -147,4 +165,5 @@ topology Flight {
 | SVC-COMCCSDS-004 | `Subtopology` (variant including `Svc.ComStub`)                                        |
 | SVC-COMCCSDS-005 | `FramingSubtopology` (variant expecting external `Svc.ComInterface`)                   |
 | SVC-COMCCSDS-006 | `ComCcsdsConfig` module                                                                |
+| SVC-COMCCSDS-007 | `SpacePacketFraming`, `SpacePacket`, and `TmTcFraming` topologies                     |
 

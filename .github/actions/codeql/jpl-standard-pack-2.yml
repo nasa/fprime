@@ -27,6 +27,19 @@ query-filters:
   - exclude:
       id:
         - cpp/jpl-c/use-of-assertions-density
+  # Moved to jpl-standard-known-autocode-issues.yml (build paths excluded): the
+  # autocoder emits conditional-compilation directives (include guards, #ifdef)
+  # in generated headers, so the Rule 20 "Conditional compilation" check runs
+  # there to guard only hand-written sources.
+  - exclude:
+      id:
+        - cpp/jpl-c/preprocessor-use-ifdef
+  # Moved to jpl-standard-known-autocode-issues.yml (build paths excluded): the
+  # autocoder emits long generated functions, so the Rule 25 "Function too long"
+  # check runs there to guard only hand-written sources.
+  - exclude:
+      id:
+        - cpp/jpl-c/function-size-limits
 
 paths-ignore:
   # CMake-internal generated sources (try_compile checks, compiler id, feature
