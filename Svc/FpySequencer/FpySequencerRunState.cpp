@@ -485,7 +485,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         }
     }
     this->log_WARNING_HI_UnknownSequencerDirective(stmt.get_opCode(), this->currentStatementIdx(),
-                                                    this->m_sequenceFilePath);
+                                                   this->m_sequenceFilePath);
     return Fw::Success::FAILURE;
 }
 
