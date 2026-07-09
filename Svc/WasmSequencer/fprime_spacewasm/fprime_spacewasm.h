@@ -11,7 +11,7 @@
 #ifndef SVC_WASMSEQUENCER_FPRIME_SPACEWASM_H
 #define SVC_WASMSEQUENCER_FPRIME_SPACEWASM_H
 
-#include <stdint.h>
+#include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {

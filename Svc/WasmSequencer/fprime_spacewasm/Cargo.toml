@@ -11,6 +11,9 @@ crate-type = ["staticlib"]
 [dependencies]
 spacewasm = "0.1"
 
+[build-dependencies]
+bindgen = "0.72"
+
 [profile.release]
 opt-level = 3
 lto = true

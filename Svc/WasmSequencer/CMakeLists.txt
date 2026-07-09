@@ -75,6 +75,8 @@ add_custom_command(
             --target-dir    "${FPRIME_SPACEWASM_TDIR}"
     DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
             "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
+            "${FPRIME_SPACEWASM_DIR}/build.rs"
+            "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerFFI.hpp"
     COMMENT "Building fprime_spacewasm Rust static library (spacewasm)"
     VERBATIM
 )
