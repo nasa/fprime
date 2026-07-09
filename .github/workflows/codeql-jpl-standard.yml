@@ -39,27 +39,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Generate the CMake build cache BEFORE initializing CodeQL so that CMake's
-    # own compiler-identification and feature-detection compilations (e.g.
-    # build-*/**/CMakeFiles/**/CompilerIdCXX/CMakeCXXCompilerId.cpp) run untraced
-    # and never enter the CodeQL database, so they raise no alerts. For compiled
-    # languages paths-ignore is only an advisory SARIF filter and does not
-    # reliably suppress these, so we exclude them at the build-tracing layer.
-    #
-    # COVERAGE CAVEAT: any source compiled during `fprime-util generate` (the
-    # CMake configure step) is NOT analyzed. Today only inherited/third-party
-    # code (e.g. FetchContent _deps) is compiled here, which we do not want to
-    # scan anyway. If first-party code is ever added to the configure step it
-    # would silently escape analysis; if that happens, filter the SARIF instead
-    # (e.g. advanced-security/filter-sarif) so the traced build stays complete.
-    - name: Generate build cache (untraced)
-      run: |
-          python3 -m venv ./fprime-venv
-          . ./fprime-venv/bin/activate
-          pip install -U setuptools setuptools_scm wheel pip
-          pip install -r ./requirements.txt
-          fprime-util generate
-
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -70,7 +49,11 @@ jobs:
 
     - name: Build
       run: |
+          python3 -m venv ./fprime-venv
           . ./fprime-venv/bin/activate
+          pip install -U setuptools setuptools_scm wheel pip
+          pip install -r ./requirements.txt
+          fprime-util generate
           fprime-util build --all
 
     - name: Perform CodeQL Analysis
@@ -80,10 +63,23 @@ jobs:
         output: sarif-results
 
     # For compiled languages the config-file paths-ignore does NOT remove
-    # results: every file reached by the traced build (including the autocoded
-    # sources in build-fprime-*) is analyzed and reported. The no-autocode run
-    # therefore filters its SARIF explicitly before upload so its rules guard
-    # only hand-written sources.
+    # results: every file reached by the traced build is analyzed and reported,
+    # so exclusions are applied here by filtering the SARIF before upload.
+
+    # CMake-internal generated sources (try_compile checks, compiler id,
+    # feature tests) and third-party dependencies fetched by CMake (e.g.
+    # googletest via FetchContent) are not first-party code
+    - name: Filter CMake-internal and third-party paths out of SARIF
+      uses: advanced-security/filter-sarif@v1.1
+      with:
+        patterns: |
+          -**/CMakeFiles/**
+          -**/_deps/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    # Autocoded C++ in the build caches is not hand-maintained, so the rules in
+    # the no-autocode run guard only hand-written sources
     - name: Filter build paths out of SARIF (no-autocode run)
       if: matrix.config-file == 'jpl-standard-known-autocode-issues.yml'
       uses: advanced-security/filter-sarif@v1.1
