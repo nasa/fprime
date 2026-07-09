@@ -33,6 +33,7 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 | `SdlsCfg.SaRouterPortCount` | Dimension of the downstream port arrays. |
 | `SdlsCfg.SaRouterMapEntryCount` | Number of entries in the SA-to-port map (independent of port count). |
 | `SdlsCfg.SaRouterMaxOutstandingBuffers` | Capacity of the outstanding decrypted buffer bookkeeping table. |
+| `SdlsCfg.SaRouterPorts` | Enumeration of the downstream decryptor ports (`PLAINTEXT_DECRYPTION = 0`, `UNCONNECTED = 1`). |
 | `SdlsCfg.SaMap` | Compile-time array of {SA index, port index} pairs. |
 
 All of the above are defined in the component-local configuration module `Svc/Ccsds/SdlsSaRouter/config/SdlsSaRouterConfig`.
