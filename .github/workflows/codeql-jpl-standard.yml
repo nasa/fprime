@@ -76,8 +76,29 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        # Only publish alerts to the GitHub code-scanning UI for the default
-        # branch (devel). The analysis still runs on other branches and PRs so
-        # regressions are caught, but results are not uploaded, preventing stale
-        # branches from accumulating alerts.
-        upload: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/devel') && 'always' || 'never' }}
+        upload: never
+        output: sarif-results
+
+    # For compiled languages the config-file paths-ignore does NOT remove
+    # results: every file reached by the traced build (including the autocoded
+    # sources in build-fprime-*) is analyzed and reported. The no-autocode run
+    # therefore filters its SARIF explicitly before upload so its rules guard
+    # only hand-written sources.
+    - name: Filter build paths out of SARIF (no-autocode run)
+      if: matrix.config-file == 'jpl-standard-known-autocode-issues.yml'
+      uses: advanced-security/filter-sarif@v1.1
+      with:
+        patterns: |
+          -**/build-fprime-*/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    # Only publish alerts to the GitHub code-scanning UI for the default
+    # branch (devel). The analysis still runs on other branches and PRs so
+    # regressions are caught, but results are not uploaded, preventing stale
+    # branches from accumulating alerts.
+    - name: Upload SARIF
+      if: github.event_name == 'push' && github.ref == 'refs/heads/devel'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: sarif-results/cpp.sarif
