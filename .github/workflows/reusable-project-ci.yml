@@ -80,11 +80,12 @@ jobs:
           fprime_location: ${{ inputs.fprime_location }}
           target_ref: ${{ inputs.target_ref }}
           stage: int
-      # Upgrade GDS to devel or pr-xxxx branch if it exists
-      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
         uses: nasa/fprime-actions/upgrade-package@devel
         with:
           repository: nasa/fprime-gds
+          pr-branch-only: true
       - name: Pull Archive Results
         uses: actions/download-artifact@v8
         with:

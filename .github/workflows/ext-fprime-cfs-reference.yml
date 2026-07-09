@@ -43,11 +43,12 @@ jobs:
           target_repository: fprime-community/fprime_cfs_reference
           fprime_location: ./libs/fprime
           target_ref: ${{ needs.get-branch.outputs.target-branch }}
-      # Upgrade GDS to devel or pr-xxxx branch if it exists
-      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
         uses: nasa/fprime-actions/upgrade-package@devel
         with:
           repository: nasa/fprime-gds
+          pr-branch-only: true
       - name: "Build cFS Reference"
         run: |
           make SIMULATION=native prep
