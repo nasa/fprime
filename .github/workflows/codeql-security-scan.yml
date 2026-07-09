@@ -38,6 +38,28 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    # Generate the CMake build cache BEFORE initializing CodeQL so that CMake's
+    # own compiler-identification and feature-detection compilations (e.g.
+    # build-*/**/CMakeFiles/**/CompilerIdCXX/CMakeCXXCompilerId.cpp) run untraced
+    # and never enter the CodeQL database, so they raise no alerts. For compiled
+    # languages paths-ignore is only an advisory SARIF filter and does not
+    # reliably suppress these, so we exclude them at the build-tracing layer.
+    #
+    # COVERAGE CAVEAT: any source compiled during `fprime-util generate` (the
+    # CMake configure step) is NOT analyzed. Today only inherited/third-party
+    # code (e.g. FetchContent _deps) is compiled here, which we do not want to
+    # scan anyway. If first-party code is ever added to the configure step it
+    # would silently escape analysis; if that happens, filter the SARIF instead
+    # (e.g. advanced-security/filter-sarif) so the traced build stays complete.
+    - if: ${{ matrix.language == 'cpp' }}
+      name: Generate build cache (untraced)
+      run: |
+          python3 -m venv ./fprime-venv
+          . ./fprime-venv/bin/activate
+          pip install -U setuptools setuptools_scm wheel pip
+          pip install -r ./requirements.txt
+          fprime-util generate
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -48,13 +70,14 @@ jobs:
     - if: ${{ matrix.language == 'cpp' }}
       name: Build
       run: |
-          python3 -m venv ./fprime-venv
           . ./fprime-venv/bin/activate
-          pip install -U setuptools setuptools_scm wheel pip
-          pip install -r ./requirements.txt
-          fprime-util generate
           fprime-util build --all
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        # Only publish alerts to the GitHub code-scanning UI for the default
+        # branch (devel). The analysis still runs on other branches and PRs so
+        # regressions are caught, but results are not uploaded, preventing stale
+        # branches from accumulating alerts.
+        upload: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/devel') && 'always' || 'never' }}
