@@ -26,7 +26,7 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: fprime-community/fprime-generic-hub-reference
+      target_repository: JPL-Devin/fprime-generic-hub-reference
 
   hub-communication:
     name: "Generic Hub round-trip"
@@ -36,7 +36,7 @@ jobs:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
-          repository: fprime-community/fprime-generic-hub-reference
+          repository: JPL-Devin/fprime-generic-hub-reference
           ref: ${{ needs.get-branch.outputs.target-branch }}
           submodules: recursive
 
@@ -214,9 +214,9 @@ jobs:
             fi
           done
 
-          for port in serIn bufIn eventIn telemIn; do
-            if ! grep -Eq "Component B +received .* on its ${port} port" "${B_LOG}"; then
-              echo "DeploymentB did not log a receipt on ${port}" >&2
+          for event in SerInReceived BufInReceived EventInReceived TelemInReceived; do
+            if ! grep -q "${event}" "${B_LOG}"; then
+              echo "DeploymentB did not log a ${event} event" >&2
               exit 1
             fi
           done
