@@ -1,0 +1,246 @@
+name: "External Repo: Generic Hub Reference"
+
+on:
+  push:
+    branches: [devel, release/**]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [devel, release/**]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/agents/**"
+
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-generic-hub-reference
+
+  hub-communication:
+    name: "Generic Hub round-trip"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          repository: fprime-community/fprime-generic-hub-reference
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+          submodules: recursive
+
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          path: lib/fprime
+          submodules: true
+          fetch-depth: 0
+
+      - name: "Setup F´ toolchain"
+        uses: ./lib/fprime/.github/actions/setup
+        with:
+          location: lib/fprime
+
+      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+
+      - name: "Generate"
+        run: fprime-util generate
+
+      - name: "Build"
+        run: fprime-util build -j8
+
+      - name: "Run Generic Hub round-trip"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          LOG_DIR="${GITHUB_WORKSPACE}/hub-communication-logs"
+          mkdir -p "${LOG_DIR}"
+
+          A_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentA"
+          B_BIN="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
+          A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
+          A_BIN="${A_DIR}/bin/FprimeGenericHubReference_Deployments_DeploymentA"
+          B_LOG="${LOG_DIR}/deploymentB.stdout.log"
+          GDS_LOG="${LOG_DIR}/gds.stdout.log"
+          GDS_LOG_DIR="${LOG_DIR}/gds"
+          A_EVENT_LOG=""
+
+          free_tcp_port() {
+            python - <<'PY'
+          import socket
+
+          with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+              sock.bind(("127.0.0.1", 0))
+              print(sock.getsockname()[1])
+          PY
+          }
+
+          PORT_A="$(free_tcp_port)"
+          PORT_B="$(free_tcp_port)"
+          B_PID=""
+          GDS_PID=""
+          A_PID=""
+
+          cleanup() {
+            set +e
+            stop_pid() {
+              local pid="$1"
+              if [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null; then
+                kill "${pid}" 2>/dev/null || true
+                for _ in 1 2 3 4 5; do
+                  kill -0 "${pid}" 2>/dev/null || return
+                  sleep 1
+                done
+                kill -KILL "${pid}" 2>/dev/null || true
+              fi
+            }
+            stop_pid "${A_PID}"
+            stop_pid "${GDS_PID}"
+            stop_pid "${B_PID}"
+            while read -r child_pid; do
+              if [[ -n "${child_pid}" ]] && [[ "${child_pid}" != "$$" ]]; then
+                stop_pid "${child_pid}"
+              fi
+            done < <(pgrep -f -- "${A_DIR}" || true)
+            while read -r child_pid; do
+              if [[ -n "${child_pid}" ]] && [[ "${child_pid}" != "$$" ]]; then
+                stop_pid "${child_pid}"
+              fi
+            done < <(pgrep -f -- "${B_BIN}" || true)
+            wait "${A_PID}" "${GDS_PID}" "${B_PID}" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          echo "Starting DeploymentB on TCP port ${PORT_B}"
+          stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
+          B_PID=$!
+
+          b_deadline=$((SECONDS + 60))
+          while (( SECONDS < b_deadline )); do
+            if grep -q "Setup to receive udp at 0.0.0.0:50556" "${B_LOG}"; then
+              break
+            fi
+            sleep 1
+          done
+          if ! grep -q "Setup to receive udp at 0.0.0.0:50556" "${B_LOG}"; then
+            echo "DeploymentB did not become ready before timeout" >&2
+            exit 1
+          fi
+
+          echo "Starting DeploymentA through GDS on TCP port ${PORT_A}"
+          mkdir -p "${GDS_LOG_DIR}"
+          fprime-gds \
+            --ip-client \
+            --ip-address 127.0.0.1 \
+            --ip-port "${PORT_A}" \
+            -d "${A_DIR}" \
+            --dictionary "${A_DICT}" \
+            -g none \
+            --logs "${GDS_LOG_DIR}" \
+            --log-to-stdout \
+            >"${GDS_LOG}" 2>&1 &
+          GDS_PID=$!
+
+          a_deadline=$((SECONDS + 120))
+          while (( SECONDS < a_deadline )); do
+            if [[ -z "${A_PID}" ]]; then
+              A_PID="$(pgrep -f -- "${A_BIN} -p ${PORT_A} -a 127.0.0.1" | head -n 1 || true)"
+            fi
+            if [[ -z "${A_EVENT_LOG}" ]]; then
+              A_EVENT_LOG="$(find "${GDS_LOG_DIR}" -type f \
+                -name "FprimeGenericHubReference_Deployments_DeploymentA.log" \
+                -print -quit)"
+            fi
+            if [[ -n "${A_PID}" ]] &&
+              [[ -n "${A_EVENT_LOG}" ]] &&
+              [[ -f "${A_EVENT_LOG}" ]] &&
+              grep -q "Accepted client at 127.0.0.1:${PORT_A}" "${A_EVENT_LOG}"; then
+              break
+            fi
+            sleep 1
+          done
+          if [[ -z "${A_PID}" ]] ||
+            [[ ! -f "${A_EVENT_LOG}" ]] ||
+            ! grep -q "Accepted client at 127.0.0.1:${PORT_A}" "${A_EVENT_LOG}"; then
+            echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
+            exit 1
+          fi
+
+          A_COMMAND="FprimeGenericHubReference.DeploymentA.a_comp.HubMessageTest"
+          for message_type in 0 1 2 3 6; do
+            echo "Sending HubMessageTest ${message_type}"
+            fprime-cli command-send \
+              -d "${A_DIR}" \
+              --dictionary "${A_DICT}" \
+              "${A_COMMAND}" \
+              --arguments "${message_type}"
+            sleep 3
+          done
+
+          echo "Sending HubCommandTest"
+          fprime-cli command-send \
+            -d "${A_DIR}" \
+            --dictionary "${A_DICT}" \
+            FprimeGenericHubReference.DeploymentA.c_comp.HubCommandTest
+          sleep 3
+
+          for event in SerDataVerif BufDataVerif TlmDataVerif EvrDataVerif; do
+            count="$(grep -c "${event}" "${A_EVENT_LOG}" || true)"
+            if (( count < 2 )); then
+              echo "Expected at least two ${event} events, found ${count}" >&2
+              exit 1
+            fi
+          done
+
+          for failure_event in SerDataVerifFail BufDataVerifFail TlmDataVerifFail EvrDataVerifFail; do
+            if grep -q "${failure_event}" "${A_EVENT_LOG}"; then
+              echo "Unexpected ${failure_event} warning found in DeploymentA event log" >&2
+              exit 1
+            fi
+          done
+
+          for port in serIn bufIn eventIn telemIn; do
+            if ! grep -Eq "Component B +received .* on its ${port} port" "${B_LOG}"; then
+              echo "DeploymentB did not log a receipt on ${port}" >&2
+              exit 1
+            fi
+          done
+
+          if ! grep -q "OpCodeDispatched : Opcode 0x11017500 dispatched" "${B_LOG}"; then
+            echo "DeploymentB did not dispatch HubCommandTest opcode 0x11017500" >&2
+            exit 1
+          fi
+          if ! grep -q "HubCommandTestEvr" "${B_LOG}"; then
+            echo "DeploymentB did not log HubCommandTestEvr" >&2
+            exit 1
+          fi
+          if ! grep -q "OpCodeCompleted : Opcode 0x11017500 completed" "${B_LOG}"; then
+            echo "DeploymentB did not complete HubCommandTest opcode 0x11017500" >&2
+            exit 1
+          fi
+
+          echo "Generic Hub round-trip assertions passed"
+
+      - name: "Archive Generic Hub logs"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: generic-hub-reference-logs
+          path: hub-communication-logs
+          if-no-files-found: warn
+          retention-days: 5
