@@ -27,7 +27,11 @@ module Ccsds {
         UNKNOWN_PORT = 2        @< Mapped port index is out of range or unconnected
         ENCRYPTION_FAILURE = 3  @< Encryption operation failed
         DECRYPTION_FAILURE = 4  @< Decryption operation failed
+        KEY_ERROR = 5           @< Key retrieval failed
     }
+
+    @ An on-stack buffer sized to hold an SDLS key
+    type SdlsKeyBuffer
 
     @ A single security association index to port index mapping entry
     struct SaMapEntry {

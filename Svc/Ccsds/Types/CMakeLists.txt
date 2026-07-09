@@ -10,7 +10,13 @@
 #
 ####
 
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/SdlsKeyConfig")
+
 register_fprime_library(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/SdlsKeyBuffer.hpp"
+  DEPENDS
+    Svc_Ccsds_Types_config_SdlsKeyConfig
 )

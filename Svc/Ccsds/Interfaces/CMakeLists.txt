@@ -10,5 +10,6 @@ register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/CcsdsSdlsDecrypt.fpp"
     "${CMAKE_CURRENT_LIST_DIR}/CcsdsSdlsEncrypt.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SdlsKey.fpp"
   INTERFACE
 )

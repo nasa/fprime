@@ -15,5 +15,8 @@ module Ccsds {
     @ the operation status alongside the output data buffer and frame context
     port CcsdsSdlsData (status: SdlsStatus, ref data: Fw.Buffer, context: ComCfg.FrameContext)
 
+    @ Port for requesting an SDLS key: the provided buffer is filled with the key
+    port SdlsKey (ref key: SdlsKeyBuffer) -> SdlsStatus
+
 }
 }
