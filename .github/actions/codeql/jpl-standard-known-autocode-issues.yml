@@ -36,3 +36,7 @@ query-filters:
         # "Conditional compilation" check. It runs here (build paths excluded)
         # so it guards only hand-written sources.
         - cpp/jpl-c/preprocessor-use-ifdef
+        # The autocoder emits long generated functions, which trip the Rule 25
+        # "Function too long" check. It runs here (build paths excluded) so it
+        # guards only hand-written sources.
+        - cpp/jpl-c/function-size-limits
