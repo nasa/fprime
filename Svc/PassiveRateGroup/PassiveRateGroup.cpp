@@ -60,7 +60,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
                 portEnd.now();
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
-                portTimes[static_cast<FwSizeType>(port)] = static_cast<U16>(cycleTime);
+                portTimes[static_cast<FwSizeType>(port)] = cycleTime;
             }
         }
     }
