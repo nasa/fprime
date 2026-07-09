@@ -483,6 +483,7 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
             // unsure what this opcode is. check compiler version matches sequencer
             break;
         }
+            // ommited default case to throw compile error on unhandled directives.
     }
     this->log_WARNING_HI_UnknownSequencerDirective(stmt.get_opCode(), this->currentStatementIdx(),
                                                    this->m_sequenceFilePath);
