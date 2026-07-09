@@ -20,8 +20,27 @@ permissions:
   contents: read
 
 jobs:
+  # Any previously deployed soak GDS still owns /dev/pico2 and the ZMQ ipc
+  # sockets that reusable-project-ci.yml's integration-tests job needs.
+  # Stop it before the reusable CI runs so the reusable flow can flash the
+  # board and open its own GDS cleanly.
+  stop-previous-gds:
+    name: "Stop Previous Soak GDS"
+    runs-on: [self-hosted, pico2-soak]
+    steps:
+      - name: "Disable prior soak GDS service"
+        shell: bash
+        run: |
+          SERVICE_NAME="fprime-soak-gds-zephyr-reference"
+          sudo systemctl disable --now "${SERVICE_NAME}" 2>/dev/null || true
+          # Clean up ipc socket files the prior GDS left behind.
+          rm -f /tmp/fprime-server-zephyr-reference-in /tmp/fprime-server-zephyr-reference-out
+          # Belt-and-suspenders: kill any straggler fprime-gds still holding /dev/pico2.
+          sudo pkill -f 'fprime-gds.*--uart-device /dev/pico2' 2>/dev/null || true
+
   build:
     name: "Zephyr Build"
+    needs: stop-previous-gds
     uses: ./.github/workflows/reusable-project-ci.yml
     with:
       target_repository: fprime-community/fprime-zephyr-reference
