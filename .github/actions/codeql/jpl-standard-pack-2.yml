@@ -23,10 +23,22 @@ query-filters:
       id:
         - cpp/jpl-c/basic-int-types
   # Excluded in favor of the FW_ASSERT-aware replacement above, which
-  # recognizes F Prime's FW_ASSERT macro as an assertion
+  # recognizes F Prime's FW_ASSERT macro as an assertion. The replacement
+  # (cpp/fprime/jpl-c/use-of-assertions-density) is also excluded here: the
+  # autocoder emits large amounts of assertion-free code, so it runs in
+  # jpl-standard-known-autocode-issues.yml with build paths excluded.
   - exclude:
       id:
         - cpp/jpl-c/use-of-assertions-density
+        - cpp/fprime/jpl-c/use-of-assertions-density
+  # Excluded in favor of the F Prime refinement
+  # (cpp/fprime/jpl-c/multiple-stmts-per-line), which understands C++
+  # constructs the stock C query miscounts: template instantiations,
+  # single-line inline member functions, blocks, case labels, and
+  # multi-statement macro expansions.
+  - exclude:
+      id:
+        - cpp/jpl-c/multiple-stmts-per-line
   # Moved to jpl-standard-known-autocode-issues.yml (build paths excluded): the
   # autocoder emits conditional-compilation directives (include guards, #ifdef)
   # in generated headers, so the Rule 20 "Conditional compilation" check runs

@@ -43,3 +43,8 @@ query-filters:
         # "Function too long" check. It runs here (build paths excluded) so it
         # guards only hand-written sources.
         - cpp/jpl-c/function-size-limits
+        # The autocoder emits large amounts of assertion-free code, which trips
+        # the Rule 16 assertion-density check. The FW_ASSERT-aware refinement
+        # runs here (build paths excluded) so it guards only hand-written
+        # sources.
+        - cpp/fprime/jpl-c/use-of-assertions-density
