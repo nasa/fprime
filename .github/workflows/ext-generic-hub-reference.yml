@@ -74,12 +74,15 @@ jobs:
           A_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentA"
           B_BIN="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
           A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
+          A_TEST_DIR="${GITHUB_WORKSPACE}/FprimeGenericHubReference/Deployments/DeploymentA/test/int"
+          A_TEST_CONFIG="${A_TEST_DIR}/int_config.json"
           A_BIN="${A_DIR}/bin/FprimeGenericHubReference_Deployments_DeploymentA"
           B_LOG="${LOG_DIR}/deploymentB.stdout.log"
           GDS_LOG="${LOG_DIR}/gds.stdout.log"
           GDS_LOG_DIR="${LOG_DIR}/gds"
           A_EVENT_LOG=""
 
+          # Allocate an unused TCP port.
           free_tcp_port() {
             python - <<'PY'
           import socket
@@ -96,6 +99,7 @@ jobs:
           GDS_PID=""
           A_PID=""
 
+          # Keep background processes from surviving failures.
           cleanup() {
             set +e
             stop_pid() {
@@ -127,9 +131,11 @@ jobs:
           trap cleanup EXIT
 
           echo "Starting DeploymentB on TCP port ${PORT_B}"
+          # Force line-buffered deployment output.
           stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
           B_PID=$!
 
+          # Keep DeploymentB readiness bounded.
           b_deadline=$((SECONDS + 60))
           while (( SECONDS < b_deadline )); do
             if grep -q "Setup to receive udp at 0.0.0.0:50556" "${B_LOG}"; then
@@ -156,11 +162,13 @@ jobs:
             >"${GDS_LOG}" 2>&1 &
           GDS_PID=$!
 
+          # Wait for GDS to launch and connect DeploymentA.
           a_deadline=$((SECONDS + 120))
           while (( SECONDS < a_deadline )); do
             if [[ -z "${A_PID}" ]]; then
               A_PID="$(pgrep -f -- "${A_BIN} -p ${PORT_A} -a 127.0.0.1" | head -n 1 || true)"
             fi
+            # Discover the timestamped GDS event-log directory.
             if [[ -z "${A_EVENT_LOG}" ]]; then
               A_EVENT_LOG="$(find "${GDS_LOG_DIR}" -type f \
                 -name "FprimeGenericHubReference_Deployments_DeploymentA.log" \
@@ -181,45 +189,19 @@ jobs:
             exit 1
           fi
 
-          A_COMMAND="FprimeGenericHubReference.DeploymentA.a_comp.HubMessageTest"
-          for message_type in 0 1 2 3 6; do
-            echo "Sending HubMessageTest ${message_type}"
-            fprime-cli command-send \
-              -d "${A_DIR}" \
-              --dictionary "${A_DICT}" \
-              "${A_COMMAND}" \
-              --arguments "${message_type}"
-            sleep 3
-          done
+          # Exercise message paths and verify return events through pytest.
+          pytest "${A_TEST_DIR}" \
+            --dictionary "${A_DICT}" \
+            --deployment-config "${A_TEST_CONFIG}" \
+            --logs "${GDS_LOG_DIR}"
 
+          # Observe the command path on DeploymentB's console.
           echo "Sending HubCommandTest"
           fprime-cli command-send \
             -d "${A_DIR}" \
             --dictionary "${A_DICT}" \
             FprimeGenericHubReference.DeploymentA.c_comp.HubCommandTest
           sleep 3
-
-          for event in SerDataVerif BufDataVerif TlmDataVerif EvrDataVerif; do
-            count="$(grep -cw "${event}" "${A_EVENT_LOG}" || true)"
-            if (( count < 2 )); then
-              echo "Expected at least two ${event} events, found ${count}" >&2
-              exit 1
-            fi
-          done
-
-          for failure_event in SerDataVerifFail BufDataVerifFail TlmDataVerifFail EvrDataVerifFail; do
-            if grep -q "${failure_event}" "${A_EVENT_LOG}"; then
-              echo "Unexpected ${failure_event} warning found in DeploymentA event log" >&2
-              exit 1
-            fi
-          done
-
-          for port in serIn bufIn eventIn telemIn; do
-            if ! grep -Eq "Component B received .* on ${port}\b" "${B_LOG}"; then
-              echo "DeploymentB did not log a receipt on ${port}" >&2
-              exit 1
-            fi
-          done
 
           if ! grep -q "OpCodeDispatched : Opcode 0x11017500 dispatched" "${B_LOG}"; then
             echo "DeploymentB did not dispatch HubCommandTest opcode 0x11017500" >&2
