@@ -48,7 +48,6 @@ TlmPacketizer ::~TlmPacketizer() {}
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
                                   const FwChanIdType startLevel) {
-    FW_ASSERT(packetList.list != nullptr);
     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
     // functionality for two reasons:
     //     1. There are no ignored channels as configured by FPP.
