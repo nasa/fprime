@@ -23,6 +23,6 @@ jobs:
     name: "Soak Summary"
     runs-on: [self-hosted, ARM64, pico2-soak]
     steps:
-      - uses: moisesmata/fprime-actions/soak-summary@pico2-isolated-raspi
+      - uses: nasa/fprime-actions/soak-summary@devel
         with:
           deployment-name: zephyr-reference

@@ -23,7 +23,6 @@ jobs:
     name: "Soak Summary"
     runs-on: [self-hosted, ARM64, soak-test]
     steps:
-      - uses: moisesmata/fprime-actions/soak-summary@split-RPI-pico2
+      - uses: nasa/fprime-actions/soak-summary@devel
         with:
           deployment-name: ledblinker
-          

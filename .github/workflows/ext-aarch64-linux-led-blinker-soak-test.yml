@@ -23,6 +23,6 @@ jobs:
     name: "Soak Test"
     runs-on: [self-hosted, ARM64, soak-test]
     steps:
-      - uses: moisesmata/fprime-actions/soak-test@pico2-isolated-raspi
+      - uses: nasa/fprime-actions/soak-test@devel
         with:
           deployment-name: ledblinker
