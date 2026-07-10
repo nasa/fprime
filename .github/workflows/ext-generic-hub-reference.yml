@@ -214,9 +214,9 @@ jobs:
             fi
           done
 
-          for event in SerInReceived BufInReceived EventInReceived TelemInReceived; do
-            if ! grep -q "${event}" "${B_LOG}"; then
-              echo "DeploymentB did not log a ${event} event" >&2
+          for port in serIn bufIn eventIn telemIn; do
+            if ! grep -Eq "Component B received .* on ${port}\b" "${B_LOG}"; then
+              echo "DeploymentB did not log a receipt on ${port}" >&2
               exit 1
             fi
           done
