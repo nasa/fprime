@@ -215,8 +215,6 @@ state machine SequencerStateMachine {
     signal entered
     @ requests that a function invocation be set up
     signal invoke
-    @ requests that the interpreter begin/resume spinning
-    signal continue
     @ requests that a module be loaded into the store
     signal load: ModuleLoad
     @ requests that the store be cleared
@@ -271,10 +269,10 @@ state machine SequencerStateMachine {
     state IDLE {
         entry do { signalEntered }
 
-        on entered if pendingInvoke do { invoke } enter PAUSED
+        on entered if pendingInvoke do { invoke } enter RUNNING.READY
         on clearStore do { clearStore }
         on load do { setLoad } enter LOADING
-        on invoke do { invoke } enter PAUSED
+        on invoke do { invoke } enter RUNNING.READY
     }
 
     @ Interpreter is loading a Wasm module into the store
@@ -287,12 +285,6 @@ state machine SequencerStateMachine {
         choice INITIALIZE {
             if hasStartFunction enter RUNNING else enter IDLE
         }
-    }
-
-    @ Interpreter is ready to interpret instructions but in a paused state.
-    @ The program and stack are initialized and ready to spin the interpreter loop.
-    state PAUSED {
-        on continue enter RUNNING
     }
 
     ###############
@@ -365,6 +357,12 @@ state machine SequencerStateMachine {
         @ check whether to pause execution before spinning the next statement
         choice BREAK_CHECK {
             if shouldBreak do { report_seqBroken } enter PAUSED else enter SPINNING
+        }
+
+        @ a function has been invoked; the program and stack are initialized and ready to
+        @ spin the interpreter loop. must be started via the CONTINUE command
+        state READY {
+            on cmd_CONTINUE enter SPINNING
         }
 
         @ sequencer is spinning the interpreter loop
