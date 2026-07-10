@@ -72,7 +72,7 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
             }
             break;
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(severity.e));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(severity.e));
             return;
     }
 

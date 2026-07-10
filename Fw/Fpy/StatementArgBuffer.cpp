@@ -52,8 +52,8 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
     const U8* us = this->getBuffAddr();
     const U8* them = other.getBuffAddr();
 
-    FW_ASSERT(us);
-    FW_ASSERT(them);
+    FW_ASSERT(us != nullptr);
+    FW_ASSERT(them != nullptr);
 
     for (Serializable::SizeType byte = 0; byte < this->getSize(); byte++) {
         if (us[byte] != them[byte]) {

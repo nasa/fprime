@@ -54,7 +54,7 @@ SocketIpStatus UdpSocket::configure(const char* const ipv4_address,
     (void)port;
     (void)timeout_seconds;
     (void)timeout_microseconds;
-    FW_ASSERT(0);  // Must use configureSend and/or configureRecv
+    FW_ASSERT(false);  // Must use configureSend and/or configureRecv
     return SocketIpStatus::SOCK_INVALID_CALL;
 }
 

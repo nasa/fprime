@@ -45,7 +45,7 @@ void AosFramer::configure(const U32 fixedFrameSize,
     // AOS Framer must be provided with a protocol to use for Idle Packets
     // Currently, only SPP idle packing is supported
     // EPP is more optimal, however
-    FW_ASSERT(idlePvns & PvnBitfield::SPP_MASK, static_cast<FwAssertArgType>(idlePvns));
+    FW_ASSERT((idlePvns & PvnBitfield::SPP_MASK) != 0, static_cast<FwAssertArgType>(idlePvns));
 
     // FECF is constant for a given Physical Channel during a Mission Phase (4.1.6.1.3)
     this->m_fecf = frameErrorControlField;
@@ -406,7 +406,7 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     // Use EPP if we can (solves for all sizes)
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
         // TODO: Serialize an EPP of the right size
-        FW_ASSERT(1);
+        FW_ASSERT(true);
     }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to

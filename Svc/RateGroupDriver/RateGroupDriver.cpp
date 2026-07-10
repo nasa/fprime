@@ -11,7 +11,7 @@ RateGroupDriver::RateGroupDriver(const char* compName)
 
 void RateGroupDriver::configure(const DividerSet& dividerSet) {
     // check arguments
-    FW_ASSERT(dividerSet.dividers);
+    FW_ASSERT(dividerSet.dividers != nullptr);
     // verify port/table size matches
     FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
               static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),

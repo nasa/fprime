@@ -20,7 +20,7 @@ void CmdSequencerComponentImpl::FPrimeSequence::CRC ::init() {
 }
 
 void CmdSequencerComponentImpl::FPrimeSequence::CRC ::update(const BYTE* buffer, FwSizeType bufferSize) {
-    FW_ASSERT(buffer);
+    FW_ASSERT(buffer != nullptr);
     this->m_computed.update(buffer, bufferSize);
 }
 
@@ -45,7 +45,7 @@ bool CmdSequencerComponentImpl::FPrimeSequence ::validateCRC() {
 
 bool CmdSequencerComponentImpl::FPrimeSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // make sure there is a buffer allocated
-    FW_ASSERT(this->m_buffer.getBuffAddr());
+    FW_ASSERT(this->m_buffer.getBuffAddr() != nullptr);
 
     this->setFileName(fileName);
 

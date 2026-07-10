@@ -102,7 +102,7 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::Ve
             this->customVersion_tlm_all();
             break;
         default:
-            FW_ASSERT(0, version_type);
+            FW_ASSERT(false, version_type);
             break;
     }
 
@@ -227,7 +227,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot) {
                     break;
                 default:
                     // There are only 10 custom slots available
-                    FW_ASSERT(0, custom_slot);
+                    FW_ASSERT(false, custom_slot);
                     break;
             }
         }

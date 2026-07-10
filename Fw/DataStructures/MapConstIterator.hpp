@@ -76,7 +76,7 @@ class MapConstIterator {
                 this->m_implIterator = new (&this->m_impl.redBlackTree) RedBlackTreeIterator(it.m_impl.redBlackTree);
                 break;
             default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(implKind));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(implKind));
                 break;
         }
     }
@@ -106,7 +106,7 @@ class MapConstIterator {
                     result = this->m_impl.redBlackTree.compareEqual(it.m_impl.redBlackTree);
                     break;
                 default:
-                    FW_ASSERT(0, static_cast<FwAssertArgType>(implKind1));
+                    FW_ASSERT(false, static_cast<FwAssertArgType>(implKind1));
                     break;
             }
         }
