@@ -144,7 +144,7 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    BlockState block) {
+                                    const BlockState& block) {
     // Create empty args and delegate to RUN_ARGS handler
     Svc::SeqArgs emptyArgs{0, 0};
     this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
@@ -154,8 +154,8 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
 void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
                                          const U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         BlockState block,
-                                         Svc::SeqArgs buffer) {
+                                         const BlockState& block,
+                                         const Svc::SeqArgs& buffer) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {

@@ -153,9 +153,9 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
 
     //! Implementation for SetMode command handler
     //! Set the mode
-    void BA_SetMode_cmdHandler(const FwOpcodeType opCode,      //!< The opcode
-                               const U32 cmdSeq,               //!< The command sequence number
-                               BufferAccumulator_OpState mode  //!< The mode
+    void BA_SetMode_cmdHandler(const FwOpcodeType opCode,             //!< The opcode
+                               const U32 cmdSeq,                      //!< The command sequence number
+                               const BufferAccumulator_OpState& mode  //!< The mode
     );
 
     //! Implementation for BA_DrainBuffers command handler
@@ -163,7 +163,7 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
     void BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                     const U32 cmdSeq,          /*!< The command sequence number*/
                                     U32 numToDrain,
-                                    BufferAccumulator_BlockMode blockMode);
+                                    const BufferAccumulator_BlockMode& blockMode);
 
   private:
     // ----------------------------------------------------------------------
