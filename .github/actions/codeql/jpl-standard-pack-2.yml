@@ -22,6 +22,19 @@ query-filters:
   - exclude:
       id:
         - cpp/jpl-c/basic-int-types
+  # The F Prime refinement of the Rule 17 query runs in jpl-standard-pack-3.yml
+  # (its include-only filter selects it there); excluding it here prevents the
+  # same alerts from being reported by two runs
+  - exclude:
+      id:
+        - cpp/fprime/jpl-c/basic-int-types
+  # Excluded in favor of the F Prime refinement
+  # cpp/fprime/jpl-c/non-const-function-pointer, which does not mistake
+  # unresolved calls in uninstantiated C++ template code (e.g. the
+  # Fw/DataStructures container templates) for function-pointer calls
+  - exclude:
+      id:
+        - cpp/jpl-c/non-const-function-pointer
   # Excluded in favor of the FW_ASSERT-aware replacement above, which
   # recognizes F Prime's FW_ASSERT macro as an assertion. The replacement
   # (cpp/fprime/jpl-c/use-of-assertions-density) is also excluded here: the

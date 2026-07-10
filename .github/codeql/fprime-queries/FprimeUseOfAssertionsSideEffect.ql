@@ -12,6 +12,39 @@ import cpp
 import FprimeAssertions
 
 /**
+ * Holds if `f` is a non-const member function whose declaring type also
+ * declares a `const` overload with the same name and arity (e.g.
+ * `SerializeBufferBase::getBuffAddr()` or `ExternalArray::operator[]`).
+ * Overload resolution picks the non-const overload on a non-const object,
+ * but the const overload's existence shows the operation itself is a
+ * side-effect-free query.
+ */
+predicate hasConstOverload(MemberFunction f) {
+  exists(ConstMemberFunction c |
+    (
+      c.getDeclaringType() = f.getDeclaringType()
+      or
+      // In a class template instantiation an unused const overload is not
+      // itself instantiated, so also look it up on the template
+      c.getDeclaringType() = f.getDeclaringType().(ClassTemplateInstantiation).getTemplate()
+    ) and
+    c.getName() = f.getName() and
+    c.getNumberOfParameters() = f.getNumberOfParameters()
+  )
+}
+
+/**
+ * Holds if `call` is the expansion of the `errno` macro (e.g.
+ * `*__errno_location()`), which merely reads thread-local error state.
+ */
+predicate isErrnoRead(FunctionCall call) {
+  exists(MacroInvocation mi |
+    mi.getMacro().getName() = "errno" and
+    mi.getAnExpandedElement() = call
+  )
+}
+
+/**
  * Holds if calling `call` may change program state.
  *
  * Calls to `const` member functions are treated as side-effect-free queries.
@@ -24,6 +57,12 @@ import FprimeAssertions
  */
 predicate callMayHaveSideEffect(FunctionCall call) {
   not call.getTarget() instanceof ConstMemberFunction and
+  not hasConstOverload(call.getTarget()) and
+  not isErrnoRead(call) and
+  // F Prime's bounded strnlen equivalent; the stock purity analysis
+  // whitelists strnlen by name but reports string_length as impure only
+  // because its own body contains an FW_ASSERT
+  not call.getTarget().hasQualifiedName("Fw::StringUtils", "string_length") and
   (
     call.getTarget().mayHaveSideEffects()
     or

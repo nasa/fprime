@@ -24,6 +24,13 @@ query-filters:
         - cpp/jpl-c/use-of-assertions-side-effect
         - cpp/jpl-c/checking-parameter-values
         - cpp/jpl-c/checking-return-values
+  # Excluded in favor of the F Prime refinement cpp/fprime/jpl-c/loop-bounds,
+  # which recognizes that a C++ range-based for over a std::initializer_list
+  # (emitted by the autocoder in every generated array class) is inherently
+  # bounded
+  - exclude:
+      id:
+        - cpp/jpl-c/loop-bounds
   # Temporarily moved to jpl-standard-known-autocode-issues.yml (with build paths
   # excluded) until the autocoder emits boolean assertion expressions.
   # See https://github.com/nasa/fpp/issues/1030
