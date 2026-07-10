@@ -198,29 +198,28 @@ state machine SequencerStateMachine {
     ####################
     # guards           #
     ####################
-    @ return true if the goal state is RUNNING
-    # see explanation in FpySequencer::m_goalState
-    guard goalStateIs_RUNNING
+    @ return true if there is a function invocation pending to be set up on entry to IDLE.
+    @ the pending FunctionInvoke is held in a component member var
+    guard pendingInvoke
 
-    guard pendingInvoke: FunctionInvoke
+    @ return true if the freshly loaded module declared a Wasm start function
+    guard hasStartFunction
 
     ####################
     # signals          #
     ####################
-    @ called on VALIDATE cmd with the path of the sequence file to validate. only raised in IDLE state
-    signal cmd_VALIDATE: SequenceExecutionArgs
-    @ called on RUN cmd with the path of the sequence file to run. only raised in IDLE state
-    signal cmd_RUN: SequenceExecutionArgs
-    @ called on RUN_VALIDATED cmd. only raised in AWAITING_CMD_RUN_VALIDATED state
-    signal cmd_RUN_VALIDATED: SequenceExecutionArgs
     @ called on CANCEL cmd. raised in all states except IDLE
     signal cmd_CANCEL
 
     @ generic entry of a state
     signal entered
+    @ requests that a function invocation be set up
     signal invoke
+    @ requests that the interpreter begin/resume spinning
     signal continue
+    @ requests that a module be loaded into the store
     signal load: ModuleLoad
+    @ requests that the store be cleared
     signal clearStore
 
     @ The program has completed
@@ -241,17 +240,30 @@ state machine SequencerStateMachine {
     @ Failed to read an instruction from memory
     signal interpreterReaderError: IrReaderErrorKind
 
+    @ raised when a module failed to decode/validate while loading
     signal loadFailure: LoadFailure
-    signal cancel
+    @ raised when a module successfully decoded/validated while loading
+    signal loadSuccess
 
     ####################
     # actions          #
     ####################
-
-    action invoke: FunctionInvoke
+    @ simply raises the "entered" signal
+    action signalEntered
+    @ sets up a function invocation on the interpreter state from the pending FunctionInvoke member var
+    action invoke
+    @ stores the module load request for the LOADING state
     action setLoad: ModuleLoad
+    @ streams, decodes and validates the module into the store
     action load
+    @ clears the interpreter store of all modules, tables and memories
     action clearStore
+    @ reports the module validation failure as an event
+    action reportValidationFailure
+    @ responds to the calling command with VALIDATION_ERROR
+    action sendCmdResponse_VALIDATION_ERROR
+    @ pushes the freshly loaded/validated module into the store
+    action pushModuleToStore
 
     initial enter IDLE
 
@@ -259,10 +271,10 @@ state machine SequencerStateMachine {
     state IDLE {
         entry do { signalEntered }
 
-        on entered if pendingInvoke do { invoke }
+        on entered if pendingInvoke do { invoke } enter PAUSED
         on clearStore do { clearStore }
         on load do { setLoad } enter LOADING
-        on invoke do { invoke }
+        on invoke do { invoke } enter PAUSED
     }
 
     @ Interpreter is loading a Wasm module into the store
@@ -277,22 +289,85 @@ state machine SequencerStateMachine {
         }
     }
 
-    @ Interpreter is ready interpret instructions but in a paused state.
+    @ Interpreter is ready to interpret instructions but in a paused state.
     @ The program and stack are initialized and ready to spin the interpreter loop.
     state PAUSED {
         on continue enter RUNNING
     }
 
-    @ sequencer is executing all statements in the sequence
+    ###############
+    # runtime     #
+    ###############
+
+    @ spins the interpreter loop, executing up to a bounded number of instructions
+    action spin
+    @ reports that the interpreter ran to completion
+    action report_seqSucceeded
+    @ reports that the sequence was cancelled
+    action report_seqCancelled
+    @ reports that the sequence failed to execute successfully
+    action report_seqFailed
+    @ reports that the interpreter trapped, with the trap reason
+    action report_seqTrap
+    @ reports that the interpreter failed to read an instruction from memory
+    action report_seqReadError
+    @ reports that execution was paused at a breakpoint
+    action report_seqBroken
+    @ responds to the calling command with OK
+    action sendCmdResponse_OK
+    @ responds to the calling command with EXECUTION_ERROR
+    action sendCmdResponse_EXECUTION_ERROR
+    @ stores the requested wake time for the SLEEPING state
+    action set_sleepTime
+    @ checks if the current statement has timed out
+    action checkStatementTimeout
+    @ checks if the sequencer should wake from sleep
+    action checkShouldWake
+    @ sets the "break before next line" flag to true
+    action setBreakBeforeNextLine
+    @ sets the "break before next line" flag to false
+    action clearBreakBeforeNextLine
+
+    @ raised whenever the checkTimers port is called
+    signal checkTimersIn
+    @ raised when we are done sleeping
+    signal result_checkShouldWake_wakeup
+    @ raised when we should keep sleeping
+    signal result_checkShouldWake_keepSleeping
+    @ raised when an operation could not be performed on a Fw::Time object due to a
+    @ mismatched time base or context
+    signal result_timeOpFailed
+    @ raised when the statement times out, according to the timeout parameter
+    signal result_checkStatementTimeout_statementTimeout
+    @ raised when the statement has not timed out yet
+    signal result_checkStatementTimeout_noTimeout
+    @ called when a paused host statement (F´ command) successfully executed. only raised in RUNNING.AWAITING_RESPONSE
+    signal stmtResponse_success
+    @ called when a paused host statement (F´ command) unsuccessfully executed. only raised in RUNNING.AWAITING_RESPONSE
+    signal stmtResponse_failure
+    @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
+    signal stmtResponse_unexpected
+    @ called when the statement is telling the sequencer to await a later stmt response
+    signal stmtResponse_keepWaiting
+
+    @ called on CONTINUE cmd. only raised in RUNNING.PAUSED state
+    signal cmd_CONTINUE
+    @ called on BREAK cmd. only raised in RUNNING state
+    signal cmd_BREAK
+
+    @ return true if execution should break before spinning the next statement
+    guard shouldBreak
+
+    @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
         initial enter BREAK_CHECK
 
-        @ check whether to pause execution before dispatching the next statement
+        @ check whether to pause execution before spinning the next statement
         choice BREAK_CHECK {
             if shouldBreak do { report_seqBroken } enter PAUSED else enter SPINNING
         }
 
-        @ sequencer is stepping into a single statement and dispatching it
+        @ sequencer is spinning the interpreter loop
         state SPINNING {
             entry do { spin }
             # -->
@@ -305,6 +380,8 @@ state machine SequencerStateMachine {
 
         }
 
+        @ a host function paused the interpreter to dispatch an F´ command;
+        @ waiting for the command response to come back in
         state AWAITING_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
@@ -330,21 +407,17 @@ state machine SequencerStateMachine {
             # if result_checkStatementTimeout_noTimeout is raised, stay asleep
         }
 
-        @ a breakpoint was hit or the sequence was broken via command. 
+        @ execution was broken via the BREAK command.
         @ sequencer is not taking any action, or allowing timeouts.
         @ must be exited via command, either CANCEL or CONTINUE
         state PAUSED {
-            entry do { signalEntered, clearBreakBeforeNextLine }
+            entry do { clearBreakBeforeNextLine }
             # -->
-            on entered if breakOnce do { clearBreakpoint }
-
-            on cmd_CONTINUE enter DISPATCH_STATEMENT
-            # a step is really just a continue followed immediately by a break
-            on cmd_STEP do { setBreakBeforeNextLine } enter DISPATCH_STATEMENT
+            on cmd_CONTINUE enter SPINNING
         }
 
         @ fail the sequence if we got an unexpected statement response while running it.
-        @ the definition of unexpected is complicated, see FpySequencer::cmdResponseIn_handler.
+        @ the definition of unexpected is complicated, see WasmSequencer::cmdResponseIn_handler.
         @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
         @ sometimes, we can produce responses in strange situations nominally by cancelling and
         @ quickly running sequences. this signal does not cover such cases.
@@ -355,7 +428,5 @@ state machine SequencerStateMachine {
         ####################
         on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
         on cmd_BREAK do { setBreakBeforeNextLine }
-        on cmd_SET_BREAKPOINT do { setBreakpoint }
-        on cmd_CLEAR_BREAKPOINT do { clearBreakpoint }
     }
 }
