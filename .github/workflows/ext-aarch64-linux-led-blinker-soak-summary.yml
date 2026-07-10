@@ -26,3 +26,4 @@ jobs:
       - uses: moisesmata/fprime-actions/soak-summary@split-RPI-pico2
         with:
           deployment-name: ledblinker
+          

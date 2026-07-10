@@ -61,7 +61,7 @@ jobs:
           name: ledblinker-soak-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
-        uses: moisesmata/fprime-actions/soak-setup@split-RPI-pico2
+        uses: moisesmata/fprime-actions/soak-setup@pico2-isolated-raspi
         with:
           deployment-name: ledblinker
           platform: linux-remote
