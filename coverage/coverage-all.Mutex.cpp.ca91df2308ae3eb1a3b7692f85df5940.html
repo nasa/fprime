@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-10 02:51:03</td>
+      <td>2026-07-10 03:25:38</td>
     </tr>
   </table>
 </div>
@@ -72,8 +72,8 @@
     </tr>
     <tr><td><a href="#l13">Os::Posix::Mutex::PosixMutex::PosixMutex() (line 13)</a></td><td>called 7585 times</td><td>67.0%</td></tr>
     <tr><td><a href="#l46">Os::Posix::Mutex::PosixMutex::getHandle() (line 46)</a></td><td>called 11 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l41">Os::Posix::Mutex::PosixMutex::release() (line 41)</a></td><td>called 4219262 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l36">Os::Posix::Mutex::PosixMutex::take() (line 36)</a></td><td>called 4147532 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l41">Os::Posix::Mutex::PosixMutex::release() (line 41)</a></td><td>called 6610176 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l36">Os::Posix::Mutex::PosixMutex::take() (line 36)</a></td><td>called 6405241 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l31">Os::Posix::Mutex::PosixMutex::~PosixMutex() (line 31)</a></td><td>called 7585 times</td><td>87.0%</td></tr>
   </table>
 </details>
@@ -372,7 +372,7 @@
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4147532</td>
+      <td class="linecount coveredLine">6405241</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixMutex</span><span class="o">::</span><span class="n">take</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -382,18 +382,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 4793750 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 6810595 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">4147532</td>
+      <td class="linecount partialCoveredLine">6405241</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4823009</td>
+      <td class="linecount coveredLine">6619937</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">posix_status_to_mutex_status</span><span class="p">(</span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -414,7 +414,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4219262</td>
+      <td class="linecount coveredLine">6610176</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixMutex</span><span class="o">::</span><span class="n">release</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -424,18 +424,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 4754103 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 6940440 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">4219262</td>
+      <td class="linecount partialCoveredLine">6610176</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4847904</td>
+      <td class="linecount coveredLine">6512587</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">posix_status_to_mutex_status</span><span class="p">(</span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
