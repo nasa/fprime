@@ -13,17 +13,18 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: pico2-soak
+  group: soak-zephyr-reference
   cancel-in-progress: true
 
 permissions:
   contents: read
 
+# Deployment name
+env:
+  DEPLOYMENT_NAME: zephyr-reference
+
 jobs:
-  # Any previously deployed soak GDS still owns /dev/pico2 and the ZMQ ipc
-  # sockets that reusable-project-ci.yml's integration-tests job needs.
-  # Stop it before the reusable CI runs so the reusable flow can flash the
-  # board and open its own GDS cleanly.
+  # Any previously deployed soak GDS still owns /dev/pico2 and the ZMQ ipc sockets
   stop-previous-gds:
     name: "Stop Previous Soak GDS"
     runs-on: [self-hosted, pico2-soak]
@@ -31,10 +32,10 @@ jobs:
       - name: "Disable prior soak GDS service"
         shell: bash
         run: |
-          SERVICE_NAME="fprime-soak-gds-zephyr-reference"
+          SERVICE_NAME="fprime-soak-gds-${DEPLOYMENT_NAME}"
           sudo systemctl disable --now "${SERVICE_NAME}" 2>/dev/null || true
           # Clean up ipc socket files the prior GDS left behind.
-          rm -f /tmp/fprime-server-zephyr-reference-in /tmp/fprime-server-zephyr-reference-out
+          rm -f "/tmp/fprime-server-${DEPLOYMENT_NAME}-in" "/tmp/fprime-server-${DEPLOYMENT_NAME}-out"
           # Belt-and-suspenders: kill any straggler fprime-gds still holding /dev/pico2.
           sudo pkill -f 'fprime-gds.*--uart-device /dev/pico2' 2>/dev/null || true
 
@@ -62,12 +63,12 @@ jobs:
           stage: int
 
       - name: "Pull Archive Results"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: archive.tar.gz
 
       - name: "Deploy Soak GDS service"
         uses: nasa/fprime-actions/soak-setup@devel
         with:
-          deployment-name: zephyr-reference
+          deployment-name: ${{ env.DEPLOYMENT_NAME }}
           platform: pico2

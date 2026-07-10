@@ -15,7 +15,7 @@ permissions:
 # Shared with the soak-setup + soak-test workflows so a summary queues
 # behind any in-flight test and doesn't race the log writer.
 concurrency:
-  group: ledblinker-soak
+  group: soak-ledblinker
   cancel-in-progress: false
 
 jobs:

@@ -15,7 +15,7 @@ permissions:
 
 # Shared with the soak-setup workflow so a test queues behind any setup.
 concurrency:
-  group: pico2-soak
+  group: soak-zephyr-reference
   cancel-in-progress: false
 
 jobs:
