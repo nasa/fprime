@@ -142,9 +142,9 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
     //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
-                                U32 cmdSeq,                //!< The command sequence number
-                                Svc::QueueType queueType,  //!< The Queue data type
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                U32 cmdSeq,                       //!< The command sequence number
+                                const Svc::QueueType& queueType,  //!< The Queue data type
                                 FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
                                 ) override;
 
@@ -159,11 +159,11 @@ class ComQueue final : public ComQueueComponentBase {
     //! Handler for SET_QUEUE_PRIORITY command
     //!
     void SET_QUEUE_PRIORITY_cmdHandler(
-        FwOpcodeType opCode,       //!< The opcode
-        U32 cmdSeq,                //!< The command sequence number
-        Svc::QueueType queueType,  //!< The Queue data type
-        FwIndexType indexType,     //!< The index of the queue (within the supplied type) to modify
-        FwIndexType newPriority    //!< New priority value for the queue
+        FwOpcodeType opCode,              //!< The opcode
+        U32 cmdSeq,                       //!< The command sequence number
+        const Svc::QueueType& queueType,  //!< The Queue data type
+        FwIndexType indexType,            //!< The index of the queue (within the supplied type) to modify
+        FwIndexType newPriority           //!< New priority value for the queue
         ) override;
 
   private:

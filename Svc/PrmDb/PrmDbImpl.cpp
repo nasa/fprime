@@ -319,7 +319,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
                                          U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         PrmDb_Merge merge) {
+                                         const PrmDb_Merge& merge) {
     // Reject PRM_LOAD_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
         this->log_WARNING_LO_PrmDbFileLoadInvalidAction(m_state, PrmDb_PrmLoadAction::LOAD_FILE_COMMAND);

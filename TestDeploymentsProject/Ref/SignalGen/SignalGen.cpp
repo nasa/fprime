@@ -151,7 +151,7 @@ void SignalGen::Settings_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
                                     U32 Frequency,
                                     F32 Amplitude,
                                     F32 Phase,
-                                    Ref::SignalType SigType) {
+                                    const Ref::SignalType& SigType) {
     this->signalFrequency = Frequency;
     this->signalAmplitude = Amplitude;
     this->signalPhase = Phase;
@@ -188,7 +188,7 @@ void SignalGen::Skip_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
 
 void SignalGen::Dp_cmdHandler(FwOpcodeType opCode,
                               U32 cmdSeq,
-                              Ref::SignalGen_DpReqType reqType,
+                              const Ref::SignalGen_DpReqType& reqType,
                               U32 records,
                               U32 priority) {
     // at least one record
