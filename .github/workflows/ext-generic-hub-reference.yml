@@ -200,7 +200,7 @@ jobs:
           sleep 3
 
           for event in SerDataVerif BufDataVerif TlmDataVerif EvrDataVerif; do
-            count="$(grep -c "${event}" "${A_EVENT_LOG}" || true)"
+            count="$(grep -cw "${event}" "${A_EVENT_LOG}" || true)"
             if (( count < 2 )); then
               echo "Expected at least two ${event} events, found ${count}" >&2
               exit 1
