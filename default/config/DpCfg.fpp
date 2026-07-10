@@ -13,8 +13,10 @@ module Fw {
     @ A bit mask for selecting the type of processing to perform on
     @ a container before writing it to disk.
     enum ProcType: U8 {
+      @ No Processing
+      PROC_TYPE_NONE = 0x00
       @ Processing type 0
-      PROC_TYPE_ZERO = 0x01
+      PROC_TYPE_ZLIB_DEFLATE = 0x01
       @ Processing type 1
       PROC_TYPE_ONE = 0x02
       @ Processing type 2

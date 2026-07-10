@@ -139,7 +139,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,
+                                       U32 cmdSeq,
+                                       const Svc::QueueType& queueType,
+                                       FwIndexType index) {
     // Acquire the queue that we need to drain
     FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
@@ -162,7 +165,7 @@ void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
 void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
-                                             Svc::QueueType queueType,
+                                             const Svc::QueueType& queueType,
                                              FwIndexType index,
                                              FwIndexType newPriority) {
     // Acquire the queue we are to reprioritize

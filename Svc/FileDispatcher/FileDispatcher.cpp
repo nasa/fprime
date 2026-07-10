@@ -74,8 +74,8 @@ void FileDispatcher ::fileAnnounceRecv_handler(FwIndexType portNum, Fw::StringBa
 
 void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                  U32 cmdSeq,
-                                                 Svc::FileDispatcherCfg::FileDispatchPort file_type,
-                                                 Fw::Enabled enable) {
+                                                 const Svc::FileDispatcherCfg::FileDispatchPort& file_type,
+                                                 const Fw::Enabled& enable) {
     for (FwSizeType i = 0; i < this->m_dispatchTable.numEntries; i++) {
         if (this->m_dispatchTable.entries[i].port == file_type) {
             this->m_dispatchTable.entries[i].enabled = (enable == Fw::Enabled::ENABLED);

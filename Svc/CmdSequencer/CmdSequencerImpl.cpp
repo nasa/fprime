@@ -72,7 +72,7 @@ CmdSequencerComponentImpl::~CmdSequencerComponentImpl() {}
 void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   const Fw::CmdStringArg& fileName,
-                                                  Svc::BlockState block) {
+                                                  const Svc::BlockState& block) {
     if (not this->requireRunMode(STOPPED)) {
         if (m_join_waiting) {
             // Inform user previous seq file is not complete
