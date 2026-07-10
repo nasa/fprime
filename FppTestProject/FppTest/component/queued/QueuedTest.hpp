@@ -96,21 +96,21 @@ class QueuedTest : public QueuedTestComponentBase {
                                 ) override;
 
     //! Handler implementation for command CMD_ENUM
-    void CMD_ENUM_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                             U32 cmdSeq,           //!< The command sequence number
-                             FormalParamEnum en    //!< An enum
+    void CMD_ENUM_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                             U32 cmdSeq,                //!< The command sequence number
+                             const FormalParamEnum& en  //!< An enum
                              ) override;
 
     //! Handler implementation for command CMD_ARRAY
-    void CMD_ARRAY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                              U32 cmdSeq,           //!< The command sequence number
-                              FormalParamArray arr  //!< An array
+    void CMD_ARRAY_cmdHandler(FwOpcodeType opCode,         //!< The opcode
+                              U32 cmdSeq,                  //!< The command sequence number
+                              const FormalParamArray& arr  //!< An array
                               ) override;
 
     //! Handler implementation for command CMD_STRUCT
-    void CMD_STRUCT_cmdHandler(FwOpcodeType opCode,   //!< The opcode
-                               U32 cmdSeq,            //!< The command sequence number
-                               FormalParamStruct str  //!< A struct
+    void CMD_STRUCT_cmdHandler(FwOpcodeType opCode,          //!< The opcode
+                               U32 cmdSeq,                   //!< The command sequence number
+                               const FormalParamStruct& str  //!< A struct
                                ) override;
 
     //! Handler implementation for command CMD_ASYNC_NO_ARGS
@@ -137,21 +137,21 @@ class QueuedTest : public QueuedTestComponentBase {
                                       ) override;
 
     //! Handler implementation for command CMD_ASYNC_ENUM
-    void CMD_ASYNC_ENUM_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                   U32 cmdSeq,           //!< The command sequence number
-                                   FormalParamEnum en    //!< An enum
+    void CMD_ASYNC_ENUM_cmdHandler(FwOpcodeType opCode,       //!< The opcode
+                                   U32 cmdSeq,                //!< The command sequence number
+                                   const FormalParamEnum& en  //!< An enum
                                    ) override;
 
     //! Handler implementation for command CMD_ASYNC_ARRAY
-    void CMD_ASYNC_ARRAY_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                    U32 cmdSeq,           //!< The command sequence number
-                                    FormalParamArray arr  //!< An array
+    void CMD_ASYNC_ARRAY_cmdHandler(FwOpcodeType opCode,         //!< The opcode
+                                    U32 cmdSeq,                  //!< The command sequence number
+                                    const FormalParamArray& arr  //!< An array
                                     ) override;
 
     //! Handler implementation for command CMD_ASYNC_STRUCT
-    void CMD_ASYNC_STRUCT_cmdHandler(FwOpcodeType opCode,   //!< The opcode
-                                     U32 cmdSeq,            //!< The command sequence number
-                                     FormalParamStruct str  //!< A struct
+    void CMD_ASYNC_STRUCT_cmdHandler(FwOpcodeType opCode,          //!< The opcode
+                                     U32 cmdSeq,                   //!< The command sequence number
+                                     const FormalParamStruct& str  //!< A struct
                                      ) override;
 
   private:

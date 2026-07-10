@@ -98,10 +98,10 @@ class DpCatalog final : public DpCatalogComponentBase {
     //!
     //! Start transmitting catalog
     void START_XMIT_CATALOG_cmdHandler(
-        FwOpcodeType opCode,  //!< The opcode
-        U32 cmdSeq,           //!< The command sequence number
-        Fw::Wait wait,        //!< have START_XMIT command wait for catalog to complete transmitting
-        bool remainActive     //!< should the catalog resume transmission when Dps are added at runtime
+        FwOpcodeType opCode,   //!< The opcode
+        U32 cmdSeq,            //!< The command sequence number
+        const Fw::Wait& wait,  //!< have START_XMIT command wait for catalog to complete transmitting
+        bool remainActive      //!< should the catalog resume transmission when Dps are added at runtime
         ) override;
 
     //! Handler implementation for command STOP_XMIT_CATALOG
