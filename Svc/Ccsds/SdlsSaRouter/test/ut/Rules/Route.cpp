@@ -59,7 +59,7 @@ void SdlsSaRouterTester::Route__UnknownSa__action() {
     } while (this->isMappedSa(sa));
     U8* const storage = this->getFreePoolBuffer();
     ASSERT_NE(storage, nullptr);
-    Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
+    Fw::Buffer buffer = this->makePoolBuffer(storage);
     ComCfg::FrameContext context;
 
     this->invoke_to_decryptIn(0, sa, buffer, context);
@@ -95,7 +95,7 @@ void SdlsSaRouterTester::Route__UnknownPort__action() {
     ASSERT_TRUE(found);
     U8* const storage = this->getFreePoolBuffer();
     ASSERT_NE(storage, nullptr);
-    Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
+    Fw::Buffer buffer = this->makePoolBuffer(storage);
     ComCfg::FrameContext context;
 
     this->invoke_to_decryptIn(0, sa, buffer, context);

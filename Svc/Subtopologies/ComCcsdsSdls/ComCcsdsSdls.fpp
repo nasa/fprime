@@ -8,9 +8,16 @@ module ComCcsdsSdls {
 
     instance saRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x01000
 
-    # NOTE: the 'decryptor' instance is defined in the ComCcsdsSdlsConfig configuration
-    # module, allowing projects to override the configuration and select a different
-    # decryptor implementation. The default is Svc.Ccsds.ClearTextDecryptor (NO security).
+    # ----------------------------------------------------------------------
+    # SDLS encryption instances
+    # ----------------------------------------------------------------------
+
+    instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
+
+    # NOTE: the 'decryptor' and 'encryptor' instances are defined in the ComCcsdsSdlsConfig
+    # configuration module, allowing projects to override the configuration and select
+    # different decryptor/encryptor implementations. The defaults are
+    # Svc.Ccsds.ClearTextDecryptor and Svc.Ccsds.ClearTextEncryptor (NO security).
 
     # This subtopology boxes the SDLS decryption layer: the SDLS deframer (SA extraction),
     # the SA router, and the default decryptor. It sits between the transfer frame layer
@@ -64,9 +71,73 @@ module ComCcsdsSdls {
         port dataReturnIn  = sdlsDeframer.dataReturnIn
     } # end SdlsDecryption
 
+    # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend)
+    # and the default encryptor. It sits between the packet layer and the transfer
+    # frame layer in the downlink path.
+    topology SdlsEncryption {
+        # Usage Note:
+        #
+        # When importing this subtopology, users shall establish the following external connections:
+        #
+        # 1) Upstream (packet layer, e.g. ComCcsds.SpacePacketFraming):
+        #     - [upstream].dataOut                        -> ComCcsdsSdls.SdlsEncryption.dataIn
+        #     - ComCcsdsSdls.SdlsEncryption.dataReturnOut -> [upstream].dataReturnIn
+        #     - ComCcsdsSdls.SdlsEncryption.comStatusOut  -> [upstream].comStatusIn
+        # 2) Downstream (transfer frame layer, e.g. ComCcsds.TmTcFraming):
+        #     - ComCcsdsSdls.SdlsEncryption.dataOut       -> [downstream].dataIn
+        #     - [downstream].dataReturnOut                -> ComCcsdsSdls.SdlsEncryption.dataReturnIn
+        #     - [downstream].comStatusOut                 -> ComCcsdsSdls.SdlsEncryption.comStatusIn
+        # 3) Buffer management (e.g. a Svc.BufferManager):
+        #     - ComCcsdsSdls.SdlsEncryption.bufferAllocate   -> [BufferManager].bufferGetCallee
+        #     - ComCcsdsSdls.SdlsEncryption.bufferDeallocate -> [BufferManager].bufferSendIn
+
+        instance sdlsFramer
+        instance encryptor
+
+        connections Encryption {
+            # CcsdsSdlsFramer <-> default encryptor
+            sdlsFramer.encryptOut       -> encryptor.encryptIn
+            encryptor.encryptOut        -> sdlsFramer.encryptIn
+            sdlsFramer.encryptReturnOut -> encryptor.encryptReturnIn
+            encryptor.bufferReturnOut   -> sdlsFramer.bufferReturnIn
+        }
+
+        # ----------------------------------------------------------------------
+        # Topology ports
+        # ----------------------------------------------------------------------
+
+        # Upstream boundary (packet layer)
+        @ Input port receiving packet-layer data to frame into SDLS frames
+        port dataIn        = sdlsFramer.dataIn
+
+        @ Output port returning ownership of downlinked buffers to the packet layer
+        port dataReturnOut = sdlsFramer.dataReturnOut
+
+        @ Output port forwarding com status to the packet layer
+        port comStatusOut  = sdlsFramer.comStatusOut
+
+        # Downstream boundary (transfer frame layer)
+        @ Output port sending SDLS frames to the transfer frame layer
+        port dataOut       = sdlsFramer.dataOut
+
+        @ Input port receiving back ownership of SDLS frame buffers from the transfer frame layer
+        port dataReturnIn  = sdlsFramer.dataReturnIn
+
+        @ Input port receiving com status from the transfer frame layer
+        port comStatusIn   = sdlsFramer.comStatusIn
+
+        # Buffer management boundary
+        @ Output port allocating SDLS frame buffers
+        port bufferAllocate   = sdlsFramer.bufferAllocate
+
+        @ Output port deallocating SDLS frame buffers
+        port bufferDeallocate = sdlsFramer.bufferDeallocate
+    } # end SdlsEncryption
+
     # This subtopology composes the ComCcsds SpacePacketFraming packet layer and the
     # ComCcsds TmTcFraming transfer frame layer with the SdlsDecryption layer inserted
-    # in between on the uplink path.
+    # in between on the uplink path and the SdlsEncryption layer inserted in between
+    # on the downlink path.
     topology FramingSubtopology {
         # Usage Note:
         #
@@ -90,13 +161,25 @@ module ComCcsdsSdls {
         # SDLS decryption layer (SDLS deframer, SA router, decryptor)
         import SdlsDecryption
 
+        # SDLS encryption layer (SDLS framer, encryptor)
+        import SdlsEncryption
+
         connections Downlink {
-            # SpacePacketFraming <-> TmTcFraming (downlink is not encrypted)
-            ComCcsds.SpacePacketFraming.dataOut -> ComCcsds.TmTcFraming.dataIn
-            ComCcsds.TmTcFraming.dataReturnOut  -> ComCcsds.SpacePacketFraming.dataReturnIn
+            # SpacePacketFraming <-> SdlsEncryption (SDLS encryption step)
+            ComCcsds.SpacePacketFraming.dataOut -> SdlsEncryption.dataIn
+            SdlsEncryption.dataReturnOut        -> ComCcsds.SpacePacketFraming.dataReturnIn
+
+            # SdlsEncryption <-> TmTcFraming
+            SdlsEncryption.dataOut             -> ComCcsds.TmTcFraming.dataIn
+            ComCcsds.TmTcFraming.dataReturnOut -> SdlsEncryption.dataReturnIn
+
+            # SdlsEncryption frame buffer allocations
+            SdlsEncryption.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
+            SdlsEncryption.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
 
             # ComStatus
-            ComCcsds.TmTcFraming.comStatusOut -> ComCcsds.SpacePacketFraming.comStatusIn
+            ComCcsds.TmTcFraming.comStatusOut -> SdlsEncryption.comStatusIn
+            SdlsEncryption.comStatusOut       -> ComCcsds.SpacePacketFraming.comStatusIn
             # (Outgoing) TmTcFraming <-> ComInterface connections shall be established by the user
         }
 

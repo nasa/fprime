@@ -5,4 +5,5 @@ register_fprime_config(
     DEPENDS
         Fw_Types
         Svc_Ccsds_ClearTextDecryptor
+        Svc_Ccsds_ClearTextEncryptor
 )

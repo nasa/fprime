@@ -82,6 +82,9 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     //! Return a pool buffer pointer not currently outstanding, or nullptr if all are in use
     U8* getFreePoolBuffer();
 
+    //! Construct an Fw::Buffer over pool storage with a unique allocation context
+    Fw::Buffer makePoolBuffer(U8* storage);
+
     //! Return true if the SA appears in the configured map
     bool isMappedSa(U16 sa) const;
 
