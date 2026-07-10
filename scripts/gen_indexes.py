@@ -178,7 +178,13 @@ def generate_index_for_section(source_dir: Path):
             file_url = section_path.name
             content.append(f"- [**{title}**]({file_url}){suffix}\n\n")
         else:
-            # Directory section — collect all pages
+            # Directory section — check if index.md exists first
+            sub_index = section_path / "index.md"
+            if not sub_index.exists():
+                # No index.md in this subfolder — skip it entirely
+                continue
+
+            # Collect all pages
             pages = list(list_pages(section_path))
 
             if pages:
