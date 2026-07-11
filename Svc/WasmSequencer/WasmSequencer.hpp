@@ -8,6 +8,8 @@
 #define Svc_WasmSequencer_HPP
 
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencerFFI.hpp"
+#include "config/WasmSequencerConfig.hpp"
 
 namespace Svc {
 
@@ -362,6 +364,50 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
     ) const override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Interpreter store and page-backed allocator
+    //
+    // The `fprime_spacewasm` Rust crate installs a page allocator as its global
+    // allocator. Each page it requests is served from `m_pages` below, so the
+    // interpreter's Store (a Rust-owned `Box<Store>`, held here as an opaque
+    // pointer) lives entirely within this component's memory.
+    // ----------------------------------------------------------------------
+
+    //! The Rust crate imports these C symbols to draw/return pages; they route
+    //! to the active instance's allocPage/deallocPage.
+    friend U8* ::svc_wasmsequencer_alloc_page(AllocResult* result, U32 size);
+    friend void ::svc_wasmsequencer_dealloc_page(U8* ptr, U32 size);
+
+    //! Hand out a constant-size page from the pool for the Rust allocator.
+    //! Writes the outcome to `result` and returns the page pointer (null on failure).
+    U8* allocPage(AllocResult* result,  //!< Out-param: allocation outcome
+                  U32 size              //!< Requested page size (must be <= PAGE_SIZE)
+    );
+
+    //! Return a page previously handed out by allocPage back to the pool.
+    void deallocPage(U8* ptr,  //!< Page pointer to release
+                     U32 size  //!< Size the page was allocated with
+    );
+
+    //! Create a fresh interpreter Store with the given module capacity,
+    //! destroying any existing store first.
+    void createStore(U16 moduleCount  //!< Maximum number of modules
+    );
+
+    //! Destroy the current interpreter Store, if any, releasing its memory.
+    void destroyStore();
+
+    //! Static pool of memory used to store modules and IR text
+    U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
+
+    //! Opaque pointer to the Rust-owned interpreter Store (`Box<Store>`), or null.
+    void* m_store;
+
+    //! Module capacity of the current/last store, remembered so CLEAR_STORE can
+    //! recreate a store with the same capacity.
+    U16 m_maxModules;
 };
 
 }  // namespace Svc

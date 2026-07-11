@@ -65,11 +65,18 @@ else()
     set(FPRIME_SPACEWASM_LIB "${FPRIME_SPACEWASM_TDIR}/release/libfprime_spacewasm.a")
 endif()
 
+set(FPRIME_SPACEWASM_BINDGEN_INCLUDES
+    "$<TARGET_PROPERTY:Svc_WasmSequencer,INCLUDE_DIRECTORIES>")
+
 # Optimization/codegen flags live in the crate's [profile.release] (opt-level,
 # lto, codegen-units, panic=abort). `--release` selects that profile here.
 add_custom_command(
     OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-    COMMAND "${CARGO_EXECUTABLE}" build --release
+    COMMAND "${CMAKE_COMMAND}" -E env
+            "FPRIME_SPACEWASM_BINDGEN_INCLUDES=${FPRIME_SPACEWASM_BINDGEN_INCLUDES}"
+            "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
+            "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
+            "${CARGO_EXECUTABLE}" build --release
             ${FPRIME_SPACEWASM_CARGO_TARGET_ARG}
             --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
             --target-dir    "${FPRIME_SPACEWASM_TDIR}"
@@ -77,6 +84,7 @@ add_custom_command(
             "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
             "${FPRIME_SPACEWASM_DIR}/build.rs"
             "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerFFI.hpp"
+            "${FPRIME_PROJECT_ROOT}/default/config/WasmSequencerConfig.hpp"
     COMMENT "Building fprime_spacewasm Rust static library (spacewasm)"
     VERBATIM
 )
@@ -93,6 +101,7 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerFFI.hpp"
     DEPENDS
 )
 

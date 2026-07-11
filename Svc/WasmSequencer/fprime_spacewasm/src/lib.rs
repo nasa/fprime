@@ -1,6 +1,7 @@
 #![cfg_attr(target_os = "none", no_std)]
 
 mod allocator;
+mod store;
 
 #[allow(non_camel_case_types, non_snake_case, dead_code)]
 mod ffi;

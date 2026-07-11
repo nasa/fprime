@@ -26,4 +26,11 @@ unsafe impl spacewasm::Allocator for FprimeAlloc {
     }
 }
 
-spacewasm::global_allocator!(FprimeAlloc, FprimeAlloc);
+static FPRIME_ALLOC: FprimeAlloc = FprimeAlloc;
+spacewasm::global_allocator!(
+    spacewasm::PageAllocator<'static, 1>,
+    spacewasm::PageAllocator::new(
+        &FPRIME_ALLOC,
+        ffi::Svc_WasmSequencerConfig_DYNAMIC_MEMORY_SIZE as usize
+    )
+);

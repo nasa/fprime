@@ -2,6 +2,7 @@
 #define SVC_WASMSEQUENCER_FFI_HPP
 
 #include <cstdint>
+#include <config/WasmSequencerConfig.hpp>
 
 enum class AllocResult { Ok, AllocationFailed, OutOfMemory };
 

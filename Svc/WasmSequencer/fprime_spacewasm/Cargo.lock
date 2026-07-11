@@ -213,9 +213,9 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "spacewasm"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab638d3a8e193bd501ab109cf126fd53544c3c10dc994885b7d1aeec3d6d2d7d"
+checksum = "0c7945b25dc2d3c8d175b9963d3e27fa5c8c888473d2b59e0b35755f0d154599"
 dependencies = [
  "libm",
 ]
