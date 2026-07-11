@@ -9,14 +9,12 @@
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencerFFI.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/fprime_spacewasm.h"
+#include "config/FwAssertArgTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 
 namespace Svc {
 
 namespace {
-//! The single active WasmSequencer instance. The `fprime_spacewasm` crate
-//! installs a process-global allocator whose pages are served from that
-//! instance's page pool, so at most one instance may exist at a time.
 WasmSequencer* g_activeSequencer = nullptr;
 }  // namespace
 
@@ -25,12 +23,9 @@ WasmSequencer* g_activeSequencer = nullptr;
 // ----------------------------------------------------------------------
 
 WasmSequencer ::WasmSequencer(const char* const compName)
-    : WasmSequencerComponentBase(compName), m_store(nullptr), m_maxModules(0) {
-    // The Rust global allocator draws pages from this instance; only one may be active.
-    FW_ASSERT(g_activeSequencer == nullptr);
-    for (U32 i = 0; i < SVC_WASMSEQUENCER_PAGE_COUNT; i++) {
-        this->m_pageUsed[i] = false;
-    }
+    : WasmSequencerComponentBase(compName), m_store(nullptr), m_maxModules(0), m_memory_allocated(false) {
+    // FIXME(tumbar) This only allows a singleton WasmSequencer
+    //               We should make this thread local in a way that is cross platform?
     g_activeSequencer = this;
 }
 
@@ -44,24 +39,21 @@ WasmSequencer ::~WasmSequencer() {
 // ----------------------------------------------------------------------
 
 U8* WasmSequencer ::allocPage(AllocResult* result, U32 size) {
-    // The Rust PageAllocator only ever requests whole pages; anything larger
-    // than a page cannot be served from this pool.
-    if (size > SVC_WASMSEQUENCER_PAGE_SIZE) {
-        *result = AllocResult::AllocationFailed;
-        return nullptr;
-    }
+    // TODO(tumbar) It's possible to have a fancier memory management system
+    // The Rust PageAllocator should only ever request the entire memory pool
 
-    for (U32 slot = 0; slot < SVC_WASMSEQUENCER_PAGE_COUNT; slot++) {
-        if (!this->m_pageUsed[slot]) {
-            this->m_pageUsed[slot] = true;
-            *result = AllocResult::Ok;
-            return &this->m_pages[slot * SVC_WASMSEQUENCER_PAGE_SIZE];
-        }
-    }
+    FW_ASSERT(size == Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE, static_cast<FwAssertArgType>(size),
+              Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE);
 
-    // No free pages remain in the pool.
-    *result = AllocResult::OutOfMemory;
-    return nullptr;
+    // Make sure memory is not already allocated
+    // This _is_ a programming error since [spacewasm::PageAllocator] has a hardcoded max-pages=1 in fprime_spacewasm
+    FW_ASSERT(!this->m_memory_allocated);
+
+    this->m_memory_allocated = true;
+
+    // Allocation succeeded.
+    *result = AllocResult::Ok;
+    return this->m_memory_pool;
 }
 
 void WasmSequencer ::deallocPage(U8* ptr, U32 size) {
@@ -70,12 +62,14 @@ void WasmSequencer ::deallocPage(U8* ptr, U32 size) {
         return;
     }
 
-    // Map the pointer back to its page slot and mark it free.
-    const FwSizeType offset = static_cast<FwSizeType>(ptr - this->m_pages);
-    const U32 slot = static_cast<U32>(offset / SVC_WASMSEQUENCER_PAGE_SIZE);
-    FW_ASSERT(slot < SVC_WASMSEQUENCER_PAGE_COUNT, static_cast<FwAssertArgType>(slot));
-    FW_ASSERT(this->m_pageUsed[slot]);
-    this->m_pageUsed[slot] = false;
+    // Make sure we are actually deallocating the memory
+    FW_ASSERT(this->m_memory_allocated);
+
+    // Make sure the deallocation is the expected size
+    FW_ASSERT(size == Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE, static_cast<FwAssertArgType>(size),
+              Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE);
+
+    this->m_memory_allocated = false;
 }
 
 void WasmSequencer ::createStore(U16 moduleCount) {
@@ -345,18 +339,21 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingInvoke
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
     // TODO
+    return false;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_hasStartFunction(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
     // TODO
+    return false;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_shouldBreak(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
     // TODO
+    return false;
 }
 
 }  // namespace Svc

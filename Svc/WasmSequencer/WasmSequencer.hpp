@@ -400,7 +400,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void destroyStore();
 
     //! Static pool of memory used to store modules and IR text
-    U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
+    alignas(8) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
 
     //! Opaque pointer to the Rust-owned interpreter Store (`Box<Store>`), or null.
     void* m_store;
@@ -408,6 +408,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Module capacity of the current/last store, remembered so CLEAR_STORE can
     //! recreate a store with the same capacity.
     U16 m_maxModules;
+
+    bool m_memory_allocated;
 };
 
 }  // namespace Svc
