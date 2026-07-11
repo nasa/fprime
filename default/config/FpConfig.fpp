@@ -94,3 +94,6 @@ dictionary enum TimeBase : FwTimeBaseStoreType {
     TB_SC_TIME = 3,          @< Time as reported by the spacecraft clock.
     TB_DONT_CARE = 0xFFFF    @< Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed (Required)
 } default TB_NONE;
+
+@ The default time base that various ground software systems should assume the flight software uses
+dictionary constant FW_TIME_BASE_DEFAULT = TimeBase.TB_WORKSTATION_TIME
