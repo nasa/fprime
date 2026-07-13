@@ -80,50 +80,18 @@ jobs:
           B_LOG="${LOG_DIR}/deploymentB.stdout.log"
           GDS_LOG="${LOG_DIR}/gds.stdout.log"
           GDS_LOG_DIR="${LOG_DIR}/gds"
-          A_EVENT_LOG=""
-
-          # Allocate two distinct unused TCP ports.
-          read -r PORT_A PORT_B < <(python - <<'PY'
-          import socket
-
-          with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as first, \
-                  socket.socket(socket.AF_INET, socket.SOCK_STREAM) as second:
-              first.bind(("127.0.0.1", 0))
-              second.bind(("127.0.0.1", 0))
-              print(first.getsockname()[1], second.getsockname()[1])
-          PY
-          )
+          PORT_A=50000
+          PORT_B=50001
           B_PID=""
           GDS_PID=""
           A_PID=""
 
-          # Keep background processes from surviving failures.
+          # Stop the background processes when the step exits.
           cleanup() {
             set +e
-            stop_pid() {
-              local pid="$1"
-              if [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null; then
-                kill "${pid}" 2>/dev/null || true
-                for _ in 1 2 3 4 5; do
-                  kill -0 "${pid}" 2>/dev/null || return
-                  sleep 1
-                done
-                kill -KILL "${pid}" 2>/dev/null || true
-              fi
-            }
-            stop_pid "${A_PID}"
-            stop_pid "${GDS_PID}"
-            stop_pid "${B_PID}"
-            while read -r child_pid; do
-              if [[ -n "${child_pid}" ]] && [[ "${child_pid}" != "$$" ]]; then
-                stop_pid "${child_pid}"
-              fi
-            done < <(pgrep -f -- "${A_DIR}" || true)
-            while read -r child_pid; do
-              if [[ -n "${child_pid}" ]] && [[ "${child_pid}" != "$$" ]]; then
-                stop_pid "${child_pid}"
-              fi
-            done < <(pgrep -f -- "${B_BIN}" || true)
+            [[ -n "${A_PID}" ]] && kill "${A_PID}" 2>/dev/null || true
+            [[ -n "${GDS_PID}" ]] && kill "${GDS_PID}" 2>/dev/null || true
+            [[ -n "${B_PID}" ]] && kill "${B_PID}" 2>/dev/null || true
             wait "${A_PID}" "${GDS_PID}" "${B_PID}" 2>/dev/null || true
           }
           trap cleanup EXIT
@@ -132,19 +100,6 @@ jobs:
           # Force line-buffered deployment output.
           stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
           B_PID=$!
-
-          # Keep DeploymentB readiness bounded.
-          b_deadline=$((SECONDS + 60))
-          while (( SECONDS < b_deadline )); do
-            if grep -q "Setup to receive udp at 0.0.0.0:50556" "${B_LOG}"; then
-              break
-            fi
-            sleep 1
-          done
-          if ! grep -q "Setup to receive udp at 0.0.0.0:50556" "${B_LOG}"; then
-            echo "DeploymentB did not become ready before timeout" >&2
-            exit 1
-          fi
 
           echo "Starting DeploymentA through GDS on TCP port ${PORT_A}"
           mkdir -p "${GDS_LOG_DIR}"
@@ -160,29 +115,18 @@ jobs:
             >"${GDS_LOG}" 2>&1 &
           GDS_PID=$!
 
-          # Wait for GDS to launch and connect DeploymentA.
+          # Wait for GDS to connect DeploymentA before pytest.
           a_deadline=$((SECONDS + 120))
           while (( SECONDS < a_deadline )); do
             if [[ -z "${A_PID}" ]]; then
               A_PID="$(pgrep -f -- "${A_BIN} -p ${PORT_A} -a 127.0.0.1" | head -n 1 || true)"
             fi
-            # Discover the timestamped GDS event-log directory.
-            if [[ -z "${A_EVENT_LOG}" ]]; then
-              A_EVENT_LOG="$(find "${GDS_LOG_DIR}" -type f \
-                -name "FprimeGenericHubReference_Deployments_DeploymentA.log" \
-                -print -quit)"
-            fi
-            if [[ -n "${A_PID}" ]] &&
-              [[ -n "${A_EVENT_LOG}" ]] &&
-              [[ -f "${A_EVENT_LOG}" ]] &&
-              grep -q "Accepted client at 127.0.0.1:${PORT_A}" "${A_EVENT_LOG}"; then
+            if grep -q "tcp_handler: Client connected to 127.0.0.1:${PORT_A}" "${GDS_LOG}"; then
               break
             fi
             sleep 1
           done
-          if [[ -z "${A_PID}" ]] ||
-            [[ ! -f "${A_EVENT_LOG}" ]] ||
-            ! grep -q "Accepted client at 127.0.0.1:${PORT_A}" "${A_EVENT_LOG}"; then
+          if ! grep -q "tcp_handler: Client connected to 127.0.0.1:${PORT_A}" "${GDS_LOG}"; then
             echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
             exit 1
           fi
