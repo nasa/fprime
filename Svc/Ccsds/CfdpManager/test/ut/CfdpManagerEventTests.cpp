@@ -113,9 +113,15 @@ void CfdpManagerTester::testTxFileQueuedEvent() {
                            destFileStr);
     this->component.doDispatch();
 
-    // Verify exact event count and TxFileQueued event
+    // Verify exact event count and TxFileQueued event with its arguments.
+    // The transaction sequence number is engine-assigned (m_seqNum is pre-incremented
+    // from 0), so the first queued transaction in this fresh component gets seq 1.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TxFileQueued_SIZE(1);
+    ASSERT_EVENTS_TxFileQueued(0,        // index
+                               srcFile,  // source file queued
+                               1         // engine-assigned transaction sequence number
+    );
 
     // Clean up test file
     Os::FileSystem::removeFile(srcFile);
@@ -150,9 +156,21 @@ void CfdpManagerTester::testTxFileTransferStartedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify TxFileTransferStarted event exists
-    // Note: Multiple events emitted (TxFileQueued, TxFileTransferStarted, and potentially others)
+    // Verify TxFileTransferStarted event and its arguments.
+    // Note: Multiple events emitted (TxFileQueued, TxFileTransferStarted, and potentially others),
+    // so only the specific _SIZE guard is used. The source EID is the local EID (TX sender),
+    // the destination EID is the commanded peer, the file size is the 3 bytes written above,
+    // and the sequence number is engine-assigned (first transaction -> seq 1).
     ASSERT_EVENTS_TxFileTransferStarted_SIZE(1);
+    ASSERT_EVENTS_TxFileTransferStarted(0,                                   // index
+                                        Cfdp::Class::CLASS_1,                // cfdpClass
+                                        1,                                   // seqNum (engine-assigned)
+                                        this->component.getLocalEidParam(),  // srcEid (local sender)
+                                        srcFile,                             // srcFile
+                                        TEST_GROUND_EID,                     // destEid (commanded peer)
+                                        destFile,                            // destFile
+                                        3                                    // fileSize (bytes written)
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(srcFile);
@@ -176,10 +194,14 @@ void CfdpManagerTester::testMetadataReceivedEvent() {
                           Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
-    // Verify exact event count and MetadataReceived event
+    // Verify exact event count and MetadataReceived event with its arguments
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
-    // Note: Payload verification not available - no ASSERT macro with parameters generated
+    ASSERT_EVENTS_MetadataReceived(0,              // index
+                                   srcFile,        // srcFile from metadata
+                                   dstFile,        // destFile from metadata
+                                   transactionSeq  // transaction sequence number
+    );
 }
 
 // ----------------------------------------------------------------------
@@ -312,9 +334,14 @@ void CfdpManagerTester::testFailMetadataPduDeserializationEvent() {
     this->invoke_to_dataIn(channelId, pduBuffer);
     this->component.doDispatch();
 
-    // Verify FailMetadataPduDeserialization event (a second recovery event also fires)
+    // Verify FailMetadataPduDeserialization event and its arguments (a second recovery event
+    // also fires). The status is the deserialize error code from parsing the truncated body.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_FailMetadataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailMetadataPduDeserialization(0,                                                  // index
+                                                 channelId,                                          // channelId
+                                                 static_cast<I32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH)  // status
+    );
 }
 
 void CfdpManagerTester::testFailFileDataPduDeserializationEvent() {
@@ -372,9 +399,15 @@ void CfdpManagerTester::testFailFileDataPduDeserializationEvent() {
     this->invoke_to_dataIn(channelId, pduBuffer);
     this->component.doDispatch();
 
-    // Verify FailFileDataPduDeserialization event was emitted
-    // Note: Other events may be emitted during error recovery (e.g., transaction state changes)
+    // Verify FailFileDataPduDeserialization event and its arguments.
+    // Note: Other events may be emitted during error recovery (e.g., transaction state changes),
+    // so only the specific _SIZE guard is used. The status is the deserialize error code from
+    // parsing the truncated body.
     ASSERT_EVENTS_FailFileDataPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailFileDataPduDeserialization(0,                                                  // index
+                                                 channelId,                                          // channelId
+                                                 static_cast<I32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH)  // status
+    );
 }
 
 void CfdpManagerTester::testFailEofPduDeserializationEvent() {
@@ -448,9 +481,14 @@ void CfdpManagerTester::testFailEofPduDeserializationEvent() {
         this->component.doDispatch();
     }
 
-    // Verify FailEofPduDeserialization event was emitted
-    // Note: Other events may be emitted during error recovery
+    // Verify FailEofPduDeserialization event and its arguments.
+    // Note: Other events may be emitted during error recovery, so only the specific _SIZE guard
+    // is used. The status is the deserialize error code from parsing the truncated body.
     ASSERT_EVENTS_FailEofPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailEofPduDeserialization(0,                                                 // index
+                                            channelId,                                         // channelId
+                                            static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
@@ -478,9 +516,14 @@ void CfdpManagerTester::testFailAckPduDeserializationEvent() {
     // Directly call s2EofAck with malformed buffer
     txn->s2EofAck(malformedBuffer);
 
-    // Verify event was emitted
+    // Verify event and its arguments (the transaction was set up on channel 0). The status is
+    // the deserialize error code from parsing the malformed buffer.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailAckPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailAckPduDeserialization(0,                                                 // index
+                                            0,                                                 // channelId
+                                            static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
+    );
 }
 
 void CfdpManagerTester::testFailFinPduDeserializationEvent() {
@@ -505,9 +548,14 @@ void CfdpManagerTester::testFailFinPduDeserializationEvent() {
     // Directly call s2Fin with malformed buffer
     txn->s2Fin(malformedBuffer);
 
-    // Verify event was emitted
+    // Verify event and its arguments (the transaction was set up on channel 0). The status is
+    // the deserialize error code from parsing the malformed buffer.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailFinPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailFinPduDeserialization(0,                                                 // index
+                                            0,                                                 // channelId
+                                            static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
+    );
 }
 
 void CfdpManagerTester::testFailNakPduDeserializationEvent() {
@@ -532,9 +580,14 @@ void CfdpManagerTester::testFailNakPduDeserializationEvent() {
     // Directly call s2Nak with malformed buffer
     txn->s2Nak(malformedBuffer);
 
-    // Verify event was emitted
+    // Verify event and its arguments (the transaction was set up on channel 0). The status is
+    // the deserialize error code from parsing the malformed buffer.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailNakPduDeserialization_SIZE(1);
+    ASSERT_EVENTS_FailNakPduDeserialization(0,                                                 // index
+                                            0,                                                 // channelId
+                                            static_cast<I32>(Fw::FW_DESERIALIZE_BUFFER_EMPTY)  // status
+    );
 }
 
 // ----------------------------------------------------------------------
@@ -572,9 +625,15 @@ void CfdpManagerTester::testRxFileCreateFailedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxFileCreateFailed event
-    // Note: Multiple events emitted during RX transaction setup and failure
+    // Verify RxFileCreateFailed event and its deterministic arguments.
+    // Note: Multiple events emitted during RX transaction setup and failure, so only the
+    // specific _SIZE guard is used. The status field is an OS-dependent file-op code; assert
+    // class/srcEid/seqNum/filename only.
     ASSERT_EVENTS_RxFileCreateFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_1, this->eventHistory_RxFileCreateFailed->at(0).cfdpClass);
+    ASSERT_EQ(sourceEid, this->eventHistory_RxFileCreateFailed->at(0).srcEid);
+    ASSERT_EQ(transactionSeq, this->eventHistory_RxFileCreateFailed->at(0).seqNum);
+    ASSERT_STREQ(dstFile, this->eventHistory_RxFileCreateFailed->at(0).filename.toChar());
 }
 
 void CfdpManagerTester::testRxCrcMismatchEvent() {
@@ -614,9 +673,16 @@ void CfdpManagerTester::testRxCrcMismatchEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxCrcMismatch event
-    // Note: Multiple events emitted during RX transaction (Metadata, potential completion events)
+    // Verify RxCrcMismatch event and its deterministic arguments.
+    // Note: Multiple events emitted during RX transaction (Metadata, potential completion events),
+    // so only the specific _SIZE guard is used. The "expected" field is the EOF-provided checksum
+    // (wrongChecksum); the "actual" field is the internally-computed CRC, which is an
+    // implementation-specific value, so it is intentionally not asserted.
     ASSERT_EVENTS_RxCrcMismatch_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxCrcMismatch->at(0).cfdpClass);
+    ASSERT_EQ(sourceEid, this->eventHistory_RxCrcMismatch->at(0).srcEid);
+    ASSERT_EQ(transactionSeq, this->eventHistory_RxCrcMismatch->at(0).seqNum);
+    ASSERT_EQ(wrongChecksum, this->eventHistory_RxCrcMismatch->at(0).expected);
 
     // Note: RxFileTransferFailed may not be emitted immediately after CRC mismatch
     // It requires the transaction to fully complete/finalize which may need additional cycles
@@ -655,9 +721,18 @@ void CfdpManagerTester::testRxFileSizeMismatchEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxFileSizeMismatch event
-    // Note: Multiple events emitted (MetadataReceived, size mismatch detection, etc.)
+    // Verify RxFileSizeMismatch event and its arguments.
+    // Note: Multiple events emitted (MetadataReceived, size mismatch detection, etc.),
+    // so only the specific _SIZE guard is used. "expected" is the metadata-claimed size,
+    // "actual" is the EOF-claimed size.
     ASSERT_EVENTS_RxFileSizeMismatch_SIZE(1);
+    ASSERT_EVENTS_RxFileSizeMismatch(0,                     // index
+                                     Cfdp::Class::CLASS_1,  // cfdpClass
+                                     sourceEid,             // srcEid
+                                     transactionSeq,        // seqNum
+                                     metadataSize,          // expected (from metadata)
+                                     eofSize                // actual (from EOF)
+    );
 }
 
 void CfdpManagerTester::testRxEofCancelReceivedEvent() {
@@ -691,9 +766,15 @@ void CfdpManagerTester::testRxEofCancelReceivedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxEofCancelReceived event
-    // Note: Multiple events emitted (MetadataReceived, RxEofCancelReceived, potentially RxFileTransferFailed)
+    // Verify RxEofCancelReceived event and its arguments.
+    // Note: Multiple events emitted (MetadataReceived, RxEofCancelReceived, potentially
+    // RxFileTransferFailed), so only the specific _SIZE guard is used.
     ASSERT_EVENTS_RxEofCancelReceived_SIZE(1);
+    ASSERT_EVENTS_RxEofCancelReceived(0,                     // index
+                                      Cfdp::Class::CLASS_1,  // cfdpClass
+                                      sourceEid,             // srcEid
+                                      transactionSeq         // seqNum
+    );
 }
 
 void CfdpManagerTester::testRxEofWithErrorEvent() {
@@ -729,9 +810,16 @@ void CfdpManagerTester::testRxEofWithErrorEvent() {
         this->component.doDispatch();
     }
 
-    // Verify RxEofWithError event (a second event also fires during EOF handling)
+    // Verify RxEofWithError event and its arguments (a second event also fires during EOF handling)
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_RxEofWithError_SIZE(1);
+    ASSERT_EVENTS_RxEofWithError(
+        0,                                                                        // index
+        Cfdp::Class::CLASS_1,                                                     // cfdpClass
+        sourceEid,                                                                // srcEid
+        transactionSeq,                                                           // seqNum
+        static_cast<U8>(Cfdp::ConditionCode::CONDITION_CODE_CHECK_LIMIT_REACHED)  // conditionCode
+    );
 }
 
 void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
@@ -786,7 +874,21 @@ void CfdpManagerTester::testRxEofMdSizeMismatchEvent() {
     // 2. RxEofMdSizeMismatch (from size mismatch check)
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    ASSERT_EVENTS_MetadataReceived(0,               // index
+                                   "test_src.dat",  // srcFile from metadata
+                                   "test_dst.dat",  // destFile from metadata
+                                   1                // transaction sequence number
+    );
     ASSERT_EVENTS_RxEofMdSizeMismatch_SIZE(1);
+    // src_eid is not populated by the white-box setupTestTransaction/r2RecvMd path, so use
+    // the transaction's actual src_eid for that field (mdSize=1000 from metadata, eofSize=2000).
+    ASSERT_EVENTS_RxEofMdSizeMismatch(0,                        // index
+                                      Cfdp::Class::CLASS_2,     // cfdpClass
+                                      txn->m_history->src_eid,  // srcEid (as populated by the txn)
+                                      1,                        // seqNum
+                                      1000,                     // mdSize (from metadata)
+                                      2000                      // eofSize (simulated EOF size)
+    );
 }
 
 void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
@@ -828,9 +930,13 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
                           fileSize, srcFile, dstFile, Cfdp::Class::CLASS_1, 1);
     this->component.doDispatch();
 
-    // Verify the event was emitted
+    // Verify the event was emitted with its arguments
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxTransactionLimitReached_SIZE(1);
+    ASSERT_EVENTS_RxTransactionLimitReached(0,          // index
+                                            sourceEid,  // srcEid of the dropped packet
+                                            9999        // transaction sequence of the dropped packet
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
@@ -919,9 +1025,15 @@ void CfdpManagerTester::testRxInactivityTimeoutEvent() {
     // Directly trigger inactivity timeout event
     txn->rSendInactivityEvent();
 
-    // Verify event
+    // Verify event and its arguments. The transaction was established through the real
+    // receivePdu path, so src_eid is the sender (sourceEid).
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxInactivityTimeout_SIZE(1);
+    ASSERT_EVENTS_RxInactivityTimeout(0,                     // index
+                                      Cfdp::Class::CLASS_2,  // cfdpClass
+                                      sourceEid,             // srcEid
+                                      transactionSeq         // seqNum
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
@@ -977,9 +1089,16 @@ void CfdpManagerTester::testRxAckLimitReachedEvent() {
     // when finishTransaction is called
     txn->rAckTimerTick();
 
-    // Verify events: should get RxAckLimitReached + RxFileTransferFailed
+    // Verify events: should get RxAckLimitReached + RxFileTransferFailed.
+    // The transaction was established through the real receivePdu path, so src_eid is the
+    // sender (sourceEid).
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_RxAckLimitReached_SIZE(1);
+    ASSERT_EVENTS_RxAckLimitReached(0,                     // index
+                                    Cfdp::Class::CLASS_2,  // cfdpClass
+                                    sourceEid,             // srcEid
+                                    transactionSeq         // seqNum
+    );
     ASSERT_EVENTS_RxFileTransferFailed_SIZE(1);
 
     // Cleanup
@@ -1038,9 +1157,15 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
     // and emit the RxNakLimitReached event
     txn->r2Complete(true);
 
-    // Verify event
+    // Verify event and its arguments. The transaction was established through the real
+    // receivePdu path, so src_eid is the sender (sourceEid).
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxNakLimitReached_SIZE(1);
+    ASSERT_EVENTS_RxNakLimitReached(0,                     // index
+                                    Cfdp::Class::CLASS_2,  // cfdpClass
+                                    sourceEid,             // srcEid
+                                    transactionSeq         // seqNum
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
@@ -1089,10 +1214,12 @@ void CfdpManagerTester::testInvalidDestinationEidEvent() {
                           Cfdp::Class::CLASS_1, 0);
     this->component.doDispatch();
 
-    // Verify exact event count and InvalidDestinationEid event
+    // Verify exact event count and InvalidDestinationEid event with its argument
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidDestinationEid_SIZE(1);
-    // Note: Payload verification not available for this event - no ASSERT macro generated
+    ASSERT_EVENTS_InvalidDestinationEid(0,            // index
+                                        wrongDestEid  // invalid destination EID
+    );
 }
 
 // ----------------------------------------------------------------------
@@ -1587,9 +1714,12 @@ void CfdpManagerTester::testFileRemoveFailedEvent() {
     // Directly call handleNotKeepFile which will try to delete the protected file
     this->component.m_engine->handleNotKeepFile(txn);
 
-    // Verify FileRemoveFailed event was emitted
+    // Verify FileRemoveFailed event and its filename argument. The status field is an
+    // OS-dependent file-op code, so only the filename is asserted.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileRemoveFailed_SIZE(1);
+    ASSERT_STREQ("/root/protected_file_that_cannot_be_deleted.bin",
+                 this->eventHistory_FileRemoveFailed->at(0).filename.toChar());
 
     // Cleanup
     Os::FileSystem::removeFile(dstFile);
@@ -1615,9 +1745,11 @@ void CfdpManagerTester::testPlaybackDirOpenFailedEvent() {
         this->component.doDispatch();
     }
 
-    // Verify exact event count and PlaybackDirOpenFailed event
+    // Verify exact event count and PlaybackDirOpenFailed event with its directory argument.
+    // The status field is an OS-dependent directory-op code, so only the directory is asserted.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirOpenFailed_SIZE(1);
+    ASSERT_STREQ(nonexistentDir.toChar(), this->eventHistory_PlaybackDirOpenFailed->at(0).directory.toChar());
 }
 
 // ----------------------------------------------------------------------
@@ -1647,9 +1779,15 @@ void CfdpManagerTester::testRxWriteFailedEvent() {
                     Cfdp::Class::CLASS_1);
     component.doDispatch();
 
-    // Verify RxWriteFailed event
-    // Note: Additional events may be emitted due to transaction state changes after write failure
+    // Verify RxWriteFailed event and its deterministic arguments.
+    // Note: Additional events may be emitted due to transaction state changes after write failure,
+    // so only the specific _SIZE guard is used. "expected" is the FileData PDU dataSize (32).
+    // "actual" is the OS-reported bytes-written on failure, so it is intentionally not asserted.
     ASSERT_EVENTS_RxWriteFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_1, this->eventHistory_RxWriteFailed->at(0).cfdpClass);
+    ASSERT_EQ(static_cast<U32>(TEST_GROUND_EID), this->eventHistory_RxWriteFailed->at(0).srcEid);
+    ASSERT_EQ(600u, this->eventHistory_RxWriteFailed->at(0).seqNum);
+    ASSERT_EQ(32u, this->eventHistory_RxWriteFailed->at(0).expected);
 }
 
 void CfdpManagerTester::testRxSeekFailedEvent() {
@@ -1675,9 +1813,15 @@ void CfdpManagerTester::testRxSeekFailedEvent() {
                     Cfdp::Class::CLASS_1);
     component.doDispatch();
 
-    // Verify RxSeekFailed event
-    // Note: Additional events may be emitted due to transaction state changes after seek failure
+    // Verify RxSeekFailed event and its deterministic arguments.
+    // Note: Additional events may be emitted due to transaction state changes after seek failure,
+    // so only the specific _SIZE guard is used. "offset" is the FileData PDU offset (50). The
+    // status field is an OS-dependent file-op code, so it is intentionally not asserted.
     ASSERT_EVENTS_RxSeekFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_1, this->eventHistory_RxSeekFailed->at(0).cfdpClass);
+    ASSERT_EQ(static_cast<U32>(TEST_GROUND_EID), this->eventHistory_RxSeekFailed->at(0).srcEid);
+    ASSERT_EQ(700u, this->eventHistory_RxSeekFailed->at(0).seqNum);
+    ASSERT_EQ(50u, this->eventHistory_RxSeekFailed->at(0).offset);
 }
 
 void CfdpManagerTester::testRxFileRenameFailedEvent() {
@@ -1753,10 +1897,23 @@ void CfdpManagerTester::testRxFileRenameFailedEvent() {
     // Directly call r2RecvMd -> parses MD (MetadataReceived) then moveFile fails (RxFileRenameFailed)
     txn->r2RecvMd(pduBuffer);
 
-    // Verify events: MetadataReceived (from recvMd) + RxFileRenameFailed (rename failure)
+    // Verify events: MetadataReceived (from recvMd) + RxFileRenameFailed (rename failure).
+    // The rename SOURCE (tempFile) is the transaction's initial dst_filename (moveSource); the
+    // rename DEST (finalFile) is the metadata's dest filename (badDest). The status field is an
+    // OS-dependent file-op code, so it is intentionally not asserted.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    ASSERT_EVENTS_MetadataReceived(0,               // index
+                                   "test_src.dat",  // srcFile from metadata
+                                   badDest,         // destFile from metadata
+                                   seq              // transaction sequence number
+    );
     ASSERT_EVENTS_RxFileRenameFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxFileRenameFailed->at(0).cfdpClass);
+    ASSERT_EQ(sourceEid, this->eventHistory_RxFileRenameFailed->at(0).srcEid);
+    ASSERT_EQ(seq, this->eventHistory_RxFileRenameFailed->at(0).seqNum);
+    ASSERT_STREQ(moveSource, this->eventHistory_RxFileRenameFailed->at(0).tempFile.toChar());
+    ASSERT_STREQ(badDest, this->eventHistory_RxFileRenameFailed->at(0).finalFile.toChar());
 
     // Cleanup: moveFile failed so the source file still exists
     Os::FileSystem::removeFile(moveSource);
@@ -1925,9 +2082,15 @@ void CfdpManagerTester::testRxTempFileCreatedEvent() {
                     Cfdp::Class::CLASS_2);
     component.doDispatch();
 
-    // Verify RxTempFileCreated event
+    // Verify RxTempFileCreated event and its deterministic arguments. The transaction was
+    // created through the real receivePdu path (FileData before Metadata), so src_eid is the
+    // sender (TEST_GROUND_EID) and seq is the FileData PDU sequence (1000). The filename is a
+    // derived temp path (<tmpDir>/<src_eid>:<seq>.tmp), so it is not asserted here.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_RxTempFileCreated_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxTempFileCreated->at(0).cfdpClass);
+    ASSERT_EQ(static_cast<U32>(TEST_GROUND_EID), this->eventHistory_RxTempFileCreated->at(0).srcEid);
+    ASSERT_EQ(1000u, this->eventHistory_RxTempFileCreated->at(0).seqNum);
 
     // Cleanup temp file (temp file format: <tmpDir>/<src_eid>:<seq_num>.tmp)
     // Will be cleaned up by transaction cleanup
@@ -1988,9 +2151,13 @@ void CfdpManagerTester::testDanglingFileHandleClosedEvent() {
     Channel* chan = component.m_engine->m_channels[channelId];
     chan->recycleTransaction(txn);
 
-    // Verify DanglingFileHandleClosed event
+    // Verify DanglingFileHandleClosed event and its arguments
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_DanglingFileHandleClosed_SIZE(1);
+    ASSERT_EVENTS_DanglingFileHandleClosed(0,              // index
+                                           channelId,      // channel ID
+                                           transactionSeq  // transaction sequence
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(testFile);
@@ -2218,9 +2385,13 @@ void CfdpManagerTester::testUnsupportedSendFileArgumentsEvent() {
     // active component's empty message queue.
     invoke_to_fileIn(0, source, dest, 100, 50);
 
-    // Verify UnsupportedSendFileArguments event
+    // Verify UnsupportedSendFileArguments event and its arguments (offset=100, length=50)
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_UnsupportedSendFileArguments_SIZE(1);
+    ASSERT_EVENTS_UnsupportedSendFileArguments(0,    // index
+                                               100,  // offset
+                                               50    // length
+    );
 
     // Cleanup
     Os::FileSystem::removeFile(testFile);
@@ -2253,11 +2424,14 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     // active component's empty message queue.
     invoke_to_fileIn(0, source, dest, 0, 0);
 
-    // Verify SendFileInitiateFail event
+    // Verify SendFileInitiateFail event and its argument (the source filename).
     // txFile()'s slot-exhaustion path also emits MaxTxTransactionsReached (Engine.cpp),
     // so the deterministic total is 2 (MaxTxTransactionsReached + SendFileInitiateFail).
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_SendFileInitiateFail_SIZE(1);
+    ASSERT_EVENTS_SendFileInitiateFail(0,               // index
+                                       source.toChar()  // source file that failed to send
+    );
 }
 
 void CfdpManagerTester::testInvalidChannelPollEvent() {
@@ -2271,9 +2445,13 @@ void CfdpManagerTester::testInvalidChannelPollEvent() {
                           Fw::CmdStringArg("test/ut/output"), Fw::CmdStringArg("/dest"));
     component.doDispatch();
 
-    // Verify InvalidChannelPoll event
+    // Verify InvalidChannelPoll event and its arguments
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannelPoll_SIZE(1);
+    ASSERT_EVENTS_InvalidChannelPoll(0,                             // index
+                                     invalidPollIndex,              // requested poll ID
+                                     CFDP_MAX_POLLING_DIR_PER_CHAN  // maximum poll ID
+    );
 }
 
 void CfdpManagerTester::testChunklistUnavailableEvent() {
@@ -2318,13 +2496,16 @@ void CfdpManagerTester::testChunklistUnavailableEvent() {
                           sizeof(testData), testData, Cfdp::Class::CLASS_2);
     this->component.doDispatch();
 
-    // Verify ChunklistUnavailable event
+    // Verify ChunklistUnavailable event and its argument.
     // Note: Two events are emitted:
     // 1. ChunklistUnavailable (line 509 of Engine.cpp) - when chunklist allocation fails
     // 2. RxFileTransferCompleted (from finishTransaction line 962) - transaction status is UNDEFINED
     //    which TxnStatusIsError treats as non-error, so success path is taken
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_ChunklistUnavailable_SIZE(1);
+    ASSERT_EVENTS_ChunklistUnavailable(0,    // index
+                                       9999  // abandoned transaction sequence
+    );
     ASSERT_EVENTS_RxFileTransferCompleted_SIZE(1);
 
     // Note: No cleanup needed - chunklists remain allocated but test isolation
@@ -2412,9 +2593,12 @@ void CfdpManagerTester::testFailKeepFileMoveEvent() {
 
     component.m_engine->handleNotKeepFile(txn);
 
-    // Step 6: Assert FailKeepFileMove event was emitted
+    // Step 6: Assert FailKeepFileMove event and its filename arguments. The status field is an
+    // OS-dependent file-op code, so only srcFile and moveDir are asserted.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailKeepFileMove_SIZE(1);
+    ASSERT_STREQ(srcFile, this->eventHistory_FailKeepFileMove->at(0).srcFile.toChar());
+    ASSERT_STREQ(invalidMoveDir.toChar(), this->eventHistory_FailKeepFileMove->at(0).moveDir.toChar());
 
     // Step 7: Cleanup test file
     Os::FileSystem::removeFile(srcFile);
@@ -2539,10 +2723,12 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     // Step 7: Direct engine call (nothing queued -> no doDispatch)
     component.m_engine->handleNotKeepFile(txn);
 
-    // Step 8: Assert exactly the FailPollFileMove event was emitted.
-    // (moveFile status is OS-dependent, so only the count is asserted.)
+    // Step 8: Assert the FailPollFileMove event and its filename arguments.
+    // (moveFile status is OS-dependent, so only srcFile and failDir are asserted.)
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FailPollFileMove_SIZE(1);
+    ASSERT_STREQ(srcFile, this->eventHistory_FailPollFileMove->at(0).srcFile.toChar());
+    ASSERT_STREQ(failDir.toChar(), this->eventHistory_FailPollFileMove->at(0).failDir.toChar());
 
     // Cleanup: the move failed so the source file remains
     Os::FileSystem::removeFile(srcFile);
@@ -2684,9 +2870,11 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
 
-    // Verify PlaybackDirReadFailed event was emitted.
+    // Verify PlaybackDirReadFailed event and its directory argument (the playback source dir).
+    // The status field is an OS-dependent directory-op code, so only the directory is asserted.
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PlaybackDirReadFailed_SIZE(1);
+    ASSERT_STREQ(srcDir.toChar(), this->eventHistory_PlaybackDirReadFailed->at(0).directory.toChar());
 }
 
 void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
@@ -2802,10 +2990,22 @@ void CfdpManagerTester::testRxFileReopenFailedEvent() {
     // then reopen of the (now-directory) dest for writing fails -> RxFileReopenFailed.
     txn->r2RecvMd(pduBuffer);
 
-    // Verify events: MetadataReceived (from recvMd) + RxFileReopenFailed (reopen failure)
+    // Verify events: MetadataReceived (from recvMd) + RxFileReopenFailed (reopen failure).
+    // After the successful rename, the transaction's dst_filename is the metadata dest (moveDest),
+    // which is the file that failed to reopen. The status field is an OS-dependent file-op code,
+    // so it is intentionally not asserted.
     ASSERT_EVENTS_SIZE(2);
     ASSERT_EVENTS_MetadataReceived_SIZE(1);
+    ASSERT_EVENTS_MetadataReceived(0,               // index
+                                   "test_src.dat",  // srcFile from metadata
+                                   moveDest,        // destFile from metadata
+                                   seq              // transaction sequence number
+    );
     ASSERT_EVENTS_RxFileReopenFailed_SIZE(1);
+    ASSERT_EQ(Cfdp::Class::CLASS_2, this->eventHistory_RxFileReopenFailed->at(0).cfdpClass);
+    ASSERT_EQ(sourceEid, this->eventHistory_RxFileReopenFailed->at(0).srcEid);
+    ASSERT_EQ(seq, this->eventHistory_RxFileReopenFailed->at(0).seqNum);
+    ASSERT_STREQ(moveDest, this->eventHistory_RxFileReopenFailed->at(0).filename.toChar());
 
     // Cleanup: rename succeeded, so the source no longer exists; the dest is now the directory.
     Os::FileSystem::removeDirectory(moveDest);
