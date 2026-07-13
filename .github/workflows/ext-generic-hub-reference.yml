@@ -26,7 +26,7 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: JPL-Devin/fprime-generic-hub-reference
+      target_repository: fprime-community/fprime-generic-hub-reference
 
   hub-communication:
     name: "Generic Hub round-trip"
@@ -36,7 +36,7 @@ jobs:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
-          repository: JPL-Devin/fprime-generic-hub-reference
+          repository: fprime-community/fprime-generic-hub-reference
           ref: ${{ needs.get-branch.outputs.target-branch }}
           submodules: recursive
 
