@@ -982,26 +982,29 @@ void CfdpManagerTester::testResetCountersAllChannels() {
 void CfdpManagerTester::testDataReturnInChannel0() {
     // Test that dataReturnIn port can be invoked on channel 0
     // Note: This is a basic test that the port is wired correctly.
-    // Full testing would require an active transaction to generate PDUs.
+
+    this->clearHistory();
 
     // Create a buffer to return
     U8 testData[100] = {0};
     Fw::Buffer testBuffer(testData, sizeof(testData));
 
     // Invoke dataReturnIn port on channel 0
-    // This should not crash and should deallocate the buffer
     this->invoke_to_dataReturnIn(0, testBuffer);
     this->component.doDispatch();
 
-    // Verify no error events
-    // Note: The component may or may not deallocate depending on whether
-    // it's tracking this buffer. The key is that it doesn't crash.
+    // dataReturnIn_handler unconditionally forwards the buffer to
+    // bufferDeallocate exactly once, on the matching channel port.
+    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_bufferDeallocate(0, testBuffer);
     ASSERT_EVENTS_SIZE(0);
 }
 
 void CfdpManagerTester::testDataReturnInChannel1() {
     // Test that dataReturnIn port can be invoked on channel 1
     // This verifies multi-channel port array indexing works correctly
+
+    this->clearHistory();
 
     // Create a buffer to return
     U8 testData[100] = {0};
@@ -1011,7 +1014,10 @@ void CfdpManagerTester::testDataReturnInChannel1() {
     this->invoke_to_dataReturnIn(1, testBuffer);
     this->component.doDispatch();
 
-    // Verify no error events
+    // dataReturnIn_handler unconditionally forwards the buffer to
+    // bufferDeallocate exactly once, on the matching channel port.
+    ASSERT_from_bufferDeallocate_SIZE(1);
+    ASSERT_from_bufferDeallocate(0, testBuffer);
     ASSERT_EVENTS_SIZE(0);
 }
 
