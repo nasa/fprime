@@ -60,9 +60,6 @@ jobs:
       - name: "Generate"
         run: fprime-util generate
 
-      - name: "Generate GenericHub autocode"
-        run: ninja -C build-fprime-automatic-native F-Prime/Svc/GenericHub/GenericHubComponentAc.hpp
-
       - name: "Build"
         run: fprime-util build -j8
 
