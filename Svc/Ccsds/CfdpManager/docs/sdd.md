@@ -452,13 +452,11 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 
 | Event Name | Severity | Description |
 |------------|----------|-------------|
-| SendFileInitiated | activity low | Successfully initiated file send transfer for source file |
+| TxFileQueued | activity low | TX file queued for source file (transaction sequence number) |
 | SendFileInitiateFail | warning low | Failed to initiate file send transfer for source file |
 | UnsupportedSendFileArguments | warning low | Invalid send file port request with offset and length |
 | InvalidChannel | warning low | Invalid channel ID, maximum channel ID is specified |
 | PlaybackInitiated | activity low | Successfully initiated directory playback for source directory |
-| PlaybackInitiateFail | warning low | Failed to initiate directory playback for source directory |
-| PlaybackInvalidChannel | warning low | Invalid channel ID for playback, maximum channel ID is specified |
 | PollDirInitiated | activity low | Successfully initiated directory poll for source directory |
 | PollDirStopped | activity low | Successfully stopped directory poll for channel and poll index |
 | PollDirBusy | warning low | Cannot start directory poll - channel poll already in use |
@@ -492,6 +490,8 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | RxSeekFailed | warning low | RX transaction failed to seek to offset |
 | RxWriteFailed | warning low | RX transaction write failed: expected bytes vs actual bytes |
 | RxFileSizeMismatch | warning low | RX transaction EOF file size mismatch: expected vs actual |
+| RxEofCancelReceived | activity high | RX transaction cancelled by sender |
+| RxEofWithError | warning low | RX transaction received EOF with error condition code |
 | RxSeekCrcFailed | warning low | RX transaction failed to seek during CRC calculation |
 | RxReadCrcFailed | warning low | RX transaction failed to read during CRC calculation |
 | RxEofMdSizeMismatch | warning low | RX transaction EOF/metadata size mismatch |
@@ -523,7 +523,9 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 |------------|----------|-------------|
 | TxFileTransferStarted | activity high | TX starting file transfer: source file -> dest file |
 | TxFileTransferCompleted | activity high | TX completed file transfer: source file -> dest file |
+| TxFileTransferFailed | warning low | TX transaction FAILED: source file -> dest file, error code |
 | RxFileTransferCompleted | activity high | RX completed file transfer: source file -> dest file |
+| RxFileTransferFailed | warning low | RX transaction FAILED: source file -> dest file, error code |
 | MetadataReceived | activity low | Metadata received for source and destination files |
 
 ### Transaction Control Events
