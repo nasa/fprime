@@ -17,10 +17,6 @@ event FileOpenError(
     severity warning high \
     format "File open error encountered while opening {}: {}"
 
-event EmptySequenceFilePath() \
-    severity warning high \
-    format "Sequence file path is empty"
-
 event FileWriteError(
     writeSize: FwSizeType
     filePath: string

@@ -27,7 +27,8 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
     if (this->m_sequenceFilePath.length() == 0) {
-        this->log_WARNING_HI_EmptySequenceFilePath();
+        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath,
+                                           static_cast<I32>(Os::File::INVALID_ARGUMENT));
         return Fw::Success::FAILURE;
     }
 

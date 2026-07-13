@@ -3101,7 +3101,9 @@ TEST_F(FpySequencerTester, validate_emptySequenceFilePath) {
     dispatchUntilState(State::VALIDATING);
     dispatchUntilState(State::IDLE);
 
-    ASSERT_EVENTS_EmptySequenceFilePath_SIZE(1);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg(""));
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).errorCode, static_cast<I32>(Os::File::INVALID_ARGUMENT));
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
 }
