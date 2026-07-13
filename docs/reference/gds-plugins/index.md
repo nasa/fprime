@@ -5,7 +5,7 @@ hide:
 
 # GDS Plugins
 
-The system functional documentation provides a functional or capability description of F Prime and its components. This includes both a high level description of the functionality and corresponding requirements.
+Documentation for the Ground Data System (GDS) plugins used in F´. The plugins provide additional functionality to the GDS, such as communication protocols, data handling, and framing.
 
 
 ### GDS Plugins
