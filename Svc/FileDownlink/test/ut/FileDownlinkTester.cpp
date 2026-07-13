@@ -34,8 +34,9 @@ FileDownlinkTester ::FileDownlinkTester()
     this->component.configure(COOLDOWN_MS, CYCLE_MS, 10);
     this->connectPorts();
     this->initComponents();
-    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
-    FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH] = {};
+    const char* cwdResult = getcwd(cwd, sizeof(cwd));
+    FW_ASSERT(cwdResult != nullptr);
     const FwSizeType cwdLen = std::strlen(cwd);
     FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
     if (cwd[cwdLen - 1] != '/') {
