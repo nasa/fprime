@@ -101,8 +101,11 @@ class Engine {
 
     /**
      * @brief Destroy the Engine object
+     *
+     * @note virtual because Engine has a virtual member (sendMd); this allows
+     *       safe destruction of the unit-test subclass through an Engine*.
      */
-    ~Engine();
+    virtual ~Engine();
 
     // ----------------------------------------------------------------------
     // Public interface

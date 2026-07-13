@@ -103,7 +103,7 @@ Fw::SerializeStatus EofPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) c
 
     // Condition code (CFDP Blue Book 5.2.6: bits 7-4 = condition code, bits 3-0 = spare/zero)
     // Note: CFDP uses big-endian bit numbering where bit 0 is MSB
-    U8 conditionCode = (static_cast<U8>(this->m_conditionCode) & 0x0F) << 4;  // Place in upper 4 bits
+    U8 conditionCode = static_cast<U8>((static_cast<U8>(this->m_conditionCode) & 0x0F) << 4);  // Place in upper 4 bits
     status = serialBuffer.serializeFrom(conditionCode);
     if (status != Fw::FW_SERIALIZE_OK) {
         return status;
