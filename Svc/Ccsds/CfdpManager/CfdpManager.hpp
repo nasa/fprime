@@ -301,13 +301,13 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Handler for command SendFile
     //!
     //! Command to start a CFDP file transaction
-    void SendFile_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                             U32 cmdSeq,           //!< The command sequence number
-                             U8 channelId,         //!< Channel ID for the file transaction
-                             EntityId destId,      //!< Destination entity id
-                             Class cfdpClass,      //!< CFDP class for the file transfer
-                             Keep keep,            //!< Whether or not to keep or delete the file upon completion
-                             U8 priority,          //!< Priority: 0=highest priority
+    void SendFile_cmdHandler(FwOpcodeType opCode,     //!< The opcode
+                             U32 cmdSeq,              //!< The command sequence number
+                             U8 channelId,            //!< Channel ID for the file transaction
+                             EntityId destId,         //!< Destination entity id
+                             const Class& cfdpClass,  //!< CFDP class for the file transfer
+                             const Keep& keep,        //!< Whether or not to keep or delete the file upon completion
+                             U8 priority,             //!< Priority: 0=highest priority
                              const Fw::CmdStringArg& sourceFileName,  //!< The name of the on-board file to send
                              const Fw::CmdStringArg& destFileName  //!< The name of the destination file on the ground
                              ) override;
@@ -320,8 +320,8 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U32 cmdSeq,                               //!< The command sequence number
         U8 channelId,                             //!< Channel ID for the file transaction(s)
         EntityId destId,                          //!< Destination entity id
-        Class cfdpClass,                          //!< CFDP class for the file transfer(s)
-        Keep keep,                                //!< Whether or not to keep or delete the file(s) upon completion
+        const Class& cfdpClass,                   //!< CFDP class for the file transfer(s)
+        const Keep& keep,                         //!< Whether or not to keep or delete the file(s) upon completion
         U8 priority,                              //!< Priority: 0=highest priority
         const Fw::CmdStringArg& sourceDirectory,  //!< The name of the on-board directory to send
         const Fw::CmdStringArg& destDirectory     //!< The name of the destination directory on the ground
@@ -336,7 +336,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
         U8 channelId,                             //!< Channel ID for the file transaction(s)
         U8 pollId,                                //!< Channel poll ID for the file transaction(s)
         EntityId destId,                          //!< Destination entity id
-        Class cfdpClass,                          //!< CFDP class for the file transfer(s)
+        const Class& cfdpClass,                   //!< CFDP class for the file transfer(s)
         U8 priority,                              //!< Priority: 0=highest priority
         U32 interval,                             //!< Interval to poll the directory in seconds
         const Fw::CmdStringArg& sourceDirectory,  //!< The name of the on-board directory to send
@@ -358,7 +358,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void SetChannelFlow_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                    U32 cmdSeq,           //!< The command sequence number
                                    U8 channelId,         //!< Channel ID to set
-                                   Flow freeze           //!< Flow state to set
+                                   const Flow& freeze    //!< Flow state to set
                                    ) override;
 
     //! Handler for command SuspendResumeTransaction
@@ -369,7 +369,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
                                              U8 channelId,                   //!< Channel ID for the transaction
                                              TransactionSeq transactionSeq,  //!< Transaction sequence number
                                              EntityId entityId,              //!< Entity ID of the transaction
-                                             SuspendResume action            //!< Action to take: SUSPEND or RESUME
+                                             const SuspendResume& action     //!< Action to take: SUSPEND or RESUME
                                              ) override;
 
     //! Handler for command CancelTransaction
