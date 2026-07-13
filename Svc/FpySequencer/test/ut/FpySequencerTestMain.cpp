@@ -3091,6 +3091,21 @@ TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
     removeFile("test.bin");
 }
 
+TEST_F(FpySequencerTester, validate_emptySequenceFilePath) {
+    allocMem();
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(""), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String(""));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+
+    ASSERT_EVENTS_EmptySequenceFilePath_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
     // a base dir that doesn't exist makes file open fail. the FileOpenError
     // event should report the fully resolved path, not the user-supplied one
