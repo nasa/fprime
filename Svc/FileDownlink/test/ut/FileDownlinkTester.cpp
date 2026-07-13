@@ -11,7 +11,9 @@
 
 #include <unistd.h>
 #include <cerrno>
+#include <cstring>
 
+#include <Os/FilePathUtils.hpp>
 #include "FileDownlinkTester.hpp"
 
 #define INSTANCE 0
@@ -32,6 +34,15 @@ FileDownlinkTester ::FileDownlinkTester()
     this->component.configure(COOLDOWN_MS, CYCLE_MS, 10);
     this->connectPorts();
     this->initComponents();
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
+    const FwSizeType cwdLen = std::strlen(cwd);
+    FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
+    if (cwd[cwdLen - 1] != '/') {
+        cwd[cwdLen] = '/';
+        cwd[cwdLen + 1] = '\0';
+    }
+    this->component.configure(cwd);
 }
 
 FileDownlinkTester ::~FileDownlinkTester() {
@@ -109,6 +120,20 @@ void FileDownlinkTester ::fileOpenError() {
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
     //    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+}
+
+void FileDownlinkTester ::sourceOutOfSandbox() {
+    const char* const sourceFileName = "/etc/hosts";
+    const char* const destFileName = "dest.bin";
+
+    this->sendFile(sourceFileName, destFileName,
+                   (FILEDOWNLINK_COMMAND_FAILURES_DISABLED) ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_Warnings(0, 1);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SourceOutOfSandbox_SIZE(1);
+    ASSERT_EVENTS_SourceOutOfSandbox(0, sourceFileName);
 }
 
 void FileDownlinkTester ::cancelDownlink() {
