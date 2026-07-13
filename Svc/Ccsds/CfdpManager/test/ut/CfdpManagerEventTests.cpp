@@ -1077,7 +1077,7 @@ void CfdpManagerTester::testRxAckLimitReachedEvent() {
 
     // Set acknak_count to one less than the limit
     U8 ack_limit = this->component.getAckLimitParam(channelId);
-    txn->m_state_data.receive.r2.acknak_count = ack_limit - 1;
+    txn->m_state_data.receive.r2.acknak_count = static_cast<U8>(ack_limit - 1);
 
     // Arm the timer and make it expire
     txn->m_ack_timer.setTimer(1);
@@ -1151,7 +1151,7 @@ void CfdpManagerTester::testRxNakLimitReachedEvent() {
 
     // Set acknak_count to one less than the limit
     U8 nak_limit = this->component.getNackLimitParam(channelId);
-    txn->m_state_data.receive.r2.acknak_count = nak_limit - 1;
+    txn->m_state_data.receive.r2.acknak_count = static_cast<U8>(nak_limit - 1);
 
     // Call r2Complete - this will detect gaps, increment acknak_count to the limit,
     // and emit the RxNakLimitReached event
