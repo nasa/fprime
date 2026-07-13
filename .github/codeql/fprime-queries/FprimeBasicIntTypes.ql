@@ -82,6 +82,12 @@ where
   not usedType instanceof BoolType and
   // Ignore violations for which we do not have a valid location.
   not d.getLocation() instanceof UnknownLocation and
+  // F Prime: ignore declarations in template instantiations. Instantiating a
+  // template parameter with an allowed typedef (e.g. `U32`) records the
+  // underlying builtin type (`unsigned int`) on the instantiated declaration,
+  // so such declarations would be misreported. The template itself is still
+  // checked, so literal uses of basic types in template code are still flagged.
+  not d.isFromTemplateInstantiation(_) and
   // F Prime: allow the plain `char` type when used as a C-string or character
   // array (i.e. reached through pointer or array indirection). A scalar `char`,
   // and `signed char`/`unsigned char` in any form, are still flagged.
