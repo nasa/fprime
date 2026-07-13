@@ -36,6 +36,7 @@ void CfdpManagerTester::testClass2RxNominalChannel1() {
                           "test/ut/output/test_class2_rx_ch1_received.bin", "/ground/test_class2_rx_ch1_source.bin",
                           expectedFileSize,
                           false,  // No NAK simulation
+                          true,   // Expect exact counts (single transaction)
                           TEST_CHANNEL_ID_1);
 }
 

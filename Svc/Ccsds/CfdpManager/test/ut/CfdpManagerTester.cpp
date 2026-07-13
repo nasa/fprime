@@ -562,6 +562,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
                                               const char* groundSrcFile,
                                               FwSizeType expectedFileSize,
                                               bool simulateNak,
+                                              bool expectExactCounts,
                                               U8 channelId) {
     const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
     const U32 transactionSeq = simulateNak ? 300 : 200;
@@ -775,18 +776,26 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
 
     // Verify RX counters (cumulative across all transactions on this channel)
     U8 numFileDataPdus = static_cast<U8>(actualFileSize / dataPerPdu);
-    // Note: expectedRecvPdus calculated for future validation enhancement
-    // U32 expectedRecvPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData PDUs + EOF + FIN-ACK
-    // if (simulateNak) {
-    //     expectedRecvPdus += 3;  // Add 3 retransmitted FileData PDUs
-    // }
-    EXPECT_GT(tlm[channelId].get_recvPdu(), numFileDataPdus)
-        << "recvPdu should include Metadata + FileData + EOF + FIN-ACK";
-    EXPECT_GE(tlm[channelId].get_recvFileDataBytes(), actualFileSize)
-        << "recvFileDataBytes should be at least file size (cumulative)";
+    U32 expectedRecvPdus = 1 + numFileDataPdus + 1 + 1;  // Metadata + FileData PDUs + EOF + FIN-ACK
+    if (simulateNak) {
+        expectedRecvPdus += 3;  // Add 3 retransmitted FileData PDUs
+    }
 
-    // Verify TX counters (Class2 RX sends EOF-ACK + FIN; may be higher with NAKs)
-    EXPECT_GE(tlm[channelId].get_sentPdu(), 2u) << "sentPdu should be at least 2 (EOF-ACK + FIN)";
+    if (expectExactCounts && !simulateNak) {
+        // Single-transaction test without NAKs: expect exact counts
+        EXPECT_EQ(expectedRecvPdus, tlm[channelId].get_recvPdu())
+            << "recvPdu should be exactly Metadata + FileData + EOF + FIN-ACK";
+        EXPECT_EQ(actualFileSize, tlm[channelId].get_recvFileDataBytes())
+            << "recvFileDataBytes should exactly match file size";
+        EXPECT_EQ(2u, tlm[channelId].get_sentPdu()) << "sentPdu should be exactly 2 (EOF-ACK + FIN)";
+    } else {
+        // Multi-transaction test or NAK test: use lower bounds
+        EXPECT_GT(tlm[channelId].get_recvPdu(), numFileDataPdus)
+            << "recvPdu should include Metadata + FileData + EOF + FIN-ACK";
+        EXPECT_GE(tlm[channelId].get_recvFileDataBytes(), actualFileSize)
+            << "recvFileDataBytes should be at least file size (cumulative)";
+        EXPECT_GE(tlm[channelId].get_sentPdu(), 2u) << "sentPdu should be at least 2 (EOF-ACK + FIN)";
+    }
     if (simulateNak) {
         EXPECT_GT(tlm[channelId].get_sentNakSegmentRequests(), 0u)
             << "NAK segment requests should be sent when gaps detected";
@@ -1000,7 +1009,8 @@ void CfdpManagerTester::testClass2RxNominal() {
 
     sendAndVerifyClass2Rx("test/ut/output/test_class2_rx_source.bin", "test/ut/output/test_class2_rx_received.bin",
                           "/ground/test_class2_rx_source.bin", expectedFileSize,
-                          false  // No NAK simulation
+                          false,  // No NAK simulation
+                          true    // Expect exact counts (single transaction)
     );
 }
 

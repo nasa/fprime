@@ -748,12 +748,14 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! @param groundSrcFile Source filename from ground perspective
     //! @param expectedFileSize Expected size of file to receive
     //! @param simulateNak If true, simulate missing FileData to trigger NAK (optional, default false)
+    //! @param expectExactCounts If true, assert exact counter values (single-transaction no-NAK only)
     //! @param channelId CFDP channel to run the transfer on (default channel 0)
     void sendAndVerifyClass2Rx(const char* srcFile,
                                const char* dstFile,
                                const char* groundSrcFile,
                                FwSizeType expectedFileSize,
                                bool simulateNak = false,
+                               bool expectExactCounts = false,
                                U8 channelId = TEST_CHANNEL_ID_0);
 
     //! Verify FIN-ACK PDU at given index
