@@ -223,6 +223,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: generic-hub-reference-logs
-          path: hub-communication-logs
+          path: |
+            hub-communication-logs
+            !hub-communication-logs/gds/**/TestLog_*.xlsx
           if-no-files-found: warn
           retention-days: 5
