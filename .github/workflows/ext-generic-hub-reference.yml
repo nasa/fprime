@@ -82,19 +82,17 @@ jobs:
           GDS_LOG_DIR="${LOG_DIR}/gds"
           A_EVENT_LOG=""
 
-          # Allocate an unused TCP port.
-          free_tcp_port() {
-            python - <<'PY'
+          # Allocate two distinct unused TCP ports.
+          read -r PORT_A PORT_B < <(python - <<'PY'
           import socket
 
-          with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-              sock.bind(("127.0.0.1", 0))
-              print(sock.getsockname()[1])
+          with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as first, \
+                  socket.socket(socket.AF_INET, socket.SOCK_STREAM) as second:
+              first.bind(("127.0.0.1", 0))
+              second.bind(("127.0.0.1", 0))
+              print(first.getsockname()[1], second.getsockname()[1])
           PY
-          }
-
-          PORT_A="$(free_tcp_port)"
-          PORT_B="$(free_tcp_port)"
+          )
           B_PID=""
           GDS_PID=""
           A_PID=""
@@ -195,12 +193,7 @@ jobs:
             --deployment-config "${A_TEST_CONFIG}" \
             --logs "${GDS_LOG_DIR}"
 
-          # Observe the command path on DeploymentB's console.
-          echo "Sending HubCommandTest"
-          fprime-cli command-send \
-            -d "${A_DIR}" \
-            --dictionary "${A_DICT}" \
-            FprimeGenericHubReference.DeploymentA.c_comp.HubCommandTest
+          # Verify the pytest-issued command on DeploymentB's console.
           sleep 3
 
           if ! grep -q "OpCodeDispatched : Opcode 0x11017500 dispatched" "${B_LOG}"; then
