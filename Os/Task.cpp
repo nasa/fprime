@@ -73,7 +73,7 @@ void Task::suspend() {
     this->suspend(Task::SuspensionType::UNINTENTIONAL);
 }
 
-Task::State Task::getState() {
+Task::State Task::getState() const {
     Task::State state;
     this->m_lock.lock();
     state = this->m_state;

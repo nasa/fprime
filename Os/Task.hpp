@@ -256,7 +256,7 @@ class Task final : public TaskInterface {
     //! and exited.
     //!
     //! \return task state
-    State getState();
+    State getState() const;
 
     //! \brief start this task
     //!
@@ -388,7 +388,7 @@ class Task final : public TaskInterface {
 
     TaskString m_name;  //!< Task object name
     TaskInterface::State m_state = Task::NOT_STARTED;
-    Mutex m_lock;                       //!< Guards state transitions
+    mutable Mutex m_lock;               //!< Guards state transitions
     TaskRoutineWrapper m_wrapper;       //!< Concrete storage for task routine wrapper
     FwTaskPriorityType m_priority = 0;  // Storage of priority
 

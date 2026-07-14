@@ -51,7 +51,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
         }
 
         //! Get the Mode value
-        Type get() {
+        Type get() const {
             this->m_mutex.lock();
             const Type value = this->m_value;
             this->m_mutex.unLock();
@@ -63,7 +63,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
         Type m_value;
 
         //! The Mode mutex
-        Os::Mutex m_mutex;
+        mutable Os::Mutex m_mutex;
     };
 
     //! Class representing an outgoing file
