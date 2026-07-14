@@ -1,4 +1,4 @@
-# How-To: Load Parameters in Batch
+# Load Parameters in Batch
 
 
 ## Overview
