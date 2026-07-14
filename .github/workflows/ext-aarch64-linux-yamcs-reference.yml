@@ -69,10 +69,9 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          # Install yamcs-client 1.x which has yamcs.tmtc module
           pip install "yamcs-client<2.0.0"
-          pip install git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC
-          pip install git+https://github.com/yvijay99/fprime-yamcs.git@yamcsPOC
+          pip install "fprime-gds==4.2.1"
+          pip install "fprime-yamcs==0.1.3"
 
       - name: "Prepare deployment"
         run: |
@@ -95,48 +94,21 @@ jobs:
             exit 1
           fi
 
-      - name: "Run deployment-specific YAMCS tests"
+      - name: "Run YAMCS-specific tests"
         run: |
-          rc=0
-          # YAMCS file transfer tests first, against an idle fileManager
           pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
             -v \
-            ./int/test_yamcs_file_transfer.py || rc=1
-          # Remaining deployment tests; health runs last in its own step
-          pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./int/int_config.json \
-            --use-yamcs \
-            -v \
-            --ignore=./int/test_yamcs_file_transfer.py \
-            --ignore=./int/test_cmd_health.py \
-            ./int/ || rc=1
-          exit $rc
+            ./int/
 
-      - name: "Run standard Svc integration tests from lib/fprime"
+      - name: "Run NASA F´ Svc integration tests"
         run: |
           pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
             -v \
-            ./fprime-svc/PrmDb/test/int/test_cmd_PrmDb.py \
-            ./fprime-svc/CmdDispatcher/test/int/test_cmd_dispatcher.py \
-            ./fprime-svc/DpCatalog/test/int/test_cmd_dpCatalog.py \
-            ./fprime-svc/DpManager/test/int/test_cmd_dpMgr.py \
-            ./fprime-svc/DpWriter/test/int/test_cmd_dpWriter.py \
-            ./fprime-svc/EventManager/test/int/test_cmd_eventManager.py \
-            ./fprime-svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
-            ./fprime-svc/FileManager/test/int/test_cmd_fileManager.py \
-            ./fprime-svc/SystemResources/test/int/test_cmd_systemResources.py
-
-      - name: "Run health integration test (last)"
-        run: |
-          pytest --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./int/int_config.json \
-            --use-yamcs \
-            -v \
-            ./int/test_cmd_health.py
+            ./fprime-svc/*/test/int/
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
