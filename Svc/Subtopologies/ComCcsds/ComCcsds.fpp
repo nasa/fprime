@@ -126,43 +126,7 @@ module ComCcsds {
         #     - [downstream].comStatusOut  -> ComCcsds.SpacePacketFraming.comStatusIn
         #     - [downstream].dataOut       -> ComCcsds.SpacePacketFraming.dataIn
 
-        # Active Components
-        instance comQueue
-
-        # Passive Components
-        instance commsBufferManager
-        instance fprimeRouter
-        instance spacePacketDeframer
-        instance spacePacketFramer
-        instance apidManager
-        instance aggregator
-
-        connections Downlink {
-            # ComQueue <-> SpacePacketFramer
-            comQueue.dataOut                -> spacePacketFramer.dataIn
-            spacePacketFramer.dataReturnOut -> comQueue.dataReturnIn
-            # SpacePacketFramer buffer and APID management
-            spacePacketFramer.bufferAllocate   -> commsBufferManager.bufferGetCallee
-            spacePacketFramer.bufferDeallocate -> commsBufferManager.bufferSendIn
-            spacePacketFramer.getApidSeqCount  -> apidManager.getApidSeqCountIn
-            # SpacePacketFramer <-> ComAggregator
-            spacePacketFramer.dataOut -> aggregator.dataIn
-            aggregator.dataReturnOut  -> spacePacketFramer.dataReturnIn
-
-            # ComStatus
-            aggregator.comStatusOut        -> spacePacketFramer.comStatusIn
-            spacePacketFramer.comStatusOut -> comQueue.comStatusIn
-            # (Outgoing) Aggregator <-> downstream connections shall be established by the user
-        }
-
-        connections Uplink {
-            # (Incoming) downstream <-> SpacePacketDeframer connections shall be established by the user
-            # SpacePacketDeframer APID validation
-            spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
-            # SpacePacketDeframer <-> Router
-            spacePacketDeframer.dataOut -> fprimeRouter.dataIn
-            fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
-        }
+        include "SpacePacketFraming.fppi"
 
         # ----------------------------------------------------------------------
         # Topology ports (open framing boundary)
@@ -194,19 +158,19 @@ module ComCcsds {
     # This subtopology uses SpacePacketFraming with a ComStub component for Com Interface,
     # providing a space-packet-only stack with no transfer frame layer.
     topology SpacePacket {
-        import SpacePacketFraming
+        include "SpacePacketFraming.fppi"
 
         instance comStub
 
         connections SpacePacketComStub {
             # SpacePacketFraming <-> ComStub (Downlink)
-            SpacePacketFraming.dataOut -> comStub.dataIn
-            comStub.dataReturnOut      -> SpacePacketFraming.dataReturnIn
-            comStub.comStatusOut       -> SpacePacketFraming.comStatusIn
+            aggregator.dataOut    -> comStub.dataIn
+            comStub.dataReturnOut -> aggregator.dataReturnIn
+            comStub.comStatusOut  -> aggregator.comStatusIn
 
             # ComStub <-> SpacePacketFraming (Uplink)
-            comStub.dataOut -> SpacePacketFraming.dataIn
-            SpacePacketFraming.dataReturnOut -> comStub.dataReturnIn
+            comStub.dataOut -> spacePacketDeframer.dataIn
+            spacePacketDeframer.dataReturnOut -> comStub.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
@@ -291,15 +255,7 @@ module ComCcsds {
         #     - ComCcsds.TmTcFraming.bufferAllocate   -> [BufferManager].bufferGetCallee
         #     - ComCcsds.TmTcFraming.bufferDeallocate -> [BufferManager].bufferSendIn
 
-        instance framer
-        instance tcDeframer
-        instance frameAccumulator
-
-        connections Uplink {
-            # FrameAccumulator <-> TcDeframer
-            frameAccumulator.dataOut -> tcDeframer.dataIn
-            tcDeframer.dataReturnOut -> frameAccumulator.dataReturnIn
-        }
+        include "TmTcFraming.fppi"
 
         # ----------------------------------------------------------------------
         # Topology ports
@@ -362,30 +318,13 @@ module ComCcsds {
         #     - [Svc.Com].dataOut       -> ComCcsds.FramingSubtopology.dataIn
 
         # Packet layer (router, ComQueue, space packet framer/deframer, buffer manager)
-        import SpacePacketFraming
+        include "SpacePacketFraming.fppi"
 
         # TM/TC transfer frame layer (TM framer, frame accumulator, TC deframer)
-        import TmTcFraming
+        include "TmTcFraming.fppi"
 
-        connections Downlink {
-            # SpacePacketFraming <-> TmTcFraming
-            SpacePacketFraming.dataOut -> TmTcFraming.dataIn
-            TmTcFraming.dataReturnOut  -> SpacePacketFraming.dataReturnIn
-
-            # ComStatus
-            TmTcFraming.comStatusOut -> SpacePacketFraming.comStatusIn
-            # (Outgoing) TmTcFraming <-> ComInterface connections shall be established by the user
-        }
-
-        connections Uplink {
-            # (Incoming) ComInterface <-> TmTcFraming connections shall be established by the user
-            # TmTcFraming buffer allocations
-            TmTcFraming.bufferDeallocate -> SpacePacketFraming.bufferSendIn
-            TmTcFraming.bufferAllocate   -> SpacePacketFraming.bufferGetCallee
-            # TmTcFraming <-> SpacePacketFraming
-            TmTcFraming.dataOut               -> SpacePacketFraming.dataIn
-            SpacePacketFraming.dataReturnOut  -> TmTcFraming.dataReturnIn
-        }
+        # Connections composing the packet layer with the transfer frame layer
+        include "FramingInterconnect.fppi"
 
         # ----------------------------------------------------------------------
         # Topology ports (Svc.Com boundary)
@@ -409,19 +348,26 @@ module ComCcsds {
 
     # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
     topology Subtopology {
-        import FramingSubtopology
+        # Packet layer (router, ComQueue, space packet framer/deframer, buffer manager)
+        include "SpacePacketFraming.fppi"
+
+        # TM/TC transfer frame layer (TM framer, frame accumulator, TC deframer)
+        include "TmTcFraming.fppi"
+
+        # Connections composing the packet layer with the transfer frame layer
+        include "FramingInterconnect.fppi"
 
         instance comStub
 
         connections ComStub {
-            # FramingSubtopology <-> ComStub (Downlink)
-            FramingSubtopology.dataOut -> comStub.dataIn
-            comStub.dataReturnOut      -> FramingSubtopology.dataReturnIn
-            comStub.comStatusOut       -> FramingSubtopology.comStatusIn
+            # TmTcFraming <-> ComStub (Downlink)
+            framer.dataOut        -> comStub.dataIn
+            comStub.dataReturnOut -> framer.dataReturnIn
+            comStub.comStatusOut  -> framer.comStatusIn
 
-            # ComStub <-> FramingSubtopology (Uplink)
-            comStub.dataOut -> FramingSubtopology.dataIn
-            FramingSubtopology.dataReturnOut -> comStub.dataReturnIn
+            # ComStub <-> TmTcFraming (Uplink)
+            comStub.dataOut -> frameAccumulator.dataIn
+            frameAccumulator.dataReturnOut -> comStub.dataReturnIn
         }
 
         # ----------------------------------------------------------------------

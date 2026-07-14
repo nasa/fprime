@@ -1,6 +1,6 @@
-# How-To: Implement an OS Abstraction Layer
+# Implement an OS Abstraction Layer
 
-This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the [OSAL Software Design Document](../../Os/docs/sdd.md).
+This guide provides step-by-step instructions for implementing a new OS Abstraction Layer (OSAL) for F´. The F´ OSAL provides a uniform interface to operating system services, allowing F´ to run on multiple operating systems without modification to the source code. For more information on the architecture and design of the OSAL, refer to the [OSAL Software Design Document](../../../Os/docs/sdd.md).
 
 ---
 
@@ -8,16 +8,16 @@ This guide provides step-by-step instructions for implementing a new OS Abstract
 
 Before starting, you should have:
 
-* An understanding of the [OSAL architecture](../../Os/docs/sdd.md#5-implementation-architecture), specifically the [delegate pattern](../../Os/docs/sdd.md#51-delegate-pattern).
+* An understanding of the [OSAL architecture](../../../Os/docs/sdd.md#5-implementation-architecture), specifically the [delegate pattern](../../../Os/docs/sdd.md#51-delegate-pattern).
 * A working F´ build environment for testing.
-* Familiarity with [F´ libraries](develop-fprime-libraries.md) and [F´ platform files](develop-fprime-libraries.md#optional-platform-folder-and-platform-files).
+* Familiarity with [F´ libraries](../develop/develop-fprime-libraries.md) and [F´ platform files](../develop/develop-fprime-libraries.md#optional-platform-folder-and-platform-files).
 * Knowledge of your target OS APIs (e.g., mutex, task creation, file I/O).
 
 ---
 
 ## Overview
 
-The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL _service_ (Mutex, File, Task, etc.) has three layers: an **interface class** defining the contract, a **wrapper class** (e.g., `Os::Mutex`) that application code uses, and a **platform-specific implementation** that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the [OSAL Software Design Document](../../Os/docs/sdd.md) — in particular the [delegate pattern](../../Os/docs/sdd.md#51-delegate-pattern) and [implementation architecture](../../Os/docs/sdd.md#5-implementation-architecture) sections — as this guide assumes familiarity with those concepts.
+The OSAL uses a delegate pattern to decouple F´ application code from platform-specific OS calls. Each OSAL _service_ (Mutex, File, Task, etc.) has three layers: an **interface class** defining the contract, a **wrapper class** (e.g., `Os::Mutex`) that application code uses, and a **platform-specific implementation** that the wrapper delegates to. The build system selects the implementation at link time. Before proceeding, read the [OSAL Software Design Document](../../../Os/docs/sdd.md) — in particular the [delegate pattern](../../../Os/docs/sdd.md#51-delegate-pattern) and [implementation architecture](../../../Os/docs/sdd.md#5-implementation-architecture) sections — as this guide assumes familiarity with those concepts.
 
 This guide walks through implementing an OSAL for a hypothetical OS called **"MyOs"**, and walks through the implementation of the `Os::Mutex` service as the example. The same process applies for all other OSAL services. Reference implementations are linked in the [Additional Resources](#additional-resources) section below.
 
@@ -25,7 +25,7 @@ This guide walks through implementing an OSAL for a hypothetical OS called **"My
 
 ## Step 1 — Set Up the Library
 
-An OSAL implementation is packaged as an [F´ library](develop-fprime-libraries.md). Create the following directory structure:
+An OSAL implementation is packaged as an [F´ library](../develop/develop-fprime-libraries.md). Create the following directory structure:
 
 ```
 fprime-my-os/
@@ -98,7 +98,7 @@ class MyOsMutex : public MutexInterface {
 ```
 
 > [!TIP]
-> Look at each interface header in `Os/` (e.g., `Os/Mutex.hpp`, `Os/File.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../Os/docs/sdd.md#24-error-handling).
+> Look at each interface header in `Os/` (e.g., `Os/Mutex.hpp`, `Os/File.hpp`, `Os/Task.hpp`) to see the exact set of pure virtual methods that need to be implemented for each. Each interface also defines a `Status` enum — your implementation must return the appropriate [status values](../../../Os/docs/sdd.md#24-error-handling).
 
 ### 2.2 — Implement the Methods
 
@@ -238,7 +238,7 @@ The process described above for `Os::Mutex` is the same for every OSAL module. F
 > [!NOTE]
 > F´ provides `Os_Generic_PriorityQueue`, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.
 
-The full set of [OSAL modules](../../Os/docs/sdd.md#2-core-services) that can be implemented is:
+The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can be implemented is:
 
 | Module | Interface | Key Methods |
 |---|---|---|
@@ -272,7 +272,7 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 
 ## Best Practices
 
-- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../Os/Stub) returns `NOT_SUPPORTED` for unimplemented services, allowing you to bring up an OSAL incrementally.
+- **Start with Stubs.** Only implement the modules you need. The [Stub backend](../../../Os/Stub) returns `NOT_SUPPORTED` for unimplemented services, allowing you to bring up an OSAL incrementally.
 - **Map error codes consistently.** Create a shared error-translation module (like `Os/Posix/error.hpp`) that converts your OS's native error codes to the F´ Os `Status` enums. This keeps error handling centralized and testable.
 - **Watch the handle size.** Each implementation object must fit in the fixed-size handle storage. If your native OS primitives are large, override `FW_MUTEX_HANDLE_MAX_SIZE` (or equivalent) in your platform configuration.
 - **Use other implementations as references.** The `Os/Posix/` directory is the most complete OSAL implementation in F´ and serves as the canonical example for all modules. Other implementations exist (see links above, or in the resources below)
@@ -282,8 +282,8 @@ The bottom line is that to use your new OSAL implementation, you need to add the
 
 ## Additional Resources
 
-- [OSAL Software Design Document](../../Os/docs/sdd.md) — Architecture details and design rationale.
-- [Develop an F´ Library](develop-fprime-libraries.md) — Library structure, toolchain, and platform files.
+- [OSAL Software Design Document](../../../Os/docs/sdd.md) — Architecture details and design rationale.
+- [Develop an F´ Library](../develop/develop-fprime-libraries.md) — Library structure, toolchain, and platform files.
 - [Porting Guide](porting-guide.md) — High-level checklist for porting F´ to a new platform.
 - [Posix OSAL implementation](https://github.com/nasa/fprime/tree/devel/Os/Posix) — Reference implementation for POSIX systems.
 - [fprime-zephyr](https://github.com/fprime-community/fprime-zephyr) — OSAL implementation for Zephyr RTOS.
