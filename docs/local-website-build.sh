@@ -32,7 +32,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 VENV_DIR="$SCRIPT_DIR/docs-venv"
 # mkdocs.yml sets docs_dir to the fprime/ root, so site_dir must be outside it.
-SITE_DIR="./site"
+SITE_DIR="$REPO_ROOT/../fprime-docs-site-local"
 PORT=8000
 
 echo -e "${BLUE}========================================${NC}"
@@ -72,11 +72,10 @@ python -m pip install \
 echo -e "${GREEN}Building nested docs website only...${NC}"
 rm -rf "$SITE_DIR"
 
-
 # Temporarily disable custom_dir since overrides/ doesn't exist in standalone fprime/ checkout
-sed 's/custom_dir:/#custom_dir:/' "$REPO_ROOT/mkdocs.yml" > "$REPO_ROOT/mkdocs.local.yml"
+sed 's/custom_dir:/#custom_dir:/' "$SCRIPT_DIR/mkdocs.yml" > "$SCRIPT_DIR/mkdocs.local.yml"
 
-mkdocs build --clean --config-file "$REPO_ROOT/mkdocs.local.yml"
+mkdocs build --clean --config-file "$SCRIPT_DIR/mkdocs.local.yml" --site-dir "$SITE_DIR"
 
 if [ $? -ne 0 ]; then
 	echo -e "${RED}Error: Documentation build failed${NC}"
