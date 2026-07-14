@@ -12,8 +12,9 @@ Please reference the [Svc::CmdSequencer](https://fprime.jpl.nasa.gov/v4.2.2/Svc/
 ## Writing an F´ Sequence File
 
 F´ sequence files consist of lists of commands. These commands start with a time argument, followed by the command
-mnemonic, and lastly any arguments to command.  See the example below, which are all pulled from the example sequence
+mnemonic, and lastly any arguments to command. See the example below, which are all pulled from the example sequence
 file found here: [simple_sequence.seq](https://github.com/fprime-community/fprime-gds/blob/devel/examples/simple_sequence.seq).
+
 
 ```
 A2015-075T22:32:40.123 cmdDisp.CMD_NO_OP
@@ -31,6 +32,9 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
 with a ;. The example file above goes into a greater explanation of the sample commands.
+
+> [!TIP]
+> If attempting to use sequencing to load parameters on to the spacecraft, it is possible to create the sequence file directly from a JSON file containing the new parameters. See [How-To: Load Parameters in Batch](https://fprime.jpl.nasa.gov/devel/docs/how-to/prm-write-how-to) for further instructions.
 
 ### Command Arguments
 
