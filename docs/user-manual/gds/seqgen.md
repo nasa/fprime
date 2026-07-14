@@ -7,7 +7,7 @@ binary format for upload and running using the command sequencer.
 Compiling this sequence is done with the `fprime-seqgen` utility and can be run once uploaded by issuing the `*.CS_RUN`
 command of any command sequencer instance defined in the flight system.
 
-Please reference the [Svc::CmdSequencer](https://fprime.jpl.nasa.gov/v4.2.2/Svc/CmdSequencer/docs/sdd/) and [Svc::CmdDispatcher](https://fprime.jpl.nasa.gov/v4.2.2/Svc/CmdDispatcher/docs/sdd/) SDD documentation for more information on the relevant F' standard components. Note that users may create multiple Command Sequencer components and manage them using a single Command Dispatcher component.
+Please reference the [Svc::CmdSequencer](https://fprime.jpl.nasa.gov/latest/Svc/CmdSequencer/docs/sdd/) and [Svc::CmdDispatcher](https://fprime.jpl.nasa.gov/latest/Svc/CmdDispatcher/docs/sdd/) SDD documentation for more information on the relevant F' standard components. Note that users may create multiple Command Sequencer components and manage them using a single Command Dispatcher component.
 
 ## Writing an F´ Sequence File
 
