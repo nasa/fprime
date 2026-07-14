@@ -327,7 +327,7 @@ Svc/FpySequencer/FpySequencerStack.cpp        87      87   100%
 Svc/FpySequencer/FpySequencerStateMachine.cpp
                                              157     142    90%   131-133,135-136,249-251,253-254,276-278,280-281
 Svc/FpySequencer/FpySequencerValidationState.cpp
-                                             131     120    91%   73,79,90-91,97-98,109,173-174,243-244
+                                             133     122    91%   76,82,93-94,100-101,112,176-177,246-247
 Svc/FrameAccumulator/FrameAccumulator.cpp
                                               89      89   100%
 Svc/FrameAccumulator/FrameDetector.hpp         1       1   100%
@@ -370,5 +370,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      18723   15363    82%
+TOTAL                                      18725   15365    82%
 ------------------------------------------------------------------------------
