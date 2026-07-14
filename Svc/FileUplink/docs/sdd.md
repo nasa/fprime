@@ -21,7 +21,11 @@ The design of `FileUplink` assumes the following:
 1. File uplink occurs by dividing files into packets
 of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 
-2. In the nominal case of file uplink
+2. File access may optionally be sandboxed to a configured directory via `configure(directory)`.
+When configured, all uplinked file paths are validated against the sandbox directory before writing.
+By default (no call to `configure`, or sandbox set to `/`), all absolute paths are allowed.
+
+3. In the nominal case of file uplink
 
     a. Files are received one at a time.
 All packets of one file are received before receiving any

@@ -74,7 +74,9 @@ void SystemResources ::run_handler(const FwIndexType portNum, U32 tick_time_hz) 
 // Command handler implementations
 // ----------------------------------------------------------------------
 
-void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, SystemResourceEnabled enable) {
+void SystemResources ::ENABLE_cmdHandler(const FwOpcodeType opCode,
+                                         const U32 cmdSeq,
+                                         const SystemResourceEnabled& enable) {
     m_enable = (enable == SystemResourceEnabled::ENABLED);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

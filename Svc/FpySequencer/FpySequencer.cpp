@@ -41,7 +41,7 @@ FpySequencer ::~FpySequencer() {}
 void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                   U32 cmdSeq,                        //!< The command sequence number
                                   const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                  BlockState block                   //!< Return command status when complete or not
+                                  const BlockState& block            //!< Return command status when complete or not
 ) {
     // Empty args and delegate to RUN_ARGS handler
     this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, Svc::SeqArgs{0, 0});
@@ -50,8 +50,8 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
 void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                         U32 cmdSeq,                        //!< The command sequence number
                                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                        Svc::BlockState block,  //!< Return command status when complete or not
-                                        Svc::SeqArgs args       //!< Arguments to pass to the sequencer
+                                        const Svc::BlockState& block,  //!< Return command status when complete or not
+                                        const Svc::SeqArgs& args       //!< Arguments to pass to the sequencer
 ) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
@@ -91,7 +91,7 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
 void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
                                              const Fw::CmdStringArg& fileName,
-                                             Svc::SeqArgs buffer) {
+                                             const Svc::SeqArgs& buffer) {
     // can only validate a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -109,9 +109,9 @@ void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
     this->sequencer_sendSignal_cmd_VALIDATE(FpySequencer_SequenceExecutionArgs(fileName, BlockState::BLOCK, buffer));
 }
 
-void FpySequencer::RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                            U32 cmdSeq,           //!< The command sequence number
-                                            BlockState block      //!< Return command status when complete or not
+void FpySequencer::RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,     //!< The opcode
+                                            U32 cmdSeq,              //!< The command sequence number
+                                            const BlockState& block  //!< Return command status when complete or not
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
     if (sequencer_getState() != State::AWAITING_CMD_RUN_VALIDATED) {

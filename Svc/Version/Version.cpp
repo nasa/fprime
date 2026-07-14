@@ -68,14 +68,14 @@ void Version ::setVersion_handler(FwIndexType portNum,
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionEnabled enable) {
+void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::VersionEnabled& enable) {
     this->m_enable = (enable == VersionEnabled::ENABLED);
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // Command handler to event versions
-void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionType version_type) {
+void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::VersionType& version_type) {
     FW_ASSERT(version_type.isValid(), version_type.e);
 
     switch (version_type) {
