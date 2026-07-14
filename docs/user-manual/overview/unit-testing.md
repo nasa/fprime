@@ -370,5 +370,5 @@ To review code coverage analysis, go to the component directory and review the s
 
 For components with internal state or multiple interacting ports,
 use rules-based testing with STest. See the
-[rules-based testing guide](../../how-to/rule-based-testing.md)
+[rules-based testing guide](../../how-to/test/rule-based-testing.md)
 for the full procedure.

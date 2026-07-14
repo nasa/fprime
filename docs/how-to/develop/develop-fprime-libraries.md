@@ -59,7 +59,7 @@ add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/MyTopology")
 
 F´ libraries share F´ code through modules. These module directories are created by `fprime-util new --component` or by hand and may include any F´ code (Components, Ports, Topologies, Data Types, etc.).  These types are made available to users of the library by ensuring that they are added to the `library.cmake` file.  The only restriction is that these component should be placed under a namespacing directory for the library (e.g. `MyLibrary`) to avoid collisions with other libraries and F´ code.
 
-Developing component, ports, topologies, etc. are the subject of our [tutorials](../tutorials/index.md).
+Developing component, ports, topologies, etc. are the subject of our [tutorials](../../tutorials/index.md).
 
 
 ## Optional: Toolchain Folder and Toolchain Files

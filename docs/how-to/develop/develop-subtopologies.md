@@ -1,13 +1,13 @@
 # Develop a Subtopology
 
-Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of [libraries](./develop-fprime-libraries.md).
+Subtopologies are topologies for smaller chunks of behavior in F Prime. It allows for grouping bits of topology architecture that fit together, to then be imported into a base deployment's topology. The use case for this is seen when working with shareable components, specifically in the form of [libraries](develop-fprime-libraries.md).
 
 *Contents*
 1. [Subtopology Structure](#subtopology-structure)
 2. [Individual File Contents](#individual-file-contents)
     1. [Example Scenario](#example-scenario)
 3. [Integration into a "Main" Deployment](#integration-into-a-main-deployment)
-4. [Subtopology Autocoder](#the-subtopology-autocoder)
+4. [Adding Subtopology Configuration](#adding-subtopology-configuration)
 5. [Conclusion](#conclusion)
 
 ## Subtopology Structure
