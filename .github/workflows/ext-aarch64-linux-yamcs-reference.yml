@@ -72,7 +72,8 @@ jobs:
           pip install "yamcs-client<2.0.0"
           # Install fprime-yamcs from yamcsPOC branch (separate repo)
           pip install "git+https://github.com/yvijay99/fprime-yamcs.git@yamcsPOC"
-        
+          pip install --force-reinstall --no-deps "git+https://github.com/yvijay99/fprime-xtce.git@yamcsPOC"
+
       - name: "Prepare deployment"
         run: |
           chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
