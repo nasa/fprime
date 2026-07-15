@@ -1,8 +1,101 @@
-{% extends "main.html" %}
-
-{% block content %}
-  <h1>404 - Page Not Found</h1>
-  <img src="ingenuity_404.png" alt="Ingenuity", width="550">
-  <p>The F Prime website has been moved!</p>
-  <p>Visit the new website here:<a href="https://fprime.jpl.nasa.gov/">fprime.jpl.nasa.gov</a>.</p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - F Prime Documentation Moved</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Roboto;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #bb4c28;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .img-container {
+            margin: 30px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: black;
+            margin-bottom: 15px;
+        }
+        a {
+            color: #0B3D91;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #bb4c28;
+            text-decoration: underline;
+        }
+        .cta-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #0B3D91;
+            font-size: 1.4rem;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(11, 61, 145, 0.4);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(11, 61, 145, 0.6);
+            color: white;
+            text-decoration: none;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 40px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404 - Page Not Found</h1>
+        <div class="img-container">
+            <img src="ingenuity_404.png" alt="Ingenuity helicopter" width="550">
+        </div>
+        <p>The F Prime website has been moved!</p>
+        <p>Visit the new website here:</p>
+        <a href="https://fprime.jpl.nasa.gov/" class="cta-button">fprime.jpl.nasa.gov</a>
+    </div>
+</body>
+</html>
