@@ -70,8 +70,7 @@ jobs:
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           pip install "git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC"
-
-          pip install "yamcs-client<2.0.0"
+          pip install "git+https://github.com/yvijay99/yamcs-python.git@yamcsPOC#subdirectory=yamcs-client"
         
       - name: "Prepare deployment"
         run: |
