@@ -1,6 +1,0 @@
-# Clang-tidy configuration used only for flight code
-
-Checks: >
-    -*,
-    misc-no-recursion
-WarningsAsErrors: '*'

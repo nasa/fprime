@@ -1,4 +1,0 @@
-    sloc     ncsl comments       ;,   file
-     159       90       39       27   /home/tcanham/source/leonardo-fsw/Svc/LinuxTimer/LinuxTimerComponentAc.cpp
-     170       57       84       17   /home/tcanham/source/leonardo-fsw/Svc/LinuxTimer/LinuxTimerComponentAc.hpp
-     329      147      123       44  total 	[ncsl:sloc     44%]

@@ -1,3 +1,0 @@
-This implementation provides the isf the CRC32 hash only, even though other hashes are provided in libcrc.
-
-Source code was obtained here: http://www.lammertbies.nl/comm/software/

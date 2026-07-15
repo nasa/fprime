@@ -1,4 +1,0 @@
-File Contents:
-
-TimePortAi.xml - XML Definition of a time port. Used by the code generator when telemetry or event items are defined by components
-Time.hpp(.cpp) - C++ definition of a time value. The type is an argument to the port

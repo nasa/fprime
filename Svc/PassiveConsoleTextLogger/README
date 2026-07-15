@@ -1,6 +1,0 @@
-This component implements the text log interface. It is a simple version that simply uses printf to dump the text to standard out.
-It has some variants depending on the processor target.
-
-PassiveTextLoggerComponentAi.xml - XML that defines component
-ConsoleTextLoggerImpl.hpp - Header for implementation class
-ConsoleTextLoggerImplCommon.cpp - Contains common class methods such as constructor and destructor. Sends message to Fw::Logger.

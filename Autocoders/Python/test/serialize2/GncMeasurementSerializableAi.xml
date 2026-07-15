@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<serializable name="GncMeasurement" namespace="Ref::Gnc">
-    <import_serializable_type>Autocoders/Python/test/serialize2/QuaternionSerializableAi.xml</import_serializable_type>
-    <members>
-	    <member type="U64" name= "timeStamp"/>
-        <member type="Ref::Gnc::Quaternion" name="quaternion"/>
-    </members>
-</serializable>

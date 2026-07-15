@@ -1,7 +1,0 @@
-File Contents:
-
-LogPortAi.xml - XML Definition of a binary log port. Used by the code generator when event items are defined by components
-LogTextPortAi.xml - XML Definition of a text log port. Used by the code generator to emit text versions of events
-LogBuffer.hpp(.cpp) - C++ definition of a log buffer. The buffer holds a serialized version of the event arguments
-LogString.hpp(.cpp) - C++ definition of a log string argument type. Used by the code generator when a string argument type is declared.
-LogPacket.hpp(.cpp) - C++ definition of a log packet type. Derived from ComPacket and is used for sending events to ground software or a test interface

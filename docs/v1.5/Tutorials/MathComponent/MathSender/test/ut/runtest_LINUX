@@ -1,6 +1,0 @@
-#!/bin/sh
-LOC=${BUILD_ROOT}/Ref/MathSender/test/ut
-cd ${LOC}
-echo "Running ${LOC}/$1/test_ut"
-${LOC}/$1/test_ut
-

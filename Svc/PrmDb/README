@@ -1,9 +1,0 @@
-This component implements storage for parameters. It implements the framework setPrm and getPrm ports. 
-Parameter values are stored as a table based on parameter ID. It reads a file during initialization that contains the 
-parameter values and loads them into memory. Subsequent calls to getPrm will get the loaded file. 
-Parameter values in the components can be updated by command and saved to PrmDb. 
-The PrmDb component can be commanded to save the updated values to a file.
-
-PrmDbComponentAi.xml - XML definition for parameter database component
-PrmDbImpl.hpp(.cpp) - Implementation of parameter database component
-PrmDbImplCfg.hpp - Configuration for parameter database
