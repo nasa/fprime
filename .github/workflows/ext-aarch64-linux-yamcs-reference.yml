@@ -5,7 +5,7 @@ name: "External Repo: AArch64 Linux Yamcs Reference"
 
 on:
   push:
-    branches: [devel]
+    branches: [devel, YAMCSCI]
   workflow_dispatch:
 
 concurrency:
