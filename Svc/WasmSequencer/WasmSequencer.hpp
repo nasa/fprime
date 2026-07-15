@@ -7,6 +7,7 @@
 #ifndef Svc_WasmSequencer_HPP
 #define Svc_WasmSequencer_HPP
 
+#include "Fw/Types/SuccessEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerFFI.hpp"
 #include "config/WasmSequencerConfig.hpp"
@@ -393,7 +394,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Create a fresh interpreter Store with the given module capacity,
     //! destroying any existing store first.
-    void createStore(U16 moduleCount  //!< Maximum number of modules
+    Fw::Success createStore(U16 moduleCount  //!< Maximum number of modules
     );
 
     //! Destroy the current interpreter Store, if any, releasing its memory.

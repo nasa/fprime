@@ -4,6 +4,7 @@ module Svc {
 
         include "WasmSequencerCommands.fppi"
         include "WasmSequencerStateMachine.fppi"
+        include "WasmSequencerEvents.fppi"
 
         # sm signals have highest priority besides ping
         state machine instance sequencer: SequencerStateMachine priority 9 assert

@@ -7,7 +7,9 @@
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/SuccessEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerFFI.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_AllocErrorEnumAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/fprime_spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
@@ -72,13 +74,21 @@ void WasmSequencer ::deallocPage(U8* ptr, U32 size) {
     this->m_memory_allocated = false;
 }
 
-void WasmSequencer ::createStore(U16 moduleCount) {
+Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
     this->destroyStore();
     const U32 status = fprime_spacewasm_store_new(moduleCount, &this->m_store);
-    if (status != 0) {
+    Fw::Success success;
+    if (this->m_store == nullptr) {
         // Allocation failed; leave the store null.
-        this->m_store = nullptr;
+        this->log_WARNING_HI_StoreAllocationFailed(
+            moduleCount, Svc::WasmSequencer_AllocError(static_cast<Svc::WasmSequencer_AllocError::T>(status)));
+        success = Fw::Success::FAILURE;
+    } else {
+        this->log_ACTIVITY_LO_StoreAllocationSucceeded(moduleCount);
+        success = Fw::Success::SUCCESS;
     }
+
+    return success;
 }
 
 void WasmSequencer ::destroyStore() {
@@ -167,9 +177,15 @@ void WasmSequencer ::CLEAR_STORE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
 void WasmSequencer ::REINITIALIZE_STORE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U16 module_count) {
     this->m_maxModules = module_count;
-    this->createStore(module_count);
-    this->cmdResponse_out(opCode, cmdSeq,
-                          (this->m_store != nullptr) ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR);
+    auto status = this->createStore(module_count);
+    switch (status) {
+        case Fw::Success::FAILURE:
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            break;
+        case Fw::Success::SUCCESS:
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            break;
+    }
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
