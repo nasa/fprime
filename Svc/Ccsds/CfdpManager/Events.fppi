@@ -579,3 +579,12 @@ event ResetCounters(
 ) \
     severity activity high \
     format "Reset telemetry counters for channel {}"
+
+@ A FIN arrived for a downlink transaction we sourced that has already completed and
+@ been recycled; acknowledged statelessly per CFDP so the peer can close out.
+event TxLateFinAcked(
+    srcEid: Cfdp.EntityId @< Source entity ID (this local entity)
+    seqNum: Cfdp.TransactionSeq @< Transaction sequence number
+) \
+    severity diagnostic \
+    format "Acknowledged late FIN for transaction {}:{}"

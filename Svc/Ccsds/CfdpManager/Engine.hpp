@@ -620,6 +620,41 @@ class Engine {
      */
     Status::T serializeAndSendPdu(Transaction* txn, PduBase& pdu);
 
+    /**
+     * @brief Serialize and send a PDU using only a channel context
+     *
+     * Identical to serializeAndSendPdu() but keyed on a Channel rather than a
+     * Transaction, so it can send PDUs that are not associated with a live
+     * transaction (e.g. a stateless FIN-ACK for a transaction that has already
+     * completed and been recycled).
+     *
+     * @param chan Channel context (provides buffer pool and channel id)
+     * @param pdu  PDU object to serialize (any type derived from PduBase)
+     * @return Status::SUCCESS on success, Status::ERROR on failure
+     */
+    Status::T serializeAndSendPduOnChannel(Channel& chan, PduBase& pdu);
+
+    /**
+     * @brief Acknowledge a FIN without a live transaction
+     *
+     * Builds and sends an ACK(FIN) PDU directly from the fields of a received
+     * FIN, for the case where a retransmitted FIN arrives for a downlink
+     * transaction this entity sourced but that has already completed and been
+     * recycled. Per CFDP the sender must still acknowledge such a FIN.
+     *
+     * @param chan       Channel the FIN arrived on
+     * @param tsn        Transaction sequence number from the FIN header
+     * @param finSrcEid  FIN source EID (this local entity, the file sender)
+     * @param finDstEid  FIN destination EID (the peer/receiver)
+     * @param cc         Condition code echoed from the FIN
+     * @return Status::SUCCESS on success, error status otherwise
+     */
+    Status::T sendFinAckStateless(Channel& chan,
+                                  TransactionSeq tsn,
+                                  EntityId finSrcEid,
+                                  EntityId finDstEid,
+                                  ConditionCode cc);
+
     // PDU Operations - Receive
 
     /**

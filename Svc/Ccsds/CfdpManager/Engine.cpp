@@ -333,12 +333,17 @@ Status::T Engine::sendNak(Transaction* txn, NakPdu& nakPdu) {
 }
 
 Status::T Engine::serializeAndSendPdu(Transaction* txn, PduBase& pdu) {
+    // Delegate to the channel-based helper; a transaction always carries its channel.
+    return this->serializeAndSendPduOnChannel(*txn->m_chan, pdu);
+}
+
+Status::T Engine::serializeAndSendPduOnChannel(Channel& chan, PduBase& pdu) {
     Fw::Buffer buffer;
     Status::T status = Cfdp::Status::SUCCESS;
 
     // Allocate buffer with space for packet descriptor
     const FwSizeType bufferSize = pdu.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
-    status = m_manager->getPduBuffer(buffer, *txn->m_chan, bufferSize);
+    status = m_manager->getPduBuffer(buffer, chan, bufferSize);
 
     if (status == Cfdp::Status::SUCCESS) {
         // Serialize to buffer at offset to leave room for descriptor
@@ -348,19 +353,48 @@ Status::T Engine::serializeAndSendPdu(Transaction* txn, PduBase& pdu) {
 
         if (serStatus != Fw::FW_SERIALIZE_OK) {
             // Log generic PDU serialization error with PDU type
-            m_manager->log_WARNING_LO_FailPduSerialization(txn->getChannelId(), pdu.getType(),
+            m_manager->log_WARNING_LO_FailPduSerialization(chan.getChannelId(), pdu.getType(),
                                                            static_cast<I32>(serStatus));
-            m_manager->returnPduBuffer(*txn->m_chan, buffer);
+            m_manager->returnPduBuffer(chan, buffer);
             status = Cfdp::Status::ERROR;
         } else {
             // Update buffer size to actual serialized size plus descriptor
             buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
-            m_manager->sendPduBuffer(*txn->m_chan, buffer);
-            m_manager->incrementSentPdu(txn->getChannelId());
+            m_manager->sendPduBuffer(chan, buffer);
+            m_manager->incrementSentPdu(chan.getChannelId());
         }
     }
 
     return status;
+}
+
+Status::T Engine::sendFinAckStateless(Channel& chan,
+                                      TransactionSeq tsn,
+                                      EntityId finSrcEid,
+                                      EntityId finDstEid,
+                                      ConditionCode cc) {
+    // A FIN has arrived for a downlink transaction we sourced, but no live transaction
+    // remains (it already completed and was recycled). Per CFDP the sender must still
+    // acknowledge a retransmitted FIN; we do so statelessly from the FIN header.
+    //
+    // The FIN was sent toward us (the sender), so its header carries
+    //   sourceEid = the transaction source = this local entity,
+    //   destEid   = the peer (receiver).
+    // The ACK(FIN) we emit travels toward the receiver, mirroring Engine::sendAck's
+    // DIRECTION_TX case: src = local entity, dst = peer.
+    AckPdu ack;
+    ack.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
+                   Cfdp::Class::CLASS_2,                      // FIN/ACK only exist in class 2
+                   finSrcEid,                                 // source EID (this local entity)
+                   tsn,                                       // transaction sequence number
+                   finDstEid,                                 // destination EID (the peer/receiver)
+                   FileDirective::FILE_DIRECTIVE_FIN,         // directive being acknowledged
+                   1,                                         // directive subtype code (always 1)
+                   cc,                                        // echo the FIN's condition code
+                   AckTxnStatus::ACK_TXN_STATUS_UNRECOGNIZED  // we no longer recognize this transaction
+    );
+
+    return this->serializeAndSendPduOnChannel(chan, ack);
 }
 
 void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
@@ -590,8 +624,27 @@ void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
         txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
 
         if (txn == nullptr) {
+            // A retransmitted FIN can arrive for a downlink transaction we sourced after
+            // that transaction has already completed and been recycled (e.g. the peer
+            // kept retransmitting FIN across a lossy/quiet link). Per CFDP the sender
+            // must still acknowledge it, so re-ACK statelessly from the FIN header.
+            // Such a FIN carries sourceEid == our local entity (we were the source) and
+            // destEid == the peer, so it would otherwise be dropped as InvalidDestinationEid.
+            if (Cfdp::peekPduType(buffer) == Cfdp::PduTypeEnum::FINISHED &&
+                sourceEid == this->m_manager->getLocalEidParam()) {
+                FinPdu fin;
+                Fw::SerialBuffer finSb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+                finSb.setBuffLen(buffer.getSize());
+                if (fin.deserializeFrom(finSb) == Fw::FW_SERIALIZE_OK) {
+                    this->sendFinAckStateless(*chan, transactionSeq, sourceEid, destEid, fin.getConditionCode());
+                    this->m_manager->log_DIAGNOSTIC_TxLateFinAcked(sourceEid, transactionSeq);
+                } else {
+                    this->m_manager->log_WARNING_LO_FailFinPduDeserialization(
+                        chan_id, static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+                }
+            }
             // if no match found, then it must be the case that we would be the destination entity id, so verify it
-            if (destEid == this->m_manager->getLocalEidParam()) {
+            else if (destEid == this->m_manager->getLocalEidParam()) {
                 // we didn't find a match, so assign it to a transaction
                 // assume this is initiating an RX transaction, as TX transactions are only commanded
                 txn = this->startRxTransaction(chan->getChannelId());

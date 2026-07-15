@@ -225,19 +225,14 @@ void Transaction::sTick(I32* cont /* unused */) {
     // that we need to send (i.e. the EOF) just in case the sender
     // is still listening to us but do not expect any future ACKs
     //
-    // Recycle transaction when inactivity timer expires if:
-    // 1. In HOLD state (transaction finished, any pending sends are cleanup)
-    // 2. In S2 CLOSEOUT_SYNC (stuck waiting for FIN that will never come)
-    // 3. No pending sends (original behavior)
-    bool should_recycle = false;
-    if (this->m_flags.com.inactivity_fired) {
-        if (this->m_state == TxnState::TXN_STATE_HOLD ||
-            (this->m_state == TxnState::TXN_STATE_S2 &&
-             this->m_state_data.send.sub_state == TxSubState::TX_SUB_STATE_CLOSEOUT_SYNC) ||
-            !pending_send) {
-            should_recycle = true;
-        }
-    }
+    // Recycle the transaction once the inactivity timer has fired, but never while a send
+    // is still pending (e.g. a throttled FIN-ACK). The send is attempted above before this
+    // check, so if one is still queued we defer recycle a cycle to give it a chance to go
+    // out; a subsequent PDU re-arms the inactivity timer and, once the send succeeds,
+    // pending_send clears, so this cannot strand the transaction. This covers the HOLD
+    // (finished) and S2/CLOSEOUT_SYNC (stuck waiting for a FIN) cases, which by then have
+    // no pending send, without dropping a FIN-ACK that has not yet been transmitted.
+    bool should_recycle = this->m_flags.com.inactivity_fired && !pending_send;
 
     if (should_recycle) {
         // the transaction is now recyclable - this means we will
