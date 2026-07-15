@@ -426,7 +426,7 @@ state machine SequencerStateMachine {
 
             choice FINISHED {
                 # Check if we are running the start function
-                if executingStart enter READY \
+                if executingStart enter INVOKE_CHECK \
                 else do {
                     # We are not executing the start function, report success to the command
                     # that requested the interpreter to spin
