@@ -41,15 +41,6 @@ async command INVOKE(
     functionName: string size 64, @< Name of the function to be invoked
 )
 
-@ Clear the WebAssembly store of all modules, tables, and memories to start fresh.
-async command CLEAR_STORE()
-
-@ Reinitialize the Wasm store. This clears the current store and reallocates the internal memory
-@ for holding modules. A maximum of 256 modules is supported.
-async command REINITIALIZE_STORE(
-    module_count: U16 @< Maximum number of modules that can be loaded into the store
-)
-
 # @ Loads and validates a sequence with arguments
 # # prio: lower than sm sig and CANCEL
 # async command VALIDATE_ARGS(
@@ -58,16 +49,18 @@ async command REINITIALIZE_STORE(
 # ) \
 #     opcode 3 priority 7 assert
 
-@ Cancels a running or validated sequence. After running CANCEL, the sequencer
-@ should return to IDLE
-async command CANCEL()
+@ Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE
+@ This completely clears the store.
+@ Cancelling during LOADING will trigger a fail response in the reader and
+@ return to IDLE mode.
+sync command CANCEL()
 
 @ Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
 @ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
 @ substates of the RUNNING state that are not RUNNING.PAUSED.
 async command BREAK()
 
-@ Dump a stack trace as an event
+@ Dump a stack trace in events
 async command TRACE()
 
 @ 

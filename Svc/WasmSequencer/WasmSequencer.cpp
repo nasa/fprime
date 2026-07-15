@@ -171,6 +171,10 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::CLEAR_STORE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    if (this->m_store == nullptr) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+    }
     // TODO
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -215,7 +219,7 @@ void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_signalEntered(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO
+    this->sequencer_sendSignal_entered();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invoke(

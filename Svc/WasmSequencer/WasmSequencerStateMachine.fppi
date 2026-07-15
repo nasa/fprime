@@ -194,97 +194,129 @@ struct IrReaderError {
     value: U8
 }
 
+@ A loaded and validated Wasm module
+type Module
+
 state machine SequencerStateMachine {
-    ####################
-    # guards           #
-    ####################
-    @ return true if there is a function invocation pending to be set up on entry to IDLE.
+    initial enter IDLE
+
+    @ return true if there is a function invocation pending to be set up.
     @ the pending FunctionInvoke is held in a component member var
     guard pendingInvoke
 
-    @ return true if the freshly loaded module declared a Wasm start function
-    guard hasStartFunction
+    @ return true if there is a module load pending.
+    @ the pending load path is held in a component member var
+    guard pendingLoad
 
-    ####################
-    # signals          #
-    ####################
-    @ called on CANCEL cmd. raised in all states except IDLE
+    @ return true if the freshly loaded module declared a Wasm start function
+    guard lastModuleHasStart
+
+    ###############
+    # Commands    #
+    ###############
+
+    @ Signal sent from a command to execute a Wasm module
+    @ Only valid while in the IDLE state
+    signal cmd_RUN: SequenceExecutionArgs
+
+    @ Signal sent from command to load a Wasm module but not execute it
+    signal cmd_LOAD: ModuleLoad
+
+    @ called on CONTINUE cmd. only raised in RUNNING.PAUSED state
+    signal cmd_CONTINUE
+
+    @ called on BREAK cmd. only raised in RUNNING state
+    signal cmd_BREAK
+
+    signal cmd_INVOKE: FunctionInvoke
+
+    @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
     signal cmd_CANCEL
 
-    @ generic entry of a state
-    signal entered
-    @ requests that a function invocation be set up
-    signal invoke
-    @ requests that a module be loaded into the store
-    signal load: ModuleLoad
-    @ requests that the store be cleared
-    signal clearStore
+    ###############
+    # Actions     #
+    ###############
 
-    @ The program has completed
-    signal interpreterFinished
-
-    @ The program has been aborted
-    signal interpreterTrap: TrapReason
-
-    @ No more fuel (ran to instruction bound)
-    signal interpreterOutOfFuel
-
-    @ An instruction or host function has requested the interpreter to pause
-    signal interpreterPause
-
-    @ A signal to put the interpreter to sleep until a given time
-    signal interpreterSleep: Fw.Time
-
-    @ Failed to read an instruction from memory
-    signal interpreterReaderError: IrReaderErrorKind
-
-    @ raised when a module failed to decode/validate while loading
-    signal loadFailure: LoadFailure
-    @ raised when a module successfully decoded/validated while loading
-    signal loadSuccess
-
-    ####################
-    # actions          #
-    ####################
-    @ simply raises the "entered" signal
+    @ Raises the "entered" signal
     action signalEntered
-    @ sets up a function invocation on the interpreter state from the pending FunctionInvoke member var
-    action invoke
-    @ stores the module load request for the LOADING state
-    action setLoad: ModuleLoad
-    @ streams, decodes and validates the module into the store
-    action load
-    @ clears the interpreter store of all modules, tables and memories
+
+    @ Create a new store with N_MODULES (parameter) modules
+    action createStore
+
+    @ Clears the Wasm store and deallocates everything
     action clearStore
-    @ reports the module validation failure as an event
-    action reportValidationFailure
-    @ responds to the calling command with VALIDATION_ERROR
-    action sendCmdResponse_VALIDATION_ERROR
-    @ pushes the freshly loaded/validated module into the store
-    action pushModuleToStore
 
-    initial enter IDLE
+    @ sets up a function invocation on the interpreter from the pending FunctionInvoke member var
+    action invoke
 
-    @ Interpreter is ready to load or run a Wasm function
+    @ Set the Wasm module to load and execute
+    @ Sets pendingLoad
+    @ Sets pendingInvoke
+    action pendRun: SequenceExecutionArgs
+
+    @ Set the Wasm module to load but not execute
+    @ Sets pendingLoad
+    action pendLoad: ModuleLoad
+
+    action appendModuleToStore: Module
+
+    action reportLoadFailure: LoadFailure
+
+    @ Load a pending module request
+    action load
+
+    @ Invoke the start function on a loaded module
+    action invokeStart
+
+    ###############
+    # Signals     #
+    ###############
+
+    @ Generic entry of a state
+    signal entered
+
+    signal loadSucceeded: Module
+
+    signal loadFailed: LoadFailure
+
+    @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
-        entry do { signalEntered }
+        entry do { clearStore }
 
-        on entered if pendingInvoke do { invoke } enter RUNNING.READY
-        on clearStore do { clearStore }
-        on load do { setLoad } enter LOADING
-        on invoke do { invoke } enter RUNNING.READY
+        on cmd_RUN do { pendRun } enter LOADING
+
+        # a no-op
+        on cmd_CANCEL enter IDLE
+
+        on cmd_LOAD do { pendLoad }
     }
 
     @ Interpreter is loading a Wasm module into the store
     state LOADING {
         entry do { load }
+        on loadSucceeded do { appendModuleToStore } enter SUCCESS
+        on loadFailed do { reportLoadFailure, sendCmdResponse_EXECUTION_ERROR } enter IDLE
 
-        on loadFailure do { reportValidationFailure, sendCmdResponse_VALIDATION_ERROR } enter IDLE
-        on loadSuccess do { pushModuleToStore } enter INITIALIZE
-
-        choice INITIALIZE {
-            if hasStartFunction enter RUNNING else enter IDLE
+        choice SUCCESS {
+            if lastModuleHasStart do { invokeStart } enter RUNNING \
+            else enter INVOKE_CHECK
         }
+    }
+
+    @ A module finished loading; decide whether to invoke a pending function or wait
+    choice INVOKE_CHECK {
+        if pendingInvoke do { invoke } enter RUNNING \
+        else do {
+            # We are not pending an invoke/run meaning we are running a LOAD/LOAD_NAME
+            # Reply to that command
+            sendCmdResponse_OK
+        } enter READY
+    }
+
+    @ Ready to execute a function
+    state READY {
+        on cmd_INVOKE do { invoke } enter RUNNING
+        on cmd_CANCEL enter IDLE
     }
 
     ###############
@@ -342,13 +374,29 @@ state machine SequencerStateMachine {
     @ called when the statement is telling the sequencer to await a later stmt response
     signal stmtResponse_keepWaiting
 
-    @ called on CONTINUE cmd. only raised in RUNNING.PAUSED state
-    signal cmd_CONTINUE
-    @ called on BREAK cmd. only raised in RUNNING state
-    signal cmd_BREAK
+    @ The program has completed
+    signal interpreterFinished
+
+    @ The program has been aborted
+    signal interpreterTrap: TrapReason
+
+    @ No more fuel (ran to instruction bound)
+    signal interpreterOutOfFuel
+
+    @ An instruction or host function has requested the interpreter to pause
+    signal interpreterPause
+
+    @ A signal to put the interpreter to sleep until a given time
+    signal interpreterSleep: Fw.Time
+
+    @ Failed to read an instruction from memory
+    signal interpreterReaderError: IrReaderErrorKind
 
     @ return true if execution should break before spinning the next statement
     guard shouldBreak
+
+    @ return true if the interpreter is currently executing a module's start function
+    guard executingStart
 
     @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
@@ -369,12 +417,23 @@ state machine SequencerStateMachine {
         state SPINNING {
             entry do { spin }
             # -->
-            on interpreterFinished do { report_seqSucceeded, sendCmdResponse_OK } enter IDLE
+            on interpreterFinished enter FINISHED
             on interpreterTrap do { report_seqTrap, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on interpreterReaderError do { report_seqReadError, sendCmdResponse_EXECUTION_ERROR, clearStore } enter IDLE
+            on interpreterReaderError do { report_seqReadError, sendCmdResponse_EXECUTION_ERROR } enter IDLE
             on interpreterOutOfFuel enter BREAK_CHECK
             on interpreterPause enter AWAITING_RESPONSE
             on interpreterSleep do { set_sleepTime } enter SLEEPING
+
+            choice FINISHED {
+                # Check if we are running the start function
+                if executingStart enter READY \
+                else do {
+                    # We are not executing the start function, report success to the command
+                    # that requested the interpreter to spin
+                    report_seqSucceeded,
+                    sendCmdResponse_OK
+                } enter READY
+            }
 
         }
 
