@@ -69,10 +69,10 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          pip install "yamcs-client<2.0.0"
-          # Install fprime-gds from yamcsPOC branch
           pip install "git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC"
 
+          pip install "yamcs-client<2.0.0"
+        
       - name: "Prepare deployment"
         run: |
           chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
