@@ -1942,6 +1942,12 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
     // the TX-error branch and only acts on polling-dir files, so /proc/cpuinfo is left
     // untouched. We therefore assert with the specific _SIZE(1) macro, not ASSERT_EVENTS_SIZE.
 
+    // This test relies on a Linux-specific /proc quirk (open O_RDONLY succeeds, but
+    // lseek(SEEK_END) fails with EINVAL) to reach the size()-failure branch. That file and
+    // behavior do not exist on other platforms.
+#ifndef TGT_OS_TYPE_LINUX
+    GTEST_SKIP() << "TxFileSeekFailed trigger relies on Linux /proc lseek semantics";
+#else
     U8 channelId = 0;
     // /proc/cpuinfo: opens O_RDONLY successfully, but lseek(SEEK_END) fails EINVAL.
     const char* srcFile = "/proc/cpuinfo";
@@ -1986,6 +1992,7 @@ void CfdpManagerTester::testTxFileSeekFailedEvent() {
     ASSERT_EQ(this->eventHistory_TxFileSeekFailed->at(0).cfdpClass, Cfdp::Class::CLASS_2);
     ASSERT_EQ(this->eventHistory_TxFileSeekFailed->at(0).srcEid, localEid);
     ASSERT_EQ(this->eventHistory_TxFileSeekFailed->at(0).seqNum, sequenceId);
+#endif
 }
 
 void CfdpManagerTester::testTxSendMetadataFailedEvent() {
