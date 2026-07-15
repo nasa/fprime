@@ -71,7 +71,8 @@ jobs:
           pip install -r requirements.txt
           pip install "yamcs-client<2.0.0"
           pip install "fprime-gds==4.2.1"
-          pip install "fprime-yamcs==0.1.3"
+          # Install fprime-yamcs from yamcsPOC branch
+          pip install "git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC#subdirectory=src/fprime_gds/executables/fprime_yamcs"
 
       - name: "Prepare deployment"
         run: |
