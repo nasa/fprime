@@ -78,7 +78,9 @@ Transaction::Transaction(Channel* channel, U8 channelId, Engine* engine, CfdpMan
       m_chan(channel),         // Initialize from parameter
       m_engine(engine)         // Initialize from parameter
 {
-    // All members initialized via member initializer list above
+    // Fully zero the union storage
+    memset(&this->m_state_data, 0, sizeof(this->m_state_data));
+    memset(&this->m_flags, 0, sizeof(this->m_flags));
 }
 
 Transaction::~Transaction() {}
@@ -95,9 +97,9 @@ void Transaction::reset() {
     this->m_crc = CFDP::Checksum(0);
     this->m_pb = nullptr;
 
-    // Use aggregate initialization to zero out unions
-    this->m_state_data = {};
-    this->m_flags = {};
+    // Fully zero the union storage
+    memset(&this->m_state_data, 0, sizeof(this->m_state_data));
+    memset(&this->m_flags, 0, sizeof(this->m_flags));
 
     // Close the file if it is open
     if (this->m_fd.isOpen()) {
