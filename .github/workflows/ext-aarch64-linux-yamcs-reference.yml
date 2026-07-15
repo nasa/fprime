@@ -110,6 +110,7 @@ jobs:
             --use-yamcs \
             -v \
             --ignore=./int/test_yamcs_file_transfer.py \
+            --ignore=./int/test_cmd_health.py \
             ./int/ || rc=1
           exit $rc
 
@@ -127,7 +128,9 @@ jobs:
             ./fprime-svc/EventManager/test/int/test_cmd_eventManager.py \
             ./fprime-svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
             ./fprime-svc/FileManager/test/int/test_cmd_fileManager.py \
-            ./fprime-svc/SystemResources/test/int/test_cmd_systemResources.py
+            ./fprime-svc/SystemResources/test/int/test_cmd_systemResources.py \
+            ./fprime-svc/Version/test/int/test_cmd_version.py \
+            ./fprime-svc/Subtopologies/FileHandling/test/int/test_file_handling.py
 
       - name: "Run health integration test (last)"
         run: |
@@ -135,7 +138,7 @@ jobs:
             --deployment-config ./int/int_config.json \
             --use-yamcs \
             -v \
-            ./fprime-svc/Health/test/int/test_cmd_health.py
+            ./int/test_cmd_health.py
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
