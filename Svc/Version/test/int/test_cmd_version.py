@@ -39,6 +39,8 @@ def test_send_version_command(fprime_test_api):
             severity=EventSeverity.ACTIVITY_LO
         )
 
+        start_tlm = fprime_test_api.get_telemetry_test_history().size()
+
         results2 = fprime_test_api.send_and_assert_command(
             fprime_test_api.get_mnemonic("Svc.Version") + "." + "VERSION",
             [
@@ -61,12 +63,12 @@ def test_send_version_command(fprime_test_api):
         if count == 1:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "ProjectVersion",
-                start="NOW",
+                start=start_tlm,
             )
         elif count == 2:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "FrameworkVersion",
-                start="NOW",
+                start=start_tlm,
             )
 
         if count == 1 or count == 2:
