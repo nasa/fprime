@@ -2,7 +2,7 @@
 
 This How-To Guide provides a step-by-step guide to implementing a custom framing protocol in F Prime Flight Software.
 
-Modern F´ deployments use the CCSDS protocol by default via the `Svc.ComCcsds` subtopology. The lightweight [F Prime Protocol](../../Svc/FprimeProtocol/docs/sdd.md) (available via `Svc.ComFprime`) is also available as an alternative low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, some projects choose to implement another framing protocol that fits their mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
+Modern F´ deployments use the CCSDS protocol by default via the `Svc.ComCcsds` subtopology. The lightweight [F Prime Protocol](../../../Svc/FprimeProtocol/docs/sdd.md) (available via `Svc.ComFprime`) is also available as an alternative low-overhead communications protocol that the [F Prime GDS](https://github.com/nasa/fprime-gds) understands. However, some projects choose to implement another framing protocol that fits their mission requirements. This document provides an overview of how to implement a custom framing protocol in F Prime Flight Software, and how to integrate it with the F Prime GDS.
 
 ## Overview
 
@@ -28,7 +28,7 @@ To implement custom framing protocols, you will typically need to:
 2. **Manually import components**: Copy the relevant topology code from the subtopology into your main topology so you can modify the component connections as needed, and remove the old `import Svc.ComCcsds` statement.
 3. **Replace standard components**: Substitute the default framer/deframer components with your custom implementations
 
-For more information on working with subtopologies, see the [Subtopologies Guide](../user-manual/design-patterns/subtopologies.md). This understanding is essential before proceeding with custom framing implementation.
+For more information on working with subtopologies, see the [Subtopologies Guide](../../user-manual/design-patterns/subtopologies.md). This understanding is essential before proceeding with custom framing implementation.
 
 ## Flight Software Implementation
 
@@ -41,7 +41,7 @@ To implement a custom framing protocol in F´, will need to implement the follow
 > [!TIP]
 > When creating framer/deframer components using `fprime-util new --component`, the recommended settings are to use passive components with events enabled.
 
-The following examples will walk through the implementation of a custom framer and deframer for a hypothetical **MyCustomProtocol** protocol. Implementation details are left to the reader, but examples of such implementations can be found in the [fprime-examples repository](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming), or within the F´ codebase itself ([Svc.FprimeFramer](../../Svc/FprimeFramer/docs/sdd.md) and [Svc.FprimeDeframer](../../Svc/FprimeDeframer/docs/sdd.md)).
+The following examples will walk through the implementation of a custom framer and deframer for a hypothetical **MyCustomProtocol** protocol. Implementation details are left to the reader, but examples of such implementations can be found in the [fprime-examples repository](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming), or within the F´ codebase itself ([Svc.FprimeFramer](../../../Svc/FprimeFramer/docs/sdd.md) and [Svc.FprimeDeframer](../../../Svc/FprimeDeframer/docs/sdd.md)).
 
 ### Pitfalls and Best Practices
 
@@ -173,7 +173,7 @@ Before implementing, consider these best practices:
    - TCP connections (stream-based, no inherent message boundaries)
    - UART/serial connections (e.g. UART radios such as XBee)
    
-   F Prime provides this capability with the [Svc.FrameAccumulator](../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
+   F Prime provides this capability with the [Svc.FrameAccumulator](../../../Svc/FrameAccumulator/docs/sdd.md) component, which uses a circular buffer and a helper `FrameDetector` to identify complete frames in the data stream.
 
    > [!NOTE]
    > The `FrameDetector` is a C++ helper class, not an FPP component. It does not have an `.fpp` definition and is used internally by `Svc.FrameAccumulator`.
@@ -215,7 +215,7 @@ Before implementing, consider these best practices:
 
 ## F´ GDS Implementation
 
-To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the `FramerDeframer`. This is further documented in the [How-To Develop a GDS Plugin Guide](./develop-gds-plugins.md) and [F Prime GDS Framing Plugin reference](../reference/gds-plugins/framing.md).
+To support your custom protocol in the F´ GDS, implement a GDS framing plugin. The GDS plugin system allows you to customize GDS behavior with user-provided code. For new framing protocols, you will need to implement a plugin that extends the `FramerDeframer`. This is further documented in the [How-To Develop a GDS Plugin Guide](../operate/develop-gds-plugins.md) and [F Prime GDS Framing Plugin reference](../../reference/gds-plugins/framing.md).
 
 For example, in Python:
 
@@ -239,7 +239,7 @@ class MyCustomFramerDeframer(FramerDeframer):
         return "MyCustomProtocol"
 ```
 
-Make sure to [package and install the plugin in your virtual environment](./develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
+Make sure to [package and install the plugin in your virtual environment](../operate/develop-gds-plugins.md#packaging-and-testing-plugins) for the GDS to be able to load it, then run it:
 
 ```
 fprime-gds --framing-selection MyCustomProtocol
@@ -249,7 +249,7 @@ fprime-gds --framing-selection MyCustomProtocol
 
 - [C++ CustomFraming Example](https://github.com/nasa/fprime-examples/tree/devel/FlightExamples/CustomFraming)
 - [GDS Plugin Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/framing)
-- [F Prime GDS Framing Plugin](../reference/gds-plugins/framing.md)
-- [F Prime Communication Adapter Interface](../reference/communication-adapter-interface.md)
+- [F Prime GDS Framing Plugin](../../reference/gds-plugins/framing.md)
+- [F Prime Communication Adapter Interface](../../reference/communication-adapter-interface.md)
 - [F Prime GDS Plugin Development](https://fprime.jpl.nasa.gov/devel/docs/how-to/develop-gds-plugins/)
 

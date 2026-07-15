@@ -68,7 +68,7 @@ SocketIpStatus IpSocket::configure(const char* const ipv4_address,
     return SOCK_SUCCESS;
 }
 
-bool IpSocket::isValidPort(U16 port) {
+bool IpSocket::isValidPort(U16 port) const {
     return true;
 }
 

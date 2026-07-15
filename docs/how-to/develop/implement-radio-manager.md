@@ -1,6 +1,6 @@
-# How-To: Implement a Radio Manager Component
+# Implement a Radio Manager Component
 
-This guide provides step-by-step instructions for implementing a radio manager component using the [Svc.Com Communications Adapter Interface](../reference/communication-adapter-interface.md). A radio manager handles communication with radio hardware, managing both outgoing transmissions (downlink) and incoming receptions (uplink).
+This guide provides step-by-step instructions for implementing a radio manager component using the [Svc.Com Communications Adapter Interface](../../reference/communication-adapter-interface.md). A radio manager handles communication with radio hardware, managing both outgoing transmissions (downlink) and incoming receptions (uplink).
 
 ---
 
@@ -11,13 +11,13 @@ Before starting, you should have:
 - Completed the [LedBlinker Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-led-blinker/docs/led-blinker/).
 - A general understanding of [FPP component modeling](https://nasa.github.io/fpp/fpp-users-guide.html).
 - Experience creating commands, events, and telemetry in FPP.
-- Read the [Communication Adapter Interface](../reference/communication-adapter-interface.md) reference documentation.
+- Read the [Communication Adapter Interface](../../reference/communication-adapter-interface.md) reference documentation.
 
 ---
 
 ## Overview
 
-A radio manager component bridges the F´ communication stack and radio hardware. To integrate with F´ standard uplink and downlink components, the radio manager must implement the [Communications Adapter Interface](../reference/communication-adapter-interface.md).
+A radio manager component bridges the F´ communication stack and radio hardware. To integrate with F´ standard uplink and downlink components, the radio manager must implement the [Communications Adapter Interface](../../reference/communication-adapter-interface.md).
 
 A common approach is to use an intermediate driver component (e.g., `Drv.ByteStreamDriver`) to communicate with radio hardware. This provides modularity and allows the same radio manager to work across different platforms by swapping the underlying driver.
 
@@ -26,7 +26,7 @@ A common approach is to use an intermediate driver component (e.g., `Drv.ByteStr
 
 ## Step 0 - Read the Reference Documentation
 
-Before starting, read the [Communication Adapter Interface](../reference/communication-adapter-interface.md) reference documentation. This How-To Guide is essentially walking through the implementation of the interface, and much of the information we are going to cover is explained at length in the reference documentation.
+Before starting, read the [Communication Adapter Interface](../../reference/communication-adapter-interface.md) reference documentation. This How-To Guide is essentially walking through the implementation of the interface, and much of the information we are going to cover is explained at length in the reference documentation.
 
 ## Step 1 - Component Definition
 
@@ -45,7 +45,7 @@ module MyProject {
 }
 ```
 
-See [`Svc.ComStub`](../../Svc/ComStub/ComStub.fpp) for a complete reference implementation.
+See [`Svc.ComStub`](../../../Svc/ComStub/ComStub.fpp) for a complete reference implementation.
 
 ---
 
@@ -57,8 +57,8 @@ Run `fprime-util impl` to generate the component implementation files. Implement
 
 This port is receiving data from the communication stack and sending it to the hardware for outgoing communications. When done sending the data:
 
-- the input buffer **must** be returned through the `dataReturnOut` port (for memory ownership, see [Design Pattern: Return-To-Sender](../user-manual/framework/memory-management/buffer-pool.md#design-pattern-return-to-sender)) 
-- a status **must** be sent via `comStatusOut`. Only a `Fw::Success::SUCCESS` value will trigger the ComQueue to send new outgoing data. `Fw::Success::SUCCESS` is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. See [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol) for more detail.
+- the input buffer **must** be returned through the `dataReturnOut` port (for memory ownership, see [Design Pattern: Return-To-Sender](../../user-manual/framework/memory-management/buffer-pool.md#design-pattern-return-to-sender)) 
+- a status **must** be sent via `comStatusOut`. Only a `Fw::Success::SUCCESS` value will trigger the ComQueue to send new outgoing data. `Fw::Success::SUCCESS` is valid in three contexts: (1) at start-up to initiate data flow, (2) in response to a successful transmission, and (3) after a previous `Fw::Success::FAILURE` to indicate recovery. See [Communication Adapter Protocol](../../reference/communication-adapter-interface.md#communication-adapter-protocol) for more detail.
 
 **Example:**
 
@@ -116,7 +116,7 @@ void RadioManager::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffe
 
 ### Initiate downlink data flow
 
-As detailed in the [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol), the F´ downlink stack expects to receive an initial `Fw::Success::SUCCESS` message via our Com Adapter component's `comStatusOut` port to initiate data flow. This initial SUCCESS is not in response to any data — it tells `Svc::ComQueue` that the adapter is ready to accept its first message. Similarly, after a `Fw::Success::FAILURE`, the adapter must eventually emit a recovery `Fw::Success::SUCCESS` to resume data flow. Projects may implement this as is relevant for their specific radio.
+As detailed in the [Communication Adapter Protocol](../../reference/communication-adapter-interface.md#communication-adapter-protocol), the F´ downlink stack expects to receive an initial `Fw::Success::SUCCESS` message via our Com Adapter component's `comStatusOut` port to initiate data flow. This initial SUCCESS is not in response to any data — it tells `Svc::ComQueue` that the adapter is ready to accept its first message. Similarly, after a `Fw::Success::FAILURE`, the adapter must eventually emit a recovery `Fw::Success::SUCCESS` to resume data flow. Projects may implement this as is relevant for their specific radio.
 
 In our example, we will leverage the ByteStreamDriver's `ready` port, which signals when the driver is ready to receive data.
 
@@ -129,7 +129,7 @@ void RadioManager::drvConnected_handler(const FwIndexType portNum) {
 }
 ```
 
-Refer to [`Svc.ComStub` implementation](../../Svc/ComStub/ComStub.cpp) for detailed examples of each handler
+Refer to [`Svc.ComStub` implementation](../../../Svc/ComStub/ComStub.cpp) for detailed examples of each handler
 
 
 ---
@@ -140,7 +140,7 @@ As discussed in the Overview, new deployments are by default created with a `Svc
 
 ### Remove ComStub
 
-First, we need to take out ComStub of our topology. This is done by using the `ComCcsds.FramingSubtopology` instead of the default `ComCcsds.Subtopology`. Refer to the [ComCcsds definition](../../Svc/Subtopologies/ComCcsds/ComCcsds.fpp) for more detail
+First, we need to take out ComStub of our topology. This is done by using the `ComCcsds.FramingSubtopology` instead of the default `ComCcsds.Subtopology`. Refer to the [ComCcsds definition](../../../Svc/Subtopologies/ComCcsds/ComCcsds.fpp) for more detail
 
 ```diff
   # ----------------------------------------------------------------------
@@ -228,17 +228,17 @@ void teardownTopology(const TopologyState& state) {
 
 ### Asynchronous Transmission
 
-For asynchronous byte stream drivers, use the async send ports and store the context for the callback. See [`Svc.ComStub` async implementation](../../Svc/ComStub/ComStub.cpp) for a complete example.
+For asynchronous byte stream drivers, use the async send ports and store the context for the callback. See [`Svc.ComStub` async implementation](../../../Svc/ComStub/ComStub.cpp) for a complete example.
 
 ### Retry Logic
 
-Implement retry logic for transient failures. See [`Svc.ComStub::handleSynchronousSend`](../../Svc/ComStub/ComStub.cpp) for an example with retry limits
+Implement retry logic for transient failures. See [`Svc.ComStub::handleSynchronousSend`](../../../Svc/ComStub/ComStub.cpp) for an example with retry limits
 
 ---
 
 ## Best Practices
 
-- **Follow the protocol**: Review the [Communication Adapter Protocol](../reference/communication-adapter-interface.md#communication-adapter-protocol) requirements carefully.
+- **Follow the protocol**: Review the [Communication Adapter Protocol](../../reference/communication-adapter-interface.md#communication-adapter-protocol) requirements carefully.
 
 - **Return buffers promptly**: Return ownership via `*Return*` ports immediately after transmission.
 
@@ -247,7 +247,7 @@ Implement retry logic for transient failures. See [`Svc.ComStub::handleSynchrono
 
 ## Additional Resources
 
-- Reference: [Svc.ComStub](../../Svc/ComStub/docs/sdd.md) - Com Adapter implementation passing through data from a ByteStreamDriver
+- Reference: [Svc.ComStub](../../../Svc/ComStub/docs/sdd.md) - Com Adapter implementation passing through data from a ByteStreamDriver
 - Reference: [XBeeManager](https://github.com/fprime-community/fprime-sensors/tree/devel/fprime-sensors/XBee/Components/XBeeManager) - Com Adapter implementation for a [XBee radio](https://www.digi.com/products/embedded-systems/digi-xbee/rf-modules)
-- [Communication Adapter Interface Reference](../reference/communication-adapter-interface.md) - Complete protocol specification
-- [Byte Stream Driver Model](../../Drv/ByteStreamDriverModel/docs/sdd.md) - Driver interface documentation
+- [Communication Adapter Interface Reference](../../reference/communication-adapter-interface.md) - Complete protocol specification
+- [Byte Stream Driver Model](../../../Drv/ByteStreamDriverModel/docs/sdd.md) - Driver interface documentation

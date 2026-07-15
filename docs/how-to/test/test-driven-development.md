@@ -1,4 +1,4 @@
-# How-To: Test-Driven Development in F Prime (F´)
+# Test-Driven Development in F Prime (F´)
 
 This guide shows a practical, repeatable test-driven development loop for building an F´ component. You’ll model behavior first in FPP, stub the implementation, write tests that fail, then implement the component until the tests pass—iterating as needed.
 
