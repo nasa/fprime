@@ -68,9 +68,8 @@ jobs:
       - name: "Setup Python environment"
         run: |
           pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
           pip install "yamcs-client<2.0.0"
-          # Install fprime-gds from yamcsPOC branch
-          pip install "git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC"
           # Install fprime-yamcs from yamcsPOC branch (separate repo)
           pip install "git+https://github.com/yvijay99/fprime-yamcs.git@yamcsPOC"
         
