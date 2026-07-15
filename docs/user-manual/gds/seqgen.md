@@ -37,7 +37,7 @@ A list of these commands can be specified in a text file typically ending with t
 with a ;. The example file above goes into a greater explanation of the sample commands.
 
 > [!TIP]
-> If attempting to use sequencing to load parameters on to the spacecraft, it is possible to create the sequence file directly from a JSON file containing the new parameters. See [How-To: Load Parameters in Batch](https://fprime.jpl.nasa.gov/devel/docs/how-to/prm-write-how-to) for further instructions.
+> When using sequencing to load parameters onto the spacecraft, a sequence file can be created directly from a JSON file containing the new parameters. See [How-To: Load Parameters in Batch](../../how-to/operate/prm-write-how-to.md) for instructions.
 
 ### Command Arguments
 
