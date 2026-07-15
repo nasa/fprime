@@ -10,7 +10,7 @@ command of any command sequencer instance defined in the flight system.
 For more information on the underlying F' standard components, reference the [Svc::CmdSequencer](../../../Svc/CmdSequencer/docs/sdd.md) and [Svc::CmdDispatcher](../../../Svc/CmdDispatcher/docs/sdd.md) SDD documentation. 
 
 > [!NOTE]
-> Users may create multiple Command Sequencer components and manage them using a [Svc::SeqDispatcher](../../../Svc/SeqDispatcher/docs/sdd.md) component. This is useful for running sequences in parallel or organizing sequences by subsystem.
+> Users may create multiple Command Sequencer components and manage them using a single [Svc::SeqDispatcher](../../../Svc/SeqDispatcher/docs/sdd.md) component. This is useful for running sequences in parallel or organizing sequences by subsystem.
 
 ## Writing an F´ Sequence File
 
