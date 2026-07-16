@@ -3,7 +3,7 @@
 name: "External Repo: fprime-examples"
 
 on:
-  workflow_dispatch:
+  
   push:
     branches: [ dp-int-testing, release/** ]
   pull_request:
@@ -16,7 +16,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.gitignore'
       - '.github/agents/**'
-
+  workflow_dispatch:
 # Cancel in-progress runs if a newer run is started on a given PR
   
 concurrency:
