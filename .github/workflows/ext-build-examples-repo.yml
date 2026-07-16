@@ -3,6 +3,7 @@
 name: "External Repo: fprime-examples"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ devel, release/** ]
   pull_request:
