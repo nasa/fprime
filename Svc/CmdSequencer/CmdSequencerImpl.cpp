@@ -97,6 +97,7 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
             // Create empty SeqArgs as placeholder
             // Use parameterized constructor to ensure m_size is initialized to 0
@@ -162,6 +163,7 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
             // Create empty SeqArgs as placeholder
             // Use parameterized constructor to ensure m_size is initialized to 0
@@ -336,6 +338,7 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
 
     this->m_blockState = Svc::BlockState::NO_BLOCK;
     this->m_runMode = RUNNING;
+    this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
     this->performCmd_Step();
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
     if (this->isConnected_seqStartOut_OutputPort(0)) {

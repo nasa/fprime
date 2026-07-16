@@ -57,6 +57,8 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     U32 m_errorCount = 0;
     // number of sequencers in state AVAILABLE
     U32 m_sequencersAvailable = SeqDispatcherSequencerPorts;
+    // number of sequences aborted via the ABORT command
+    U32 m_abortedCount = 0;
 
     struct DispatchEntry {
         FwOpcodeType opCode;  //!< opcode of entry
@@ -96,6 +98,12 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                const U32 cmdSeq);         /*!< The command sequence number*/
+
+    //! Implementation for ABORT command handler
+    //!
+    void ABORT_cmdHandler(const FwOpcodeType opCode,          /*!< The opcode*/
+                          const U32 cmdSeq,                   /*!< The command sequence number*/
+                          const Fw::CmdStringArg& fileName);  /*!< The name of the sequence file to abort*/
 };
 
 }  // namespace Svc

@@ -34,6 +34,16 @@ TEST(RunArgs, testRunArgsBlockingVsNonBlocking) {
     tester.testRunArgsBlockingVsNonBlocking();
 }
 
+TEST(Abort, testAbort) {
+    Svc::SeqDispatcherTester tester;
+    tester.testAbort();
+}
+
+TEST(Abort, testAbortNotFound) {
+    Svc::SeqDispatcherTester tester;
+    tester.testAbortNotFound();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

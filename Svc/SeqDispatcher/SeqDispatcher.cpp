@@ -185,4 +185,31 @@ void SeqDispatcher::LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The op
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
+
+void SeqDispatcher::ABORT_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
+                                     const U32 cmdSeq,                 /*!< The command sequence number*/
+                                     const Fw::CmdStringArg& fileName) /*!< The name of the sequence file to abort*/ {
+    bool aborted = false;
+    for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+        // only slots actively running the named sequence are candidates
+        const bool running = this->m_entryTable[idx].state != SeqDispatcher_CmdSequencerState::AVAILABLE;
+        if (running && this->m_entryTable[idx].sequenceRunning == fileName) {
+            if (this->isConnected_seqCancelOut_OutputPort(idx)) {
+                this->seqCancelOut_out(idx);
+            }
+            // Entry table is cleared via seqDoneIn_handler
+            this->log_ACTIVITY_HI_SequenceAborted(static_cast<U16>(idx),
+                                                   Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+            this->tlmWrite_abortedCount(++this->m_abortedCount);
+            aborted = true;
+        }
+    }
+
+    if (aborted) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->log_WARNING_LO_AbortSequenceNotFound(Fw::LogStringArg(fileName));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
 }  // namespace Svc

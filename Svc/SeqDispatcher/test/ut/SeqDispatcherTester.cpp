@@ -92,6 +92,56 @@ void SeqDispatcherTester::seqRunOut_handler(FwIndexType portNum,             //!
     this->pushFromPortEntry_seqRunOut(filename, args);
 }
 
+void SeqDispatcherTester::seqCancelOut_handler(FwIndexType portNum  //!< The port number
+) {
+    this->pushFromPortEntry_seqCancelOut();
+}
+
+// Test ABORT cancels the sequencer running the named file and clears state on done
+void SeqDispatcherTester::testAbort() {
+    // Dispatch a non-blocking sequence so sequencer 0 is running "test"
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->sendCmd_RUN_ARGS(0, 0, Fw::String("test"), BlockState::NO_BLOCK, emptyArgs);
+    this->component.doDispatch();
+    ASSERT_from_seqRunOut_SIZE(1);
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts - 1);
+    this->clearHistory();
+
+    // Abort by filename
+    this->sendCmd_ABORT(0, 0, Fw::String("test"));
+    this->component.doDispatch();
+
+    // The matching sequencer should have been sent a cancel on its port
+    ASSERT_from_seqCancelOut_SIZE(1);
+    // Event + counter recorded
+    ASSERT_EVENTS_SequenceAborted_SIZE(1);
+    ASSERT_EVENTS_SequenceAborted(0, 0, "test");
+    ASSERT_TLM_abortedCount(0, 1);
+    // Command succeeds
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_ABORT, 0, Fw::CmdResponse::OK);
+    this->clearHistory();
+
+    // The canceled sequencer reports done, which clears our internal state
+    this->invoke_to_seqDoneIn(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->component.doDispatch();
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts);
+}
+
+// Test ABORT with a filename that is not running returns an error and cancels nothing
+void SeqDispatcherTester::testAbortNotFound() {
+    // No sequence running; abort a name that does not match
+    this->sendCmd_ABORT(0, 0, Fw::String("does_not_exist"));
+    this->component.doDispatch();
+
+    // Nothing canceled
+    ASSERT_from_seqCancelOut_SIZE(0);
+    // Warning event, error response
+    ASSERT_EVENTS_AbortSequenceNotFound_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, SeqDispatcher::OPCODE_ABORT, 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 // Test RUN_ARGS with valid arguments - verify arguments are propagated correctly
 void SeqDispatcherTester::testRunArgsWithValidArguments() {
     // Create test arguments with some data

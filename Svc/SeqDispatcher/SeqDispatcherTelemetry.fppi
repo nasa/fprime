@@ -6,3 +6,5 @@ telemetry dispatchedCount: U32
 telemetry errorCount: U32
 @ Number of sequencers in an available state
 telemetry sequencersAvailable: U32
+@ Number of sequences aborted by the ABORT command
+telemetry abortedCount: U32
