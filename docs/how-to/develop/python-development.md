@@ -1,4 +1,4 @@
-# How-To: Develop Components in Python
+# Develop Components in Python
 
 This guide is a starting point for developing Python-based F Prime applications by constructing select components using Python.
 
@@ -15,14 +15,12 @@ For a working reference project, see the [F Prime Python Reference](https://gith
 - [Prerequisites](#prerequisites)
 - [Python in F Prime](#python-in-f-prime)
 - [Modeling](#modeling)
-- [Project Structure](#project-structure)
-- [Development Environment](#development-environment)
-- [Development Workflow](#development-workflow)
+- [Project Setup](#project-setup)
+- [Modeling](#modeling)
+- [Implementation](#implementation)
+- [Binding TopologyState](#binding-topologystate)
+- [Instantiation and Deployment Main (Entry Point)](#instantiation-and-deployment-main-(entry-point))
 - [Testing](#testing)
-- [Packaging and Distribution](#packaging-and-distribution)
-- [Integration with Flight Components](#integration-with-flight-components)
-- [Debugging](#debugging)
-- [Next Steps](#next-steps)
 
 ## When to Use This
 

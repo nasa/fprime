@@ -1,4 +1,4 @@
-# How-To: Write Rule-Based Tests for F Prime Components
+# Write Rule-Based Tests for F Prime Components
 
 This guide shows how to write Rule-Based Testing (RBT) unit tests for an F Prime component.
 
@@ -7,7 +7,7 @@ Rule-Based Testing is a methodology for unit testing where unit tests are constr
 1. A precondition that says when the rule can be applied
 2. An action that performs the test
 
-Rules are then assembled into different sequences to form the test, potentially at random and in very large numbers. This methodology provides broad coverage and high confidence in component behavior. The framework for authoring Rule-Based Testing is provided by the [`fprime/STest/` module](../../STest/README.md).
+Rules are then assembled into different sequences to form the test, potentially at random and in very large numbers. This methodology provides broad coverage and high confidence in component behavior. The framework for authoring Rule-Based Testing is provided by the [`fprime/STest/` module](../../../STest/README.md).
 
 ## Prerequisites
 
@@ -316,7 +316,7 @@ The rule is then ready to be applied in test mains via scenarios as seen in step
 
 The key design choice is that `precondition` and `action` are implemented to delegate to the tester itself rather than in the rule struct directly. This is what makes F Prime test assert macros like `ASSERT_EVENTS_*` and `ASSERT_TLM_*` work inside rule bodies — those macros expand to `this->...`, and `this` must be the tester instance.
 
-The definition of this macro can be found in [`TestUtils/RuleBasedTesting.hpp`](../../TestUtils/RuleBasedTesting.hpp) for reference.
+The definition of this macro can be found in [`TestUtils/RuleBasedTesting.hpp`](../../../TestUtils/RuleBasedTesting.hpp) for reference.
 
 ### Rule Parameterization at Construction
 
@@ -374,7 +374,7 @@ rule25.apply(tester);
 
 ## References
 
-- [`Svc/Ccsds/ApidManager/test/ut/`](../../Svc/Ccsds/ApidManager/test/ut/)
-- [`TestUtils/RuleBasedTesting.hpp`](../../TestUtils/RuleBasedTesting.hpp)
-- [`STest/STest/Rule/Rule.hpp`](../../STest/STest/Rule/Rule.hpp)
-- [`STest/STest/Scenario/`](../../STest/STest/Scenario/)
+- [`Svc/Ccsds/ApidManager/test/ut/`](../../../Svc/Ccsds/ApidManager/test/ut/)
+- [`TestUtils/RuleBasedTesting.hpp`](../../../TestUtils/RuleBasedTesting.hpp)
+- [`STest/STest/Rule/Rule.hpp`](../../../STest/STest/Rule/Rule.hpp)
+- [`STest/STest/Scenario/`](../../../STest/STest/Scenario/)

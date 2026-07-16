@@ -9,7 +9,7 @@ This guide walks through the process of creating a basic plugin that listens to 
 
 > [!NOTE]
 > **Prerequisite**  
-> Before following this guide, you should first complete the [Develop GDS Plugins](../how-to/develop-gds-plugins.md) guide.  
+> Before following this guide, you should first complete the [Develop GDS Plugins](develop-gds-plugins.md) guide.  
 > It explains the plugin system, registration process, and runtime behavior essential to this example.
 
 A [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels) is provided to help users follow along.
@@ -143,7 +143,7 @@ First this code filters out unwanted channels. Then it performs a translation on
 
 ## Running It
 
-Install the plugin as directed in the plugin development How-To section [packaging and testing plugins ](./develop-gds-plugins.md#packaging-and-testing-plugins).  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
+Install the plugin as directed in the plugin development How-To section [packaging and testing plugins ](develop-gds-plugins.md#packaging-and-testing-plugins).  Next we need to merge our dictionaries and run it.  This is accomplished by running the merge dictionary command, and then supplying the output to the `--dictionary` flag of the GDS.
 
 **Merging Dictionaries**
 ```bash
@@ -160,6 +160,6 @@ fprime-gds --dictionary ./MergedDictionary.json --no-zmq
 
 ## See Also
 
-- [DataHandlerPlugin Reference](../reference/gds-plugins/data-handler.md)
-- [Plugin System Overview](../how-to/develop-gds-plugins.md)
+- [DataHandlerPlugin Reference](../../reference/gds-plugins/data-handler.md)
+- [Plugin System Overview](develop-gds-plugins.md)
 - [Cosine Example](https://github.com/nasa/fprime-examples/tree/devel/GdsExamples/gds-plugins/src/ground_channels)

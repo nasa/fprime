@@ -1,7 +1,7 @@
 # Data Products
 
 > [!TIP]
-> The following document is a technical guide to the Data Products system in F´. For a quick introduction to get started with using data products, see the [How To: Generate Data Products](../../how-to/data-products.md).
+> The following document is a technical guide to the Data Products system in F´. For a quick introduction to get started with using data products, see the [How To: Generate Data Products](../../how-to/develop/data-products.md).
 
 ## 1. Introduction
 
