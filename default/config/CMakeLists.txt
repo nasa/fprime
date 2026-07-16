@@ -21,6 +21,7 @@ register_fprime_config(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/MemoryAllocation.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/EventManagerCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroupCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroupCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"

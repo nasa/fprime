@@ -57,10 +57,10 @@ class FileDispatcher final : public FileDispatcherComponentBase {
 
     //! Handler implementation for command DISABLE_DISPATCH
     void ENABLE_DISPATCH_cmdHandler(
-        FwOpcodeType opCode,                                 //!< The opcode
-        U32 cmdSeq,                                          //!< The command sequence number
-        Svc::FileDispatcherCfg::FileDispatchPort file_type,  //!< the file type dispatch to disable
-        Fw::Enabled enable                                   //!< whether to enable or disable dispatch
+        FwOpcodeType opCode,                                        //!< The opcode
+        U32 cmdSeq,                                                 //!< The command sequence number
+        const Svc::FileDispatcherCfg::FileDispatchPort& file_type,  //!< the file type dispatch to disable
+        const Fw::Enabled& enable                                   //!< whether to enable or disable dispatch
         ) override;
 
     //! Handler implementation for pingIn

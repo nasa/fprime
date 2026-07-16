@@ -7,11 +7,17 @@ binary format for upload and running using the command sequencer.
 Compiling this sequence is done with the `fprime-seqgen` utility and can be run once uploaded by issuing the `*.CS_RUN`
 command of any command sequencer instance defined in the flight system.
 
+For more information on the underlying F' standard components, reference the [Svc::CmdSequencer](../../../Svc/CmdSequencer/docs/sdd.md) and [Svc::CmdDispatcher](../../../Svc/CmdDispatcher/docs/sdd.md) SDD documentation. 
+
+> [!NOTE]
+> Users may create multiple Command Sequencer components and manage them using a single [Svc::SeqDispatcher](../../../Svc/SeqDispatcher/docs/sdd.md) component. This is useful for running sequences in parallel or organizing sequences by subsystem.
+
 ## Writing an F´ Sequence File
 
 F´ sequence files consist of lists of commands. These commands start with a time argument, followed by the command
-mnemonic, and lastly any arguments to command.  See the example below, which are all pulled from the example sequence
+mnemonic, and lastly any arguments to command. See the example below, which are all pulled from the example sequence
 file found here: [simple_sequence.seq](https://github.com/fprime-community/fprime-gds/blob/devel/examples/simple_sequence.seq).
+
 
 ```
 A2015-075T22:32:40.123 cmdDisp.CMD_NO_OP
@@ -29,6 +35,9 @@ R01:00:01.050 CMD_NO_OP_STRING "Awesome string!" ; And a nice comment too
 
 A list of these commands can be specified in a text file typically ending with the `.seq` extension.  Comments start
 with a ;. The example file above goes into a greater explanation of the sample commands.
+
+> [!TIP]
+> When using sequencing to load parameters onto the spacecraft, a sequence file can be created directly from a JSON file containing the new parameters. See [How-To: Load Parameters in Batch](../../how-to/operate/prm-write-how-to.md) for instructions.
 
 ### Command Arguments
 

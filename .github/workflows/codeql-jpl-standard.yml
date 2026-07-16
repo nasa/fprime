@@ -59,8 +59,42 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        # Only publish alerts to the GitHub code-scanning UI for the default
-        # branch (devel). The analysis still runs on other branches and PRs so
-        # regressions are caught, but results are not uploaded, preventing stale
-        # branches from accumulating alerts.
-        upload: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/devel') && 'always' || 'never' }}
+        upload: never
+        output: sarif-results
+
+    # For compiled languages the config-file paths-ignore does NOT remove
+    # results: every file reached by the traced build is analyzed and reported,
+    # so exclusions are applied here by filtering the SARIF before upload.
+
+    # CMake-internal generated sources (try_compile checks, compiler id,
+    # feature tests) and third-party dependencies fetched by CMake (e.g.
+    # googletest via FetchContent) are not first-party code
+    - name: Filter CMake-internal and third-party paths out of SARIF
+      uses: advanced-security/filter-sarif@v1.1
+      with:
+        patterns: |
+          -**/CMakeFiles/**
+          -**/_deps/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    # Autocoded C++ in the build caches is not hand-maintained, so the rules in
+    # the no-autocode run guard only hand-written sources
+    - name: Filter build paths out of SARIF (no-autocode run)
+      if: matrix.config-file == 'jpl-standard-known-autocode-issues.yml'
+      uses: advanced-security/filter-sarif@v1.1
+      with:
+        patterns: |
+          -**/build-fprime-*/**
+        input: sarif-results/cpp.sarif
+        output: sarif-results/cpp.sarif
+
+    # Only publish alerts to the GitHub code-scanning UI for the default
+    # branch (devel). The analysis still runs on other branches and PRs so
+    # regressions are caught, but results are not uploaded, preventing stale
+    # branches from accumulating alerts.
+    - name: Upload SARIF
+      if: github.event_name == 'push' && github.ref == 'refs/heads/devel'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: sarif-results/cpp.sarif
