@@ -186,8 +186,8 @@ void SeqDispatcher::LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The op
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void SeqDispatcher::ABORT_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
-                                     const U32 cmdSeq,                 /*!< The command sequence number*/
+void SeqDispatcher::ABORT_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                     const U32 cmdSeq,          /*!< The command sequence number*/
                                      const Fw::CmdStringArg& fileName) /*!< The name of the sequence file to abort*/ {
     bool aborted = false;
     for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
@@ -199,7 +199,7 @@ void SeqDispatcher::ABORT_cmdHandler(const FwOpcodeType opCode,        /*!< The 
             }
             // Entry table is cleared via seqDoneIn_handler
             this->log_ACTIVITY_HI_SequenceAborted(static_cast<U16>(idx),
-                                                   Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+                                                  Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
             this->tlmWrite_abortedCount(++this->m_abortedCount);
             aborted = true;
         }

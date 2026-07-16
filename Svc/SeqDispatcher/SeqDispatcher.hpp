@@ -101,9 +101,9 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     //! Implementation for ABORT command handler
     //!
-    void ABORT_cmdHandler(const FwOpcodeType opCode,          /*!< The opcode*/
-                          const U32 cmdSeq,                   /*!< The command sequence number*/
-                          const Fw::CmdStringArg& fileName);  /*!< The name of the sequence file to abort*/
+    void ABORT_cmdHandler(const FwOpcodeType opCode,         /*!< The opcode*/
+                          const U32 cmdSeq,                  /*!< The command sequence number*/
+                          const Fw::CmdStringArg& fileName); /*!< The name of the sequence file to abort*/
 };
 
 }  // namespace Svc
