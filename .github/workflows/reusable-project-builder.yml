@@ -4,6 +4,7 @@
 name: "F´ Project Builder - Reusable Workflow"
 
 on:
+  workflow_dispatch:
   workflow_call:
     inputs:
       build_location:
