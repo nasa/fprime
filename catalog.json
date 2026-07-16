@@ -2,18 +2,18 @@
   "schema": 1,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "cd1c0446d703ba54499aa3d80a508f992cdc769e",
-  "generated_at": "2026-07-16T18:29:18Z",
+  "commit": "d0aacb8e76abec0a3ac0dbf4b1ff2badb4f76048",
+  "generated_at": "2026-07-16T22:52:05Z",
   "overall": {
-    "line_pct": 82.06,
-    "line_covered": 15366,
-    "line_total": 18725,
-    "function_pct": 62.69,
-    "function_covered": 5465,
-    "function_total": 8717,
-    "branch_pct": 71.85,
-    "branch_covered": 8758,
-    "branch_total": 12189,
+    "line_pct": 82.07,
+    "line_covered": 15374,
+    "line_total": 18733,
+    "function_pct": 62.63,
+    "function_covered": 5468,
+    "function_total": 8730,
+    "branch_pct": 71.94,
+    "branch_covered": 8803,
+    "branch_total": 12236,
     "report": "coverage/coverage-all.html"
   },
   "modules": [
@@ -659,8 +659,8 @@
       "function_pct": 88.16,
       "function_covered": 67,
       "function_total": 76,
-      "branch_pct": 72.86,
-      "branch_covered": 298,
+      "branch_pct": 73.35,
+      "branch_covered": 300,
       "branch_total": 409
     },
     {
@@ -675,8 +675,8 @@
       "function_pct": 92.86,
       "function_covered": 26,
       "function_total": 28,
-      "branch_pct": 73.33,
-      "branch_covered": 77,
+      "branch_pct": 74.29,
+      "branch_covered": 78,
       "branch_total": 105
     },
     {
@@ -697,8 +697,8 @@
       "function_pct": 84.21,
       "function_covered": 80,
       "function_total": 95,
-      "branch_pct": 44.1,
-      "branch_covered": 187,
+      "branch_pct": 44.34,
+      "branch_covered": 188,
       "branch_total": 424
     },
     {
@@ -1128,14 +1128,14 @@
       "report": "Svc/FpySequencer/coverage/index.html",
       "summary": "Svc/FpySequencer/coverage/summary.json",
       "line_pct": 86.58,
-      "line_covered": 1845,
-      "line_total": 2131,
+      "line_covered": 1852,
+      "line_total": 2139,
       "function_pct": 98.57,
       "function_covered": 207,
       "function_total": 210,
-      "branch_pct": 76.79,
-      "branch_covered": 1499,
-      "branch_total": 1952
+      "branch_pct": 77.19,
+      "branch_covered": 1543,
+      "branch_total": 1999
     },
     {
       "path": "Svc/GenericHub",

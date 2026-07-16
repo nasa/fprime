@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-16 18:26:01</td>
+      <td>2026-07-16 22:49:10</td>
     </tr>
   </table>
 </div>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l5">Os::CountingSemaphore::CountingSemaphore(unsigned int) (line 5)</a></td><td>called 2529 times</td><td>77.0%</td></tr>
+    <tr><td><a href="#l5">Os::CountingSemaphore::CountingSemaphore(unsigned int) (line 5)</a></td><td>called 2513 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l32">Os::CountingSemaphore::getHandle() (line 32)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l27">Os::CountingSemaphore::post() (line 27)</a></td><td>called 229731 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l22">Os::CountingSemaphore::tryWait() (line 22)</a></td><td>called 135652 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l27">Os::CountingSemaphore::post() (line 27)</a></td><td>called 181151 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l22">Os::CountingSemaphore::tryWait() (line 22)</a></td><td>called 114012 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l12">Os::CountingSemaphore::wait() (line 12)</a></td><td>called 1034 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l17">Os::CountingSemaphore::waitTimeout(Fw::TimeInterval const&amp;) (line 17)</a></td><td>called 4 times</td><td>97.0%</td></tr>
-    <tr><td><a href="#l8">Os::CountingSemaphore::~CountingSemaphore() (line 8)</a></td><td>called 2529 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l8">Os::CountingSemaphore::~CountingSemaphore() (line 8)</a></td><td>called 2513 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -122,7 +122,7 @@
       <td class="lineno"><a id="l5" href="#l5">5</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2529</td>
+      <td class="linecount coveredLine">2513</td>
       <td class="src coveredLine"><span class="n">CountingSemaphore</span><span class="o">::</span><span class="n">CountingSemaphore</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">initial_count</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -131,11 +131,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 9 taken 2529 times.</div>
+            <div class="takenBranch">&check; Branch 9 taken 2513 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2529</td>
+      <td class="linecount coveredLine">2513</td>
       <td class="src coveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_delegate</span><span class="p">(</span><span class="o">*</span><span class="n">CountingSemaphoreInterface</span><span class="o">::</span><span class="n">getDelegate</span><span class="p">(</span><span class="n">m_handle_storage</span><span class="p">,</span><span class="w"> </span><span class="n">initial_count</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -149,21 +149,21 @@
       <td class="lineno"><a id="l8" href="#l8">8</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5058</td>
+      <td class="linecount coveredLine">5026</td>
       <td class="src coveredLine"><span class="n">CountingSemaphore</span><span class="o">::~</span><span class="n">CountingSemaphore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l9" href="#l9">9</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5058</td>
+      <td class="linecount coveredLine">5026</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_delegate</span><span class="p">.</span><span class="o">~</span><span class="n">CountingSemaphoreInterface</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l10" href="#l10">10</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5058</td>
+      <td class="linecount coveredLine">5026</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -247,21 +247,21 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">135652</td>
+      <td class="linecount coveredLine">114012</td>
       <td class="src coveredLine"><span class="n">CountingSemaphore</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">CountingSemaphore</span><span class="o">::</span><span class="n">tryWait</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">135652</td>
+      <td class="linecount coveredLine">114012</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">CountingSemaphoreInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">136545</td>
+      <td class="linecount coveredLine">114431</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="n">tryWait</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -282,21 +282,21 @@
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">229731</td>
+      <td class="linecount coveredLine">181151</td>
       <td class="src coveredLine"><span class="n">CountingSemaphore</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">CountingSemaphore</span><span class="o">::</span><span class="k">post</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">229731</td>
+      <td class="linecount coveredLine">181151</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">CountingSemaphoreInterface</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle_storage</span><span class="p">[</span><span class="mi">0</span><span class="p">]));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">231787</td>
+      <td class="linecount coveredLine">182260</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_delegate</span><span class="p">.</span><span class="k">post</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
