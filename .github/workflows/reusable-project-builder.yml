@@ -138,4 +138,22 @@ jobs:
           fi
           fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
+  
+      - name: "Generate AArch64 Linux Build Cache"
+        run: |
+          fprime-util generate aarch64-linux
+      - name: "Build AArch64 Linux"
+        run: |
+          fprime-util build aarch64-linux
+      - name: "Prepare artifacts"
+        run: |
+          mkdir -p aarch64-linux-artifacts
+          cp -r ./build-artifacts aarch64-linux-artifacts
+          cp -r LedBlinker/Components/Led/test/int aarch64-linux-artifacts
+      - name: "Archive Build Artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
+          retention-days: 5
 
