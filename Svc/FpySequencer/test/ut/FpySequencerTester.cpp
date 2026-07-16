@@ -452,6 +452,16 @@ void FpySequencerTester::add_POP_EVENT() {
     Fw::StatementArgBuffer buf;
     addDirective(Fpy::DirectiveId::POP_EVENT, buf);
 }
+
+void FpySequencerTester::add_POP_SERIALIZABLE(FwIndexType portIndex, Fpy::StackSizeType size) {
+    add_POP_SERIALIZABLE(FpySequencer_PopSerializableDirective(portIndex, size));
+}
+
+void FpySequencerTester::add_POP_SERIALIZABLE(FpySequencer_PopSerializableDirective dir) {
+    Fw::StatementArgBuffer buf;
+    FW_ASSERT(buf.serializeFrom(dir) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+    addDirective(Fpy::DirectiveId::POP_SERIALIZABLE, buf);
+}
 //! Handle a text event
 void FpySequencerTester::textLogIn(FwEventIdType id,                //!< The event ID
                                    const Fw::Time& timeTag,         //!< The time
