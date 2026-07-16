@@ -6,7 +6,7 @@ on:
   
   push:
     branches: [ dp-int-testing, release/** ]
-  workflow_dispatch:
+  
 
   pull_request:
     # The branches below must be a subset of the branches above
@@ -19,6 +19,8 @@ on:
       - '.gitignore'
       - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
+  workflow_dispatch:
+  
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
