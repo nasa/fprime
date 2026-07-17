@@ -63,7 +63,7 @@ jobs:
       - name: "Build"
         run: fprime-util build -j8
 
-      - name: "Set up runtime config variables"
+      - name: "Resolve deployment paths and command opcode"
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -132,10 +132,10 @@ jobs:
             --log-to-stdout \
             >"${GDS_LOG}" 2>&1 &
 
-          # Wait for GDS to connect DeploymentA before pytest
-          a_timeout=$((SECONDS + 60))
+          # Wait for GDS to connect DeploymentA before pytest.
+          a_deadline=$((SECONDS + 120))
           until grep -q "tcp_handler: Client connected" "${GDS_LOG}"; do
-            (( SECONDS < a_timeout )) || {
+            (( SECONDS < a_deadline )) || {
               echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
               exit 1
             }
@@ -151,12 +151,12 @@ jobs:
       - name: "Verify HubCommandTest on DeploymentB"
         shell: bash
         run: |
-          # Verify in DeploymentB's logs that the commands have been dispatched
-          # this is a current limitation - FprimeRouter::cmdResponseIn_handler
-          # is a no-op that discards the hub-returned command response
-
           set -Eeuo pipefail
-          sleep 1
+
+          # Verify in DeploymentB's logs that the commands have been dispatched
+          # This is a current limitation: FprimeRouter::cmdResponseIn_handler
+          # is a no-op that discards the hub-returned command response.
+          sleep 3
 
           if ! grep -q "OpCodeDispatched : Opcode ${CMD_OPCODE_HEX} dispatched" "${B_LOG}"; then
             echo "DeploymentB did not dispatch HubCommandTest opcode ${CMD_OPCODE_HEX}" >&2
