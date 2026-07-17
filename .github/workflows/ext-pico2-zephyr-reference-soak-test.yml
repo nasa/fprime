@@ -21,7 +21,7 @@ concurrency:
 jobs:
   soak-test:
     name: "Soak Test"
-    runs-on: [self-hosted, ARM64, pico2-soak]
+    runs-on: [self-hosted, ARM64, soak-test]
     steps:
       - uses: nasa/fprime-actions/soak-test@devel
         with:
