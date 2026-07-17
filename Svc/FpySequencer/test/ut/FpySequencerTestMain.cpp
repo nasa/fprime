@@ -3624,6 +3624,26 @@ TEST_F(FpySequencerTester, deserialize_popEvent) {
     ASSERT_EQ(result, Fw::Success::SUCCESS);
 }
 
+TEST_F(FpySequencerTester, deserialize_popSerializable) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_PopSerializableDirective popSerializable(0, 4);
+    add_POP_SERIALIZABLE(popSerializable);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.popSerializable, popSerializable);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+}
+
 // caught a bug
 TEST_F(FpySequencerTester, checkTimers) {
     allocMem();
