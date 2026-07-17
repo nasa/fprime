@@ -2138,6 +2138,26 @@ TEST_F(FpySequencerTester, checkStatementTimeout) {
     ASSERT_EQ(result, Signal::result_checkStatementTimeout_statementTimeout);
 }
 
+TEST_F(FpySequencerTester, checkStatementTimeoutLargeSeconds) {
+    // Seconds value > 4294 triggers 32-bit overflow without the U64 cast (issue #5424)
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 5000, 500000);
+    setTestTime(testTime);
+
+    F32 timeout = 10;
+    paramSet_STATEMENT_TIMEOUT_SECS(timeout, Fw::ParamValid::VALID);
+    paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
+
+    // dispatched at 4980s, currently 5000s → 20s elapsed > 10s timeout
+    tester_get_m_runtime_ptr()->currentStatementDispatchTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 4980, 500000);
+    Signal result = tester_checkStatementTimeout();
+    ASSERT_EQ(result, Signal::result_checkStatementTimeout_statementTimeout);
+
+    // dispatched at 4995s, currently 5000s → 5s elapsed < 10s timeout
+    tester_get_m_runtime_ptr()->currentStatementDispatchTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 4995, 500000);
+    result = tester_checkStatementTimeout();
+    ASSERT_EQ(result, Signal::result_checkStatementTimeout_noTimeout);
+}
+
 TEST_F(FpySequencerTester, checkStatementTimeoutMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 300, 100);
     setTestTime(testTime);
