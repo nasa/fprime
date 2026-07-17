@@ -287,7 +287,7 @@ TEST_F(FpySequencerTester, cmdStackOverflow) {
 
     // with exactly enough room for the response code, the cmd should be dispatched
     err = DirectiveError::NO_ERROR;
-    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I32);
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType);
     result = tester_constCmd_directiveHandler(directive, err);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
