@@ -76,30 +76,17 @@ jobs:
           A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
           A_TEST_DIR="${GITHUB_WORKSPACE}/FprimeGenericHubReference/Deployments/DeploymentA/test/int"
           A_TEST_CONFIG="${A_TEST_DIR}/int_config.json"
-          A_BIN="${A_DIR}/bin/FprimeGenericHubReference_Deployments_DeploymentA"
           B_LOG="${LOG_DIR}/deploymentB.stdout.log"
           GDS_LOG="${LOG_DIR}/gds.stdout.log"
           GDS_LOG_DIR="${LOG_DIR}/gds"
           PORT_A=50000
           PORT_B=50001
-          B_PID=""
-          GDS_PID=""
-          A_PID=""
 
-          # Stop the background processes when the step exits.
-          cleanup() {
-            set +e
-            [[ -n "${A_PID}" ]] && kill "${A_PID}" 2>/dev/null || true
-            [[ -n "${GDS_PID}" ]] && kill "${GDS_PID}" 2>/dev/null || true
-            [[ -n "${B_PID}" ]] && kill "${B_PID}" 2>/dev/null || true
-            wait "${A_PID}" "${GDS_PID}" "${B_PID}" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
+          # Background processes redirect to log files (not the step's stdio) and the
+          # runner VM is ephemeral, so GitHub Actions tears them down at job end.
           echo "Starting DeploymentB on TCP port ${PORT_B}"
-          # Force line-buffered deployment output.
+          # Line-buffer B's output so its log lines are on disk when we grep them below.
           stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
-          B_PID=$!
 
           echo "Starting DeploymentA through GDS on TCP port ${PORT_A}"
           mkdir -p "${GDS_LOG_DIR}"
@@ -113,20 +100,16 @@ jobs:
             --logs "${GDS_LOG_DIR}" \
             --log-to-stdout \
             >"${GDS_LOG}" 2>&1 &
-          GDS_PID=$!
 
           # Wait for GDS to connect DeploymentA before pytest.
           a_deadline=$((SECONDS + 120))
           while (( SECONDS < a_deadline )); do
-            if [[ -z "${A_PID}" ]]; then
-              A_PID="$(pgrep -f -- "${A_BIN} -p ${PORT_A} -a 127.0.0.1" | head -n 1 || true)"
-            fi
-            if grep -q "tcp_handler: Client connected to 127.0.0.1:${PORT_A}" "${GDS_LOG}"; then
+            if grep -q "tcp_handler: Client connected" "${GDS_LOG}"; then
               break
             fi
             sleep 1
           done
-          if ! grep -q "tcp_handler: Client connected to 127.0.0.1:${PORT_A}" "${GDS_LOG}"; then
+          if ! grep -q "tcp_handler: Client connected" "${GDS_LOG}"; then
             echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
             exit 1
           fi
