@@ -138,7 +138,12 @@ jobs:
           fi
           fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
-  
+
+      - name: "Install AArch64 cross-compilation toolchain"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build
+        shell: bash
       - name: "Generate AArch64 Linux Build Cache"
         working-directory: ${{ inputs.build_location }}
         run: |
