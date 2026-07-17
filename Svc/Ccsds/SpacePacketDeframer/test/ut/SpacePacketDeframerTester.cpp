@@ -54,7 +54,8 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
 
     bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));  // random secondary header flag
-    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength, hasSecHdr);
+    U8 seqFlags = static_cast<U8>(STest::Random::lowerUpper(0, 3));       // random 2 bit sequence flags
+    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength, hasSecHdr, seqFlags);
     ComCfg::FrameContext nullContext;
 
     this->invoke_to_dataIn(0, buffer, nullContext);
@@ -73,6 +74,7 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     ASSERT_EQ(context.get_apid(), apid);
     ASSERT_EQ(context.get_sequenceCount(), seqCount);
     ASSERT_EQ(context.get_hasSecHdr(), hasSecHdr);
+    ASSERT_EQ(context.get_sequenceFlags(), seqFlags);
 
     ASSERT_EVENTS_SIZE(0);  // No events should be generated in the nominal case
 }
@@ -199,14 +201,18 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 lengthToken,
                                                       U8* packetData,
                                                       U16 packetDataLen,
-                                                      bool hasSecHdr) {
+                                                      bool hasSecHdr,
+                                                      U8 seqFlags) {
     SpacePacketHeader header;
     U16 packetId = apid & SpacePacketSubfields::ApidMask;
     if (hasSecHdr) {
         packetId |= SpacePacketSubfields::SecHdrMask;
     }
     header.set_packetIdentification(packetId);
-    header.set_packetSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    U16 packetSeqControl = static_cast<U16>((static_cast<U16>(seqFlags) << SpacePacketSubfields::SeqFlagsOffset) &
+                                            SpacePacketSubfields::SeqFlagsMask);
+    packetSeqControl |= seqCount & SpacePacketSubfields::SeqCountMask;
+    header.set_packetSequenceControl(packetSeqControl);
     header.set_packetDataLength(lengthToken);
 
     Fw::ExternalSerializeBuffer serializer(static_cast<U8*>(this->m_packetBuffer), sizeof(this->m_packetBuffer));

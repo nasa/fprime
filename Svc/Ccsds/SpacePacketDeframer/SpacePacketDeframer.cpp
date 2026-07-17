@@ -85,6 +85,11 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     bool hasSecHdr = (header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) != 0;
     contextCopy.set_hasSecHdr(hasSecHdr);
 
+    // Extract sequence flags
+    U8 sequenceFlags = static_cast<U8>((header.get_packetSequenceControl() & SpacePacketSubfields::SeqFlagsMask) >>
+                                       SpacePacketSubfields::SeqFlagsOffset);
+    contextCopy.set_sequenceFlags(sequenceFlags);
+
     // Validate with the ApidManager that the sequence count is correct
     U16 receivedSequenceCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
     (void)this->validateApidSeqCount_out(0, apid, receivedSequenceCount);
