@@ -31,25 +31,35 @@ jobs:
     name: "Get target branch"
     uses: ./.github/workflows/reusable-get-pr-branch.yml
     with:
-      target_repository: nasa/fprime-examples
+      target_repository: Specky26846/fprime-examples
 
   run:
     needs: get-branch
     name: ""
     uses: ./.github/workflows/reusable-project-builder.yml
     with:
-      target_repository: nasa/fprime-examples
+      target_repository: Specky26846/fprime-examples
       build_location: FlightExamples
       run_unit_tests: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
 
-  download-artifacts:
+  integration-tests:
     needs: run
-    name: "Download build artifacts"
+    name: "Run Integration Tests"
     runs-on: ubuntu-22.04
     steps:
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
         with:
           name: aarch64-linux-artifacts
+      - name: "Setup Python environment"
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install pytest
+      - name: "Run integration tests"
+        run: |
+          cd aarch64-linux-artifacts/int
+          ./run_int_tests.sh
