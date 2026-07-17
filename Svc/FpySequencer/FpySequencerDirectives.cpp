@@ -1301,10 +1301,13 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
     // also pop the args off the stack
     this->m_runtime.stack.size -= directive.get_argsSize();
 
-    // the cmd response code will be pushed to the stack when it comes back. popping the
-    // opcode above always frees enough room for it, so no runtime check is needed here
-    static_assert(sizeof(FwOpcodeType) >= sizeof(Fw::CmdResponse::SerialType),
-                  "popping the opcode must free enough stack room for the cmd response push");
+    // the cmd response code will be pushed to the stack when it comes back, so make sure
+    // there is room for it now, before the cmd is dispatched. popping the opcode above
+    // frees some room, but FwOpcodeType is configurable so it may not be enough
+    if (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
 
     if (this->sendCmd(opcode, this->m_runtime.stack.bytes + argBufOffset, directive.get_argsSize()) ==
         Fw::Success::FAILURE) {
