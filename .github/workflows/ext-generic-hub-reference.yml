@@ -113,16 +113,13 @@ jobs:
 
           # Wait for GDS to connect DeploymentA before pytest.
           a_deadline=$((SECONDS + 120))
-          while (( SECONDS < a_deadline )); do
-            if grep -q "tcp_handler: Client connected" "${GDS_LOG}"; then
-              break
-            fi
+          until grep -q "tcp_handler: Client connected" "${GDS_LOG}"; do
+            (( SECONDS < a_deadline )) || {
+              echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
+              exit 1
+            }
             sleep 1
           done
-          if ! grep -q "tcp_handler: Client connected" "${GDS_LOG}"; then
-            echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
-            exit 1
-          fi
 
           # Exercise message paths and verify return events through pytest.
           pytest "${A_TEST_DIR}" \
