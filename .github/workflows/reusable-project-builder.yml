@@ -140,12 +140,15 @@ jobs:
         shell: bash
   
       - name: "Generate AArch64 Linux Build Cache"
+        working-directory: ${{ inputs.build_location }}
         run: |
           fprime-util generate aarch64-linux
       - name: "Build AArch64 Linux"
+        working-directory: ${{ inputs.build_location }}
         run: |
           fprime-util build aarch64-linux
       - name: "Prepare artifacts"
+        working-directory: ${{ inputs.build_location }}
         run: |
           mkdir -p aarch64-linux-artifacts
           cp -r ./build-artifacts aarch64-linux-artifacts
@@ -154,6 +157,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: aarch64-linux-artifacts
-          path: aarch64-linux-artifacts
+          path: ${{ inputs.build_location }}/aarch64-linux-artifacts
           retention-days: 5
 
