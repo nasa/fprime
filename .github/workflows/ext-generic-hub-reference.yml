@@ -68,8 +68,9 @@ jobs:
         run: |
           set -Eeuo pipefail
 
-          A_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentA"
-          B_BIN="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
+          BUILD_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux"
+          A_DIR="${BUILD_DIR}/FprimeGenericHubReference_Deployments_DeploymentA"
+          B_BIN="${BUILD_DIR}/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
           A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
           A_TEST_DIR="${GITHUB_WORKSPACE}/FprimeGenericHubReference/Deployments/DeploymentA/test/int"
           A_TEST_CONFIG="${A_TEST_DIR}/int_config.json"
@@ -114,8 +115,6 @@ jobs:
 
           mkdir -p "${LOG_DIR}"
 
-          # Background processes redirect to log files (not the step's stdio) and the
-          # runner VM is ephemeral, so GitHub Actions tears them down at job end.
           echo "Starting DeploymentB on TCP port ${PORT_B}"
           # Line-buffer B's output so its log lines are on disk when we grep them below.
           stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
@@ -148,6 +147,11 @@ jobs:
             --dictionary "${A_DICT}" \
             --deployment-config "${A_TEST_CONFIG}" \
             --logs "${GDS_LOG_DIR}"
+
+      - name: "Verify HubCommandTest on DeploymentB"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
 
           # Verify the pytest-issued command on DeploymentB's console.
           sleep 3
