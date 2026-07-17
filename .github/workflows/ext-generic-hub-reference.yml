@@ -63,34 +63,56 @@ jobs:
       - name: "Build"
         run: fprime-util build -j8
 
-      - name: "Run Generic Hub round-trip"
+      - name: "Resolve deployment paths and command opcode"
         shell: bash
         run: |
           set -Eeuo pipefail
-
-          LOG_DIR="${GITHUB_WORKSPACE}/hub-communication-logs"
-          mkdir -p "${LOG_DIR}"
 
           A_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentA"
           B_BIN="${GITHUB_WORKSPACE}/build-artifacts/Linux/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
           A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
           A_TEST_DIR="${GITHUB_WORKSPACE}/FprimeGenericHubReference/Deployments/DeploymentA/test/int"
           A_TEST_CONFIG="${A_TEST_DIR}/int_config.json"
+          LOG_DIR="${GITHUB_WORKSPACE}/hub-communication-logs"
           B_LOG="${LOG_DIR}/deploymentB.stdout.log"
           GDS_LOG="${LOG_DIR}/gds.stdout.log"
           GDS_LOG_DIR="${LOG_DIR}/gds"
           PORT_A=50000
           PORT_B=50001
 
-          # Resolve the HubCommandTest opcode from the dictionary instead of hardcoding it
-          # (F´ renders opcodes in the console as lowercase, unpadded hex, e.g. 0x11017500).
+          # Resolve the HubCommandTest opcode from the dictionary instead of hardcoding it.
+          # F´ renders opcodes in the console as lowercase, unpadded hex, e.g. 0x11017500.
           CMD_OPCODE="$(jq -r '.commands[] | select(.name | endswith(".HubCommandTest")) | .opcode' "${A_DICT}")"
           if [[ -z "${CMD_OPCODE}" || "${CMD_OPCODE}" == "null" ]]; then
             echo "Could not resolve HubCommandTest opcode from ${A_DICT}" >&2
             exit 1
           fi
+          # Convert the dictionary's decimal opcode to the console's lowercase hexadecimal format.
           CMD_OPCODE_HEX="$(printf '0x%x' "${CMD_OPCODE}")"
           echo "HubCommandTest opcode: ${CMD_OPCODE_HEX}"
+
+          {
+            echo "A_DIR=${A_DIR}"
+            echo "B_BIN=${B_BIN}"
+            echo "A_DICT=${A_DICT}"
+            echo "A_TEST_DIR=${A_TEST_DIR}"
+            echo "A_TEST_CONFIG=${A_TEST_CONFIG}"
+            echo "LOG_DIR=${LOG_DIR}"
+            echo "B_LOG=${B_LOG}"
+            echo "GDS_LOG=${GDS_LOG}"
+            echo "GDS_LOG_DIR=${GDS_LOG_DIR}"
+            echo "PORT_A=${PORT_A}"
+            echo "PORT_B=${PORT_B}"
+            echo "CMD_OPCODE=${CMD_OPCODE}"
+            echo "CMD_OPCODE_HEX=${CMD_OPCODE_HEX}"
+          } >> "${GITHUB_ENV}"
+
+      - name: "Run Generic Hub round-trip"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          mkdir -p "${LOG_DIR}"
 
           # Background processes redirect to log files (not the step's stdio) and the
           # runner VM is ephemeral, so GitHub Actions tears them down at job end.
