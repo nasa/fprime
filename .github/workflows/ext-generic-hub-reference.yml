@@ -82,6 +82,16 @@ jobs:
           PORT_A=50000
           PORT_B=50001
 
+          # Resolve the HubCommandTest opcode from the dictionary instead of hardcoding it
+          # (F´ renders opcodes in the console as lowercase, unpadded hex, e.g. 0x11017500).
+          CMD_OPCODE="$(jq -r '.commands[] | select(.name | endswith(".HubCommandTest")) | .opcode' "${A_DICT}")"
+          if [[ -z "${CMD_OPCODE}" || "${CMD_OPCODE}" == "null" ]]; then
+            echo "Could not resolve HubCommandTest opcode from ${A_DICT}" >&2
+            exit 1
+          fi
+          CMD_OPCODE_HEX="$(printf '0x%x' "${CMD_OPCODE}")"
+          echo "HubCommandTest opcode: ${CMD_OPCODE_HEX}"
+
           # Background processes redirect to log files (not the step's stdio) and the
           # runner VM is ephemeral, so GitHub Actions tears them down at job end.
           echo "Starting DeploymentB on TCP port ${PORT_B}"
@@ -123,16 +133,16 @@ jobs:
           # Verify the pytest-issued command on DeploymentB's console.
           sleep 3
 
-          if ! grep -q "OpCodeDispatched : Opcode 0x11017500 dispatched" "${B_LOG}"; then
-            echo "DeploymentB did not dispatch HubCommandTest opcode 0x11017500" >&2
+          if ! grep -q "OpCodeDispatched : Opcode ${CMD_OPCODE_HEX} dispatched" "${B_LOG}"; then
+            echo "DeploymentB did not dispatch HubCommandTest opcode ${CMD_OPCODE_HEX}" >&2
             exit 1
           fi
           if ! grep -q "HubCommandTestEvr" "${B_LOG}"; then
             echo "DeploymentB did not log HubCommandTestEvr" >&2
             exit 1
           fi
-          if ! grep -q "OpCodeCompleted : Opcode 0x11017500 completed" "${B_LOG}"; then
-            echo "DeploymentB did not complete HubCommandTest opcode 0x11017500" >&2
+          if ! grep -q "OpCodeCompleted : Opcode ${CMD_OPCODE_HEX} completed" "${B_LOG}"; then
+            echo "DeploymentB did not complete HubCommandTest opcode ${CMD_OPCODE_HEX}" >&2
             exit 1
           fi
 
