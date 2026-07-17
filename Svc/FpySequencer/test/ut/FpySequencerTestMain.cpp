@@ -3091,6 +3091,23 @@ TEST_F(FpySequencerTester, seqBaseDir_emptyKeepsRawPath) {
     removeFile("test.bin");
 }
 
+TEST_F(FpySequencerTester, validate_emptySequenceFilePath) {
+    allocMem();
+    paramSet_SEQ_BASE_DIR(Fw::ParamString(""), Fw::ParamValid::VALID);
+    paramSend_SEQ_BASE_DIR(0, 0);
+    this->clearHistory();
+
+    sendCmd_VALIDATE(0, 0, Fw::String(""));
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).filePath, Fw::LogStringArg(""));
+    ASSERT_EQ(this->eventHistory_FileOpenError->at(0).errorCode, static_cast<I32>(Os::File::INVALID_ARGUMENT));
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+}
+
 TEST_F(FpySequencerTester, seqBaseDir_fileOpenLogsResolvedPath) {
     // a base dir that doesn't exist makes file open fail. the FileOpenError
     // event should report the fully resolved path, not the user-supplied one
@@ -3605,6 +3622,26 @@ TEST_F(FpySequencerTester, deserialize_popEvent) {
     seq.get_statements()[0].get_argBuf().resetSer();
     result = tester_deserializeDirective(seq.get_statements()[0], actual);
     ASSERT_EQ(result, Fw::Success::SUCCESS);
+}
+
+TEST_F(FpySequencerTester, deserialize_popSerializable) {
+    FpySequencer::DirectiveUnion actual;
+    FpySequencer_PopSerializableDirective popSerializable(0, 4);
+    add_POP_SERIALIZABLE(popSerializable);
+    Fw::Success result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::SUCCESS);
+    ASSERT_EQ(actual.popSerializable, popSerializable);
+    // write some junk after buf, make sure it fails
+    seq.get_statements()[0].get_argBuf().serializeFrom(123);
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
+    this->clearHistory();
+    // clear args, make sure it fails
+    seq.get_statements()[0].get_argBuf().resetSer();
+    result = tester_deserializeDirective(seq.get_statements()[0], actual);
+    ASSERT_EQ(result, Fw::Success::FAILURE);
+    ASSERT_EVENTS_DirectiveDeserializeError_SIZE(1);
 }
 
 // caught a bug

@@ -1,4 +1,4 @@
-# How-To: Define State Machines in F Prime
+# Define State Machines in F Prime
 
 This guide shows how to define and use state machines in F Prime using the F Prime Modeling Language (FPP). State machines help capture component behavior by modeling modes (states) and transitions explicitly, making complex logic easier to implement, test, and maintain. FPP provides autocoding capabilities to allow users to quickly implement state-defined behavior.
 

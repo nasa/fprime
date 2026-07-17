@@ -19,7 +19,7 @@ Before starting, you should have:
 
 A "device driver" traditionally refers to the entire stack of software that manages a hardware device. In F´, the driver-manager pattern splits this in two components: the device manager component and the bus driver component. The bus driver handles the platform-specific implementation of communications on a specific bus (e.g., LinuxI2cDriver, LinuxUartDriver). The device manager handles the operations and logic for a specific device. This enhances modularity and reusability: for example the same device manager can be ported to different platforms by switching the bus driver component.
 
-Please refer to the [Application Manager Driver pattern documentation](../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
+Please refer to the [Application Manager Driver pattern documentation](../../user-manual/design-patterns/app-man-drv.md) for more details on the design pattern used in F Prime for device drivers.
 
 ### Example and reference
 
@@ -65,7 +65,7 @@ Use `fprime-util new --component` to create a new component for your device mana
 
 This component will translate device-specific operations into bus transactions. Identify the bus type (I2C, SPI, UART, etc.) and the operations needed (read, write, configure, etc.). These should be reflected in the component's ports by mirroring the bus driver's interface.
 
-For our `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)).  
+For our `ImuManager` component, we are using an I2C bus, therefore we need to define ports that mirror the `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../../Drv/Interfaces/I2c.fpp)).  
 For example, a `Drv.I2c` component provides an ***input*** port of type `Drv.I2cWriteRead`, so we need to define an ***output*** port of that type in our component in order to connect to a bus driver component. We mirror each Bus Driver port that we need to use in our Device Manager.
 
 ```python
@@ -280,7 +280,7 @@ We learn the following:
 
 ### Step 2 - Define the Bus Driver Component
 
-Use `fprime-util new --component` to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the `Drv/Interfaces/` directory. For I2C, we can use the existing `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../Drv/Interfaces/I2c.fpp)).
+Use `fprime-util new --component` to create a new component for your bus driver. The set of ports that a bus driver needs to expose depends on the bus communication protocol (I2C, SPI, UART, etc.). F Prime provides standard interfaces for common bus types in the `Drv/Interfaces/` directory. For I2C, we can use the existing `Drv.I2c` interface (see [Drv/Interfaces/I2c.fpp](../../../Drv/Interfaces/I2c.fpp)).
 
 ```python
 # In: ZephyrI2cDriver.fpp
@@ -292,7 +292,7 @@ passive component ZephyrI2cDriver {
 ```
 
 > [!TIP]
-> Our I2C bus driver will only be responding to read/write requests from a device manager, therefore we define it as a `passive component` and the `Drv.I2c` ports are sufficient. If your bus driver needs to perform scheduled tasks (e.g., polling, timeouts, etc.), you may consider adding a scheduling port (`Svc.Sched`) to hook to a [Svc.RateGroup](../../Svc/ActiveRateGroup/docs/sdd.md), and potentially switching to an `active` component. `queued` components can also be used but need careful design to ensure messages are dispatched.
+> Our I2C bus driver will only be responding to read/write requests from a device manager, therefore we define it as a `passive component` and the `Drv.I2c` ports are sufficient. If your bus driver needs to perform scheduled tasks (e.g., polling, timeouts, etc.), you may consider adding a scheduling port (`Svc.Sched`) to hook to a [Svc.RateGroup](../../../Svc/ActiveRateGroup/docs/sdd.md), and potentially switching to an `active` component. `queued` components can also be used but need careful design to ensure messages are dispatched.
 
 Run `fprime-util impl` to generate the component C++, including the port handler to fill out. In our case, we will need to implement the `write`, `read`, and `writeRead` port handlers.
 
@@ -405,9 +405,9 @@ void configureTopology() {
 
 ## Additional Resources
 
-- [Application Manager Driver Pattern](../user-manual/design-patterns/app-man-drv.md)
+- [Application Manager Driver Pattern](../../user-manual/design-patterns/app-man-drv.md)
 - [fprime-sensors Repository](https://github.com/fprime-community/fprime-sensors) - A collection of ready-to-use device managers for specific devices
 - [fprime-sensors-reference Repository](https://github.com/fprime-community/fprime-sensors-reference) - Reference project that uses sensors defined in fprime-sensors
-- [F´ core Linux Bus Drivers](../../Drv/)
+- [F´ core Linux Bus Drivers](../../../Drv)
 - [fprime-zephyr package](https://github.com/fprime-community/fprime-zephyr) - F Prime support for Zephyr RTOS, including common bus drivers for Zephyr
 

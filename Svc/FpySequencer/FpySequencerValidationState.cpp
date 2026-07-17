@@ -26,7 +26,10 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
-    FW_ASSERT(this->m_sequenceFilePath.length() > 0);
+    if (this->m_sequenceFilePath.length() == 0) {
+        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(Os::File::INVALID_ARGUMENT));
+        return Fw::Success::FAILURE;
+    }
 
     // crc needs to be initialized with a particular value
     // for the calculation to work

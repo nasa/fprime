@@ -112,8 +112,8 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
 
 void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
-                                               FilterSeverity filterLevel,
-                                               Enabled filterEnable) {
+                                               const FilterSeverity& filterLevel,
+                                               const Enabled& filterEnable) {
     this->m_filterState[filterLevel.e].enabled = filterEnable;
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -121,7 +121,7 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
 void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                             U32 cmdSeq,           //!< The command sequence number
                                             FwEventIdType ID,
-                                            Enabled idEnabled  //!< ID filter state
+                                            const Enabled& idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
         if (m_filteredIDs.insert(ID) == Fw::Success::SUCCESS) {

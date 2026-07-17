@@ -37,11 +37,11 @@ category is summarized in the table below.
 
 | Category      | Type          | Description                                                              | Reference                                                                    |
 |---------------|---------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| framing       | SELECTION     | Implement a framer/deframer pair to handle serialized data               | [Framing Plugin Reference](../reference/gds-plugins/framing.md)              |
-| communication | SELECTION     | Implement a communication adapter for flight software communication      | [Communication Plugin Reference](../reference/gds-plugins/communications.md) |
-| data-handler  | FEATURE | Implement custom data item handling (for channels, events, etc)          | [Data Handler Plugin](../reference/gds-plugins/data-handler.md)              |
-| gds-app       | FEATURE | Implement a new GDS application isolated to a separate process           | [Gds Application Plugin](../reference/gds-plugins/gds-app.md)                |
-| gds-function  | FEATURE | (Advanced) Implement new GDS functionality with control over the process | [Gds Function Plugin](../reference/gds-plugins/gds-function.md)              |
+| framing       | SELECTION     | Implement a framer/deframer pair to handle serialized data               | [Framing Plugin Reference](../../reference/gds-plugins/framing.md)              |
+| communication | SELECTION     | Implement a communication adapter for flight software communication      | [Communication Plugin Reference](../../reference/gds-plugins/communications.md) |
+| data-handler  | FEATURE | Implement custom data item handling (for channels, events, etc)          | [Data Handler Plugin](../../reference/gds-plugins/data-handler.md)              |
+| gds-app       | FEATURE | Implement a new GDS application isolated to a separate process           | [Gds Application Plugin](../../reference/gds-plugins/gds-app.md)                |
+| gds-function  | FEATURE | (Advanced) Implement new GDS functionality with control over the process | [Gds Function Plugin](../../reference/gds-plugins/gds-function.md)              |
 
 
 Plugins should define a function called `register_<category>_plugin` that return a concrete subclass of the category's

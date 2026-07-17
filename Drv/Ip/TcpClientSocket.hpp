@@ -41,7 +41,7 @@ class TcpClientSocket : public IpSocket {
      * \param port: port to check
      * \return true if valid, false otherwise
      */
-    bool isValidPort(U16 port) override;
+    bool isValidPort(U16 port) const override;
 
     /**
      * \brief Tcp specific implementation for opening a client socket.

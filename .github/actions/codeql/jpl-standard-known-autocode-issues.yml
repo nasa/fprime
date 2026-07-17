@@ -8,7 +8,10 @@ name: "CodeQL JPL Coding Standard - Known Auto-Code Issues"
 disable-default-queries: true
 
 # Autocoded C++ in build caches is not hand-maintained, so alerts there are
-# not actionable in this repository
+# not actionable in this repository. NOTE: for compiled languages this
+# paths-ignore does not filter results by itself; the actual exclusion is the
+# filter-sarif step in codeql-jpl-standard.yml. Kept here for documentation
+# and for file-coverage accounting.
 paths-ignore:
   - "**/build-fprime-*/**"
 
@@ -40,3 +43,8 @@ query-filters:
         # "Function too long" check. It runs here (build paths excluded) so it
         # guards only hand-written sources.
         - cpp/jpl-c/function-size-limits
+        # The autocoder emits large amounts of assertion-free code, which trips
+        # the Rule 16 assertion-density check. The FW_ASSERT-aware refinement
+        # runs here (build paths excluded) so it guards only hand-written
+        # sources.
+        - cpp/fprime/jpl-c/use-of-assertions-density
