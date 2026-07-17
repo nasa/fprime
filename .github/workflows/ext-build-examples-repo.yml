@@ -52,8 +52,8 @@ jobs:
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
         with:
-          name: aarch64-linux-artifacts/int
-          path: aarch64-linux-artifacts/int
+          name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
       - name: "Setup Python environment"
         run: |
           python3 -m venv venv
