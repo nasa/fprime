@@ -60,6 +60,12 @@ TEST(Transaction, Class2TxNack) {
     delete tester;
 }
 
+TEST(Transaction, Class2TxLateFinAck) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testClass2TxLateFinAck();
+    delete tester;
+}
+
 TEST(Transaction, Class1RxNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testClass1RxNominal();

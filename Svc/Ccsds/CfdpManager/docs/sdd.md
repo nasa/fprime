@@ -516,6 +516,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | TxInvalidSegmentRequests | warning low | TX transaction received invalid NAK segment requests |
 | TxNonFileDirectivePduReceived | warning low | TX transaction received non-file-directive PDU |
 | TxInvalidDirectiveCode | warning low | TX transaction received invalid directive code for substate |
+| TxLateFinAcked | diagnostic | Retransmitted FIN acknowledged statelessly for an already-completed/recycled TX transaction (source EID, transaction sequence number) |
 
 ### File Transfer Complete Events
 

@@ -347,6 +347,9 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 TX file transfer with NAK handling
     void testClass2TxNack();
 
+    //! Test stateless FIN-ACK for a retransmitted FIN on an already-recycled TX transaction
+    void testClass2TxLateFinAck();
+
     //! Test nominal Class 1 RX file transfer
     void testClass1RxNominal();
 

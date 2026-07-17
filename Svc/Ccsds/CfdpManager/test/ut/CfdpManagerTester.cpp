@@ -996,6 +996,78 @@ void CfdpManagerTester::testClass2TxNack() {
     );
 }
 
+void CfdpManagerTester::testClass2TxLateFinAck() {
+    // Exercises Engine::receivePdu's stateless FIN-ACK path: a retransmitted FIN arrives for a
+    // downlink (TX) transaction this entity sourced, but that transaction has already completed
+    // and been recycled (no live transaction remains). Per CFDP the sender must still acknowledge
+    // the FIN, so the engine re-ACKs it statelessly and emits TxLateFinAcked.
+    const U16 dataPerPdu = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
+    const FwSizeType expectedFileSize = 5 * dataPerPdu;
+    const char* srcFile = "test/ut/output/c2_latefin.bin";
+    const char* dstFile = "test/ut/output/c2_latefin_dst.dat";
+    const U8 channelId = TEST_CHANNEL_ID_1;
+
+    // Create the source file and drive a full nominal Class 2 TX to completion.
+    FwSizeType fileSize;
+    createAndVerifyTestFile(srcFile, expectedFileSize, fileSize);
+
+    TransactionSetup setup;
+    setupTxTransaction(srcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, TEST_PRIORITY,
+                       TxnState::TXN_STATE_S2, setup);
+    const TransactionSeq seqNum = setup.expectedSeqNum;
+
+    U8 numFileDataPdus = static_cast<U8>(fileSize / dataPerPdu);
+    if (fileSize % dataPerPdu != 0) {
+        numFileDataPdus++;
+    }
+
+    // Metadata + FileData PDUs
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    // EOF PDU
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // Close out the handshake (EOF-ACK + FIN -> FIN-ACK) and confirm completion.
+    completeClass2Handshake(channelId, TEST_GROUND_EID, seqNum, setup.txn);
+    ASSERT_EVENTS_TxFileTransferCompleted_SIZE(1);
+
+    // Let the inactivity timer fire so the transaction is recycled (txn == nullptr precondition).
+    waitForTransactionRecycle(channelId, seqNum);
+    ASSERT_EQ(nullptr, findTransaction(channelId, seqNum)) << "Transaction should be recycled before late FIN";
+
+    // Only observe what the late FIN produces.
+    this->clearHistory();
+    this->m_pduCopyCount = 0;
+
+    // Retransmitted FIN for the completed transaction. Its sourceEid is the local (sender) EID and
+    // destEid is the ground peer -- exactly the header a FIN toward this sender carries, which is
+    // what routes it into the stateless FIN-ACK branch.
+    this->sendFinPdu(channelId, component.getLocalEidParam(), TEST_GROUND_EID, seqNum,
+                     Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, Cfdp::FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE,
+                     Cfdp::FinFileStatus::FIN_FILE_STATUS_RETAINED);
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    // A stateless ACK(FIN) must go out. Unlike the in-transaction FIN-ACK (verifyFinAckPdu, which
+    // expects ACK_TXN_STATUS_TERMINATED), the stateless path reports ACK_TXN_STATUS_UNRECOGNIZED.
+    ASSERT_EQ(1u, this->fromPortHistory_dataOut->size()) << "Exactly one PDU (the stateless FIN-ACK) should be sent";
+    Fw::Buffer finAckBuffer = this->getSentPduBuffer(0);
+    ASSERT_GT(finAckBuffer.getSize(), 0) << "Stateless FIN-ACK PDU should be sent";
+    verifyAckPdu(finAckBuffer, component.getLocalEidParam(), TEST_GROUND_EID, seqNum,
+                 Cfdp::FileDirective::FILE_DIRECTIVE_FIN, 1, Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR,
+                 Cfdp::AckTxnStatus::ACK_TXN_STATUS_UNRECOGNIZED);
+
+    // The diagnostic event should be emitted with the source EID and sequence number.
+    ASSERT_EVENTS_TxLateFinAcked_SIZE(1);
+    ASSERT_EVENTS_TxLateFinAcked(0, component.getLocalEidParam(), seqNum);
+
+    // No stray transaction should have been created by the late FIN.
+    ASSERT_EQ(nullptr, findTransaction(channelId, seqNum)) << "Late FIN must not create a new transaction";
+
+    cleanupTestFile(srcFile);
+}
+
 void CfdpManagerTester::testClass1RxNominal() {
     const U16 fileDataSize = static_cast<U16>(this->component.getOutgoingFileChunkSizeParam());
 
