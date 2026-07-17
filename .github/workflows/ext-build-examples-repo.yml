@@ -49,17 +49,25 @@ jobs:
     name: "Run Integration Tests"
     runs-on: ubuntu-22.04
     steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: Specky26846/fprime-examples
+          ref: devel
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./FlightExamples/lib/fprime
+      - name: "Install F´ requirements"
+        run: |
+          pip3 install -r ./FlightExamples/lib/fprime/requirements.txt
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
         with:
           name: aarch64-linux-artifacts
           path: aarch64-linux-artifacts
-      - name: "Setup Python environment"
-        run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install pytest
       - name: "Run integration tests"
         run: |
           cd aarch64-linux-artifacts/int
