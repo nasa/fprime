@@ -27,7 +27,7 @@ jobs:
   # Any previously deployed soak GDS still owns /dev/pico2 and the ZMQ ipc sockets
   stop-previous-gds:
     name: "Stop Previous Soak GDS"
-    runs-on: [self-hosted, pico2-soak]
+    runs-on: [self-hosted, soak-test]
     steps:
       - name: "Disable prior soak GDS service"
         shell: bash
@@ -47,7 +47,7 @@ jobs:
       target_repository: fprime-community/fprime-zephyr-reference
       target_ref: ${{ github.event.release.tag_name || 'devel' }}
       ci_config_file: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
-      runs_on_int: pico2-soak
+      runs_on_int: soak-test 
 
   # Now start the persistent GDS service for soak testing
   start-persistent-gds:
