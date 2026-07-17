@@ -452,6 +452,12 @@ Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirectiv
 }
 
 Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
+    // the cmd response code will be pushed to the stack when it comes back, so make sure
+    // there is room for it now, before the cmd is dispatched
+    if (Fpy::MAX_STACK_SIZE - sizeof(I32) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
     if (this->sendCmd(directive.get_opCode(), directive.get_argBuf(), directive.get__argBufSize()) ==
         Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;
@@ -1294,6 +1300,15 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
 
     // also pop the args off the stack
     this->m_runtime.stack.size -= directive.get_argsSize();
+
+    // the cmd response code will be pushed to the stack when it comes back, so make sure
+    // there is room for it now, before the cmd is dispatched. popping the opcode above
+    // guarantees this on configs where FwOpcodeType is at least as big as I32, but not on
+    // configs where it is smaller
+    if (Fpy::MAX_STACK_SIZE - sizeof(I32) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
 
     if (this->sendCmd(opcode, this->m_runtime.stack.bytes + argBufOffset, directive.get_argsSize()) ==
         Fw::Success::FAILURE) {

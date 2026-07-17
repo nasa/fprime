@@ -274,6 +274,26 @@ TEST_F(FpySequencerTester, cmd) {
         (((tester_get_m_sequencesStarted() & 0xFFFF) << 16) | (tester_get_m_statementsDispatched() & 0xFFFF)));
 }
 
+TEST_F(FpySequencerTester, cmdStackOverflow) {
+    FpySequencer_ConstCmdDirective directive(123, 0, 0);
+    DirectiveError err = DirectiveError::NO_ERROR;
+    // fill the stack so there is no room left to push the cmd response code
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
+    Signal result = tester_constCmd_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::STACK_OVERFLOW);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    // the cmd should not have been dispatched
+    ASSERT_from_cmdOut_SIZE(0);
+
+    // with exactly enough room for the response code, the cmd should be dispatched
+    err = DirectiveError::NO_ERROR;
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE - sizeof(I32);
+    result = tester_constCmd_directiveHandler(directive, err);
+    ASSERT_EQ(err, DirectiveError::NO_ERROR);
+    ASSERT_EQ(result, Signal::stmtResponse_keepWaiting);
+    ASSERT_from_cmdOut_SIZE(1);
+}
+
 TEST_F(FpySequencerTester, stackOp) {
     // Test EQ (equal)
     FpySequencer_StackOpDirective directiveEQ(Fpy::DirectiveId::IEQ);
