@@ -62,4 +62,4 @@ jobs:
       - name: "Run integration tests"
         run: |
           cd aarch64-linux-artifacts/int
-          ./run_int_tests.sh
+          python dp_demo_integration_test.py

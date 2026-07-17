@@ -159,6 +159,7 @@ jobs:
           cp -r ./build-artifacts aarch64-linux-artifacts
           if [ -d "DataProduct/Producer/test/int" ]; then
             cp -r DataProduct/Producer/test/int aarch64-linux-artifacts/
+            cp -r DataProduct/Producer/test/ut aarch64-linux-artifacts/
           fi
       - name: "Archive Build Artifacts"
         uses: actions/upload-artifact@v7
