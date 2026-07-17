@@ -34,14 +34,14 @@ TEST(RunArgs, testRunArgsBlockingVsNonBlocking) {
     tester.testRunArgsBlockingVsNonBlocking();
 }
 
-TEST(Abort, testAbort) {
+TEST(CancelName, testCancelName) {
     Svc::SeqDispatcherTester tester;
-    tester.testAbort();
+    tester.testCancelName();
 }
 
-TEST(Abort, testAbortNotFound) {
+TEST(CancelName, testCancelNameNotFound) {
     Svc::SeqDispatcherTester tester;
-    tester.testAbortNotFound();
+    tester.testCancelNameNotFound();
 }
 
 int main(int argc, char** argv) {

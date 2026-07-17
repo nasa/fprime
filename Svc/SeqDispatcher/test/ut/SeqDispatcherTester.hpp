@@ -44,8 +44,8 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     void testRunArgsWithMaxSizedArguments();
     void testRunArgsNoSequencersAvailable();
     void testRunArgsBlockingVsNonBlocking();
-    void testAbort();
-    void testAbortNotFound();
+    void testCancelName();
+    void testCancelNameNotFound();
 
   private:
     // ----------------------------------------------------------------------

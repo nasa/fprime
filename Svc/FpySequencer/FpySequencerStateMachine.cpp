@@ -88,6 +88,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_report_seqSucce
 ) {
     this->m_tlm.sequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceDone(this->m_sequenceFilePath);
+    this->m_sequenceFilePath = NO_SEQ;
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         // report that the sequence succeeded to internal callers
         this->seqDoneOut_out(0, 0, 0, Fw::CmdResponse::OK);

@@ -37,15 +37,15 @@ event LogSequencerStatus(
     severity activity low \
     format "Sequencer {} with state {} is running file {}"
 
-event SequenceAborted(
+event SequenceCanceled(
     idx: U16
     filename: string size 240
 ) \
     severity activity high \
-    format "Sequencer {} aborted running sequence {}"
+    format "Sequencer {} canceled running sequence {}"
 
-event AbortSequenceNotFound(
+event CancelSequenceNotFound(
     filename: string size 240
 ) \
     severity warning low \
-    format "No running sequence matched file {} to abort"
+    format "No running sequence matched file {} to cancel"

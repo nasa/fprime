@@ -339,8 +339,8 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
     this->m_blockState = Svc::BlockState::NO_BLOCK;
     this->m_runMode = RUNNING;
     this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
-    this->performCmd_Step();
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
+    this->performCmd_Step();
     if (this->isConnected_seqStartOut_OutputPort(0)) {
         // Create empty SeqArgs as placeholder
         Svc::SeqArgs emptyArgs{0, 0};
@@ -442,6 +442,7 @@ void CmdSequencerComponentImpl::sequenceComplete() {
 
     m_join_waiting = false;
     this->m_blockState = Svc::BlockState::NO_BLOCK;
+    this->tlmWrite_CS_CurrentSequence(NO_SEQ);
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
