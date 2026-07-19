@@ -33,6 +33,29 @@ These are platforms that the F Prime community or core team is actively working 
 | Vorago | Baremetal | ARM | In development | |TBD|
 | VOXL2 | Linux | ARM64 | In development | | TBD |
 
+## Other Reference Projects
+
+The following projects demonstrate F Prime integrations, libraries, tutorials, and deployment patterns that are not tied to a single supported platform. Build badges are included when the project is exercised by the F Prime continuous integration workflows. Reference projects already listed in the platform tables above are not repeated here.
+
+| Reference Project | Purpose | Build Status |
+| ----------------- | ------- | ------------ |
+| [`fprime-examples`](https://github.com/nasa/fprime-examples) | Examples of F Prime components, patterns, and applications | [![External Repo: Examples](https://github.com/nasa/fprime/actions/workflows/ext-build-examples-repo.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-examples-repo.yml) |
+| [`fprime-tutorial-hello-world`](https://github.com/fprime-community/fprime-tutorial-hello-world) | Hello World tutorial reference project | [![External Repo: Hello World](https://github.com/nasa/fprime/actions/workflows/ext-build-hello-world.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-hello-world.yml) |
+| [`fprime-tutorial-math-component`](https://github.com/fprime-community/fprime-tutorial-math-component) | Math component tutorial reference project | [![External Repo: Math Component](https://github.com/nasa/fprime/actions/workflows/ext-build-math-comp.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-math-comp.yml) |
+| [`fprime-bootstrap`](https://github.com/fprime-community/fprime-bootstrap) | Project bootstrap and cookiecutter templates | [![External Repo: Cookiecutters](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml) |
+| [`fprime-tools`](https://github.com/nasa/fprime-tools) | Development tools and project cookiecutters | [![External Repo: Cookiecutters](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml) |
+| [`fprime_cfs_reference`](https://github.com/fprime-community/fprime_cfs_reference) | cFS reference project using F Prime applications | [![External Repo: cFS Reference](https://github.com/nasa/fprime/actions/workflows/ext-fprime-cfs-reference.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-cfs-reference.yml) |
+| [`fprime-pycubed-zephyr-reference`](https://github.com/fprime-community/fprime-pycubed-zephyr-reference) | PyCubed deployment using Zephyr | N/A |
+| [`fprime-pycubed-baremetal-reference`](https://github.com/fprime-community/fprime-pycubed-baremetal-reference) | PyCubed bare-metal deployment | N/A |
+| [`fprime-sensors-reference`](https://github.com/fprime-community/fprime-sensors-reference) | Reference project for the `fprime-sensors` library | N/A |
+| [`fprime-amsat-reference`](https://github.com/fprime-community/fprime-amsat-reference) | AMSAT CubeSat Simulator C&DH reference project | N/A |
+| [`fprime-stm32h7-zephyr-reference`](https://github.com/fprime-community/fprime-stm32h7-zephyr-reference) | STM32H7 deployment using Zephyr | N/A |
+| [`fprime-amsat-main-board-reference`](https://github.com/fprime-community/fprime-amsat-main-board-reference) | AMSAT CubeSat Simulator main sensor board reference project | N/A |
+| [`fprime-python-reference`](https://github.com/fprime-community/fprime-python-reference) | Reference project for the `fprime-python` package | N/A |
+| [`fprime-generic-hub-reference`](https://github.com/fprime-community/fprime-generic-hub-reference) | Reference project for applications using the hub pattern | N/A |
+| [`fprime-yamcs-reference`](https://github.com/fprime-community/fprime-yamcs-reference) | Reference project integrating F Prime with YAMCS | N/A |
+| [`fprime-phased-deployment-reference`](https://github.com/fprime-community/fprime-phased-deployment-reference) | Reference project that starts F Prime through deployment phases | N/A |
+
 ## What does "Supported Platform" Mean?
 
 A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
