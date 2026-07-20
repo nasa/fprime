@@ -63,7 +63,7 @@ jobs:
   setup-java:
     name: "Setup Java Environment"
     runs-on: ubuntu-22.04-arm
-    needs: cross-compilation
+    needs: setup-python
     steps:
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
@@ -74,7 +74,7 @@ jobs:
   yamcs-specific-tests:
     name: "YAMCS-Specific Integration Tests"
     runs-on: ubuntu-22.04-arm
-    needs: [setup-python, setup-java]
+    needs: setup-java
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
@@ -146,7 +146,7 @@ jobs:
   svc-integration-tests:
     name: "Standard Svc Integration Tests"
     runs-on: ubuntu-22.04-arm
-    needs: [setup-python, setup-java]
+    needs: yamcs-specific-tests
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
