@@ -21,8 +21,8 @@ fprime-fpl-layout==1.0.4
 fprime-fpl-write-pic==1.0.4
 fprime-fpp==3.3.0a12
 fprime-fpy==0.4.0
-fprime-gds @ git+https://github.com/yvijay99/fprime-gds.git@yamcsPOC
-fprime-xtce @ git+https://github.com/yvijay99/fprime-xtce.git@yamcsPOC
+fprime-gds==4.2.1
+fprime-xtce
 fprime-tools==4.3.0a5
 fprime-visual==1.0.2
 gcovr==8.2
