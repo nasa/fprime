@@ -53,7 +53,7 @@ jobs:
   start-persistent-gds:
     name: "Start Soak GDS"
     needs: build
-    runs-on: [self-hosted, pico2-soak]
+    runs-on: [self-hosted, soak-test]
     steps:
       - name: "Set up target repository (for tests + dictionary)"
         uses: nasa/fprime-actions/external-repository-setup@devel
