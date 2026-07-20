@@ -13,7 +13,6 @@
 #include "Os/File.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_AllocErrorEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
-#include "config/FwAssertArgTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 
 namespace Svc {
@@ -607,13 +606,15 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
         return;
     }
 
+    Fw::ParamValid prmValid;
+    auto fuel = this->paramGet_INSTRUCTION_FUEL(prmValid);
+
     spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
     spacewasm_run_status_t runStatus;
     if (this->m_executingStart) {
-        runStatus = spacewasm_store_run_start(this->m_store, this->m_moduleIndex,
-                                              Svc::WasmSequencerConfig::INSTRUCTION_FUEL, &trap);
+        runStatus = spacewasm_store_run_start(this->m_store, this->m_moduleIndex, static_cast<FwSizeType>(fuel), &trap);
     } else {
-        runStatus = spacewasm_store_run(this->m_store, Svc::WasmSequencerConfig::INSTRUCTION_FUEL, &trap);
+        runStatus = spacewasm_store_run(this->m_store, static_cast<FwSizeType>(fuel), &trap);
     }
     this->m_lastTrap = trap;
 
