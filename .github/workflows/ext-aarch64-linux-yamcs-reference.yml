@@ -33,7 +33,8 @@ jobs:
           cp -r ./build-artifacts aarch64-linux-artifacts
           cp -r FprimeYamcsReference/YamcsDeployment/test/int aarch64-linux-artifacts
           # Copy fprime Svc integration tests (including conftest.py)
-          cp -r Svc aarch64-linux-artifacts/fprime-svc
+          # fprime is overlaid at lib/fprime by external-repository-setup
+          cp -r lib/fprime/Svc aarch64-linux-artifacts/fprime-svc
       - name: "Archive Build Artifacts"
         uses: actions/upload-artifact@v7
         with:
