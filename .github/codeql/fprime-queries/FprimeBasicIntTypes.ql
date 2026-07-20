@@ -151,9 +151,15 @@ where
   // Declarations introduced by this repository — including functions and
   // methods returning or taking basic integral types — are still flagged.
   not externalApiVariable(d) and
+  // F Prime: the language mandates a plain `int` dummy parameter to
+  // distinguish the postfix increment/decrement operators.
+  not exists(Operator op |
+    op.getName() = ["operator++", "operator--"] and d = op.getAParameter()
+  ) and
   // F Prime: exclude vendored third-party code, which is not maintained to the
-  // F Prime coding standard.
-  not d.getFile().getRelativePath().matches("Utils/Hash/libcrc/%")
+  // F Prime coding standard, and the Python virtual environment (toolchain
+  // files such as CMake's compiler ABI probes live inside it).
+  not d.getFile().getRelativePath().matches(["Utils/Hash/libcrc/%", "%fprime-venv/%"])
 select d,
   d.getName() + " uses the basic integral type " + usedType.getName() +
     " rather than a typedef with size and signedness."
