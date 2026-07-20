@@ -150,7 +150,10 @@ where
   // external (system/libc) API they receive values from or are passed to.
   // Declarations introduced by this repository — including functions and
   // methods returning or taking basic integral types — are still flagged.
-  not externalApiVariable(d)
+  not externalApiVariable(d) and
+  // F Prime: exclude vendored third-party code, which is not maintained to the
+  // F Prime coding standard.
+  not d.getFile().getRelativePath().matches("Utils/Hash/libcrc/%")
 select d,
   d.getName() + " uses the basic integral type " + usedType.getName() +
     " rather than a typedef with size and signedness."
