@@ -42,3 +42,18 @@ jobs:
           export PATH="${CMAKE_INSTALL_DIRECTORY}/bin:${PATH}"
           cmake --version
           pytest -s
+  CMake-macOS:
+    runs-on: macos-latest
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: CMake Target Triple Tests
+        working-directory: ./cmake/test
+        shell: bash
+        run: |
+          cmake --version
+          pytest -s src/test_target_triple.py
