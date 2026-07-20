@@ -126,8 +126,10 @@ jobs:
       - name: "Run YAMCS-specific tests"
         run: |
           rc=0
+          # Verify fprime-gds plugin is available
+          python -c "import fprime_gds.common.testing_fw.pytest_integration; print('Plugin module loaded successfully')"
           # YAMCS file transfer tests first, against an idle fileManager
-          pytest -p fprime_test_api \
+          python -m pytest \
             --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
@@ -197,7 +199,7 @@ jobs:
 
       - name: "Run standard Svc integration tests from lib/fprime"
         run: |
-          pytest -p fprime_test_api \
+          python -m pytest \
             --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
