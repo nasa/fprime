@@ -89,7 +89,7 @@ class LinuxSpiDriverComponentImpl final : public LinuxSpiDriverComponentBase {
                               Fw::Buffer& WriteBuffer,
                               Fw::Buffer& readBuffer);
 
-    int m_fd;
+    I32 m_fd;
     FwIndexType m_device;
     FwIndexType m_select;
     FwSizeType m_bytes;

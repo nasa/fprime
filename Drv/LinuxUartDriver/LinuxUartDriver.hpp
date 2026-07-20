@@ -115,7 +115,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
                               Fw::Buffer& fwBuffer  //!< The buffer
                               ) override;
 
-    int m_fd;                     //!< file descriptor returned for I/O device
+    I32 m_fd;                     //!< file descriptor returned for I/O device
     FwSizeType m_allocationSize;  //!< size of allocation request to memory manager
     const char* m_device;         //!< original device path
 

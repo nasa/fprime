@@ -131,7 +131,7 @@ class DpCatalog final : public DpCatalogComponentBase {
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
-        static int compareEntries(const DpStateEntry& left, const DpStateEntry& right);
+        static I32 compareEntries(const DpStateEntry& left, const DpStateEntry& right);
 
         bool operator==(const DpStateEntry& other) const;
         bool operator!=(const DpStateEntry& other) const;
@@ -159,7 +159,7 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
     /// @return -1 for quit, 0 for failure but continue, 1 for success
-    int processFile(Fw::String fullFile, FwSizeType dir);
+    I32 processFile(Fw::String fullFile, FwSizeType dir);
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry

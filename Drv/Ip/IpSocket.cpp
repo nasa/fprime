@@ -72,7 +72,7 @@ bool IpSocket::isValidPort(U16 port) const {
     return true;
 }
 
-SocketIpStatus IpSocket::setupTimeouts(int socketFd) {
+SocketIpStatus IpSocket::setupTimeouts(I32 socketFd) {
 // Get the IP address from host
 #ifdef TGT_OS_TYPE_VXWORKS
     // No timeouts set on Vxworks
@@ -230,7 +230,7 @@ SocketIpStatus IpSocket::handleZeroReturn() {
     return SOCK_DISCONNECTED;
 }
 
-SocketIpStatus IpSocket::setupSocketOptions(int socketFd) {
+SocketIpStatus IpSocket::setupSocketOptions(I32 socketFd) {
     // Iterate over the socket options and set them
     for (const auto& options : IP_SOCKET_OPTIONS) {
         int status = 0;

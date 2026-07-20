@@ -82,17 +82,17 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
 
   private:
     //! \brief helper to setup a line handle (read or write).
-    Os::File::Status setupLineHandle(const int chip_descriptor,
+    Os::File::Status setupLineHandle(const I32 chip_descriptor,
                                      const U32 gpio,
                                      const GpioConfiguration& configuration,
                                      const Fw::Logic& default_state,
-                                     int& fd);
+                                     I32& fd);
 
     //! \brief helper to setup a line event (interrupt)
-    Os::File::Status setupLineEvent(const int chip_descriptor,
+    Os::File::Status setupLineEvent(const I32 chip_descriptor,
                                     const U32 gpio,
                                     const GpioConfiguration& configuration,
-                                    int& fd);
+                                    I32& fd);
 
     //! \brief poll for interrupt loop helper
     //!
@@ -129,7 +129,7 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     GpioConfiguration m_configuration = GpioConfiguration::MAX_GPIO_CONFIGURATION;
 
     //! File descriptor for GPIO
-    int m_fd = -1;
+    I32 m_fd = -1;
 
     //! Determine if the interrupt polling thread is running
     bool m_running = false;

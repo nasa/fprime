@@ -383,7 +383,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             Fw::String fullFile;
             fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
 
-            int ret = processFile(fullFile, dir);
+            I32 ret = processFile(fullFile, dir);
             if (ret < 0) {
                 break;
             }
@@ -441,7 +441,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
@@ -575,7 +575,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
 // ----------------------------------------------------------------------
 // DpStateEntry Comparison Ops
 // ----------------------------------------------------------------------
-int DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+I32 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
     if (left.record.get_priority() < right.record.get_priority()) {
         return -1;
@@ -791,7 +791,7 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
     }
 
     // ret > 0 := success
-    int ret = processFile(fileName, dir);
+    I32 ret = processFile(fileName, dir);
 
     if (ret > 0) {
         // If we already finished, sendNext only if remainingActive

@@ -15,11 +15,11 @@ namespace File {
 //! FileHandle class definition for posix implementations.
 //!
 struct PosixFileHandle : public FileHandle {
-    static constexpr int INVALID_FILE_DESCRIPTOR = -1;
-    static constexpr int ERROR_RETURN_VALUE = -1;
+    static constexpr I32 INVALID_FILE_DESCRIPTOR = -1;
+    static constexpr I32 ERROR_RETURN_VALUE = -1;
 
     //! Posix file descriptor
-    int m_file_descriptor = INVALID_FILE_DESCRIPTOR;
+    I32 m_file_descriptor = INVALID_FILE_DESCRIPTOR;
 };
 
 //! \brief posix implementation of Os::File
