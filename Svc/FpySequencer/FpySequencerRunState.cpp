@@ -728,8 +728,8 @@ Signal FpySequencer::checkStatementTimeout() {
         return Signal::result_checkStatementTimeout_noTimeout;
     }
 
-    U64 currentUSeconds = currentTime.getSeconds() * 1000000 + currentTime.getUSeconds();
-    U64 dispatchUSeconds = this->m_runtime.currentStatementDispatchTime.getSeconds() * 1000000 +
+    U64 currentUSeconds = static_cast<U64>(currentTime.getSeconds()) * 1000000 + currentTime.getUSeconds();
+    U64 dispatchUSeconds = static_cast<U64>(this->m_runtime.currentStatementDispatchTime.getSeconds()) * 1000000 +
                            this->m_runtime.currentStatementDispatchTime.getUSeconds();
 
     U64 timeoutUSeconds = static_cast<U64>(timeout * 1000000.0f);

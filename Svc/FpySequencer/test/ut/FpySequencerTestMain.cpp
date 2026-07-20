@@ -2158,6 +2158,38 @@ TEST_F(FpySequencerTester, checkStatementTimeout) {
     ASSERT_EQ(result, Signal::result_checkStatementTimeout_statementTimeout);
 }
 
+TEST_F(FpySequencerTester, checkStatementTimeoutU32OverflowMissed) {
+    // Without widening getSeconds() to U64 before * 1000000, the product wraps every
+    // 2^32 us (~4294.97 s). A statement dispatched at t=0 and checked at t=4300 s then
+    // appears to have elapsed only ~5.03 s, so a 10 s timeout is missed (issue #5424).
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 4300, 0);
+    setTestTime(testTime);
+
+    F32 timeout = 10;
+    paramSet_STATEMENT_TIMEOUT_SECS(timeout, Fw::ParamValid::VALID);
+    paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
+
+    tester_get_m_runtime_ptr()->currentStatementDispatchTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 0, 0);
+    Signal result = tester_checkStatementTimeout();
+    ASSERT_EQ(result, Signal::result_checkStatementTimeout_statementTimeout);
+}
+
+TEST_F(FpySequencerTester, checkStatementTimeoutU32OverflowSpurious) {
+    // Crossing the 2^32-us product boundary (4294 s → 4295 s) makes the wrapped current
+    // value smaller than dispatch; U64 subtraction underflows to a huge elapsed time and
+    // spuriously times out a 1 s wait under a 10 s timeout (issue #5424).
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 4295, 0);
+    setTestTime(testTime);
+
+    F32 timeout = 10;
+    paramSet_STATEMENT_TIMEOUT_SECS(timeout, Fw::ParamValid::VALID);
+    paramSend_STATEMENT_TIMEOUT_SECS(0, 0);
+
+    tester_get_m_runtime_ptr()->currentStatementDispatchTime = Fw::Time(TimeBase::TB_WORKSTATION_TIME, 0, 4294, 0);
+    Signal result = tester_checkStatementTimeout();
+    ASSERT_EQ(result, Signal::result_checkStatementTimeout_noTimeout);
+}
+
 TEST_F(FpySequencerTester, checkStatementTimeoutMismatchBase) {
     Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 300, 100);
     setTestTime(testTime);
