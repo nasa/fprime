@@ -132,11 +132,11 @@ LinuxGpioDriver ::~LinuxGpioDriver() {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-Os::File::Status LinuxGpioDriver ::setupLineHandle(const I32 chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineHandle(const int chip_descriptor,
                                                    const U32 gpio,
                                                    const GpioConfiguration& configuration,
                                                    const Fw::Logic& default_state,
-                                                   I32& fd) {
+                                                   int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpiohandle_request request;
@@ -159,10 +159,10 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const I32 chip_descriptor,
     return status;
 }
 
-Os::File::Status LinuxGpioDriver ::setupLineEvent(const I32 chip_descriptor,
+Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
                                                   const U32 gpio,
                                                   const GpioConfiguration& configuration,
-                                                  I32& fd) {
+                                                  int& fd) {
     Os::File::Status status = Os::File::OP_OK;
     // Set up the GPIO request
     struct gpioevent_request event;
@@ -200,7 +200,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         return status;
     }
     // Read chip information and check for correctness
-    I32 chip_descriptor = reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
+    int chip_descriptor = reinterpret_cast<Os::Posix::File::PosixFileHandle*>(chip_file.getHandle())->m_file_descriptor;
     struct gpiochip_info chip_info;
     (void)::memset(&chip_info, 0, sizeof chip_info);
     int return_value = ioctl(chip_descriptor, GPIO_GET_CHIPINFO_IOCTL, &chip_info);
@@ -227,7 +227,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     }
 
     // Set up pin and set file descriptor for it
-    I32 pin_fd = -1;
+    int pin_fd = -1;
     switch (configuration) {
         // Cascade intended
         case GPIO_OUTPUT:

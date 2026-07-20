@@ -58,7 +58,7 @@ class LinuxI2cDriver final : public LinuxI2cDriverComponentBase {
 
 // Prevent unused field error when using stub
 #ifndef STUBBED_LINUX_I2C_DRIVER
-    I32 m_fd;  //!< i2c file descriptor
+    int m_fd;  //!< i2c file descriptor
 #endif
 };
 

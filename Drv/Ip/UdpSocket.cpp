@@ -93,7 +93,7 @@ U16 UdpSocket::getRecvPort() {
     return ntohs(this->m_addr_recv.sin_port);
 }
 
-SocketIpStatus UdpSocket::bind(const I32 fd) {
+SocketIpStatus UdpSocket::bind(const int fd) {
     FW_ASSERT(fd != -1);
     struct sockaddr_in address = this->m_addr_recv;
 

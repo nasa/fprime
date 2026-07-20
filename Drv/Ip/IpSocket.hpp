@@ -19,8 +19,8 @@
 namespace Drv {
 
 struct SocketDescriptor final {
-    I32 fd = -1;        //!< Used for all sockets to track the communication file descriptor
-    I32 serverFd = -1;  //!< Used for server sockets to track the listening file descriptor
+    int fd = -1;        //!< Used for all sockets to track the communication file descriptor
+    int serverFd = -1;  //!< Used for server sockets to track the listening file descriptor
 };
 
 /**
@@ -184,7 +184,7 @@ class IpSocket {
      * \param socketDescriptor: socket descriptor to setup
      * \return status of timeout setup
      */
-    SocketIpStatus setupTimeouts(I32 socketFd);
+    SocketIpStatus setupTimeouts(int socketFd);
 
     /**
      * \brief converts a given IPv4 address in dotted-quad form "x.x.x.x" to a network-order
@@ -243,7 +243,7 @@ class IpSocket {
      * \param socketFd: socket file descriptor
      * \return status of setup options
      */
-    SocketIpStatus setupSocketOptions(I32 socketFd);
+    SocketIpStatus setupSocketOptions(int socketFd);
 
     U32 m_timeoutSeconds;
     U32 m_timeoutMicroseconds;
