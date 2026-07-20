@@ -59,10 +59,10 @@ def test_command_and_event_with_many_args(fprime_test_api: IntegrationTestAPI):
 def test_telemetry_update(fprime_test_api: IntegrationTestAPI):
     """Test that we can receive telemetry updates with expected values"""
 
+    cmd_dispatched_channel = fprime_test_api.get_telemetry_pred("CommandsDispatched")
+    
     # Enable all telemetry packet groups so CommandsDispatched is emitted
     fprime_test_api.set_tlm_packet_level(3)
-
-    cmd_dispatched_channel = fprime_test_api.get_telemetry_pred("CommandsDispatched")
 
     # Wait for telemetry update with expected values
     begin_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
