@@ -36,7 +36,8 @@ def test_send_health_command(fprime_test_api):
     # Verify disable/enable the Health command
     # Command: Disable the health  HLTH_ENABLE command
     fprime_test_api.send_and_assert_command(
-        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["DISABLED"]
+        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["DISABLED"],
+        timeout=10
     )
     assert (
         fprime_test_api.get_command_test_history().size() == 1
@@ -47,7 +48,8 @@ def test_send_health_command(fprime_test_api):
 
     # Command: Enable health Expect number increment HLTH_Enable command
     fprime_test_api.send_and_assert_command(
-        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["ENABLED"]
+        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["ENABLED"],
+        timeout=10
     )
     assert (
         fprime_test_api.get_command_test_history().size() == 2
@@ -68,9 +70,10 @@ def test_send_health_command(fprime_test_api):
     )  # current command count
 
     time.sleep(3)
+    start_tlm = fprime_test_api.get_telemetry_test_history().size()
     cmdErrors = fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.CommandDispatcher") + "." + "CommandErrors",
-        start="NOW",
+        start=start_tlm,
     )
     # If no constraints are specified on the channels, the predicate will always return true
     param_error = fprime_test_api.get_telemetry_pred(
@@ -98,14 +101,17 @@ def test_send_health_command(fprime_test_api):
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_PING_ENABLE",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), "DISABLED"],
+        timeout=10
     )
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_CHNG_PING",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), 1, 1],
+        timeout=10
     )
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_PING_ENABLE",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), "ENABLED"],
+        timeout=10
     )
     fprime_test_api.send_command(
         fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",
