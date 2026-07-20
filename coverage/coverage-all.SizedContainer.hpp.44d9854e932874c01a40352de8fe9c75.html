@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-16 22:49:10</td>
+      <td>2026-07-20 18:27:43</td>
     </tr>
   </table>
 </div>
@@ -70,10 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l30">Fw::SizedContainer::SizedContainer() (line 30)</a></td><td>called 2174 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l63">Fw::SizedContainer::isEmpty() const (line 63)</a></td><td>called 18740 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l67">Fw::SizedContainer::isFull() const (line 67)</a></td><td>called 20721 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l33">Fw::SizedContainer::~SizedContainer() (line 33)</a></td><td>called 2174 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l30">Fw::SizedContainer::SizedContainer() (line 30)</a></td><td>called 2180 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l63">Fw::SizedContainer::isEmpty() const (line 63)</a></td><td>called 18983 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l67">Fw::SizedContainer::isFull() const (line 67)</a></td><td>called 20838 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l33">Fw::SizedContainer::~SizedContainer() (line 33)</a></td><td>called 2180 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -294,7 +294,7 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2174</td>
+      <td class="linecount coveredLine">2180</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">SizedContainer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -315,7 +315,7 @@
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4348</td>
+      <td class="linecount coveredLine">4360</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">SizedContainer</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -525,7 +525,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">18740</td>
+      <td class="linecount coveredLine">18983</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isEmpty</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -553,7 +553,7 @@
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">20721</td>
+      <td class="linecount coveredLine">20838</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isFull</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getCapacity</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
