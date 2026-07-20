@@ -107,6 +107,9 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //!
     void sendFilePort();
 
+    //! Reject a source path outside the configured read sandbox
+    void sourceOutOfSandbox();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for from ports
