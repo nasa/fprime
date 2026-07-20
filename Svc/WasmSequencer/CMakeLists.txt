@@ -15,9 +15,10 @@
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
 
 ####
-# fprime_spacewasm: Rust static library (C ABI wrapper over the `spacewasm`
-# WebAssembly interpreter). Built by cargo and consumed by the C++ component
-# below as an IMPORTED static library.
+# fprime_spacewasm: thin Rust static library re-exporting the published
+# `spacewasm_c_api` crate (the C ABI over the `spacewasm` WebAssembly
+# interpreter). Built by cargo and consumed by the C++ component below as an
+# IMPORTED static library. The C API surface is the vendored `spacewasm.h`.
 ####
 set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
 set(FPRIME_SPACEWASM_TDIR "${CMAKE_CURRENT_BINARY_DIR}/fprime_spacewasm_target")
@@ -65,27 +66,18 @@ else()
     set(FPRIME_SPACEWASM_LIB "${FPRIME_SPACEWASM_TDIR}/release/libfprime_spacewasm.a")
 endif()
 
-set(FPRIME_SPACEWASM_BINDGEN_INCLUDES
-    "$<TARGET_PROPERTY:Svc_WasmSequencer,INCLUDE_DIRECTORIES>")
-
 # Optimization/codegen flags live in the crate's [profile.release] (opt-level,
 # lto, codegen-units, panic=abort). `--release` selects that profile here.
 add_custom_command(
     OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-    COMMAND "${CMAKE_COMMAND}" -E env
-            "FPRIME_SPACEWASM_BINDGEN_INCLUDES=${FPRIME_SPACEWASM_BINDGEN_INCLUDES}"
-            "FPRIME_PROJECT_ROOT=${FPRIME_PROJECT_ROOT}"
-            "FPRIME_FRAMEWORK_PATH=${FPRIME_FRAMEWORK_PATH}"
-            "${CARGO_EXECUTABLE}" build --release
+    COMMAND "${CARGO_EXECUTABLE}" build --release
             ${FPRIME_SPACEWASM_CARGO_TARGET_ARG}
             --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
             --target-dir    "${FPRIME_SPACEWASM_TDIR}"
     DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
             "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
-            "${FPRIME_SPACEWASM_DIR}/build.rs"
-            "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerFFI.hpp"
-            "${FPRIME_PROJECT_ROOT}/default/config/WasmSequencerConfig.hpp"
-    COMMENT "Building fprime_spacewasm Rust static library (spacewasm)"
+            "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
+    COMMENT "Building fprime_spacewasm Rust static library (spacewasm_c_api 0.3.0)"
     VERBATIM
 )
 add_custom_target(fprime_spacewasm_build DEPENDS "${FPRIME_SPACEWASM_LIB}")
@@ -101,7 +93,6 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencerFFI.hpp"
     DEPENDS
 )
 
@@ -109,6 +100,9 @@ register_fprime_library(
 # does not believe it's a library.
 if(TARGET Svc_WasmSequencer)
     target_link_libraries(Svc_WasmSequencer PUBLIC fprime_spacewasm)
+    # Vendored cbindgen header (spacewasm.h) for `#include "spacewasm.h"`.
+    target_include_directories(Svc_WasmSequencer PUBLIC
+        "${CMAKE_CURRENT_LIST_DIR}/spacewasm_include")
 endif()
 
 ### Unit Tests ###

@@ -9,8 +9,17 @@
 
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
-#include "Svc/WasmSequencer/WasmSequencerFFI.hpp"
 #include "config/WasmSequencerConfig.hpp"
+#include "spacewasm.h"
+
+extern "C" {
+uint8_t* wasmSeqGlobalAlloc(void* userdata, std::size_t size, std::size_t align);
+void wasmSeqGlobalDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
+uint8_t* wasmSeqGuestAlloc(void* userdata, std::size_t size, std::size_t align);
+uint8_t* wasmSeqGuestRealloc(void* userdata, uint8_t* ptr, std::size_t oldSize, std::size_t newSize, std::size_t align);
+void wasmSeqGuestDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
+spacewasm_read_result_t wasmSeqReadModule(void* userdata, const uint8_t** outBuf, std::size_t* outLen);
+}
 
 namespace Svc {
 
@@ -54,15 +63,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // ----------------------------------------------------------------------
 
     //! Handler implementation for command RUN
-    //!
-    //! Run a Wasm module main function on it's own in the interpreter
-    //! This command is short-hand for:
-    //! 1. CLEAR_STORE
-    //! 2. LOAD_NAME [fileName] ""
-    //! 3. INVOKE "" "main"
-    //! 4. CONTINUE
-    //!
-    //! If $block == Svc.BlockState.BLOCK this command will wait for complemention.
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
@@ -70,26 +70,17 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                         ) override;
 
     //! Handler implementation for command WAIT
-    //!
-    //! Wait for the interpreter to finish and return it's result as a CmdResponse
     void WAIT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                          U32 cmdSeq            //!< The command sequence number
                          ) override;
 
     //! Handler implementation for command LOAD
-    //!
-    //! Loads and validates a WebAssembly module into the store.
-    //! This command loads the module with a empty name meaning only a single module may be loaded.
-    //! To allow multiple modules, use the `LOAD_NAME` command instead.
     void LOAD_cmdHandler(FwOpcodeType opCode,              //!< The opcode
                          U32 cmdSeq,                       //!< The command sequence number
                          const Fw::CmdStringArg& fileName  //!< The name of the sequence file
                          ) override;
 
     //! Handler implementation for command LOAD_NAME
-    //!
-    //! Load and validate a WebAssembly module into the store. This module is given a name so that
-    //! it's exports can be referenced by other modules.
     void LOAD_NAME_cmdHandler(
         FwOpcodeType opCode,               //!< The opcode
         U32 cmdSeq,                        //!< The command sequence number
@@ -98,51 +89,23 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         ) override;
 
     //! Handler implementation for command INVOKE
-    //!
-    //! Invoke a function from a loaded module
     void INVOKE_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
                            U32 cmdSeq,                           //!< The command sequence number
                            const Fw::CmdStringArg& module,       //!< Name of the module to invoke a function from
                            const Fw::CmdStringArg& functionName  //!< Name of the function to be invoked
                            ) override;
 
-    //! Handler implementation for command CLEAR_STORE
-    //!
-    //! Clear the WebAssembly store of all modules, tables, and memories to start fresh.
-    void CLEAR_STORE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                U32 cmdSeq            //!< The command sequence number
-                                ) override;
-
-    //! Handler implementation for command REINITIALIZE_STORE
-    //!
-    //! Reinitialize the Wasm store. This clears the current store and reallocates the internal memory
-    //! for holding modules. A maximum of 256 modules is supported.
-    void REINITIALIZE_STORE_cmdHandler(
-        FwOpcodeType opCode,  //!< The opcode
-        U32 cmdSeq,           //!< The command sequence number
-        U16 module_count      //!< Maximum number of modules that can be loaded into the store
-        ) override;
-
     //! Handler implementation for command CANCEL
-    //!
-    //! Cancels a running or validated sequence. After running CANCEL, the sequencer
-    //! should return to IDLE
     void CANCEL_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                            U32 cmdSeq            //!< The command sequence number
                            ) override;
 
     //! Handler implementation for command BREAK
-    //!
-    //! Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
-    //! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
-    //! substates of the RUNNING state that are not RUNNING.PAUSED.
     void BREAK_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                           U32 cmdSeq            //!< The command sequence number
                           ) override;
 
     //! Handler implementation for command TRACE
-    //!
-    //! Dump a stack trace as an event
     void TRACE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                           U32 cmdSeq            //!< The command sequence number
                           ) override;
@@ -157,260 +120,275 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action signalEntered of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! simply raises the "entered" signal
     void Svc_WasmSequencer_SequencerStateMachine_action_signalEntered(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action invoke of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! sets up a function invocation on the interpreter state from the pending FunctionInvoke member var
-    void Svc_WasmSequencer_SequencerStateMachine_action_invoke(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+    //! Create a new store with N_MODULES modules
+    void Svc_WasmSequencer_SequencerStateMachine_action_createStore(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action setLoad of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! stores the module load request for the LOADING state
-    void Svc_WasmSequencer_SequencerStateMachine_action_setLoad(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleLoad& value               //!< The value
-        ) override;
-
-    //! Implementation for action load of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! streams, decodes and validates the module into the store
-    void Svc_WasmSequencer_SequencerStateMachine_action_load(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action clearStore of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! clears the interpreter store of all modules, tables and memories
+    //! Clears the Wasm store and deallocates everything
     void Svc_WasmSequencer_SequencerStateMachine_action_clearStore(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action reportValidationFailure of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! reports the module validation failure as an event
-    void Svc_WasmSequencer_SequencerStateMachine_action_reportValidationFailure(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+    //! sets up a function invocation on the interpreter from the pending FunctionInvoke member var
+    void Svc_WasmSequencer_SequencerStateMachine_action_invoke(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action sendCmdResponse_VALIDATION_ERROR of state machine
-    //! Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! responds to the calling command with VALIDATION_ERROR
-    void Svc_WasmSequencer_SequencerStateMachine_action_sendCmdResponse_VALIDATION_ERROR(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+    //! Set the Wasm module to load and execute; sets pendingLoad and pendingInvoke
+    void Svc_WasmSequencer_SequencerStateMachine_action_pendRun(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal,
+        const Svc::WasmSequencer_SequenceExecutionArgs& value) override;
 
-    //! Implementation for action pushModuleToStore of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! pushes the freshly loaded/validated module into the store
-    void Svc_WasmSequencer_SequencerStateMachine_action_pushModuleToStore(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+    //! Set the Wasm module to load but not execute; sets pendingLoad
+    void Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal,
+        const Svc::WasmSequencer_ModuleLoad& value) override;
 
-    //! Implementation for action spin of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
+    //! Records the freshly loaded/validated module handle
+    void Svc_WasmSequencer_SequencerStateMachine_action_appendModuleToStore(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal,
+        const Svc::WasmSequencer_Module& value) override;
+
+    //! Reports the module load failure as an event
+    void Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal,
+        const Svc::WasmSequencer_LoadFailure& value) override;
+
+    //! Load a pending module request
+    void Svc_WasmSequencer_SequencerStateMachine_action_load(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
+
+    //! Invoke the start function on a loaded module
+    void Svc_WasmSequencer_SequencerStateMachine_action_invokeStart(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
+
     //! spins the interpreter loop, executing up to a bounded number of instructions
     void Svc_WasmSequencer_SequencerStateMachine_action_spin(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqSucceeded of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that the interpreter ran to completion
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqSucceeded(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqCancelled of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that the sequence was cancelled
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqCancelled(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqFailed of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that the sequence failed to execute successfully
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqFailed(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqTrap of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that the interpreter trapped, with the trap reason
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqTrap(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqReadError of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that the interpreter failed to read an instruction from memory
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqReadError(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action report_seqBroken of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! reports that execution was paused at a breakpoint
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqBroken(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action sendCmdResponse_OK of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! responds to the calling command with OK
     void Svc_WasmSequencer_SequencerStateMachine_action_sendCmdResponse_OK(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action sendCmdResponse_EXECUTION_ERROR of state machine
-    //! Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! responds to the calling command with EXECUTION_ERROR
     void Svc_WasmSequencer_SequencerStateMachine_action_sendCmdResponse_EXECUTION_ERROR(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action set_sleepTime of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! stores the requested wake time for the SLEEPING state
     void Svc_WasmSequencer_SequencerStateMachine_action_set_sleepTime(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action checkStatementTimeout of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! checks if the current statement has timed out
     void Svc_WasmSequencer_SequencerStateMachine_action_checkStatementTimeout(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action checkShouldWake of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! checks if the sequencer should wake from sleep
     void Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action setBreakBeforeNextLine of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! sets the "break before next line" flag to true
     void Svc_WasmSequencer_SequencerStateMachine_action_setBreakBeforeNextLine(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
-    //! Implementation for action clearBreakBeforeNextLine of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! sets the "break before next line" flag to false
     void Svc_WasmSequencer_SequencerStateMachine_action_clearBreakBeforeNextLine(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) override;
 
   private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
     // ----------------------------------------------------------------------
 
-    //! Implementation for guard pendingInvoke of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! return true if there is a function invocation pending to be set up on entry to IDLE.
-    //! the pending FunctionInvoke is held in a component member var
+    //! return true if there is a function invocation pending to be set up
     bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingInvoke(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-    ) const override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) const override;
 
-    //! Implementation for guard hasStartFunction of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
+    //! return true if there is a module load pending
+    bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingLoad(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) const override;
+
     //! return true if the freshly loaded module declared a Wasm start function
-    bool Svc_WasmSequencer_SequencerStateMachine_guard_hasStartFunction(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-    ) const override;
+    bool Svc_WasmSequencer_SequencerStateMachine_guard_lastModuleHasStart(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) const override;
 
-    //! Implementation for guard shouldBreak of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
     //! return true if execution should break before spinning the next statement
     bool Svc_WasmSequencer_SequencerStateMachine_guard_shouldBreak(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-    ) const override;
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) const override;
+
+    //! return true if the interpreter is currently executing a module's start function
+    bool Svc_WasmSequencer_SequencerStateMachine_guard_executingStart(
+        SmId smId,
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal) const override;
 
   private:
     // ----------------------------------------------------------------------
-    // Interpreter store and page-backed allocator
+    // Interpreter store and page-backed allocators
     //
-    // The `fprime_spacewasm` Rust crate installs a page allocator as its global
-    // allocator. Each page it requests is served from `m_pages` below, so the
-    // interpreter's Store (a Rust-owned `Box<Store>`, held here as an opaque
-    // pointer) lives entirely within this component's memory.
+    // The `spacewasm_c_api` crate installs a process-wide page allocator as its
+    // global (Rust) allocator via spacewasm_set_global_allocator. Each page it
+    // requests is served from `m_memory_pool` below, so the interpreter's store
+    // and compiled bytecode live entirely within this component's memory. Guest
+    // linear memory is served separately from `m_guest_pool` via a per-load
+    // spacewasm_allocator_t.
     // ----------------------------------------------------------------------
 
-    //! The Rust crate imports these C symbols to draw/return pages; they route
-    //! to the active instance's allocPage/deallocPage.
-    friend U8* ::svc_wasmsequencer_alloc_page(AllocResult* result, U32 size);
-    friend void ::svc_wasmsequencer_dealloc_page(U8* ptr, U32 size);
+    //! The C-linkage trampolines forward into these private instance methods.
+    //! Function names are parenthesized so the return type + `::name` is not
+    //! parsed as a qualified-id.
+    friend uint8_t*(::wasmSeqGlobalAlloc)(void* userdata, std::size_t size, std::size_t align);
+    friend void(::wasmSeqGlobalDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
+    friend uint8_t*(::wasmSeqGuestAlloc)(void* userdata, std::size_t size, std::size_t align);
+    friend uint8_t*(::wasmSeqGuestRealloc)(void* userdata,
+                                           uint8_t* ptr,
+                                           std::size_t oldSize,
+                                           std::size_t newSize,
+                                           std::size_t align);
+    friend void(::wasmSeqGuestDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
+    friend spacewasm_read_result_t(::wasmSeqReadModule)(void* userdata, const uint8_t** outBuf, std::size_t* outLen);
 
-    //! Hand out a constant-size page from the pool for the Rust allocator.
-    //! Writes the outcome to `result` and returns the page pointer (null on failure).
-    U8* allocPage(AllocResult* result,  //!< Out-param: allocation outcome
-                  U32 size              //!< Requested page size (must be <= PAGE_SIZE)
-    );
-
+    //! Hand out a fixed-size page from `m_memory_pool` for the Rust allocator.
+    U8* allocPage(U32 size, U32 align);
     //! Return a page previously handed out by allocPage back to the pool.
-    void deallocPage(U8* ptr,  //!< Page pointer to release
-                     U32 size  //!< Size the page was allocated with
-    );
+    void deallocPage(U8* ptr);
 
-    //! Create a fresh interpreter Store with the given module capacity,
+    //! Serve `size` bytes for a guest linear memory from `m_guest_pool`.
+    U8* guestAlloc(U32 size, U32 align);
+    //! Grow/shrink a guest linear-memory allocation.
+    U8* guestRealloc(U8* ptr, U32 oldSize, U32 newSize, U32 align);
+    //! Release a guest linear-memory allocation.
+    void guestDealloc(U8* ptr, U32 size);
+
+    //! Fill `m_readBuf` with the next chunk of the module file being loaded.
+    spacewasm_read_result_t readModuleChunk(const U8** outBuf, std::size_t* outLen);
+
+    //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
     Fw::Success createStore(U16 moduleCount  //!< Maximum number of modules
     );
 
-    //! Destroy the current interpreter Store, if any, releasing its memory.
+    //! Destroy the current interpreter store, if any, releasing its memory.
     void destroyStore();
 
-    //! Static pool of memory used to store modules and IR text
-    alignas(8) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
+    //! Map a spacewasm store-allocation status onto the AllocError event enum.
+    static Svc::WasmSequencer_AllocError::T mapAllocError(spacewasm_status_t status);
 
-    //! Opaque pointer to the Rust-owned interpreter Store (`Box<Store>`), or null.
-    void* m_store;
+    //! Map a spacewasm_trap_t onto the TrapReason event enum.
+    static Svc::WasmSequencer_TrapReason::T mapTrapReason(spacewasm_trap_t trap);
+
+    //! Static pool backing the process-wide spacewasm global page allocator.
+    alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
+
+    //! Which pages of `m_memory_pool` are currently handed out (bit i == page i).
+    U32 m_page_used_mask;
+
+    //! Static pool backing the per-load guest linear-memory allocator; a simple
+    //! bump allocator (guest modules are compiled with memory.grow disabled).
+    alignas(16) U8 m_guest_pool[Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE];
+
+    //! Current bump offset into `m_guest_pool`.
+    FwSizeType m_guest_offset;
+
+    //! Buffer handed to the streaming loader, filled from `m_loadFile`.
+    U8 m_readBuf[256];
+
+    //! Opaque handle to the spacewasm store, or null.
+    spacewasm_store_t* m_store;
 
     //! Module capacity of the current/last store, remembered so CLEAR_STORE can
     //! recreate a store with the same capacity.
     U16 m_maxModules;
 
-    bool m_memory_allocated;
+    //! Index of the most-recently-loaded module within the store.
+    U32 m_moduleIndex;
+
+    //! True while the interpreter is running a module's Wasm start function.
+    bool m_executingStart;
+
+    //! Opcode/cmdSeq of the command that started the current run, saved so a
+    //! deferred (blocking) response can be sent once the SM reaches a terminal
+    //! state.
+    FwOpcodeType m_savedOpCode;
+    U32 m_savedCmdSeq;
+
+    //! Whether the current run should defer its command response to a terminal
+    //! SM transition (true) or was already answered (false).
+    bool m_shouldRespond;
+
+    //! Pending module load (path + optional name) for the `load` action.
+    Svc::WasmSequencer_ModuleLoad m_pendingLoad;
+    bool m_hasPendingLoad;
+
+    //! Pending function invocation for the `invoke` action.
+    Svc::WasmSequencer_FunctionInvoke m_pendingInvoke;
+    bool m_hasPendingInvoke;
+
+    //! Whether the most-recently-loaded module declared a start function.
+    bool m_lastModuleHasStart;
+
+    //! Break-before-next-statement flag, toggled by BREAK/CONTINUE.
+    bool m_breakBeforeNextLine;
+
+    //! The open module file for the streaming loader, valid only during `load`.
+    //! Held as a void* so the header does not depend on Os/File.hpp.
+    void* m_loadFile;
+
+    //! Most recent trap reason, stashed so the payload-less report_seqTrap
+    //! action can render it.
+    spacewasm_trap_t m_lastTrap;
 };
 
 }  // namespace Svc

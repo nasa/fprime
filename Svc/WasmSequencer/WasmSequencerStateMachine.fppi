@@ -47,128 +47,11 @@ enum TrapReason {
     BadConversionToInteger,
 }
 
-enum Section {
-    Custom,
-    Type,
-    Import,
-    Function,
-    Table,
-    Memory,
-    Global,
-    Export,
-    Start,
-    Element,
-    Code,
-    Data,
-    None,
-}
-
+@ Failure loading a module. The spacewasm_c_api collapses all decode/validation
+@ failures into a single status code, so only the raw status is reported.
 struct LoadFailure {
-    @ Wasm section where the validation error was detected
-    section: Section
-    @ Offset in-bytes where the decoding/validation failed
-    offset: U32,
-    @ The validation failure
-    error: ValidationError,
-    @ Optional additional context about the validation failure
-    context: U8,
-}
-
-enum ValidationError : U8 {
-    Eof,
-    MalformedInteger,
-    I33IsNegative,
-    MalformedMagic,
-    MalformedVersion,
-    MalformedUtf8,
-    DuplicateModuleName,
-    DuplicateExportName,
-    MalformedSectionId,
-    MalformedValueType,
-    MalformedFunction,
-    MalformedLimit,
-    MalformedElemType,
-    MalformedSectionSize,
-    ExpectedConstOrVar,
-    MalformedImportExportDesc,
-    InvalidSectionOrdering,
-    DuplicateSection,
-    InvalidMaxLimit,
-    ExpectedTerminal,
-    InvalidOpcode,
-    MalformedCodeSize,
-    InvalidCodeSectionFunctionCount,
-    VecTooLong,
-    IdxTooLarge,
-    ModuleIdxTooLarge,
-    MemoryTooLarge,
-    MemoryImportTooLarge,
-    MemAlignTooLarge,
-    ControlFlowTooDeep,
-    StackUnderflow,
-    StackTooLarge,
-    LabelStackJumpTooDeep,
-    LabelJumpTooLarge,
-    TypeMismatch,
-    BlockResultTypeMismatch,
-    FunctionResultTypeMismatch,
-    IllegalMemoryGrow,
-    InvalidElementOffset,
-    InvalidElementOutOfBounds,
-    InvalidTableIndex,
-    TableNotDefined,
-    InvalidElementCount,
-    InvalidMemIndex,
-    MemoryNotDefined,
-    InvalidMemOffsetType,
-    InvalidNegativeMemOffset,
-    InvalidMemOffset,
-    InvalidLabelIndex,
-    InvalidElseBlock,
-    InvalidEndBlock,
-    MultipleMemories,
-    MultipleTables,
-    PossibleBackpatchCycle,
-    PageFault,
-    InstructionOutsideOfFunction,
-    LocalIdxOutOfRange,
-    FunctionIdxOutOfRange,
-    TypeIdxOutOfRange,
-    FunctionTextOutOfRange,
-    GlobalIdxOutOfRange,
-    FunctionImportNotFound,
-    GlobalImportNotFound,
-    MemoryImportNotFound,
-    TableImportNotFound,
-    FunctionImportOutOfRange,
-    FunctionImportTypeMismatch,
-    GlobalIsNotMutable,
-    GlobalImportTypeMismatch,
-    MemoryImportTypeMismatch,
-    TableImportTypeMismatch,
-    TableImportIncompatibleSize,
-    FunctionParametersTooLarge,
-    FunctionReturnsTooLarge,
-    TooManyLocals,
-    InvalidConstInstruction,
-    BrTableHasTooManyCases,
-    GlobalTypeMismatch,
-    AlignmentLargerThanType,
-    InvalidStartFunctionSignature,
-    InvalidConstantExprInstruction,
-    InvalidConstantExprAlreadyHasValue,
-    InvalidConstantExprNoValue,
-    InvalidConstantExprInvalidGlobal,
-    # AllocError(AllocError),
-    # MemoryError(MemoryError),
-    ReaderError,
-}
-
-enum MemoryError : U8 {
-    OutOfBounds,
-    OutOfMemory,
-    AllocationFailed,
-    PageTooSmall,
+    @ spacewasm_status_t returned by spacewasm_store_load_module (non-zero)
+    status: I32,
 }
 
 enum AllocError : U8 {
@@ -182,20 +65,11 @@ enum AllocError : U8 {
     AllocationFailed,
 }
 
-enum IrReaderErrorKind : U8 {
-    InvalidAddress,
-    InvalidOpcode,
-    InvalidType,
-    InvalidCallType,
-}
-
-struct IrReaderError {
-    kind: IrReaderErrorKind
-    value: U8
-}
-
 @ A loaded and validated Wasm module
-type Module
+struct Module {
+    moduleIndex: U16,
+    hasStart: bool
+}
 
 state machine SequencerStateMachine {
     initial enter IDLE
@@ -390,7 +264,7 @@ state machine SequencerStateMachine {
     signal interpreterSleep: Fw.Time
 
     @ Failed to read an instruction from memory
-    signal interpreterReaderError: IrReaderErrorKind
+    signal interpreterReaderError
 
     @ return true if execution should break before spinning the next statement
     guard shouldBreak
