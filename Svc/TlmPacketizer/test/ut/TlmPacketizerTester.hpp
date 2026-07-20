@@ -98,6 +98,12 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Commanding test: verify SET_LEVEL invalid-level returns VALIDATION_ERROR
     void setLevelInvalidTest(void);
 
+    //! Duplicate channel ID across packets with identical size is accepted
+    void duplicateChannelIdMatchingSizeTest(void);
+
+    //! Duplicate channel ID across packets with conflicting size asserts
+    void duplicateChannelIdConflictingSizeTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();
