@@ -250,7 +250,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
                 // add new bucket from free list
                 entryToUse = &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
                                   .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
-                FW_ASSERT(prevEntry);
+                FW_ASSERT(prevEntry != nullptr);
                 prevEntry->next = entryToUse;
                 entryToUse->next = nullptr;
                 break;
@@ -265,7 +265,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
         entryToUse->next = nullptr;
     }
 
-    FW_ASSERT(entryToUse);
+    FW_ASSERT(entryToUse != nullptr);
     entryToUse->used = true;
     entryToUse->id = id;
     entryToUse->updated = true;
@@ -341,7 +341,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
             } else if (Fw::FW_SERIALIZE_OK == stat) {
                 // room available, continue filling packet
             } else {
-                FW_ASSERT(0, static_cast<FwAssertArgType>(stat));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(stat));
             }
 
             p_entry->updated = false;

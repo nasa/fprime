@@ -400,7 +400,7 @@ bool PolyType::operator==(const PolyType& other) const {
                 valIsEqual = false;
                 break;
             default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_dataType));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_dataType));
                 return false;  // for compiler
         }
         return valIsEqual;
@@ -459,7 +459,7 @@ bool PolyType::operator<(const PolyType& other) const {
                 result = false;
                 break;
             default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_dataType));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_dataType));
                 return false;  // for compiler
         }
         return result;

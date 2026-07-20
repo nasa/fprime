@@ -44,7 +44,7 @@ void HealthImpl::init(const FwSizeType queueDepth, const FwEnumStoreType instanc
 }
 
 void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntries, U32 watchDogCode) {
-    FW_ASSERT(pingEntries);
+    FW_ASSERT(pingEntries != nullptr);
     // make sure not asking for more pings than ports
     FW_ASSERT(numPingEntries <= NUM_PINGSEND_OUTPUT_PORTS);
 

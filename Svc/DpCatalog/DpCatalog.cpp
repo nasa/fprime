@@ -94,7 +94,7 @@ void DpCatalog::resetStateFileData() {
 }
 
 Fw::CmdResponse DpCatalog::loadStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // Make sure that a file was specified
     if (this->m_stateFile.length() == 0) {
@@ -179,7 +179,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
 }
 
 void DpCatalog::getFileState(DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     // search the file state data for the entry
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
         // check for a match (compare dir, then id, priority, & time)
@@ -195,7 +195,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
 }
 
 void DpCatalog::pruneAndWriteStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // There is a chance that a data product file can disappear after
     // the state file is written from the last catalog build and transmit.
@@ -248,7 +248,7 @@ void DpCatalog::pruneAndWriteStateFile() {
 }
 
 void DpCatalog::appendFileState(const DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories), static_cast<FwAssertArgType>(entry.dir),
               static_cast<FwAssertArgType>(this->m_numDirectories));
 

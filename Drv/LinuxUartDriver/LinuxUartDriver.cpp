@@ -191,7 +191,7 @@ bool LinuxUartDriver::open(const char* const device,
 #endif
 #endif
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(baud));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(baud));
             break;
     }
 
@@ -234,7 +234,7 @@ bool LinuxUartDriver::open(const char* const device,
             newtio.c_cflag &= static_cast<unsigned int>(~PARENB);
             break;
         default:
-            FW_ASSERT(0, parity);
+            FW_ASSERT(false, parity);
             break;
     }
 

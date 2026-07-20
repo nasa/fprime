@@ -495,7 +495,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
     switch (id) {
         case Fpy::DirectiveId::INVALID: {
             // coding err
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             return;
         }
         case Fpy::DirectiveId::WAIT_REL: {
@@ -672,7 +672,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
     }
     // coding err
-    FW_ASSERT(0, static_cast<FwAssertArgType>(id));
+    FW_ASSERT(false, static_cast<FwAssertArgType>(id));
 }
 
 Signal FpySequencer::checkShouldWake() {
