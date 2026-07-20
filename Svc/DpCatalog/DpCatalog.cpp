@@ -383,12 +383,14 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             Fw::String fullFile;
             fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
 
-            I32 ret = processFile(fullFile, dir);
-            if (ret < 0) {
+            const ProcessFileStatus ret = processFile(fullFile, dir);
+            if (ret == ProcessFileStatus::QUIT) {
                 break;
             }
 
-            filesProcessed += static_cast<U32>(ret);
+            if (ret == ProcessFileStatus::SUCCESS) {
+                filesProcessed++;
+            }
 
         }  // end for each file in a directory
 
@@ -441,7 +443,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+DpCatalog::ProcessFileStatus DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
@@ -458,18 +460,18 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fullFile.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     if (fileSize < Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileOpenError(fullFile, stat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // Read DP header and header hash
@@ -479,14 +481,14 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(fullFile, stat);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // if full header and hashes aren't read, something's wrong with the file, so skip
     if (size != Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // if all is well, don't need the file any more
@@ -502,21 +504,21 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (hashStatus != Fw::Success::SUCCESS) {
         this->log_WARNING_HI_FileHdrError(fullFile, DpHdrField::CRC, computedHash.asBigEndianU32(),
                                           storedHash.asBigEndianU32());
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // reset header deserialization in the container
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     const FwSizeType dataSize = container.getDataSize();
     const FwSizeType expectedDataSize = fileSize - Fw::DpContainer::MIN_PACKET_SIZE;
     if (dataSize != expectedDataSize) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     Fw::FileNameString canonicalFileName;
@@ -524,13 +526,13 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
                              container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
     if (canonicalFileName != fullFile) {
         this->log_WARNING_HI_InvalidFileName(fullFile, canonicalFileName);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // skip adding an already transmitted file
     if (container.getState() == Fw::DpState::TRANSMITTED) {
         this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // add entry to catalog.
@@ -551,7 +553,7 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (!inserted) {
         this->log_WARNING_HI_DpInsertError(entry.record);
         // return and hope new slots open up later
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
     // increment our counters
@@ -561,7 +563,7 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // make sure we haven't exceeded the limit
     if (this->m_pendingFiles > this->m_numDpSlots) {
         this->log_WARNING_HI_DpCatalogFull(entry.record);
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
     this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
@@ -569,13 +571,13 @@ I32 DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // No need to track iterator state - begin() always gives us the highest priority entry
     // and we remove entries as we transmit them
 
-    return 1;
+    return ProcessFileStatus::SUCCESS;
 }
 
 // ----------------------------------------------------------------------
 // DpStateEntry Comparison Ops
 // ----------------------------------------------------------------------
-I32 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
     if (left.record.get_priority() < right.record.get_priority()) {
         return -1;
@@ -790,10 +792,9 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // ret > 0 := success
-    I32 ret = processFile(fileName, dir);
+    const ProcessFileStatus ret = processFile(fileName, dir);
 
-    if (ret > 0) {
+    if (ret == ProcessFileStatus::SUCCESS) {
         // If we already finished, sendNext only if remainingActive
         if (!this->m_xmitInProgress && this->m_remainActive) {
             this->m_xmitInProgress = true;

@@ -19,12 +19,12 @@ namespace Os {
 namespace Posix {
 namespace Task {
 std::atomic<bool> PosixTask::s_permissions_reported(false);
-static const I32 SCHED_POLICY = SCHED_RR;
+static const int SCHED_POLICY = SCHED_RR;
 
 typedef void* (*pthread_func_ptr)(void*);
 
 // Forward declaration
-I32 set_task_name(pthread_t thread, char* name);
+int set_task_name(pthread_t thread, char* name);
 
 void* pthread_entry_wrapper(void* wrapper_pointer) {
     FW_ASSERT(wrapper_pointer != nullptr);
@@ -40,7 +40,7 @@ void* pthread_entry_wrapper(void* wrapper_pointer) {
     return nullptr;
 }
 
-I32 set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+int set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     int status = PosixTaskHandle::SUCCESS;
     FwSizeType stack = arguments.m_stackSize;
 // Check for stack size multiple of page size or skip when the function
@@ -73,7 +73,7 @@ I32 set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& argume
     return status;
 }
 
-I32 set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     const FwSizeType min_priority = static_cast<FwSizeType>(sched_get_priority_min(SCHED_POLICY));
     const FwSizeType max_priority = static_cast<FwSizeType>(sched_get_priority_max(SCHED_POLICY));
     int status = PosixTaskHandle::SUCCESS;
@@ -105,7 +105,7 @@ I32 set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
     return status;
 }
 
-I32 set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
+int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& arguments) {
     int status = 0;
 // pthread_attr_setaffinity_np is a non-POSIX function. Notably, it is not available on musl.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
@@ -126,7 +126,7 @@ I32 set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
     return status;
 }
 
-I32 set_task_name(pthread_t thread, char* name) {
+int set_task_name(pthread_t thread, char* name) {
     int status = 0;
 // pthread_setname_np is a non-POSIX function.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.

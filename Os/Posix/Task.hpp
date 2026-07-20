@@ -23,7 +23,7 @@ namespace Task {
 //!
 struct PosixTaskHandle : public TaskHandle {
     static constexpr FwSizeType PTHREAD_NAME_LENGTH = 16;  //!< Length of pthread name
-    static constexpr I32 SUCCESS = 0;
+    static constexpr int SUCCESS = 0;
 
     //! Posix task descriptor
     pthread_t m_task_descriptor;
