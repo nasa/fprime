@@ -186,6 +186,35 @@ void FileWorkerTester ::testWriteErr() {
     fTest.setOpen(Os::FileInterface::OP_OK);
 }
 
+// Regression test: when the underlying write fails, writeIn must report a
+// failure status on writeDoneOut rather than FW_STATUS_DONE_WRITE. Drives the
+// full writeIn port handler (not just the writeBufferToFile helper) so the
+// status-propagation path is exercised.
+void FileWorkerTester ::testWriteErrStatusReported() {
+    FwSizeType dataSize = 1024;
+    U8 data[dataSize];
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer buffer(data, dataSize);
+    Fw::String fname = "testwrite.txt";
+    FwSizeType offsetBytes = 0;
+
+    // Force the write's open() to fail so writeBufferToFile returns false.
+    this->clearHistory();
+    fTest.setOpen(Os::FileInterface::INVALID_MODE);
+
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, false);
+    this->component.doDispatch();
+
+    // The write failed, so ground must be told it failed.
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_FAILED_TO_WRITE, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    fTest.setOpen(Os::FileInterface::OP_OK);
+}
+
 void FileWorkerTester ::testWriteHashErr() {
     FwSizeType offsetBytes = 0;
     const char* fnameChar = "testfile.txt";
