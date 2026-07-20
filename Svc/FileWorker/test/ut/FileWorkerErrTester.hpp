@@ -48,6 +48,7 @@ class FileWorkerTester final : public FileWorkerGTestBase {
     // ----------------------------------------------------------------------
 
     void testReadErr();
+    void testReadErrStatusReported();
     void testVerifyErr();
     void testWriteErr();
     void testWriteHashErr();
