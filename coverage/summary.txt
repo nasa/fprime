@@ -190,7 +190,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      70    39%   18,20-21,33-35,37,39-40,44-46,54-56,58-61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            170     117    68%   62-64,66,113-115,123-125,154-155,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,270,279,281-282,284-285,310,320,322-323,325-326,335-336,342-343
+Os/Posix/File.cpp                            170     120    70%   62-64,66,123-125,154-155,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,270,279,281-282,284-285,310,320,322-323,325-326,335-336,342-343
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       56      49    87%   49,57,78,87,93,101-102
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -204,7 +204,7 @@ Os/Queue.hpp                                   4       4   100%
 Os/QueueString.hpp                            11      11   100%
 Os/RawTime.cpp                                55      52    94%   65,77-78
 Os/RawTime.hpp                                 2       2   100%
-Os/SandboxedFile.cpp                          60      44    73%   16,53,78-79,82-83,86-87,94-95,102-103,110-111,114-115
+Os/SandboxedFile.cpp                          60      48    80%   16,53,82-83,86-87,94-95,110-111,114-115
 Os/Stub/ConditionVariable.cpp                  8       0     0%   12,15,17,20-21,24,26-27
 Os/Stub/ConditionVariable.hpp                  2       2   100%
 Os/Stub/Console.cpp                            3       0     0%   11,13-14
@@ -304,16 +304,16 @@ Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
 Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
                                                6       0     0%   26,28-32
 Svc/FileDispatcher/FileDispatcher.cpp         39      39   100%
-Svc/FileDownlink/File.cpp                     28      24    85%   38,54,61,65
-Svc/FileDownlink/FileDownlink.cpp            294     248    84%   58-60,98-99,119-120,122-123,133,139-141,147,183-184,186-187,197,218-219,221-222,232,253-259,261,265,297-299,301,313-315,352-353,459-461,464
-Svc/FileDownlink/FileDownlink.hpp             32      32   100%
-Svc/FileDownlink/Warnings.cpp                 12       4    33%   20-23,25-28
+Svc/FileDownlink/File.cpp                     33      26    78%   43-44,48-49,59,66,70
+Svc/FileDownlink/FileDownlink.cpp            299     253    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,305-307,309,321-323,360-361,467-469,472
+Svc/FileDownlink/FileDownlink.hpp             33      33   100%
+Svc/FileDownlink/Warnings.cpp                 16       8    50%   20-23,25-28
 Svc/FileManager/FileManager.cpp              164     145    88%   72-75,156-158,200-201,206,208-209,262,269-270,272-275
 Svc/FileUplink/File.cpp                       25      23    92%   25,48
 Svc/FileUplink/FileUplink.cpp                129     116    89%   46-48,58-60,69,85-87,93,95-96
 Svc/FileUplink/FileUplink.hpp                 16      16   100%
 Svc/FileUplink/Warnings.cpp                   29      29   100%
-Svc/FileWorker/FileWorker.cpp                310     280    90%   75-78,167-170,252,255-257,259-261,263-265,311,322,405,442,461-464,511-514
+Svc/FileWorker/FileWorker.cpp                312     282    90%   75-78,167-170,256,259-261,263-265,267-269,320,331,414,451,470-473,520-523
 Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
 Svc/FprimeFramer/FprimeFramer.cpp             31      31   100%
 Svc/FprimeRouter/FprimeRouter.cpp             36      32    88%   43,59-61
@@ -370,5 +370,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      18741   15378    82%
+TOTAL                                      18758   15399    82%
 ------------------------------------------------------------------------------

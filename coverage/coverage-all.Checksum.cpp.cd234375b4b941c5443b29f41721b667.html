@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-20 18:27:43</td>
+      <td>2026-07-20 18:46:05</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l22">CFDP::Checksum::Checksum() (line 22)</a></td><td>called 59 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l22">CFDP::Checksum::Checksum() (line 22)</a></td><td>called 62 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l26">CFDP::Checksum::Checksum(CFDP::Checksum const&amp;) (line 26)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l24">CFDP::Checksum::Checksum(unsigned int) (line 24)</a></td><td>called 9 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l90">CFDP::Checksum::addByteAtOffset(unsigned char, unsigned char) (line 90)</a></td><td>called 143 times</td><td>71.0%</td></tr>
@@ -78,10 +78,10 @@
     <tr><td><a href="#l78">CFDP::Checksum::addWordUnaligned(unsigned char const*, unsigned char, unsigned char) (line 78)</a></td><td>called 29 times</td><td>92.0%</td></tr>
     <tr><td><a href="#l45">CFDP::Checksum::getValue() const (line 45)</a></td><td>called 17 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l41">CFDP::Checksum::operator!=(CFDP::Checksum const&amp;) const (line 41)</a></td><td>called 2 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l32">CFDP::Checksum::operator=(CFDP::Checksum const&amp;) (line 32)</a></td><td>called 30 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l32">CFDP::Checksum::operator=(CFDP::Checksum const&amp;) (line 32)</a></td><td>called 32 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l37">CFDP::Checksum::operator==(CFDP::Checksum const&amp;) const (line 37)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l49">CFDP::Checksum::update(unsigned char const*, unsigned int, unsigned int) (line 49)</a></td><td>called 25 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l30">CFDP::Checksum::~Checksum() (line 30)</a></td><td>called 69 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l30">CFDP::Checksum::~Checksum() (line 30)</a></td><td>called 72 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l16">min(unsigned int, unsigned int) (line 16)</a></td><td>called 10 times</td><td>80.0%</td></tr>
   </table>
 </details>
@@ -254,7 +254,7 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">59</td>
+      <td class="linecount coveredLine">62</td>
       <td class="src coveredLine"><span class="n">Checksum</span><span class="w"> </span><span class="nf">::Checksum</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_value</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -310,7 +310,7 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">69</td>
+      <td class="linecount coveredLine">72</td>
       <td class="src coveredLine"><span class="n">Checksum</span><span class="w"> </span><span class="o">::~</span><span class="n">Checksum</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -324,21 +324,21 @@
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">30</td>
+      <td class="linecount coveredLine">32</td>
       <td class="src coveredLine"><span class="n">Checksum</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Checksum</span><span class="w"> </span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Checksum</span><span class="o">&amp;</span><span class="w"> </span><span class="n">checksum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">30</td>
+      <td class="linecount coveredLine">32</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checksum</span><span class="p">.</span><span class="n">m_value</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">30</td>
+      <td class="linecount coveredLine">32</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
