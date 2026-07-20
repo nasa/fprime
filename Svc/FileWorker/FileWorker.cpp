@@ -81,8 +81,8 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     // Start reading
     FileWorkerStatus workerStat = this->readBufferFromFile(buffer, fileName);
 
-    // Signal done and pass U8* buffer with data
-    this->readDoneOut_out(0, workerStat, fileSize);
+    // Report 0 bytes on a failed or aborted read so readDoneOut does not imply success.
+    this->readDoneOut_out(0, workerStat, (workerStat == FW_STATUS_DONE_READ) ? fileSize : 0);
     this->m_state = FW_STATE_IDLE;
 }
 
@@ -207,15 +207,20 @@ Svc ::FileWorkerStatus FileWorker ::readBufferFromFile(Fw::Buffer& buffer, const
 
     // Read file
     this->log_ACTIVITY_LO_ReadBegin(readSize, fileNameStr);
-    this->readFile(buffer, readSize, file, fileNameStr);
+    const FileWorkerReadStatus readStat = this->readFile(buffer, readSize, file, fileNameStr);
 
     this->log_ACTIVITY_LO_ReadCompleted(readSize, fileNameStr);
     file.close();
 
-    return FileWorkerStatus::FW_STATUS_DONE_READ;
+    // Only a completed read is DONE_READ; error, abort, or timeout reports FAILED_TO_READ.
+    return (readStat == FileWorkerReadStatus::FW_READ_DONE) ? FileWorkerStatus::FW_STATUS_DONE_READ
+                                                            : FileWorkerStatus::FW_STATUS_FAILED_TO_READ;
 }
 
-void FileWorker ::readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, const Fw::LogStringArg& fileNameStr) {
+Svc ::FileWorkerReadStatus FileWorker ::readFile(Fw::Buffer& buffer,
+                                                 FwSizeType size,
+                                                 Os::File& file,
+                                                 const Fw::LogStringArg& fileNameStr) {
     FW_ASSERT(buffer.getData() != nullptr);
     FW_ASSERT(size > 0);
     FW_ASSERT(fileNameStr != nullptr);
@@ -225,7 +230,7 @@ void FileWorker ::readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, 
     U64 timeout = 0;
 
     if (!file.isOpen()) {
-        return;
+        return FileWorkerReadStatus::FW_READ_ERROR;
     }
 
     FileWorkerReadStatus readStat = this->readFileBytes(buffer, size, file, bytesRead);
@@ -260,7 +265,7 @@ void FileWorker ::readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, 
             break;
     }
 
-    return;
+    return readStat;
 }
 
 Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
