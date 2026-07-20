@@ -1,5 +1,6 @@
 set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/Topology.fpp"
+  "${CMAKE_CURRENT_LIST_DIR}/empty.cpp"
 )
 
 set(MOD_DEPS
