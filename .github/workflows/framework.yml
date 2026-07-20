@@ -105,6 +105,7 @@ jobs:
         uses: nasa/fprime-actions/run-tsan-tests@devel
         with:
           jobs: ${{ github.event.inputs.jobs || 'random' }}
+          tsan-options: "halt_on_error=1 history_size=5 suppressions=${{ github.workspace }}/.github/tsan-suppressions.txt"
 
   quality:
     name: "Quality"

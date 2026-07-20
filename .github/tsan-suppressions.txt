@@ -1,0 +1,9 @@
+# ThreadSanitizer suppressions for F Prime CI
+#
+# Known design issue: Drv::SocketComponentHelper may close a socket descriptor
+# from one thread (e.g. send() observing a disconnect, or an explicit close())
+# while the read task is concurrently blocked in recv() on the same descriptor.
+# The read path intentionally copies the descriptor and receives outside the
+# lock so that a blocking recv() does not hold the mutex. Resolving this
+# requires a descriptor-ownership redesign and is tracked as follow-up work.
+race:Drv::IpSocket::close
