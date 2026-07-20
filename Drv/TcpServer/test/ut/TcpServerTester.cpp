@@ -123,8 +123,8 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 (void)this->wait_on_change(false, Drv::Test::get_configured_delay_ms() / 10 + 1);
             } else {
                 Drv::Test::drain(this->component.m_socket, this->component.m_descriptor);
+                this->component.close();
             }
-            this->component.close();
         }
         // Server should have shutdown cleanly and waited for this to be shut down.  It is safe
         // to release the file descriptor.
