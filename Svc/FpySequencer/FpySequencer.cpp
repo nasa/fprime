@@ -503,7 +503,7 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
+            FW_ASSERT(false, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
         }
     }
 

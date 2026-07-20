@@ -582,7 +582,7 @@ static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle,
     // If priority not configured, fall back to default
     if (index < 0) {
         if (requirePrioritySizing) {
-            FW_ASSERT(0, queueId, requirePrioritySizing, priority, handle.m_maxPriority);
+            FW_ASSERT(false, queueId, requirePrioritySizing, priority, handle.m_maxPriority);
         }
         priority = Os::Generic::Queue::DEFAULT_PRIORITY;
         index = handle.getPriorityIndex(priority);

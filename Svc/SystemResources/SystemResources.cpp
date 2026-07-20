@@ -105,7 +105,7 @@ void SystemResources::Cpu() {
             cpuAvg += cpuUtil;
 
             // Send telemetry using telemetry output table
-            FW_ASSERT(this->m_cpu_tlm_functions[i]);
+            FW_ASSERT(this->m_cpu_tlm_functions[i] != nullptr);
             (this->*m_cpu_tlm_functions[i])(cpuUtil, Fw::Time());
 
             // Store cpu used and total

@@ -133,7 +133,7 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    FW_ASSERT(false, status);
             }
             break;
         case HashFileType:
@@ -153,11 +153,11 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    FW_ASSERT(false, status);
             }
             break;
         default:
-            FW_ASSERT(0, type);
+            FW_ASSERT(false, type);
     }
 
     return ValidateFile::OTHER_ERROR;

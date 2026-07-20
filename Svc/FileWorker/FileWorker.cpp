@@ -256,7 +256,7 @@ void FileWorker ::readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, 
             break;
 
         default:
-            FW_ASSERT(0);  // Should not get here
+            FW_ASSERT(false);  // Should not get here
             break;
     }
 

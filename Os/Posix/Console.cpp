@@ -35,7 +35,7 @@ void PosixConsole ::setOutputStream(Stream stream) {
             this->m_handle.m_file_descriptor = stderr;
             break;
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             break;
     }
 }

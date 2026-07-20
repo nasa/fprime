@@ -215,7 +215,7 @@ void SocketComponentHelper::readLoop() {
             Fw::Buffer buffer = this->getBuffer();
             if (buffer.isValid()) {
                 U8* data = buffer.getData();
-                FW_ASSERT(data);
+                FW_ASSERT(data != nullptr);
                 FwSizeType size = buffer.getSize();
                 // recv blocks, so it may have been a while since its done an isOpened check
                 status = this->recv(data, size);
@@ -243,7 +243,7 @@ void SocketComponentHelper::readLoop() {
 }
 
 void SocketComponentHelper::readTask(void* pointer) {
-    FW_ASSERT(pointer);
+    FW_ASSERT(pointer != nullptr);
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
     self->readLoop();
 }
@@ -315,7 +315,7 @@ void SocketComponentHelper::reconnectLoop() {
 }
 
 void SocketComponentHelper::reconnectTask(void* pointer) {
-    FW_ASSERT(pointer);
+    FW_ASSERT(pointer != nullptr);
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
     self->reconnectLoop();
 }

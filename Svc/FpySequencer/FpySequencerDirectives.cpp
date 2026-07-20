@@ -27,7 +27,7 @@ void FpySequencer::sendSignal(Signal signal) {
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(signal));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(signal));
         }
     }
 }
@@ -1126,7 +1126,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             error = this->op_itrunc_64_32();
             break;
         default:
-            FW_ASSERT(0, directive.get__op());
+            FW_ASSERT(false, directive.get__op());
             break;
     }
     if (error != DirectiveError::NO_ERROR) {
