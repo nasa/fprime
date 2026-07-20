@@ -57,7 +57,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install "yamcs-client<2.0.0"
-          pip install git+https://github.com/fprime-community/fprime-gds.git@yamcsPOC
+          pip install fprime-gds>=4.2.2a3
           pip install fprime-yamcs>=0.1.4
 
   setup-java:
@@ -99,7 +99,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install "yamcs-client<2.0.0"
-          pip install git+https://github.com/fprime-community/fprime-gds.git@yamcsPOC
+          pip install fprime-gds>=4.2.2a3
           pip install fprime-yamcs>=0.1.4
 
       - name: "Prepare deployment"
@@ -173,7 +173,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install "yamcs-client<2.0.0"
-          pip install git+https://github.com/fprime-community/fprime-gds.git@yamcsPOC
+          pip install fprime-gds>=4.2.2a3
           pip install fprime-yamcs>=0.1.4
 
       - name: "Prepare deployment"
