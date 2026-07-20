@@ -1,0 +1,74 @@
+# Soak-test setup for the Zephyr Reference deployment on Raspberry Pi Pico 2.
+#
+# Does a run of reusable-project-ci.yml to build, flash,
+# and initially test the Pico 2, then deploys a persistent GDS service for soak testing.
+#
+# Pairs with ext-pico2-zephyr-reference-soak-test.yml.
+
+name: "Soak Setup: Pico 2 Zephyr Reference"
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+concurrency:
+  group: soak-zephyr-reference
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Deployment name
+env:
+  DEPLOYMENT_NAME: zephyr-reference
+
+jobs:
+  # Any previously deployed soak GDS still owns /dev/pico2 and the ZMQ ipc sockets
+  stop-previous-gds:
+    name: "Stop Previous Soak GDS"
+    runs-on: [self-hosted, soak-test]
+    steps:
+      - name: "Disable prior soak GDS service"
+        shell: bash
+        run: |
+          SERVICE_NAME="fprime-soak-gds-${DEPLOYMENT_NAME}"
+          sudo systemctl disable --now "${SERVICE_NAME}" 2>/dev/null || true
+          # Clean up ipc socket files the prior GDS left behind.
+          rm -f "/tmp/fprime-server-${DEPLOYMENT_NAME}-in" "/tmp/fprime-server-${DEPLOYMENT_NAME}-out"
+          # Belt-and-suspenders: kill any straggler fprime-gds still holding /dev/pico2.
+          sudo pkill -f 'fprime-gds.*--uart-device /dev/pico2' 2>/dev/null || true
+
+  build:
+    name: "Zephyr Build"
+    needs: stop-previous-gds
+    uses: ./.github/workflows/reusable-project-ci.yml
+    with:
+      target_repository: fprime-community/fprime-zephyr-reference
+      target_ref: ${{ github.event.release.tag_name || 'devel' }}
+      ci_config_file: ./lib/fprime-zephyr/ci/sample-configs/pico2.yml
+      runs_on_int: soak-test 
+
+  # Now start the persistent GDS service for soak testing
+  start-persistent-gds:
+    name: "Start Soak GDS"
+    needs: build
+    runs-on: [self-hosted, pico2-soak]
+    steps:
+      - name: "Set up target repository (for tests + dictionary)"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-zephyr-reference
+          target_ref: ${{ github.event.release.tag_name || 'devel' }}
+          stage: int
+
+      - name: "Pull Archive Results"
+        uses: actions/download-artifact@v8
+        with:
+          name: archive.tar.gz
+
+      - name: "Deploy Soak GDS service"
+        uses: nasa/fprime-actions/soak-setup@devel
+        with:
+          deployment-name: ${{ env.DEPLOYMENT_NAME }}
+          platform: pico2
