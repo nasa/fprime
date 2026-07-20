@@ -42,10 +42,39 @@ jobs:
           path: aarch64-linux-artifacts
           retention-days: 5
 
-  aarch64-integration:
-    name: "AArch64 Linux Integration Tests"
+  setup-python:
+    name: "Setup Python Environment"
     runs-on: ubuntu-22.04-arm
     needs: cross-compilation
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "requirements.txt"
+          sparse-checkout-cone-mode: false
+
+      - name: "Setup Python environment"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install "yamcs-client<2.0.0"
+          pip install fprime-gds>=4.2.2a3
+          pip install fprime-yamcs>=0.1.4
+
+  setup-java:
+    name: "Setup Java Environment"
+    runs-on: ubuntu-22.04-arm
+    needs: cross-compilation
+    steps:
+      - name: "Setup Java 17 for YAMCS"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+  yamcs-specific-tests:
+    name: "YAMCS-Specific Integration Tests"
+    runs-on: ubuntu-22.04-arm
+    needs: [setup-python, setup-java]
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
@@ -72,7 +101,7 @@ jobs:
           pip install "yamcs-client<2.0.0"
           pip install fprime-gds>=4.2.2a3
           pip install fprime-yamcs>=0.1.4
-        
+
       - name: "Prepare deployment"
         run: |
           chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
@@ -106,6 +135,66 @@ jobs:
             ./int/test_yamcs_file_transfer.py || rc=1
           exit $rc
 
+      - name: "Archive test logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: yamcs-test-logs
+          path: ci-logs
+          retention-days: 5
+
+  svc-integration-tests:
+    name: "Standard Svc Integration Tests"
+    runs-on: ubuntu-22.04-arm
+    needs: [setup-python, setup-java]
+    env:
+      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: "requirements.txt"
+          sparse-checkout-cone-mode: false
+
+      - name: "Download build artifacts"
+        uses: actions/download-artifact@v8
+        with:
+          name: aarch64-linux-artifacts
+
+      - name: "Setup Java 17 for YAMCS"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: "Setup Python environment"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install "yamcs-client<2.0.0"
+          pip install fprime-gds>=4.2.2a3
+          pip install fprime-yamcs>=0.1.4
+
+      - name: "Prepare deployment"
+        run: |
+          chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          mkdir -p ci-logs
+
+      - name: "Start F´ deployment with YAMCS"
+        run: |
+          # Verify dictionary exists
+          ls -la ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/ || true
+
+          fprime-yamcs --ip-client \
+            -d ${PWD}/build-artifacts/aarch64-linux/${DEPLOYMENT} \
+            --logs ${PWD}/ci-logs &
+          sleep 15
+          # Check if YAMCS started successfully
+          if ! jobs -r | grep -q fprime-yamcs; then
+            echo "ERROR: YAMCS failed to start"
+            cat ${PWD}/ci-logs/*.log 2>/dev/null || true
+            exit 1
+          fi
+
       - name: "Run standard Svc integration tests from lib/fprime"
         run: |
           pytest -p fprime_gds.common.testing_fw.pytest_integration \
@@ -127,12 +216,12 @@ jobs:
             ./fprime-svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
             ./fprime-svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
             ./fprime-svc/Version/test/int/test_cmd_version.py \
-            ./fprime-svc/Health/test/int/test_cmd_health.py \
+            ./fprime-svc/Health/test/int/test_cmd_health.py
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: test-logs
+          name: svc-test-logs
           path: ci-logs
           retention-days: 5
