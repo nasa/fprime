@@ -124,7 +124,7 @@ jobs:
             ./fprime-svc/FileUplink/test/int/test_cmd_uplink.py \
             ./fprime-svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
             ./fprime-svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
-            ./fprime-svc/Version/test/int/test_cmd_version.py
+            ./fprime-svc/Version/test/int/test_cmd_version.py \
             ./fprime-svc/Health/test/int/test_cmd_health.py \
 
       - name: "Archive test logs"
