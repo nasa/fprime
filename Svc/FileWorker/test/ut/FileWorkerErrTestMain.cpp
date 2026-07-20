@@ -26,6 +26,11 @@ TEST(Nominal, testWriteErr) {
     tester.testWriteErr();
 }
 
+TEST(Nominal, testWriteErrStatusReported) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteErrStatusReported();
+}
+
 TEST(Nominal, testWriteHashErr) {
     Svc::FileWorkerTester tester;
     tester.testWriteHashErr();

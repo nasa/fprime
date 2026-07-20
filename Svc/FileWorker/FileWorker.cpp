@@ -174,12 +174,16 @@ void FileWorker ::writeIn_handler(FwIndexType portNum,
     fileName[sizeof(fileName) - 1] = 0;  // guarantee termination
 
     // Write
-    bool isWrite = this->writeBufferToFile(buffer, fileName, offsetBytes, append);
+    const bool isWrite = this->writeBufferToFile(buffer, fileName, offsetBytes, append);
     if (isWrite) {
         this->writeBufferHashToFile(buffer, fileName, offsetBytes, append);
     }
 
-    this->writeDoneOut_out(0, FW_STATUS_DONE_WRITE, buffer.getSize());
+    // Report the actual outcome of the write. A failed writeBufferToFile (open
+    // failure, permission denied, disk full, partial write) must not be reported
+    // to ground as a successful FW_STATUS_DONE_WRITE.
+    const FileWorkerStatus writeStatus = isWrite ? FW_STATUS_DONE_WRITE : FW_STATUS_FAILED_TO_WRITE;
+    this->writeDoneOut_out(0, writeStatus, isWrite ? buffer.getSize() : 0);
     this->m_state = FW_STATE_IDLE;
     return;
 }
@@ -293,6 +297,11 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
         Os::File::Status ret = file.read(buffer.getData() + bytesRead, readAmtActual);
 
         if (Os::File::OP_OK != ret || readAmt != readAmtActual) {
+            // Count the bytes actually transferred so ReadError telemetry reports
+            // the true amount. A short read stays an error on purpose: FileWorker
+            // reads a fixed, caller-specified size and must not silently accept a
+            // file shorter than expected (e.g. truncated mid-read).
+            bytesRead += readAmtActual;
             return FileWorkerReadStatus::FW_READ_ERROR;
         }
 
