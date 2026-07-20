@@ -127,7 +127,7 @@ jobs:
         run: |
           rc=0
           # YAMCS file transfer tests first, against an idle fileManager
-          pytest \
+          pytest -p fprime_test_api \
             --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
@@ -197,7 +197,7 @@ jobs:
 
       - name: "Run standard Svc integration tests from lib/fprime"
         run: |
-          pytest \
+          pytest -p fprime_test_api \
             --dictionary ./build-artifacts/aarch64-linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./int/int_config.json \
             --use-yamcs \
