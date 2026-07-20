@@ -159,7 +159,6 @@ jobs:
           cp -r ./build-artifacts aarch64-linux-artifacts
           if [ -d "ExamplesDeployment/test/int" ]; then
             cp -r ExamplesDeployment/test/int aarch64-linux-artifacts/int
-            cp -r ExamplesDeployment/test/ut aarch64-linux-artifacts/ut
           fi
       - name: "Archive Build Artifacts"
         uses: actions/upload-artifact@v7
