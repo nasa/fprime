@@ -45,13 +45,64 @@ Type getAnImmediateUsedType(Declaration d) {
 }
 
 /**
- * Gets a type which appears indirectly in `t`, stopping at allowed typedefs.
+ * Holds if `t` is a typedef declared outside the repository (a system or
+ * toolchain header, e.g. `off_t`, `mode_t`, `ssize_t`, `size_t`). Such a
+ * typedef is the type an external API dictates, so a declaration using it is
+ * honoring the external interface contract; replacing it with an F Prime
+ * sized type would be wrong on platforms where the sizes differ.
+ */
+predicate systemTypedef(TypedefType t) { not exists(t.getFile().getRelativePath()) }
+
+/**
+ * Gets a type which appears indirectly in `t`, stopping at allowed typedefs
+ * and at typedefs declared by system headers.
  */
 Type getAUsedType(Type t) {
   not allowedTypedefs(t) and
+  not systemTypedef(t) and
   (
     result = t.(TypedefType).getBaseType() or
     result = t.(DerivedType).getBaseType()
+  )
+}
+
+/**
+ * Holds if `f` is declared outside the repository: a system, libc, or
+ * toolchain function (e.g. `::open`, `::ioctl`, `::lseek`). Functions
+ * declared anywhere in the repository are NOT external, so APIs introduced
+ * in this repository that use basic integral types are still reported.
+ */
+predicate externalFunction(Function f) { not exists(f.getFile().getRelativePath()) }
+
+/**
+ * Gets an expression whose value `v` receives, either by initialization or
+ * by assignment.
+ */
+Expr getAnAssignedExpr(Variable v) {
+  result = v.getInitializer().getExpr()
+  or
+  exists(AssignExpr a | a.getLValue() = v.getAnAccess() and result = a.getRValue())
+}
+
+/**
+ * Holds if local variable `v` exists to interact with an external API, which
+ * dictates its basic integral type:
+ * - it receives the return value of a call to an external function
+ *   (e.g. `int descriptor = ::open(...)`), or
+ * - it receives the value of the `errno` macro, which is `int` by contract, or
+ * - it is passed to an external function, directly or by address
+ *   (e.g. the flags argument built for `::open`).
+ */
+predicate externalApiVariable(LocalVariable v) {
+  exists(FunctionCall c | externalFunction(c.getTarget()) | c = getAnAssignedExpr(v))
+  or
+  exists(MacroInvocation mi |
+    mi.getMacroName() = "errno" and mi.getExpr() = getAnAssignedExpr(v)
+  )
+  or
+  exists(FunctionCall c | externalFunction(c.getTarget()) |
+    c.getAnArgument() = v.getAnAccess() or
+    c.getAnArgument().(AddressOfExpr).getOperand() = v.getAnAccess()
   )
 }
 
@@ -94,7 +145,21 @@ where
   not (
     usedType instanceof PlainCharType and
     isPlainCharIndirection(getAnImmediateUsedType(d))
-  )
+  ) and
+  // F Prime: allow local variables whose basic integral type is dictated by an
+  // external (system/libc) API they receive values from or are passed to.
+  // Declarations introduced by this repository — including functions and
+  // methods returning or taking basic integral types — are still flagged.
+  not externalApiVariable(d) and
+  // F Prime: the language mandates a plain `int` dummy parameter to
+  // distinguish the postfix increment/decrement operators.
+  not exists(Operator op |
+    op.getName() = ["operator++", "operator--"] and d = op.getAParameter()
+  ) and
+  // F Prime: exclude vendored third-party code, which is not maintained to the
+  // F Prime coding standard, and the Python virtual environment (toolchain
+  // files such as CMake's compiler ABI probes live inside it).
+  not d.getFile().getRelativePath().matches(["Utils/Hash/libcrc/%", "%fprime-venv/%"])
 select d,
   d.getName() + " uses the basic integral type " + usedType.getName() +
     " rather than a typedef with size and signedness."
