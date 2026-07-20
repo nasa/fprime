@@ -50,6 +50,10 @@ void FileDownlink ::configure(U32 cooldown, U32 cycleTime, U32 fileQueueDepth) {
     FW_ASSERT(stat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(stat));
 }
 
+void FileDownlink ::configure(const char* directory) {
+    this->m_file.configureSandbox(directory);
+}
+
 void FileDownlink ::deinit() {
     this->m_fileQueue.teardown();
     FileDownlinkComponentBase::deinit();
@@ -287,7 +291,11 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
     // Reject command if error when opening file
     if (status != Os::File::OP_OK) {
         this->m_mode.set(Mode::IDLE);
-        this->m_warnings.fileOpenError();
+        if (status == Os::File::OUTSIDE_SANDBOX) {
+            this->m_warnings.sourceOutOfSandbox();
+        } else {
+            this->m_warnings.fileOpenError();
+        }
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
         return;
     }
