@@ -87,6 +87,25 @@ jobs:
         with:
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
 
+  tsan:
+    name: "TSan UTs"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Run Unit Tests (TSan)"
+        uses: nasa/fprime-actions/run-tsan-tests@devel
+        with:
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+
   quality:
     name: "Quality"
     runs-on: ubuntu-22.04
@@ -115,3 +134,15 @@ jobs:
       - name: "Build (static analysis runs during compilation)"
         shell: bash
         run: fprime-util build --all
+
+  timing-check:
+    name: "Timing Check"
+    runs-on: ubuntu-latest
+    needs: [build, unit-tests, tsan, quality]
+    if: always()
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: "Check Job Timings"
+        uses: nasa/fprime-actions/timing-check@devel
