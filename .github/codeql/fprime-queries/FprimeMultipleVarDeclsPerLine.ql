@@ -21,9 +21,6 @@ import cpp
  * header, so the single variable the programmer wrote is falsely reported as
  * multiple declarations on one line. Compiler-generated variables are not
  * counted here.
- *
- * Vendored third-party code (Utils/Hash/libcrc) is excluded, consistent with
- * the F Prime Rule 17 refinement.
  */
 from DeclStmt d
 where
@@ -32,6 +29,5 @@ where
     not v1.isCompilerGenerated() and
     not v2.isCompilerGenerated() and
     v1.getLocation().getStartLine() = v2.getLocation().getStartLine()
-  ) and
-  not d.getFile().getRelativePath().matches("Utils/Hash/libcrc/%")
+  )
 select d, "Multiple variable declarations on the same line."
