@@ -15,7 +15,7 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
   workflow_dispatch:
-    branches: [devel, YAMCSCI]
+    branches: [devel]
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
