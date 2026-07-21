@@ -1,0 +1,90 @@
+# Builds and runs integration tests on https://github.com/fprime-community/fprime-python-reference
+
+name: "External Repo: fprime-python-reference"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-python-reference
+      default_target_ref: main
+
+  build:
+    needs: get-branch
+    runs-on: ubuntu-24.04
+    name: "Build"
+    env:
+      FPRIME_LOCATION: lib/fprime
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: fprime-community/fprime-python-reference
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: lib/fprime
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12" # fprime-python-reference requires Python >= 3.12
+      - name: "Install requirements.txt"
+        run: |
+          # fprime_python_model is not published to PyPI; pre-install it from source
+          # TODO: install from main once fprime-community/fprime-python-model#28 merges
+          pip3 install "fprime_python_model @ git+https://github.com/lestarch-autobot/fprime-python-model.git@28545e528a654fe108055af93e861be7f8095bfd"
+          pip3 install -r requirements.txt
+        shell: bash
+      - name: "Generate build cache"
+        run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          export CMAKE_PREFIX_PATH="$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+          fprime-util generate ${VERBOSE_FLAG}
+        shell: bash
+      - name: "Build"
+        run: |
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          export CMAKE_PREFIX_PATH="$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+          fprime-util build -j8 ${VERBOSE_FLAG}
+        shell: bash
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "."
+          test-working-directory: "."
+          binary: "python3"
+          binary-args: "build-artifacts/python/fsw_main.py"
+          gds-args: "--ip-client --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json"
+          pytest-args: "test/int --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json --logs gds-logs"
