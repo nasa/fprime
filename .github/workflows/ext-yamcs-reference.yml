@@ -15,11 +15,12 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
   workflow_dispatch:
+    branches: [devel, YAMCSCI]
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') && !contains(github.ref, 'YAMCSCI') }}
 
 permissions:
   contents: read
