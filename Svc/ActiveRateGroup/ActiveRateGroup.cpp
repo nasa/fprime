@@ -66,7 +66,7 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // grab timer for endTime of cycle
-    (void)endTime.now();  // fall back to default time on failure
+    endTime.now();
 
     // get rate group execution time
     U32 cycleTime;

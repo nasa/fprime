@@ -56,7 +56,7 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
             (void)timerfd_settime(fd, 0, &itval, nullptr);  // best-effort disarm on shutdown
             return;
         }
-        (void)this->m_rawTime.now();  // fall back to default time on failure
+        this->m_rawTime.now();
         this->CycleOut_out(0, this->m_rawTime);
     }
 }

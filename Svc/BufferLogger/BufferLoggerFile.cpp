@@ -105,11 +105,10 @@ void BufferLogger::File ::open() {
     }
 
     if (this->m_fileCounter == 0) {
-        (void)this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
-                                  this->m_suffix.toChar());
+        this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
     } else {
-        (void)this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
-                                  this->m_fileCounter, this->m_suffix.toChar());
+        this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
+                            this->m_fileCounter, this->m_suffix.toChar());
     }
 
     const Os::File::Status status = this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_WRITE);

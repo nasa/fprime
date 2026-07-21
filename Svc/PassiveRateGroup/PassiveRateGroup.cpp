@@ -57,7 +57,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
 
             if (Svc::PassiveRateGroupCfg::PortCycleTime) {
-                (void)portEnd.now();  // fall back to default time on failure
+                portEnd.now();
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
                 portTimes[static_cast<FwSizeType>(port)] = cycleTime;
@@ -66,7 +66,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     }
 
     // grab timer for endTime of cycle
-    (void)endTime.now();  // fall back to default time on failure
+    endTime.now();
 
     // get rate group execution time
     U32 cycleTime;
