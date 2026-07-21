@@ -47,6 +47,7 @@ U32 Checksum ::getValue() const {
 }
 
 void Checksum ::update(const U8* const data, const U32 offset, const U32 length) {
+    FW_ASSERT(data != nullptr);
     U32 index = 0;
 
     // Add the first word unaligned if necessary

@@ -116,6 +116,7 @@ bool MaxHeap::pop(FwQueuePriorityType& value, FwSizeType& id) {
     if (this->isEmpty()) {
         return false;
     }
+    FW_ASSERT(this->m_heap != nullptr);
 
     // Set the return values to the top (max) of
     // the heap:
