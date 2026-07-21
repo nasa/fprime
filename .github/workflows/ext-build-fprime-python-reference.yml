@@ -32,8 +32,24 @@ jobs:
 
   build:
     needs: get-branch
+    name: ""
+    uses: ./.github/workflows/reusable-project-builder.yml
+    with:
+      target_repository: fprime-community/fprime-python-reference
+      fprime_location: lib/fprime
+      build_location: "."
+      run_unit_tests: false
+      # ubuntu-24.04 provides Python 3.12, required by fprime-python-reference
+      runs_on: ubuntu-24.04
+      target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      requirements_location: "."
+      upload_artifacts: true
+      artifact_name: fprime-python-reference-build-artifacts
+
+  integration-tests:
+    needs: [get-branch, build]
     runs-on: ubuntu-24.04
-    name: "Build"
+    name: "Integration Tests"
     env:
       FPRIME_LOCATION: lib/fprime
     steps:
@@ -48,24 +64,14 @@ jobs:
         with:
           submodules: true
           path: lib/fprime
-      - name: "Setup Python"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12" # fprime-python-reference requires Python >= 3.12
       - name: "Install requirements.txt"
-        run: |
-          # fprime_python_model is not published to PyPI; pre-install it from source
-          pip3 install "fprime_python_model @ git+https://github.com/fprime-community/fprime-python-model.git@main"
-          pip3 install -r requirements.txt
+        run: pip3 install -r requirements.txt
         shell: bash
-      - name: "Expose pip-installed pybind11 to CMake"
-        run: |
-          echo "CMAKE_PREFIX_PATH=$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}" >> "$GITHUB_ENV"
-        shell: bash
-      - name: "Build"
-        uses: nasa/fprime-actions/build@devel
+      - name: "Download Build Artifacts"
+        uses: actions/download-artifact@v8
         with:
-          jobs: "8"
+          name: fprime-python-reference-build-artifacts
+          path: build-artifacts/
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
