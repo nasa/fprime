@@ -50,7 +50,7 @@ jobs:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
       - name: "Checkout external repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: yvijay99/fprime-yamcs-reference
           ref: testingyamcsclient
