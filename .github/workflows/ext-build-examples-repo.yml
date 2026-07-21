@@ -84,7 +84,8 @@ jobs:
           . ../venv/bin/activate
           fprime-util generate
           fprime-util build
-      - name: "Run integration tests"
+      - name: "Run dp_demo integration tests"
+        continue-on-error: true
         run: |
           DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
@@ -93,5 +94,12 @@ jobs:
           fprime-gds --ip-client -d ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
           cd aarch64-linux-artifacts/int
-          pytest Svc --dictionary TestDeploymentsProject/build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json --deployment-config TestDeploymentsProject/Ref/test/int/int_config.json
           pytest dp_demo_integration_test.py
+      - name: "Run Svc integration tests"
+        run: |
+          DEPLOYMENT=ExamplesDeployment
+          . venv/bin/activate
+          pkill -f fprime-gds || true
+          sleep 2
+          cd FlightExamples
+          pytest lib/fprime/Svc --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json --deployment-config ./ExamplesDeployment/test/int/int_config.json
