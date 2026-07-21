@@ -55,8 +55,7 @@ jobs:
       - name: "Install requirements.txt"
         run: |
           # fprime_python_model is not published to PyPI; pre-install it from source
-          # TODO: install from main once fprime-community/fprime-python-model#28 merges
-          pip3 install "fprime_python_model @ git+https://github.com/lestarch-autobot/fprime-python-model.git@262a35c1cf1e0d17f6c2549e748419c03f881348"
+          pip3 install "fprime_python_model @ git+https://github.com/fprime-community/fprime-python-model.git@main"
           pip3 install -r requirements.txt
         shell: bash
       - name: "Generate build cache"
