@@ -32,7 +32,8 @@ SystemResources ::SystemResources(const char* const compName)
         m_cpu_prev[i].total = 0;
     }
 
-    if (Os::Cpu::getCount(m_cpu_count) == Os::Generic::ERROR) {
+    const Os::Generic::Status countStatus = Os::Cpu::getCount(m_cpu_count);
+    if (countStatus == Os::Generic::ERROR) {
         m_cpu_count = 0;
     }
 
@@ -119,7 +120,8 @@ void SystemResources::Cpu() {
 }
 
 void SystemResources::Mem() {
-    if (Os::Memory::getUsage(m_mem) == Os::Generic::OP_OK) {
+    const Os::Generic::Status memStatus = Os::Memory::getUsage(m_mem);
+    if (memStatus == Os::Generic::OP_OK) {
         this->tlmWrite_MEMORY_TOTAL(m_mem.total / 1024);
         this->tlmWrite_MEMORY_USED(m_mem.used / 1024);
     }
@@ -129,7 +131,8 @@ void SystemResources::PhysMem() {
     FwSizeType total = 0;
     FwSizeType free = 0;
 
-    if (Os::FileSystem::getFreeSpace("/", total, free) == Os::FileSystem::OP_OK) {
+    const Os::FileSystem::Status freeSpaceStatus = Os::FileSystem::getFreeSpace("/", total, free);
+    if (freeSpaceStatus == Os::FileSystem::OP_OK) {
         this->tlmWrite_NON_VOLATILE_FREE(free / 1024);
         this->tlmWrite_NON_VOLATILE_TOTAL(total / 1024);
     }

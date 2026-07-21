@@ -342,7 +342,8 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     // Return the buffer if no bytes are outstanding
     if (currentVc.outstanding.offset == 0) {
         // Return the buffer if this isn't the SPP Idle buff
-        if (!buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer))) {
+        const bool isSppIdleBuffer = buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer));
+        if (!isSppIdleBuffer) {
             this->dataReturnOut_out(0, data,
                                     context);  // return ownership of the original data buffer
         }
