@@ -7,7 +7,7 @@ const char* Hash ::getFileExtensionString() {
 }
 
 void Hash ::addFileExtension(const Fw::ConstStringBase& baseName, Fw::StringBase& extendedName) {
-    extendedName.format("%s%s", baseName.toChar(), HASH_EXTENSION_STRING);
+    (void)extendedName.format("%s%s", baseName.toChar(), HASH_EXTENSION_STRING);
 }
 
 FwSizeType Hash ::getFileExtensionLength() {

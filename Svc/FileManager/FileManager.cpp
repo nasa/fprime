@@ -242,7 +242,7 @@ void FileManager ::run_internalInterfaceHandler() {
             } else if (status == Os::Directory::OP_OK) {
                 // Construct full path for type checking
                 Fw::String fullPath;
-                fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
+                (void)fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
 
                 // Determine entry type
                 Os::FileSystem::PathType pathType = Os::FileSystem::getPathType(fullPath.toChar());

@@ -163,7 +163,7 @@ void PriorityMemQueueHandle::enablePriority(FwQueuePriorityType priority) {
 
     // MEMORY ORDERING: seq_cst for control path operations ensures total ordering
     // Atomic update of priority mask using fetch_or with seq_cst (control path)
-    this->m_priorityMask.fetch_or(priorityBitMask(priority), std::memory_order_seq_cst);
+    (void)this->m_priorityMask.fetch_or(priorityBitMask(priority), std::memory_order_seq_cst);
 }
 
 void PriorityMemQueueHandle::disablePriority(FwQueuePriorityType priority) {
@@ -171,7 +171,7 @@ void PriorityMemQueueHandle::disablePriority(FwQueuePriorityType priority) {
 
     // MEMORY ORDERING: seq_cst for control path operations ensures total ordering
     // Atomic update of priority mask using fetch_and with seq_cst (control path)
-    this->m_priorityMask.fetch_and(~priorityBitMask(priority), std::memory_order_seq_cst);
+    (void)this->m_priorityMask.fetch_and(~priorityBitMask(priority), std::memory_order_seq_cst);
 }
 
 PriorityMemQueue::PriorityMemQueue() {
@@ -337,7 +337,7 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
         for (FwSizeType i = 0; i < numQueueConfigs; ++i) {
             s_configs[i] = queueConfigs[i];
             FwSizeType priorityConfigsSize = queueConfigs[i].numPriorities * sizeof(QueuePriorityConfig);
-            memcpy(priorityBase, queueConfigs[i].priorityConfigs, priorityConfigsSize);
+            (void)memcpy(priorityBase, queueConfigs[i].priorityConfigs, priorityConfigsSize);
             s_configs[i].priorityConfigs = priorityBase;
             priorityBase += queueConfigs[i].numPriorities;
         }

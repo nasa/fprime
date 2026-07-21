@@ -98,7 +98,7 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
     }
     if (status == PosixTaskHandle::SUCCESS) {
         sched_param schedParam;
-        memset(&schedParam, 0, sizeof(sched_param));
+        (void)memset(&schedParam, 0, sizeof(sched_param));
         schedParam.sched_priority = static_cast<int>(priority);
         status = pthread_attr_setschedparam(&attributes, &schedParam);
     }
@@ -147,7 +147,7 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     const bool expect_permission = (permissions == EXPECT_PERMISSION);
     // Initialize and clear pthread attributes
     pthread_attr_t attributes;
-    memset(&attributes, 0, sizeof(attributes));
+    (void)memset(&attributes, 0, sizeof(attributes));
     pthread_status = pthread_attr_init(&attributes);
     if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
@@ -171,7 +171,7 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     }
 
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
-    Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
+    (void)Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
 #endif
 
     (void)pthread_attr_destroy(&attributes);

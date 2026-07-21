@@ -70,7 +70,7 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcgetattr(fd, &cfg);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -97,7 +97,7 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcsetattr(fd, TCSANOW, &cfg);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -110,7 +110,7 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcgetattr(fd, &t);
         if (-1 == stat) {
-            close(fd);
+            (void)close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
             this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -122,7 +122,7 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcsetattr(fd, TCSANOW, &t);
         if (-1 == stat) {
-            close(fd);
+            (void)close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
             this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -199,7 +199,7 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcgetattr(fd, &newtio);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -241,7 +241,7 @@ bool LinuxUartDriver::open(const char* const device,
     // Set baud rate:
     stat = cfsetispeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -249,7 +249,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
     stat = cfsetospeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -270,7 +270,7 @@ bool LinuxUartDriver::open(const char* const device,
     // Set attributes:
     stat = tcsetattr(fd, TCSANOW, &newtio);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -341,7 +341,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             status = ByteStreamStatus::OTHER_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(Fw::TimeInterval(0, 50000));
+            (void)Os::Task::delay(Fw::TimeInterval(0, 50000));  // best-effort delay
             continue;
         }
 

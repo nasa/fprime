@@ -65,24 +65,24 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
 
     // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
     if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
 
     if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // TCP requires connect to the socket to allow for communication
     if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }
     socketDescriptor.fd = socketFd;
