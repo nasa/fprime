@@ -30,3 +30,4 @@ paths-ignore:
   - "**/_deps/**"
   # Vendored third-party code is not maintained to the JPL standard
   - "Utils/Hash/libcrc/**"
+  - "fprime-venv/**"
