@@ -188,7 +188,8 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
 }
 
 void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
-    CFDP::Checksum computed, stored;
+    CFDP::Checksum computed;
+    CFDP::Checksum stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
     if (computed != stored) {
