@@ -65,12 +65,12 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType buf
     // This is recommended by the manual pages (man 3 readdir)
     errno = 0;
 
-    struct dirent* direntData = nullptr;
-    while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
+    struct dirent* direntData = ::readdir(this->m_handle.m_dir_descriptor);
+    while (direntData != nullptr) {
         // Skip . and .. directory entries
         if ((direntData->d_name[0] == '.' and direntData->d_name[1] == '\0') or
             (direntData->d_name[0] == '.' and direntData->d_name[1] == '.' and direntData->d_name[2] == '\0')) {
-            continue;
+            direntData = ::readdir(this->m_handle.m_dir_descriptor);
         } else {
             (void)Fw::StringUtils::string_copy(fileNameBuffer, direntData->d_name, bufSize);
             break;

@@ -182,7 +182,9 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
         U8 buffer[sizeof(size)];
         Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
         serialLength.serializeFrom(size);
-        if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()))) {
+        const bool lengthWritten =
+            this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()));
+        if (lengthWritten) {
             this->m_byteCount += static_cast<U32>(serialLength.getSize());
         } else {
             return;
@@ -190,7 +192,8 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
     }
 
     // Write buffer to file:
-    if (this->writeToFile(data.getBuffAddr(), size)) {
+    const bool dataWritten = this->writeToFile(data.getBuffAddr(), size);
+    if (dataWritten) {
         this->m_byteCount += size;
     }
 }

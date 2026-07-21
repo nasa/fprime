@@ -179,7 +179,8 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     Os::File destination;
 
     // If requested, check if destination file exists and exit if does not exist
-    if (not createMissingDest and not FileSystem::exists(destPath)) {
+    const bool destExists = FileSystem::exists(destPath);
+    if (not createMissingDest and not destExists) {
         return Status::DOESNT_EXIST;
     }
 
