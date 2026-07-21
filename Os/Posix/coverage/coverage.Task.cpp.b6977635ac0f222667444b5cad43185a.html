@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 02:03:22</td>
+      <td>2026-07-21 02:36:45</td>
     </tr>
   </table>
 </div>
@@ -70,19 +70,19 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l240">Os::Posix::Task::PosixTask::_delay(Fw::TimeInterval const&amp;) (line 240)</a></td><td>called 5775 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l144">Os::Posix::Task::PosixTask::create(Os::TaskInterface::Arguments const&amp;, Os::Posix::Task::PosixTask::PermissionExpectation) (line 144)</a></td><td>called 405 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l226">Os::Posix::Task::PosixTask::getHandle() (line 226)</a></td><td>called 405 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l215">Os::Posix::Task::PosixTask::join() (line 215)</a></td><td>called 405 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l183">Os::Posix::Task::PosixTask::onStart() (line 183)</a></td><td>called 405 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l240">Os::Posix::Task::PosixTask::_delay(Fw::TimeInterval const&amp;) (line 240)</a></td><td>called 9041 times</td><td>72.0%</td></tr>
+    <tr><td><a href="#l144">Os::Posix::Task::PosixTask::create(Os::TaskInterface::Arguments const&amp;, Os::Posix::Task::PosixTask::PermissionExpectation) (line 144)</a></td><td>called 421 times</td><td>72.0%</td></tr>
+    <tr><td><a href="#l226">Os::Posix::Task::PosixTask::getHandle() (line 226)</a></td><td>called 421 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l215">Os::Posix::Task::PosixTask::join() (line 215)</a></td><td>called 421 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l183">Os::Posix::Task::PosixTask::onStart() (line 183)</a></td><td>called 421 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l236">Os::Posix::Task::PosixTask::resume() (line 236)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l185">Os::Posix::Task::PosixTask::start(Os::TaskInterface::Arguments const&amp;) (line 185)</a></td><td>called 405 times</td><td>34.0%</td></tr>
+    <tr><td><a href="#l185">Os::Posix::Task::PosixTask::start(Os::TaskInterface::Arguments const&amp;) (line 185)</a></td><td>called 421 times</td><td>34.0%</td></tr>
     <tr><td><a href="#l232">Os::Posix::Task::PosixTask::suspend(Os::TaskInterface::SuspensionType) (line 232)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l29">Os::Posix::Task::pthread_entry_wrapper(void*) (line 29)</a></td><td>called 405 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l29">Os::Posix::Task::pthread_entry_wrapper(void*) (line 29)</a></td><td>called 421 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l109">Os::Posix::Task::set_cpu_affinity(pthread_attr_t&amp;, Os::TaskInterface::Arguments const&amp;) (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l77">Os::Posix::Task::set_priority_params(pthread_attr_t&amp;, Os::TaskInterface::Arguments const&amp;) (line 77)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l44">Os::Posix::Task::set_stack_size(pthread_attr_t&amp;, Os::TaskInterface::Arguments const&amp;) (line 44)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l130">Os::Posix::Task::set_task_name(unsigned long, char*) (line 130)</a></td><td>called 405 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l130">Os::Posix::Task::set_task_name(unsigned long, char*) (line 130)</a></td><td>called 421 times</td><td>86.0%</td></tr>
   </table>
 </details>
 
@@ -296,14 +296,14 @@
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="nf">pthread_entry_wrapper</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">wrapper_pointer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">wrapper_pointer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -317,7 +317,7 @@
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">TaskRoutineWrapper</span><span class="o">&amp;</span><span class="w"> </span><span class="n">wrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">TaskRoutineWrapper</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">wrapper_pointer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -331,14 +331,14 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">PosixTaskHandle</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">wrapper</span><span class="p">.</span><span class="n">m_task</span><span class="p">.</span><span class="n">getHandle</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">handle</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -359,7 +359,7 @@
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">set_task_name</span><span class="p">(</span><span class="n">pthread_self</span><span class="p">(),</span><span class="w"> </span><span class="n">handle</span><span class="o">-&gt;</span><span class="n">m_name</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -373,14 +373,14 @@
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">wrapper</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="o">&amp;</span><span class="n">wrapper</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1003,14 +1003,14 @@
       <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="kt">int</span><span class="w"> </span><span class="nf">set_task_name</span><span class="p">(</span><span class="n">pthread_t</span><span class="w"> </span><span class="kr">thread</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l131" href="#l131">131</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1059,7 +1059,7 @@
       <td class="lineno"><a id="l138" href="#l138">138</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">name</span><span class="p">[</span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">PosixTaskHandle</span><span class="o">::</span><span class="n">PTHREAD_NAME_LENGTH</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\0&#39;</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1069,11 +1069,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_setname_np</span><span class="p">(</span><span class="kr">thread</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1087,7 +1087,7 @@
       <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1108,7 +1108,7 @@
       <td class="lineno"><a id="l144" href="#l144">144</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixTask::create</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Arguments</span><span class="o">&amp;</span><span class="w"> </span><span class="n">arguments</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -1122,21 +1122,21 @@
       <td class="lineno"><a id="l146" href="#l146">146</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pthread_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PosixTaskHandle</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l147" href="#l147">147</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">PosixTaskHandle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l148" href="#l148">148</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">expect_permission</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">permissions</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">EXPECT_PERMISSION</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1150,7 +1150,7 @@
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">pthread_attr_t</span><span class="w"> </span><span class="n">attributes</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1160,11 +1160,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attributes</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">attributes</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -1174,11 +1174,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">pthread_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_attr_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attributes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1188,7 +1188,7 @@
           <summary class="linebranchSummary">1/6</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
@@ -1196,7 +1196,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">arguments</span><span class="p">.</span><span class="n">m_stackSize</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">TASK_DEFAULT</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">expect_permission</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span></td>
     </tr>
     <tr class="source-line">
@@ -1227,7 +1227,7 @@
           <summary class="linebranchSummary">1/6</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
@@ -1235,7 +1235,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">arguments</span><span class="p">.</span><span class="n">m_priority</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">TASK_PRIORITY_DEFAULT</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">expect_permission</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span></td>
     </tr>
     <tr class="source-line">
@@ -1266,7 +1266,7 @@
           <summary class="linebranchSummary">1/6</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
@@ -1274,7 +1274,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">arguments</span><span class="p">.</span><span class="n">m_cpuAffinity</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">TASK_DEFAULT</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">expect_permission</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span></td>
     </tr>
     <tr class="source-line">
@@ -1318,11 +1318,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_copy</span><span class="p">(</span><span class="n">handle</span><span class="p">.</span><span class="n">m_name</span><span class="p">,</span><span class="w"> </span><span class="n">arguments</span><span class="p">.</span><span class="n">m_name</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">handle</span><span class="p">.</span><span class="n">m_name</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -1345,12 +1345,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pthread_status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PosixTaskHandle</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1367,13 +1367,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="n">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">handle</span><span class="p">.</span><span class="n">m_task_descriptor</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attributes</span><span class="p">,</span><span class="w"> </span><span class="n">pthread_entry_wrapper</span><span class="p">,</span><span class="w"> </span><span class="n">arguments</span><span class="p">.</span><span class="n">m_routine_argument</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1396,19 +1396,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pthread_status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PosixTaskHandle</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">handle</span><span class="p">.</span><span class="n">m_is_valid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1432,11 +1432,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">pthread_attr_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attributes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1445,11 +1445,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">810</td>
+      <td class="linecount coveredLine">842</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Posix</span><span class="o">::</span><span class="n">posix_status_to_task_status</span><span class="p">(</span><span class="n">pthread_status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1470,7 +1470,7 @@
       <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="nf">PosixTask::onStart</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -1484,14 +1484,14 @@
       <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixTask::start</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Arguments</span><span class="o">&amp;</span><span class="w"> </span><span class="n">arguments</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">arguments</span><span class="p">.</span><span class="n">m_routine</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1512,7 +1512,7 @@
       <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span><span class="w"> </span><span class="n">PermissionExpectation</span><span class="o">::</span><span class="n">EXPECT_PERMISSION</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1529,11 +1529,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">ERROR_PERMISSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1662,11 +1662,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1687,7 +1687,7 @@
       <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1708,14 +1708,14 @@
       <td class="lineno"><a id="l215" href="#l215">215</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixTask::join</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l216" href="#l216">216</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">JOIN_ERROR</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1725,13 +1725,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 421 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_is_valid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1752,7 +1752,7 @@
       <td class="lineno"><a id="l220" href="#l220">220</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">pthread_join</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_task_descriptor</span><span class="p">,</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1761,12 +1761,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 405 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 421 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">405</td>
+      <td class="linecount partialCoveredLine">421</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">stat</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PosixTaskHandle</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">JOIN_ERROR</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1780,7 +1780,7 @@
       <td class="lineno"><a id="l223" href="#l223">223</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1801,14 +1801,14 @@
       <td class="lineno"><a id="l226" href="#l226">226</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="n">TaskHandle</span><span class="o">*</span><span class="w"> </span><span class="nf">PosixTask::getHandle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l227" href="#l227">227</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">405</td>
+      <td class="linecount coveredLine">421</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1899,21 +1899,21 @@
       <td class="lineno"><a id="l240" href="#l240">240</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">PosixTask::_delay</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">TimeInterval</span><span class="o">&amp;</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l241" href="#l241">241</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">task_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l242" href="#l242">242</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">timespec</span><span class="w"> </span><span class="n">sleep_interval</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1922,11 +1922,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 5775 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 9041 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">sleep_interval</span><span class="p">.</span><span class="n">tv_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -1935,11 +1935,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 5775 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 9041 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">sleep_interval</span><span class="p">.</span><span class="n">tv_nsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">interval</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1953,21 +1953,21 @@
       <td class="lineno"><a id="l246" href="#l246">246</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">timespec</span><span class="w"> </span><span class="n">remaining_interval</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l247" href="#l247">247</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">remaining_interval</span><span class="p">.</span><span class="n">tv_sec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l248" href="#l248">248</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">remaining_interval</span><span class="p">.</span><span class="n">tv_nsec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1990,11 +1990,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 5775 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 9041 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nanosleep</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sleep_interval</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">remaining_interval</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2010,19 +2010,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 5775 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 9041 times.</div>
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5775</td>
+      <td class="linecount partialCoveredLine">9041</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l254" href="#l254">254</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5775</td>
+      <td class="linecount coveredLine">9041</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -2113,7 +2113,7 @@
       <td class="lineno"><a id="l267" href="#l267">267</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11550</td>
+      <td class="linecount coveredLine">18082</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">task_status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
