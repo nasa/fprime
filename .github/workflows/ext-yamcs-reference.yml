@@ -4,10 +4,10 @@ name: "External Repo: YAMCS Reference"
 
 on:
   push:
-    branches: [YAMCSCI]
+    branches: [devel]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [YAMCSCI ]
+    branches: [devel]
     paths-ignore:
       - 'docs/**'
       - '**.md'
