@@ -15,6 +15,7 @@
 
 #include "Drv/Ip/TcpServerSocket.hpp"
 #include "Drv/TcpClient/TcpClientComponentImpl.hpp"
+#include "Os/Mutex.hpp"
 #include "TcpClientGTestBase.hpp"
 
 #define SEND_DATA_BUFFER_SIZE 1024
@@ -105,6 +106,8 @@ class TcpClientTester : public TcpClientGTestBase {
     //!
     TcpClientComponentImpl component;
     Fw::Buffer m_data_buffer;
+    //! Protects m_data_buffer, which is shared with the receive thread's handler
+    Os::Mutex m_buffer_lock;
     Fw::Buffer m_data_buffer2;
     U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
     std::atomic<bool> m_spinner;

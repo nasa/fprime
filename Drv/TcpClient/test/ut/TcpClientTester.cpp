@@ -87,8 +87,15 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             // If receive thread is live, try the other way
             if (recv_thread) {
                 m_spinner = false;
-                m_data_buffer.setSize(sizeof(m_data_storage));
-                status2 = server.send(server_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+                U8* send_data = nullptr;
+                FwSizeType send_size = 0;
+                {
+                    Os::ScopeLock lock(m_buffer_lock);
+                    m_data_buffer.setSize(sizeof(m_data_storage));
+                    send_data = m_data_buffer.getData();
+                    send_size = m_data_buffer.getSize();
+                }
+                status2 = server.send(server_fd, send_data, send_size);
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
                 while (not m_spinner) {
                 }
@@ -99,10 +106,18 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
             this->component.stop();
             this->component.join();
         } else {
-            // Client should close to initiate a clean shutdown
+            // Client should shut down to initiate a clean disconnect
             // This is because the server "can't know" if the client is done until
-            // this close is hit, or the server initiates the shutdown.
-            this->component.close();
+            // this shutdown is hit, or the server initiates the shutdown.
+            this->component.shutdown();
+            if (recv_thread) {
+                // The receive thread owns the descriptor while running: it will close the
+                // socket once it observes the disconnect. Wait for that close here.
+                (void)this->wait_on_change(this->component.getSocketHandler(), false,
+                                           Drv::Test::get_configured_delay_ms() / 10 + 1);
+            } else {
+                this->component.close();
+            }
         }
         // Safe server shutdown after client
         Drv::Test::drain(server, server_fd);
@@ -200,6 +215,7 @@ void TcpClientTester ::from_recv_handler(const FwIndexType portNum,
     this->pushFromPortEntry_recv(recvBuffer, ByteStreamStatus);
     if (ByteStreamStatus == ByteStreamStatus::OP_OK) {
         // Make sure we can get to unblocking the spinner
+        Os::ScopeLock lock(m_buffer_lock);
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
         m_data_buffer.setSize(0);
