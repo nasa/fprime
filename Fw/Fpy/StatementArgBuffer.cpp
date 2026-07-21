@@ -55,7 +55,8 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
     FW_ASSERT(us != nullptr);
     FW_ASSERT(them != nullptr);
 
-    for (Serializable::SizeType byte = 0; byte < this->getSize(); byte++) {
+    const Serializable::SizeType size = this->getSize();
+    for (Serializable::SizeType byte = 0; byte < size; byte++) {
         if (us[byte] != them[byte]) {
             return false;
         }

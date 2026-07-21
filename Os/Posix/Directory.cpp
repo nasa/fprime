@@ -66,6 +66,7 @@ PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType buf
     errno = 0;
 
     struct dirent* direntData = nullptr;
+    // @non-terminating@: bounded by the number of directory entries
     while ((direntData = ::readdir(this->m_handle.m_dir_descriptor)) != nullptr) {
         // Skip . and .. directory entries
         if ((direntData->d_name[0] == '.' and direntData->d_name[1] == '\0') or

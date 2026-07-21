@@ -331,6 +331,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
     Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
+    // @non-terminating@: read thread runs until quit is requested
     while (!comp->m_quitReadThread) {
         Fw::Buffer buff = comp->allocate_out(0, comp->m_allocationSize);
 
@@ -350,6 +351,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         // Read until something is received or an error occurs. Only loop when
         // stat == 0 as this is the timeout condition and the read should spin
         FW_ASSERT_NO_OVERFLOW(buff.getSize(), size_t);
+        // @non-terminating@: retry read until data arrives or quit is requested
         while ((stat == 0) && !comp->m_quitReadThread) {
             stat = static_cast<int>(::read(comp->m_fd, buff.getData(), static_cast<size_t>(buff.getSize())));
         }

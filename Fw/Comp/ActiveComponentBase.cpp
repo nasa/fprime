@@ -108,6 +108,7 @@ void ActiveComponentBase::s_taskLoop(void* component_pointer) {
     ActiveComponentBase* component = static_cast<ActiveComponentBase*>(component_pointer);
     // A non-cooperative task switching implementation is just a while-loop around the active component
     // state-machine. Here the while loop is at top-level.
+    // @non-terminating@: component lifecycle loop runs until DONE
     while (component->m_stage != ActiveComponentBase::Lifecycle::DONE) {
         ActiveComponentBase::s_taskStateMachine(component);
     }
