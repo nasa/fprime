@@ -54,11 +54,6 @@ predicate testAsserted(Function f) {
   exists(GTestAssert a, Expr e | e = a.getAnExpandedElement() and e.getEnclosingFunction() = f)
 }
 
-/** Vendored third-party code, not maintained in this repository. */
-predicate vendored(Function f) {
-  f.getFile().getRelativePath().matches("Utils/Hash/libcrc/%")
-}
-
 from Function f
 where
   f.getMetrics().getNumberOfLinesOfCode() > 10 and
@@ -69,6 +64,7 @@ where
   not exists(Assertion a | a.getAsserted().getEnclosingFunction() = f) and
   not statusReturning(f) and
   not eventLogging(f) and
-  not testAsserted(f) and
-  not vendored(f)
-select f, "All functions of more than 10 lines should have at least one assertion."
+  not testAsserted(f)
+select f,
+  "All functions of more than 10 lines should have at least one assertion, " +
+    "unless they handle errors by returning a status enum or by emitting a WARNING/FATAL event."
