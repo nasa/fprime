@@ -93,4 +93,5 @@ jobs:
           fprime-gds --ip-client -d ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
           cd aarch64-linux-artifacts/int
+          pytest Svc --dictionary TestDeploymentsProject/build-artifacts/Linux/Ref/dict/RefTopologyDictionary.json --deployment-config TestDeploymentsProject/Ref/test/int/int_config.json
           pytest dp_demo_integration_test.py
