@@ -73,17 +73,24 @@ jobs:
         with:
           repository: nasa/fprime-gds
           pr-branch-only: true
-      - name: "Artifacts Download"
+      - name: "Download integration test files"
         uses: actions/download-artifact@v8
         with:
           name: aarch64-linux-artifacts
+          path: aarch64-linux-artifacts
+      - name: "Build native x86_64 binary for integration tests"
+        working-directory: FlightExamples
+        run: |
+          . ../venv/bin/activate
+          fprime-util generate
+          fprime-util build
       - name: "Run integration tests"
         run: |
           DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
           mkdir -p ci-logs
-          chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
-          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/${DEPLOYMENT} --logs ./ci-logs &
+          chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          fprime-gds --ip-client -d ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
           cd aarch64-linux-artifacts/int
           pytest dp_demo_integration_test.py
