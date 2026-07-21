@@ -79,7 +79,7 @@ jobs:
           name: aarch64-linux-artifacts
       - name: "Run integration tests"
         run: |
-          DEPLOYMENT=LedBlinker_LedBlinkerDeployment
+          DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
