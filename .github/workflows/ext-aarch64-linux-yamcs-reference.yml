@@ -1,63 +1,73 @@
-# Cross-compile https://github.com/yvijay99/fprime-yamcs-reference
-# Runs integration tests on aarch64-linux
+# Builds and runs integration tests on https://github.com/yvijay99/fprime-yamcs-reference
 
-name: "External Repo: AArch64 Linux Yamcs Reference"
+name: "External Repo: YAMCS Reference"
 
 on:
   push:
-    branches: [devel]
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
   workflow_dispatch:
 
+# Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
 
 permissions:
   contents: read
 
 jobs:
-  cross-compilation:
-    name: "Cross Compilation"
+  build:
+    name: "Build"
     runs-on: ubuntu-22.04
+    env:
+      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
       - name: "Setup external repository + overlay F´"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: yvijay99/fprime-yamcs-reference
           target_ref: testingyamcsclient
-      - name: "Cross compile"
-        uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
-      - name: "Prepare artifacts"
+
+      - name: "Build deployment"
         run: |
-          mkdir -p aarch64-linux-artifacts
-          cp -r ./build-artifacts aarch64-linux-artifacts
-          cp -r FprimeYamcsReference/YamcsDeployment/test/int aarch64-linux-artifacts
-          # Copy fprime Svc integration tests (including conftest.py)
-          cp -r Svc aarch64-linux-artifacts/fprime-svc
-      - name: "Archive Build Artifacts"
+          cd FprimeYamcsReference/YamcsDeployment
+          fprime-util generate
+          fprime-util build
+
+      - name: "Upload build artifacts"
         uses: actions/upload-artifact@v7
         with:
-          name: aarch64-linux-artifacts
-          path: aarch64-linux-artifacts
-          retention-days: 5
+          name: yamcs-build-artifacts
+          path: build-artifacts/
+          retention-days: 1
 
-  aarch64-integration:
-    name: "AArch64 Linux Integration Tests"
-    runs-on: ubuntu-22.04-arm
-    needs: cross-compilation
+  test:
+    name: "Test"
+    runs-on: ubuntu-22.04
+    needs: build
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
-      - name: "Checkout F´ Repository"
-        uses: actions/checkout@v4
+      - name: "Setup external repository + overlay F´"
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          sparse-checkout: "requirements.txt"
-          sparse-checkout-cone-mode: false
+          target_repository: yvijay99/fprime-yamcs-reference
+          target_ref: testingyamcsclient
 
       - name: "Download build artifacts"
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v7
         with:
-          name: aarch64-linux-artifacts
+          name: yamcs-build-artifacts
+          path: build-artifacts
 
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
@@ -80,14 +90,10 @@ jobs:
 
       - name: "Start F´ deployment with YAMCS"
         run: |
-          # Verify dictionary exists
-          ls -la ./build-artifacts/Linux/${DEPLOYMENT}/dict/ || true
-
           fprime-yamcs --ip-client \
             -d ${PWD}/build-artifacts/Linux/${DEPLOYMENT} \
             --logs ${PWD}/ci-logs &
           sleep 15
-          # Check if YAMCS started successfully
           if ! jobs -r | grep -q fprime-yamcs; then
             echo "ERROR: YAMCS failed to start"
             cat ${PWD}/ci-logs/*.log 2>/dev/null || true
@@ -125,7 +131,7 @@ jobs:
             ./fprime-svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
             ./fprime-svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
             ./fprime-svc/Version/test/int/test_cmd_version.py \
-            ./fprime-svc/Health/test/int/test_cmd_health.py \
+            ./fprime-svc/Health/test/int/test_cmd_health.py
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
