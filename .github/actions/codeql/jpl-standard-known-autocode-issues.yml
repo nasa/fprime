@@ -14,6 +14,8 @@ disable-default-queries: true
 # and for file-coverage accounting.
 paths-ignore:
   - "**/build-fprime-*/**"
+  # Vendored third-party code is not maintained to the JPL standard
+  - "Utils/Hash/libcrc/**"
 
 packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
