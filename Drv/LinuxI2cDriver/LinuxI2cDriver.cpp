@@ -32,7 +32,7 @@ LinuxI2cDriver ::LinuxI2cDriver(const char* const compName) : LinuxI2cDriverComp
 
 LinuxI2cDriver::~LinuxI2cDriver() {
     if (-1 != this->m_fd) {  // check if file is open
-        ::close(this->m_fd);
+        (void)::close(this->m_fd);
     }
 }
 

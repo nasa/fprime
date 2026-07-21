@@ -381,7 +381,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             }
 
             Fw::String fullFile;
-            fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+            (void)fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
 
             const ProcessFileStatus ret = processFile(fullFile, dir);
             if (ret == ProcessFileStatus::QUIT) {
@@ -522,8 +522,8 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(Fw::String fullFile, FwSizeT
     }
 
     Fw::FileNameString canonicalFileName;
-    canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
-                             container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
+    (void)canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
+                                   container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
     if (canonicalFileName != fullFile) {
         this->log_WARNING_HI_InvalidFileName(fullFile, canonicalFileName);
         return ProcessFileStatus::FAILED;
@@ -654,8 +654,8 @@ void DpCatalog::sendNextEntry() {
     this->m_hasCurrentXmit = true;
 
     // Build file name based on the found entry
-    this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(), entry.record.get_id(),
-                                    entry.record.get_tSec(), entry.record.get_tSub());
+    (void)this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(),
+                                          entry.record.get_id(), entry.record.get_tSec(), entry.record.get_tSub());
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
                                          entry.record.get_priority());
     Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);

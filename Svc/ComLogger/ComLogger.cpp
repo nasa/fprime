@@ -139,7 +139,8 @@ void ComLogger ::openFile() {
         "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com", this->m_filePrefix.toChar(),
         static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
     FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
-    this->m_hashFileName.format("%s%s", this->m_fileName.toChar(), Utils::Hash::getFileExtensionString());
+    formatStatus =
+        this->m_hashFileName.format("%s%s", this->m_fileName.toChar(), Utils::Hash::getFileExtensionString());
     FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
     Os::File::Status ret = m_file.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE);
@@ -181,7 +182,8 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
     if (this->m_storeBufferLength) {
         U8 buffer[sizeof(size)];
         Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
-        serialLength.serializeFrom(size);
+        Fw::SerializeStatus serStatus = serialLength.serializeFrom(size);
+        FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
         if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()))) {
             this->m_byteCount += static_cast<U32>(serialLength.getSize());
         } else {

@@ -27,7 +27,7 @@ ActivePhaser ::ActivePhaser(const char* const compName)
       m_last_start_ticks(0),
       m_last_cycle_ticks(0),
       m_cycle_count(0) {
-    ::memset(&m_state, 0, sizeof(m_state));  // Zero-out the whole configuration table
+    (void)::memset(&m_state, 0, sizeof(m_state));  // Zero-out the whole configuration table
 }
 
 void ActivePhaser ::init(const FwSizeType queueDepth, const FwIndexType instance) {

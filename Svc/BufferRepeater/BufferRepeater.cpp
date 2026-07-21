@@ -70,7 +70,7 @@ void BufferRepeater ::portIn_handler(FwIndexType portNum, /*!< The port number*/
             if (this->check_allocation(i, new_allocation, buffer)) {
                 // Clone the data and send it
                 FW_ASSERT_NO_OVERFLOW(buffer.getSize(), size_t);
-                ::memcpy(new_allocation.getData(), buffer.getData(), static_cast<size_t>(buffer.getSize()));
+                (void)::memcpy(new_allocation.getData(), buffer.getData(), static_cast<size_t>(buffer.getSize()));
                 new_allocation.setSize(buffer.getSize());
                 this->portOut_out(i, new_allocation);
             }

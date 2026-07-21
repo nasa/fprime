@@ -23,7 +23,7 @@ void Logger::log(const char* format, ...) {
     // Forward the variable arguments to the vformat format implementation
     va_list args;
     va_start(args, format);
-    formatted_string.vformat(format, args);
+    (void)formatted_string.vformat(format, args);
     va_end(args);
     Logger::log(formatted_string);
 }

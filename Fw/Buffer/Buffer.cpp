@@ -157,7 +157,7 @@ Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::En
 #if FW_SERIALIZABLE_TO_STRING
 void Buffer::toString(Fw::StringBase& text) const {
     static const char* formatString = "(data = %p, size = %u, context = %u)";
-    text.format(formatString, this->m_bufferData, this->m_size, this->m_context);
+    (void)text.format(formatString, this->m_bufferData, this->m_size, this->m_context);
 }
 #endif
 
