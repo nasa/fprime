@@ -127,7 +127,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
             break;
         default:
             // Assert if the device SPI Mode is not in the correct range
-            FW_ASSERT(0, spiMode);
+            FW_ASSERT(false, spiMode);
             break;
     }
 

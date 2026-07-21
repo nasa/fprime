@@ -417,7 +417,7 @@ void CmdSequencerComponentImpl::performCmd_Step() {
             this->performCmd_Step_ABSOLUTE(currentTime);
             break;
         default:
-            FW_ASSERT(0, m_record.m_descriptor);
+            FW_ASSERT(false, m_record.m_descriptor);
     }
 }
 

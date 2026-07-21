@@ -121,7 +121,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             mode_flags = O_WRONLY | O_CREAT | O_APPEND;
             break;
         default:
-            FW_ASSERT(0, requested_mode);
+            FW_ASSERT(false, requested_mode);
             break;
     }
     int descriptor = ::open(filepath, mode_flags, map_open_create_mode(Os::FILE_DEFAULT_CREATE_MODE));

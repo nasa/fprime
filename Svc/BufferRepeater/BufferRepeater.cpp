@@ -49,7 +49,7 @@ bool BufferRepeater ::check_allocation(FwIndexType index,
                 this->log_FATAL_AllocationHardFailure(index, incoming_buffer.getSize());
                 break;
             default:
-                FW_ASSERT(0);
+                FW_ASSERT(false);
                 break;
         }
     }

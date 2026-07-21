@@ -98,7 +98,7 @@ void ActiveComponentBase::s_taskStateMachine(void* component_pointer) {
         case Lifecycle::DONE:
             break;
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             break;
     }
 }

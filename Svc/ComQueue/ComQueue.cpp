@@ -252,7 +252,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
         // one of the WAITING or RETRY states.
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_state));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_state));
             break;
     }
 }

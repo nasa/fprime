@@ -57,7 +57,7 @@ PosixDirectory::Status PosixDirectory::rewind() {
 }
 
 PosixDirectory::Status PosixDirectory::read(char* fileNameBuffer, FwSizeType bufSize) {
-    FW_ASSERT(fileNameBuffer);
+    FW_ASSERT(fileNameBuffer != nullptr);
 
     Status status = Status::OP_OK;
 

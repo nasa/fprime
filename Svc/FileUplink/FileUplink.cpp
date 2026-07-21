@@ -83,7 +83,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
                 this->handleCancelPacket();
                 break;
             default:
-                FW_ASSERT(0);
+                FW_ASSERT(false);
                 break;
         }
     }

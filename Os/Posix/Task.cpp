@@ -228,11 +228,11 @@ TaskHandle* PosixTask::getHandle() {
 // Note: not implemented for Posix threads. Must be manually done using a mutex or other blocking construct as there
 // is no top-level pthreads support for suspend and resume.
 void PosixTask::suspend(Os::Task::SuspensionType suspensionType) {
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 void PosixTask::resume() {
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 Os::Task::Status PosixTask::_delay(const Fw::TimeInterval& interval) {

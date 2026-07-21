@@ -88,6 +88,44 @@ void FileWorkerTester ::testReadErr() {
     fTest.setOpen(Os::FileInterface::OP_OK);
 }
 
+// A failed or aborted read must report a failure status, not FW_STATUS_DONE_READ.
+// Tested at the readBufferFromFile level because the mocked Os::File cannot pass the
+// readIn port's CRC gate, matching how testReadErr checks the error and abort paths.
+void FileWorkerTester ::testReadErrStatusReported() {
+    FileWorkerStatus wStat;
+    const char* fnameChar = "nominalread.bin";
+    FwSizeType size = 1024 * 100;
+    U8 data[size];
+    Fw::Buffer buf(data, size);
+
+    fTest.setOpen(Os::FileInterface::OP_OK);
+    fTest.setSize(Os::FileInterface::OP_OK, 8247);
+    fTest.setRead(Os::FileInterface::OP_OK);
+    fTest.setWrite(Os::FileInterface::OP_OK);
+
+    // Positive control: a fully completed read maps to FW_STATUS_DONE_READ.
+    this->clearHistory();
+    this->component.m_abort.store(false);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_DONE_READ, wStat);
+
+    // Read error: a failed read must not be reported as FW_STATUS_DONE_READ.
+    this->clearHistory();
+    fTest.setRead(Os::FileInterface::INVALID_MODE);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_FAILED_TO_READ, wStat);
+    ASSERT_EVENTS_ReadError_SIZE(1);
+    fTest.setRead(Os::FileInterface::OP_OK);
+
+    // Abort via cancelIn: a cancelled read must not be reported as FW_STATUS_DONE_READ.
+    this->clearHistory();
+    this->component.m_abort.store(true);
+    wStat = this->component.readBufferFromFile(buf, fnameChar);
+    ASSERT_EQ(FileWorkerStatus::FW_STATUS_FAILED_TO_READ, wStat);
+    ASSERT_EVENTS_ReadAborted_SIZE(1);
+    this->component.m_abort.store(false);
+}
+
 void FileWorkerTester ::testVerifyErr() {
     const char* fnameChar = "testfile.txt";
     Fw::String fname = fnameChar;
@@ -145,6 +183,35 @@ void FileWorkerTester ::testWriteErr() {
     writeBytes = this->component.writeBufferToFile(buf, fnameChar, 0, false);
     ASSERT_EQ(0, writeBytes);
     ASSERT_EVENTS_OpenFileError_SIZE(1);
+    fTest.setOpen(Os::FileInterface::OP_OK);
+}
+
+// Regression test: when the underlying write fails, writeIn must report a
+// failure status on writeDoneOut rather than FW_STATUS_DONE_WRITE. Drives the
+// full writeIn port handler (not just the writeBufferToFile helper) so the
+// status-propagation path is exercised.
+void FileWorkerTester ::testWriteErrStatusReported() {
+    FwSizeType dataSize = 1024;
+    U8 data[dataSize];
+    for (FwSizeType i = 0; i < dataSize; i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer buffer(data, dataSize);
+    Fw::String fname = "testwrite.txt";
+    FwSizeType offsetBytes = 0;
+
+    // Force the write's open() to fail so writeBufferToFile returns false.
+    this->clearHistory();
+    fTest.setOpen(Os::FileInterface::INVALID_MODE);
+
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, false);
+    this->component.doDispatch();
+
+    // The write failed, so ground must be told it failed.
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FileWorkerStatus::FW_STATUS_FAILED_TO_WRITE, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
     fTest.setOpen(Os::FileInterface::OP_OK);
 }
 
