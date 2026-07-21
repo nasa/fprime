@@ -251,7 +251,8 @@ void FileManager ::run_internalInterfaceHandler() {
 
                 if (formatStatus != Fw::FormatStatus::SUCCESS) {
                     // Cannot determine the type of an entry whose path did not format
-                    this->log_WARNING_HI_FileNameFormatError(filename);
+                    this->log_WARNING_HI_FileNameFormatError(filename,
+                                                             static_cast<Fw::StringFormatStatus::T>(formatStatus));
                 } else if (pathType == Os::FileSystem::FILE) {
                     // Regular file: get size and emit file event
                     FwSizeType fileSize;

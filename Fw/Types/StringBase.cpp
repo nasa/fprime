@@ -11,10 +11,29 @@
  */
 
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringFormatStatusEnumAc.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/StringUtils.hpp>
 #include <cstdarg>
 #include <cstring>
+
+// Check consistency of every constant in the Fw::FormatStatus enum with the FPP shadow enum
+static_assert(static_cast<FwIndexType>(Fw::StringFormatStatus::NUM_CONSTANTS) == 5,
+              "Format status and FPP shadow enum have inconsistent number of values");
+static_assert(static_cast<Fw::StringFormatStatus::T>(Fw::FormatStatus::SUCCESS) == Fw::StringFormatStatus::T::SUCCESS,
+              "Format status and FPP shadow enum do not match");
+static_assert(static_cast<Fw::StringFormatStatus::T>(Fw::FormatStatus::OVERFLOWED) ==
+                  Fw::StringFormatStatus::T::OVERFLOWED,
+              "Format status and FPP shadow enum do not match");
+static_assert(static_cast<Fw::StringFormatStatus::T>(Fw::FormatStatus::INVALID_FORMAT_STRING) ==
+                  Fw::StringFormatStatus::T::INVALID_FORMAT_STRING,
+              "Format status and FPP shadow enum do not match");
+static_assert(static_cast<Fw::StringFormatStatus::T>(Fw::FormatStatus::SIZE_OVERFLOW) ==
+                  Fw::StringFormatStatus::T::SIZE_OVERFLOW,
+              "Format status and FPP shadow enum do not match");
+static_assert(static_cast<Fw::StringFormatStatus::T>(Fw::FormatStatus::OTHER_ERROR) ==
+                  Fw::StringFormatStatus::T::OTHER_ERROR,
+              "Format status and FPP shadow enum do not match");
 
 namespace Fw {
 

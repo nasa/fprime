@@ -384,7 +384,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             Fw::FormatStatus formatStatus =
                 fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
             if (formatStatus != Fw::FormatStatus::SUCCESS) {
-                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file]);
+                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
+                                                         static_cast<Fw::StringFormatStatus::T>(formatStatus));
                 continue;
             }
 
@@ -531,7 +532,8 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(Fw::String fullFile, FwSizeT
         canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
                                  container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
     if (canonicalFormatStatus != Fw::FormatStatus::SUCCESS) {
-        this->log_WARNING_HI_FileNameFormatError(fullFile);
+        this->log_WARNING_HI_FileNameFormatError(fullFile,
+                                                 static_cast<Fw::StringFormatStatus::T>(canonicalFormatStatus));
         return ProcessFileStatus::FAILED;
     }
     if (canonicalFileName != fullFile) {
@@ -668,7 +670,8 @@ void DpCatalog::sendNextEntry() {
         this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(),
                                         entry.record.get_id(), entry.record.get_tSec(), entry.record.get_tSub());
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
-        this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName);
+        this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName,
+                                                 static_cast<Fw::StringFormatStatus::T>(formatStatus));
         return;
     }
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),

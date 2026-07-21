@@ -88,7 +88,7 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
         const Fw::FormatStatus formatStatus = fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(),
                                                               containerId, timeTag.getSeconds(), timeTag.getUSeconds());
         if (formatStatus != Fw::FormatStatus::SUCCESS) {
-            this->log_WARNING_HI_FileNameFormatError(static_cast<U32>(formatStatus));
+            this->log_WARNING_HI_FileNameFormatError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
             status = Fw::Success::FAILURE;
         }
     }

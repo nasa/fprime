@@ -107,7 +107,7 @@ module Svc {
 
     @ An error occurred when formatting a file name
     event FileNameFormatError(
-                         status: U32 @< The status code returned from the format operation
+                         status: Fw.StringFormatStatus @< The status returned from the format operation
                        ) \
       severity warning high \
       format "Error {} formatting DP file name" \

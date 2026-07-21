@@ -113,7 +113,7 @@ void BufferLogger::File ::open() {
                                            this->m_baseName.toChar(), this->m_fileCounter, this->m_suffix.toChar());
     }
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
-        this->m_bufferLogger.log_WARNING_HI_BL_LogFileNameError(static_cast<U32>(formatStatus));
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileNameError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
         return;
     }
 
