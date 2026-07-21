@@ -75,6 +75,7 @@ jobs:
         patterns: |
           -**/CMakeFiles/**
           -**/_deps/**
+          -Utils/Hash/libcrc/**
         input: sarif-results/cpp.sarif
         output: sarif-results/cpp.sarif
 
