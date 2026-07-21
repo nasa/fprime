@@ -100,22 +100,9 @@ jobs:
             exit 1
           fi
 
-      - name: "Debug: Check directory structure"
-        run: |
-          echo "=== Current directory ==="
-          pwd
-          ls -la
-          echo "=== Checking for symlinks ==="
-          ls -la int 2>/dev/null || echo "int symlink not found"
-          ls -la fprime-svc 2>/dev/null || echo "fprime-svc symlink not found"
-          echo "=== Checking actual paths ==="
-          ls -la FprimeYamcsReference/YamcsDeployment/test/int/ 2>/dev/null || echo "test/int not found"
-          ls -la lib/fprime/Svc/PrmDb/test/int/ 2>/dev/null || echo "Svc tests not found"
-
       - name: "Run YAMCS-specific tests"
         run: |
           rc=0
-          # YAMCS file transfer tests first, against an idle fileManager
           pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
             --use-yamcs \
