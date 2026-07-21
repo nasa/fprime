@@ -25,38 +25,23 @@ permissions:
   contents: read
 
 jobs:
-  get-branch:
-    name: "Get target branch"
-    uses: ./.github/workflows/reusable-get-pr-branch.yml
-    with:
-      target_repository: yvijay99/fprime-yamcs-reference
-
-  build:
-    needs: get-branch
-    name: "Build"
-    uses: ./.github/workflows/reusable-project-builder.yml
-    with:
-      target_repository: yvijay99/fprime-yamcs-reference
-      fprime_location: ./lib/fprime
-      build_location: FprimeYamcsReference/YamcsDeployment
-      run_unit_tests: false
-      target_ref: ${{ needs.get-branch.outputs.target-branch }}
-
-  integration-tests:
-    name: "Integration Tests"
+  build-and-test:
+    name: "Build and Test"
     runs-on: ubuntu-22.04
-    needs: build
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
-      - name: "Checkout external repository"
-        uses: actions/checkout@v5
+      - name: "Setup external repository + overlay F´"
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          repository: yvijay99/fprime-yamcs-reference
-          ref: testingyamcsclient
+          target_repository: yvijay99/fprime-yamcs-reference
+          target_ref: testingyamcsclient
 
-      - name: "Download build artifacts"
-        uses: actions/download-artifact@v8
+      - name: "Build deployment"
+        run: |
+          cd FprimeYamcsReference/YamcsDeployment
+          fprime-util generate
+          fprime-util build
 
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
@@ -64,10 +49,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: "Setup Python environment"
+      - name: "Setup Python YAMCS packages"
         run: |
           pip install --upgrade pip setuptools wheel
-          pip install "yamcs-client<2.0.0" "fprime-gds>=4.2.2a3" "fprime-yamcs>=0.1.4"
+          pip install "yamcs-client<2.0.0"
+          pip install "git+https://github.com/yvijay99/fprime-yamcs.git@yamcsPOC"
+          pip install --force-reinstall --no-deps "git+https://github.com/yvijay99/fprime-xtce.git@yamcsPOC"
 
       - name: "Prepare deployment"
         run: |
@@ -87,14 +74,13 @@ jobs:
             exit 1
           fi
 
-      - name: "Run YAMCS integration tests"
+      - name: "Run integration tests"
         run: |
-          python -m pytest \
-            --dictionary ./build-artifacts/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
+          pytest --dictionary ./build-artifacts/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
             --use-yamcs \
             -v \
-            ./FprimeYamcsReference/YamcsDeployment/test/int/test_yamcs_file_transfer.py
+            ./FprimeYamcsReference/YamcsDeployment/test/int/
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
