@@ -1,6 +1,7 @@
 #ifndef SVC_CCSDS_UTILS_CRC16_HPP
 #define SVC_CCSDS_UTILS_CRC16_HPP
 
+#include "Fw/Types/Assert.hpp"
 #include "Fw/Types/BasicTypes.hpp"
 // Include the libcrc library because we need update_crc_ccitt that is not provided through the main interface.
 extern "C" {
@@ -41,6 +42,7 @@ class CRC16 {
     //! \param length: length of the data buffer
     //! \return computed CRC16 value
     static U16 compute(const U8* buffer, U32 length) {
+        FW_ASSERT(buffer != nullptr);
         U16 crc = std::numeric_limits<U16>::max();  // Initial value
         for (U32 i = 0; i < length; ++i) {
             crc = static_cast<U16>(update_crc_ccitt(crc, static_cast<char>(buffer[i])));

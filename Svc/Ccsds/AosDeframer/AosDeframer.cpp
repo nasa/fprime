@@ -453,6 +453,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
 }
 
 FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes) {
+    FW_ASSERT(packetStart != nullptr);
     FW_ASSERT(remainingBytes > 0, static_cast<FwAssertArgType>(remainingBytes));
 
     // Determine packet type from PVN (upper 3 bits of first byte)
@@ -521,6 +522,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
 FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize) {
     // Per CCSDS 133.1-B-3 Section 4.1.2.1.1, EPP minimum header is 1 byte
     // Since we identified this as an EPP we had the 1 byte to read the PVN already
+    FW_ASSERT(payloadStart != nullptr);
     FW_ASSERT(payloadSize > 0, static_cast<FwAssertArgType>(payloadSize));
 
     // Parse first byte
