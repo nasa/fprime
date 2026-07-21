@@ -70,7 +70,7 @@ File::Status readHash(const char* hashFileName, Utils::HashBuffer& hashBuffer) {
     }
 
     // Read hash from checksum file:
-    unsigned char savedHash[HASH_DIGEST_LENGTH];
+    U8 savedHash[HASH_DIGEST_LENGTH];
     FwSizeType size = static_cast<FwSizeType>(hashBuffer.getCapacity());
     status = hashFile.read(savedHash, size);
     if (File::OP_OK != status) {
