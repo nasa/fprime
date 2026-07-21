@@ -58,26 +58,14 @@ jobs:
           pip3 install "fprime_python_model @ git+https://github.com/fprime-community/fprime-python-model.git@main"
           pip3 install -r requirements.txt
         shell: bash
-      - name: "Generate build cache"
+      - name: "Expose pip-installed pybind11 to CMake"
         run: |
-          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
-            VERBOSE_FLAG=--verbose
-          else
-            VERBOSE_FLAG=
-          fi
-          export CMAKE_PREFIX_PATH="$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
-          fprime-util generate ${VERBOSE_FLAG}
+          echo "CMAKE_PREFIX_PATH=$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}" >> "$GITHUB_ENV"
         shell: bash
       - name: "Build"
-        run: |
-          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
-            VERBOSE_FLAG=--verbose
-          else
-            VERBOSE_FLAG=
-          fi
-          export CMAKE_PREFIX_PATH="$(python3 -m pybind11 --cmakedir)${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
-          fprime-util build -j8 ${VERBOSE_FLAG}
-        shell: bash
+        uses: nasa/fprime-actions/build@devel
+        with:
+          jobs: "8"
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
