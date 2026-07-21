@@ -52,3 +52,11 @@ event BL_NoLogFileOpenInitError \
   severity warning high \
   id 0x06 \
   format "No log file open command"
+
+@ The Buffer Logger encountered an error formatting a log file name
+event BL_LogFileNameError(
+                           status: U32 @< The Fw::FormatStatus returned from the format operation
+                         ) \
+  severity warning high \
+  id 0x07 \
+  format "Error {} formatting log file name"

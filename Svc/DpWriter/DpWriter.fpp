@@ -105,6 +105,14 @@ module Svc {
       format "Received buffer has size {}; minimum required size is {}" \
       throttle 10
 
+    @ An error occurred when formatting a file name
+    event FileNameFormatError(
+                         status: U32 @< The status code returned from the format operation
+                       ) \
+      severity warning high \
+      format "Error {} formatting DP file name" \
+      throttle 10
+
     @ An error occurred when opening a file
     event FileOpenError(
                          status: U32 @< The status code returned from the open operation

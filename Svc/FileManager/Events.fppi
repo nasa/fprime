@@ -215,6 +215,14 @@ event CalculateCrcFailed(fileName: string size FileNameStringSize @< The name of
   id 0x1b \
   format "Failed CRC calculation for file {}, returned status {}"
 
+@ Error formatting a file path
+event FileNameFormatError(
+                          fileName: string size FileNameStringSize @< The file whose full path failed to format
+                        ) \
+  severity warning high \
+  id 0x1d \
+  format "Failed to format full path for file {}"
+
 @ CRC succeeded
 event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name of the file being read from
                        crc: U32 @< The computed CRC value

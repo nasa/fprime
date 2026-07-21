@@ -420,7 +420,17 @@ module Svc {
       ) \
       severity warning high \
       id 48 \
-      format "DP file {} contains malformed data (status {})"     
+      format "DP file {} contains malformed data (status {})"
+
+    @ Error formatting a DP file name
+    event FileNameFormatError(
+                            file: string size FileNameStringSize @< The file whose name failed to format
+                          ) \
+      severity warning high \
+      id 49 \
+      format "Failed to format DP file name for {}" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry

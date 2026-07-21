@@ -85,8 +85,12 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         const FwDpIdType containerId = container.getId();
         const Fw::Time timeTag = container.getTimeTag();
-        fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(), containerId, timeTag.getSeconds(),
-                        timeTag.getUSeconds());
+        const Fw::FormatStatus formatStatus = fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(),
+                                                              containerId, timeTag.getSeconds(), timeTag.getUSeconds());
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
+            this->log_WARNING_HI_FileNameFormatError(static_cast<U32>(formatStatus));
+            status = Fw::Success::FAILURE;
+        }
     }
     // Calculate and populate the file data checksum
     if (status == Fw::Success::SUCCESS) {
