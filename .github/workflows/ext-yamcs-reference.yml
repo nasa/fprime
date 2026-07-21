@@ -35,8 +35,8 @@ jobs:
       - name: "Setup external repository + overlay F´"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
+          target_repository: yvijay99/fprime-yamcs-reference
+          target_ref: testingyamcsclient
 
       - name: "Build deployment"
         run: |
@@ -61,8 +61,8 @@ jobs:
       - name: "Setup external repository + overlay F´"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
+          target_repository: yvijay99/fprime-yamcs-reference
+          target_ref: testingyamcsclient
 
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
