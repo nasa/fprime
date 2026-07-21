@@ -100,38 +100,50 @@ jobs:
             exit 1
           fi
 
+      - name: "Debug: Check directory structure"
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          ls -la
+          echo "=== Checking for symlinks ==="
+          ls -la int 2>/dev/null || echo "int symlink not found"
+          ls -la fprime-svc 2>/dev/null || echo "fprime-svc symlink not found"
+          echo "=== Checking actual paths ==="
+          ls -la FprimeYamcsReference/YamcsDeployment/test/int/ 2>/dev/null || echo "test/int not found"
+          ls -la lib/fprime/Svc/PrmDb/test/int/ 2>/dev/null || echo "Svc tests not found"
+
       - name: "Run YAMCS-specific tests"
         run: |
           rc=0
           # YAMCS file transfer tests first, against an idle fileManager
           pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./int/int_config.json \
+            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
             --use-yamcs \
             -v \
-            ./int/test_yamcs_file_transfer.py || rc=1
+            ./FprimeYamcsReference/YamcsDeployment/test/int/test_yamcs_file_transfer.py || rc=1
           exit $rc
 
       - name: "Run standard Svc integration tests from lib/fprime"
         run: |
           pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./int/int_config.json \
+            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
             --use-yamcs \
             -v \
-            ./fprime-svc/PrmDb/test/int/test_cmd_PrmDb.py \
-            ./fprime-svc/CmdDispatcher/test/int/test_cmd_dispatcher.py \
-            ./fprime-svc/DpCatalog/test/int/test_cmd_dpCatalog.py \
-            ./fprime-svc/DpManager/test/int/test_cmd_dpMgr.py \
-            ./fprime-svc/DpWriter/test/int/test_cmd_dpWriter.py \
-            ./fprime-svc/EventManager/test/int/test_cmd_eventManager.py \
-            ./fprime-svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
-            ./fprime-svc/FileManager/test/int/test_cmd_fileManager.py \
-            ./fprime-svc/SystemResources/test/int/test_cmd_systemResources.py \
-            ./fprime-svc/CmdSequencer/test/int/test_cmd_sequencer.py \
-            ./fprime-svc/FileUplink/test/int/test_cmd_uplink.py \
-            ./fprime-svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
-            ./fprime-svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
-            ./fprime-svc/Version/test/int/test_cmd_version.py \
-            ./fprime-svc/Health/test/int/test_cmd_health.py
+            ./lib/fprime/Svc/PrmDb/test/int/test_cmd_PrmDb.py \
+            ./lib/fprime/Svc/CmdDispatcher/test/int/test_cmd_dispatcher.py \
+            ./lib/fprime/Svc/DpCatalog/test/int/test_cmd_dpCatalog.py \
+            ./lib/fprime/Svc/DpManager/test/int/test_cmd_dpMgr.py \
+            ./lib/fprime/Svc/DpWriter/test/int/test_cmd_dpWriter.py \
+            ./lib/fprime/Svc/EventManager/test/int/test_cmd_eventManager.py \
+            ./lib/fprime/Svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
+            ./lib/fprime/Svc/FileManager/test/int/test_cmd_fileManager.py \
+            ./lib/fprime/Svc/SystemResources/test/int/test_cmd_systemResources.py \
+            ./lib/fprime/Svc/CmdSequencer/test/int/test_cmd_sequencer.py \
+            ./lib/fprime/Svc/FileUplink/test/int/test_cmd_uplink.py \
+            ./lib/fprime/Svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
+            ./lib/fprime/Svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
+            ./lib/fprime/Svc/Version/test/int/test_cmd_version.py \
+            ./lib/fprime/Svc/Health/test/int/test_cmd_health.py
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
