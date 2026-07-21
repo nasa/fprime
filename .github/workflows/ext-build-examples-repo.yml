@@ -44,10 +44,10 @@ jobs:
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
 
-  integration-tests:
-    needs: run
-    name: "Run Integration Tests"
-    runs-on: ubuntu-22.04
+  aarch64-integration:
+    name: "AArch64 Linux Integration Tests"
+    runs-on: [self-hosted, aarch64-linux]
+    needs: cross-compilation
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -60,15 +60,30 @@ jobs:
         with:
           submodules: true
           path: ./FlightExamples/lib/fprime
-      - name: "Install F´ requirements"
+      - name: "Setup environment"
         run: |
-          pip3 install -r ./FlightExamples/lib/fprime/requirements.txt
-      - name: "Download build artifacts"
-        uses: actions/download-artifact@v7
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Artifacts Download"
+        uses: actions/download-artifact@v8
         with:
           name: aarch64-linux-artifacts
-          path: aarch64-linux-artifacts
       - name: "Run integration tests"
         run: |
+          DEPLOYMENT=LedBlinker_LedBlinkerDeployment
+          . venv/bin/activate
+          mkdir -p ci-logs
+          chmod +x ./build-artifacts/aarch64-linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          fprime-gds --ip-client -d ./build-artifacts/aarch64-linux/${DEPLOYMENT} --logs ./ci-logs &
+          sleep 10
           cd aarch64-linux-artifacts/int
-          python dp_demo_integration_test.py
+          pytest dp_demo_integration_test.py
