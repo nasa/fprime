@@ -43,29 +43,39 @@ jobs:
           fprime-util generate
           fprime-util build
 
+      - name: "Debug: List build output"
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Contents:"
+          ls -la
+          echo "Build directories:"
+          find . -type d -name "build*" -o -name "FprimeYamcsReference*" | head -20
+          echo "Looking for binary:"
+          find . -name "FprimeYamcsReference_YamcsDeployment" -type f 2>/dev/null || echo "Binary not found"
+
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: "Setup Python YAMCS packages"
+      - name: "Setup Python environment"
         run: |
           pip install --upgrade pip setuptools wheel
           pip install "yamcs-client<2.0.0"
-          pip install "git+https://github.com/yvijay99/fprime-yamcs.git@yamcsPOC"
-          pip install --force-reinstall --no-deps "git+https://github.com/yvijay99/fprime-xtce.git@yamcsPOC"
+          pip install "fprime-gds>=4.2.2a3"
+          pip install "fprime-yamcs>=0.1.4"
 
       - name: "Prepare deployment"
         run: |
-          chmod +x ./build-artifacts/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          chmod +x FprimeYamcsReference/YamcsDeployment/build-fprime-automatic-native/FprimeYamcsReference/YamcsDeployment/bin/${DEPLOYMENT}
           mkdir -p ci-logs
 
       - name: "Start F´ deployment with YAMCS"
         run: |
-          ls -la ./build-artifacts/${DEPLOYMENT}/dict/ || true
           fprime-yamcs --ip-client \
-            -d ${PWD}/build-artifacts/${DEPLOYMENT} \
+            -d ${PWD}/FprimeYamcsReference/YamcsDeployment \
             --logs ${PWD}/ci-logs &
           sleep 15
           if ! jobs -r | grep -q fprime-yamcs; then
@@ -76,7 +86,7 @@ jobs:
 
       - name: "Run integration tests"
         run: |
-          pytest --dictionary ./build-artifacts/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
+          pytest --dictionary ./FprimeYamcsReference/YamcsDeployment/build-fprime-automatic-native/FprimeYamcsReference/YamcsDeployment/dict/YamcsDeploymentTopologyDictionary.json \
             --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
             --use-yamcs \
             -v \
