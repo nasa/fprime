@@ -70,7 +70,7 @@ File::Status readHash(const char* hashFileName, Utils::HashBuffer& hashBuffer) {
     }
 
     // Read hash from checksum file:
-    unsigned char savedHash[HASH_DIGEST_LENGTH];
+    U8 savedHash[HASH_DIGEST_LENGTH];
     FwSizeType size = static_cast<FwSizeType>(hashBuffer.getCapacity());
     status = hashFile.read(savedHash, size);
     if (File::OP_OK != status) {
@@ -133,7 +133,7 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    FW_ASSERT(false, status);
             }
             break;
         case HashFileType:
@@ -153,11 +153,11 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    FW_ASSERT(false, status);
             }
             break;
         default:
-            FW_ASSERT(0, type);
+            FW_ASSERT(false, type);
     }
 
     return ValidateFile::OTHER_ERROR;
@@ -219,6 +219,17 @@ ValidateFile::Status ValidateFile::createValidation(const char* fileName,
 ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
     Utils::HashBuffer hashBuffer;  // pass by reference - final value is unused
     return createValidation(fileName, hashFileName, hashBuffer);
+}
+
+ValidateFile::Status ValidateFile::createValidation(const char* hashFileName, const Utils::HashBuffer& hashBuffer) {
+    File::Status status;
+
+    status = writeHash(hashFileName, hashBuffer);
+    if (File::OP_OK != status) {
+        return translateStatus(status, HashFileType);
+    }
+
+    return ValidateFile::VALIDATION_OK;
 }
 
 }  // namespace Os

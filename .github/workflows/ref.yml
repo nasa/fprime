@@ -60,7 +60,7 @@ jobs:
           working-directory: "TestDeploymentsProject"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
       - name: "Archive Build Artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ref-build-artifacts-${{ matrix.runner }}
           path: TestDeploymentsProject/build-artifacts/
@@ -87,13 +87,15 @@ jobs:
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
-      # Upgrade GDS to devel or pr-xxxx branch if it exists
-      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
         uses: nasa/fprime-actions/upgrade-package@devel
         with:
           repository: nasa/fprime-gds
+          pr-branch-only: true
       - name: "Download Build Artifacts"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ref-build-artifacts-${{ matrix.runner }}
           path: TestDeploymentsProject/build-artifacts/
@@ -111,10 +113,10 @@ jobs:
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
           gds-working-directory: "TestDeploymentsProject"
-          test-working-directory: "TestDeploymentsProject/Ref/test/int"
+          test-working-directory: "TestDeploymentsProject"
           binary: "build-artifacts/*/Ref/bin/Ref"
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
-          pytest-args: "--deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
 
   unit-tests:
@@ -145,3 +147,15 @@ jobs:
           working-directory: "TestDeploymentsProject"
           generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
+
+  timing-check:
+    name: "Timing Check"
+    runs-on: ubuntu-latest
+    needs: [build, integration-tests, unit-tests]
+    if: always()
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: "Check Job Timings"
+        uses: nasa/fprime-actions/timing-check@devel

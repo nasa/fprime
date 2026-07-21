@@ -53,6 +53,8 @@ static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::NO_MORE_RESOURCES
               "File status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OTHER_ERROR) == Os::FileStatus::T::OTHER_ERROR,
               "File status and FPP shadow enum do not match");
+static_assert(static_cast<Os::FileStatus::T>(Os::File::Status::OUTSIDE_SANDBOX) == Os::FileStatus::T::OUTSIDE_SANDBOX,
+              "File status and FPP shadow enum do not match");
 
 // Check consistency of every constant in the Os::File::Mode enum
 static_assert(static_cast<FwIndexType>(Os::File::Mode::MAX_OPEN_MODE) ==

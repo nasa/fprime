@@ -33,8 +33,9 @@ void* pthread_entry_wrapper(void* wrapper_pointer) {
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
     FW_ASSERT(handle != nullptr);
-    // Task name is on a best effort basis
-    (void)set_task_name(handle->m_task_descriptor, handle->m_name);
+    // Task name is on a best effort basis. Use pthread_self() since the handle's task
+    // descriptor is written by pthread_create concurrently with this thread's start.
+    (void)set_task_name(pthread_self(), handle->m_name);
 #endif
     wrapper.run(&wrapper);
     return nullptr;
@@ -161,6 +162,11 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_cpu_affinity(attributes, arguments);
     }
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
+    // Copy the name before the thread starts, since the new thread reads it
+    Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
+#endif
+
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         pthread_status =
             pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper, arguments.m_routine_argument);
@@ -169,10 +175,6 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         handle.m_is_valid = true;
     }
-
-#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
-    Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
-#endif
 
     (void)pthread_attr_destroy(&attributes);
     return Posix::posix_status_to_task_status(pthread_status);
@@ -228,11 +230,11 @@ TaskHandle* PosixTask::getHandle() {
 // Note: not implemented for Posix threads. Must be manually done using a mutex or other blocking construct as there
 // is no top-level pthreads support for suspend and resume.
 void PosixTask::suspend(Os::Task::SuspensionType suspensionType) {
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 void PosixTask::resume() {
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 Os::Task::Status PosixTask::_delay(const Fw::TimeInterval& interval) {

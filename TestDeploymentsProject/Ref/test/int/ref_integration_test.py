@@ -333,3 +333,43 @@ def test_system_resources(fprime_test_api):
     fprime_test_api.await_telemetry_count(
         predicates.greater_than(1.0), "Ref.systemResources.CPU", timeout=3
     )
+
+
+def test_file_uplink_sandbox(fprime_test_api):
+    """Test that FileUplink sandbox rejects files outside the allowed directory.
+
+    The Ref deployment configures FileUplink with sandbox directory /tmp/uplink/.
+    Uploading to a path outside that directory should produce a FileOpenError event,
+    and no FileReceived event.
+    """
+    import os
+    import tempfile
+
+    # Create the sandbox directory so in-sandbox uplinks succeed
+    os.makedirs("/tmp/uplink", exist_ok=True)
+
+    # Create a small temporary file to uplink
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".bin") as f:
+        f.write(b"\x00" * 64)
+        local_file = f.name
+
+    try:
+        # --- Test 1: uplink to a path OUTSIDE the sandbox should fail ---
+        fprime_test_api.clear_histories()
+        fprime_test_api.uplink_file(local_file, destination="/tmp/evil/escaped.bin")
+
+        # Expect a FileOpenError warning because the path is outside /tmp/uplink/
+        fprime_test_api.await_event("FileHandling.fileUplink.FileOpenError", timeout=10)
+
+        # --- Test 2: uplink to a path INSIDE the sandbox should succeed ---
+        fprime_test_api.clear_histories()
+        fprime_test_api.uplink_file(local_file, destination="/tmp/uplink/test.bin")
+
+        fprime_test_api.await_event("FileHandling.fileUplink.FileReceived", timeout=10)
+    finally:
+        os.unlink(local_file)
+        # Clean up uploaded file
+        try:
+            os.unlink("/tmp/uplink/test.bin")
+        except OSError:
+            pass

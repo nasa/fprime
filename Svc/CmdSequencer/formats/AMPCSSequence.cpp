@@ -21,7 +21,7 @@ AMPCSSequence ::AMPCSSequence(CmdSequencerComponentImpl& component) : CmdSequenc
 
 bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // Make sure there is a buffer allocated
-    FW_ASSERT(this->m_buffer.getBuffAddr());
+    FW_ASSERT(this->m_buffer.getBuffAddr() != nullptr);
 
     Fw::CmdStringArg crcFileName(fileName);
     crcFileName += ".CRC32";

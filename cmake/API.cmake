@@ -161,6 +161,9 @@ endfunction(add_fprime_subdirectory)
 ####
 function(fprime_attach_custom_targets BUILD_TARGET_NAME)
     setup_module_targets("${BUILD_TARGET_NAME}")
+    # After all targets (build + custom) have run their autocoders, validate that every
+    # user-supplied AUTOCODER_INPUT was picked up by at least one autocoder.
+    _validate_all_autocoder_inputs_handled("${BUILD_TARGET_NAME}")
 endfunction()
 
 ####
@@ -186,11 +189,15 @@ endfunction()
 #         -lm
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/extra_file.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -263,11 +270,15 @@ endfunction()
 #         -lm
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/linker_script.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -327,11 +338,15 @@ endfunction()
 #         MyFprimeDeployment_Top
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/linker_script.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -462,7 +477,8 @@ function(fprime_add_config_build_target)
     fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}"
                                              "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
                                              "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
-                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}"
+                                             "${INTERNAL_LINK_DEPENDS}")
 
     # The new module should include the root configuration directory
     fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")

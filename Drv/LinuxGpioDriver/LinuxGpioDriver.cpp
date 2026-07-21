@@ -97,7 +97,7 @@ U32 configuration_to_handler_flags(Drv::LinuxGpioDriver::GpioConfiguration confi
             flags = GPIOHANDLE_REQUEST_INPUT;
             break;
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(configuration));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(configuration));
             break;
     }
     return flags;
@@ -116,14 +116,16 @@ U32 configuration_to_event_flags(Drv::LinuxGpioDriver::GpioConfiguration configu
             flags = GPIOEVENT_REQUEST_RISING_EDGE | GPIOEVENT_REQUEST_FALLING_EDGE;
             break;
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(configuration));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(configuration));
             break;
     }
     return flags;
 }
 
 LinuxGpioDriver ::~LinuxGpioDriver() {
-    (void)::close(this->m_fd);
+    if (this->m_fd >= 0) {
+        (void)::close(this->m_fd);
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -239,7 +241,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
             status = this->setupLineEvent(chip_descriptor, gpio, configuration, pin_fd);
             break;
         default:
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             break;
     }
     // Final status check

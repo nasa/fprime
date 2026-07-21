@@ -6,7 +6,8 @@ name: "Soak Test: AArch64 Linux LedBlinker"
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Staggered against the Pico 2 soak 
+    - cron: "0,30 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -14,7 +15,7 @@ permissions:
 
 # Shared with the soak-setup workflow so a test queues behind any setup. 
 concurrency:
-  group: ledblinker-soak
+  group: soak-ledblinker
   cancel-in-progress: false
 
 jobs:
@@ -23,3 +24,5 @@ jobs:
     runs-on: [self-hosted, ARM64, soak-test]
     steps:
       - uses: nasa/fprime-actions/soak-test@devel
+        with:
+          deployment-name: ledblinker

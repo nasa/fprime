@@ -26,9 +26,6 @@
 #include <cstdlib>
 #include <cstring>
 
-static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
-              "Cannot use SPI driver without full string formatting");
-
 namespace Drv {
 
 // ----------------------------------------------------------------------
@@ -130,7 +127,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
             break;
         default:
             // Assert if the device SPI Mode is not in the correct range
-            FW_ASSERT(0, spiMode);
+            FW_ASSERT(false, spiMode);
             break;
     }
 

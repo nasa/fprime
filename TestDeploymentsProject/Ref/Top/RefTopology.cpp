@@ -53,6 +53,9 @@ void configureTopology() {
 
     // Command sequencer needs to allocate memory to hold contents of command sequences
     cmdSeq.allocateBuffer(0, mallocator, 5 * 1024);
+
+    // Restrict uplinked files to a sandbox directory to prevent path-traversal writes
+    FileHandling::fileUplink.configure("/tmp/uplink/");
 }
 
 // Public functions for use in main program are namespaced with deployment name Ref

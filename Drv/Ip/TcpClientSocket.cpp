@@ -42,7 +42,7 @@ namespace Drv {
 
 TcpClientSocket::TcpClientSocket() : IpSocket() {}
 
-bool TcpClientSocket::isValidPort(U16 port) {
+bool TcpClientSocket::isValidPort(U16 port) const {
     return port != 0;
 }
 

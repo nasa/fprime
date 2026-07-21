@@ -139,7 +139,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,
+                                       U32 cmdSeq,
+                                       const Svc::QueueType& queueType,
+                                       FwIndexType index) {
     // Acquire the queue that we need to drain
     FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
@@ -162,7 +165,7 @@ void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
 void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
-                                             Svc::QueueType queueType,
+                                             const Svc::QueueType& queueType,
                                              FwIndexType index,
                                              FwIndexType newPriority) {
     // Acquire the queue we are to reprioritize
@@ -249,7 +252,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
         // one of the WAITING or RETRY states.
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_state));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_state));
             break;
     }
 }

@@ -72,7 +72,7 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
             }
             break;
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(severity.e));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(severity.e));
             return;
     }
 
@@ -112,8 +112,8 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
 
 void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
-                                               FilterSeverity filterLevel,
-                                               Enabled filterEnable) {
+                                               const FilterSeverity& filterLevel,
+                                               const Enabled& filterEnable) {
     this->m_filterState[filterLevel.e].enabled = filterEnable;
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -121,7 +121,7 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
 void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                             U32 cmdSeq,           //!< The command sequence number
                                             FwEventIdType ID,
-                                            Enabled idEnabled  //!< ID filter state
+                                            const Enabled& idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
         if (m_filteredIDs.insert(ID) == Fw::Success::SUCCESS) {
@@ -160,6 +160,10 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void EventManager::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_EventsDropped(this->getNumMsgsDropped());
 }
 
 void EventManager::pingIn_handler(const FwIndexType portNum, U32 key) {

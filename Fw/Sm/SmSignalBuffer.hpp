@@ -1,39 +1,17 @@
-/*
- * SmSignalBuffer.hpp
- *
- */
+// ======================================================================
+// @file   SmSignalBuffer.hpp
+// @author F Prime
+// @brief  A buffer sized for state machine signals
+// ======================================================================
 
-/*
- * Description:
- * This object contains the SmSignalBuffer type, used for attaching data to state machine signals
- */
 #ifndef FW_SM_SIGNAL_BUFFER_HPP
 #define FW_SM_SIGNAL_BUFFER_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
+#include "Fw/Types/LinearBufferTemplate.hpp"
 
 namespace Fw {
 
-class SmSignalBuffer final : public LinearBufferBase {
-  public:
-    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_SM_SIGNAL_BUFFER_MAX_SIZE) };
-
-    SmSignalBuffer(const U8* args, Serializable::SizeType size);
-    SmSignalBuffer();
-    SmSignalBuffer(const SmSignalBuffer& other);
-    virtual ~SmSignalBuffer();
-    SmSignalBuffer& operator=(const SmSignalBuffer& other);
-
-    DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
-    Serializable::SizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
-
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
-
-  private:
-    U8 m_bufferData[FW_SM_SIGNAL_BUFFER_MAX_SIZE];  // packet data buffer
-};
+using SmSignalBuffer = LinearBufferTemplate<FW_SM_SIGNAL_BUFFER_MAX_SIZE>;
 
 }  // namespace Fw
 

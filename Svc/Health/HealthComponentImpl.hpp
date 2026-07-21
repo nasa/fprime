@@ -102,7 +102,7 @@ class HealthImpl final : public HealthComponentBase {
     //!  \param opCode Command opcode
     //!  \param cmdSeq Command sequence
     //!  \param enable Enum for enabling/disabling tracker
-    void HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, Fw::Enabled enable);
+    void HLTH_ENABLE_cmdHandler(const FwOpcodeType opCode, U32 cmdSeq, const Fw::Enabled& enable);
 
     //!  \brief HLTH_PING_ENABLE handler
     //!
@@ -115,7 +115,7 @@ class HealthImpl final : public HealthComponentBase {
     void HLTH_PING_ENABLE_cmdHandler(FwOpcodeType opCode,
                                      U32 cmdSeq,
                                      const Fw::CmdStringArg& entry,
-                                     Fw::Enabled enable);
+                                     const Fw::Enabled& enable);
 
     //!  \brief HLTH_CHNG_PING handler
     //!

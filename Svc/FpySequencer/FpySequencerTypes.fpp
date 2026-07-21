@@ -109,6 +109,7 @@ module Svc {
             POP_EVENT = 75
             SET_SEED = 76
             PUSH_RAND = 77
+            POP_SERIALIZABLE = 78
         }
 
         enum DirectiveErrorCode : U8 {
@@ -130,6 +131,8 @@ module Svc {
             STACK_UNDERFLOW = 15
             INVALID_ARG = 16
             CMD_FAIL = 17
+            SERIAL_PORT_NOT_CONNECTED = 18
+            SERIAL_PORT_INVALID_INDEX = 19
         }
 
         @ Maximum length for argument or type names in arg_specs

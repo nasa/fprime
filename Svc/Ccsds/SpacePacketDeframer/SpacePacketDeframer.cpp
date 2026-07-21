@@ -20,6 +20,16 @@ SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePac
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
 
+namespace {
+
+bool isValidPacketVersionNumber(const SpacePacketHeader& header) {
+    const U16 packetIdentification = header.get_packetIdentification();
+    const U16 pvn = (packetIdentification & SpacePacketSubfields::PvnMask) >> SpacePacketSubfields::PvnOffset;
+    return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
@@ -35,7 +45,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     //  1b - 0/1 - (PT) Packet Type
     //  1b - 0/1 - (SHF) Secondary Header Flag
     // 11b - n/a - (APID) Application Process ID
-    //  2b - 00  - Sequence Flag
+    //  2b - 00/01/10/11 - Sequence Flag
     // 14b - n/a - Sequence Count
     // 16b - n/a - Packet Data Length
     // ################################
@@ -62,6 +72,15 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
         return;
     }
 
+    if (!isValidPacketVersionNumber(header)) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+
     // Widen to U32 before adding 1 to prevent U16 truncation to 0 when packetDataLength == 0xFFFF (max U16 value).
     // This is a undefined behavior condition in C++.
     const U32 pkt_length = static_cast<U32>(header.get_packetDataLength()) + 1U;
@@ -77,7 +96,8 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
 
     U16 apidValue = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
-    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(apidValue);
+    ComCfg::Apid::T apid = ComCfg::Apid::isValid(apidValue) ? static_cast<ComCfg::Apid::T>(apidValue)
+                                                            : ComCfg::Apid::INVALID_UNINITIALIZED;
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
 

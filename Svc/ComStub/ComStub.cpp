@@ -31,7 +31,7 @@ void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, 
     } else if (this->isConnected_drvAsyncSendOut_OutputPort(0)) {
         this->handleAsynchronousSend(sendBuffer, context);
     } else {
-        FW_ASSERT(0);  // Neither send port is connected, this should never happen
+        FW_ASSERT(false);  // Neither send port is connected, this should never happen
     }
 }
 

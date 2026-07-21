@@ -1,0 +1,123 @@
+# Verify that F' builds and passes unit tests under the "minimal" configuration
+# profile from ci/config-profiles.json.  The remainder of the profile matrix
+# runs in the nightly "Config Test Nightly" workflow.
+
+name: "Config Test"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Generate the build matrix from ci/config-profiles.json (minimal profile only)
+  # ---------------------------------------------------------------------------
+  generate-matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      empty: ${{ steps.set-matrix.outputs.empty }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: ci/config-profiles.json
+          sparse-checkout-cone-mode: false
+
+      - name: "Build matrix JSON"
+        id: set-matrix
+        shell: bash
+        run: |
+          MATRIX=$(cat ci/config-profiles.json | jq -c '[.[] | select(.disabled != true) | select(.name == "minimal")]')
+          echo "matrix={\"include\":$MATRIX}" >> "$GITHUB_OUTPUT"
+          echo "empty=$(echo "$MATRIX" | jq -r 'length == 0')" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------
+  # Build framework + Ref with each config profile
+  # ---------------------------------------------------------------------------
+  config-build:
+    name: "Build [${{ matrix.name }}]"
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.empty != 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+
+      - name: "Build Framework [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          generate-args: "${{ matrix.generate-args }}"
+          jobs: "random"
+
+      - name: "Build Ref [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "${{ matrix.generate-args }}"
+          jobs: "random"
+
+  # ---------------------------------------------------------------------------
+  # Run unit tests with each config profile
+  # ---------------------------------------------------------------------------
+  config-ut:
+    name: "UTs [${{ matrix.name }}]"
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.empty != 'true'
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: "Setup F´ Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+
+      - name: "Run Framework UTs [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          generate-args: "${{ matrix.generate-args }}"
+          jobs: "random"
+
+      - name: "Run Ref UTs [${{ matrix.name }}]"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF ${{ matrix.generate-args }}"
+          jobs: "random"
