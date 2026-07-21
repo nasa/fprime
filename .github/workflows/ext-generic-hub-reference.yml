@@ -52,10 +52,13 @@ jobs:
         with:
           location: lib/fprime
 
-      - name: "Upgrade fprime-gds to devel or pr-xxxx"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
         uses: nasa/fprime-actions/upgrade-package@devel
         with:
           repository: nasa/fprime-gds
+          pr-branch-only: true
 
       - name: "Generate"
         run: fprime-util generate

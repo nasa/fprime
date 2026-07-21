@@ -41,21 +41,26 @@ port.
 ## What can cross the hub?
 
 - **Serial data:** typed port calls whose arguments are serialized by value.
-- **Buffers:** `Fw::Buffer` payloads, with explicit ownership and return
-  semantics.
 - **Events:** event ID, time tag, severity, and event arguments.
 - **Telemetry:** channel ID, time tag, and telemetry value.
 - **Commands:** remote command dispatches and command responses through the
   command splitter and dispatcher interfaces. See the [GenericHub SDD](../../../Svc/GenericHub/docs/sdd.md)
   for the current command-response limitation.
 
+> **Do not pass an `Fw::Buffer` across a hub.** An `Fw::Buffer` is essentially a
+> fat pointer: an address into a local address space plus a size. A hub connects
+> components across a system boundary — a separate address space, processor, or
+> transport — where that address is meaningless. In practice it almost never
+> makes sense to send an `Fw::Buffer` through a hub; serialize and send the
+> underlying data instead.
+
 ## Rules for using the pattern
 
 - Configure both hubs with matching array sizes. Hub A's inputs must correspond
   to hub B's outputs, and hub A's outputs must correspond to hub B's inputs.
-- Never pass pointers through a hub. A pointer is valid only in the address
-  space that owns the pointed-to object; send serialized values or buffer data
-  instead.
+- Never pass pointers through a hub. A pointer (including an `Fw::Buffer`, which
+  is effectively a fat pointer) is valid only in the address space that owns the
+  pointed-to object; send serialized values instead.
 - Wire received event and telemetry outputs to the deployment's event manager
   and telemetry database. A hub transports events and telemetry, but is not
   itself an event source or telemetry database.
