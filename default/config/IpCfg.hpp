@@ -12,6 +12,13 @@
 #include <Fw/Time/TimeInterval.hpp>
 #ifndef REF_IPCFG_HPP
 #define REF_IPCFG_HPP
+#ifdef TGT_OS_TYPE_VXWORKS
+#include <socket.h>
+#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+#include <sys/socket.h>
+#else
+#error OS not supported for IP Socket Communications
+#endif
 
 enum IpCfg {
     SOCKET_SEND_TIMEOUT_SECONDS = 1,       // Seconds component of timeout to an individual send
@@ -22,14 +29,6 @@ enum IpCfg {
     SOCKET_MAX_HOSTNAME_SIZE = 256         // Maximum stored hostname
 };
 static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
-
-#ifdef TGT_OS_TYPE_VXWORKS
-#include <socket.h>
-#elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
-#include <sys/socket.h>
-#else
-#error OS not supported for IP Socket Communications
-#endif
 
 // Value type enumeration
 enum SocketOptionValueType {
