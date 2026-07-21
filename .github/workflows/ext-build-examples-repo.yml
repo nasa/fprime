@@ -41,7 +41,6 @@ jobs:
       target_repository: Specky26846/fprime-examples
       build_location: FlightExamples
       run_unit_tests: true # unit tests being run through the reusable workflow
-      continue-on-error: true
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
 
