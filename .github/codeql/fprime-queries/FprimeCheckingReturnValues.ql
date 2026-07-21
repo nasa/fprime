@@ -17,8 +17,11 @@ import cpp
  * Assignment and increment/decrement operators return a reference to the
  * modified object solely to support chaining (e.g. `a = b = c`). Ignoring that
  * reference is idiomatic C++ and is not an unchecked error condition, so these
- * operators are whitelisted here. All other non-void calls are still checked,
- * including `Fw::StringBase::format()` (see https://github.com/nasa/fpp/issues/1031).
+ * operators are whitelisted here. Compiler builtins (e.g. `__builtin_memset`)
+ * only appear via system-header macro expansions such as glibc's `CPU_ZERO()`,
+ * so they are not hand code and are also whitelisted. All other non-void calls
+ * are still checked, including `Fw::StringBase::format()` (see
+ * https://github.com/nasa/fpp/issues/1031).
  */
 predicate whitelist(Function f) {
   f.getName() =
@@ -27,6 +30,8 @@ predicate whitelist(Function f) {
       "operator&=", "operator|=", "operator^=", "operator<<=", "operator>>=", "operator++",
       "operator--"
     ]
+  or
+  f.getName().matches("\\_\\_builtin\\_%")
 }
 
 from FunctionCall c, string msg
@@ -37,8 +42,15 @@ where
     c instanceof ExprInVoidContext and
     msg = "The return value of non-void function $@ is not checked."
     or
-    definition(_, c.getParent()) and
-    not definitionUsePair(_, c.getParent(), _) and
+    // A value stored into a reference parameter is an output visible to the
+    // caller, and a constexpr initializer is consumed at compile time (e.g. in
+    // a static_assert), so neither is an unchecked return value.
+    exists(SemanticStackVariable v |
+      definition(v, c.getParent()) and
+      not definitionUsePair(v, c.getParent(), _) and
+      not v.(Parameter).getType() instanceof ReferenceType and
+      not v.isConstexpr()
+    ) and
     msg = "$@'s return value is stored but not checked."
   )
 select c, msg, c.getTarget() as f, f.getName()
