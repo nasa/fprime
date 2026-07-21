@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 01:41:00</td>
+      <td>2026-07-21 02:03:54</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>116</td>
-      <td>129</td>
-      <td class="coverage-medium">89.9%</td>
+      <td>117</td>
+      <td>130</td>
+      <td class="coverage-high">90.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -76,8 +76,8 @@
     <tr><td><a href="#l173">Svc::FileUplink::checkSequenceIndex(unsigned int) (line 173)</a></td><td>called 11 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l190">Svc::FileUplink::compareChecksums(Fw::FilePacket::EndPacket const&amp;) (line 190)</a></td><td>called 2 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l35">Svc::FileUplink::configure(char const*) (line 35)</a></td><td>called 12 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l206">Svc::FileUplink::goToDataMode() (line 206)</a></td><td>called 10 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l199">Svc::FileUplink::goToStartMode() (line 199)</a></td><td>called 6 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l207">Svc::FileUplink::goToDataMode() (line 207)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l200">Svc::FileUplink::goToStartMode() (line 200)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l167">Svc::FileUplink::handleCancelPacket() (line 167)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l122">Svc::FileUplink::handleDataPacket(Fw::FilePacket::DataPacket const&amp;) (line 122)</a></td><td>called 11 times</td><td>98.0%</td></tr>
     <tr><td><a href="#l151">Svc::FileUplink::handleEndPacket(Fw::FilePacket::EndPacket const&amp;) (line 151)</a></td><td>called 3 times</td><td>98.0%</td></tr>
@@ -1620,18 +1620,30 @@
       <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 2 times.</div>
           </div>
         </details>
       </td>
       <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">computed</span><span class="p">,</span><span class="w"> </span><span class="n">stored</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">computed</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">stored</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1644,7 +1656,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getChecksum</span><span class="p">(</span><span class="n">computed</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l193" href="#l193">193</a></td>
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1657,7 +1669,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">endPacket</span><span class="p">.</span><span class="n">getChecksum</span><span class="p">(</span><span class="n">stored</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l194" href="#l194">194</a></td>
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -1672,7 +1684,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">computed</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">stored</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l195" href="#l195">195</a></td>
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -1687,126 +1699,126 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_warnings</span><span class="p">.</span><span class="n">badChecksum</span><span class="p">(</span><span class="n">computed</span><span class="p">.</span><span class="n">getValue</span><span class="p">(),</span><span class="w"> </span><span class="n">stored</span><span class="p">.</span><span class="n">getValue</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l196" href="#l196">196</a></td>
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l197" href="#l197">197</a></td>
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l198" href="#l198">198</a></td>
+      <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l199" href="#l199">199</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileUplink</span><span class="o">::</span><span class="n">goToStartMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">osFile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileUplink</span><span class="o">::</span><span class="n">goToStartMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l201" href="#l201">201</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_receiveMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">START</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">osFile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l202" href="#l202">202</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastSequenceIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_receiveMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">START</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastPacketWriteStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">MAX_STATUS</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastSequenceIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastPacketWriteStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">MAX_STATUS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l205" href="#l205">205</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l206" href="#l206">206</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileUplink</span><span class="o">::</span><span class="n">goToDataMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l207" href="#l207">207</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_receiveMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DATA</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileUplink</span><span class="o">::</span><span class="n">goToDataMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l208" href="#l208">208</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastSequenceIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_receiveMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DATA</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l209" href="#l209">209</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastPacketWriteStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">MAX_STATUS</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastSequenceIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastPacketWriteStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">MAX_STATUS</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l211" href="#l211">211</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">10</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
