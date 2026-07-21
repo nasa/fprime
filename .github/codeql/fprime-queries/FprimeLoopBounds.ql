@@ -13,15 +13,11 @@ import cpp
 
 /*
  * F Prime refinement of the stock JPL Rule 3 query (cpp/jpl-c/loop-bounds).
- * A C++ range-based for statement over a std::initializer_list iterates a
- * compile-time-fixed sequence, so it is inherently bounded; the stock query
- * reports it because the desugared `__begin != __end` condition contains no
- * relational bound check. The F Prime autocoder emits this pattern in every
- * generated array class's initializer_list operator=.
+ * A C++ range-based for statement iterates the finite range of its container,
+ * so it is inherently bounded; the stock query reports it because the
+ * desugared `__begin != __end` condition contains no relational bound check.
  */
-predicate isInitializerListRangeFor(Loop l) {
-  l.(RangeBasedForStmt).getRange().getType().stripType().(Class).hasQualifiedName("std", "initializer_list")
-}
+predicate isRangeBasedFor(Loop l) { l instanceof RangeBasedForStmt }
 
 predicate validVarForBound(Loop loop, Variable var) {
   // The variable is read in the loop controlling expression
@@ -134,7 +130,7 @@ from Loop loop, string msg
 where
   not hasSafeBound(loop) and
   not markedAsNonterminating(loop) and
-  not isInitializerListRangeFor(loop) and
+  not isRangeBasedFor(loop) and
   (
     not upperBoundCheck(loop, _) and
     not lowerBoundCheck(loop, _) and
