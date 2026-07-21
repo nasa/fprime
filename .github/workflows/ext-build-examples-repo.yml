@@ -44,10 +44,10 @@ jobs:
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
 
-  aarch64-integration:
-    name: "AArch64 Linux Integration Tests"
-    runs-on: [self-hosted, aarch64-linux]
-    needs: cross-compilation
+  integration-tests:
+    needs: run
+    name: "Run Integration Tests"
+    runs-on: ubuntu-22.04
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
