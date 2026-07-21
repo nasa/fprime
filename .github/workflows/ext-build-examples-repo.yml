@@ -64,7 +64,7 @@ jobs:
         run: |
           python -m venv venv
           . venv/bin/activate
-          pip install -r requirements.txt
+          pip install -r ./FlightExamples/lib/fprime/requirements.txt
           echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
       # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
       - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
