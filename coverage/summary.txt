@@ -161,7 +161,7 @@ Os/Generic/PriorityMemQueue.cpp              338     306    90%   77-78,107-108,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 156     129    82%   75,77-78,88-89,91-93,103-105,107-110,120-123,125-129,185,246-247
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             167     156    93%   21-25,27,247-248,252,317,343
+Os/Generic/Types/AtomicQueue.cpp             167     154    92%   21-25,27,193,247-248,252,317,340,343
 Os/Generic/Types/AtomicQueue.hpp               3       3   100%
 Os/Generic/Types/MaxHeap.cpp                 106     106   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -370,5 +370,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      18761   15405    82%
+TOTAL                                      18761   15403    82%
 ------------------------------------------------------------------------------
