@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 22:19:11</td>
+      <td>2026-07-21 23:54:48</td>
     </tr>
   </table>
 </div>
@@ -53,8 +53,8 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>8</td>
-      <td>40</td>
-      <td class="coverage-low">20.0%</td>
+      <td>42</td>
+      <td class="coverage-low">19.0%</td>
     </tr>
   </table>
 </div>
@@ -595,14 +595,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">dirent</span><span class="o">*</span><span class="w"> </span><span class="n">direntData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">dirent</span><span class="o">*</span><span class="w"> </span><span class="n">direntData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">readdir</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_dir_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">direntData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">readdir</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_dir_descriptor</span><span class="p">))</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">direntData</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
@@ -630,7 +630,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">continue</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">direntData</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">::</span><span class="n">readdir</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_dir_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>

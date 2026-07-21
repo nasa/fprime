@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 22:19:58</td>
+      <td>2026-07-21 23:55:34</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>33</td>
-      <td>36</td>
-      <td class="coverage-high">91.7%</td>
+      <td>34</td>
+      <td>37</td>
+      <td class="coverage-high">91.9%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -623,26 +623,38 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">3/3</summary>
+          <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 5 taken 40 times.</div>
-            <div class="takenBranch">&check; Branch 7 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 30 times.</div>
           </div>
         </details>
       </td>
       <td class="linecount coveredLine">40</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">check_allocation</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">new_allocation</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">allocationValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">check_allocation</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">new_allocation</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 0 taken 10 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 30 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">40</td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocationValid</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                </span><span class="c1">// Clone the data and send it</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l72" href="#l72">72</a></td>
+      <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/5</summary>
@@ -659,7 +671,7 @@
       <td class="src partialCoveredLine"><span class="w">                </span><span class="n">FW_ASSERT_NO_OVERFLOW</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">(),</span><span class="w"> </span><span class="kt">size_t</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l73" href="#l73">73</a></td>
+      <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">5/7</summary>
@@ -678,7 +690,7 @@
       <td class="src partialCoveredLine"><span class="w">                </span><span class="o">::</span><span class="n">memcpy</span><span class="p">(</span><span class="n">new_allocation</span><span class="p">.</span><span class="n">getData</span><span class="p">(),</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">(),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l74" href="#l74">74</a></td>
+      <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -692,7 +704,7 @@
       <td class="src coveredLine"><span class="w">                </span><span class="n">new_allocation</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l75" href="#l75">75</a></td>
+      <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -705,49 +717,49 @@
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">portOut_out</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">new_allocation</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l78" href="#l78">78</a></td>
+      <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">deallocate_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// end namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

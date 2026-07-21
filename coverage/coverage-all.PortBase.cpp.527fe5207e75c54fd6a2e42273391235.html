@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 22:17:57</td>
+      <td>2026-07-21 23:53:31</td>
     </tr>
   </table>
 </div>
@@ -41,8 +41,8 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>17</td>
-      <td>45</td>
-      <td class="coverage-low">37.8%</td>
+      <td>46</td>
+      <td class="coverage-low">37.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -73,11 +73,11 @@
     <tr><td><a href="#l21">Fw::PortBase::PortBase() (line 21)</a></td><td>called 44187 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l76">Fw::PortBase::getToStringFormatString() (line 76)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l34">Fw::PortBase::init() (line 34)</a></td><td>called 43848 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l38">Fw::PortBase::isConnected() const (line 38)</a></td><td>called 1050715 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l38">Fw::PortBase::isConnected() const (line 38)</a></td><td>called 1024579 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l68">Fw::PortBase::ovrTrace(bool, bool) (line 68)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l64">Fw::PortBase::setTrace(bool) (line 64)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l80">Fw::PortBase::toString(char*, unsigned long) (line 80)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l44">Fw::PortBase::trace() const (line 44)</a></td><td>called 1777710 times</td><td>29.0%</td></tr>
+    <tr><td><a href="#l44">Fw::PortBase::trace() const (line 44)</a></td><td>called 1741608 times</td><td>29.0%</td></tr>
     <tr><td><a href="#l32">Fw::PortBase::~PortBase() (line 32)</a></td><td>called 44187 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l9">setConnTrace (line 9)</a></td><td>not called</td><td>0.0%</td></tr>
   </table>
@@ -356,14 +356,14 @@
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1050715</td>
+      <td class="linecount coveredLine">1024579</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">PortBase</span><span class="o">::</span><span class="n">isConnected</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1050715</td>
+      <td class="linecount coveredLine">1024579</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_connObj</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nb">false</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -398,14 +398,14 @@
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1777710</td>
+      <td class="linecount coveredLine">1741608</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">PortBase</span><span class="o">::</span><span class="n">trace</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1777710</td>
+      <td class="linecount coveredLine">1741608</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">do_trace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -422,13 +422,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1777710 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1741608 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 1777710 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 1741608 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1777710</td>
+      <td class="linecount partialCoveredLine">1741608</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_ovr_trace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -459,13 +459,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1777710 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1741608 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 1777710 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1741608 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1777710</td>
+      <td class="linecount partialCoveredLine">1741608</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">PortBase</span><span class="o">::</span><span class="n">s_trace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -496,11 +496,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1777710 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1741608 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1777710</td>
+      <td class="linecount partialCoveredLine">1741608</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">do_trace</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -549,7 +549,7 @@
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1777710</td>
+      <td class="linecount coveredLine">1741608</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -837,59 +837,66 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalString</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalString</span><span class="o">::</span><span class="n">SizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">))</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FormatStatus</span><span class="w"> </span><span class="n">formatStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalString</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fw</span><span class="o">::</span><span class="n">ExternalString</span><span class="o">::</span><span class="n">SizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">size</span><span class="p">))</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">formatString</span><span class="p">,</span><span class="w"> </span><span class="n">object_name</span><span class="p">,</span><span class="w"> </span><span class="n">this_is_connected</span><span class="p">,</span><span class="w"> </span><span class="n">connected_to</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FormatStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">                                              </span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="n">formatString</span><span class="p">,</span><span class="w"> </span><span class="n">object_name</span><span class="p">,</span><span class="w"> </span><span class="n">this_is_connected</span><span class="p">,</span><span class="w"> </span><span class="n">connected_to</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">formatStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FormatStatus</span><span class="o">::</span><span class="n">SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l108" href="#l108">108</a></td>
+      <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#endif  </span><span class="c1">// FW_OBJECT_TO_STRING</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l109" href="#l109">109</a></td>
+      <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l110" href="#l110">110</a></td>
+      <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Fw</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l111" href="#l111">111</a></td>
+      <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
