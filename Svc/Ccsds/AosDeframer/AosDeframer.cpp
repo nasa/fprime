@@ -104,19 +104,20 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     // Validate FECF if enabled (Section 4.1.6)
     // FrameDetector + FrameAccumulator or Lower Protocol Layer should enforce whole AOS Frames
-    if (m_fecfEnabled && !this->validateFecf(data)) {
-        this->dataReturnOut_out(0, data, context);
-        return;
+    if (m_fecfEnabled) {
+        const bool fecfValid = this->validateFecf(data);
+        if (!fecfValid) {
+            this->dataReturnOut_out(0, data, context);
+            return;
+        }
     }
 
     // Create a mutable context for extracted packet info
     ComCfg::FrameContext packetContext = context;
-    // Start null, and is set by the parse step
-    AosDeframerVc* vc;
-
     // Parse and validate the AOS Primary Header (Section 4.1.2)
     // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
-    if ((vc = this->parseAndValidateHeader(data, packetContext)) == nullptr) {
+    AosDeframerVc* vc = this->parseAndValidateHeader(data, packetContext);
+    if (vc == nullptr) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
