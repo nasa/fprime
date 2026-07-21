@@ -43,6 +43,11 @@ For C code, the framework provides `FW_CASSERT` macros in Fw/Types/CAssert.h:
 
 - `FW_CASSERT(cond)` - Basic assertion with condition only
 - `FW_CASSERT_1(cond, arg1)` - Assertion with condition and one argument for reporting
+- `FW_CASSERT_2(cond, arg1, arg2)` - Assertion with condition and two arguments for reporting
+- `FW_CASSERT_3(cond, arg1, arg2, arg3)` - Assertion with condition and three arguments for reporting
+- `FW_CASSERT_4(cond, arg1, arg2, arg3, arg4)` - Assertion with condition and four arguments for reporting
+- `FW_CASSERT_5(cond, arg1, arg2, arg3, arg4, arg5)` - Assertion with condition and five arguments for reporting
+- `FW_CASSERT_6(cond, arg1, arg2, arg3, arg4, arg5, arg6)` - Assertion with condition and six arguments for reporting
 
 The C assertion macros support the same argument types as the C++ version and integrate with the same assertion hook system.
 
