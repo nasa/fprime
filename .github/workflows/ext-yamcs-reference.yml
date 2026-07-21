@@ -37,6 +37,8 @@ jobs:
         with:
           target_repository: yvijay99/fprime-yamcs-reference
           target_ref: testingyamcsclient
+          fprime_repository: yvijay99/fprime
+          fprime_ref: YAMCSCI
 
       - name: "Build deployment"
         run: |
@@ -63,6 +65,8 @@ jobs:
         with:
           target_repository: yvijay99/fprime-yamcs-reference
           target_ref: testingyamcsclient
+          fprime_repository: yvijay99/fprime
+          fprime_ref: YAMCSCI
 
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
