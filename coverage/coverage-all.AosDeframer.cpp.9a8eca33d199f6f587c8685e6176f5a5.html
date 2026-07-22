@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-21 23:53:31</td>
+      <td>2026-07-22 01:02:47</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>268</td>
-      <td>272</td>
+      <td>270</td>
+      <td>274</td>
       <td class="coverage-high">98.5%</td>
     </tr>
     <tr>
@@ -77,13 +77,13 @@
     <tr><td><a href="#l93">Svc::Ccsds::AosDeframer::dataIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 93)</a></td><td>called 59 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l141">Svc::Ccsds::AosDeframer::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 141)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l382">Svc::Ccsds::AosDeframer::extractPackets(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, Fw::Buffer&amp;) (line 382)</a></td><td>called 53 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l586">Svc::Ccsds::AosDeframer::getPacketVersion(unsigned char) (line 586)</a></td><td>called 68 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l588">Svc::Ccsds::AosDeframer::getPacketVersion(unsigned char) (line 588)</a></td><td>called 68 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l168">Svc::Ccsds::AosDeframer::getVcStruct(unsigned char) (line 168)</a></td><td>called 54 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l150">Svc::Ccsds::AosDeframer::notifyErrorIfConnected(Svc::Ccsds::FrameError) (line 150)</a></td><td>called 10 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l178">Svc::Ccsds::AosDeframer::parseAndValidateHeader(Fw::Buffer&amp;, ComCfg::FrameContext&amp;) (line 178)</a></td><td>called 56 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l522">Svc::Ccsds::AosDeframer::sizeEppPacket(unsigned char const*, unsigned long) (line 522)</a></td><td>called 31 times</td><td>90.0%</td></tr>
-    <tr><td><a href="#l456">Svc::Ccsds::AosDeframer::sizePacket(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, unsigned char*, unsigned long) (line 456)</a></td><td>called 68 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l488">Svc::Ccsds::AosDeframer::sizeSppPacket(unsigned char*, unsigned long) (line 488)</a></td><td>called 35 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l523">Svc::Ccsds::AosDeframer::sizeEppPacket(unsigned char const*, unsigned long) (line 523)</a></td><td>called 31 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l456">Svc::Ccsds::AosDeframer::sizePacket(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, unsigned char*, unsigned long) (line 456)</a></td><td>called 68 times</td><td>85.0%</td></tr>
+    <tr><td><a href="#l489">Svc::Ccsds::AosDeframer::sizeSppPacket(unsigned char*, unsigned long) (line 489)</a></td><td>called 35 times</td><td>70.0%</td></tr>
     <tr><td><a href="#l259">Svc::Ccsds::AosDeframer::validateFecf(Fw::Buffer&amp;) (line 259)</a></td><td>called 57 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l40">Svc::Ccsds::AosDeframer::~AosDeframer() (line 40)</a></td><td>called 35 times</td><td>100.0%</td></tr>
   </table>
@@ -3949,38 +3949,45 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">68</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">remainingBytes</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">remainingBytes</span><span class="p">));</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">packetStart</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l458" href="#l458">458</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">68</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">remainingBytes</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">remainingBytes</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l459" href="#l459">459</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Determine packet type from PVN (upper 3 bits of first byte)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l460" href="#l460">460</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Determine packet type from PVN (upper 3 bits of first byte)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l461" href="#l461">461</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">68</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">pvn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getPacketVersion</span><span class="p">(</span><span class="n">packetStart</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l461" href="#l461">461</a></td>
+      <td class="lineno"><a id="l462" href="#l462">462</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Default to invalid, override if valid (non-idle) packet</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l462" href="#l462">462</a></td>
+      <td class="lineno"><a id="l463" href="#l463">463</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3993,21 +4000,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">vc</span><span class="p">.</span><span class="n">spanningPacket</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">set_pvn</span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Pvn</span><span class="o">::</span><span class="n">INVALID_UNINITIALIZED</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l463" href="#l463">463</a></td>
+      <td class="lineno"><a id="l464" href="#l464">464</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l464" href="#l464">464</a></td>
+      <td class="lineno"><a id="l465" href="#l465">465</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Check if this pvn is disabled</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l465" href="#l465">465</a></td>
+      <td class="lineno"><a id="l466" href="#l466">466</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -4023,7 +4030,7 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">vc</span><span class="p">.</span><span class="n">pvnMask</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pvn</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l466" href="#l466">466</a></td>
+      <td class="lineno"><a id="l467" href="#l467">467</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4036,28 +4043,28 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_DisabledPvn</span><span class="p">(</span><span class="n">vc</span><span class="p">.</span><span class="n">virtualChannelId</span><span class="p">,</span><span class="w"> </span><span class="n">pvn</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l467" href="#l467">467</a></td>
+      <td class="lineno"><a id="l468" href="#l468">468</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l468" href="#l468">468</a></td>
+      <td class="lineno"><a id="l469" href="#l469">469</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l469" href="#l469">469</a></td>
+      <td class="lineno"><a id="l470" href="#l470">470</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l470" href="#l470">470</a></td>
+      <td class="lineno"><a id="l471" href="#l471">471</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4070,7 +4077,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Pvn</span><span class="w"> </span><span class="n">pvnEnum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Pvn</span><span class="o">::</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pvn</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l471" href="#l471">471</a></td>
+      <td class="lineno"><a id="l472" href="#l472">472</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4083,21 +4090,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">vc</span><span class="p">.</span><span class="n">spanningPacket</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">set_pvn</span><span class="p">(</span><span class="n">pvnEnum</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l472" href="#l472">472</a></td>
+      <td class="lineno"><a id="l473" href="#l473">473</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l473" href="#l473">473</a></td>
+      <td class="lineno"><a id="l474" href="#l474">474</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Size the Packet (so we can alloc a buffer)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l474" href="#l474">474</a></td>
+      <td class="lineno"><a id="l475" href="#l475">475</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/3</summary>
@@ -4112,14 +4119,14 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">pvnEnum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l475" href="#l475">475</a></td>
+      <td class="lineno"><a id="l476" href="#l476">476</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">ComCfg</span><span class="o">::</span><span class="no">Pvn</span><span class="o">::</span><span class="no">SPACE_PACKET_PROTOCOL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l476" href="#l476">476</a></td>
+      <td class="lineno"><a id="l477" href="#l477">477</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4132,21 +4139,21 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">sizeSppPacket</span><span class="p">(</span><span class="n">packetStart</span><span class="p">,</span><span class="w"> </span><span class="n">remainingBytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l477" href="#l477">477</a></td>
+      <td class="lineno"><a id="l478" href="#l478">478</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l478" href="#l478">478</a></td>
+      <td class="lineno"><a id="l479" href="#l479">479</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">31</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">ComCfg</span><span class="o">::</span><span class="no">Pvn</span><span class="o">::</span><span class="no">ENCAPSULATION_PACKET_PROTOCOL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l479" href="#l479">479</a></td>
+      <td class="lineno"><a id="l480" href="#l480">480</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4159,70 +4166,70 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">sizeEppPacket</span><span class="p">(</span><span class="n">packetStart</span><span class="p">,</span><span class="w"> </span><span class="n">remainingBytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l480" href="#l480">480</a></td>
+      <td class="lineno"><a id="l481" href="#l481">481</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l481" href="#l481">481</a></td>
+      <td class="lineno"><a id="l482" href="#l482">482</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">default</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l482" href="#l482">482</a></td>
+      <td class="lineno"><a id="l483" href="#l483">483</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="c1">// User should only configure AOS Deframer to accept SPP &amp;/| EPP</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l483" href="#l483">483</a></td>
+      <td class="lineno"><a id="l484" href="#l484">484</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span><span class="w"> </span><span class="n">pvn</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l484" href="#l484">484</a></td>
+      <td class="lineno"><a id="l485" href="#l485">485</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l485" href="#l485">485</a></td>
+      <td class="lineno"><a id="l486" href="#l486">486</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l486" href="#l486">486</a></td>
+      <td class="lineno"><a id="l487" href="#l487">487</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">66</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l487" href="#l487">487</a></td>
+      <td class="lineno"><a id="l488" href="#l488">488</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l488" href="#l488">488</a></td>
+      <td class="lineno"><a id="l489" href="#l489">489</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AosDeframer</span><span class="o">::</span><span class="n">sizeSppPacket</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">payloadStart</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">payloadSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l489" href="#l489">489</a></td>
+      <td class="lineno"><a id="l490" href="#l490">490</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4235,14 +4242,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">SpacePacketHeader</span><span class="w"> </span><span class="n">header</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l490" href="#l490">490</a></td>
+      <td class="lineno"><a id="l491" href="#l491">491</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l491" href="#l491">491</a></td>
+      <td class="lineno"><a id="l492" href="#l492">492</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -4255,7 +4262,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="n">payloadStart</span><span class="p">,</span><span class="w"> </span><span class="n">payloadSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l492" href="#l492">492</a></td>
+      <td class="lineno"><a id="l493" href="#l493">493</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4269,14 +4276,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">getDeserializer</span><span class="p">().</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">header</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l493" href="#l493">493</a></td>
+      <td class="lineno"><a id="l494" href="#l494">494</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l494" href="#l494">494</a></td>
+      <td class="lineno"><a id="l495" href="#l495">495</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4290,147 +4297,147 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l495" href="#l495">495</a></td>
+      <td class="lineno"><a id="l496" href="#l496">496</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Incomplete header - spans to next frame</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l496" href="#l496">496</a></td>
+      <td class="lineno"><a id="l497" href="#l497">497</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l497" href="#l497">497</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l498" href="#l498">498</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l499" href="#l499">499</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Per CCSDS 133.0-B-2 Section 4.1.3.5.2, packet data length = (actual length - 1)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l500" href="#l500">500</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Guarantee at compile time that the maximum possible sum fits in FwSizeType. If</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// packetDataLength is a 16-bit field (max 65535); SERIALIZED_SIZE is a small constant.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l501" href="#l501">501</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// FwSizeType is ever narrowed below 17 bits, this fails to build and the addition</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Guarantee at compile time that the maximum possible sum fits in FwSizeType. If</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l502" href="#l502">502</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// below must be guarded the same way sizeEppPacket is.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// FwSizeType is ever narrowed below 17 bits, this fails to build and the addition</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l503" href="#l503">503</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// below must be guarded the same way sizeEppPacket is.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l504" href="#l504">504</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">34</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">constexpr</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">MAX_LENGTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">SpacePacketHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l504" href="#l504">504</a></td>
+      <td class="lineno"><a id="l505" href="#l505">505</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="n">MAX_LENGTH</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l505" href="#l505">505</a></td>
+      <td class="lineno"><a id="l506" href="#l506">506</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                  </span><span class="s">&quot;FwSizeType must be wide enough to hold the maximum SPP packet size without overflow&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l506" href="#l506">506</a></td>
+      <td class="lineno"><a id="l507" href="#l507">507</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">34</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SpacePacketHeader</span><span class="o">::</span><span class="n">SERIALIZED_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">header</span><span class="p">.</span><span class="n">get_packetDataLength</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l507" href="#l507">507</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l508" href="#l508">508</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// TODO: Unify Deframers | bring the whole spp processing into this component</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l509" href="#l509">509</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// since we&#39;re only missing seq count logic?</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// TODO: Unify Deframers | bring the whole spp processing into this component</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l510" href="#l510">510</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// since we&#39;re only missing seq count logic?</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l511" href="#l511">511</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l512" href="#l512">512</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Check for idle packet (APID = 0x7FF per CCSDS 133.0-B-2)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l513" href="#l513">513</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">34</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">apid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;</span><span class="p">(</span><span class="n">header</span><span class="p">.</span><span class="n">get_packetIdentification</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">SpacePacketSubfields</span><span class="o">::</span><span class="n">ApidMask</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l513" href="#l513">513</a></td>
+      <td class="lineno"><a id="l514" href="#l514">514</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l514" href="#l514">514</a></td>
+      <td class="lineno"><a id="l515" href="#l515">515</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Idle means this is the last packet in the frame</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l515" href="#l515">515</a></td>
+      <td class="lineno"><a id="l516" href="#l516">516</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4444,116 +4451,109 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">apid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ComCfg</span><span class="o">::</span><span class="n">Apid</span><span class="o">::</span><span class="n">SPP_IDLE_PACKET</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l516" href="#l516">516</a></td>
+      <td class="lineno"><a id="l517" href="#l517">517</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l517" href="#l517">517</a></td>
+      <td class="lineno"><a id="l518" href="#l518">518</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l518" href="#l518">518</a></td>
+      <td class="lineno"><a id="l519" href="#l519">519</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l519" href="#l519">519</a></td>
+      <td class="lineno"><a id="l520" href="#l520">520</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">33</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l520" href="#l520">520</a></td>
+      <td class="lineno"><a id="l521" href="#l521">521</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l521" href="#l521">521</a></td>
+      <td class="lineno"><a id="l522" href="#l522">522</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l522" href="#l522">522</a></td>
+      <td class="lineno"><a id="l523" href="#l523">523</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">31</td>
       <td class="src coveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AosDeframer</span><span class="o">::</span><span class="n">sizeEppPacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">payloadStart</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">payloadSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l523" href="#l523">523</a></td>
+      <td class="lineno"><a id="l524" href="#l524">524</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Per CCSDS 133.1-B-3 Section 4.1.2.1.1, EPP minimum header is 1 byte</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l524" href="#l524">524</a></td>
+      <td class="lineno"><a id="l525" href="#l525">525</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Since we identified this as an EPP we had the 1 byte to read the PVN already</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l525" href="#l525">525</a></td>
+      <td class="lineno"><a id="l526" href="#l526">526</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">31</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">payloadStart</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l527" href="#l527">527</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">31</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">payloadSize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">payloadSize</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l526" href="#l526">526</a></td>
+      <td class="lineno"><a id="l528" href="#l528">528</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l527" href="#l527">527</a></td>
+      <td class="lineno"><a id="l529" href="#l529">529</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Parse first byte</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l528" href="#l528">528</a></td>
+      <td class="lineno"><a id="l530" href="#l530">530</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">31</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">firstByte</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">payloadStart</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l529" href="#l529">529</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">31</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">protocolId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">((</span><span class="n">firstByte</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">protocolIdMask</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">protocolIdOffset</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l530" href="#l530">530</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l531" href="#l531">531</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">31</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">protocolId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">((</span><span class="n">firstByte</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">protocolIdMask</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">protocolIdOffset</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l532" href="#l532">532</a></td>
@@ -4566,11 +4566,25 @@
       <td class="lineno"><a id="l533" href="#l533">533</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">31</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l534" href="#l534">534</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l535" href="#l535">535</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Idle means this is the last packet in the frame</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l534" href="#l534">534</a></td>
+      <td class="lineno"><a id="l536" href="#l536">536</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4584,53 +4598,39 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">protocolId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">EppProtocolId</span><span class="o">::</span><span class="n">Idle</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l535" href="#l535">535</a></td>
+      <td class="lineno"><a id="l537" href="#l537">537</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l536" href="#l536">536</a></td>
+      <td class="lineno"><a id="l538" href="#l538">538</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l537" href="#l537">537</a></td>
+      <td class="lineno"><a id="l539" href="#l539">539</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l538" href="#l538">538</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l539" href="#l539">539</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">11</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">lengthOfLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">firstByte</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">lengthOfLengthMask</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l540" href="#l540">540</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Encapsulation Idle Packet per CCSDS 133.1-B-3 Section 4.1.3.2</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l541" href="#l541">541</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">11</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1U</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">lengthOfLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">firstByte</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">lengthOfLengthMask</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l542" href="#l542">542</a></td>
@@ -4643,11 +4643,25 @@
       <td class="lineno"><a id="l543" href="#l543">543</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">11</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1U</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l544" href="#l544">544</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l545" href="#l545">545</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If length of length is 2 or more then there&#39;s an extra byte of extension/user defined (4.1.2.1.1)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l544" href="#l544">544</a></td>
+      <td class="lineno"><a id="l546" href="#l546">546</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4661,35 +4675,35 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lengthOfLength</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">EppLengthOfLength</span><span class="o">::</span><span class="n">Two</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l545" href="#l545">545</a></td>
+      <td class="lineno"><a id="l547" href="#l547">547</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1U</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l546" href="#l546">546</a></td>
+      <td class="lineno"><a id="l548" href="#l548">548</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l547" href="#l547">547</a></td>
+      <td class="lineno"><a id="l549" href="#l549">549</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l548" href="#l548">548</a></td>
+      <td class="lineno"><a id="l550" href="#l550">550</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If length of length is 4 then we add 2 bytes for the ccsds reserved field (4.1.2.1.1)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l549" href="#l549">549</a></td>
+      <td class="lineno"><a id="l551" href="#l551">551</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4703,70 +4717,70 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lengthOfLength</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">EppLengthOfLength</span><span class="o">::</span><span class="n">Four</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l550" href="#l550">550</a></td>
+      <td class="lineno"><a id="l552" href="#l552">552</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2U</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l551" href="#l551">551</a></td>
+      <td class="lineno"><a id="l553" href="#l553">553</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// &#39;0d3&#39; on the wire, but means 4</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l552" href="#l552">552</a></td>
+      <td class="lineno"><a id="l554" href="#l554">554</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">lengthOfLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l553" href="#l553">553</a></td>
+      <td class="lineno"><a id="l555" href="#l555">555</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l554" href="#l554">554</a></td>
+      <td class="lineno"><a id="l556" href="#l556">556</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l555" href="#l555">555</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Bytes to get to length + length of length</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l556" href="#l556">556</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">11</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="w"> </span><span class="n">headerLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lengthOfLength</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l557" href="#l557">557</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Bytes to get to length + length of length</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l558" href="#l558">558</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">11</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="w"> </span><span class="n">headerLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lengthOfLength</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l559" href="#l559">559</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l560" href="#l560">560</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Validate and read length field</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l559" href="#l559">559</a></td>
+      <td class="lineno"><a id="l561" href="#l561">561</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4780,42 +4794,42 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">payloadSize</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">headerLength</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l560" href="#l560">560</a></td>
+      <td class="lineno"><a id="l562" href="#l562">562</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Incomplete</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l561" href="#l561">561</a></td>
+      <td class="lineno"><a id="l563" href="#l563">563</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l562" href="#l562">562</a></td>
+      <td class="lineno"><a id="l564" href="#l564">564</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l563" href="#l563">563</a></td>
+      <td class="lineno"><a id="l565" href="#l565">565</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Read length field (big-endian)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l564" href="#l564">564</a></td>
+      <td class="lineno"><a id="l566" href="#l566">566</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">packetDataLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l565" href="#l565">565</a></td>
+      <td class="lineno"><a id="l567" href="#l567">567</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4829,42 +4843,42 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">lengthOfLength</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l566" href="#l566">566</a></td>
+      <td class="lineno"><a id="l568" href="#l568">568</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">21</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">packetDataLength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">packetDataLength</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">payloadStart</span><span class="p">[</span><span class="n">lengthOffset</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l567" href="#l567">567</a></td>
+      <td class="lineno"><a id="l569" href="#l569">569</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l568" href="#l568">568</a></td>
+      <td class="lineno"><a id="l570" href="#l570">570</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l569" href="#l569">569</a></td>
+      <td class="lineno"><a id="l571" href="#l571">571</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Guard against integer overflow and return 0 as incomplete/invalid (if true).</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l570" href="#l570">570</a></td>
+      <td class="lineno"><a id="l572" href="#l572">572</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// This fires on 32-bit targets (FwSizeType = U32) where the sum would wrap.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l571" href="#l571">571</a></td>
+      <td class="lineno"><a id="l573" href="#l573">573</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -4878,161 +4892,161 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">packetDataLength</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">headerLength</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l572" href="#l572">572</a></td>
+      <td class="lineno"><a id="l574" href="#l574">574</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l573" href="#l573">573</a></td>
+      <td class="lineno"><a id="l575" href="#l575">575</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l574" href="#l574">574</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l575" href="#l575">575</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Cast both operands to FwSizeType BEFORE adding.</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l576" href="#l576">576</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Without the cast, C++ computes headerLength(U8) + packetDataLength(U32) in U32</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l577" href="#l577">577</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// arithmetic, which wraps on both 32-bit and 64-bit hosts even when FwSizeType is</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Cast both operands to FwSizeType BEFORE adding.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l578" href="#l578">578</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// 64 bits wide.  The guard above is not sufficient on its own: on 64-bit it never</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Without the cast, C++ computes headerLength(U8) + packetDataLength(U32) in U32</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l579" href="#l579">579</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// fires (packetDataLength can never exceed UINT64_MAX-8), so the unguarded addition</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// arithmetic, which wraps on both 32-bit and 64-bit hosts even when FwSizeType is</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l580" href="#l580">580</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// would still silently truncate to 4 on a 64-bit host.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// 64 bits wide.  The guard above is not sufficient on its own: on 64-bit it never</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l581" href="#l581">581</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">totalPacketSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">headerLength</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">packetDataLength</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// fires (packetDataLength can never exceed UINT64_MAX-8), so the unguarded addition</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l582" href="#l582">582</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// would still silently truncate to 4 on a 64-bit host.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l583" href="#l583">583</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">9</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">totalPacketSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">headerLength</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">packetDataLength</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l584" href="#l584">584</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l585" href="#l585">585</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">9</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">totalPacketSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l586" href="#l586">586</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68</td>
-      <td class="src coveredLine"><span class="n">U8</span><span class="w"> </span><span class="n">AosDeframer</span><span class="o">::</span><span class="n">getPacketVersion</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">firstByte</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l587" href="#l587">587</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// PVN is the upper 3 bits per both CCSDS 133.0-B-2 and 133.1-B-3</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l588" href="#l588">588</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// EPP&#39;s Subfield array is done in bytes</span></td>
+      <td class="linecount coveredLine">68</td>
+      <td class="src coveredLine"><span class="n">U8</span><span class="w"> </span><span class="n">AosDeframer</span><span class="o">::</span><span class="n">getPacketVersion</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">firstByte</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l589" href="#l589">589</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">68</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">firstByte</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">packetVersionOffset</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// PVN is the upper 3 bits per both CCSDS 133.0-B-2 and 133.1-B-3</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l590" href="#l590">590</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// EPP&#39;s Subfield array is done in bytes</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l591" href="#l591">591</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">68</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">&gt;</span><span class="p">(</span><span class="n">firstByte</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">EPPSubfields</span><span class="o">::</span><span class="n">packetVersionOffset</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l592" href="#l592">592</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l593" href="#l593">593</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l594" href="#l594">594</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l595" href="#l595">595</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l596" href="#l596">596</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
