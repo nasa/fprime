@@ -76,7 +76,7 @@ The diagram below shows the `DpManager` component.
 
 ### 3.4. Compile-Time Setup
 
-The configuration constant [`DpManagerNumPorts`](../../../config/AcConstants.fpp)
+The configuration constant [`DpManagerNumPorts`](../../../default/config/AcConstants.fpp)
 specifies the number of ports for
 requesting data product buffers and for sending filled data products.
 
