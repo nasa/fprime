@@ -63,4 +63,8 @@ module ComCfg {
         sendNow = false
     }
 
+    @ Size of FprimeRouter's buffer->FrameContext table. Set to the uplink buffer
+    @ pool count, which bounds how many buffers can be outstanding at once.
+    constant RouterBufferContextTableSize = 10
+
 }

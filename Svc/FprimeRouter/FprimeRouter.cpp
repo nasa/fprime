@@ -16,7 +16,12 @@ namespace Svc {
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-FprimeRouter ::FprimeRouter(const char* const compName) : FprimeRouterComponentBase(compName) {}
+FprimeRouter ::FprimeRouter(const char* const compName) : FprimeRouterComponentBase(compName) {
+    // Mark every table entry unused (key == nullptr)
+    for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
+        this->m_bufferContextTable[i].key = nullptr;
+    }
+}
 
 FprimeRouter ::~FprimeRouter() {}
 
@@ -42,22 +47,25 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             } else {
                 this->log_WARNING_HI_SerializationError(status);
             }
-            // Return ownership of the incoming packetBuffer with an empty context
-            ComCfg::FrameContext emptyContext;
-            this->dataReturnOut_out(0, packetBuffer, emptyContext);
+            // The command buffer was copied into the com buffer above, so ownership of the
+            // incoming packetBuffer is returned immediately with the context it was received with.
+            this->dataReturnOut_out(0, packetBuffer, context);
             break;
         }
         // Handle a file packet
         case Fw::ComPacketType::FW_PACKET_FILE: {
             // If the file uplink output port is connected, send the file packet directly.
             // Ownership is passed to the receiver and will come back on fileBufferReturnIn,
-            // at which point we return it to the deframer via dataReturnOut.
+            // at which point we return it to the deframer via dataReturnOut. fileOut carries
+            // only Fw::Buffer, so remember the context here to restore it on return.
             if (this->isConnected_fileOut_OutputPort(0)) {
+                if (this->insertContext(packetBuffer, context) == Fw::Success::FAILURE) {
+                    this->log_WARNING_HI_FileOutContextTableFull();
+                }
                 this->fileOut_out(0, packetBuffer);
             } else {
-                // Port not connected, return the buffer immediately with an empty context
-                ComCfg::FrameContext emptyContext;
-                this->dataReturnOut_out(0, packetBuffer, emptyContext);
+                // Port not connected, return the buffer immediately with its context
+                this->dataReturnOut_out(0, packetBuffer, context);
             }
             break;
         }
@@ -65,13 +73,16 @@ void FprimeRouter ::dataIn_handler(FwIndexType portNum, Fw::Buffer& packetBuffer
             // Packet type is not known to the F Prime protocol. If the unknownDataOut port is
             // connected, forward packet and context for further processing.
             // Ownership is passed to the receiver and will come back on fileBufferReturnIn,
-            // at which point we return it to the deframer via dataReturnOut.
+            // at which point we return it to the deframer via dataReturnOut. The return path
+            // (fileBufferReturnIn) carries no context, so remember it here to restore on return.
             if (this->isConnected_unknownDataOut_OutputPort(0)) {
+                if (this->insertContext(packetBuffer, context) == Fw::Success::FAILURE) {
+                    this->log_WARNING_HI_UnknownDataOutContextTableFull();
+                }
                 this->unknownDataOut_out(0, packetBuffer, context);
             } else {
-                // Port not connected, return the buffer immediately with an empty context
-                ComCfg::FrameContext emptyContext;
-                this->dataReturnOut_out(0, packetBuffer, emptyContext);
+                // Port not connected, return the buffer immediately with its context
+                this->dataReturnOut_out(0, packetBuffer, context);
             }
             break;
         }
@@ -86,9 +97,44 @@ void FprimeRouter ::cmdResponseIn_handler(FwIndexType portNum,
 }
 
 void FprimeRouter ::fileBufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    // Return ownership of the buffer to the deframer with an empty context
+    // Restore the context that was saved when this buffer was handed off on
+    // fileOut/unknownDataOut
     ComCfg::FrameContext context;
+    if (this->takeContext(fwBuffer, context) == Fw::Success::FAILURE) {
+        // Buffer not found in the table: return with an empty context (already default)
+        this->log_WARNING_HI_BufferContextNotFound();
+    }
     this->dataReturnOut_out(0, fwBuffer, context);
+}
+
+// ----------------------------------------------------------------------
+// Buffer-to-context association table helpers
+// ----------------------------------------------------------------------
+
+Fw::Success FprimeRouter ::insertContext(const Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
+    const U8* key = buffer.getData();
+    for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
+        if (this->m_bufferContextTable[i].key == nullptr) {
+            this->m_bufferContextTable[i].key = key;
+            this->m_bufferContextTable[i].context = context;
+            return Fw::Success::SUCCESS;
+        }
+    }
+    // Table full
+    return Fw::Success::FAILURE;
+}
+
+Fw::Success FprimeRouter ::takeContext(const Fw::Buffer& buffer, ComCfg::FrameContext& context) {
+    const U8* key = buffer.getData();
+    for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
+        if (this->m_bufferContextTable[i].key == key) {
+            context = this->m_bufferContextTable[i].context;
+            this->m_bufferContextTable[i].key = nullptr;
+            return Fw::Success::SUCCESS;
+        }
+    }
+    // Not found
+    return Fw::Success::FAILURE;
 }
 
 }  // namespace Svc
