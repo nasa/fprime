@@ -59,7 +59,9 @@ void Checksum ::update(const U8* const data, const U32 offset, const U32 length)
     }
 
     // Add the middle words aligned
-    for (; index + 4 <= length; index += 4) {
+    // End of the whole 4-byte words remaining after index, i.e. the largest index + 4*k <= length
+    const U32 alignedEnd = index + (((length - index) / 4) * 4);
+    for (; index < alignedEnd; index += 4) {
         addWordAligned(&data[index]);
     }
 

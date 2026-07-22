@@ -302,6 +302,7 @@ void LinuxGpioDriver ::pollLoop() {
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever
+    // @non-terminating@: polling thread runs until stopped
     while (this->getRunning()) {
         // Setup polling
         (void)::memset(file_descriptors, 0, sizeof file_descriptors);

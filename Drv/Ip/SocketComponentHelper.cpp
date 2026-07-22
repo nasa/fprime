@@ -200,6 +200,7 @@ SocketIpStatus SocketComponentHelper::recv(U8* data, FwSizeType& size) {
 
 void SocketComponentHelper::readLoop() {
     SocketIpStatus status = SOCK_SUCCESS;
+    // @non-terminating@: runs until the socket component is stopped
     do {
         // Prevent transmission before connection, or after a disconnect
         if ((not this->isOpened()) and this->running()) {
@@ -268,6 +269,7 @@ bool SocketComponentHelper::runningReconnect() {
 
 void SocketComponentHelper::reconnectLoop() {
     SocketIpStatus status = SOCK_SUCCESS;
+    // @non-terminating@: runs until the reconnect thread is stopped
     while (this->runningReconnect()) {
         // Check if we need to reconnect
         bool reconnect = false;
@@ -336,6 +338,7 @@ SocketIpStatus SocketComponentHelper::waitForReconnect(Fw::TimeInterval timeout)
 
     Fw::TimeInterval elapsed = Fw::TimeInterval(0, 0);
 
+    // @non-terminating@: time-bounded wait for the reconnect thread
     while (elapsed < timeout) {
         // If the reconnect thread is NOT reconnecting, we are done waiting
         // If we are no longer running the reconnect thread, we are done waiting
