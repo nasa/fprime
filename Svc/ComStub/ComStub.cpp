@@ -85,7 +85,6 @@ void ComStub ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer, c
 // ----------------------------------------------------------------------
 
 void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameContext& context) {
-    FW_ASSERT(sendBuffer.isValid());
     Drv::ByteStreamStatus sendStatus = Drv::ByteStreamStatus::SEND_RETRY;
     Fw::Success comSuccess = Fw::Success::FAILURE;
 

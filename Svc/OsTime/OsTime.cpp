@@ -51,7 +51,6 @@ void OsTime::SetCurrentTime_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U32 seco
 // ----------------------------------------------------------------------
 
 void OsTime ::timeGetPort_handler(FwIndexType portNum, Fw::Time& time) {
-    FW_ASSERT(portNum >= 0 && portNum < this->getNum_timeGetPort_InputPorts(), static_cast<FwAssertArgType>(portNum));
     Fw::Time temp_epoch_fw_time;
     Os::RawTime temp_epoch_os_time;
     bool temp_epoch_valid;

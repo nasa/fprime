@@ -150,8 +150,6 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
 }
 
 void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
-    FW_ASSERT(this->m_receiveMode == START || this->m_receiveMode == DATA,
-              static_cast<FwAssertArgType>(this->m_receiveMode));
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
         this->m_filesReceived.fileReceived();

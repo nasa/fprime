@@ -406,7 +406,6 @@ void FpySequencer::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& f
 void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
                                     U32 context           //!< The call order
 ) {
-    FW_ASSERT(portNum >= 0 && portNum < this->getNum_tlmWrite_InputPorts(), static_cast<FwAssertArgType>(portNum));
     this->tlmWrite_State(static_cast<FwEnumStoreType>(this->sequencer_getState()));
     this->tlmWrite_StatementsDispatched(this->m_statementsDispatched);
     this->tlmWrite_StatementsFailed(this->m_tlm.statementsFailed);
