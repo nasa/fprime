@@ -54,7 +54,7 @@ void ComQueue ::cleanup() {
     }
 }
 
-void ComQueue::configure(QueueConfigurationTable queueConfig,
+void ComQueue::configure(const QueueConfigurationTable& queueConfig,
                          FwEnumStoreType allocationId,
                          Fw::MemAllocator& allocator) {
     FwIndexType currentPriorityIndex = 0;
