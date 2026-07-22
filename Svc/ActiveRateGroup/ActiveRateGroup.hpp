@@ -15,6 +15,7 @@
 #ifndef SVC_ACTIVERATEGROUP_HPP
 #define SVC_ACTIVERATEGROUP_HPP
 
+#include <Fw/Deprecate.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupComponentAc.hpp>
 
 namespace Svc {
@@ -34,6 +35,12 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
   public:
     static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
+    //! \class ContextArray
+    //! \brief Struct containing the array of context values for rate group members
+    struct ContextArray {
+        U32 contexts[CONNECTION_COUNT_MAX];  //!< Context values, indexed by output port number
+    };
+
     //!  \brief ActiveRateGroup constructor
     //!
     //!  The constructor of the class clears all the flags and copies the
@@ -47,12 +54,23 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
     //!  The configuration function takes an array of context values to pass to
     //!  members of the rate group.
     //!
+    //!  \param contexts Array of context values that will be sent to each member component.
+    //!         The index of the array corresponds to the output port number.
+
+    void configure(const ContextArray& contexts);
+
+    //!  \brief ActiveRateGroup configuration function
+    //!
+    //!  The configuration function takes an array of context values to pass to
+    //!  members of the rate group.
+    //!
     //!  \param contexts Array of integers that contain the context values that will be sent
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
 
-    void configure(const U32 contexts[], const FwIndexType numContexts);
+    DEPRECATED(void configure(const U32 contexts[], const FwIndexType numContexts),
+               "Use configure(const ActiveRateGroup::ContextArray& contexts) instead");
 
     //!  \brief ActiveRateGroup destructor
     //!

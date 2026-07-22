@@ -33,10 +33,10 @@ void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& test
 
 TEST(PassiveRateGroupTest, NominalSchedule) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
-        U32 contexts[PassiveRateGroupOutputPorts] = {1, 2, 3, 4, 5};
+        Svc::PassiveRateGroup::ContextArray contexts = {{1, 2, 3, 4, 5}};
 
         Svc::PassiveRateGroup impl("PassiveRateGroup");
-        impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));
+        impl.configure(contexts);
         Svc::PassiveRateGroupTester tester(impl);
 
         tester.init();
@@ -45,7 +45,7 @@ TEST(PassiveRateGroupTest, NominalSchedule) {
         // connect ports
         connectPorts(impl, tester);
 
-        tester.runNominal(contexts, FW_NUM_ARRAY_ELEMENTS(contexts), inst);
+        tester.runNominal(contexts.contexts, FW_NUM_ARRAY_ELEMENTS(contexts.contexts), inst);
     }
 }
 

@@ -24,19 +24,28 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
-void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
-    FW_ASSERT(contexts != nullptr);
-    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+void PassiveRateGroup::configure(const ContextArray& contexts) {
     FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
               static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
               static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
 
-    this->m_numContexts = numContexts;
+    this->m_numContexts = static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(contexts.contexts));
     // copy context values
     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = static_cast<U32>(contexts[entry]);
+        this->m_contexts[entry] = contexts.contexts[entry];
     }
+}
+
+void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
+    FW_ASSERT(contexts != nullptr);
+    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
+              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+
+    ContextArray contextArray;
+    for (FwIndexType entry = 0; entry < numContexts; entry++) {
+        contextArray.contexts[entry] = static_cast<U32>(contexts[entry]);
+    }
+    this->configure(contextArray);
 }
 
 void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {

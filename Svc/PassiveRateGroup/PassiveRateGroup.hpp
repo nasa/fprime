@@ -14,6 +14,7 @@
 #ifndef SVC_PASSIVERATEGROUP_IMPL_HPP
 #define SVC_PASSIVERATEGROUP_IMPL_HPP
 
+#include <Fw/Deprecate.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroupComponentAc.hpp>
 
 namespace Svc {
@@ -29,6 +30,14 @@ namespace Svc {
 
 class PassiveRateGroup final : public PassiveRateGroupComponentBase {
   public:
+    static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
+
+    //! \class ContextArray
+    //! \brief Struct containing the array of context values for rate group members
+    struct ContextArray {
+        U32 contexts[CONNECTION_COUNT_MAX];  //!< Context values, indexed by output port number
+    };
+
     //!  \brief PassiveRateGroupImpl constructor
     //!
     //!  The constructor of the class clears all the flags and copies the
@@ -42,11 +51,21 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!  The configuration function takes an array of context values to pass to
     //!  members of the rate group.
     //!
+    //!  \param contexts Array of context values that will be sent to each member component.
+    //!         The index of the array corresponds to the output port number.
+    void configure(const ContextArray& contexts);
+
+    //!  \brief PassiveRateGroup configuration function
+    //!
+    //!  The configuration function takes an array of context values to pass to
+    //!  members of the rate group.
+    //!
     //!  \param contexts Array of integers that contain the context values that will be sent
     //!         to each member component. The index of the array corresponds to the
     //!         output port number.
     //!  \param numContexts The number of elements in the context array.
-    void configure(const U32 contexts[], const FwIndexType numContexts);
+    DEPRECATED(void configure(const U32 contexts[], const FwIndexType numContexts),
+               "Use configure(const PassiveRateGroup::ContextArray& contexts) instead");
 
     //!  \brief PassiveRateGroupImpl destructor
     //!

@@ -48,13 +48,13 @@ void connectPorts(Svc::ActiveRateGroup& impl, Svc::ActiveRateGroupTester& tester
 
 TEST(ActiveRateGroupTest, NominalSchedule) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
-        U32 contexts[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX];
+        Svc::ActiveRateGroup::ContextArray contexts;
         for (U32 i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-            contexts[i] = i + 1;
+            contexts.contexts[i] = i + 1;
         }
 
         Svc::ActiveRateGroup impl("ActiveRateGroup");
-        impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));
+        impl.configure(contexts);
 
         Svc::ActiveRateGroupTester tester(impl);
 
@@ -64,19 +64,19 @@ TEST(ActiveRateGroupTest, NominalSchedule) {
         // connect ports
         connectPorts(impl, tester);
 
-        tester.runNominal(contexts, FW_NUM_ARRAY_ELEMENTS(contexts), inst);
+        tester.runNominal(contexts.contexts, FW_NUM_ARRAY_ELEMENTS(contexts.contexts), inst);
     }
 }
 
 TEST(ActiveRateGroupTest, CycleOverrun) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
-        U32 contexts[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX];
+        Svc::ActiveRateGroup::ContextArray contexts;
         for (U32 i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-            contexts[i] = i + 1;
+            contexts.contexts[i] = i + 1;
         }
 
         Svc::ActiveRateGroup impl("ActiveRateGroup");
-        impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));
+        impl.configure(contexts);
 
         Svc::ActiveRateGroupTester tester(impl);
 
@@ -86,18 +86,18 @@ TEST(ActiveRateGroupTest, CycleOverrun) {
         // connect ports
         connectPorts(impl, tester);
 
-        tester.runCycleOverrun(contexts, FW_NUM_ARRAY_ELEMENTS(contexts), inst);
+        tester.runCycleOverrun(contexts.contexts, FW_NUM_ARRAY_ELEMENTS(contexts.contexts), inst);
     }
 }
 
 TEST(ActiveRateGroupTest, PingPort) {
-    U32 contexts[Svc::ActiveRateGroup::CONNECTION_COUNT_MAX];
+    Svc::ActiveRateGroup::ContextArray contexts;
     for (FwIndexType i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-        contexts[i] = i + 1;
+        contexts.contexts[i] = static_cast<U32>(i + 1);
     }
 
     Svc::ActiveRateGroup impl("ActiveRateGroup");
-    impl.configure(contexts, FW_NUM_ARRAY_ELEMENTS(contexts));
+    impl.configure(contexts);
     Svc::ActiveRateGroupTester tester(impl);
 
     tester.init();
