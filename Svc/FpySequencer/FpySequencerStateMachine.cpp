@@ -222,6 +222,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     Fw::Success result = this->validate();
+    FW_ASSERT(result == Fw::Success::SUCCESS || result == Fw::Success::FAILURE, static_cast<FwAssertArgType>(result));
     if (result == Fw::Success::FAILURE) {
         this->sequencer_sendSignal_result_failure();
         return;

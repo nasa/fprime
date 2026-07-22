@@ -82,6 +82,7 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
             severityString = "SEVERITY ERROR";
             break;
     }
+    FW_ASSERT(severityString != nullptr);
     // Overflow is allowed and truncation accepted
     Fw::InternalInterfaceString intText;
     (void)intText.format("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32
