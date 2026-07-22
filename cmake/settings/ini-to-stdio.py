@@ -1,7 +1,8 @@
-""" ini-to-stdio.py:
+"""ini-to-stdio.py:
 
 Loads fprime style ini files into a format CMake can process.
 """
+
 import argparse
 import os.path
 import sys
@@ -11,7 +12,6 @@ from pathlib import Path
 from typing import List
 
 from fprime.fbuild.settings import IniSettings
-
 
 REMAPPING = {}
 

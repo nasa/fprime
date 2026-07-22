@@ -15,6 +15,7 @@ comments with simple GitHub Markdown. It looks for blocks following the pattern:
 
 @author mstarch
 """
+
 import enum
 import os
 import re
