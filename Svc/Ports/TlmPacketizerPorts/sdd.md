@@ -10,7 +10,7 @@ The `Svc::EnableSection ` port is used to enable / disable an output section of 
 
 #### 2.1.1 TelemetrySection
 
-[TelemetrySection](../../../default/config/TlmPacketizerCfg.fpp) is an enum used to choose which section of the `Svc::TlmPacketizer` to enable or disable. 
+[TelemetrySection](../../TlmPacketizer/config/TlmPacketizerConfig/TlmPacketizerCfg.fpp) is an enum used to choose which section of the `Svc::TlmPacketizer` to enable or disable. 
 
 ## 3. Change Log
 
