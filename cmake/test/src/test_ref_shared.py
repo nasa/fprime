@@ -12,7 +12,6 @@ from pathlib import Path
 from . import cmake
 from . import settings
 
-
 if platform.system() == "Darwin":
     pytestmark = pytest.mark.skip(reason="Shared modules are not supported on macOS")
 
