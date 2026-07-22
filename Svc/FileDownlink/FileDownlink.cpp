@@ -70,6 +70,7 @@ FileDownlink ::~FileDownlink() {}
 // ----------------------------------------------------------------------
 
 void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {
+    FW_ASSERT(portNum >= 0 && portNum < this->getNum_Run_InputPorts(), static_cast<FwAssertArgType>(portNum));
     switch (this->m_mode.get()) {
         case Mode::IDLE: {
             FwSizeType real_size = 0;
@@ -270,6 +271,8 @@ Fw::CmdResponse FileDownlink ::statusToCmdResp(SendFileStatus status) {
 }
 
 void FileDownlink ::sendResponse(SendFileStatus resp) {
+    FW_ASSERT(this->m_curEntry.source == FileDownlink::COMMAND || this->m_curEntry.source == FileDownlink::PORT,
+              static_cast<FwAssertArgType>(this->m_curEntry.source));
     if (this->m_curEntry.source == FileDownlink::COMMAND) {
         this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
     } else {

@@ -490,6 +490,7 @@ FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeTyp
 }
 
 FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) {
+    FW_ASSERT(payloadStart != nullptr);
     SpacePacketHeader header;
 
     Fw::Buffer data(payloadStart, payloadSize);

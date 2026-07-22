@@ -111,6 +111,8 @@ void BufferAccumulator ::pingIn_handler(const FwIndexType portNum, U32 key) {
 void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
                                                const U32 cmdSeq,
                                                const BufferAccumulator_OpState& mode) {
+    FW_ASSERT(this->m_numDrained <= this->m_numToDrain, static_cast<FwAssertArgType>(this->m_numDrained),
+              static_cast<FwAssertArgType>(this->m_numToDrain));
     // cancel an in-progress partial drain
     if (this->m_numToDrain > 0) {
         // reset counters for partial buffer drain

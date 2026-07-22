@@ -131,6 +131,7 @@ void Version ::projectVersion_tlm() {
 void Version ::libraryVersion_tlm() {
     // Process libraries array
     for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
+        FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
         // Write to Events

@@ -65,6 +65,7 @@ void BufferLogger::File ::setBaseName(const Fw::ConstStringBase& baseName) {
 }
 
 void BufferLogger::File ::logBuffer(const U8* const data, const FwSizeType size) {
+    FW_ASSERT(data != nullptr);
     // Close the file if it will be too big
     if (this->m_mode == File::Mode::OPEN) {
         const FwSizeType projectedByteCount = this->m_bytesWritten + this->m_sizeOfSize + size;

@@ -140,6 +140,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
+    FW_ASSERT(dataPacket.getData() != nullptr);
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);
@@ -149,6 +150,8 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
 }
 
 void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
+    FW_ASSERT(this->m_receiveMode == START || this->m_receiveMode == DATA,
+              static_cast<FwAssertArgType>(this->m_receiveMode));
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
         this->m_filesReceived.fileReceived();
