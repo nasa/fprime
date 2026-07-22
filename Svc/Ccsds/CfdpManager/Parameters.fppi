@@ -36,7 +36,7 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
         {
             ack_limit = 10, \
             nack_limit = 10, \
-            ack_timer = 10, \
+            ack_timer = 2, \
             inactivity_timer = 120, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
@@ -47,7 +47,7 @@ param ChannelConfig: Cfdp.ChannelArrayParams \
         {
             ack_limit = 10, \
             nack_limit = 10, \
-            ack_timer = 10, \
+            ack_timer = 2, \
             inactivity_timer = 120, \
             dequeue_enabled = Fw.Enabled.ENABLED, \
             move_dir = "", \
