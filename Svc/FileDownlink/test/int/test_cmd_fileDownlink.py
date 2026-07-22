@@ -7,6 +7,7 @@ Test the command FileDownlink with basic integration tests.
 
 
 """
+from pathlib import Path
 
 
 def test_send_fileDownlink_command(fprime_test_api):
@@ -14,6 +15,13 @@ def test_send_fileDownlink_command(fprime_test_api):
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of fileDownlink commands.
     """
+    fileuplink_int_dir = Path(__file__).resolve().parents[3] / "FileUplink" / "test" / "int"
+    fprime_test_api.uplink_file_and_await_completion(
+        str(fileuplink_int_dir / "test_seq_wait.seq"), "/tmp/test_seq_wait.seq", timeout=100
+    )
+    fprime_test_api.uplink_file_and_await_completion(
+        str(fileuplink_int_dir / "1MiB.txt"), "/tmp/1MiB.txt", timeout=100
+    )
 
     ## source = /tmp/test_seq_wait.seq   ,   Dest = /tmp/<user>/fprime-downlink/DL.log
     fprime_test_api.send_and_assert_command(

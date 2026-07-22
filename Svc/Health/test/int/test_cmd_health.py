@@ -4,6 +4,7 @@ Test the command dispatcher with basic integration tests.
 """
 
 import time
+from pathlib import Path
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
@@ -17,6 +18,10 @@ def test_send_health_command(fprime_test_api):
      health.HLTH_PING_ENABLE,["FileManager","DISABLED/ENABLED"]
      health.HLTH_CHNG_PING,["FileManager",1,1]
     """
+    fileuplink_int_dir = Path(__file__).resolve().parents[3] / "FileUplink" / "test" / "int"
+    fprime_test_api.uplink_file_and_await_completion(
+        str(fileuplink_int_dir / "1MiB.txt"), "/tmp/1MiB.txt", timeout=100
+    )
 
     # Enable all telemetry packet groups so CommandErrors and PingLateWarnings are emitted
     fprime_test_api.set_tlm_packet_level(3)
