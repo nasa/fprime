@@ -68,7 +68,7 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
 #if FW_SERIALIZABLE_TO_STRING
 void StatementArgBuffer::toString(Fw::StringBase& text) const {
     static const char* formatString = "(data = %p, size = %" PRI_FwSizeType ")";
-    text.format(formatString, &this->m_bufferData, this->getSize());
+    (void)text.format(formatString, &this->m_bufferData, this->getSize());  // display string may safely truncate
 }
 #endif
 }  // namespace Fw

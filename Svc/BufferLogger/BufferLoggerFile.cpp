@@ -104,11 +104,17 @@ void BufferLogger::File ::open() {
         return;
     }
 
+    Fw::FormatStatus formatStatus;
     if (this->m_fileCounter == 0) {
-        this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
+        formatStatus =
+            this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
     } else {
-        this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
-                            this->m_fileCounter, this->m_suffix.toChar());
+        formatStatus = this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(),
+                                           this->m_baseName.toChar(), this->m_fileCounter, this->m_suffix.toChar());
+    }
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileNameError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        return;
     }
 
     const Os::File::Status status = this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_WRITE);
