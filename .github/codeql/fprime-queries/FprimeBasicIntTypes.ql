@@ -93,6 +93,10 @@ predicate isExternalValueExpr(Expr e) {
   exists(FunctionCall c | externalFunction(c.getTarget()) and c = e)
   or
   exists(MacroInvocation mi | mi.getMacroName() = "errno" and mi.getExpr() = e)
+  or
+  // a field of a system-declared struct (e.g. `request.fd` of a kernel ioctl
+  // request struct): its type is fixed by the external definition
+  exists(FieldAccess fa | fa = e and not exists(fa.getTarget().getFile().getRelativePath()))
 }
 
 /**
@@ -127,7 +131,14 @@ predicate carriesExternalValue(Expr e) {
  * - a function whose return value forwards an external call (its `int` return
  *   mirrors the external API it wraps, e.g. thin wrappers around `pthread_*`);
  * - a variable initialized from a system/toolchain macro (e.g. `SCHED_RR`,
- *   `SOL_SOCKET`), whose integer type is fixed by that external definition.
+ *   `SOL_SOCKET`), whose integer type is fixed by that external definition;
+ * - a sentinel constant or parameter whose value flows into, or is compared
+ *   against, a declaration that is itself externally dictated (e.g.
+ *   `INVALID_FILE_DESCRIPTOR` assigned to / compared with a posix fd,
+ *   `SUCCESS` compared with a `pthread_*` status);
+ * - a variable passed (by value, reference, or address) to a repository
+ *   function whose corresponding parameter is externally dictated (an fd
+ *   out-parameter chain, e.g. `setupLineHandle(..., int& fd)`).
  */
 predicate externalApiDeclaration(Declaration d) {
   exists(Variable v | v = d | isExternalValueExpr(getAnAssignedExpr(v)))
@@ -148,6 +159,23 @@ predicate externalApiDeclaration(Declaration d) {
     v = d and
     not exists(mi.getMacro().getFile().getRelativePath()) and
     mi.getExpr() = v.getInitializer().getExpr()
+  )
+  or
+  exists(Variable v, Variable v2 | v = d and externalApiDeclaration(v2) |
+    getAnAssignedExpr(v2) = v.getAnAccess()
+  )
+  or
+  exists(Variable v, ComparisonOperation cmp | v = d and cmp.getAnOperand() = v.getAnAccess() |
+    carriesExternalValue(cmp.getAnOperand())
+    or
+    exists(Variable v2 | externalApiDeclaration(v2) and cmp.getAnOperand() = v2.getAnAccess() and v2 != v)
+  )
+  or
+  exists(FunctionCall c, int i, Variable v |
+    v = d and externalApiDeclaration(c.getTarget().getParameter(i))
+  |
+    c.getArgument(i) = v.getAnAccess() or
+    c.getArgument(i).(AddressOfExpr).getOperand() = v.getAnAccess()
   )
 }
 
