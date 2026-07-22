@@ -18,7 +18,7 @@ class ActiveComponentExitSerializableBuffer : public Fw::LinearBufferBase {
     U8 m_buff[sizeof(ActiveComponentBase::ACTIVE_COMPONENT_EXIT)];
 };
 
-ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name) {}
+ActiveComponentBase::ActiveComponentBase(const char* name) : QueuedComponentBase(name), m_stage(Lifecycle::CREATED) {}
 
 ActiveComponentBase::~ActiveComponentBase() {}
 

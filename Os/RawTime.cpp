@@ -16,6 +16,8 @@ RawTime::~RawTime() {
     m_delegate.~RawTimeInterface();
 }
 
+// m_handle_storage is placement-new storage populated by getDelegate below
+// cppcheck-suppress missingMemberCopy
 RawTime::RawTime(const RawTime& other)
     : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
