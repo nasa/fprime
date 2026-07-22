@@ -128,6 +128,7 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
 }
 
 int set_task_name(pthread_t thread, char* name) {
+    FW_ASSERT(name != nullptr);
     int status = 0;
 // pthread_setname_np is a non-POSIX function.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
