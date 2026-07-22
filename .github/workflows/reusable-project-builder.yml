@@ -143,7 +143,9 @@ jobs:
       - name: "Install AArch64 cross-compilation toolchain"
         run: |
           sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build zlib1g-dev
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build zlib1g-dev zlib1g-dev:arm64
         shell: bash
       - name: "Generate AArch64 Linux Build Cache"
         working-directory: ${{ inputs.build_location }}

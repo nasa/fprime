@@ -60,13 +60,6 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
 
-# Compression components - only add if zlib is available
-find_library(ZLIB_LIBRARY z)
-if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompressProc/")
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor/")
-endif()
-
 # Subtopologies
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
 
