@@ -29,4 +29,9 @@ module FileHandlingConfig {
         constant cycleTime      = 1000         # File downlink cycle time in ms
         constant fileQueueDepth = 10           # File downlink queue depth
     }
+
+    # File paths
+    module Paths {
+        constant prmDbFile = "PrmDb.dat"       # Parameter database file
+    }
 }

@@ -75,6 +75,7 @@ topology Flight {
 * **Queue sizes** — Queue depths for `fileUplink`, `fileDownlink`, `fileManager`.
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
+* **Paths** — File name for the `prmDb` parameter database.
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

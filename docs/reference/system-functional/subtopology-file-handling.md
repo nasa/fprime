@@ -30,7 +30,7 @@ The File Handling subtopology packages the core file-transfer and file-managemen
 
 - Base IDs, queue sizes, stack sizes, and priorities via FileHandlingConfig.
 - The File Downlink send rate is determined by the connected rate group frequency.
-- The Parameter Database file path is configured at deployment time.
+- The Parameter Database file name via FileHandlingConfig.Paths.prmDbFile.
 
 ### Limitations
 
