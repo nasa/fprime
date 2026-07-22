@@ -76,7 +76,8 @@ TlmChan::TlmChan(const char* name)
     (void)rawTime.serializeTo(serBuf);
 
     U32 foldedTime = 0;
-    for (U32 i = 0; i < static_cast<U32>(serBuf.getSize()); i++) {
+    const U32 timeSize = static_cast<U32>(serBuf.getSize());
+    for (U32 i = 0; i < timeSize; i++) {
         // Rotate-and-XOR each byte to avoid cancellation when bytes are equal
         foldedTime = (foldedTime << 8) | (foldedTime >> 24);
         foldedTime ^= static_cast<U32>(timeBuf[i]);
