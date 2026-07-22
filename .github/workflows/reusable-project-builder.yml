@@ -39,21 +39,6 @@ on:
         required: false
         type: string
         default: "devel"
-      requirements_location:
-        description: "Directory containing the requirements.txt to install. Defaults to the F´ submodule location."
-        required: false
-        type: string
-        default: ""
-      upload_artifacts:
-        description: "Upload build-artifacts/ for use by downstream jobs (e.g. integration tests)"
-        required: false
-        type: boolean
-        default: false
-      artifact_name:
-        description: "Name of the uploaded build artifact"
-        required: false
-        type: string
-        default: "external-build-artifacts"
 
 jobs:
 
@@ -63,7 +48,6 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      REQUIREMENTS_LOCATION: ${{ inputs.requirements_location }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -78,7 +62,7 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${REQUIREMENTS_LOCATION:-${FPRIME_LOCATION}}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
@@ -100,13 +84,6 @@ jobs:
           fi
           fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
-      - name: "Archive Build Artifacts"
-        if: ${{ inputs.upload_artifacts }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ inputs.artifact_name }}
-          path: build-artifacts/
-          retention-days: 1
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
@@ -115,7 +92,6 @@ jobs:
     env:
       FPRIME_LOCATION: ${{ inputs.fprime_location }}
       TARGET_PLATFORM: ${{ inputs.target_platform }}
-      REQUIREMENTS_LOCATION: ${{ inputs.requirements_location }}
     steps:
       - name: "Checkout target repository"
         uses: actions/checkout@v4
@@ -130,7 +106,7 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${REQUIREMENTS_LOCATION:-${FPRIME_LOCATION}}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}

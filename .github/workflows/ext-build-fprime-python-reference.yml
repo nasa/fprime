@@ -30,48 +30,29 @@ jobs:
       target_repository: fprime-community/fprime-python-reference
       default_target_ref: main
 
-  build:
-    needs: get-branch
-    name: ""
-    uses: ./.github/workflows/reusable-project-builder.yml
-    with:
-      target_repository: fprime-community/fprime-python-reference
-      fprime_location: lib/fprime
-      build_location: "."
-      run_unit_tests: false
-      # ubuntu-24.04 provides Python 3.12, required by fprime-python-reference
-      runs_on: ubuntu-24.04
-      target_ref: ${{ needs.get-branch.outputs.target-branch }}
-      requirements_location: "."
-      upload_artifacts: true
-      artifact_name: fprime-python-reference-build-artifacts
-
-  integration-tests:
-    needs: [get-branch, build]
+  build-and-test:
+    name: "Build and Integration Tests"
+    # ubuntu-24.04 provides Python 3.12, required by fprime-python-reference
     runs-on: ubuntu-24.04
-    name: "Integration Tests"
-    env:
-      FPRIME_LOCATION: lib/fprime
+    needs: get-branch
     steps:
-      - name: "Checkout target repository"
-        uses: actions/checkout@v4
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          submodules: recursive
-          repository: fprime-community/fprime-python-reference
-          ref: ${{ needs.get-branch.outputs.target-branch }}
-      - name: "Overlay current F´ revision"
-        uses: actions/checkout@v4
+          target_repository: fprime-community/fprime-python-reference
+          fprime_location: ./lib/fprime
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
         with:
-          submodules: true
-          path: lib/fprime
-      - name: "Install requirements.txt"
-        run: pip3 install -r requirements.txt
-        shell: bash
-      - name: "Download Build Artifacts"
-        uses: actions/download-artifact@v8
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Build"
+        uses: nasa/fprime-actions/build@devel
         with:
-          name: fprime-python-reference-build-artifacts
-          path: build-artifacts/
+          jobs: "8"
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
@@ -81,3 +62,10 @@ jobs:
           binary-args: "build-artifacts/python/fsw_main.py"
           gds-args: "--ip-client --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json"
           pytest-args: "test/int --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json --logs gds-logs"
+      - name: "Archive logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fprime-python-reference-logs
+          path: gds-logs
+          retention-days: 5
