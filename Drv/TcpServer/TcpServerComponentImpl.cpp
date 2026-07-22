@@ -95,6 +95,7 @@ void TcpServerComponentImpl::terminate() {
 void TcpServerComponentImpl::readLoop() {
     Drv::SocketIpStatus status = Drv::SocketIpStatus::SOCK_NOT_STARTED;
     // Keep trying to reconnect until the status is good, told to stop, or reconnection is turned off
+    // @non-terminating@: retry loop bounded by stop request
     do {
         status = this->startup();
         if (status != SOCK_SUCCESS) {

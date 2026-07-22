@@ -19,6 +19,7 @@
 namespace Types {
 
 U32 AtomicQueue::computeChecksum(const U8* buffer, FwSizeType size) {
+    FW_ASSERT(buffer != nullptr);
     U32 sum = 0;
     for (FwSizeType i = 0; i < size; ++i) {
         sum += buffer[i];
@@ -183,7 +184,7 @@ bool AtomicQueue::enqueueInternal(const U8* buffer, FwSizeType size) {
                                                          std::memory_order_relaxed)) {
                 // Claimed the slot, copy message data
                 FW_ASSERT(slot->buffer != nullptr, static_cast<FwAssertArgType>(pos));
-                std::memcpy(slot->buffer, buffer, size);
+                (void)std::memcpy(slot->buffer, buffer, size);
                 slot->size = size;
 
                 // Mark slot as ready for read
@@ -284,7 +285,7 @@ bool AtomicQueue::dequeue(U8* buffer, FwSizeType capacity, FwSizeType& actualSiz
                           static_cast<FwAssertArgType>(capacity));
 
                 actualSize = slot->size;
-                std::memcpy(buffer, slot->buffer, actualSize);
+                (void)std::memcpy(buffer, slot->buffer, actualSize);
 
                 // Mark slot as available for next cycle (pos + capacity)
                 slot->sequence.store(pos + this->m_capacity, std::memory_order_release);

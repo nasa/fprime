@@ -191,6 +191,7 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
             return QueueInterface::Status::FULL;
         }
         // Will loop and block until full is false
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isFull()) {
             this->m_handle.m_full.wait(this->m_handle.m_data_lock);
         }
@@ -217,6 +218,7 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
             return QueueInterface::Status::EMPTY;
         }
         // Loop and lock while empty
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isEmpty()) {
             this->m_handle.m_empty.wait(this->m_handle.m_data_lock);
         }

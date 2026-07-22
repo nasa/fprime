@@ -47,6 +47,7 @@ U32 Checksum ::getValue() const {
 }
 
 void Checksum ::update(const U8* const data, const U32 offset, const U32 length) {
+    FW_ASSERT(data != nullptr);
     U32 index = 0;
 
     // Add the first word unaligned if necessary
@@ -58,7 +59,9 @@ void Checksum ::update(const U8* const data, const U32 offset, const U32 length)
     }
 
     // Add the middle words aligned
-    for (; index + 4 <= length; index += 4) {
+    // End of the whole 4-byte words remaining after index, i.e. the largest index + 4*k <= length
+    const U32 alignedEnd = index + (((length - index) / 4) * 4);
+    for (; index < alignedEnd; index += 4) {
         addWordAligned(&data[index]);
     }
 
@@ -70,12 +73,14 @@ void Checksum ::update(const U8* const data, const U32 offset, const U32 length)
 }
 
 void Checksum ::addWordAligned(const U8* const word) {
+    FW_ASSERT(word != nullptr);
     for (U8 i = 0; i < 4; ++i) {
         addByteAtOffset(word[i], i);
     }
 }
 
 void Checksum ::addWordUnaligned(const U8* word, const U8 position, const U8 length) {
+    FW_ASSERT(word != nullptr);
     FW_ASSERT(length < 4);
     U8 offset = position % 4;
     for (U8 i = 0; i < length; ++i) {

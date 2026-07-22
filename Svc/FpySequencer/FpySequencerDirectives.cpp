@@ -1521,7 +1521,7 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     // Save the return value if there is one
     U8 returnValue[Fpy::MAX_STACK_SIZE] = {};
     if (returnValSize > 0) {
-        memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
+        (void)memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
     }
 
     // Truncate the stack to stack_frame_start (discard all local variables)

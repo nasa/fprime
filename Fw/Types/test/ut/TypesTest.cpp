@@ -1548,11 +1548,9 @@ TEST(TypesTest, FormatSpecifierTest) {
     str.format("F32: %" PRI_F64, static_cast<double>(numF32));
     ASSERT_STREQ(str.toChar(), "F32: 12.345679");
 
-#if FW_HAS_F64
     F64 numF64 = 12.3456789;
     str.format("F64: %" PRI_F64, numF64);
     ASSERT_STREQ(str.toChar(), "F64: 12.345679");
-#endif
 
     char c = 'A';
     str.format("CHAR: %" PRI_CHAR, c);

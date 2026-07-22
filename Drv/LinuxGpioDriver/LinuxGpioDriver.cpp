@@ -142,8 +142,8 @@ Os::File::Status LinuxGpioDriver ::setupLineHandle(const int chip_descriptor,
     struct gpiohandle_request request;
     (void)::memset(&request, 0, sizeof request);
     request.lineoffsets[0] = gpio;
-    Fw::StringUtils::string_copy(request.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
-                                 static_cast<FwSizeType>(sizeof request.consumer_label));
+    (void)Fw::StringUtils::string_copy(request.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
+                                       static_cast<FwSizeType>(sizeof request.consumer_label));
     request.default_values[0] = (default_state == Fw::Logic::HIGH) ? 1 : 0;
     request.fd = -1;
     request.lines = 1;
@@ -168,8 +168,8 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
     struct gpioevent_request event;
     (void)::memset(&event, 0, sizeof event);
     event.lineoffset = gpio;
-    Fw::StringUtils::string_copy(event.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
-                                 static_cast<FwSizeType>(sizeof event.consumer_label));
+    (void)Fw::StringUtils::string_copy(event.consumer_label, FW_OPTIONAL_NAME(this->getObjName()),
+                                       static_cast<FwSizeType>(sizeof event.consumer_label));
     event.fd = -1;
     event.handleflags = configuration_to_handler_flags(configuration);
     event.eventflags = configuration_to_event_flags(configuration);
@@ -222,8 +222,8 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     return_value = ioctl(chip_descriptor, GPIO_GET_LINEINFO_IOCTL, &pin_info);
     if (return_value == 0) {
         const bool has_consumer = pin_info.consumer[0] != '\0';
-        pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
-                           has_consumer ? pin_info.consumer : "");
+        (void)pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
+                                 has_consumer ? pin_info.consumer : "");
     }
 
     // Set up pin and set file descriptor for it
@@ -302,6 +302,7 @@ void LinuxGpioDriver ::pollLoop() {
     // Setup poll information
     pollfd file_descriptors[1];
     // Loop forever
+    // @non-terminating@: polling thread runs until stopped
     while (this->getRunning()) {
         // Setup polling
         (void)::memset(file_descriptors, 0, sizeof file_descriptors);

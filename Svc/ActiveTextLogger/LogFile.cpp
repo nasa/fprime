@@ -87,6 +87,7 @@ bool LogFile::set_log_file(const char* fileName, const FwSizeType maxSize, const
     U32 suffix = 0;
     bool failedSuffix = false;
     FwSizeType fileSize = 0;
+    // @non-terminating@: bounded by the maxBackups check below
     while (Os::FileSystem::getFileSize(searchFilename.toChar(), fileSize) == Os::FileSystem::OP_OK) {
         // Not able to create a new non-existing file in maxBackups tries, then mark that it failed:
         if (suffix >= maxBackups) {
