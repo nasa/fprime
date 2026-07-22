@@ -280,6 +280,9 @@ void AosFramer ::pack_pad_send(Fw::Buffer& data, const ComCfg::FrameContext& con
     if (context.get_sendNow()) {
         // Compute some sizes to check if we've got space left to pad
         const FwSizeType min_size = get_min_size();
+        FW_ASSERT(currentVc.frame.buffer.getSize() >= min_size,
+                  static_cast<FwAssertArgType>(currentVc.frame.buffer.getSize()),
+                  static_cast<FwAssertArgType>(min_size));
         const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - min_size;
 
         if (currentVc.current_payload_offset < maxPayload) {
