@@ -100,6 +100,11 @@ jobs:
             cat ${PWD}/ci-logs/*.log 2>/dev/null || true
             exit 1
           fi
+          for i in {1..30}; do
+            python -c "from yamcs.client import YamcsClient; YamcsClient('localhost:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
+            sleep 2
+          done
+          echo "YAMCS timeout" && exit 1
 
       - name: "Run YAMCS-specific tests"
         run: |
