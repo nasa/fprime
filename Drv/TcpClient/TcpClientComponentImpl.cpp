@@ -47,8 +47,8 @@ Fw::Buffer TcpClientComponentImpl::getBuffer() {
 }
 
 void TcpClientComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
-    // A successful receive must have produced a valid buffer
-    FW_ASSERT((status != SOCK_SUCCESS) || buffer.isValid());
+    // A successful receive must have produced a buffer with backing data (size may be zero)
+    FW_ASSERT((status != SOCK_SUCCESS) || (buffer.getData() != nullptr));
     Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
         recvStatus = ByteStreamStatus::OP_OK;
