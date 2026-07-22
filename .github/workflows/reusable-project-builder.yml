@@ -145,6 +145,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build zlib1g-dev
         shell: bash
+      - name: "Build zlib for ARM64"
+        run: |
+          wget https://www.zlib.net/zlib-1.3.1.tar.gz
+          tar -xzf zlib-1.3.1.tar.gz
+          cd zlib-1.3.1
+          CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar RANLIB=aarch64-linux-gnu-ranlib ./configure --prefix=/usr/aarch64-linux-gnu
+          make
+          sudo make install
+        shell: bash
       - name: "Generate AArch64 Linux Build Cache"
         working-directory: ${{ inputs.build_location }}
         run: |
