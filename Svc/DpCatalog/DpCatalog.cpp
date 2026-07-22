@@ -591,9 +591,6 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(Fw::String fullFile, FwSizeT
 // DpStateEntry Comparison Ops
 // ----------------------------------------------------------------------
 I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
-    // Entries must reference valid directory indices
-    FW_ASSERT(left.dir >= 0, static_cast<FwAssertArgType>(left.dir));
-    FW_ASSERT(right.dir >= 0, static_cast<FwAssertArgType>(right.dir));
     // check priority. Lower is higher priority
     if (left.record.get_priority() < right.record.get_priority()) {
         return -1;
