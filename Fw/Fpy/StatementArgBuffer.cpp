@@ -13,6 +13,8 @@ StatementArgBuffer::StatementArgBuffer() {}
 
 StatementArgBuffer::~StatementArgBuffer() {}
 
+// m_bufferData contents are copied via setBuff below
+// cppcheck-suppress missingMemberCopy
 StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other) : Fw::LinearBufferBase() {
     SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
