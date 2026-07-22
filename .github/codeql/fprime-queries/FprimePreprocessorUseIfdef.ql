@@ -19,10 +19,11 @@ import cpp
  * defined(O_SYNC)`, `#ifdef B3000000`), so feature detection of macros that
  * are not defined by this repository is permitted there.
  *
- * The core framework (Fw/) is configured through the FW_* switches in
- * FpConfig.h, so conditionals testing only those switches are permitted in
- * files under Fw/. Everywhere else, and for any other repository-defined
- * macro, conditional compilation is flagged.
+ * The core framework (Fw/) and OSAL (Os/) are configured through the FW_*
+ * switches in FpConfig.h and the BUILD_UT test-build switch, so conditionals
+ * testing only those switches are permitted in files under Fw/ and Os/.
+ * Everywhere else, and for any other repository-defined macro, conditional
+ * compilation is flagged.
  */
 
 /** Holds if a macro with the given name is defined in repository sources. */
@@ -64,14 +65,16 @@ predicate fpConfigSwitch(string name) {
   exists(Macro m | m.getName() = name and m.getFile() = fpConfigFile())
 }
 
-/** Holds if the directive only tests FW_* configuration switches from FpConfig.h. */
+/** Holds if the directive only tests FW_* configuration switches or the BUILD_UT test-build switch. */
 predicate fpConfigConditional(PreprocessorBranch b) {
   exists(conditionIdentifier(b)) and
-  forall(string id | id = conditionIdentifier(b) | fpConfigSwitch(id))
+  forall(string id | id = conditionIdentifier(b) | fpConfigSwitch(id) or id = "BUILD_UT")
 }
 
-/** Holds if the file is part of the core framework package. */
-predicate inFwPackage(File f) { f.getRelativePath().matches("Fw/%") }
+/** Holds if the file is part of the core framework or OSAL package. */
+predicate inFwPackage(File f) {
+  f.getRelativePath().matches("Fw/%") or f.getRelativePath().matches("Os/%")
+}
 
 from PreprocessorBranch i
 where
