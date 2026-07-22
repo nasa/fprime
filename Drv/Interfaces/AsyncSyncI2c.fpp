@@ -1,17 +1,17 @@
 module Drv {
-    interface AsyncGuardedI2c {
+    interface AsyncSyncI2c {
         # ----------------------------------------------------------------------
         # I2C interface ports (async with callbacks)
         # ----------------------------------------------------------------------
 
         @ Port for asynchronous write transaction
-        guarded input port write: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cRequest
+        sync input port write: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cRequest
 
         @ Port for asynchronous read transaction
-        guarded input port read: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cRequest
+        sync input port read: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cRequest
 
         @ Port for asynchronous write-read transaction
-        guarded input port writeRead: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cWriteReadRequest
+        sync input port writeRead: [Drv.AsyncI2cCfg.I2cDriverPorts] Drv.I2cWriteReadRequest
 
         ###### Ports below must be connected if buffers are being passed to/from i2c drv ######
 
