@@ -8,7 +8,6 @@ from enum import Enum
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
-
 """
 This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
 """

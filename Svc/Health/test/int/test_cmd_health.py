@@ -41,8 +41,9 @@ def test_send_health_command(fprime_test_api):
     # Verify disable/enable the Health command
     # Command: Disable the health  HLTH_ENABLE command
     fprime_test_api.send_and_assert_command(
-        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["DISABLED"],
-        timeout=10
+        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE",
+        ["DISABLED"],
+        timeout=10,
     )
     assert (
         fprime_test_api.get_command_test_history().size() == 1
@@ -53,8 +54,9 @@ def test_send_health_command(fprime_test_api):
 
     # Command: Enable health Expect number increment HLTH_Enable command
     fprime_test_api.send_and_assert_command(
-        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE", ["ENABLED"],
-        timeout=10
+        fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_ENABLE",
+        ["ENABLED"],
+        timeout=10,
     )
     assert (
         fprime_test_api.get_command_test_history().size() == 2
@@ -106,17 +108,17 @@ def test_send_health_command(fprime_test_api):
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_PING_ENABLE",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), "DISABLED"],
-        timeout=10
+        timeout=10,
     )
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_CHNG_PING",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), 1, 1],
-        timeout=10
+        timeout=10,
     )
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_PING_ENABLE",
         [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), "ENABLED"],
-        timeout=10
+        timeout=10,
     )
     fprime_test_api.send_command(
         fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",

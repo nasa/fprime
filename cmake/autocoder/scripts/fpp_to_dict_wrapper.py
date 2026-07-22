@@ -2,7 +2,7 @@
 """
 fpp_to_dict_wrapper.py:
 
-Wrapper script to run fpp-to-dict within the build process. 
+Wrapper script to run fpp-to-dict within the build process.
 This is required to be able to read the version files and pass them to the fpp-to-dict executable.
 
 @author thomas-bc
