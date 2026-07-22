@@ -66,7 +66,10 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // grab timer for endTime of cycle
-    endTime.now();
+    Os::RawTime::Status timeStatus = endTime.now();
+    if (timeStatus != Os::RawTime::Status::OP_OK) {
+        this->log_WARNING_HI_RateGroupTimeGetError(Os::RawTimeStatus(static_cast<Os::RawTimeStatus::T>(timeStatus)));
+    }
 
     // get rate group execution time
     U32 cycleTime;

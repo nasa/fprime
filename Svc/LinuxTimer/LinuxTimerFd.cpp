@@ -57,7 +57,10 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
             (void)timerfd_settime(fd, 0, &itval, nullptr);  // best-effort disarm on shutdown
             return;
         }
-        this->m_rawTime.now();
+        Os::RawTime::Status rawTimeStatus = this->m_rawTime.now();
+        if (rawTimeStatus != Os::RawTime::Status::OP_OK) {
+            Fw::Logger::log("timer raw time error: %d\n", static_cast<I32>(rawTimeStatus));
+        }
         this->CycleOut_out(0, this->m_rawTime);
     }
 }
