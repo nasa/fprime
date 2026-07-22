@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 20:18:46</td>
+      <td>2026-07-22 21:34:12</td>
     </tr>
   </table>
 </div>
@@ -70,8 +70,8 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l179">Types::AtomicQueue::getIndex(unsigned long) const (line 179)</a></td><td>called 147653 times</td><td>82.0%</td></tr>
-    <tr><td><a href="#l152">Types::AtomicQueue::isCreated() const (line 152)</a></td><td>called 409588 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l179">Types::AtomicQueue::getIndex(unsigned long) const (line 179)</a></td><td>called 200658 times</td><td>82.0%</td></tr>
+    <tr><td><a href="#l152">Types::AtomicQueue::isCreated() const (line 152)</a></td><td>called 449992 times</td><td>89.0%</td></tr>
   </table>
 </details>
 
@@ -1148,14 +1148,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 411862 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 451215 times.</div>
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 410767 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 264 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 449422 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 310 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">409588</td>
+      <td class="linecount partialCoveredLine">449992</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isCreated</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_slots</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1344,7 +1344,7 @@
       <td class="lineno"><a id="l179" href="#l179">179</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">147653</td>
+      <td class="linecount coveredLine">200658</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kr">inline</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="nf">getIndex</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1353,14 +1353,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 146342 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 199219 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 2204 times.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
             <div class="takenBranch">&check; Branch 9 taken 2204 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">147653</td>
+      <td class="linecount partialCoveredLine">200658</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mask</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="n">pos</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mask</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">pos</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
