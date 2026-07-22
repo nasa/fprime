@@ -70,6 +70,8 @@ int set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& argume
             const_cast<CHAR*>(arguments.m_name.toChar()), stack, static_cast<FwSizeType>(PTHREAD_STACK_MIN));
         stack = static_cast<FwSizeType>(PTHREAD_STACK_MIN);
     }
+    // Clamping above guarantees a valid minimum stack size
+    FW_ASSERT(stack >= static_cast<FwSizeType>(PTHREAD_STACK_MIN), static_cast<FwAssertArgType>(stack));
     status = pthread_attr_setstacksize(&attributes, static_cast<size_t>(stack));
     return status;
 }
@@ -92,6 +94,9 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
         priority = max_priority;
     }
 
+    // Clamping above guarantees the priority is within the policy's valid range
+    FW_ASSERT(priority >= min_priority && priority <= max_priority, static_cast<FwAssertArgType>(priority));
+
     // Set attributes required for priority
     status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY);
     if (status == PosixTaskHandle::SUCCESS) {
@@ -113,6 +118,8 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
 // That's the circumstance in which we expect this feature to work.
 #if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
     const FwSizeType affinity = arguments.m_cpuAffinity;
+    // CPU_SET is undefined for indices at or beyond CPU_SETSIZE
+    FW_ASSERT(affinity < static_cast<FwSizeType>(CPU_SETSIZE), static_cast<FwAssertArgType>(affinity));
     cpu_set_t cpu_set;
     CPU_ZERO(&cpu_set);
     CPU_SET(static_cast<int>(affinity), &cpu_set);

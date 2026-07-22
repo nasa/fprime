@@ -42,6 +42,8 @@ bool PortBase::isConnected() const {
 #if FW_PORT_TRACING == 1
 
 void PortBase::trace() const {
+    // Ports are only traced as part of invocation, which requires a connection
+    FW_ASSERT(this->isConnected());
     bool do_trace = false;
 
     if (this->m_ovr_trace) {

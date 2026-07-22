@@ -329,6 +329,8 @@ FwSizeType AtomicQueue::getSize() const {
     if (this->m_capacity == 0) {
         return 0;
     }
+    // A nonzero capacity implies the queue was created with backing storage
+    FW_ASSERT(this->m_slots != nullptr);
 
     FwSizeType enq = this->m_enqueuePos.load(std::memory_order_relaxed);
     FwSizeType deq = this->m_dequeuePos.load(std::memory_order_relaxed);
