@@ -71,11 +71,11 @@ The diagram below shows the `DpWriter` component.
 
 ### 3.4. Compile-Time Setup
 
-1. The configuration constant [`DpWriterNumProcPorts`](../../../config/AcConstants.fpp)
+1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
    processing.
 
-1. The configuration [`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp)
+1. The configuration [`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp)
    specifies the file name format.
 
 ### 3.5. Runtime Setup
@@ -151,7 +151,7 @@ with the format described in the
 ### 4.2. File Name
 
 The name of each file is formatted with the configurable format string
-[`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp).
+[`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp).
 The format string must contain format specifications for the following arguments,
 in order.
 
