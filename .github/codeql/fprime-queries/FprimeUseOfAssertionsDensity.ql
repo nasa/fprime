@@ -54,6 +54,30 @@ predicate testAsserted(Function f) {
   exists(GTestAssert a, Expr e | e = a.getAnExpandedElement() and e.getEnclosingFunction() = f)
 }
 
+/**
+ * A function that is part of the assertion-reporting machinery itself: the
+ * default assert reporter, the C-linkage assert entry points invoked by the
+ * FW_ASSERT macros, and the members of `Fw::AssertHook` and its subclasses
+ * (e.g. `Test::UnitTestAssert`). Asserting inside the assert handler would
+ * recurse into the very handler being executed, so these functions cannot
+ * satisfy the rule with FW_ASSERT.
+ */
+predicate assertInfrastructure(Function f) {
+  f.getDeclaringType().getABaseClass*().hasQualifiedName("Fw", "AssertHook")
+  or
+  f.hasGlobalName(["CAssert0", "CAssert1"])
+  or
+  f.hasQualifiedName("Fw", "defaultReportAssert")
+}
+
+/**
+ * A function that reports failures through a `bool` return value, the same
+ * caller-checked error-reporting contract as a status enum (e.g. the sequence
+ * loaders' `validateRecords`/`deserializeHeader` returning false on invalid
+ * input, or `RateLimiter::trigger`).
+ */
+predicate boolReturning(Function f) { f.getType().getUnspecifiedType() instanceof BoolType }
+
 from Function f
 where
   f.getMetrics().getNumberOfLinesOfCode() > 10 and
@@ -63,8 +87,10 @@ where
   not f.isFromUninstantiatedTemplate(_) and
   not exists(Assertion a | a.getAsserted().getEnclosingFunction() = f) and
   not statusReturning(f) and
+  not boolReturning(f) and
   not eventLogging(f) and
-  not testAsserted(f)
+  not testAsserted(f) and
+  not assertInfrastructure(f)
 select f,
   "All functions of more than 10 lines should have at least one assertion, " +
-    "unless they handle errors by returning a status enum or by emitting a WARNING/FATAL event."
+    "unless they handle errors by returning a status enum or bool, or by emitting a WARNING/FATAL event."
