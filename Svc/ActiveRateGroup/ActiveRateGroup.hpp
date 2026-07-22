@@ -15,6 +15,7 @@
 #ifndef SVC_ACTIVERATEGROUP_HPP
 #define SVC_ACTIVERATEGROUP_HPP
 
+#include <Fw/DataStructures/Array.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupComponentAc.hpp>
 
@@ -35,11 +36,8 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
   public:
     static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS;
 
-    //! \class ContextArray
-    //! \brief Struct containing the array of context values for rate group members
-    struct ContextArray {
-        U32 contexts[CONNECTION_COUNT_MAX];  //!< Context values, indexed by output port number
-    };
+    //! Array of context values for rate group members, indexed by output port number
+    using ContextArray = Fw::Array<U32, CONNECTION_COUNT_MAX>;
 
     //!  \brief ActiveRateGroup constructor
     //!

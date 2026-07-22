@@ -50,7 +50,7 @@ TEST(ActiveRateGroupTest, NominalSchedule) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
         Svc::ActiveRateGroup::ContextArray contexts;
         for (U32 i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-            contexts.contexts[i] = i + 1;
+            contexts[i] = i + 1;
         }
 
         Svc::ActiveRateGroup impl("ActiveRateGroup");
@@ -64,7 +64,7 @@ TEST(ActiveRateGroupTest, NominalSchedule) {
         // connect ports
         connectPorts(impl, tester);
 
-        tester.runNominal(contexts.contexts, FW_NUM_ARRAY_ELEMENTS(contexts.contexts), inst);
+        tester.runNominal(contexts.getElements(), Svc::ActiveRateGroup::CONNECTION_COUNT_MAX, inst);
     }
 }
 
@@ -72,7 +72,7 @@ TEST(ActiveRateGroupTest, CycleOverrun) {
     for (FwEnumStoreType inst = 0; inst < 3; inst++) {
         Svc::ActiveRateGroup::ContextArray contexts;
         for (U32 i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-            contexts.contexts[i] = i + 1;
+            contexts[i] = i + 1;
         }
 
         Svc::ActiveRateGroup impl("ActiveRateGroup");
@@ -86,14 +86,14 @@ TEST(ActiveRateGroupTest, CycleOverrun) {
         // connect ports
         connectPorts(impl, tester);
 
-        tester.runCycleOverrun(contexts.contexts, FW_NUM_ARRAY_ELEMENTS(contexts.contexts), inst);
+        tester.runCycleOverrun(contexts.getElements(), Svc::ActiveRateGroup::CONNECTION_COUNT_MAX, inst);
     }
 }
 
 TEST(ActiveRateGroupTest, PingPort) {
     Svc::ActiveRateGroup::ContextArray contexts;
     for (FwIndexType i = 0; i < Svc::ActiveRateGroup::CONNECTION_COUNT_MAX; i++) {
-        contexts.contexts[i] = static_cast<U32>(i + 1);
+        contexts[static_cast<FwSizeType>(i)] = static_cast<U32>(i + 1);
     }
 
     Svc::ActiveRateGroup impl("ActiveRateGroup");

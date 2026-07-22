@@ -27,9 +27,9 @@ Svc::RateGroupDriver::DividerSet rateGroupDivisorsSet{{{1, 0}, {2, 0}, {4, 0}}};
 
 // Rate groups may supply a context token to each of the attached children whose purpose is set by the project. The
 // reference topology sets each token to zero as these contexts are unused in this project.
-Svc::ActiveRateGroup::ContextArray rateGroup1Context = {};
-Svc::ActiveRateGroup::ContextArray rateGroup2Context = {};
-Svc::ActiveRateGroup::ContextArray rateGroup3Context = {};
+Svc::ActiveRateGroup::ContextArray rateGroup1Context(0);
+Svc::ActiveRateGroup::ContextArray rateGroup2Context(0);
+Svc::ActiveRateGroup::ContextArray rateGroup3Context(0);
 
 enum TopologyConstants {
     COMM_PRIORITY = 34,

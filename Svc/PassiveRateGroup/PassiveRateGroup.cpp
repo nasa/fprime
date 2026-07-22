@@ -29,10 +29,10 @@ void PassiveRateGroup::configure(const ContextArray& contexts) {
               static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
               static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
 
-    this->m_numContexts = static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(contexts.contexts));
+    this->m_numContexts = CONNECTION_COUNT_MAX;
     // copy context values
     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = contexts.contexts[entry];
+        this->m_contexts[entry] = contexts[static_cast<FwSizeType>(entry)];
     }
 }
 
@@ -43,7 +43,7 @@ void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numCont
 
     ContextArray contextArray;
     for (FwIndexType entry = 0; entry < numContexts; entry++) {
-        contextArray.contexts[entry] = static_cast<U32>(contexts[entry]);
+        contextArray[static_cast<FwSizeType>(entry)] = static_cast<U32>(contexts[entry]);
     }
     this->configure(contextArray);
 }
