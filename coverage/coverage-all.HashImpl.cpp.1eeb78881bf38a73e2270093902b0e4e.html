@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 19:20:11</td>
+      <td>2026-07-22 20:17:28</td>
     </tr>
   </table>
 </div>
@@ -70,15 +70,15 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l18">Utils::Hash::Hash() (line 18)</a></td><td>called 94603 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l40">Utils::Hash::finalize(Utils::HashBuffer&amp;) const (line 40)</a></td><td>called 58784 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l48">Utils::Hash::finalize(unsigned int&amp;) const (line 48)</a></td><td>called 7391 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l24">Utils::Hash::hash(void const*, unsigned long, Utils::HashBuffer&amp;) (line 24)</a></td><td>called 56730 times</td><td>73.0%</td></tr>
-    <tr><td><a href="#l30">Utils::Hash::init() (line 30)</a></td><td>called 124096 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l18">Utils::Hash::Hash() (line 18)</a></td><td>called 87344 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l40">Utils::Hash::finalize(Utils::HashBuffer&amp;) const (line 40)</a></td><td>called 55844 times</td><td>75.0%</td></tr>
+    <tr><td><a href="#l48">Utils::Hash::finalize(unsigned int&amp;) const (line 48)</a></td><td>called 7354 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l24">Utils::Hash::hash(void const*, unsigned long, Utils::HashBuffer&amp;) (line 24)</a></td><td>called 53790 times</td><td>73.0%</td></tr>
+    <tr><td><a href="#l30">Utils::Hash::init() (line 30)</a></td><td>called 114212 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l53">Utils::Hash::setHashValue(Utils::HashBuffer&amp;) (line 53)</a></td><td>called 3 times</td><td>94.0%</td></tr>
-    <tr><td><a href="#l61">Utils::Hash::setHashValue(unsigned int) (line 61)</a></td><td>called 138 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l34">Utils::Hash::update(void const*, unsigned long) (line 34)</a></td><td>called 2381388 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l22">Utils::Hash::~Hash() (line 22)</a></td><td>called 94788 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l61">Utils::Hash::setHashValue(unsigned int) (line 61)</a></td><td>called 100 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l34">Utils::Hash::update(void const*, unsigned long) (line 34)</a></td><td>called 2369673 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l22">Utils::Hash::~Hash() (line 22)</a></td><td>called 87536 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -215,21 +215,21 @@
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94603</td>
+      <td class="linecount coveredLine">87344</td>
       <td class="src coveredLine"><span class="n">Hash</span><span class="w"> </span><span class="nf">::Hash</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94603</td>
+      <td class="linecount coveredLine">87344</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94603</td>
+      <td class="linecount coveredLine">87344</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -243,7 +243,7 @@
       <td class="lineno"><a id="l22" href="#l22">22</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94788</td>
+      <td class="linecount coveredLine">87536</td>
       <td class="src coveredLine"><span class="n">Hash</span><span class="w"> </span><span class="o">::~</span><span class="n">Hash</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -257,7 +257,7 @@
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">56730</td>
+      <td class="linecount coveredLine">53790</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::hash</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="n">HashBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -266,11 +266,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 56730 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 53790 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">56730</td>
+      <td class="linecount coveredLine">53790</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Hash</span><span class="w"> </span><span class="n">crc32</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -279,11 +279,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 56730 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 53790 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">56730</td>
+      <td class="linecount coveredLine">53790</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">crc32</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -292,18 +292,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 56730 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 53790 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">56730</td>
+      <td class="linecount coveredLine">53790</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">crc32</span><span class="p">.</span><span class="n">finalize</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">113460</td>
+      <td class="linecount coveredLine">107580</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -317,21 +317,21 @@
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">124096</td>
+      <td class="linecount coveredLine">114212</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">124096</td>
+      <td class="linecount coveredLine">114212</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xffffffffL</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">124096</td>
+      <td class="linecount coveredLine">114212</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -345,7 +345,7 @@
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2381388</td>
+      <td class="linecount coveredLine">2369673</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::update</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -359,21 +359,21 @@
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2381388</td>
+      <td class="linecount coveredLine">2369673</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l37" href="#l37">37</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2381388</td>
+      <td class="linecount coveredLine">2369673</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">crc32_ieee802_3_update</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2381388</td>
+      <td class="linecount coveredLine">2369673</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -387,7 +387,7 @@
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58784</td>
+      <td class="linecount coveredLine">55844</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::finalize</span><span class="p">(</span><span class="n">HashBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -396,11 +396,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 58784 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 55844 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">58784</td>
+      <td class="linecount coveredLine">55844</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">HashBuffer</span><span class="w"> </span><span class="n">bufferOut</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -416,18 +416,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 58784 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 55844 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">58784</td>
+      <td class="linecount coveredLine">55844</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufferOut</span><span class="p">.</span><span class="n">serializeFrom</span><span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">58784</td>
+      <td class="linecount coveredLine">55844</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -436,18 +436,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 58784 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 55844 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">58784</td>
+      <td class="linecount coveredLine">55844</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">buffer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufferOut</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">117568</td>
+      <td class="linecount coveredLine">111688</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -461,7 +461,7 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7391</td>
+      <td class="linecount coveredLine">7354</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::finalize</span><span class="p">(</span><span class="n">U32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">hashvalue</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -475,14 +475,14 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7391</td>
+      <td class="linecount coveredLine">7354</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">hashvalue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7391</td>
+      <td class="linecount coveredLine">7354</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -552,21 +552,21 @@
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">138</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Hash</span><span class="w"> </span><span class="nf">::setHashValue</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">138</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">hash_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">value</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">138</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>GCC Code Coverage Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="coverage.css"/>
+  </head>
+
+  <body>
+
+    <header>
+      <h1>GCC Code Coverage Report</h1>
+      <hr/>
+      <div class="summary">
+<div>
+  <table class="legend">
+    <tr>
+      <th scope="row">Directory:</th>
+      <td>Svc/Ccsds/AosDeframer/</td>
+    </tr>
+    <tr>
+      <th scope="row">Date:</th>
+      <td>2026-07-22 20:19:12</td>
+    </tr>
+  </table>
+</div>
+
+<div>
+  <table class="coverage">
+    <tr>
+      <th></th>
+      <th scope="col">Exec</th>
+      <th scope="col">Total</th>
+      <th scope="col">Coverage</th>
+    </tr>
+    <tr>
+      <th scope="row">Lines:</th>
+      <td>273</td>
+      <td>277</td>
+      <td class="coverage-high">98.6%</td>
+    </tr>
+    <tr>
+      <th scope="row">Functions:</th>
+      <td>16</td>
+      <td>16</td>
+      <td class="coverage-high">100.0%</td>
+    </tr>
+    <tr>
+      <th scope="row">Branches:</th>
+      <td>193</td>
+      <td>216</td>
+      <td class="coverage-medium">89.4%</td>
+    </tr>
+  </table>
+</div>
+      </div>
+      <hr/>
+    </header>
+    <nav>
+    </nav>
+    <main>
+<table class="listOfFunctions">
+  <tr>
+    <th>Function (File:Line)</th>
+    <th>Call count</th>
+    <th>Block coverage</th>
+  </tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l28">Svc::Ccsds::AosDeframer::AosDeframer(char const*) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:28)</a></td><td>called 35 times</td><td>75.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l156">Svc::Ccsds::AosDeframer::abandonSpanningPacket(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:156)</a></td><td>called 147 times</td><td>87.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l285">Svc::Ccsds::AosDeframer::appendToSpanningPacket(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, unsigned char*, unsigned long) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:285)</a></td><td>called 81 times</td><td>80.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l42">Svc::Ccsds::AosDeframer::configure(unsigned int, bool, unsigned short, unsigned char, unsigned char) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:42)</a></td><td>called 35 times</td><td>89.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l93">Svc::Ccsds::AosDeframer::dataIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:93)</a></td><td>called 59 times</td><td>86.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l141">Svc::Ccsds::AosDeframer::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:141)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l384">Svc::Ccsds::AosDeframer::extractPackets(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, Fw::Buffer&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:384)</a></td><td>called 53 times</td><td>87.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l592">Svc::Ccsds::AosDeframer::getPacketVersion(unsigned char) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:592)</a></td><td>called 68 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l168">Svc::Ccsds::AosDeframer::getVcStruct(unsigned char) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:168)</a></td><td>called 54 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l150">Svc::Ccsds::AosDeframer::notifyErrorIfConnected(Svc::Ccsds::FrameError) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:150)</a></td><td>called 10 times</td><td>100.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l178">Svc::Ccsds::AosDeframer::parseAndValidateHeader(Fw::Buffer&amp;, ComCfg::FrameContext&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:178)</a></td><td>called 56 times</td><td>80.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l527">Svc::Ccsds::AosDeframer::sizeEppPacket(unsigned char const*, unsigned long) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:527)</a></td><td>called 31 times</td><td>87.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l459">Svc::Ccsds::AosDeframer::sizePacket(Svc::Ccsds::AosDeframer::AosDeframerVc&amp;, unsigned char*, unsigned long) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:459)</a></td><td>called 68 times</td><td>85.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l492">Svc::Ccsds::AosDeframer::sizeSppPacket(unsigned char*, unsigned long) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:492)</a></td><td>called 35 times</td><td>69.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l259">Svc::Ccsds::AosDeframer::validateFecf(Fw::Buffer&amp;) (Svc/Ccsds/AosDeframer/AosDeframer.cpp:259)</a></td><td>called 57 times</td><td>76.0%</td></tr>
+  <tr><td><a href="coverage.AosDeframer.cpp.9a8eca33d199f6f587c8685e6176f5a5.html#l40">Svc::Ccsds::AosDeframer::~AosDeframer() (Svc/Ccsds/AosDeframer/AosDeframer.cpp:40)</a></td><td>called 35 times</td><td>100.0%</td></tr>
+</table>
+
+      <hr/>
+    </main>
+    <footer>
+      Generated by: <a href="http://gcovr.com/en/8.2">GCOVR (Version 8.2)</a>
+    </footer>
+  </body>
+</html>
