@@ -263,7 +263,8 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeDescr
 
 Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeTimeTag(Fw::Time& timeTag) {
     Fw::LinearBufferBase& buffer = this->m_buffer;
-    U32 seconds, useconds;
+    U32 seconds;
+    U32 useconds;
     Fw::SerializeStatus status = buffer.deserializeTo(seconds);
     if (status == Fw::FW_SERIALIZE_OK) {
         status = buffer.deserializeTo(useconds);

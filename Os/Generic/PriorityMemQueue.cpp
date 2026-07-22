@@ -719,7 +719,8 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
             if (aq->getSize() == 0) {
                 continue;
             }
-            if (aq->dequeue(destination, capacity, actualSize)) {
+            const bool dequeued = aq->dequeue(destination, capacity, actualSize);
+            if (dequeued) {
                 priority = testPriority;
                 return QueueInterface::Status::OP_OK;
             }

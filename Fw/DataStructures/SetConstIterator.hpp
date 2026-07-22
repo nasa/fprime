@@ -92,7 +92,7 @@ class SetConstIterator {
     SetConstIterator& operator=(const SetConstIterator&) = default;
 
     //! Equality comparison operator
-    bool operator==(const SetConstIterator& it) {
+    bool operator==(const SetConstIterator& it) const {
         bool result = false;
         const auto implKind1 = this->getImplIterator().implKind();
         const auto implKind2 = it.getImplIterator().implKind();
@@ -113,7 +113,7 @@ class SetConstIterator {
     }
 
     //! Inequality comparison operator
-    bool operator!=(const SetConstIterator& it) { return !(*this == it); };
+    bool operator!=(const SetConstIterator& it) const { return !(*this == it); };
 
     //! Prefix increment
     SetConstIterator& operator++() {

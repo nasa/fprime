@@ -46,10 +46,10 @@ U16 TcpServerSocket::getListenPort() {
 }
 
 SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
-    int serverFd = -1;
     struct sockaddr_in address;
     // Acquire a socket, or return error
-    if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    int serverFd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (serverFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
@@ -61,7 +61,8 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
     // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
-    if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
+    const SocketIpStatus addressStatus = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (addressStatus != SOCK_SUCCESS) {
         ::close(serverFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
@@ -78,7 +79,8 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(serverFd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
+    const int socknameStatus = ::getsockname(serverFd, reinterpret_cast<struct sockaddr*>(&address), &size);
+    if (socknameStatus == -1) {
         ::close(serverFd);
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }

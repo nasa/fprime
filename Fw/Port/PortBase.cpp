@@ -100,8 +100,9 @@ void PortBase::toString(char* buffer, FwSizeType size) {
 #endif
                                                    : "None";
     // Format the external string or use "" on error
-    if (Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size))
-            .format(formatString, object_name, this_is_connected, connected_to) != Fw::FormatStatus::SUCCESS) {
+    const Fw::FormatStatus formatStatus = Fw::ExternalString(buffer, static_cast<Fw::ExternalString::SizeType>(size))
+                                              .format(formatString, object_name, this_is_connected, connected_to);
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
         buffer[0] = 0;
     }
 }

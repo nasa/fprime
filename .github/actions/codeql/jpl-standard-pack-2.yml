@@ -52,13 +52,23 @@ query-filters:
   - exclude:
       id:
         - cpp/jpl-c/multiple-stmts-per-line
+  # Excluded in favor of the F Prime refinement
+  # (cpp/fprime/jpl-c/multiple-var-decls-per-line), which does not mistake the
+  # compiler-generated variables of a C++ range-based for loop (__range,
+  # __begin, __end) for multiple declarations on one line
+  - exclude:
+      id:
+        - cpp/jpl-c/multiple-var-decls-per-line
   # Moved to jpl-standard-known-autocode-issues.yml (build paths excluded): the
   # autocoder emits conditional-compilation directives (include guards, #ifdef)
   # in generated headers, so the Rule 20 "Conditional compilation" check runs
   # there to guard only hand-written sources.
+  # The F Prime refinement (cpp/fprime/jpl-c/preprocessor-use-ifdef) also runs
+  # there, not here, since this run does not exclude build paths.
   - exclude:
       id:
         - cpp/jpl-c/preprocessor-use-ifdef
+        - cpp/fprime/jpl-c/preprocessor-use-ifdef
   # Moved to jpl-standard-known-autocode-issues.yml (build paths excluded): the
   # autocoder emits long generated functions, so the Rule 25 "Function too long"
   # check runs there to guard only hand-written sources.
@@ -76,3 +86,6 @@ paths-ignore:
   - "**/CMakeFiles/**"
   # Third-party dependencies fetched by CMake (e.g. googletest via FetchContent)
   - "**/_deps/**"
+  # Vendored third-party code is not maintained to the JPL standard
+  - "Utils/Hash/libcrc/**"
+  - "fprime-venv/**"

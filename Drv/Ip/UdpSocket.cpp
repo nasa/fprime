@@ -107,7 +107,8 @@ SocketIpStatus UdpSocket::bind(const int fd) {
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
+    const int socknameStatus = ::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size);
+    if (socknameStatus == -1) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
 
@@ -123,7 +124,6 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     SocketIpStatus status = SOCK_SUCCESS;
-    int socketFd = -1;
 
     // Initialize address structure to zero before use
     struct sockaddr_in address;
@@ -133,7 +133,8 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     U16 recv_port = ntohs(this->m_addr_recv.sin_port);
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_DGRAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
 

@@ -228,7 +228,7 @@ FwSizeType AosFramer::get_min_size() {
     return AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (this->m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
 }
 
-bool AosFramer::buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
+bool AosFramer::buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
@@ -342,7 +342,8 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     // Return the buffer if no bytes are outstanding
     if (currentVc.outstanding.offset == 0) {
         // Return the buffer if this isn't the SPP Idle buff
-        if (!buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer))) {
+        const bool isSppIdleBuffer = buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer));
+        if (!isSppIdleBuffer) {
             this->dataReturnOut_out(0, data,
                                     context);  // return ownership of the original data buffer
         }
