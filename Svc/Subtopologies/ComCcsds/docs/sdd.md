@@ -32,7 +32,7 @@ Both variants provide the standard **router + ComQueue + CCSDS framers/deframers
 
 | Instance name         | Type (Svc/Drv)                  | Kind    | Purpose (core function)                                                                         |
 | --------------------- | ------------------------------- | ------- | ----------------------------------------------------------------------------------------------- |
-| `fprimeRouter`        | `Svc.FprimeRouter`              | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
+| `router`              | `Svc.FprimeRouter` (default; configurable via `ComCcsdsRouterConfig.fpp`) | Passive | Routes deframed packets (e.g., commands/files) into the flight software.                        |
 | `comQueue`            | `Svc.ComQueue`                  | Active  | Queues categorized COM data for framing (telemetry, events, file, etc.); exposes `run`.         |
 | `spacePacketFramer`   | `Svc.Ccsds.SpacePacketFramer`   | Passive | Builds **CCSDS Space Packets** from COM buffers (downlink step 1).                              |
 | `framer`              | `Svc.Ccsds.TmFramer`            | Passive | Builds **CCSDS TM Transfer Frames** from space packets and sends to the link (downlink step 2). |
@@ -52,7 +52,7 @@ alternative stacks (e.g., inserting an SDLS security layer between them) while r
 
 | Topology             | Contents                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------- |
-| `SpacePacketFraming` | Packet layer: `comQueue`, `fprimeRouter`, `spacePacketFramer`, `spacePacketDeframer`, `apidManager`, `aggregator`, `commsBufferManager`. Open framing boundary. |
+| `SpacePacketFraming` | Packet layer: `comQueue`, `router`, `spacePacketFramer`, `spacePacketDeframer`, `apidManager`, `aggregator`, `commsBufferManager`. Open framing boundary. |
 | `SpacePacket`        | `SpacePacketFraming` plus `comStub` — a space-packet-only stack with no transfer frame layer.      |
 | `TmTcFraming`       | Transfer frame layer: `framer` (TM), `tcDeframer`, `frameAccumulator`. Open upstream/downstream boundaries. |
 | `FramingSubtopology` | `SpacePacketFraming` composed with `TmTcFraming` (variant B).                                      |
@@ -161,7 +161,7 @@ topology Flight {
 | ---------------- | -------------------------------------------------------------------------------------- |
 | SVC-COMCCSDS-001 | `spacePacketFramer` — `Svc.Ccsds.SpacePacketFramer`, `tmFramer` — `Svc.Ccsds.TmFramer` |
 | SVC-COMCCSDS-002 | `frameAccumulator` — `Svc.FrameAccumulator`                                            |
-| SVC-COMCCSDS-003 | `fprimeRouter` — `Svc.FprimeRouter`                                                    |
+| SVC-COMCCSDS-003 | `router` — `Svc.FprimeRouter` (default; swappable via `ComCcsdsRouterConfig.fpp`)      |
 | SVC-COMCCSDS-004 | `Subtopology` (variant including `Svc.ComStub`)                                        |
 | SVC-COMCCSDS-005 | `FramingSubtopology` (variant expecting external `Svc.ComInterface`)                   |
 | SVC-COMCCSDS-006 | `ComCcsdsConfig` module                                                                |
