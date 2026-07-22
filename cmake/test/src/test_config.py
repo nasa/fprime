@@ -8,7 +8,7 @@ import pytest
 from . import cmake
 from . import settings
 
-_1 = cmake.get_build(
+_ = cmake.get_build(
     "CONFIG_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
@@ -29,7 +29,7 @@ _1 = cmake.get_build(
     ],
 )
 
-_2 = cmake.get_build(
+_ = cmake.get_build(
     "CONFIG_FAILED_OVERRIDE_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
@@ -45,7 +45,7 @@ _2 = cmake.get_build(
     make_targets=[],
 )
 
-_3 = cmake.get_build(
+_ = cmake.get_build(
     "CONFIG_FAILED_NEW_FILE_BUILD",
     settings.DATA_DIR / "TestConfigDeployment",
     {
