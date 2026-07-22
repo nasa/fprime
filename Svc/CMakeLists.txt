@@ -59,6 +59,8 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompressProc/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor/")
 
 # Subtopologies
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
