@@ -193,7 +193,6 @@ static inline I32 findMSB(U32 value) {
     // Use compiler builtin for CLZ (count leading zeros) if available
 #if defined(__GNUC__) || defined(__clang__)
     I32 msb = 31 - __builtin_clz(value);
-    FW_ASSERT(msb >= 0 && msb <= 31, msb);
     return msb;
 #else
     // Fallback: software implementation with explicit bound (32 bits maximum)

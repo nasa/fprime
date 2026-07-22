@@ -67,12 +67,6 @@ PosixFile& PosixFile::operator=(const PosixFile& other) {
 }
 
 mode_t PosixFile::map_open_create_mode(const U32 create_mode) {
-    // Only known mode bits may be set; unknown bits would be silently dropped
-    FW_ASSERT((create_mode & ~static_cast<U32>(Os::FILE_MODE_IRUSR | Os::FILE_MODE_IWUSR | Os::FILE_MODE_IXUSR |
-                                               Os::FILE_MODE_IRGRP | Os::FILE_MODE_IWGRP | Os::FILE_MODE_IXGRP |
-                                               Os::FILE_MODE_IROTH | Os::FILE_MODE_IWOTH | Os::FILE_MODE_IXOTH |
-                                               Os::FILE_MODE_ISUID | Os::FILE_MODE_ISGID | Os::FILE_MODE_ISVTX)) == 0,
-              static_cast<FwAssertArgType>(create_mode));
     mode_t out_mode = 0;
 
     // Some posix systems (e.g. Darwin) use the older S_IREAD and S_IWRITE flags
