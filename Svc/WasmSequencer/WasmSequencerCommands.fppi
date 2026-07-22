@@ -1,9 +1,8 @@
 @ Run a Wasm module main function on it's own in the interpreter
 @ This command is short-hand for:
-@ 1. CLEAR_STORE
-@ 2. LOAD_NAME [fileName] ""
-@ 3. INVOKE "" "main"
-@ 4. CONTINUE
+@ 1. LOAD_NAME [fileName] ""
+@ 2. INVOKE "" "main"
+@ 3. CONTINUE
 @ 
 @ If $block == Svc.BlockState.BLOCK this command will wait for complemention.
 async command RUN(
@@ -12,7 +11,7 @@ async command RUN(
                     )
 
 @ Wait for the interpreter to finish and return it's result as a CmdResponse
-async command WAIT()
+async command WAIT
 
 # async command RUN_ARGS(
 #                       fileName: string size FileNameStringSize @< The name of the sequence file
@@ -35,10 +34,10 @@ async command LOAD_NAME(
     name: string size 16 @< WebAssembly module name, must not conflict with previously loaded modules
 )
 
-@ Invoke a function from a loaded module
+@ Invoke a main function from a loaded module
 async command INVOKE(
     $module: string size 16, @< Name of the module to invoke a function from
-    functionName: string size 64, @< Name of the function to be invoked
+    $block: Svc.BlockState
 )
 
 # @ Loads and validates a sequence with arguments
@@ -53,15 +52,15 @@ async command INVOKE(
 @ This completely clears the store.
 @ Cancelling during LOADING will trigger a fail response in the reader and
 @ return to IDLE mode.
-sync command CANCEL()
+sync command CANCEL
 
 @ Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
 @ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
 @ substates of the RUNNING state that are not RUNNING.PAUSED.
-async command BREAK()
+async command PAUSE
 
 @ Dump a stack trace in events
-async command TRACE()
+async command TRACE
 
 @ 
-async command CONTINUE()
+async command CONTINUE($block: Svc.BlockState)

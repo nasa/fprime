@@ -77,7 +77,7 @@ add_custom_command(
     DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
             "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
             "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
-    COMMENT "Building fprime_spacewasm Rust static library (spacewasm_c_api 0.3.0)"
+    COMMENT "Building fprime_spacewasm Rust static library"
     VERBATIM
 )
 add_custom_target(fprime_spacewasm_build DEPENDS "${FPRIME_SPACEWASM_LIB}")

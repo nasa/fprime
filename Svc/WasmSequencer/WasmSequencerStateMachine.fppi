@@ -1,17 +1,11 @@
 struct SequenceExecutionArgs {
     filePath: string size FileNameStringSize
-    $block: Svc.BlockState
     buffer: Svc.SeqArgs
 }
 
 struct ModuleLoad {
     fileName: string size FileNameStringSize
     moduleName: string size 16
-}
-
-struct FunctionInvoke {
-    moduleName: string size 16
-    functionName: string size 64
 }
 
 enum TrapReason {
@@ -47,13 +41,6 @@ enum TrapReason {
     BadConversionToInteger,
 }
 
-@ Failure loading a module. The spacewasm_c_api collapses all decode/validation
-@ failures into a single status code, so only the raw status is reported.
-struct LoadFailure {
-    @ spacewasm_status_t returned by spacewasm_store_load_module (non-zero)
-    status: I32,
-}
-
 enum AllocError : U8 {
     @ Not enough pages could be allocated to accommodate this allocation
     OutOfMemory,
@@ -65,25 +52,10 @@ enum AllocError : U8 {
     AllocationFailed,
 }
 
-@ A loaded and validated Wasm module
-struct Module {
-    moduleIndex: U16,
-    hasStart: bool
-}
+type ModuleIdx = U8
 
 state machine SequencerStateMachine {
-    initial enter IDLE
-
-    @ return true if there is a function invocation pending to be set up.
-    @ the pending FunctionInvoke is held in a component member var
-    guard pendingInvoke
-
-    @ return true if there is a module load pending.
-    @ the pending load path is held in a component member var
-    guard pendingLoad
-
-    @ return true if the freshly loaded module declared a Wasm start function
-    guard lastModuleHasStart
+    initial enter INIT
 
     ###############
     # Commands    #
@@ -99,13 +71,32 @@ state machine SequencerStateMachine {
     @ called on CONTINUE cmd. only raised in RUNNING.PAUSED state
     signal cmd_CONTINUE
 
-    @ called on BREAK cmd. only raised in RUNNING state
-    signal cmd_BREAK
+    @ called on PAUSE cmd. only raised in RUNNING state
+    signal cmd_PAUSE
 
-    signal cmd_INVOKE: FunctionInvoke
+    signal cmd_INVOKE: ModuleIdx
 
     @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
     signal cmd_CANCEL
+
+    ###############
+    # Guards      #
+    ###############
+
+    @ return true if the module is pending to execute after loading
+    guard pendingRun
+
+    @ return true if an invoke succeeded and the interpreter can now run
+    guard invokeFailed
+
+    @ return true if execution should pause before spinning the next statement
+    guard pendingPause
+
+    @ a host function is waiting to be processed
+    guard pendingHostFunction
+
+    @ return true if the last module load succeeded
+    guard moduleLoadSucceeded
 
     ###############
     # Actions     #
@@ -115,32 +106,38 @@ state machine SequencerStateMachine {
     action signalEntered
 
     @ Create a new store with N_MODULES (parameter) modules
-    action createStore
+    action resetStore
 
-    @ Clears the Wasm store and deallocates everything
-    action clearStore
+    @ Invoke the main function of last module loaded into the store
+    action invokeMainOfLastModule
 
-    @ sets up a function invocation on the interpreter from the pending FunctionInvoke member var
-    action invoke
+    @ Invoke the main function on a module given its index
+    action invokeMain: ModuleIdx
 
     @ Set the Wasm module to load and execute
-    @ Sets pendingLoad
     @ Sets pendingInvoke
     action pendRun: SequenceExecutionArgs
 
     @ Set the Wasm module to load but not execute
-    @ Sets pendingLoad
     action pendLoad: ModuleLoad
 
-    action appendModuleToStore: Module
+    action reportLoadFailure
 
-    action reportLoadFailure: LoadFailure
+    action reportInvokeFailure
 
     @ Load a pending module request
     action load
 
+    @ responds to any command waiting on load with OK
+    action sendLoadCmdResponse_OK
+    @ responds to any command waiting on load with EXECUTION_ERROR
+    action sendLoadCmdResponse_EXECUTION_ERROR
+
     @ Invoke the start function on a loaded module
-    action invokeStart
+    action invokeStartOfLastModule
+    signal startFinished
+    signal startInvoked
+    signal startError
 
     ###############
     # Signals     #
@@ -149,53 +146,78 @@ state machine SequencerStateMachine {
     @ Generic entry of a state
     signal entered
 
-    signal loadSucceeded: Module
+    signal storeAllocSucceeded
+    signal storeAllocFailed
 
-    signal loadFailed: LoadFailure
+    @ Interpreter is initializing a new Wasm store
+    state INIT {
+        entry do { resetStore }
+
+        on storeAllocSucceeded enter IDLE
+        on storeAllocFailed enter INVALID
+    }
+
+    @ Interpreter's store allocation failed
+    state INVALID {
+        on cmd_CANCEL enter INIT
+    }
 
     @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
-        entry do { clearStore }
-
+        on cmd_CANCEL enter INIT
         on cmd_RUN do { pendRun } enter LOADING
-
-        # a no-op
-        on cmd_CANCEL enter IDLE
-
-        on cmd_LOAD do { pendLoad }
+        on cmd_LOAD do { pendLoad } enter LOADING
+        on cmd_INVOKE do { invokeMain } enter INVOKE_CHECK
     }
 
     @ Interpreter is loading a Wasm module into the store
     state LOADING {
-        entry do { load }
-        on loadSucceeded do { appendModuleToStore } enter SUCCESS
-        on loadFailed do { reportLoadFailure, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        entry do { signalEntered }
+        on entered do { load } enter LOAD_CHECK
 
-        choice SUCCESS {
-            if lastModuleHasStart do { invokeStart } enter RUNNING \
-            else enter INVOKE_CHECK
+        choice LOAD_CHECK {
+            if moduleLoadSucceeded enter STARTING \
+            else do { reportLoadFailure, sendLoadCmdResponse_EXECUTION_ERROR } enter IDLE
         }
     }
 
+    @ A module finished loading and the start function needs to be invoked/run
+    state STARTING {
+        entry do { signalEntered }
+        on entered do { invokeStartOfLastModule }
+
+        # Start finished might be either start=host function or start=None
+        on startFinished enter RUN_CHECK
+        on startInvoked enter RUNNING
+        on startError do { reportInvokeFailure, sendLoadCmdResponse_EXECUTION_ERROR } enter IDLE
+    }
+
     @ A module finished loading; decide whether to invoke a pending function or wait
-    choice INVOKE_CHECK {
-        if pendingInvoke do { invoke } enter RUNNING \
+    choice RUN_CHECK {
+        if pendingRun do { invokeMainOfLastModule } enter INVOKE_CHECK \
         else do {
             # We are not pending an invoke/run meaning we are running a LOAD/LOAD_NAME
             # Reply to that command
-            sendCmdResponse_OK
-        } enter READY
+            sendLoadCmdResponse_OK
+        } enter IDLE
     }
 
-    @ Ready to execute a function
-    state READY {
-        on cmd_INVOKE do { invoke } enter RUNNING
-        on cmd_CANCEL enter IDLE
+    choice INVOKE_CHECK {
+        if invokeFailed do {
+            reportInvokeFailure,
+            sendLoadCmdResponse_EXECUTION_ERROR
+        } enter IDLE \
+        else enter RUNNING
     }
 
     ###############
     # runtime     #
     ###############
+
+    @ responds to all commands waiting for finish with OK
+    action sendRunCmdResponse_OK
+    @ responds to all commands waiting for finish with EXECUTION_ERROR
+    action sendRunCmdResponse_EXECUTION_ERROR
 
     @ spins the interpreter loop, executing up to a bounded number of instructions
     action spin
@@ -210,21 +232,19 @@ state machine SequencerStateMachine {
     @ reports that the interpreter failed to read an instruction from memory
     action report_seqReadError
     @ reports that execution was paused at a breakpoint
-    action report_seqBroken
-    @ responds to the calling command with OK
-    action sendCmdResponse_OK
-    @ responds to the calling command with EXECUTION_ERROR
-    action sendCmdResponse_EXECUTION_ERROR
+    action report_seqPaused
     @ stores the requested wake time for the SLEEPING state
     action set_sleepTime
     @ checks if the current statement has timed out
     action checkStatementTimeout
     @ checks if the sequencer should wake from sleep
     action checkShouldWake
-    @ sets the "break before next line" flag to true
-    action setBreakBeforeNextLine
-    @ sets the "break before next line" flag to false
-    action clearBreakBeforeNextLine
+    @ sets the pause flag to true
+    action pendPause
+    @ sets the pause flag to false
+    action clearPause
+    @ dispatch a host function port call
+    action dispatchPendingHostFunction
 
     @ raised whenever the checkTimers port is called
     signal checkTimersIn
@@ -257,7 +277,7 @@ state machine SequencerStateMachine {
     @ No more fuel (ran to instruction bound)
     signal interpreterOutOfFuel
 
-    @ An instruction or host function has requested the interpreter to pause
+    @ An asynchronous host function has been called and has requested the interpreter pause
     signal interpreterPause
 
     @ A signal to put the interpreter to sleep until a given time
@@ -266,47 +286,43 @@ state machine SequencerStateMachine {
     @ Failed to read an instruction from memory
     signal interpreterReaderError
 
-    @ return true if execution should break before spinning the next statement
-    guard shouldBreak
-
-    @ return true if the interpreter is currently executing a module's start function
-    guard executingStart
-
     @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
-        initial enter BREAK_CHECK
+        initial enter PAUSE_CHECK
 
         @ check whether to pause execution before spinning the next statement
-        choice BREAK_CHECK {
-            if shouldBreak do { report_seqBroken } enter PAUSED else enter SPINNING
-        }
-
-        @ a function has been invoked; the program and stack are initialized and ready to
-        @ spin the interpreter loop. must be started via the CONTINUE command
-        state READY {
-            on cmd_CONTINUE enter SPINNING
+        choice PAUSE_CHECK {
+            if pendingPause enter PAUSED else enter SPINNING
         }
 
         @ sequencer is spinning the interpreter loop
         state SPINNING {
-            entry do { spin }
+            entry do { signalEntered }
+            on entered do { spin }
             # -->
             on interpreterFinished enter FINISHED
-            on interpreterTrap do { report_seqTrap, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on interpreterReaderError do { report_seqReadError, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on interpreterOutOfFuel enter BREAK_CHECK
-            on interpreterPause enter AWAITING_RESPONSE
+            on interpreterTrap do { report_seqTrap, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            on interpreterReaderError do { report_seqReadError, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            on interpreterOutOfFuel enter PAUSE_CHECK
+            on interpreterPause enter HOST_FUNCTION
             on interpreterSleep do { set_sleepTime } enter SLEEPING
+
+            # Check if there is a pending 
+            choice HOST_FUNCTION {
+                if pendingPause enter PAUSED \
+                else do { dispatchPendingHostFunction } enter AWAITING_RESPONSE
+            }
 
             choice FINISHED {
                 # Check if we are running the start function
-                if executingStart enter INVOKE_CHECK \
+                if pendingRun enter RUN_CHECK \
                 else do {
                     # We are not executing the start function, report success to the command
                     # that requested the interpreter to spin
                     report_seqSucceeded,
-                    sendCmdResponse_OK
-                } enter READY
+                    clearPause,
+                    sendRunCmdResponse_OK
+                } enter IDLE
             }
 
         }
@@ -316,13 +332,13 @@ state machine SequencerStateMachine {
         state AWAITING_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # result_checkStatementTimeout_noTimeout not handled, no need
 
-            on stmtResponse_success enter BREAK_CHECK
-            on stmtResponse_failure do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on stmtResponse_success enter PAUSE_CHECK
+            on stmtResponse_failure do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # stmtResponse_keepWaiting not handled, we're already in the awaiting state
         }
 
@@ -330,21 +346,23 @@ state machine SequencerStateMachine {
         state SLEEPING {
             on checkTimersIn do { checkShouldWake, checkStatementTimeout }
             # -->
-            on result_checkShouldWake_wakeup enter BREAK_CHECK
+            on result_checkShouldWake_wakeup enter PAUSE_CHECK
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_timeOpFailed do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # if result_checkShouldWake_keepSleeping is raised, stay asleep
             # if result_checkStatementTimeout_noTimeout is raised, stay asleep
         }
 
-        @ execution was broken via the BREAK command.
-        @ sequencer is not taking any action, or allowing timeouts.
-        @ must be exited via command, either CANCEL or CONTINUE
         state PAUSED {
-            entry do { clearBreakBeforeNextLine }
+            entry do { clearPause, report_seqPaused }
             # -->
-            on cmd_CONTINUE enter SPINNING
+            on cmd_CONTINUE enter RESUME
+
+            choice RESUME {
+                if pendingHostFunction do { dispatchPendingHostFunction } enter AWAITING_RESPONSE \
+                else enter SPINNING
+            }
         }
 
         @ fail the sequence if we got an unexpected statement response while running it.
@@ -352,12 +370,12 @@ state machine SequencerStateMachine {
         @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
         @ sometimes, we can produce responses in strange situations nominally by cancelling and
         @ quickly running sequences. this signal does not cover such cases.
-        on stmtResponse_unexpected do { report_seqFailed, sendCmdResponse_EXECUTION_ERROR } enter IDLE
+        on stmtResponse_unexpected do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
 
         ####################
         # commands         #
         ####################
-        on cmd_CANCEL do { report_seqCancelled, sendCmdResponse_EXECUTION_ERROR } enter IDLE
-        on cmd_BREAK do { setBreakBeforeNextLine }
+        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter INIT
+        on cmd_PAUSE do { pendPause }
     }
 }

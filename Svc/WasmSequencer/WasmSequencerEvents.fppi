@@ -7,7 +7,7 @@ event StoreAllocationSucceeded(moduleCount: U16) \
     format "Successfully allocated store with {} modules"
 
 @ A command was issued in a state where it is not valid
-event InvalidCommand($state: I32) \
+event InvalidCommand($state: SequencerStateMachine.State) \
     severity warning low \
     format "Command not valid in state {}"
 
@@ -20,6 +20,10 @@ event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
 event ModuleLoadFailed(status: I32) \
     severity warning high \
     format "Module load failed: spacewasm status {}"
+
+event TooManyBlockingCommands \
+    severity warning high \
+    format "Too many commands blocking on sequencer finish"
 
 @ The interpreter ran a program to completion
 event SequenceSucceeded() \

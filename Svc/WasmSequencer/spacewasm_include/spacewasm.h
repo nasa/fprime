@@ -132,7 +132,7 @@ typedef int32_t spacewasm_read_result_t;
 #endif // __cplusplus
 
 /*
- Outcome of a call to `spacewasm_engine_run` / `spacewasm_engine_run_to_completion`.
+ Outcome of a call to `spacewasm_store_run`.
  */
 enum spacewasm_run_status_t
 #if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
@@ -441,7 +441,7 @@ spacewasm_status_t spacewasm_add_host_function(struct spacewasm_host_t *host,
  Load a guest module named `name` onto an existing store by streaming its
  bytes through the `read` callback. The callback owns the buffer backing each
  chunk (see [`spacewasm_read_fn_t`]). This does not run the module's start
- function; use [`spacewasm_store_module_needs_start`] and
+ function; use [`spacewasm_store_module_get_start`] and
  [`spacewasm_store_run_start`] for that. `allocator` supplies the guest linear
  memory (see [`spacewasm_allocator_new`]). Writes the new module's index to
  `out_module_idx` (if non-null). May be called repeatedly to load several
@@ -501,31 +501,19 @@ spacewasm_status_t spacewasm_store_find_export_func(struct spacewasm_store_t *st
                                                     uint32_t *out_index);
 
 /*
- Report whether module `module_idx` declares a start function that should be
- run (via [`spacewasm_store_run_start`]) before the module is used, writing
- the answer to `out_needs_start`.
+ Invoke the start function of a module.
+
+ If there is no start function, return [`spacewasm_run_status_t::SPACEWASM_RUN_FINISHED`]
+ If there is a start function, return [`spacewasm_run_status_t::SPACEWASM_RUN_OUT_OF_FUEL`]
+
+ If there are any bad arguments or the start function is a host function that traps,
+ return [`spacewasm_run_status_t::SPACEWASM_RUN_TRAP`]
 
  # Safety
- `store` must be live; `out_needs_start` valid.
+ `store` must be live
  */
-spacewasm_status_t spacewasm_store_module_needs_start(struct spacewasm_store_t *store,
-                                                      uint32_t module_idx,
-                                                      bool *out_needs_start);
-
-/*
- Run the start function of module `module_idx` (if any) for up to `fuel`
- instructions, writing any trap to `out_trap`. Returns whether the start
- function finished, trapped, paused, or ran out of fuel. A module with no
- start function returns [`spacewasm_run_status_t::SPACEWASM_RUN_FINISHED`]
- immediately. If it runs out of fuel, call again to resume.
-
- # Safety
- `store` must be live; `out_trap` null or valid.
- */
-spacewasm_run_status_t spacewasm_store_run_start(struct spacewasm_store_t *store,
-                                                 uint32_t module_idx,
-                                                 size_t fuel,
-                                                 spacewasm_trap_t *out_trap);
+spacewasm_run_status_t spacewasm_store_module_invoke_start(struct spacewasm_store_t *store,
+                                                           uint32_t module_idx);
 
 /*
  Set up a call to exported function `func_index` of module `module_idx` with
@@ -551,17 +539,6 @@ spacewasm_status_t spacewasm_store_invoke(struct spacewasm_store_t *store,
 spacewasm_run_status_t spacewasm_store_run(struct spacewasm_store_t *store,
                                            size_t fuel,
                                            spacewasm_trap_t *out_trap);
-
-/*
- Run the pending invocation to completion, slicing execution into
- `fuel_per_slice` chunks (0 for unbounded), writing any trap to `out_trap`.
-
- # Safety
- `store` must be live; `out_trap` null or valid.
- */
-spacewasm_run_status_t spacewasm_store_run_to_completion(struct spacewasm_store_t *store,
-                                                         size_t fuel_per_slice,
-                                                         spacewasm_trap_t *out_trap);
 
 /*
  Fetch the result of the last completed call, coerced to `expected`, into

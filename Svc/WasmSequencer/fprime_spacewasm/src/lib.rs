@@ -5,18 +5,10 @@
 //! This crate exists only to turn the crates.io `spacewasm_c_api` dependency
 //! into a single, stably-named staticlib artifact and to guarantee the
 //! dependency's exported symbols survive archiving.
-//!
-//! Deliberately NOT defined here: `#[panic_handler]`, `#[global_allocator]`, and
-//! `rust_eh_personality`. `spacewasm_c_api` (default features) provides all
-//! three; defining a second copy of any is a duplicate lang item and fails to
-//! link.
 #![no_std]
 
 extern crate spacewasm_c_api;
 
-/// A `*const ()` is not `Sync`, so a bare pointer array cannot be a `static`.
-/// The pointers are only ever held to keep symbols alive, never dereferenced, so
-/// asserting `Sync` is sound.
 #[repr(transparent)]
 struct KeepPtr(*const ());
 // SAFETY: the pointers are never read or dereferenced; the wrapper exists solely
@@ -31,8 +23,10 @@ unsafe impl Sync for KeepPtr {}
 // `spacewasm.h`; `spacewasm_panic` (integrator-supplied) and `rust_eh_personality`
 // (crate-provided) are intentionally omitted. Addresses are stored as `usize`
 // so the static is `Sync`.
+//
+// TODO(tumbar) This is a hack, we need to fix the C API crate...
 #[used]
-static KEEP: [KeepPtr; 21] = [
+static KEEP: [KeepPtr; 19] = [
     KeepPtr(spacewasm_c_api::global_alloc::spacewasm_set_global_allocator as *const ()),
     KeepPtr(spacewasm_c_api::spacewasm_memory_statistics as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_allocator_new as *const ()),
@@ -44,11 +38,9 @@ static KEEP: [KeepPtr; 21] = [
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_new as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_load_module as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_find_export_func as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_module_needs_start as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_run_start as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_store_module_invoke_start as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_invoke as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_run as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_run_to_completion as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_get_result as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_store_destroy as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_mem_read as *const ()),
