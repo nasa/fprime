@@ -150,6 +150,7 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     // first, iterate through severity filters
     for (FwEnumStoreType filter = 0; filter < FilterSeverity::NUM_CONSTANTS; filter++) {
         FilterSeverity filterState(static_cast<FilterSeverity::t>(filter));
+        FW_ASSERT(this->m_filterState[filter].enabled.isValid(), static_cast<FwAssertArgType>(filter));
         this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(filterState,
                                                     Enabled::ENABLED == this->m_filterState[filter].enabled.e);
     }

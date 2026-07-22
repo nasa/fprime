@@ -418,6 +418,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 }  // end fillBinaryTree()
 
 FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
+    FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(this->m_numDirectories));
     // Grab the directory string (up until the final slash)
     // Could be found directly w/ a dirname func or regex
     FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
@@ -840,6 +841,7 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
                                                const Fw::Wait& wait,
                                                bool remainActive) {
     Fw::CmdResponse resp = this->doCatalogXmit();
+    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
     this->m_remainActive = remainActive;
 
     if (resp != Fw::CmdResponse::OK) {

@@ -160,6 +160,10 @@ void PriorityQueue::teardown() {
 
 void PriorityQueue::teardownInternal() {
     if (this->m_handle.m_data != nullptr) {
+        // All backing arrays are allocated together in create()
+        FW_ASSERT(this->m_handle.m_indices != nullptr);
+        FW_ASSERT(this->m_handle.m_sizes != nullptr);
+        FW_ASSERT(this->m_handle.m_heap_pointer != nullptr);
         const FwEnumStoreType identifier = this->m_handle.m_id;
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);

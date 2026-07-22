@@ -62,6 +62,7 @@ void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum,
             severityString = "SEVERITY ERROR";
             break;
     }
+    FW_ASSERT(severityString != nullptr);
     Fw::Logger::log("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                     id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(),
                     timeTag.getUSeconds(), severityString, text.toChar());

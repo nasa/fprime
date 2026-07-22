@@ -151,6 +151,7 @@ void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
+    FW_ASSERT(queueIndex >= 0 && queueIndex < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueIndex));
 
     this->drainQueue(queueIndex);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -185,6 +186,9 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
 
     // Find our queue in the prioritized list & update the priority
     for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
+        // Each entry must reference a valid queue index
+        FW_ASSERT(m_prioritizedList[prioIndex].index >= 0 && m_prioritizedList[prioIndex].index < TOTAL_PORT_COUNT,
+                  static_cast<FwAssertArgType>(m_prioritizedList[prioIndex].index));
         // If the port based index matches, then update
         if (m_prioritizedList[prioIndex].index == queueIndex) {
             m_prioritizedList[prioIndex].priority = newPriority;
@@ -260,6 +264,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
 void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
+    FW_ASSERT(comQueueDepth.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comQueueDepth.SIZE));
     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {
         comQueueDepth[i] = static_cast<U32>(this->m_queues[i].get_high_water_mark());
         this->m_queues[i].clear_high_water_mark();
@@ -268,6 +273,8 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 
     // Downlink the high-water marks for the Fw::Buffer array types
     BuffQueueDepth buffQueueDepth;
+    FW_ASSERT((buffQueueDepth.SIZE + COM_PORT_COUNT) <= TOTAL_PORT_COUNT,
+              static_cast<FwAssertArgType>(buffQueueDepth.SIZE));
     for (U32 i = 0; i < buffQueueDepth.SIZE; i++) {
         buffQueueDepth[i] = static_cast<U32>(this->m_queues[i + COM_PORT_COUNT].get_high_water_mark());
         this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();

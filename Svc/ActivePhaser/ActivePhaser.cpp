@@ -110,6 +110,8 @@ void ActivePhaser ::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart
 // ----------------------------------------------------------------------
 
 void ActivePhaser ::Tick_internalInterfaceHandler() {
+    FW_ASSERT(m_state.current <= m_state.used, static_cast<FwAssertArgType>(m_state.current),
+              static_cast<FwAssertArgType>(m_state.used));
     m_lock.lock();
     U32 full_ticks = m_ticks;
     m_lock.unLock();
@@ -166,6 +168,7 @@ void ActivePhaser ::startChild(U32 full_ticks) {
     // If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of
     // execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a
     // user-specified time window.
+    FW_ASSERT((entry.contextType == SEQUENTIAL) || (entry.context != 0), static_cast<FwAssertArgType>(entry.port));
     U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
     entry.started = true;
     m_last_start_ticks = full_ticks;

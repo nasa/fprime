@@ -53,6 +53,8 @@ Fw::Buffer TcpServerComponentImpl::getBuffer() {
 }
 
 void TcpServerComponentImpl::sendBuffer(Fw::Buffer buffer, SocketIpStatus status) {
+    // A successful receive must have produced a buffer with backing data (size may be zero)
+    FW_ASSERT((status != SOCK_SUCCESS) || (buffer.getData() != nullptr));
     Drv::ByteStreamStatus recvStatus = ByteStreamStatus::OTHER_ERROR;
     if (status == SOCK_SUCCESS) {
         recvStatus = ByteStreamStatus::OP_OK;
@@ -104,6 +106,9 @@ void TcpServerComponentImpl::readLoop() {
             continue;
         }
     } while (this->running() && status != SOCK_SUCCESS && this->m_reopen);
+    // Loop exit implies startup succeeded, a stop was requested, or reopen is disabled
+    FW_ASSERT(status == SOCK_SUCCESS || (not this->running()) || (not this->m_reopen),
+              static_cast<FwAssertArgType>(status));
     // If start up was successful then perform normal operations
     if (this->running() && status == SOCK_SUCCESS) {
         // Perform the nominal read loop
