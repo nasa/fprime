@@ -24,6 +24,14 @@ module Svc {
             format "Unable to reduce size of Data Product {}. Uncompressed size {}" \
             throttle 10
 
+        @ Error occurred when deserializing the container header
+        event InvalidHeader(buffer_size: FwSizeType @< The incoming buffer size
+                            error_code: U32 @< The error code
+                            ) \
+            severity warning high \
+            format "Received buffer of size {}; deserialization of container header failed with error code {}" \
+            throttle 10
+
         @ Record ID used to mark compressed records in a data product
         product record CompressionRecord: U8 array
 

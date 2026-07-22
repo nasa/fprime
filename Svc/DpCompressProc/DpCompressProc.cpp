@@ -57,6 +57,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     const Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         // Cannot process a container with an invalid header. Give up
+        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(), static_cast<U32>(desStat));
         return;
     }
 
