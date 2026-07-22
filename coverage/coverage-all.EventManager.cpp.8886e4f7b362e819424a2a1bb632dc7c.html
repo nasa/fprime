@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:48:48</td>
+      <td>2026-07-22 17:08:27</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>91</td>
-      <td>97</td>
-      <td class="coverage-high">93.8%</td>
+      <td>92</td>
+      <td>98</td>
+      <td class="coverage-high">93.9%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -70,14 +70,14 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l147">Svc::EventManager::DUMP_FILTER_STATE_cmdHandler(unsigned int, unsigned int) (line 147)</a></td><td>called 1 time</td><td>77.0%</td></tr>
+    <tr><td><a href="#l147">Svc::EventManager::DUMP_FILTER_STATE_cmdHandler(unsigned int, unsigned int) (line 147)</a></td><td>called 1 time</td><td>78.0%</td></tr>
     <tr><td><a href="#l18">Svc::EventManager::EventManager(char const*) (line 18)</a></td><td>called 7 times</td><td>57.0%</td></tr>
     <tr><td><a href="#l36">Svc::EventManager::LogRecv_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt;&amp;) (line 36)</a></td><td>called 54 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l113">Svc::EventManager::SET_EVENT_FILTER_cmdHandler(unsigned int, unsigned int, Svc::EventManager_FilterSeverity const&amp;, Svc::EventManager_Enabled const&amp;) (line 113)</a></td><td>called 30 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l121">Svc::EventManager::SET_ID_FILTER_cmdHandler(unsigned int, unsigned int, unsigned int, Svc::EventManager_Enabled const&amp;) (line 121)</a></td><td>called 80 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l96">Svc::EventManager::loqQueue_internalInterfaceHandler(unsigned int, Fw::Time const&amp;, Fw::LogSeverity const&amp;, Fw::LinearBufferTemplate&lt;506ul&gt; const&amp;) (line 96)</a></td><td>called 20 times</td><td>98.0%</td></tr>
-    <tr><td><a href="#l169">Svc::EventManager::pingIn_handler(short, unsigned int) (line 169)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l165">Svc::EventManager::run_handler(short, unsigned int) (line 165)</a></td><td>called 2 times</td><td>81.0%</td></tr>
+    <tr><td><a href="#l170">Svc::EventManager::pingIn_handler(short, unsigned int) (line 170)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l166">Svc::EventManager::run_handler(short, unsigned int) (line 166)</a></td><td>called 2 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l34">Svc::EventManager::~EventManager() (line 34)</a></td><td>called 7 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -1415,10 +1415,17 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_SEVERITY_FILTER_STATE</span><span class="p">(</span><span class="n">filterState</span><span class="p">,</span></td>
+      <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_filterState</span><span class="p">[</span><span class="n">filter</span><span class="p">].</span><span class="n">enabled</span><span class="p">.</span><span class="n">isValid</span><span class="p">(),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">filter</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l154" href="#l154">154</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_LO_SEVERITY_FILTER_STATE</span><span class="p">(</span><span class="n">filterState</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/3</summary>
@@ -1433,28 +1440,28 @@
       <td class="src partialCoveredLine"><span class="w">                                                    </span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_filterState</span><span class="p">[</span><span class="n">filter</span><span class="p">].</span><span class="n">enabled</span><span class="p">.</span><span class="n">e</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l155" href="#l155">155</a></td>
+      <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l156" href="#l156">156</a></td>
+      <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l157" href="#l157">157</a></td>
+      <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// iterate through ID filter</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l158" href="#l158">158</a></td>
+      <td class="lineno"><a id="l159" href="#l159">159</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">7/7</summary>
@@ -1473,7 +1480,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwEventIdType</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_filteredIDs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l159" href="#l159">159</a></td>
+      <td class="lineno"><a id="l160" href="#l160">160</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1486,21 +1493,21 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_ID_FILTER_ENABLED</span><span class="p">(</span><span class="n">ID</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l160" href="#l160">160</a></td>
+      <td class="lineno"><a id="l161" href="#l161">161</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l161" href="#l161">161</a></td>
+      <td class="lineno"><a id="l162" href="#l162">162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l162" href="#l162">162</a></td>
+      <td class="lineno"><a id="l163" href="#l163">163</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1514,28 +1521,28 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l163" href="#l163">163</a></td>
+      <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l164" href="#l164">164</a></td>
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">run_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -1550,63 +1557,63 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_EventsDropped</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getNumMsgsDropped</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">EventManager</span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// return key</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l172" href="#l172">172</a></td>
+      <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l173" href="#l173">173</a></td>
+      <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l174" href="#l174">174</a></td>
+      <td class="lineno"><a id="l175" href="#l175">175</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l175" href="#l175">175</a></td>
+      <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

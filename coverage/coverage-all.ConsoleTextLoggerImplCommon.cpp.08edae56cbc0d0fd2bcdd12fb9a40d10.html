@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:48:48</td>
+      <td>2026-07-22 17:08:27</td>
     </tr>
   </table>
 </div>
@@ -41,7 +41,7 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>0</td>
-      <td>43</td>
+      <td>44</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
@@ -540,38 +540,45 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;EVENT: (%&quot;</span><span class="w"> </span><span class="n">PRI_FwEventIdType</span><span class="w"> </span><span class="s">&quot;) (%&quot;</span><span class="w"> </span><span class="n">PRI_FwTimeBaseStoreType</span><span class="w"> </span><span class="s">&quot;:%&quot;</span><span class="w"> </span><span class="n">PRIu32</span><span class="w"> </span><span class="s">&quot;,%&quot;</span><span class="w"> </span><span class="n">PRIu32</span><span class="w"> </span><span class="s">&quot;) %s: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">severityString</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwTimeBaseStoreType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeTag</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">()),</span><span class="w"> </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">(),</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;EVENT: (%&quot;</span><span class="w"> </span><span class="n">PRI_FwEventIdType</span><span class="w"> </span><span class="s">&quot;) (%&quot;</span><span class="w"> </span><span class="n">PRI_FwTimeBaseStoreType</span><span class="w"> </span><span class="s">&quot;:%&quot;</span><span class="w"> </span><span class="n">PRIu32</span><span class="w"> </span><span class="s">&quot;,%&quot;</span><span class="w"> </span><span class="n">PRIu32</span><span class="w"> </span><span class="s">&quot;) %s: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">(),</span><span class="w"> </span><span class="n">severityString</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwTimeBaseStoreType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeTag</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">()),</span><span class="w"> </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">(),</span><span class="w"> </span><span class="n">severityString</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

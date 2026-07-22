@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:49:39</td>
+      <td>2026-07-22 17:09:33</td>
     </tr>
   </table>
 </div>
@@ -41,19 +41,19 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>0</td>
-      <td>58</td>
+      <td>65</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
       <td>0</td>
-      <td>19</td>
+      <td>20</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
       <th scope="row">Branches:</th>
       <td>0</td>
-      <td>30</td>
+      <td>35</td>
       <td class="coverage-none">0.0%</td>
     </tr>
   </table>
@@ -78,7 +78,8 @@
     <tr><td><a href="#l51">Fw::StringUtils::StringToNumberStatus string_to_number_as_template&lt;unsigned int, unsigned long long, &amp;strtoull&gt;(char const*, unsigned long, unsigned int&amp;, char**, unsigned char) (line 51)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l51">Fw::StringUtils::StringToNumberStatus string_to_number_as_template&lt;unsigned long, unsigned long long, &amp;strtoull&gt;(char const*, unsigned long, unsigned long&amp;, char**, unsigned char) (line 51)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l51">Fw::StringUtils::StringToNumberStatus string_to_number_as_template&lt;unsigned short, unsigned long long, &amp;strtoull&gt;(char const*, unsigned long, unsigned short&amp;, char**, unsigned char) (line 51)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l162">Fw::StringUtils::string_to_number(char const*, unsigned long, float&amp;, char**) (line 162)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l147">Fw::StringUtils::string_to_number(char const*, unsigned long, double&amp;, char**) (line 147)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l160">Fw::StringUtils::string_to_number(char const*, unsigned long, float&amp;, char**) (line 160)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l109">Fw::StringUtils::string_to_number(char const*, unsigned long, int&amp;, char**, unsigned char) (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l92">Fw::StringUtils::string_to_number(char const*, unsigned long, long&amp;, char**, unsigned char) (line 92)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l125">Fw::StringUtils::string_to_number(char const*, unsigned long, short&amp;, char**, unsigned char) (line 125)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -1128,193 +1129,179 @@
       <td class="lineno"><a id="l147" href="#l147">147</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#if FW_HAS_F64</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_to_number</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CHAR</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l148" href="#l148">148</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_to_number</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CHAR</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                                        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                                        </span><span class="n">F64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">output</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="n">F64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">output</span><span class="p">,</span></td>
+      <td class="src "><span class="w">                                                                        </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l152" href="#l152">152</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">output_next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l153" href="#l153">153</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_input_check</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l154" href="#l154">154</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SUCCESSFUL_CONVERSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l155" href="#l155">155</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtod</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">output_next</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l156" href="#l156">156</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l157" href="#l157">157</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_output_check</span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output_next</span><span class="p">,</span><span class="w"> </span><span class="n">next</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l158" href="#l158">158</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l159" href="#l159">159</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l160" href="#l160">160</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l161" href="#l161">161</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l162" href="#l162">162</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_to_number</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CHAR</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l163" href="#l163">163</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l164" href="#l164">164</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="n">F32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">output</span><span class="p">,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l165" href="#l165">165</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                                        </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l166" href="#l166">166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">output_next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="lineno"><a id="l152" href="#l152">152</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_input_check</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SUCCESSFUL_CONVERSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtof</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">output_next</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtod</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">output_next</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_output_check</span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output_next</span><span class="p">,</span><span class="w"> </span><span class="n">next</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l172" href="#l172">172</a></td>
+      <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l173" href="#l173">173</a></td>
+      <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l174" href="#l174">174</a></td>
+      <td class="lineno"><a id="l159" href="#l159">159</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l160" href="#l160">160</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">string_to_number</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CHAR</span><span class="o">*</span><span class="w"> </span><span class="n">input</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l161" href="#l161">161</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                                        </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l162" href="#l162">162</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                                        </span><span class="n">F32</span><span class="o">&amp;</span><span class="w"> </span><span class="n">output</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l163" href="#l163">163</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                                        </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l164" href="#l164">164</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">output_next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">StringToNumberStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_input_check</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">buffer_size</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SUCCESSFUL_CONVERSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strtof</span><span class="p">(</span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">output_next</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string_to_helper_output_check</span><span class="p">(</span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"> </span><span class="n">output_next</span><span class="p">,</span><span class="w"> </span><span class="n">next</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

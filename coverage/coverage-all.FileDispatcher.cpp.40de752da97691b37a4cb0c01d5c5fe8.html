@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:48:48</td>
+      <td>2026-07-22 17:08:27</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>39</td>
-      <td>39</td>
+      <td>41</td>
+      <td>41</td>
       <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
@@ -70,11 +70,11 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l75">Svc::FileDispatcher::ENABLE_DISPATCH_cmdHandler(unsigned int, unsigned int, Svc::FileDispatcherCfg::FileDispatchPort const&amp;, Fw::Enabled const&amp;) (line 75)</a></td><td>called 6 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l77">Svc::FileDispatcher::ENABLE_DISPATCH_cmdHandler(unsigned int, unsigned int, Svc::FileDispatcherCfg::FileDispatchPort const&amp;, Fw::Enabled const&amp;) (line 77)</a></td><td>called 6 times</td><td>85.0%</td></tr>
     <tr><td><a href="#l16">Svc::FileDispatcher::FileDispatcher(char const*) (line 16)</a></td><td>called 5 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l26">Svc::FileDispatcher::configure(Svc::FileDispatcherTable const&amp;) (line 26)</a></td><td>called 4 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l47">Svc::FileDispatcher::fileAnnounceRecv_handler(short, Fw::StringBase&amp;) (line 47)</a></td><td>called 40 times</td><td>98.0%</td></tr>
-    <tr><td><a href="#l88">Svc::FileDispatcher::pingIn_handler(short, unsigned int) (line 88)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l47">Svc::FileDispatcher::fileAnnounceRecv_handler(short, Fw::StringBase&amp;) (line 47)</a></td><td>called 40 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l92">Svc::FileDispatcher::pingIn_handler(short, unsigned int) (line 92)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l24">Svc::FileDispatcher::~FileDispatcher() (line 24)</a></td><td>called 5 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -456,18 +456,32 @@
       <td class="lineno"><a id="l49" href="#l49">49</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount coveredLine">40</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">FileDispatcherCfg</span><span class="o">::</span><span class="n">FILE_DISPATCHER_MAX_TABLE_SIZE</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// walk table to find match</span></td>
+      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// walk table to find match</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -481,7 +495,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -497,56 +511,56 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">enabled</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l53" href="#l53">53</a></td>
+      <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">200</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">continue</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l54" href="#l54">54</a></td>
+      <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">400</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">loc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">StringUtils</span><span class="o">::</span><span class="n">substring_find_last</span><span class="p">(</span><span class="n">file_name</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="n">file_name</span><span class="p">.</span><span class="n">length</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l57" href="#l57">57</a></td>
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">200</td>
       <td class="src coveredLine"><span class="w">                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fileExt</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l58" href="#l58">58</a></td>
+      <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">200</td>
       <td class="src coveredLine"><span class="w">                                                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fileExt</span><span class="p">.</span><span class="n">length</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/4</summary>
@@ -562,14 +576,14 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">loc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w">  </span><span class="c1">// matches at all</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="w">            </span><span class="p">(</span><span class="n">file_name</span><span class="p">.</span><span class="n">length</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">fileExt</span><span class="p">.</span><span class="n">length</span><span class="p">()</span><span class="w"> </span><span class="o">==</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l62" href="#l62">62</a></td>
+      <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -583,21 +597,21 @@
       <td class="src partialCoveredLine"><span class="w">             </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">loc</span><span class="p">))</span><span class="w">  </span><span class="c1">// match at end of string</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l63" href="#l63">63</a></td>
+      <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l64" href="#l64">64</a></td>
+      <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="c1">// dispatch on this port</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l65" href="#l65">65</a></td>
+      <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -611,53 +625,39 @@
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">fileDispatch_out</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">port</span><span class="p">.</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">file_name</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l66" href="#l66">66</a></td>
+      <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_FileDispatched</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">port</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l67" href="#l67">67</a></td>
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l70" href="#l70">70</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l71" href="#l71">71</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Handler implementations for commands</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
@@ -671,38 +671,66 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">// Handler implementations for commands</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDispatcher</span><span class="w"> </span><span class="o">::</span><span class="n">ENABLE_DISPATCH_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                 </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">FileDispatcherCfg</span><span class="o">::</span><span class="n">FileDispatchPort</span><span class="o">&amp;</span><span class="w"> </span><span class="n">file_type</span><span class="p">,</span></td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDispatcher</span><span class="w"> </span><span class="o">::</span><span class="n">ENABLE_DISPATCH_cmdHandler</span><span class="p">(</span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">&amp;</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                                                 </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">FileDispatcherCfg</span><span class="o">::</span><span class="n">FileDispatchPort</span><span class="o">&amp;</span><span class="w"> </span><span class="n">file_type</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                 </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">&amp;</span><span class="w"> </span><span class="n">enable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">6</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Svc</span><span class="o">::</span><span class="n">FileDispatcherCfg</span><span class="o">::</span><span class="n">FILE_DISPATCHER_MAX_TABLE_SIZE</span><span class="p">,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -716,7 +744,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -730,35 +758,35 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">port</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">file_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l81" href="#l81">81</a></td>
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dispatchTable</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">enable</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l82" href="#l82">82</a></td>
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_FileDispatchState</span><span class="p">(</span><span class="n">file_type</span><span class="p">,</span><span class="w"> </span><span class="n">enable</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -772,63 +800,63 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDispatcher</span><span class="w"> </span><span class="o">::</span><span class="n">pingIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// return key</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">pingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

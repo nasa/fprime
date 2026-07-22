@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:48:48</td>
+      <td>2026-07-22 17:08:27</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>32</td>
-      <td>54</td>
-      <td class="coverage-low">59.3%</td>
+      <td>33</td>
+      <td>55</td>
+      <td class="coverage-low">60.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -71,10 +71,10 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l19">Svc::ActiveTextLogger::ActiveTextLogger(char const*) (line 19)</a></td><td>called 3 times</td><td>78.0%</td></tr>
-    <tr><td><a href="#l39">Svc::ActiveTextLogger::TextLogger_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::StringTemplate&lt;256ul&gt;&amp;) (line 39)</a></td><td>called 8 times</td><td>71.0%</td></tr>
-    <tr><td><a href="#l101">Svc::ActiveTextLogger::TextQueue_internalInterfaceHandler(Fw::StringTemplate&lt;256ul&gt; const&amp;) (line 101)</a></td><td>called 8 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l39">Svc::ActiveTextLogger::TextLogger_handler(short, unsigned int, Fw::Time&amp;, Fw::LogSeverity const&amp;, Fw::StringTemplate&lt;256ul&gt;&amp;) (line 39)</a></td><td>called 8 times</td><td>70.0%</td></tr>
+    <tr><td><a href="#l102">Svc::ActiveTextLogger::TextQueue_internalInterfaceHandler(Fw::StringTemplate&lt;256ul&gt; const&amp;) (line 102)</a></td><td>called 8 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l24">Svc::ActiveTextLogger::configure(unsigned int const*, unsigned long) (line 24)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l113">Svc::ActiveTextLogger::set_log_file(char const*, unsigned int, unsigned int) (line 113)</a></td><td>called 19 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l114">Svc::ActiveTextLogger::set_log_file(char const*, unsigned int, unsigned int) (line 114)</a></td><td>called 19 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l22">Svc::ActiveTextLogger::~ActiveTextLogger() (line 22)</a></td><td>called 3 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -718,11 +718,18 @@
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">8</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">severityString</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Overflow is allowed and truncation accepted</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -735,7 +742,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">InternalInterfaceString</span><span class="w"> </span><span class="n">intText</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -750,14 +757,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">intText</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;EVENT: (%&quot;</span><span class="w"> </span><span class="n">PRI_FwEventIdType</span><span class="w"> </span><span class="s">&quot;) (%&quot;</span><span class="w"> </span><span class="n">PRI_FwTimeBaseStoreType</span><span class="w"> </span><span class="s">&quot;:%&quot;</span><span class="w"> </span><span class="n">PRIu32</span><span class="w"> </span><span class="s">&quot;,%&quot;</span><span class="w"> </span><span class="n">PRIu32</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                         </span><span class="s">&quot;) %s: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -770,35 +777,35 @@
       <td class="src coveredLine"><span class="w">                         </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwTimeBaseStoreType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeTag</span><span class="p">.</span><span class="n">getTimeBase</span><span class="p">()),</span><span class="w"> </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">16</td>
       <td class="src coveredLine"><span class="w">                         </span><span class="n">timeTag</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">(),</span><span class="w"> </span><span class="n">severityString</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">toChar</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Call internal interface so that everything else is done on component thread,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// this helps ensure consistent ordering of the printed text:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -811,182 +818,182 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">TextQueue_internalInterfaceInvoke</span><span class="p">(</span><span class="n">intText</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l95" href="#l95">95</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Internal interface handlers</span></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="c1">// Internal interface handlers</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveTextLogger</span><span class="o">::</span><span class="n">TextQueue_internalInterfaceHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">InternalInterfaceString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Print to console:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="n">text</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Print to file if there is one:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_log_file</span><span class="p">.</span><span class="n">write_to_log</span><span class="p">(</span><span class="n">text</span><span class="p">.</span><span class="n">toChar</span><span class="p">(),</span><span class="w"> </span><span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="p">());</span><span class="w">  </span><span class="c1">// Ignoring return status</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l108" href="#l108">108</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Helper Methods</span></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="c1">// Helper Methods</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">19</td>
-      <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">ActiveTextLogger</span><span class="o">::</span><span class="n">set_log_file</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">fileName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">maxSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">maxBackups</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">19</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">fileName</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+      <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">ActiveTextLogger</span><span class="o">::</span><span class="n">set_log_file</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">fileName</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">maxSize</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">maxBackups</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">19</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">fileName</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">19</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_log_file</span><span class="p">.</span><span class="n">set_log_file</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span><span class="w"> </span><span class="n">maxSize</span><span class="p">,</span><span class="w"> </span><span class="n">maxBackups</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l120" href="#l120">120</a></td>
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

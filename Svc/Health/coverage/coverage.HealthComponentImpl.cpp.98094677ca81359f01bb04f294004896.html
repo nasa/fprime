@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:51:01</td>
+      <td>2026-07-22 17:11:16</td>
     </tr>
   </table>
 </div>
@@ -40,8 +40,8 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>112</td>
-      <td>112</td>
+      <td>113</td>
+      <td>113</td>
       <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l176">Svc::HealthImpl::HLTH_CHNG_PING_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, unsigned int, unsigned int) (line 176)</a></td><td>called 28 times</td><td>77.0%</td></tr>
+    <tr><td><a href="#l179">Svc::HealthImpl::HLTH_CHNG_PING_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, unsigned int, unsigned int) (line 179)</a></td><td>called 28 times</td><td>77.0%</td></tr>
     <tr><td><a href="#l143">Svc::HealthImpl::HLTH_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::Enabled const&amp;) (line 143)</a></td><td>called 5 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l153">Svc::HealthImpl::HLTH_PING_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Fw::Enabled const&amp;) (line 153)</a></td><td>called 52 times</td><td>77.0%</td></tr>
+    <tr><td><a href="#l153">Svc::HealthImpl::HLTH_PING_ENABLE_cmdHandler(unsigned int, unsigned int, Fw::StringTemplate&lt;40ul&gt; const&amp;, Fw::Enabled const&amp;) (line 153)</a></td><td>called 52 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l23">Svc::HealthImpl::HealthImpl(char const*) (line 23)</a></td><td>called 10 times</td><td>64.0%</td></tr>
     <tr><td><a href="#l72">Svc::HealthImpl::PingReturn_handler(short, unsigned int) (line 72)</a></td><td>called 1826 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l84">Svc::HealthImpl::Run_handler(short, unsigned int) (line 84)</a></td><td>called 964 times</td><td>91.0%</td></tr>
-    <tr><td><a href="#l204">Svc::HealthImpl::findEntry(Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 204)</a></td><td>called 80 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l207">Svc::HealthImpl::findEntry(Fw::StringTemplate&lt;40ul&gt; const&amp;) (line 207)</a></td><td>called 80 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l41">Svc::HealthImpl::init(unsigned long, int) (line 41)</a></td><td>called 10 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l46">Svc::HealthImpl::setPingEntries(Svc::HealthImpl::PingEntry*, short, unsigned int) (line 46)</a></td><td>called 10 times</td><td>84.0%</td></tr>
     <tr><td><a href="#l66">Svc::HealthImpl::~HealthImpl() (line 66)</a></td><td>called 10 times</td><td>100.0%</td></tr>
@@ -1454,11 +1454,32 @@
       <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">51</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="n">entryIndex</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">entryIndex</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">FW_NUM_ARRAY_ELEMENTS</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">)),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entryIndex</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -1472,7 +1493,7 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entryIndex</span><span class="p">].</span><span class="n">enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enable</span><span class="p">.</span><span class="n">e</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1485,7 +1506,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="w"> </span><span class="nf">isEnabled</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">DISABLED</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1499,7 +1520,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">enable</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1512,14 +1533,14 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">isEnabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="o">::</span><span class="n">ENABLED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1532,7 +1553,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="w"> </span><span class="n">arg</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1545,7 +1566,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l172" href="#l172">172</a></td>
+      <td class="lineno"><a id="l175" href="#l175">175</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1558,7 +1579,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_HLTH_CHECK_PING</span><span class="p">(</span><span class="n">isEnabled</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l173" href="#l173">173</a></td>
+      <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1572,63 +1593,63 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l174" href="#l174">174</a></td>
+      <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">51</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l175" href="#l175">175</a></td>
+      <td class="lineno"><a id="l178" href="#l178">178</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l176" href="#l176">176</a></td>
+      <td class="lineno"><a id="l179" href="#l179">179</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">HLTH_CHNG_PING_cmdHandler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwOpcodeType</span><span class="w"> </span><span class="n">opCode</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l177" href="#l177">177</a></td>
+      <td class="lineno"><a id="l180" href="#l180">180</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="n">U32</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l178" href="#l178">178</a></td>
+      <td class="lineno"><a id="l181" href="#l181">181</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">entry</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l179" href="#l179">179</a></td>
+      <td class="lineno"><a id="l182" href="#l182">182</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="n">U32</span><span class="w"> </span><span class="n">warningValue</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                           </span><span class="n">U32</span><span class="w"> </span><span class="n">fatalValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="lineno"><a id="l184" href="#l184">184</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// check to see if entry is in range</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l182" href="#l182">182</a></td>
+      <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1641,7 +1662,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">entryIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">findEntry</span><span class="p">(</span><span class="n">entry</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l183" href="#l183">183</a></td>
+      <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1655,7 +1676,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">-1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">entryIndex</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="lineno"><a id="l187" href="#l187">187</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1669,35 +1690,35 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">VALIDATION_ERROR</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="lineno"><a id="l188" href="#l188">188</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l187" href="#l187">187</a></td>
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l188" href="#l188">188</a></td>
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// check to see if warningValue less than or equal to fatalValue</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l189" href="#l189">189</a></td>
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1711,7 +1732,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">warningValue</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">fatalValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1724,7 +1745,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="w"> </span><span class="n">arg</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1737,7 +1758,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="n">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1750,7 +1771,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_HLTH_PING_INVALID_VALUES</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span><span class="w"> </span><span class="n">warningValue</span><span class="p">,</span><span class="w"> </span><span class="n">fatalValue</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l193" href="#l193">193</a></td>
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1764,42 +1785,42 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">VALIDATION_ERROR</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l194" href="#l194">194</a></td>
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l195" href="#l195">195</a></td>
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l196" href="#l196">196</a></td>
+      <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l197" href="#l197">197</a></td>
+      <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entryIndex</span><span class="p">].</span><span class="n">entry</span><span class="p">.</span><span class="n">warnCycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">warningValue</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l198" href="#l198">198</a></td>
+      <td class="lineno"><a id="l201" href="#l201">201</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">entryIndex</span><span class="p">].</span><span class="n">entry</span><span class="p">.</span><span class="n">fatalCycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fatalValue</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l199" href="#l199">199</a></td>
+      <td class="lineno"><a id="l202" href="#l202">202</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1812,7 +1833,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="w"> </span><span class="n">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l200" href="#l200">200</a></td>
+      <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1825,7 +1846,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_HLTH_PING_UPDATED</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span><span class="w"> </span><span class="n">warningValue</span><span class="p">,</span><span class="w"> </span><span class="n">fatalValue</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l201" href="#l201">201</a></td>
+      <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1839,42 +1860,42 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">cmdResponse_out</span><span class="p">(</span><span class="n">opCode</span><span class="p">,</span><span class="w"> </span><span class="n">cmdSeq</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l202" href="#l202">202</a></td>
+      <td class="lineno"><a id="l205" href="#l205">205</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l203" href="#l203">203</a></td>
+      <td class="lineno"><a id="l206" href="#l206">206</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l204" href="#l204">204</a></td>
+      <td class="lineno"><a id="l207" href="#l207">207</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">80</td>
       <td class="src coveredLine"><span class="n">FwIndexType</span><span class="w"> </span><span class="n">HealthImpl</span><span class="o">::</span><span class="n">findEntry</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdStringArg</span><span class="o">&amp;</span><span class="w"> </span><span class="n">entry</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l205" href="#l205">205</a></td>
+      <td class="lineno"><a id="l208" href="#l208">208</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;::</span><span class="n">is_signed</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FwIndexType must be signed to return -1 for error&quot;</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l206" href="#l206">206</a></td>
+      <td class="lineno"><a id="l209" href="#l209">209</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// walk through entries</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l207" href="#l207">207</a></td>
+      <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1888,7 +1909,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">tableEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">tableEntry</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NUM_PINGSEND_OUTPUT_PORTS</span><span class="p">;</span><span class="w"> </span><span class="n">tableEntry</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l208" href="#l208">208</a></td>
+      <td class="lineno"><a id="l211" href="#l211">211</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
@@ -1903,28 +1924,28 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">entry</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_pingTrackerEntries</span><span class="p">[</span><span class="n">tableEntry</span><span class="p">].</span><span class="n">entry</span><span class="p">.</span><span class="n">entryName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l209" href="#l209">209</a></td>
+      <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">78</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwIndexType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">tableEntry</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l210" href="#l210">210</a></td>
+      <td class="lineno"><a id="l213" href="#l213">213</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l211" href="#l211">211</a></td>
+      <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l212" href="#l212">212</a></td>
+      <td class="lineno"><a id="l215" href="#l215">215</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1937,7 +1958,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">LogStringArg</span><span class="w"> </span><span class="n">arg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="lineno"><a id="l216" href="#l216">216</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -1950,27 +1971,6 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_LO_HLTH_CHECK_LOOKUP_ERROR</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l214" href="#l214">214</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l215" href="#l215">215</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l216" href="#l216">216</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">2</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
       <td class="lineno"><a id="l217" href="#l217">217</a></td>
       <td class="linebranch">
       </td>
@@ -1981,11 +1981,32 @@
       <td class="lineno"><a id="l218" href="#l218">218</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l219" href="#l219">219</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l220" href="#l220">220</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l221" href="#l221">221</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// end namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l219" href="#l219">219</a></td>
+      <td class="lineno"><a id="l222" href="#l222">222</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

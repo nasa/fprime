@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:48:48</td>
+      <td>2026-07-22 17:08:27</td>
     </tr>
   </table>
 </div>
@@ -41,8 +41,8 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>13</td>
-      <td>29</td>
-      <td class="coverage-low">44.8%</td>
+      <td>33</td>
+      <td class="coverage-low">39.4%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -71,10 +71,10 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l12">Fw::SimpleObjRegistry::SimpleObjRegistry() (line 12)</a></td><td>called 4 times</td><td>81.0%</td></tr>
-    <tr><td><a href="#l63">Fw::SimpleObjRegistry::clear() (line 63)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l67">Fw::SimpleObjRegistry::clear() (line 67)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l25">Fw::SimpleObjRegistry::dump() (line 25)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l43">Fw::SimpleObjRegistry::dump(char const*) (line 43)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l58">Fw::SimpleObjRegistry::regObject(Fw::ObjBase*) (line 58)</a></td><td>called 744 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l45">Fw::SimpleObjRegistry::dump(char const*) (line 45)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l62">Fw::SimpleObjRegistry::regObject(Fw::ObjBase*) (line 62)</a></td><td>called 744 times</td><td>94.0%</td></tr>
     <tr><td><a href="#l21">Fw::SimpleObjRegistry::~SimpleObjRegistry() (line 21)</a></td><td>called 4 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -282,217 +282,217 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">FW_OBJ_SIMPLE_REG_ENTRIES</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l28" href="#l28">28</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#if FW_OBJECT_NAMES == 1</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l28" href="#l28">28</a></td>
+      <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#if FW_OBJECT_TO_STRING == 1</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l29" href="#l29">29</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">objDump</span><span class="p">[</span><span class="n">FW_OBJ_SIMPLE_REG_BUFF_SIZE</span><span class="p">];</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l30" href="#l30">30</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="n">objDump</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Str: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span><span class="w"> </span><span class="n">objDump</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">objDump</span><span class="p">[</span><span class="n">FW_OBJ_SIMPLE_REG_BUFF_SIZE</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#else</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="n">objDump</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Name: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Str: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span><span class="w"> </span><span class="n">objDump</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">());</span></td>
+      <td class="src "><span class="cp">#else</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif  </span><span class="c1">// FW_OBJECT_TO_STRING</span></td>
+      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Name: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#else</span></td>
+      <td class="src "><span class="w">                        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l37" href="#l37">37</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]);</span></td>
+      <td class="src "><span class="cp">#endif  </span><span class="c1">// FW_OBJECT_TO_STRING</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif</span></td>
+      <td class="src "><span class="cp">#else</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l39" href="#l39">39</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l41" href="#l41">41</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l42" href="#l42">42</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#if FW_OBJECT_NAMES == 1</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l43" href="#l43">43</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">SimpleObjRegistry</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">objName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l44" href="#l44">44</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l45" href="#l45">45</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">objDump</span><span class="p">[</span><span class="n">FW_OBJ_SIMPLE_REG_BUFF_SIZE</span><span class="p">];</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l46" href="#l46">46</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">objName</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">(),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l47" href="#l47">47</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#if FW_OBJECT_TO_STRING == 1</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l48" href="#l48">48</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="n">objDump</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">));</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l49" href="#l49">49</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Str: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span><span class="w"> </span><span class="n">objDump</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l50" href="#l50">50</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cp">#else</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l51" href="#l51">51</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Name: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l52" href="#l52">52</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">());</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l54" href="#l54">54</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l43" href="#l43">43</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l44" href="#l44">44</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#if FW_OBJECT_NAMES == 1</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l45" href="#l45">45</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">SimpleObjRegistry</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">objName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l46" href="#l46">46</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">FW_OBJ_SIMPLE_REG_ENTRIES</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l47" href="#l47">47</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="p">;</span><span class="w"> </span><span class="n">obj</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l48" href="#l48">48</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l49" href="#l49">49</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">objDump</span><span class="p">[</span><span class="n">FW_OBJ_SIMPLE_REG_BUFF_SIZE</span><span class="p">];</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l50" href="#l50">50</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">objName</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">(),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l51" href="#l51">51</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#if FW_OBJECT_TO_STRING == 1</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l52" href="#l52">52</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">toString</span><span class="p">(</span><span class="n">objDump</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">objDump</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l53" href="#l53">53</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Str: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span><span class="w"> </span><span class="n">objDump</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l54" href="#l54">54</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#else</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l55" href="#l55">55</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="n">Fw</span><span class="o">::</span><span class="n">Logger</span><span class="o">::</span><span class="n">log</span><span class="p">(</span><span class="s">&quot;Entry: %&quot;</span><span class="w"> </span><span class="n">PRI_FwSizeType</span><span class="w"> </span><span class="s">&quot; Ptr: %p Name: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">],</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l56" href="#l56">56</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">getObjName</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
@@ -505,57 +505,57 @@
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l62" href="#l62">62</a></td>
+      <td class="linebranch">
+      </td>
       <td class="linecount coveredLine">744</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">SimpleObjRegistry</span><span class="o">::</span><span class="n">regObject</span><span class="p">(</span><span class="n">ObjBase</span><span class="o">*</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l59" href="#l59">59</a></td>
+      <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">744</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">FW_OBJ_SIMPLE_REG_ENTRIES</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l60" href="#l60">60</a></td>
+      <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">744</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objPtrArray</span><span class="p">[</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="o">++</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obj</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l61" href="#l61">61</a></td>
+      <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">744</td>
       <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l62" href="#l62">62</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l63" href="#l63">63</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">SimpleObjRegistry</span><span class="o">::</span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l64" href="#l64">64</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l65" href="#l65">65</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
@@ -568,25 +568,53 @@
       <td class="lineno"><a id="l67" href="#l67">67</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Fw</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">SimpleObjRegistry</span><span class="o">::</span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numEntries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l69" href="#l69">69</a></td>
+      <td class="lineno"><a id="l71" href="#l71">71</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Fw</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l72" href="#l72">72</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l70" href="#l70">70</a></td>
+      <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 07:49:43</td>
+      <td>2026-07-22 17:09:39</td>
     </tr>
   </table>
 </div>
@@ -41,7 +41,7 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>0</td>
-      <td>168</td>
+      <td>169</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
@@ -77,8 +77,8 @@
     <tr><td><a href="#l204">Types::AtomicQueue::enqueue(unsigned char const*, unsigned long) (line 204)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l222">Types::AtomicQueue::enqueueBlocking(unsigned char const*, unsigned long, bool) (line 222)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l152">Types::AtomicQueue::enqueueInternal(unsigned char const*, unsigned long) (line 152)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l354">Types::AtomicQueue::getBufferSize() const (line 354)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l349">Types::AtomicQueue::getCapacity() const (line 349)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l356">Types::AtomicQueue::getBufferSize() const (line 356)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l351">Types::AtomicQueue::getCapacity() const (line 351)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l327">Types::AtomicQueue::getSize() const (line 327)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l323">Types::AtomicQueue::isEmpty() const (line 323)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l314">Types::AtomicQueue::isFull() const (line 314)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -2419,199 +2419,213 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// A nonzero capacity implies the queue was created with backing storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l333" href="#l333">333</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">enq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_enqueuePos</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_slots</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l334" href="#l334">334</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">deq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dequeuePos</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l335" href="#l335">335</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSignedSizeType</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSignedSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">enq</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSignedSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">deq</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">enq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_enqueuePos</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l336" href="#l336">336</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">deq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_dequeuePos</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_relaxed</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l337" href="#l337">337</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Two independent relaxed loads provide no cross-variable consistency guarantee.</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="n">FwSignedSizeType</span><span class="w"> </span><span class="n">diff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSignedSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">enq</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSignedSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">deq</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l338" href="#l338">338</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Restrict to [0, capacity] rather than asserting — diff can be transiently negative</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l339" href="#l339">339</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// or &gt; capacity on concurrent access even though no real program state has that.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Two independent relaxed loads provide no cross-variable consistency guarantee.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l340" href="#l340">340</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Restrict to [0, capacity] rather than asserting — diff can be transiently negative</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l341" href="#l341">341</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// or &gt; capacity on concurrent access even though no real program state has that.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l342" href="#l342">342</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">diff</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l341" href="#l341">341</a></td>
+      <td class="lineno"><a id="l343" href="#l343">343</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l342" href="#l342">342</a></td>
+      <td class="lineno"><a id="l344" href="#l344">344</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l343" href="#l343">343</a></td>
+      <td class="lineno"><a id="l345" href="#l345">345</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l344" href="#l344">344</a></td>
+      <td class="lineno"><a id="l346" href="#l346">346</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l345" href="#l345">345</a></td>
+      <td class="lineno"><a id="l347" href="#l347">347</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l346" href="#l346">346</a></td>
+      <td class="lineno"><a id="l348" href="#l348">348</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwSizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">diff</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l347" href="#l347">347</a></td>
+      <td class="lineno"><a id="l349" href="#l349">349</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l348" href="#l348">348</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l349" href="#l349">349</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AtomicQueue</span><span class="o">::</span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l350" href="#l350">350</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Safe to call on uninitialized queue - returns 0 if not created</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l351" href="#l351">351</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AtomicQueue</span><span class="o">::</span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l352" href="#l352">352</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Safe to call on uninitialized queue - returns 0 if not created</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l353" href="#l353">353</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l354" href="#l354">354</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AtomicQueue</span><span class="o">::</span><span class="n">getBufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l355" href="#l355">355</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Safe to call on uninitialized queue - returns 0 if not created</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l356" href="#l356">356</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferSize</span><span class="p">;</span></td>
+      <td class="src uncoveredLine"><span class="n">FwSizeType</span><span class="w"> </span><span class="n">AtomicQueue</span><span class="o">::</span><span class="n">getBufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l357" href="#l357">357</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Safe to call on uninitialized queue - returns 0 if not created</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l358" href="#l358">358</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l359" href="#l359">359</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Types</span></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l360" href="#l360">360</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l361" href="#l361">361</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Types</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l362" href="#l362">362</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
