@@ -19,7 +19,9 @@ def test_send_fileManager_command(fprime_test_api):
 
     Tests command send, dispatch, and receipt using send_and_assert command with a pair of fileManager commands.
     """
-    fileuplink_int_dir = Path(__file__).resolve().parents[3] / "FileUplink" / "test" / "int"
+    fileuplink_int_dir = (
+        Path(__file__).resolve().parents[3] / "FileUplink" / "test" / "int"
+    )
     fprime_test_api.uplink_file_and_await_completion(
         str(fileuplink_int_dir / "1MiB.txt"), "/tmp/1MiB.txt", timeout=100
     )
