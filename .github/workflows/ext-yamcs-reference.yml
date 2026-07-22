@@ -101,7 +101,7 @@ jobs:
             exit 1
           fi
           for i in {1..30}; do
-            python -c "from yamcs.client import YamcsClient; YamcsClient('localhost:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
+            python -c "from yamcs.client import YamcsClient; YamcsClient('127.0.0.1:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
             sleep 2
           done
           echo "YAMCS timeout" && exit 1
