@@ -228,7 +228,7 @@ FwSizeType AosFramer::get_min_size() {
     return AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (this->m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
 }
 
-bool AosFramer::buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
+bool AosFramer::buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
