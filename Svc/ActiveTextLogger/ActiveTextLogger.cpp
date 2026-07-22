@@ -22,6 +22,7 @@ ActiveTextLogger::ActiveTextLogger(const char* name)
 ActiveTextLogger::~ActiveTextLogger() {}
 
 void ActiveTextLogger::configure(const FwEventIdType* filteredIds, FwSizeType count) {
+    FW_ASSERT(filteredIds != nullptr || count == 0);
     FW_ASSERT(count < ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
               ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 

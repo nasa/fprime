@@ -318,6 +318,7 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+    FW_ASSERT(queueNum < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueNum));
 
     // For buffer queues with DROP_OLDEST, check if the queue is full before enqueuing.
     // If full, dequeue the oldest entry first so we can return buffer ownership before
