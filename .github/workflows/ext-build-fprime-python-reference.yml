@@ -55,10 +55,18 @@ jobs:
           binary-args: "build-artifacts/python/fsw_main.py"
           gds-args: "--ip-client --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json"
           pytest-args: "test/int --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json --logs gds-logs"
+      # Tar the logs first: GDS log filenames contain colons, which upload-artifact rejects
+      - name: "Bundle logs"
+        if: always()
+        run: |
+          if [ -d gds-logs ]; then
+            tar -czf gds-logs.tar.gz gds-logs
+          fi
+        shell: bash
       - name: "Archive logs"
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: fprime-python-reference-logs
-          path: gds-logs
+          path: gds-logs.tar.gz
           retention-days: 5
