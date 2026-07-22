@@ -86,6 +86,7 @@ jobs:
         working-directory: FlightExamples
         run: |
           . ../venv/bin/activate
+          fprime-util purge
           fprime-util generate
           fprime-util build
       - name: "Run dp_demo integration tests"
