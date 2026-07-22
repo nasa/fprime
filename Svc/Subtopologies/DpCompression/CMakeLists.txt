@@ -8,6 +8,9 @@ register_fprime_module(
         "${CMAKE_CURRENT_LIST_DIR}/SubtopologyTopologyDefs.hpp"
     DEPENDS
         Svc_Subtopologies_DpCompression_DpCompressionConfig
+        Svc/DpCompressProc
+        Svc/DpZLibCompressor
+        Svc/BufferManager
     INTERFACE
 )
 
