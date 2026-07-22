@@ -34,7 +34,7 @@ Drv::GpioStatus LinuxGpioDriver ::start(const FwTaskPriorityType priority,
             this->m_running = true;
         }
         Fw::String name;
-        name.format("%s.interrupt", FW_OPTIONAL_NAME(this->getObjName()));
+        (void)name.format("%s.interrupt", FW_OPTIONAL_NAME(this->getObjName()));  // task name may safely truncate
         Os::Task::Arguments arguments(name, &this->interruptFunction, this, priority, stackSize, cpuAffinity,
                                       identifier);
         this->m_poller.start(arguments);

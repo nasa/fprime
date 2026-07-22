@@ -420,7 +420,18 @@ module Svc {
       ) \
       severity warning high \
       id 48 \
-      format "DP file {} contains malformed data (status {})"     
+      format "DP file {} contains malformed data (status {})"
+
+    @ Error formatting a DP file name
+    event FileNameFormatError(
+                            file: string size FileNameStringSize @< The file whose name failed to format
+                            status: Fw.StringFormatStatus @< The status returned from the format operation
+                          ) \
+      severity warning high \
+      id 49 \
+      format "Failed to format DP file name for {} with status {}" \
+      throttle 10
+
 
     # ----------------------------------------------------------------------
     # Telemetry
