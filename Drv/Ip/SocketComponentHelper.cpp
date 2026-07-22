@@ -275,6 +275,10 @@ void SocketComponentHelper::reconnectLoop() {
         bool reconnect = false;
         {
             Os::ScopeLock scopedLock(this->m_reconnectLock);
+            FW_ASSERT(this->m_reconnectState == ReconnectState::NOT_RECONNECTING ||
+                          this->m_reconnectState == ReconnectState::REQUEST_RECONNECT ||
+                          this->m_reconnectState == ReconnectState::RECONNECT_IN_PROGRESS,
+                      static_cast<FwAssertArgType>(this->m_reconnectState));
             if (this->m_reconnectState == ReconnectState::REQUEST_RECONNECT) {
                 this->m_reconnectState = ReconnectState::RECONNECT_IN_PROGRESS;
                 reconnect = true;

@@ -640,6 +640,8 @@ void PolyType::toString(StringBase& dest, bool append) const {
             (void)external.format("%s ", "NT");
             break;
     }
+    // Every case above must have produced a non-empty representation
+    FW_ASSERT(external.length() > 0, static_cast<FwAssertArgType>(this->m_dataType));
 
     if (append) {
         dest += external;
