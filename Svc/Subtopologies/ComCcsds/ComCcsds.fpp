@@ -90,7 +90,7 @@ module ComCcsds {
         """
     }
 
-    # NOTE: the 'router' instance is defined in ComCcsdsConfig/ComCcsdsRouterConfig.fpp so that
+    # NOTE: the 'fprimeRouter' instance is defined in ComCcsdsConfig/ComCcsdsRouterConfig.fpp so that
     # projects may swap the router implementation via configuration overrides
 
     instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000
@@ -132,7 +132,7 @@ module ComCcsds {
 
         # Passive Components
         instance commsBufferManager
-        instance router
+        instance fprimeRouter
         instance spacePacketDeframer
         instance spacePacketFramer
         instance apidManager
@@ -161,8 +161,8 @@ module ComCcsds {
             # SpacePacketDeframer APID validation
             spacePacketDeframer.validateApidSeqCount -> apidManager.validateApidSeqCountIn
             # SpacePacketDeframer <-> Router
-            spacePacketDeframer.dataOut -> router.dataIn
-            router.dataReturnOut  -> spacePacketDeframer.dataReturnIn
+            spacePacketDeframer.dataOut -> fprimeRouter.dataIn
+            fprimeRouter.dataReturnOut  -> spacePacketDeframer.dataReturnIn
         }
 
         # ----------------------------------------------------------------------
@@ -216,16 +216,16 @@ module ComCcsds {
 
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = router.commandOut
+        port commandOut         = fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = router.cmdResponseIn
+        port cmdResponseIn      = fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = router.fileOut
+        port fileUplinkOut          = fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
-        port fileUplinkReturnIn = router.fileBufferReturnIn
+        port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
 
         # Telemetry/events/file queuing (array ports - index at connection site)
         @ Input port array for queueing Fw::ComBuffers
@@ -431,16 +431,16 @@ module ComCcsds {
 
         # Command routing
         @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = router.commandOut
+        port commandOut         = fprimeRouter.commandOut
 
         @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = router.cmdResponseIn
+        port cmdResponseIn      = fprimeRouter.cmdResponseIn
 
         @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = router.fileOut
+        port fileUplinkOut          = fprimeRouter.fileOut
 
         @ Input port receiving back buffer ownership from the file handling stack
-        port fileUplinkReturnIn = router.fileBufferReturnIn
+        port fileUplinkReturnIn = fprimeRouter.fileBufferReturnIn
 
         # Telemetry/events/file queuing (array ports - index at connection site)
         @ Input port array for queueing Fw::ComBuffers
