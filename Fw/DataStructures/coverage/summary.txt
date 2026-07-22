@@ -7,7 +7,7 @@ File                                       Lines    Exec  Cover   Missing
 Fw/DataStructures/Array.hpp                   42      42   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
-Fw/DataStructures/ArraySetOrMapImpl.hpp       95      94    98%   170
+Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
 Fw/DataStructures/CircularIndex.hpp           36      36   100%
 Fw/DataStructures/ExternalArray.hpp           56      56   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
@@ -36,5 +36,5 @@ Fw/DataStructures/SizedContainer.hpp           4       4   100%
 Fw/DataStructures/Stack.hpp                   15      15   100%
 Fw/DataStructures/StackBase.hpp               17      17   100%
 ------------------------------------------------------------------------------
-TOTAL                                       1121    1104    98%
+TOTAL                                       1122    1105    98%
 ------------------------------------------------------------------------------

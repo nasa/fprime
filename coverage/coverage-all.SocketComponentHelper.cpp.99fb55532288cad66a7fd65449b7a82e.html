@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 02:33:10</td>
+      <td>2026-07-22 03:23:04</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l20">Drv::SocketComponentHelper::SocketComponentHelper() (line 20)</a></td><td>called 21 times</td><td>62.0%</td></tr>
     <tr><td><a href="#l151">Drv::SocketComponentHelper::close() (line 151)</a></td><td>called 457 times</td><td>91.0%</td></tr>
     <tr><td><a href="#l98">Drv::SocketComponentHelper::getAutomaticOpen() (line 98)</a></td><td>called 71 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l87">Drv::SocketComponentHelper::isOpened() (line 87)</a></td><td>called 1361 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l87">Drv::SocketComponentHelper::isOpened() (line 87)</a></td><td>called 1356 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l160">Drv::SocketComponentHelper::join() (line 160)</a></td><td>called 14 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l254">Drv::SocketComponentHelper::joinReconnect() (line 254)</a></td><td>called 14 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l52">Drv::SocketComponentHelper::open() (line 52)</a></td><td>called 437 times</td><td>80.0%</td></tr>
@@ -85,7 +85,7 @@
     <tr><td><a href="#l103">Drv::SocketComponentHelper::reopen() (line 103)</a></td><td>called 34 times</td><td>95.0%</td></tr>
     <tr><td><a href="#l325">Drv::SocketComponentHelper::requestReconnect() (line 325)</a></td><td>called 37 times</td><td>91.0%</td></tr>
     <tr><td><a href="#l179">Drv::SocketComponentHelper::running() (line 179)</a></td><td>called 143 times</td><td>87.0%</td></tr>
-    <tr><td><a href="#l264">Drv::SocketComponentHelper::runningReconnect() (line 264)</a></td><td>called 102 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l264">Drv::SocketComponentHelper::runningReconnect() (line 264)</a></td><td>called 100 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l121">Drv::SocketComponentHelper::send(unsigned char const*, unsigned long) (line 121)</a></td><td>called 439 times</td><td>67.0%</td></tr>
     <tr><td><a href="#l93">Drv::SocketComponentHelper::setAutomaticOpen(bool) (line 93)</a></td><td>called 8 times</td><td>93.0%</td></tr>
     <tr><td><a href="#l146">Drv::SocketComponentHelper::shutdown() (line 146)</a></td><td>called 243 times</td><td>88.0%</td></tr>
@@ -809,7 +809,7 @@
       <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1361</td>
+      <td class="linecount coveredLine">1356</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">SocketComponentHelper</span><span class="o">::</span><span class="n">isOpened</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -818,11 +818,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 1362 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 1359 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1361</td>
+      <td class="linecount coveredLine">1356</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">ScopeLock</span><span class="w"> </span><span class="nf">scopedLock</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lock</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -832,25 +832,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 1362 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 1359 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1362</td>
+      <td class="linecount partialCoveredLine">1359</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_open</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_open</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OpenState</span><span class="o">::</span><span class="n">OPEN</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1362</td>
+      <td class="linecount coveredLine">1359</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">is_open</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1362</td>
+      <td class="linecount coveredLine">1359</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2374,7 +2374,7 @@
       <td class="lineno"><a id="l264" href="#l264">264</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">102</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="n">SocketComponentHelper</span><span class="o">::</span><span class="n">runningReconnect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2383,11 +2383,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 102 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 100 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">102</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">ScopeLock</span><span class="w"> </span><span class="nf">scopedLock</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectLock</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2397,25 +2397,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 102 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 100 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">102</td>
+      <td class="linecount partialCoveredLine">100</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">running</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectStop</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l267" href="#l267">267</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">102</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">running</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l268" href="#l268">268</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">102</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2452,12 +2452,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 94 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 92 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 8 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">102</td>
+      <td class="linecount coveredLine">100</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">runningReconnect</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2471,7 +2471,7 @@
       <td class="lineno"><a id="l275" href="#l275">275</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94</td>
+      <td class="linecount coveredLine">92</td>
       <td class="src coveredLine"><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">reconnect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -2487,11 +2487,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 94 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 92 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">94</td>
+      <td class="linecount coveredLine">92</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">Os</span><span class="o">::</span><span class="n">ScopeLock</span><span class="w"> </span><span class="nf">scopedLock</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectLock</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -2501,13 +2501,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 94 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 92 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 34 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 60 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 58 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">94</td>
+      <td class="linecount partialCoveredLine">92</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectState</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ReconnectState</span><span class="o">::</span><span class="n">REQUEST_RECONNECT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2559,13 +2559,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 60 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 58 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 60 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 58 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">60</td>
+      <td class="linecount partialCoveredLine">58</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectState</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ReconnectState</span><span class="o">::</span><span class="n">RECONNECT_IN_PROGRESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2586,7 +2586,7 @@
       <td class="lineno"><a id="l288" href="#l288">288</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">94</td>
+      <td class="linecount coveredLine">92</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -2603,11 +2603,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 34 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 60 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 58 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">94</td>
+      <td class="linecount coveredLine">92</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reconnect</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -2801,7 +2801,7 @@
       <td class="lineno"><a id="l314" href="#l314">314</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">60</td>
+      <td class="linecount coveredLine">58</td>
       <td class="src coveredLine"><span class="w">            </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">delay</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectCheckInterval</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -3028,13 +3028,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 192 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 192 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 186 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 186 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">192</td>
+      <td class="linecount partialCoveredLine">186</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">elapsed</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">timeout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -3064,11 +3064,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 192 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 186 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">192</td>
+      <td class="linecount coveredLine">186</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">Os</span><span class="o">::</span><span class="n">ScopeLock</span><span class="w"> </span><span class="nf">scopedLock</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectLock</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -3078,13 +3078,13 @@
           <summary class="linebranchSummary">3/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 192 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 186 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 33 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 159 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 153 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">192</td>
+      <td class="linecount partialCoveredLine">186</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectState</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ReconnectState</span><span class="o">::</span><span class="n">NOT_RECONNECTING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -3108,13 +3108,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 159 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 153 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 159 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 153 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">159</td>
+      <td class="linecount partialCoveredLine">153</td>
       <td class="src partialCoveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectStop</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -3135,7 +3135,7 @@
       <td class="lineno"><a id="l353" href="#l353">353</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">192</td>
+      <td class="linecount coveredLine">186</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -3151,11 +3151,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 159 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 153 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">159</td>
+      <td class="linecount coveredLine">153</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">Os</span><span class="o">::</span><span class="n">Task</span><span class="o">::</span><span class="n">delay</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectWaitInterval</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -3164,13 +3164,13 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 159 times.</div>
-            <div class="takenBranch">&check; Branch 15 taken 159 times.</div>
-            <div class="takenBranch">&check; Branch 18 taken 159 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 153 times.</div>
+            <div class="takenBranch">&check; Branch 15 taken 153 times.</div>
+            <div class="takenBranch">&check; Branch 18 taken 153 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">159</td>
+      <td class="linecount coveredLine">153</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">elapsed</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectWaitInterval</span><span class="p">.</span><span class="n">getSeconds</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_reconnectWaitInterval</span><span class="p">.</span><span class="n">getUSeconds</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">

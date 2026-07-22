@@ -26,7 +26,7 @@ Drv/LinuxSpiDriver/LinuxSpiDriverComponentImpl.cpp
 Drv/LinuxSpiDriver/LinuxSpiDriverComponentImplCommon.cpp
                                                2       0     0%   22-23
 Drv/LinuxUartDriver/LinuxUartDriver.cpp      237       0     0%   30,32-37,39,44-47,49,57,59-64,66,69,71-78,95-96,98-105,108-109,111-118,121,123-130,133-152,154-171,173-175,178-180,183-185,188-190,193-195,198,200-207,224,226-238,242-257,260,263,265,268,271-278,281-284,286,289-291,293,299-302,304-307,309-311,313,315-320,323-324,326-328,330-333,335-336,339-343,345-347,349,353,355-356,358,363-370,372,375-377,379,382-386,388-390,392-393
-Drv/Ports/DataTypes/DataBuffer.cpp            24       0     0%   6-9,11,13,15-18,20-22,25-27,30-31,34-35,38-39,42-43
+Drv/Ports/DataTypes/DataBuffer.cpp            24       0     0%   6-9,11,13,17-20,22-24,27-29,32-33,36-37,40-41,44-45
 Drv/TcpClient/TcpClientComponentImpl.cpp      40      32    80%   54,75-77,81-83,86
 Drv/TcpServer/TcpServerComponentImpl.cpp      72      61    84%   60,102-104,124-126,130-132,135
 Drv/Udp/UdpComponentImpl.cpp                  47      32    68%   41-42,61-62,64,83-88,92-94,97
@@ -39,7 +39,7 @@ Fw/Comp/QueuedComponentBase.cpp               28      18    64%   23-24,46-52,55
 Fw/DataStructures/Array.hpp                   43      43   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
-Fw/DataStructures/ArraySetOrMapImpl.hpp       95      94    98%   170
+Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
 Fw/DataStructures/CircularIndex.hpp           36      36   100%
 Fw/DataStructures/ExternalArray.hpp           56      56   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
@@ -77,7 +77,7 @@ Fw/FilePacket/FilePacket.hpp                  15      15   100%
 Fw/FilePacket/Header.cpp                      23      20    87%   33,48,53
 Fw/FilePacket/PathName.cpp                    26      22    84%   36,46,60,69
 Fw/FilePacket/StartPacket.cpp                 40      33    82%   44,52,60,74,82,90,98
-Fw/Fpy/StatementArgBuffer.cpp                 39      26    66%   7-10,23,35-36,49,60-61,69,71-72
+Fw/Fpy/StatementArgBuffer.cpp                 39      26    66%   7-10,25,37-38,51,62-63,71,73-74
 Fw/LanguageHelpers.hpp                        14      14   100%
 Fw/Log/LogPacket.cpp                          46      40    87%   22,27,32,42,47,52
 Fw/Logger/Logger.cpp                          15      15   100%
@@ -161,7 +161,7 @@ Os/Generic/PriorityMemQueue.cpp              339     306    90%   77-78,107-108,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 156     129    82%   75,77-78,88-89,91-93,103-105,107-110,120-123,125-129,185,248-249
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             168     155    92%   21-26,28,248-249,253,318,341,344
+Os/Generic/Types/AtomicQueue.cpp             168     156    92%   21-26,28,248-249,253,318,344
 Os/Generic/Types/AtomicQueue.hpp               3       3   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -180,7 +180,7 @@ Os/Os.cpp                                      7       7   100%
 Os/Posix/ConditionVariable.cpp                22      20    90%   37-38
 Os/Posix/Console.cpp                          20      11    55%   14,18-21,23,37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      33    89%   44-45,69-70
+Os/Posix/CountingSemaphore.cpp                37      35    94%   69-70
 Os/Posix/DefaultConsole.cpp                    2       2   100%
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -197,12 +197,12 @@ Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            138     107    77%   55-56,84-86,90-92,109-110,115-118,121-122,127,164,211,219,233-235,237-239,259-260,264-265,267
+Os/Posix/Task.cpp                            138     106    76%   55-56,84-86,90-92,109-110,115-118,121-122,127,164,211,219,233-235,237-239,258-260,264-265,267
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
 Os/QueueString.hpp                            11      11   100%
-Os/RawTime.cpp                                55      52    94%   65,77-78
+Os/RawTime.cpp                                55      52    94%   67,79-80
 Os/RawTime.hpp                                 2       2   100%
 Os/SandboxedFile.cpp                          60      48    80%   16,53,82-83,86-87,94-95,110-111,114-115
 Os/Stub/ConditionVariable.cpp                  8       0     0%   12,15,17,20-21,24,26-27
@@ -370,5 +370,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      54    91%   48,54,82,87,100
 ------------------------------------------------------------------------------
-TOTAL                                      18847   15468    82%
+TOTAL                                      18848   15471    82%
 ------------------------------------------------------------------------------
