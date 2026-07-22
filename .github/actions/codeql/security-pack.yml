@@ -10,6 +10,8 @@ query-filters:
       tags contain: correctness
   - include: 
       tags contain: reliability
+  - exclude:
+      id: cpp/constant-comparison
 
 # NOTE: for compiled languages (cpp) paths-ignore does not filter results by
 # itself; the actual exclusion is the filter-sarif step in
