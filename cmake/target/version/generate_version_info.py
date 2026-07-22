@@ -15,13 +15,13 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 """
+
 import argparse
 import os
 import sys
 import json
 from pathlib import Path
 import subprocess
-
 
 FALLBACK_VERSION = "v3.5.0"  # Keep up-to-date on release tag
 

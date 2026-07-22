@@ -1,0 +1,147 @@
+# Builds and runs integration tests on https://github.com/yvijay99/fprime-yamcs-reference
+
+name: "External Repo: YAMCS Reference"
+
+on:
+  push:
+    branches: [devel]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [devel]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+  workflow_dispatch:
+    branches: [devel]
+
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') && !contains(github.ref, 'YAMCSCI') }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-22.04
+    env:
+      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
+    steps:
+      - name: "Setup external repository + overlay F´"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-yamcs-reference
+          target_ref: main
+
+      - name: "Build deployment"
+        run: |
+          cd FprimeYamcsReference/YamcsDeployment
+          fprime-util generate
+          fprime-util build
+
+      - name: "Upload build artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: yamcs-build-artifacts
+          path: build-artifacts/
+          retention-days: 1
+
+  test:
+    name: "Test"
+    runs-on: ubuntu-22.04
+    needs: build
+    env:
+      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
+    steps:
+      - name: "Setup external repository + overlay F´"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-yamcs-reference
+          target_ref: main
+
+      - name: "Download build artifacts"
+        uses: actions/download-artifact@v7
+        with:
+          name: yamcs-build-artifacts
+          path: build-artifacts
+
+      - name: "Setup Java 17 for YAMCS"
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: "Setup Python environment"
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install "yamcs-client<2.0.0"
+          pip install "fprime-gds>=4.2.2a3"
+          pip install "fprime-xtce>=0.1.3"
+          pip install "fprime-yamcs>=0.1.4"
+
+      - name: "Prepare deployment"
+        run: |
+          chmod +x ./build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          mkdir -p ci-logs
+
+      - name: "Start F´ deployment with YAMCS"
+        run: |
+          fprime-yamcs --ip-client \
+            -d ${PWD}/build-artifacts/Linux/${DEPLOYMENT} \
+            --logs ${PWD}/ci-logs &
+          sleep 15
+          if ! jobs -r | grep -q fprime-yamcs; then
+            echo "ERROR: YAMCS failed to start"
+            cat ${PWD}/ci-logs/*.log 2>/dev/null || true
+            exit 1
+          fi
+          for i in {1..30}; do
+            python -c "from yamcs.client import YamcsClient; YamcsClient('127.0.0.1:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
+            sleep 2
+          done
+          echo "YAMCS timeout" && exit 1
+
+      - name: "Run YAMCS-specific tests"
+        run: |
+          rc=0
+          pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
+            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
+            --use-yamcs \
+            -v \
+            ./FprimeYamcsReference/YamcsDeployment/test/int/test_yamcs_file_transfer.py || rc=1
+          exit $rc
+
+      - name: "Run standard Svc integration tests from lib/fprime"
+        run: |
+          pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
+            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
+            --use-yamcs \
+            -v \
+            ./lib/fprime/Svc/PrmDb/test/int/test_cmd_PrmDb.py \
+            ./lib/fprime/Svc/CmdDispatcher/test/int/test_cmd_dispatcher.py \
+            ./lib/fprime/Svc/DpCatalog/test/int/test_cmd_dpCatalog.py \
+            ./lib/fprime/Svc/DpManager/test/int/test_cmd_dpMgr.py \
+            ./lib/fprime/Svc/DpWriter/test/int/test_cmd_dpWriter.py \
+            ./lib/fprime/Svc/EventManager/test/int/test_cmd_eventManager.py \
+            ./lib/fprime/Svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
+            ./lib/fprime/Svc/FileManager/test/int/test_cmd_fileManager.py \
+            ./lib/fprime/Svc/SystemResources/test/int/test_cmd_systemResources.py \
+            ./lib/fprime/Svc/CmdSequencer/test/int/test_cmd_sequencer.py \
+            ./lib/fprime/Svc/FileUplink/test/int/test_cmd_uplink.py \
+            ./lib/fprime/Svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
+            ./lib/fprime/Svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
+            ./lib/fprime/Svc/Version/test/int/test_cmd_version.py \
+            ./lib/fprime/Svc/Health/test/int/test_cmd_health.py
+
+      - name: "Archive test logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-logs
+          path: ci-logs
+          retention-days: 5
