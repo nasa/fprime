@@ -266,8 +266,9 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     // Deserialize the trailer
     AOSTrailer trailer;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(crcDataLen);
-    Fw::SerializeStatus status = deserializer.deserializeTo(trailer);
+    Fw::SerializeStatus status = deserializer.moveDeserToOffset(crcDataLen);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    status = deserializer.deserializeTo(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 transmittedCrc = trailer.get_fecf();
@@ -303,7 +304,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             FW_ASSERT(vc.spanningPacket.bytesReceived + toHeader <= headerCap,
                       static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                       static_cast<FwAssertArgType>(toHeader), static_cast<FwAssertArgType>(headerCap));
-            ::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
+            (void)::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
             vc.spanningPacket.bytesReceived += toHeader;
 
             // We'll work w/ everything past the copied header if we get a clean parse
@@ -348,7 +349,8 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
                   static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
-        ::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
+        (void)::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf,
+                       vc.spanningPacket.bytesReceived);
     }
 
     // Already have the dynamic buffer, so fill away
@@ -359,7 +361,7 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
         FW_ASSERT(vc.spanningPacket.bytesReceived + toBody <= vc.spanningPacket.buffer.getSize(),
                   static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived), static_cast<FwAssertArgType>(toBody),
                   static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
-        ::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
+        (void)::memcpy(vc.spanningPacket.buffer.getData() + vc.spanningPacket.bytesReceived, data, toBody);
         vc.spanningPacket.bytesReceived += toBody;
         seekForward += toBody;
     }
@@ -383,8 +385,9 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
     // Parse M_PDU header (per CCSDS 732.0-B-5 Section 4.1.4.2.2)
     M_PDUHeader mpduHeader;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(AOSHeader::SERIALIZED_SIZE);
-    Fw::SerializeStatus status = deserializer.deserializeTo(mpduHeader);
+    Fw::SerializeStatus status = deserializer.moveDeserToOffset(AOSHeader::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    status = deserializer.deserializeTo(mpduHeader);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     U16 firstHeaderPointer = mpduHeader.get_firstHeaderPointer();

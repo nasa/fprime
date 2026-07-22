@@ -153,19 +153,19 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
         if (status != SOCK_SUCCESS) {
             Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
-            ::close(socketFd);
+            (void)::close(socketFd);
             return status;
         };
 
         if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-            ::close(socketFd);
+            (void)::close(socketFd);
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
 
         // Now apply timeouts
         status = this->setupTimeouts(socketFd);
         if (status != SOCK_SUCCESS) {
-            ::close(socketFd);
+            (void)::close(socketFd);
             return status;
         }
         FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),

@@ -34,7 +34,10 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
     itval.it_value.tv_sec = static_cast<time_t>(seconds_value);
     itval.it_value.tv_nsec = static_cast<long>(interval.getUSeconds() * 1000);
 
-    timerfd_settime(fd, 0, &itval, nullptr);
+    const int settimeStatus = timerfd_settime(fd, 0, &itval, nullptr);
+    if (settimeStatus == -1) {
+        Fw::Logger::log("timer settime error: %s\n", strerror(errno));
+    }
 
     while (true) {
         unsigned long long missed;
@@ -51,7 +54,7 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
             itval.it_value.tv_sec = 0;
             itval.it_value.tv_nsec = 0;
 
-            timerfd_settime(fd, 0, &itval, nullptr);
+            (void)timerfd_settime(fd, 0, &itval, nullptr);  // best-effort disarm on shutdown
             return;
         }
         this->m_rawTime.now();

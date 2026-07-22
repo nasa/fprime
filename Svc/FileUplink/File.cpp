@@ -24,7 +24,7 @@ Os::File::Status FileUplink::File::open(const Fw::FilePacket::StartPacket& start
     if (length >= sizeof(path)) {
         return Os::File::Status::BAD_SIZE;
     }
-    memcpy(path, startPacket.getDestinationPath().getValue(), length);
+    (void)memcpy(path, startPacket.getDestinationPath().getValue(), length);
     path[length] = 0;
     Fw::LogStringArg logStringArg(path);
     this->name = logStringArg;

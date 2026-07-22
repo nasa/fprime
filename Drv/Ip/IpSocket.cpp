@@ -45,7 +45,7 @@
 namespace Drv {
 
 IpSocket::IpSocket() : m_timeoutSeconds(0), m_timeoutMicroseconds(0), m_port(0) {
-    ::memset(this->m_ipv4_address, 0, sizeof(this->m_ipv4_address));
+    (void)::memset(this->m_ipv4_address, 0, sizeof(this->m_ipv4_address));
 }
 
 SocketIpStatus IpSocket::configure(const char* const ipv4_address,

@@ -75,8 +75,8 @@ Svc::CompressionAlgorithm DpZLibCompressor ::compressChunk_handler(FwIndexType p
                   static_cast<FwAssertArgType>(buffer.getSize()), static_cast<FwAssertArgType>(write_offset),
                   static_cast<FwAssertArgType>(ctx.compression_buffer.getSize()));
 
-        std::memcpy(buffer.getData() + write_offset, ctx.compression_buffer.getData(),
-                    ctx.compression_buffer.getSize());
+        (void)std::memcpy(buffer.getData() + write_offset, ctx.compression_buffer.getData(),
+                          ctx.compression_buffer.getSize());
         buffer.setSize(ctx.compression_buffer.getSize() + write_offset);
     }
 

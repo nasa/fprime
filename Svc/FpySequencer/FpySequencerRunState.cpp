@@ -58,7 +58,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
     Fw::SerializeStatus status;
     // make our own esb so we can deser from stmt without breaking its constness
     Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.get_argBuf().getBuffAddr()), stmt.get_argBuf().getSize());
-    argBuf.setBuffLen(stmt.get_argBuf().getSize());
+    status = argBuf.setBuffLen(stmt.get_argBuf().getSize());
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     switch (stmt.get_opCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
