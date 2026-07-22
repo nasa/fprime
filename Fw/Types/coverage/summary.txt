@@ -22,10 +22,10 @@ Fw/Types/Serializable.cpp                    559     314    56%   23-25,30-32,34
 Fw/Types/Serializable.hpp                     12      12   100%
 Fw/Types/snprintf_format.cpp                  22      17    77%   25,31,35,41,43
 Fw/Types/sscanf_scan.cpp                      20      18    90%   36,44
-Fw/Types/StringBase.cpp                       53      49    92%   58-60,115
+Fw/Types/StringBase.cpp                       53      49    92%   77-79,134
 Fw/Types/StringTemplate.hpp                   16      16   100%
 Fw/Types/StringToNumber.cpp                   58       0     0%   5-6,8-9,12-13,16-18,21-22,25,30-31,34-36,39-40,42-43,51,65-71,73-75,77,79-80,84,89,92,97,101,106,109,114,118,123,125,130,133,138,140,145,162,166-169,171-172
-Fw/Types/StringUtils.cpp                      59      58    98%   10
+Fw/Types/StringUtils.cpp                      60      59    98%   10
 ------------------------------------------------------------------------------
-TOTAL                                       1537     846    55%
+TOTAL                                       1538     847    55%
 ------------------------------------------------------------------------------

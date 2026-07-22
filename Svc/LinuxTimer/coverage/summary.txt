@@ -5,7 +5,7 @@ Directory: ../..
 File                                       Lines    Exec  Cover   Missing
 ------------------------------------------------------------------------------
 Svc/LinuxTimer/LinuxTimerCommon.cpp            7       7   100%
-Svc/LinuxTimer/LinuxTimerFd.cpp               27      26    96%   43
+Svc/LinuxTimer/LinuxTimerFd.cpp               29      27    93%   39,46
 ------------------------------------------------------------------------------
-TOTAL                                         34      33    97%
+TOTAL                                         36      34    94%
 ------------------------------------------------------------------------------

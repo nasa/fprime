@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 01:02:47</td>
+      <td>2026-07-22 02:33:10</td>
     </tr>
   </table>
 </div>
@@ -71,14 +71,14 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l21">Fw::ActiveComponentBase::ActiveComponentBase(char const*) (line 21)</a></td><td>called 1104 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l116">Fw::ActiveComponentBase::dispatch() (line 116)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l117">Fw::ActiveComponentBase::dispatch() (line 117)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l54">Fw::ActiveComponentBase::exit() (line 54)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l126">Fw::ActiveComponentBase::finalizer() (line 126)</a></td><td>not called</td><td>0.0%</td></tr>
+    <tr><td><a href="#l127">Fw::ActiveComponentBase::finalizer() (line 127)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l30">Fw::ActiveComponentBase::getToStringFormatString() (line 30)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l25">Fw::ActiveComponentBase::init(int) (line 25)</a></td><td>called 1103 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l61">Fw::ActiveComponentBase::join() (line 61)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l65">Fw::ActiveComponentBase::join(void**) (line 65)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l124">Fw::ActiveComponentBase::preamble() (line 124)</a></td><td>called 72 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l125">Fw::ActiveComponentBase::preamble() (line 125)</a></td><td>called 72 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l106">Fw::ActiveComponentBase::s_taskLoop(void*) (line 106)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l69">Fw::ActiveComponentBase::s_taskStateMachine(void*) (line 69)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l35">Fw::ActiveComponentBase::start(unsigned char, unsigned long, unsigned long, int) (line 35)</a></td><td>not called</td><td>0.0%</td></tr>
@@ -879,130 +879,137 @@
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">component</span><span class="o">-&gt;</span><span class="n">m_stage</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">Lifecycle</span><span class="o">::</span><span class="n">DONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// @non-terminating@: component lifecycle loop runs until DONE</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">s_taskStateMachine</span><span class="p">(</span><span class="n">component</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">component</span><span class="o">-&gt;</span><span class="n">m_stage</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">Lifecycle</span><span class="o">::</span><span class="n">DONE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">s_taskStateMachine</span><span class="p">(</span><span class="n">component</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l114" href="#l114">114</a></td>
+      <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">MsgDispatchStatus</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">dispatch</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Cooperative tasks should return rather than block when no messages are available</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_task</span><span class="p">.</span><span class="n">isCooperative</span><span class="p">()</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">m_queue</span><span class="p">.</span><span class="n">getMessagesAvailable</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">MsgDispatchStatus</span><span class="o">::</span><span class="n">MSG_DISPATCH_EMPTY</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l120" href="#l120">120</a></td>
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l121" href="#l121">121</a></td>
+      <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">doDispatch</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l122" href="#l122">122</a></td>
+      <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l123" href="#l123">123</a></td>
+      <td class="lineno"><a id="l124" href="#l124">124</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l124" href="#l124">124</a></td>
+      <td class="lineno"><a id="l125" href="#l125">125</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">72</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">preamble</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l125" href="#l125">125</a></td>
+      <td class="lineno"><a id="l126" href="#l126">126</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l126" href="#l126">126</a></td>
+      <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveComponentBase</span><span class="o">::</span><span class="n">finalizer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l127" href="#l127">127</a></td>
+      <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l128" href="#l128">128</a></td>
+      <td class="lineno"><a id="l129" href="#l129">129</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Fw</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l129" href="#l129">129</a></td>
+      <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
