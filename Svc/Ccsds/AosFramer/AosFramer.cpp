@@ -220,7 +220,7 @@ void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no
     Fw::SerializeStatus status = frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    frameSerializer.serializeFrom(muxedPdu);
+    status = frameSerializer.serializeFrom(muxedPdu);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 

@@ -37,7 +37,10 @@ Drv::GpioStatus LinuxGpioDriver ::start(const FwTaskPriorityType priority,
         (void)name.format("%s.interrupt", FW_OPTIONAL_NAME(this->getObjName()));  // task name may safely truncate
         Os::Task::Arguments arguments(name, &this->interruptFunction, this, priority, stackSize, cpuAffinity,
                                       identifier);
-        this->m_poller.start(arguments);
+        Os::Task::Status taskStatus = this->m_poller.start(arguments);
+        if (taskStatus != Os::Task::Status::OP_OK) {
+            status = Drv::GpioStatus::UNKNOWN_ERROR;
+        }
     }
     return status;
 }
@@ -48,7 +51,7 @@ void LinuxGpioDriver ::stop() {
 }
 
 void LinuxGpioDriver ::join() {
-    this->m_poller.join();
+    (void)this->m_poller.join();  // best-effort join on shutdown
 }
 
 void LinuxGpioDriver ::interruptFunction(void* self) {

@@ -10,7 +10,7 @@ T FpySequencer::Stack::pop() {
     // first make a byte array which can definitely store our val
     U8 valBytes[8] = {0};
     // now move top of stack into byte array and shrink stack
-    memcpy(valBytes, this->top() - sizeof(T), sizeof(T));
+    (void)memcpy(valBytes, this->top() - sizeof(T), sizeof(T));
     this->size -= static_cast<Fpy::StackSizeType>(sizeof(T));
 
     // now do appropriate byteswap on byte array
@@ -42,7 +42,7 @@ template <>
 F32 FpySequencer::Stack::pop<F32>() {
     U32 endianness = this->pop<U32>();
     F32 val;
-    memcpy(&val, &endianness, sizeof(val));
+    (void)memcpy(&val, &endianness, sizeof(val));
     return val;
 }
 
@@ -50,7 +50,7 @@ template <>
 F64 FpySequencer::Stack::pop<F64>() {
     U64 endianness = this->pop<U64>();
     F64 val;
-    memcpy(&val, &endianness, sizeof(val));
+    (void)memcpy(&val, &endianness, sizeof(val));
     return val;
 }
 
@@ -84,7 +84,7 @@ void FpySequencer::Stack::push(T val) {
     } else {
         valBytes[0] = static_cast<U8>(valUnsigned);
     }
-    memcpy(this->top(), valBytes, sizeof(T));
+    (void)memcpy(this->top(), valBytes, sizeof(T));
     this->size += static_cast<Fpy::StackSizeType>(sizeof(T));
 }
 
@@ -100,14 +100,14 @@ template void FpySequencer::Stack::push(I64);
 template <>
 void FpySequencer::Stack::push<F32>(F32 val) {
     U32 endianness;
-    memcpy(&endianness, &val, sizeof(val));
+    (void)memcpy(&endianness, &val, sizeof(val));
     this->push(endianness);
 }
 
 template <>
 void FpySequencer::Stack::push<F64>(F64 val) {
     U64 endianness;
-    memcpy(&endianness, &val, sizeof(val));
+    (void)memcpy(&endianness, &val, sizeof(val));
     this->push(endianness);
 }
 
@@ -116,7 +116,7 @@ void FpySequencer::Stack::push<F64>(F64 val) {
 void FpySequencer::Stack::pop(U8* dest, Fpy::StackSizeType destSize) {
     FW_ASSERT(dest != nullptr);
     FW_ASSERT(this->size >= destSize, static_cast<FwAssertArgType>(this->size), static_cast<FwAssertArgType>(destSize));
-    memcpy(dest, this->top() - destSize, destSize);
+    (void)memcpy(dest, this->top() - destSize, destSize);
     this->size -= destSize;
 }
 
@@ -127,7 +127,7 @@ void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
     FW_ASSERT(src != nullptr);
     FW_ASSERT(this->size + srcSize <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(srcSize));
-    memcpy(this->top(), src, srcSize);
+    (void)memcpy(this->top(), src, srcSize);
     this->size += srcSize;
 }
 
@@ -135,7 +135,7 @@ void FpySequencer::Stack::push(const U8* src, Fpy::StackSizeType srcSize) {
 void FpySequencer::Stack::pushZeroes(Fpy::StackSizeType byteCount) {
     FW_ASSERT(this->size + byteCount <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(this->size),
               static_cast<FwAssertArgType>(byteCount));
-    memset(this->top(), 0, byteCount);
+    (void)memset(this->top(), 0, byteCount);
     this->size += byteCount;
 }
 
@@ -158,7 +158,7 @@ void FpySequencer::Stack::copy(Fpy::StackSizeType destOffset,
     FW_ASSERT(copySize == 0 || (destOffset + copySize <= srcOffset) || (srcOffset + copySize <= destOffset),
               static_cast<FwAssertArgType>(destOffset), static_cast<FwAssertArgType>(srcOffset));
     if (copySize > 0) {
-        memcpy(this->bytes + destOffset, this->bytes + srcOffset, copySize);
+        (void)memcpy(this->bytes + destOffset, this->bytes + srcOffset, copySize);
     }
 }
 
@@ -173,7 +173,7 @@ void FpySequencer::Stack::move(Fpy::StackSizeType destOffset,
     FW_ASSERT(srcOffset + moveSize <= this->size, static_cast<FwAssertArgType>(srcOffset),
               static_cast<FwAssertArgType>(moveSize));
     if (moveSize > 0) {
-        memmove(this->bytes + destOffset, this->bytes + srcOffset, moveSize);
+        (void)memmove(this->bytes + destOffset, this->bytes + srcOffset, moveSize);
     }
 }
 
