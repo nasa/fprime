@@ -16,6 +16,7 @@ paths-ignore:
   - "**/build-fprime-*/**"
   # Vendored third-party code is not maintained to the JPL standard
   - "Utils/Hash/libcrc/**"
+  - "fprime-venv/**"
 
 packs:
   # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
@@ -39,8 +40,10 @@ query-filters:
         # The autocoder emits conditional-compilation directives (include
         # guards, #ifdef) in generated headers, which trip the Rule 20
         # "Conditional compilation" check. It runs here (build paths excluded)
-        # so it guards only hand-written sources.
-        - cpp/jpl-c/preprocessor-use-ifdef
+        # so it guards only hand-written sources. The F Prime refinement
+        # permits external-macro feature detection in the OS platform layers
+        # (Os/Posix, Os/Linux, Os/Darwin).
+        - cpp/fprime/jpl-c/preprocessor-use-ifdef
         # The autocoder emits long generated functions, which trip the Rule 25
         # "Function too long" check. It runs here (build paths excluded) so it
         # guards only hand-written sources.

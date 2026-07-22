@@ -54,7 +54,7 @@ PyYAML==6.0.3
 pyzmq==27.1.0
 requests==2.33.0
 rich==13.9.2
-setuptools==78.1.1
+setuptools==83.0.0
 six==1.16.0
 text-unidecode==1.3
 tomli==2.0.1

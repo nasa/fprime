@@ -109,7 +109,8 @@ SocketIpStatus IpSocket::addressToIp4(const char* const ipv4_address, void* cons
     // string, and -1 (with errno=EAFNOSUPPORT) if the family argument is bogus. Only a
     // strict equality check is safe — a `not` test treats -1 as success and would silently
     // mask an EAFNOSUPPORT failure. (Power-of-Ten Rule 7: check every return value.)
-    if (::inet_pton(AF_INET, ipv4_address, out) != 1) {
+    const int ptonStatus = ::inet_pton(AF_INET, ipv4_address, out);
+    if (ptonStatus != 1) {
         return SOCK_INVALID_IP_ADDRESS;
     }
 #endif

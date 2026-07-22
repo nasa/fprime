@@ -104,19 +104,20 @@ void AosDeframer::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     // Validate FECF if enabled (Section 4.1.6)
     // FrameDetector + FrameAccumulator or Lower Protocol Layer should enforce whole AOS Frames
-    if (m_fecfEnabled && !this->validateFecf(data)) {
-        this->dataReturnOut_out(0, data, context);
-        return;
+    if (m_fecfEnabled) {
+        const bool fecfValid = this->validateFecf(data);
+        if (!fecfValid) {
+            this->dataReturnOut_out(0, data, context);
+            return;
+        }
     }
 
     // Create a mutable context for extracted packet info
     ComCfg::FrameContext packetContext = context;
-    // Start null, and is set by the parse step
-    AosDeframerVc* vc;
-
     // Parse and validate the AOS Primary Header (Section 4.1.2)
     // Note: parseAndValidateHeader handles warning events and errorNotify for header failures.
-    if ((vc = this->parseAndValidateHeader(data, packetContext)) == nullptr) {
+    AosDeframerVc* vc = this->parseAndValidateHeader(data, packetContext);
+    if (vc == nullptr) {
         this->dataReturnOut_out(0, data, context);
         return;
     }
@@ -456,6 +457,7 @@ void AosDeframer::extractPackets(AosDeframerVc& vc, Fw::Buffer& data) {
 }
 
 FwSizeType AosDeframer::sizePacket(AosDeframerVc& vc, U8* packetStart, FwSizeType remainingBytes) {
+    FW_ASSERT(packetStart != nullptr);
     FW_ASSERT(remainingBytes > 0, static_cast<FwAssertArgType>(remainingBytes));
 
     // Determine packet type from PVN (upper 3 bits of first byte)
@@ -524,6 +526,7 @@ FwSizeType AosDeframer::sizeSppPacket(U8* payloadStart, FwSizeType payloadSize) 
 FwSizeType AosDeframer::sizeEppPacket(const U8* const payloadStart, FwSizeType payloadSize) {
     // Per CCSDS 133.1-B-3 Section 4.1.2.1.1, EPP minimum header is 1 byte
     // Since we identified this as an EPP we had the 1 byte to read the PVN already
+    FW_ASSERT(payloadStart != nullptr);
     FW_ASSERT(payloadSize > 0, static_cast<FwAssertArgType>(payloadSize));
 
     // Parse first byte

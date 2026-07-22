@@ -19,6 +19,7 @@
 namespace Types {
 
 U32 AtomicQueue::computeChecksum(const U8* buffer, FwSizeType size) {
+    FW_ASSERT(buffer != nullptr);
     U32 sum = 0;
     for (FwSizeType i = 0; i < size; ++i) {
         sum += buffer[i];
