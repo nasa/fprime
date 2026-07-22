@@ -78,10 +78,6 @@ jobs:
         with:
           name: aarch64-linux-artifacts
           path: aarch64-linux-artifacts
-      - name: "Install build dependencies"
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zlib1g-dev
       - name: "Build native x86_64 binary for integration tests"
         working-directory: FlightExamples
         run: |
