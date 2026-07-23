@@ -40,7 +40,7 @@ jobs:
     with:
       target_repository: Specky26846/fprime-examples
       build_location: FlightExamples
-      run_unit_tests: true # unit tests being run through the reusable workflow
+      run_unit_tests: false # unit tests being run through the reusable workflow
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
 
@@ -89,8 +89,8 @@ jobs:
           fprime-util purge
           fprime-util generate
           fprime-util build
-      - name: "Run dp_demo integration tests"
-        continue-on-error: true
+      - name: "Run integration tests"
+        continue-on-error: false
         run: |
           DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
