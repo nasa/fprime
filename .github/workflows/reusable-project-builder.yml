@@ -177,8 +177,8 @@ jobs:
         run: |
           mkdir -p aarch64-linux-artifacts
           cp -r ./build-artifacts aarch64-linux-artifacts
-          if [ -d "ExamplesDeployment/test/int" ]; then
-            cp -r ExamplesDeployment/test/int aarch64-linux-artifacts/int
+          if [ -d "ManagerWorker" ]; then
+            cp -r ManagerWorker aarch64-linux-artifacts/
           fi
       - name: "Archive Build Artifacts"
         if: ${{ !inputs.skip_aarch64_build }}
