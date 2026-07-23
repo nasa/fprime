@@ -7,9 +7,9 @@
 #ifndef Svc_FprimeRouter_HPP
 #define Svc_FprimeRouter_HPP
 
-#include "Svc/FprimeRouter/FprimeRouterComponentAc.hpp"
 #include "Fw/Types/ActiveEnumAc.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
+#include "Svc/FprimeRouter/FprimeRouterComponentAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Svc {
