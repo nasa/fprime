@@ -80,7 +80,7 @@ jobs:
         run: |
           pip install --upgrade pip setuptools wheel
           pip install "yamcs-client<2.0.0"
-          pip install "fprime-gds>=4.2.2a4"
+          pip install "fprime-gds==4.2.2a4"
           pip install "fprime-xtce>=0.1.3"
           pip install "fprime-yamcs>=0.1.4"
 
