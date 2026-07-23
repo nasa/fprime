@@ -33,9 +33,8 @@ void ActiveRateGroup::configure(const U32 contexts[], const FwIndexType numConte
     FW_ASSERT(contexts != nullptr);
     FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
               static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
+                  "Context table size must match the number of rate group member output ports");
 
     this->m_numContexts = numContexts;
     // copy context values

@@ -266,7 +266,8 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
             (void)memcpy(val.getBuffAddr(), ptr, static_cast<size_t>(entry.channelSize));
             // set buf len to the channelSize. keep in mind, this is the MAX serialized size of the channel.
             // so we may actually be filling val with some junk after the value of the channel.
-            FW_ASSERT(val.setBuffLen(entry.channelSize) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            const Fw::SerializeStatus setStatus = val.setBuffLen(entry.channelSize);
+            FW_ASSERT(setStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
             this->m_lock.unLock();
             return Fw::TlmValid::VALID;
         }
