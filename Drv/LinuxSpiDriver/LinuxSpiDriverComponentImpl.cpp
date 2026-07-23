@@ -83,53 +83,12 @@ SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType po
     return SpiStatus::SPI_OK;
 }
 
-bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
-    FW_ASSERT(device >= 0, static_cast<FwAssertArgType>(device));
-    FW_ASSERT(select >= 0, static_cast<FwAssertArgType>(select));
-
-    this->m_device = device;
-    this->m_select = select;
-    int fd;
+bool LinuxSpiDriverComponentImpl::configureBus(int fd,
+                                               FwIndexType device,
+                                               FwIndexType select,
+                                               SpiFrequency clock,
+                                               U8 mode) {
     int ret;
-
-    // Open:
-    Fw::FileNameString devString;
-    Fw::FormatStatus formatStatus =
-        devString.format("/dev/spidev%" PRI_FwIndexType ".%" PRI_FwIndexType, device, select);
-    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
-
-    fd = ::open(devString.toChar(), O_RDWR);
-    if (fd == -1) {
-        this->log_WARNING_HI_SPI_OpenError(device, select, fd);
-        return false;
-    }
-
-    this->m_fd = fd;
-
-    // Configure:
-    /*
-     * SPI Mode 0, 1, 2, 3
-     */
-
-    U8 mode;  // Mode Select (CPOL = 0/1, CPHA = 0/1)
-    switch (spiMode) {
-        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
-            mode = SPI_MODE_0;
-            break;
-        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
-            mode = SPI_MODE_1;
-            break;
-        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
-            mode = SPI_MODE_2;
-            break;
-        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
-            mode = SPI_MODE_3;
-            break;
-        default:
-            // Assert if the device SPI Mode is not in the correct range
-            FW_ASSERT(false, spiMode);
-            break;
-    }
 
     ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
     if (ret == -1) {
@@ -190,6 +149,55 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     }
 
     return true;
+}
+
+bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, SpiFrequency clock, SpiMode spiMode) {
+    FW_ASSERT(device >= 0, static_cast<FwAssertArgType>(device));
+    FW_ASSERT(select >= 0, static_cast<FwAssertArgType>(select));
+
+    this->m_device = device;
+    this->m_select = select;
+
+    // Open:
+    Fw::FileNameString devString;
+    Fw::FormatStatus formatStatus =
+        devString.format("/dev/spidev%" PRI_FwIndexType ".%" PRI_FwIndexType, device, select);
+    FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
+
+    const int fd = ::open(devString.toChar(), O_RDWR);
+    if (fd == -1) {
+        this->log_WARNING_HI_SPI_OpenError(device, select, fd);
+        return false;
+    }
+
+    this->m_fd = fd;
+
+    // Configure:
+    /*
+     * SPI Mode 0, 1, 2, 3
+     */
+
+    U8 mode;  // Mode Select (CPOL = 0/1, CPHA = 0/1)
+    switch (spiMode) {
+        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW:
+            mode = SPI_MODE_0;
+            break;
+        case SpiMode::SPI_MODE_CPOL_LOW_CPHA_HIGH:
+            mode = SPI_MODE_1;
+            break;
+        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_LOW:
+            mode = SPI_MODE_2;
+            break;
+        case SpiMode::SPI_MODE_CPOL_HIGH_CPHA_HIGH:
+            mode = SPI_MODE_3;
+            break;
+        default:
+            // Assert if the device SPI Mode is not in the correct range
+            FW_ASSERT(false, spiMode);
+            break;
+    }
+
+    return this->configureBus(fd, device, select, clock, mode);
 }
 
 LinuxSpiDriverComponentImpl::~LinuxSpiDriverComponentImpl() {

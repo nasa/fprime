@@ -69,6 +69,13 @@ class FrameAccumulator final : public FrameAccumulatorComponentBase {
     //! \brief process circular buffer
     void processRing(const ComCfg::FrameContext& context);
 
+    //! \brief extract a detected frame from the ring buffer and send it downstream
+    //! \return true to continue processing the ring, false to suspend until more data arrives
+    bool extractFrame(const ComCfg::FrameContext& context,
+                      FwSizeType size_out,  //!< The detected frame size
+                      FwSizeType remaining  //!< The allocated ring size before extraction
+    );
+
     //! Circular buffer for storing data
     Types::CircularBuffer m_inRing;
 

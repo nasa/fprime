@@ -31,12 +31,8 @@ void DpWriter::configure(const Fw::ConstStringBase& dpFileNamePrefix) {
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
 
-void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
+Fw::Success::T DpWriter::validatePacketBuffer(Fw::Buffer& buffer, Fw::DpContainer& container) {
     Fw::Success::T status = Fw::Success::SUCCESS;
-    // portNum is unused
-    (void)portNum;
-    // Update num buffers received
-    ++this->m_numBuffersReceived;
     // Check that the buffer is valid
     if (!buffer.isValid()) {
         this->log_WARNING_HI_InvalidBuffer();
@@ -53,7 +49,6 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
         }
     }
     // Set up the container and check that the header hash is valid
-    Fw::DpContainer container;
     if (status == Fw::Success::SUCCESS) {
         container.setBuffer(buffer);
         Utils::HashBuffer storedHash;
@@ -76,6 +71,17 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
             status = Fw::Success::FAILURE;
         }
     }
+    return status;
+}
+
+void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffer) {
+    // portNum is unused
+    (void)portNum;
+    // Update num buffers received
+    ++this->m_numBuffersReceived;
+    // Validate the buffer and set up the container
+    Fw::DpContainer container;
+    Fw::Success::T status = this->validatePacketBuffer(buffer, container);
     // Perform the requested processing
     if (status == Fw::Success::SUCCESS) {
         this->performProcessing(container);

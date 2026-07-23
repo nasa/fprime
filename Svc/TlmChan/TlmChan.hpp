@@ -50,6 +50,9 @@ class TlmChan final : public TlmChanComponentBase {
         FwChanIdType bucketNo;  //!< for testing
     };
 
+    //! Find the entry with the given id in a hash-slot bucket chain, or nullptr
+    static TlmEntry* findBucketEntry(TlmEntry* entry, FwChanIdType id);
+
     struct TlmSet {
         TlmEntry* slots[TLMCHAN_NUM_TLM_HASH_SLOTS];  //!< set of hash slots in hash table
         TlmEntry buckets[TLMCHAN_HASH_BUCKETS];       //!< set of buckets used in hash table

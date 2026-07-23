@@ -88,6 +88,16 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
                                      const Fw::Logic& default_state,
                                      int& fd);
 
+    //! \brief describe the pin (name and current consumer) for diagnostics
+    static Fw::String getPinMessage(const int chip_descriptor, const U32 gpio);
+
+    //! \brief setup the pin per the configuration, producing its file descriptor
+    Os::File::Status setupPin(const int chip_descriptor,
+                              const U32 gpio,
+                              const GpioConfiguration& configuration,
+                              const Fw::Logic& default_state,
+                              int& fd);
+
     //! \brief helper to setup a line event (interrupt)
     Os::File::Status setupLineEvent(const int chip_descriptor,
                                     const U32 gpio,

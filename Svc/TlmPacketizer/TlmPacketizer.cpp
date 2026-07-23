@@ -45,91 +45,67 @@ TlmPacketizer ::TlmPacketizer(const char* const compName)
 
 TlmPacketizer ::~TlmPacketizer() {}
 
-void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
-                                  const Svc::TlmPacketizerPacket& ignoreList,
-                                  const FwChanIdType startLevel) {
-    // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
-    // functionality for two reasons:
-    //     1. There are no ignored channels as configured by FPP.
-    //     2. Ignore functionality is intentionally disabled by project where nullptr was intentionally supplied.
-    FW_ASSERT(ignoreList.list || ignoreList.numEntries == 0);
-    FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(packetList.numEntries));
-
-    // Reset key data members incase of reentrant calls
-    this->m_numChannels = 0;
-    this->m_channelIndices.clear();
-    this->m_configured = false;
-
-    // validate packet sizes against maximum com buffer size and populate hash
-    // table
-    FwChanIdType maxLevel = 0;
-    for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
-        // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
-        FwSizeType packetLen =
-            sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
-        FW_ASSERT(packetList.list[pktEntry]->list != nullptr, static_cast<FwAssertArgType>(pktEntry));
-        // add up entries for each defined packet
-        for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
-            FwChanIdType id = packetList.list[pktEntry]->list[tlmEntry].id;
-            const FwSizeType channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
-            FwSizeType entryIndex = 0;
-            if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
-                // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
-                entryIndex = this->m_numChannels++;
-                this->m_channels[entryIndex].id = id;
-                this->m_channels[entryIndex].hasValue = false;
-                this->m_channels[entryIndex].channelSize = channelSize;
-                for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
-                    this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
-                }
-                const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
-                FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
-            } else {
-                // Existing channel - a channel ID may repeat across packets, but its definition (size) must match.
-                // A conflicting size would corrupt the packet offsets computed from the earlier definition and
-                // overflow the fill buffer during TlmRecv/TlmGet copies, so reject the misconfiguration here.
-                FW_ASSERT(this->m_channels[entryIndex].channelSize == channelSize, static_cast<FwAssertArgType>(id),
-                          static_cast<FwAssertArgType>(channelSize),
-                          static_cast<FwAssertArgType>(this->m_channels[entryIndex].channelSize));
+void TlmPacketizer::setupPacket(const Svc::TlmPacketizerPacket& packet, const FwChanIdType pktEntry) {
+    // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
+    FwSizeType packetLen = sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
+    FW_ASSERT(packet.list != nullptr, static_cast<FwAssertArgType>(pktEntry));
+    // add up entries for each defined packet
+    for (FwChanIdType tlmEntry = 0; tlmEntry < packet.numEntries; tlmEntry++) {
+        FwChanIdType id = packet.list[tlmEntry].id;
+        const FwSizeType channelSize = packet.list[tlmEntry].size;
+        FwSizeType entryIndex = 0;
+        if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
+            // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
+            entryIndex = this->m_numChannels++;
+            this->m_channels[entryIndex].id = id;
+            this->m_channels[entryIndex].hasValue = false;
+            this->m_channels[entryIndex].channelSize = channelSize;
+            for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
+                this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
             }
-            // not ignored channel - update entry in place via reference
-            TlmEntry& entry = this->m_channels[entryIndex];
-            entry.ignored = false;
-            entry.channelSize = channelSize;
-            // the offset into the buffer will be the current packet length
-            // the offset must fit within FwSignedSizeType to allow for negative values
-            FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
-                      static_cast<FwAssertArgType>(packetLen));
-            entry.packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
-
-            packetLen += entry.channelSize;
-
-        }  // end channel in packet
-        FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen),
-                  static_cast<FwAssertArgType>(pktEntry));
-        // clear contents
-        (void)memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
-        // serialize packet descriptor and packet ID now since it will always be the same
-        Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
-            static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-        stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packetList.list[pktEntry]->id);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-        // set packet buffer length
-        stat = this->m_fillBuffers[pktEntry].buffer.setBuffLen(packetLen);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
-        // save ID
-        this->m_fillBuffers[pktEntry].id = packetList.list[pktEntry]->id;
-        // save level
-        this->m_fillBuffers[pktEntry].level = packetList.list[pktEntry]->level;
-        // store max level
-        if (packetList.list[pktEntry]->level > maxLevel) {
-            maxLevel = packetList.list[pktEntry]->level;
+            const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
+            FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
+        } else {
+            // Existing channel - a channel ID may repeat across packets, but its definition (size) must match.
+            // A conflicting size would corrupt the packet offsets computed from the earlier definition and
+            // overflow the fill buffer during TlmRecv/TlmGet copies, so reject the misconfiguration here.
+            FW_ASSERT(this->m_channels[entryIndex].channelSize == channelSize, static_cast<FwAssertArgType>(id),
+                      static_cast<FwAssertArgType>(channelSize),
+                      static_cast<FwAssertArgType>(this->m_channels[entryIndex].channelSize));
         }
+        // not ignored channel - update entry in place via reference
+        TlmEntry& entry = this->m_channels[entryIndex];
+        entry.ignored = false;
+        entry.channelSize = channelSize;
+        // the offset into the buffer will be the current packet length
+        // the offset must fit within FwSignedSizeType to allow for negative values
+        FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
+                  static_cast<FwAssertArgType>(packetLen));
+        entry.packetOffset[pktEntry] = static_cast<FwSignedSizeType>(packetLen);
 
-    }  // end packet list
-    FW_ASSERT(maxLevel <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(maxLevel));
+        packetLen += entry.channelSize;
 
+    }  // end channel in packet
+    FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen),
+              static_cast<FwAssertArgType>(pktEntry));
+    // clear contents
+    (void)memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
+    // serialize packet descriptor and packet ID now since it will always be the same
+    Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
+        static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
+    stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(packet.id);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
+    // set packet buffer length
+    stat = this->m_fillBuffers[pktEntry].buffer.setBuffLen(packetLen);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, stat);
+    // save ID
+    this->m_fillBuffers[pktEntry].id = packet.id;
+    // save level
+    this->m_fillBuffers[pktEntry].level = packet.level;
+}
+
+void TlmPacketizer::setupIgnoreList(const Svc::TlmPacketizerPacket& ignoreList) {
     // This section adds entries in the map for channels that are intended to be ignored. When the user supplies
     // a list with no length, this loop is skipped. To turn-off ignoring of channels, the user can provide a null
     // list with 0 length.
@@ -155,6 +131,36 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         entry.ignored = true;
         entry.channelSize = ignoreList.list[channelEntry].size;
     }  // end ignore list
+}
+
+void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
+                                  const Svc::TlmPacketizerPacket& ignoreList,
+                                  const FwChanIdType startLevel) {
+    // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
+    // functionality for two reasons:
+    //     1. There are no ignored channels as configured by FPP.
+    //     2. Ignore functionality is intentionally disabled by project where nullptr was intentionally supplied.
+    FW_ASSERT(ignoreList.list || ignoreList.numEntries == 0);
+    FW_ASSERT(packetList.numEntries <= MAX_PACKETIZER_PACKETS, static_cast<FwAssertArgType>(packetList.numEntries));
+
+    // Reset key data members incase of reentrant calls
+    this->m_numChannels = 0;
+    this->m_channelIndices.clear();
+    this->m_configured = false;
+
+    // validate packet sizes against maximum com buffer size and populate hash
+    // table
+    FwChanIdType maxLevel = 0;
+    for (FwChanIdType pktEntry = 0; pktEntry < packetList.numEntries; pktEntry++) {
+        this->setupPacket(*packetList.list[pktEntry], pktEntry);
+        // store max level
+        if (packetList.list[pktEntry]->level > maxLevel) {
+            maxLevel = packetList.list[pktEntry]->level;
+        }
+    }  // end packet list
+    FW_ASSERT(maxLevel <= MAX_CONFIGURABLE_TLMPACKETIZER_GROUP, static_cast<FwAssertArgType>(maxLevel));
+
+    this->setupIgnoreList(ignoreList);
 
     // store number of packets
     this->m_numPackets = packetList.numEntries;
@@ -280,6 +286,76 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
     return Fw::TlmValid::INVALID;
 }
 
+bool TlmPacketizer ::sectionShouldSend(const FwIndexType section,
+                                       const FwChanIdType entryGroup,
+                                       const FwChanIdType pkt,
+                                       const bool isNewData) {
+    PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
+    TlmPacketizer_GroupConfig& entryGroupConfig = this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
+    bool needsSend = false;
+
+    // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
+    if (isNewData && pktEntryFlags.updateFlag != UpdateFlag::REQUESTED) {
+        pktEntryFlags.updateFlag = UpdateFlag::NEW;
+    }
+
+    /* Base conditions for sending
+    1. Output port is connected
+    2. The packet was requested (Override Checks).
+
+    If the packet wasn't requested:
+    3. The Section and Group in Section is enabled OR the Group in Section is force enabled
+    4. The rate logic is not SILENCED.
+    5. The packet has data (marked updated in the past or new)
+    */
+    if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))) {
+        return false;
+    }
+
+    if (pktEntryFlags.updateFlag == UpdateFlag::REQUESTED) {
+        needsSend = true;
+    } else {
+        if (not((entryGroupConfig.get_enabled() and
+                 this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED) or
+                entryGroupConfig.get_forceEnabled() == Fw::Enabled::ENABLED)) {
+            return false;
+        }
+        if (entryGroupConfig.get_rateLogic() == Svc::RateLogic::SILENCED) {
+            return false;
+        }
+        if (pktEntryFlags.updateFlag == UpdateFlag::NEVER_UPDATED) {
+            return false;  // Avoid No Data
+        }
+    }
+
+    // Update Counter, prevent overflow.
+    if (pktEntryFlags.prevSentCounter < std::numeric_limits<U32>::max()) {
+        pktEntryFlags.prevSentCounter++;
+    }
+
+    /*
+    1. Packet has been updated
+    2. Group Logic includes checking MIN
+    3. Packet sent counter at MIN
+    */
+    if (pktEntryFlags.updateFlag == UpdateFlag::NEW and
+        entryGroupConfig.get_rateLogic() != Svc::RateLogic::EVERY_MAX and
+        pktEntryFlags.prevSentCounter >= entryGroupConfig.get_min()) {
+        needsSend = true;
+    }
+
+    /*
+    1. Group Logic includes checking MAX
+    2. Packet set counter is at MAX
+    */
+    if (entryGroupConfig.get_rateLogic() != Svc::RateLogic::ON_CHANGE_MIN and
+        pktEntryFlags.prevSentCounter >= entryGroupConfig.get_max()) {
+        needsSend = true;
+    }
+
+    return needsSend;
+}
+
 void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
     FW_ASSERT(this->m_configured);
 
@@ -296,69 +372,7 @@ void TlmPacketizer ::Run_handler(const FwIndexType portNum, U32 context) {
         this->m_lock.unLock();
 
         for (FwIndexType section = 0; section < TelemetrySection::NUM_SECTIONS; section++) {
-            PktSendCounters& pktEntryFlags = this->m_packetFlags[static_cast<FwSizeType>(section)][pkt];
-            TlmPacketizer_GroupConfig& entryGroupConfig =
-                this->m_groupConfigs[static_cast<FwSizeType>(section)][entryGroup];
-
-            // Packet is updated and not REQUESTED (Keep REQUESTED marking to bypass disable checks)
-            if (isNewData && pktEntryFlags.updateFlag != UpdateFlag::REQUESTED) {
-                pktEntryFlags.updateFlag = UpdateFlag::NEW;
-            }
-
-            /* Base conditions for sending
-            1. Output port is connected
-            2. The packet was requested (Override Checks).
-
-            If the packet wasn't requested:
-            3. The Section and Group in Section is enabled OR the Group in Section is force enabled
-            4. The rate logic is not SILENCED.
-            5. The packet has data (marked updated in the past or new)
-            */
-            if (!this->isConnected_PktSend_OutputPort(this->sectionGroupToPort(section, entryGroup))) {
-                continue;
-            }
-
-            if (pktEntryFlags.updateFlag == UpdateFlag::REQUESTED) {
-                sectionNeedsSend[section] = true;
-            } else {
-                if (not((entryGroupConfig.get_enabled() and
-                         this->m_sectionEnabled[static_cast<FwSizeType>(section)] == Fw::Enabled::ENABLED) or
-                        entryGroupConfig.get_forceEnabled() == Fw::Enabled::ENABLED)) {
-                    continue;
-                }
-                if (entryGroupConfig.get_rateLogic() == Svc::RateLogic::SILENCED) {
-                    continue;
-                }
-                if (pktEntryFlags.updateFlag == UpdateFlag::NEVER_UPDATED) {
-                    continue;  // Avoid No Data
-                }
-            }
-
-            // Update Counter, prevent overflow.
-            if (pktEntryFlags.prevSentCounter < std::numeric_limits<U32>::max()) {
-                pktEntryFlags.prevSentCounter++;
-            }
-
-            /*
-            1. Packet has been updated
-            2. Group Logic includes checking MIN
-            3. Packet sent counter at MIN
-            */
-            if (pktEntryFlags.updateFlag == UpdateFlag::NEW and
-                entryGroupConfig.get_rateLogic() != Svc::RateLogic::EVERY_MAX and
-                pktEntryFlags.prevSentCounter >= entryGroupConfig.get_min()) {
-                sectionNeedsSend[section] = true;
-            }
-
-            /*
-            1. Group Logic includes checking MAX
-            2. Packet set counter is at MAX
-            */
-            if (entryGroupConfig.get_rateLogic() != Svc::RateLogic::ON_CHANGE_MIN and
-                pktEntryFlags.prevSentCounter >= entryGroupConfig.get_max()) {
-                sectionNeedsSend[section] = true;
-            }
-
+            sectionNeedsSend[section] = this->sectionShouldSend(section, entryGroup, pkt, isNewData);
             if (sectionNeedsSend[section]) {
                 anySectionNeedsSend = true;
             }

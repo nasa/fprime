@@ -240,6 +240,22 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
 
   private:
+    //! Validate one packet's channel list, populate the hash table, and prepare its fill buffer
+    void setupPacket(const Svc::TlmPacketizerPacket& packet,  //!< The packet definition
+                     const FwChanIdType pktEntry              //!< The packet index
+    );
+
+    //! Add the ignore-list channels to the channel map
+    void setupIgnoreList(const Svc::TlmPacketizerPacket& ignoreList);
+
+    //! Evaluate the send conditions for one section of a packet, updating its counters
+    //! \return true if the section needs a packet dispatch
+    bool sectionShouldSend(const FwIndexType section,      //!< The telemetry section
+                           const FwChanIdType entryGroup,  //!< The packet's group
+                           const FwChanIdType pkt,         //!< The packet index
+                           const bool isNewData            //!< Whether the fill buffer was updated
+    );
+
     FwSizeType m_numChannels;  //!< number of channels being packetized
     Fw::RedBlackTreeMap<FwChanIdType, FwSizeType, MAX_PACKETIZER_CHANNELS> m_channelIndices;
     Fw::Array<TlmEntry, MAX_PACKETIZER_CHANNELS>

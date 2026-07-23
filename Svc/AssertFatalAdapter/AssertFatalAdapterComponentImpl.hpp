@@ -44,6 +44,9 @@ class AssertFatalAdapterComponentImpl final : public AssertFatalAdapterComponent
                       FwAssertArgType arg6);
 
   private:
+    //! Build the file argument for the FATAL events from the assert file argument
+    static Fw::LogStringArg makeFileArg(FILE_NAME_ARG file);
+
     class AssertFatalAdapter : public Fw::AssertHook {
       public:
         AssertFatalAdapter();

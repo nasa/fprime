@@ -282,6 +282,75 @@ bool AosDeframer::validateFecf(Fw::Buffer& data) {
     return true;
 }
 
+bool AosDeframer::beginSpanningPacket(AosDeframerVc& vc,
+                                      U8*& data,
+                                      FwSizeType& size,
+                                      FwSizeType& seekForward,
+                                      FwSizeType& result) {
+    // (Keep) packing whatever we've got into the static header buffer
+    const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
+    // Pack the lesser of how much we have & how much room we have
+    const FwSizeType toHeader = FW_MIN(size, headerCap - vc.spanningPacket.bytesReceived);
+    if (toHeader > 0) {
+        FW_ASSERT(vc.spanningPacket.bytesReceived < headerCap,
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+                  static_cast<FwAssertArgType>(headerCap));
+        FW_ASSERT(toHeader <= headerCap, static_cast<FwAssertArgType>(toHeader),
+                  static_cast<FwAssertArgType>(headerCap));
+        FW_ASSERT(vc.spanningPacket.bytesReceived + toHeader <= headerCap,
+                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived), static_cast<FwAssertArgType>(toHeader),
+                  static_cast<FwAssertArgType>(headerCap));
+        (void)::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
+        vc.spanningPacket.bytesReceived += toHeader;
+
+        // We'll work w/ everything past the copied header if we get a clean parse
+        data += toHeader;
+        size -= toHeader;
+        seekForward += toHeader;
+    }
+
+    // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
+    // packet)
+    const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
+    if (packetSize == 0) {
+        result = 0;
+        return false;
+    }
+
+    // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
+    // manager is out of memory, this is handled below.
+    vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
+    if ((not vc.spanningPacket.buffer.isValid()) || (vc.spanningPacket.buffer.getSize() < packetSize)) {
+        this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
+                                                       packetSize);
+        // Save before abandon clears it -— needed for the correct seek offset below
+        const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
+        this->abandonSpanningPacket(vc);
+
+        // Seek past the failed packet (header bytes already consumed + remaining body)
+        const FwSizeType remainingLength = seekForward + remainingBody;
+        if (remainingLength > size) {
+            result = 0;
+        } else {
+            result = remainingLength;
+        }
+        return false;
+    }
+
+    // Load the header into the dynamic buffer
+    FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
+              static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+              AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
+    // Destination buffer must be large enough for the accumulated header bytes.
+    // Protect against any future regression in sizeEppPacket/sizeSppPacket
+    // reintroducing an overflow that makes packetSize < bytesReceived.
+    FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
+              static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
+              static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
+    (void)::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
+    return true;
+}
+
 FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size) {
     FW_ASSERT(data != nullptr);
     FW_ASSERT(size > 0, static_cast<FwAssertArgType>(size));
@@ -291,66 +360,10 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
 
     // We work out of the static header buffer until we know the full packet size
     if (!vc.spanningPacket.buffer.isValid()) {
-        // (Keep) packing whatever we've got into the static header buffer
-        const FwSizeType headerCap = AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE;
-        // Pack the lesser of how much we have & how much room we have
-        const FwSizeType toHeader = FW_MIN(size, headerCap - vc.spanningPacket.bytesReceived);
-        if (toHeader > 0) {
-            FW_ASSERT(vc.spanningPacket.bytesReceived < headerCap,
-                      static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
-                      static_cast<FwAssertArgType>(headerCap));
-            FW_ASSERT(toHeader <= headerCap, static_cast<FwAssertArgType>(toHeader),
-                      static_cast<FwAssertArgType>(headerCap));
-            FW_ASSERT(vc.spanningPacket.bytesReceived + toHeader <= headerCap,
-                      static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
-                      static_cast<FwAssertArgType>(toHeader), static_cast<FwAssertArgType>(headerCap));
-            (void)::memcpy(vc.spanningPacket.headerBuf + vc.spanningPacket.bytesReceived, data, toHeader);
-            vc.spanningPacket.bytesReceived += toHeader;
-
-            // We'll work w/ everything past the copied header if we get a clean parse
-            data += toHeader;
-            size -= toHeader;
-            seekForward += toHeader;
+        FwSizeType result = 0;
+        if (!this->beginSpanningPacket(vc, data, size, seekForward, result)) {
+            return result;
         }
-
-        // Attempt to find a size w/ what we have in our header buff (zero means we ran out of frame before valid
-        // packet)
-        const FwSizeType packetSize = sizePacket(vc, vc.spanningPacket.headerBuf, vc.spanningPacket.bytesReceived);
-        if (packetSize == 0) {
-            return 0;
-        }
-
-        // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
-        // manager is out of memory, this is handled below.
-        vc.spanningPacket.buffer = this->allocate_out(0, packetSize);
-        if ((not vc.spanningPacket.buffer.isValid()) || (vc.spanningPacket.buffer.getSize() < packetSize)) {
-            this->log_WARNING_HI_SpanningPacketAllocFailed(vc.virtualChannelId, vc.spanningPacket.context.get_pvn(),
-                                                           packetSize);
-            // Save before abandon clears it -— needed for the correct seek offset below
-            const FwSizeType remainingBody = packetSize - vc.spanningPacket.bytesReceived;
-            this->abandonSpanningPacket(vc);
-
-            // Seek past the failed packet (header bytes already consumed + remaining body)
-            const FwSizeType remainingLength = seekForward + remainingBody;
-            if (remainingLength > size) {
-                return 0;
-            } else {
-                return remainingLength;
-            }
-        }
-
-        // Load the header into the dynamic buffer
-        FW_ASSERT(vc.spanningPacket.bytesReceived <= AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE,
-                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
-                  AosDeframerVc::SpanningPacketState::HEADER_BUF_SIZE);
-        // Destination buffer must be large enough for the accumulated header bytes.
-        // Protect against any future regression in sizeEppPacket/sizeSppPacket
-        // reintroducing an overflow that makes packetSize < bytesReceived.
-        FW_ASSERT(vc.spanningPacket.bytesReceived <= vc.spanningPacket.buffer.getSize(),
-                  static_cast<FwAssertArgType>(vc.spanningPacket.bytesReceived),
-                  static_cast<FwAssertArgType>(vc.spanningPacket.buffer.getSize()));
-        (void)::memcpy(vc.spanningPacket.buffer.getData(), vc.spanningPacket.headerBuf,
-                       vc.spanningPacket.bytesReceived);
     }
 
     // Already have the dynamic buffer, so fill away

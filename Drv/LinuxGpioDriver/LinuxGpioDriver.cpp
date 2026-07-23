@@ -183,6 +183,45 @@ Os::File::Status LinuxGpioDriver ::setupLineEvent(const int chip_descriptor,
     return status;
 }
 
+Fw::String LinuxGpioDriver ::getPinMessage(const int chip_descriptor, const U32 gpio) {
+    Fw::String pin_message("Unknown");
+    struct gpioline_info pin_info;
+    (void)::memset(&pin_info, 0, sizeof pin_info);
+    pin_info.line_offset = gpio;
+    const int return_value = ioctl(chip_descriptor, GPIO_GET_LINEINFO_IOCTL, &pin_info);
+    if (return_value == 0) {
+        const bool has_consumer = pin_info.consumer[0] != '\0';
+        (void)pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
+                                 has_consumer ? pin_info.consumer : "");
+    }
+    return pin_message;
+}
+
+Os::File::Status LinuxGpioDriver ::setupPin(const int chip_descriptor,
+                                            const U32 gpio,
+                                            const GpioConfiguration& configuration,
+                                            const Fw::Logic& default_state,
+                                            int& fd) {
+    Os::File::Status status = Os::File::OP_OK;
+    switch (configuration) {
+        // Cascade intended
+        case GPIO_OUTPUT:
+        case GPIO_INPUT:
+            status = this->setupLineHandle(chip_descriptor, gpio, configuration, default_state, fd);
+            break;
+        // Cascade intended
+        case GPIO_INTERRUPT_RISING_EDGE:
+        case GPIO_INTERRUPT_FALLING_EDGE:
+        case GPIO_INTERRUPT_BOTH_RISING_AND_FALLING_EDGES:
+            status = this->setupLineEvent(chip_descriptor, gpio, configuration, fd);
+            break;
+        default:
+            FW_ASSERT(false);
+            break;
+    }
+    return status;
+}
+
 Os::File::Status LinuxGpioDriver ::open(const char* device,
                                         const U32 gpio,
                                         const GpioConfiguration& configuration,
@@ -215,35 +254,11 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
                                           Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
     }
-    Fw::String pin_message("Unknown");
-    struct gpioline_info pin_info;
-    (void)::memset(&pin_info, 0, sizeof pin_info);
-    pin_info.line_offset = gpio;
-    return_value = ioctl(chip_descriptor, GPIO_GET_LINEINFO_IOCTL, &pin_info);
-    if (return_value == 0) {
-        const bool has_consumer = pin_info.consumer[0] != '\0';
-        (void)pin_message.format("%s%s%s", pin_info.name, has_consumer ? " with current consumer " : "",
-                                 has_consumer ? pin_info.consumer : "");
-    }
+    Fw::String pin_message = getPinMessage(chip_descriptor, gpio);
 
     // Set up pin and set file descriptor for it
     int pin_fd = -1;
-    switch (configuration) {
-        // Cascade intended
-        case GPIO_OUTPUT:
-        case GPIO_INPUT:
-            status = this->setupLineHandle(chip_descriptor, gpio, configuration, default_state, pin_fd);
-            break;
-        // Cascade intended
-        case GPIO_INTERRUPT_RISING_EDGE:
-        case GPIO_INTERRUPT_FALLING_EDGE:
-        case GPIO_INTERRUPT_BOTH_RISING_AND_FALLING_EDGES:
-            status = this->setupLineEvent(chip_descriptor, gpio, configuration, pin_fd);
-            break;
-        default:
-            FW_ASSERT(false);
-            break;
-    }
+    status = this->setupPin(chip_descriptor, gpio, configuration, default_state, pin_fd);
     // Final status check
     if (status != Os::File::Status::OP_OK) {
         this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, pin_message,

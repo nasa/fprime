@@ -72,6 +72,12 @@ class DpWriter final : public DpWriterComponentBase {
     // Private helper functions
     // ----------------------------------------------------------------------
 
+    //! Validate the packet buffer and set up the container (size, header hash, header, packet size)
+    //! \return Success or failure
+    Fw::Success::T validatePacketBuffer(Fw::Buffer& buffer,         //!< The packet buffer
+                                        Fw::DpContainer& container  //!< The container
+    );
+
     //! Deserialize the packet header
     //! \return Success or failure
     Fw::Success::T deserializePacketHeader(Fw::Buffer& buffer,         //!< The packet buffer

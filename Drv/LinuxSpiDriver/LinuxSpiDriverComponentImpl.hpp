@@ -72,6 +72,10 @@ class LinuxSpiDriverComponentImpl final : public LinuxSpiDriverComponentBase {
               SpiMode spiMode = SpiMode::SPI_MODE_CPOL_LOW_CPHA_LOW);
 
   private:
+    //! Configure mode, bits-per-word, and clock speed on an opened SPI device
+    //! \return true on success
+    bool configureBus(int fd, FwIndexType device, FwIndexType select, SpiFrequency clock, U8 mode);
+
     // ----------------------------------------------------------------------
     // Handler implementations for user-defined typed input ports
     // ----------------------------------------------------------------------

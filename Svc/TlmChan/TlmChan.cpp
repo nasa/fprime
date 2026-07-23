@@ -159,6 +159,16 @@ void TlmChan::pingIn_handler(const FwIndexType portNum, U32 key) {
     this->pingOut_out(0, key);
 }
 
+TlmChan::TlmEntry* TlmChan::findBucketEntry(TlmEntry* entry, FwChanIdType id) {
+    for (FwChanIdType bucket = 0; (bucket < TLMCHAN_HASH_BUCKETS) && (entry != nullptr); bucket++) {
+        if (entry->id == id) {
+            return entry;
+        }
+        entry = entry->next;
+    }
+    return nullptr;
+}
+
 Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& timeTag, Fw::TlmBuffer& val) {
     static_assert(NUM_TLMGET_INPUT_PORTS == 1, "TlmGet_handler expects exactly one input port");
     FwChanIdType index = this->doHash(id);
@@ -166,31 +176,9 @@ Fw::TlmValid TlmChan::TlmGet_handler(FwIndexType portNum, FwChanIdType id, Fw::T
     // Search to see if channel has been stored
     // check both buffers
     // don't need to lock because this port is guarded
-    TlmEntry* activeEntry = this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index];
-    for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-        if (activeEntry) {
-            if (activeEntry->id == id) {
-                break;
-            } else {
-                activeEntry = activeEntry->next;
-            }
-        } else {
-            break;
-        }
-    }
-
-    TlmEntry* inactiveEntry = this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].slots[index];
-    for (FwChanIdType bucket = 0; bucket < TLMCHAN_HASH_BUCKETS; bucket++) {
-        if (inactiveEntry) {
-            if (inactiveEntry->id == id) {
-                break;
-            } else {
-                inactiveEntry = inactiveEntry->next;
-            }
-        } else {
-            break;
-        }
-    }
+    TlmEntry* activeEntry = findBucketEntry(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index], id);
+    TlmEntry* inactiveEntry =
+        findBucketEntry(this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].slots[index], id);
 
     if (activeEntry && inactiveEntry) {
         Fw::TimeComparison cmp = Fw::Time::compare(inactiveEntry->lastUpdate, activeEntry->lastUpdate);

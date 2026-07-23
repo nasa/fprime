@@ -139,6 +139,15 @@ class AosDeframer : public AosDeframerComponentBase {
     //! \return Number of bytes to seek forward, or zero if done w/ frame
     FwSizeType appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSizeType size);
 
+    //! \brief accumulate header bytes, size the spanning packet, and allocate its buffer
+    //! \return true when the dynamic buffer is ready; false when the caller should return `result`
+    bool beginSpanningPacket(AosDeframerVc& vc,
+                             U8*& data,                //!< Advanced past any consumed header bytes
+                             FwSizeType& size,         //!< Reduced by any consumed header bytes
+                             FwSizeType& seekForward,  //!< Increased by any consumed header bytes
+                             FwSizeType& result        //!< Seek amount to return on false
+    );
+
     //! Map frame context onto the appropriate virtual channel struct
     //! \param vcId the virtual channel id to lookup
     //! \return pointer to the vc struct if vcId is known, nullptr otherwise

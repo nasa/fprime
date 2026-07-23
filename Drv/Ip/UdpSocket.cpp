@@ -118,72 +118,43 @@ SocketIpStatus UdpSocket::bind(const int fd) {
     return SOCK_SUCCESS;
 }
 
-SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    if (this->m_port == 0 && !this->m_recv_configured) {
-        return SOCK_INVALID_CALL;  // Neither send nor receive is configured
-    }
-
-    SocketIpStatus status = SOCK_SUCCESS;
-
+SocketIpStatus UdpSocket::setupSendSide(int socketFd) {
     // Initialize address structure to zero before use
     struct sockaddr_in address;
     (void)::memset(&address, 0, sizeof(address));
 
-    U16 port = this->m_port;
-    U16 recv_port = ntohs(this->m_addr_recv.sin_port);
+    // Set up the address port and name
+    address.sin_family = AF_INET;
+    address.sin_port = htons(this->m_port);
 
-    // Acquire a socket, or return error
-    int socketFd = ::socket(AF_INET, SOCK_DGRAM, 0);
-    if (socketFd == -1) {
-        return SOCK_FAILED_TO_GET_SOCKET;
-    }
-
-    // May not be sending in all cases
-    if (port != 0) {
-        // Set up the address port and name
-        address.sin_family = AF_INET;
-        address.sin_port = htons(this->m_port);
-
-        // OS specific settings
+    // OS specific settings
 #if defined TGT_OS_TYPE_VXWORKS || TGT_OS_TYPE_DARWIN
-        address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
+    address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-        // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
-        status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
-        if (status != SOCK_SUCCESS) {
-            Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
-            (void)::close(socketFd);
-            return status;
-        };
-
-        if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-            (void)::close(socketFd);
-            return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
-        }
-
-        // Now apply timeouts
-        status = this->setupTimeouts(socketFd);
-        if (status != SOCK_SUCCESS) {
-            (void)::close(socketFd);
-            return status;
-        }
-        FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
-                  static_cast<FwAssertArgType>(sizeof(address)));
-        (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
+    // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+    SocketIpStatus status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (status != SOCK_SUCCESS) {
+        Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
+        return status;
     }
 
-    // Only bind if configureRecv was called (including ephemeral)
-    if (this->m_recv_configured) {
-        status = this->bind(socketFd);
-
-        if (status != SOCK_SUCCESS) {
-            (void)::close(socketFd);  // Closing FD as a retry will reopen send side
-            return status;
-        }
+    if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
+        return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
-    // Log message for UDP
+    // Now apply timeouts
+    status = this->setupTimeouts(socketFd);
+    if (status != SOCK_SUCCESS) {
+        return status;
+    }
+    FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
+              static_cast<FwAssertArgType>(sizeof(address)));
+    (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
+    return SOCK_SUCCESS;
+}
+
+void UdpSocket::logOpenState(U16 port, U16 recv_port) const {
     char recv_addr[INET_ADDRSTRLEN];
     const char* recv_addr_str = inet_ntop(AF_INET, &(this->m_addr_recv.sin_addr), recv_addr, INET_ADDRSTRLEN);
     if (recv_addr_str == nullptr) {
@@ -198,6 +169,44 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port,
                         this->m_ipv4_address, port);
     }
+}
+
+SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
+    if (this->m_port == 0 && !this->m_recv_configured) {
+        return SOCK_INVALID_CALL;  // Neither send nor receive is configured
+    }
+
+    SocketIpStatus status = SOCK_SUCCESS;
+
+    U16 port = this->m_port;
+    U16 recv_port = ntohs(this->m_addr_recv.sin_port);
+
+    // Acquire a socket, or return error
+    int socketFd = ::socket(AF_INET, SOCK_DGRAM, 0);
+    if (socketFd == -1) {
+        return SOCK_FAILED_TO_GET_SOCKET;
+    }
+
+    // May not be sending in all cases
+    if (port != 0) {
+        status = this->setupSendSide(socketFd);
+        if (status != SOCK_SUCCESS) {
+            (void)::close(socketFd);
+            return status;
+        }
+    }
+
+    // Only bind if configureRecv was called (including ephemeral)
+    if (this->m_recv_configured) {
+        status = this->bind(socketFd);
+
+        if (status != SOCK_SUCCESS) {
+            (void)::close(socketFd);  // Closing FD as a retry will reopen send side
+            return status;
+        }
+    }
+
+    this->logOpenState(port, recv_port);
 
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
     socketDescriptor.fd = socketFd;

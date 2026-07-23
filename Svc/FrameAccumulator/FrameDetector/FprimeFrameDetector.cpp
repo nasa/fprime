@@ -9,6 +9,53 @@
 namespace Svc {
 namespace FrameDetectors {
 
+namespace {
+
+// Peek and deserialize the frame trailer that follows the frame body
+bool readTrailer(const Types::CircularBuffer& data,
+                 const FprimeProtocol::FrameHeader& header,
+                 FprimeProtocol::FrameTrailer& trailer) {
+    U8 trailer_data[FprimeProtocol::FrameTrailer::SERIALIZED_SIZE];
+    Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    Fw::SerializeStatus status = data.peek(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE,
+                                           FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return false;
+    }
+    status = trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    // Deserialize trailer from circular buffer (peeked data) into trailer object
+    status = trailer.deserializeFrom(trailer_ser_buffer);
+    return status == Fw::FW_SERIALIZE_OK;
+}
+
+// Compute the CRC over the transmitted data (header + body)
+U32 computeCrc(const Types::CircularBuffer& data, const FprimeProtocol::FrameHeader& header) {
+    Utils::Hash hash;
+    Utils::HashBuffer hashBuffer;
+    // Safety invariant: the caller's guard ensures
+    //   lengthField <= MAX - header_trailer_overhead
+    //                <= MAX - HEADER_SIZE - TRAILER_SIZE
+    //                <  MAX - HEADER_SIZE
+    // so this addition cannot overflow. The assert makes that contract explicit at the
+    // point of use so it remains correct if this code is ever moved or refactored.
+    FW_ASSERT(header.get_lengthField() <=
+                  std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
+              static_cast<FwAssertArgType>(header.get_lengthField()));
+    FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
+    hash.init();
+    for (FwSizeType i = 0; i < hash_field_size; i++) {
+        U8 byte = 0;
+        const Fw::SerializeStatus status = data.peek(byte, i);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+        hash.update(&byte, 1);
+    }
+    hash.finalize(hashBuffer);
+    return hashBuffer.asBigEndianU32();
+}
+
+}  // namespace
+
 FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& data, FwSizeType& size_out) const {
     // If not enough data for header + trailer, report MORE_DATA_NEEDED
     if (data.get_allocated_size() <
@@ -83,45 +130,12 @@ FrameDetector::Status FprimeFrameDetector::detect(const Types::CircularBuffer& d
     }
 
     // ---------------- Frame Trailer ----------------
-    U8 trailer_data[FprimeProtocol::FrameTrailer::SERIALIZED_SIZE];
-    Fw::ExternalSerializeBuffer trailer_ser_buffer(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
-    status = data.peek(trailer_data, FprimeProtocol::FrameTrailer::SERIALIZED_SIZE,
-                       FprimeProtocol::FrameHeader::SERIALIZED_SIZE + header.get_lengthField());
-    if (status != Fw::FW_SERIALIZE_OK) {
+    if (!readTrailer(data, header, trailer)) {
         return Status::NO_FRAME_DETECTED;
     }
-    status = trailer_ser_buffer.setBuffLen(FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
-    // Deserialize trailer from circular buffer (peeked data) into trailer object
-    status = trailer.deserializeFrom(trailer_ser_buffer);
-    if (status != Fw::FW_SERIALIZE_OK) {
-        return Status::NO_FRAME_DETECTED;
-    }
-
-    Utils::Hash hash;
-    Utils::HashBuffer hashBuffer;
-    // Compute CRC over the transmitted data (header + body).
-    // Safety invariant: the guard above ensures
-    //   lengthField <= MAX - header_trailer_overhead
-    //                <= MAX - HEADER_SIZE - TRAILER_SIZE
-    //                <  MAX - HEADER_SIZE
-    // so this addition cannot overflow. The assert makes that contract explicit at the
-    // point of use so it remains correct if this code is ever moved or refactored.
-    FW_ASSERT(header.get_lengthField() <=
-                  std::numeric_limits<FwSizeType>::max() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE,
-              static_cast<FwAssertArgType>(header.get_lengthField()));
-    FwSizeType hash_field_size = header.get_lengthField() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE;
-    hash.init();
-    for (FwSizeType i = 0; i < hash_field_size; i++) {
-        U8 byte = 0;
-        status = data.peek(byte, i);
-        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
-        hash.update(&byte, 1);
-    }
-    hash.finalize(hashBuffer);
 
     // Compare the transmitted CRC with the computed one
-    if (trailer.get_crcField() != hashBuffer.asBigEndianU32()) {
+    if (trailer.get_crcField() != computeCrc(data, header)) {
         // CRC mismatch - there likely was data corruption. The F Prime protocol
         // being very simple, we don't have a way to recover from this.
         // So we report NO_FRAME_DETECTED and drop the frame

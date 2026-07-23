@@ -83,16 +83,7 @@ void AssertFatalAdapterComponentImpl::AssertFatalAdapter::doAssert() {
     // do nothing since there will be a FATAL
 }
 
-void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
-                                                   FwSizeType lineNo,
-                                                   FwSizeType numArgs,
-                                                   FwAssertArgType arg1,
-                                                   FwAssertArgType arg2,
-                                                   FwAssertArgType arg3,
-                                                   FwAssertArgType arg4,
-                                                   FwAssertArgType arg5,
-                                                   FwAssertArgType arg6) {
-    // Get file arg for events
+Fw::LogStringArg AssertFatalAdapterComponentImpl::makeFileArg(FILE_NAME_ARG file) {
 #if FW_ASSERT_LEVEL == FW_FILEID_ASSERT
     Fw::LogStringArg fileArg;
     fileArg.format("0x%08" PRIX32, file);
@@ -106,6 +97,20 @@ void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
 
     Fw::LogStringArg fileArg(start);
 #endif
+    return fileArg;
+}
+
+void AssertFatalAdapterComponentImpl::reportAssert(FILE_NAME_ARG file,
+                                                   FwSizeType lineNo,
+                                                   FwSizeType numArgs,
+                                                   FwAssertArgType arg1,
+                                                   FwAssertArgType arg2,
+                                                   FwAssertArgType arg3,
+                                                   FwAssertArgType arg4,
+                                                   FwAssertArgType arg5,
+                                                   FwAssertArgType arg6) {
+    // Get file arg for events
+    Fw::LogStringArg fileArg = this->makeFileArg(file);
 
     CHAR msg[Fw::StringBase::BUFFER_SIZE(FW_ASSERT_TEXT_SIZE)] = {0};
     Fw::defaultReportAssert(file, static_cast<U32>(lineNo), numArgs, arg1, arg2, arg3, arg4, arg5, arg6, msg,

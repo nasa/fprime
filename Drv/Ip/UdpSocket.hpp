@@ -173,6 +173,16 @@ class UdpSocket : public IpSocket {
     SocketIpStatus handleZeroReturn() override;
 
   private:
+    /**
+     * \brief configure the send side of the socket (address, options, timeouts)
+     * \param socketFd: open socket file descriptor
+     * \return status of the setup
+     */
+    SocketIpStatus setupSendSide(int socketFd);
+
+    //! \brief log the configured send/receive endpoints
+    void logOpenState(U16 port, U16 recv_port) const;
+
     struct sockaddr_in m_addr_send;  //!< UDP server address for sending
     struct sockaddr_in m_addr_recv;  //!< UDP server address for receiving
     bool m_recv_configured;          //!< True if configureRecv was called

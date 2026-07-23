@@ -131,38 +131,7 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
 
         // On successful detection, consume data from the ring buffer and place it into an allocated frame
         if (status == FrameDetector::FRAME_DETECTED) {
-            // size_out must be set (non-zero) and must fit within the remaining data
-            FW_ASSERT(size_out != 0);
-            FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out),
-                      static_cast<FwAssertArgType>(remaining));
-            Fw::Buffer buffer = this->bufferAllocate_out(0, size_out);
-            if (buffer.isValid()) {
-                // Copy data out of ring buffer into the allocated buffer
-                Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
-                buffer.setSize(size_out);
-                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                // Consume (rotate) the data from the ring buffer
-                serialize_status = this->m_inRing.rotate(size_out);
-                FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
-                          static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                          static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
-                this->dataOut_out(0, buffer, context);
-            } else {
-                // No buffer is available
-                this->log_WARNING_HI_NoBufferAvailable();
-                // In the case where no buffer is available and the circular buffer is full, we have to drop the buffer
-                // as there is no other way to retry. Without dropping it, the back pressure would assert the
-                // processing call, which is built on the assumption that at least one byte would process
-                if (this->m_inRing.get_free_size() == 0) {
-                    // Discard the whole frame as a last attempt to keep the system afloat
-                    Fw::SerializeStatus serialize_status = this->m_inRing.rotate(size_out);
-                    FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
-                    FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
-                              static_cast<FwAssertArgType>(m_inRing.get_allocated_size()),
-                              static_cast<FwAssertArgType>(remaining), static_cast<FwAssertArgType>(size_out));
-                    this->log_WARNING_HI_FrameDetectionValidFrameDropped();
-                }
+            if (!this->extractFrame(context, size_out, remaining)) {
                 break;
             }
         }
@@ -183,6 +152,42 @@ void FrameAccumulator ::processRing(const ComCfg::FrameContext& context) {
                       static_cast<FwAssertArgType>(remaining));
         }
     }
+}
+
+bool FrameAccumulator ::extractFrame(const ComCfg::FrameContext& context, FwSizeType size_out, FwSizeType remaining) {
+    // size_out must be set (non-zero) and must fit within the remaining data
+    FW_ASSERT(size_out != 0);
+    FW_ASSERT(size_out <= remaining, static_cast<FwAssertArgType>(size_out), static_cast<FwAssertArgType>(remaining));
+    Fw::Buffer buffer = this->bufferAllocate_out(0, size_out);
+    if (buffer.isValid()) {
+        // Copy data out of ring buffer into the allocated buffer
+        Fw::SerializeStatus serialize_status = this->m_inRing.peek(buffer.getData(), size_out);
+        buffer.setSize(size_out);
+        FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        // Consume (rotate) the data from the ring buffer
+        serialize_status = this->m_inRing.rotate(size_out);
+        FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
+                  static_cast<FwAssertArgType>(m_inRing.get_allocated_size()), static_cast<FwAssertArgType>(remaining),
+                  static_cast<FwAssertArgType>(size_out));
+        this->dataOut_out(0, buffer, context);
+        return true;
+    }
+    // No buffer is available
+    this->log_WARNING_HI_NoBufferAvailable();
+    // In the case where no buffer is available and the circular buffer is full, we have to drop the buffer
+    // as there is no other way to retry. Without dropping it, the back pressure would assert the
+    // processing call, which is built on the assumption that at least one byte would process
+    if (this->m_inRing.get_free_size() == 0) {
+        // Discard the whole frame as a last attempt to keep the system afloat
+        Fw::SerializeStatus serialize_status = this->m_inRing.rotate(size_out);
+        FW_ASSERT(serialize_status == Fw::SerializeStatus::FW_SERIALIZE_OK);
+        FW_ASSERT(m_inRing.get_allocated_size() == remaining - size_out,
+                  static_cast<FwAssertArgType>(m_inRing.get_allocated_size()), static_cast<FwAssertArgType>(remaining),
+                  static_cast<FwAssertArgType>(size_out));
+        this->log_WARNING_HI_FrameDetectionValidFrameDropped();
+    }
+    return false;
 }
 
 void FrameAccumulator ::dataReturnIn_handler(FwIndexType portNum,
