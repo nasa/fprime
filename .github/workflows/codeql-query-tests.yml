@@ -47,7 +47,9 @@ jobs:
 
     - name: Install query pack dependencies
       working-directory: .github/codeql
-      run: codeql pack install fprime-queries-tests --additional-packs=.
+      run: |
+        codeql pack install fprime-queries
+        codeql pack install fprime-queries-tests --additional-packs=.
 
     - name: Run query tests
       working-directory: .github/codeql
