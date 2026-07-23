@@ -17,9 +17,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FprimeRouter ::FprimeRouter(const char* const compName) : FprimeRouterComponentBase(compName) {
-    // Mark every table entry unused (key == nullptr)
+    // Mark every table entry unused
     for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
-        this->m_bufferContextTable[i].key = nullptr;
+        this->m_bufferContextTable[i].state = Fw::Active::INACTIVE;
     }
 }
 
@@ -114,7 +114,8 @@ void FprimeRouter ::fileBufferReturnIn_handler(FwIndexType portNum, Fw::Buffer& 
 Fw::Success FprimeRouter ::insertContext(const Fw::Buffer& buffer, const ComCfg::FrameContext& context) {
     const U8* key = buffer.getData();
     for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
-        if (this->m_bufferContextTable[i].key == nullptr) {
+        if (this->m_bufferContextTable[i].state == Fw::Active::INACTIVE) {
+            this->m_bufferContextTable[i].state = Fw::Active::ACTIVE;
             this->m_bufferContextTable[i].key = key;
             this->m_bufferContextTable[i].context = context;
             return Fw::Success::SUCCESS;
@@ -127,9 +128,9 @@ Fw::Success FprimeRouter ::insertContext(const Fw::Buffer& buffer, const ComCfg:
 Fw::Success FprimeRouter ::takeContext(const Fw::Buffer& buffer, ComCfg::FrameContext& context) {
     const U8* key = buffer.getData();
     for (FwSizeType i = 0; i < FW_NUM_ARRAY_ELEMENTS(this->m_bufferContextTable); i++) {
-        if (this->m_bufferContextTable[i].key == key) {
+        if (this->m_bufferContextTable[i].state == Fw::Active::ACTIVE && this->m_bufferContextTable[i].key == key) {
             context = this->m_bufferContextTable[i].context;
-            this->m_bufferContextTable[i].key = nullptr;
+            this->m_bufferContextTable[i].state = Fw::Active::INACTIVE;
             return Fw::Success::SUCCESS;
         }
     }

@@ -20,6 +20,8 @@ Command packets are returned immediately with their received context. `fileOut` 
 
 The table capacity is set by `ComCfg.RouterBufferContextTableSize`. Size it to the uplink buffer pool size: every outstanding buffer comes from that pool, so the pool count is the hard upper bound on how many can be in flight at once. Because buffers return on a different thread than `dataIn` arrivals, `dataIn` and `fileBufferReturnIn` are `guarded input` ports so table access is serialized.
 
+The lookup keys on the returned buffer's data pointer, which relies on the standard contract that a consumer returns the same `Fw::Buffer` it was given (the buffers are drawn from a single uplink pool, so at most one outstanding buffer holds a given data pointer at a time). If a consumer returned a different or offset buffer, the lookup would miss and degrade as below rather than restore a wrong context.
+
 If the table is full on hand-off, or a returned buffer is not found, the router emits a warning event and returns the buffer with an empty context.
 
 ## Usage Examples

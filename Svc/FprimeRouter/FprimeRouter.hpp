@@ -8,6 +8,7 @@
 #define Svc_FprimeRouter_HPP
 
 #include "Svc/FprimeRouter/FprimeRouterComponentAc.hpp"
+#include "Fw/Types/ActiveEnumAc.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
 
@@ -61,7 +62,8 @@ class FprimeRouter final : public FprimeRouterComponentBase {
 
     //! One buffer-to-context association
     struct BufferContextEntry {
-        const U8* key;                 //!< Data pointer of the outstanding buffer (nullptr if unused)
+        Fw::Active state;              //!< ACTIVE if this slot holds an outstanding association, else INACTIVE
+        const U8* key;                 //!< Data pointer of the outstanding buffer
         ComCfg::FrameContext context;  //!< Context to restore when the buffer returns
     };
 
