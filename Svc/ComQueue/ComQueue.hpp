@@ -124,9 +124,10 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Takes in the queue depth and priority per-port in order from Fw::Com through Fw::Buffer ports. Calculates the
     //! queue metadata stored `m_prioritizedList` and then sorts that list by priority.
-    void configure(QueueConfigurationTable queueConfig,  //!< Table of the configuration properties for the component
-                   FwEnumStoreType allocationId,         //!< Identifier used  when dealing with the Fw::MemAllocator
-                   Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
+    void configure(
+        const QueueConfigurationTable& queueConfig,  //!< Table of the configuration properties for the component
+        FwEnumStoreType allocationId,                //!< Identifier used  when dealing with the Fw::MemAllocator
+        Fw::MemAllocator& allocator                  //!< Fw::MemAllocator used to acquire memory
     );
 
     //! Deallocate resources and cleanup ComQueue

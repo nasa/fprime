@@ -417,7 +417,7 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
 }  // end fillBinaryTree()
 
-FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
+FwSizeType DpCatalog::determineDirectory(const Fw::String& fullFile) {
     FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(this->m_numDirectories));
     // Grab the directory string (up until the final slash)
     // Could be found directly w/ a dirname func or regex
@@ -450,7 +450,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-DpCatalog::ProcessFileStatus DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, FwSizeType dir) {
     FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
