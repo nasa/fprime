@@ -61,6 +61,8 @@ def test_telemetry_update(fprime_test_api: IntegrationTestAPI):
 
     cmd_dispatched_channel = fprime_test_api.get_telemetry_pred("CommandsDispatched")
     fprime_test_api.set_tlm_packet_level(3)
+    # Clear stale telemetry, then wait for fresh telemetry after command completes
+    fprime_test_api.clear_histories()
 
     begin_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
     begin_tlm_val = begin_result.val_obj.val
