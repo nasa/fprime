@@ -29,18 +29,27 @@ ActiveRateGroup::ActiveRateGroup(const char* compName)
       m_overrunThrottle(0),
       m_cycleSlips(0) {}
 
+void ActiveRateGroup::configure(const ContextArray& contexts) {
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
+                  "Context table size must match the number of rate group member output ports");
+
+    this->m_numContexts = CONNECTION_COUNT_MAX;
+    // copy context values
+    for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
+        this->m_contexts[entry] = contexts[static_cast<FwSizeType>(entry)];
+    }
+}
+
 void ActiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
     FW_ASSERT(contexts != nullptr);
     FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
               static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
-    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
-                  "Context table size must match the number of rate group member output ports");
 
-    this->m_numContexts = numContexts;
-    // copy context values
-    for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = contexts[entry];
+    ContextArray contextArray;
+    for (FwIndexType entry = 0; entry < numContexts; entry++) {
+        contextArray[static_cast<FwSizeType>(entry)] = contexts[entry];
     }
+    this->configure(contextArray);
 }
 
 ActiveRateGroup::~ActiveRateGroup() {}
