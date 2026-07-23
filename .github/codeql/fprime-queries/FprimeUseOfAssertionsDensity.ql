@@ -86,11 +86,21 @@ where
   // analyzed instead (macro expansions are visible in instantiations).
   not f.isFromUninstantiatedTemplate(_) and
   not exists(Assertion a | a.getAsserted().getEnclosingFunction() = f) and
+  // A static_assert is an assertion too -- arguably a better one, since it
+  // proves the invariant at compile time and can never fire in flight.
+  not exists(StaticAssert sa | sa.getCondition().getEnclosingFunction() = f) and
   not statusReturning(f) and
   not boolReturning(f) and
   not eventLogging(f) and
   not testAsserted(f) and
-  not assertInfrastructure(f)
+  not assertInfrastructure(f) and
+  // Constructors and destructors are exempt: components may be globally
+  // instantiated, so a runtime assertion there can fire before main() — before
+  // the assert hook, logging, or any output path exists — making the failure
+  // undiagnosable. Compile-time checks (static_assert) are the sanctioned
+  // ctor/dtor-time mechanism.
+  not f instanceof Constructor and
+  not f instanceof Destructor
 select f,
   "All functions of more than 10 lines should have at least one assertion, " +
     "unless they handle errors by returning a status enum or bool, or by emitting a WARNING/FATAL event."
