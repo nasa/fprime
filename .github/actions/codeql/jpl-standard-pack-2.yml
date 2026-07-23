@@ -75,6 +75,7 @@ query-filters:
   - exclude:
       id:
         - cpp/jpl-c/function-size-limits
+        - cpp/fprime/jpl-c/function-size-limits
 
 # NOTE: for compiled languages paths-ignore does not filter results by itself;
 # the actual exclusion is the filter-sarif step in codeql-jpl-standard.yml.
