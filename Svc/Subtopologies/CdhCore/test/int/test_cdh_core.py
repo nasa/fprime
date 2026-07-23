@@ -40,9 +40,9 @@ def test_command_and_event_with_many_args(fprime_test_api: IntegrationTestAPI):
 
     # types are (I32, F32, U8) - random float precision is finnicky, so just use a fixed value
     TEST_ARGS = [
-        random.randint(-(2**31), 2**31 - 1),
+        random.randint(-(2 ** 31), 2 ** 31 - 1),
         1.5,
-        random.randint(0, 2**8 - 1),
+        random.randint(0, 2 ** 8 - 1),
     ]
 
     test_event = fprime_test_api.get_event_pred("TestCmd1Args", TEST_ARGS)
