@@ -4,8 +4,6 @@
 # Basic CMake tests.
 #
 ####
-import platform
-
 from . import cmake
 from . import settings
 
