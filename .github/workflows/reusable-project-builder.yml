@@ -39,6 +39,11 @@ on:
         required: false
         type: string
         default: "devel"
+      skip_aarch64_build:
+        description: "Skip ARM64 cross-compilation build"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
 
@@ -141,11 +146,13 @@ jobs:
         shell: bash
 
       - name: "Install AArch64 cross-compilation toolchain"
+        if: ${{ !inputs.skip_aarch64_build }}
         run: |
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build zlib1g-dev
         shell: bash
       - name: "Build zlib for ARM64"
+        if: ${{ !inputs.skip_aarch64_build }}
         run: |
           wget https://github.com/madler/zlib/releases/download/v1.3/zlib-1.3.tar.gz
           tar -xzf zlib-1.3.tar.gz
@@ -155,14 +162,17 @@ jobs:
           sudo make install
         shell: bash
       - name: "Generate AArch64 Linux Build Cache"
+        if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
           fprime-util generate aarch64-linux
       - name: "Build AArch64 Linux"
+        if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
           fprime-util build aarch64-linux
       - name: "Prepare artifacts"
+        if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
           mkdir -p aarch64-linux-artifacts
@@ -171,6 +181,7 @@ jobs:
             cp -r ExamplesDeployment/test/int aarch64-linux-artifacts/int
           fi
       - name: "Archive Build Artifacts"
+        if: ${{ !inputs.skip_aarch64_build }}
         uses: actions/upload-artifact@v7
         with:
           name: aarch64-linux-artifacts

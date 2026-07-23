@@ -14,16 +14,29 @@
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
 
-find_package(ZLIB)
-
-if (NOT ZLIB_FOUND)
-    find_library(ZLIB_LIBRARY z)
+# For cross-compilation, look in the cross-compiler's sysroot
+if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+    find_library(ZLIB_LIBRARY z PATHS /usr/aarch64-linux-gnu/lib NO_DEFAULT_PATH)
     if (ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
         message(STATUS "Unable to add Svc_DpZLibCompressor. libz not found")
         set(ZLIB_FOUND FALSE)
     else()
         set(ZLIB_FOUND TRUE)
         set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+        set(ZLIB_INCLUDE_DIRS /usr/aarch64-linux-gnu/include)
+    endif()
+else()
+    find_package(ZLIB)
+
+    if (NOT ZLIB_FOUND)
+        find_library(ZLIB_LIBRARY z)
+        if (ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
+            message(STATUS "Unable to add Svc_DpZLibCompressor. libz not found")
+            set(ZLIB_FOUND FALSE)
+        else()
+            set(ZLIB_FOUND TRUE)
+            set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+        endif()
     endif()
 endif()
 
@@ -37,6 +50,11 @@ if (ZLIB_FOUND)
        DEPENDS
             ${ZLIB_LIBRARIES}
     )
+
+    # Add include directories if set (needed for cross-compilation)
+    if (ZLIB_INCLUDE_DIRS)
+        target_include_directories(Svc_DpZLibCompressor PUBLIC ${ZLIB_INCLUDE_DIRS})
+    endif()
 
     ### Unit Tests ###
     register_fprime_ut(

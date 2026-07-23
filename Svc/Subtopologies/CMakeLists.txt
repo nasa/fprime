@@ -5,11 +5,20 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
 
 # DpCompression requires zlib - only add if available
-find_package(ZLIB)
-if (NOT ZLIB_FOUND)
-    find_library(ZLIB_LIBRARY z)
+# For cross-compilation, look in the cross-compiler's sysroot
+if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+    find_library(ZLIB_LIBRARY z PATHS /usr/aarch64-linux-gnu/lib NO_DEFAULT_PATH)
     if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
         set(ZLIB_FOUND TRUE)
+        set(ZLIB_INCLUDE_DIRS /usr/aarch64-linux-gnu/include)
+    endif()
+else()
+    find_package(ZLIB)
+    if (NOT ZLIB_FOUND)
+        find_library(ZLIB_LIBRARY z)
+        if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
+            set(ZLIB_FOUND TRUE)
+        endif()
     endif()
 endif()
 
