@@ -372,4 +372,4 @@ def test_file_uplink_sandbox(fprime_test_api):
         try:
             os.unlink("/tmp/uplink/test.bin")
         except OSError:
-            pass
+            pass  # uploaded file may not exist; nothing to clean up

@@ -30,10 +30,8 @@ def test_send_health_command(fprime_test_api):
 
     cmd_events = fprime_test_api.get_event_pred(severity=EventSeverity.COMMAND)
     actHi_events = fprime_test_api.get_event_pred(severity=EventSeverity.ACTIVITY_HI)
-    warnLo_events = fprime_test_api.get_event_pred(severity=EventSeverity.WARNING_LO)
 
     pred = predicates.greater_than(0)
-    zero = predicates.equal_to(0)
     one_plus = predicates.greater_than_or_equal_to(1)
 
     # Expect number still increment after clear_history
@@ -80,14 +78,9 @@ def test_send_health_command(fprime_test_api):
 
     time.sleep(3)
     start_tlm = fprime_test_api.get_telemetry_test_history().size()
-    cmdErrors = fprime_test_api.await_telemetry(
+    fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.CommandDispatcher") + "." + "CommandErrors",
         start=start_tlm,
-    )
-    # If no constraints are specified on the channels, the predicate will always return true
-    param_error = fprime_test_api.get_telemetry_pred(
-        fprime_test_api.get_mnemonic("Svc.CommandDispatcher") + "." + "CommandErrors",
-        cmdErrors,
     )
 
     time.sleep(3)

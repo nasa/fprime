@@ -40,7 +40,7 @@ def test_send_version_command(fprime_test_api):
 
         start_tlm = fprime_test_api.get_telemetry_test_history().size()
 
-        results2 = fprime_test_api.send_and_assert_command(
+        fprime_test_api.send_and_assert_command(
             fprime_test_api.get_mnemonic("Svc.Version") + "." + "VERSION",
             [
                 value,

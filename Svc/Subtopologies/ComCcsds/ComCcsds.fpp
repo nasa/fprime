@@ -90,7 +90,8 @@ module ComCcsds {
         """
     }
 
-    instance fprimeRouter: Svc.FprimeRouter base id ComCcsdsConfig.BASE_ID + 0x03000
+    # NOTE: the 'fprimeRouter' instance is defined in ComCcsdsConfig/ComCcsdsRouterConfig.fpp so that
+    # projects may swap the router implementation via configuration overrides
 
     instance tcDeframer: Svc.Ccsds.TcDeframer base id ComCcsdsConfig.BASE_ID + 0x04000
 

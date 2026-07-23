@@ -128,7 +128,6 @@ bool MaxHeap::pop(FwQueuePriorityType& value, FwSizeType& id) {
     // This will put the smallest value in the
     // heap on the top, violating the heap property.
     FwSizeType index = this->m_size - 1;
-    // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
     this->m_heap[0] = this->m_heap[index];
     --this->m_size;
 

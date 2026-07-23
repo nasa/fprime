@@ -316,7 +316,11 @@ void LinuxGpioDriver ::pollLoop() {
             FwSizeType read_bytes = static_cast<FwSizeType>(::read(this->m_fd, &event_data, sizeof event_data));
             if (read_bytes == sizeof event_data) {
                 Os::RawTime timestamp;
-                timestamp.now();
+                Os::RawTime::Status timeStatus = timestamp.now();
+                if (timeStatus != Os::RawTime::Status::OP_OK) {
+                    this->log_WARNING_HI_InterruptTimeError(
+                        Os::RawTimeStatus(static_cast<Os::RawTimeStatus::T>(timeStatus)));
+                }
                 this->gpioInterrupt_out(0, timestamp);
             }
             // A read error occurred

@@ -186,22 +186,8 @@ void BufferLogger::File ::writeHashFile() {
 }
 
 bool BufferLogger::File ::flush() {
+    // Unbuffered file I/O requires no flush; flush the Os::File here if using buffered I/O
     return true;
-    // NOTE(if your fprime uses buffered file I/O, re-enable this)
-    /*bool status = true;
-    if(this->mode == File::Mode::OPEN)
-    {
-      const Os::File::Status fileStatus = this->osFile.flush();
-      if(fileStatus == Os::File::OP_OK)
-      {
-        status = true;
-      }
-      else
-      {
-        status = false;
-      }
-    }
-    return status;*/
 }
 
 void BufferLogger::File ::close() {
