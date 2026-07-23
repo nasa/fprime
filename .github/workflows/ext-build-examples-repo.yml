@@ -97,7 +97,7 @@ jobs:
           mkdir -p ci-logs
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           cd FlightExamples/ExamplesDeployment
-          fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
+          fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs --framing-selection fprime &
           sleep 10
-          cd aarch64-linux-artifacts/int
-          pytest ../ManagerWorker/Subtopology/test/int/test_manager_worker.py
+          cd ../../aarch64-linux-artifacts
+          pytest ManagerWorker/Subtopology/test/int/test_manager_worker.py
