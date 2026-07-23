@@ -1,2 +1,1 @@
-WARNING: QLDoc comment is not attached to any QL element (FprimeMultipleVarDeclsPerLine.ql:14,1-24,4)
 | test.cpp:7:5:7:30 | declaration | Multiple variable declarations on the same line. |

@@ -1,2 +1,1 @@
-WARNING: QLDoc comment is not attached to any QL element (FprimePreprocessorUseIfdef.ql:14,1-26,4)
 | test.cpp:6:1:6:16 | #if FEATURE_MODE | Use of conditional compilation must be kept to a minimum. |
