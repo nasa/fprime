@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 23:16:28</td>
+      <td>2026-07-23 01:00:37</td>
     </tr>
   </table>
 </div>
@@ -41,7 +41,7 @@
     <tr>
       <th scope="row">Lines:</th>
       <td>0</td>
-      <td>199</td>
+      <td>202</td>
       <td class="coverage-none">0.0%</td>
     </tr>
     <tr>
@@ -53,7 +53,7 @@
     <tr>
       <th scope="row">Branches:</th>
       <td>0</td>
-      <td>125</td>
+      <td>129</td>
       <td class="coverage-none">0.0%</td>
     </tr>
   </table>
@@ -2325,84 +2325,84 @@
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="n">timestamp</span><span class="p">.</span><span class="n">now</span><span class="p">();</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">timeStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">timestamp</span><span class="p">.</span><span class="n">now</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l320" href="#l320">320</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gpioInterrupt_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">timestamp</span><span class="p">);</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">timeStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l321" href="#l321">321</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">                    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_InterruptTimeError</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l322" href="#l322">322</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="c1">// A read error occurred</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                        </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTimeStatus</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Os</span><span class="o">::</span><span class="n">RawTimeStatus</span><span class="o">::</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeStatus</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l323" href="#l323">323</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">                </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l324" href="#l324">324</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_InterruptReadError</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="w"> </span><span class="n">event_data</span><span class="p">),</span></td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gpioInterrupt_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">timestamp</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l325" href="#l325">325</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">                                                        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">read_bytes</span><span class="p">));</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l326" href="#l326">326</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">            </span><span class="p">}</span></td>
+      <td class="src "><span class="w">            </span><span class="c1">// A read error occurred</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l327" href="#l327">327</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      <td class="src "><span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l328" href="#l328">328</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="c1">// An error of some kind occurred</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_InterruptReadError</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="w"> </span><span class="n">event_data</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l329" href="#l329">329</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">                                                        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">read_bytes</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l330" href="#l330">330</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_PollingError</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">I32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">            </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l331" href="#l331">331</a></td>
@@ -2416,31 +2416,59 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="src "><span class="w">        </span><span class="c1">// An error of some kind occurred</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l333" href="#l333">333</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="p">}</span></td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l334" href="#l334">334</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_PollingError</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">I32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l335" href="#l335">335</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// end namespace Drv</span></td>
+      <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l336" href="#l336">336</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l337" href="#l337">337</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l338" href="#l338">338</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l339" href="#l339">339</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// end namespace Drv</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l340" href="#l340">340</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 23:18:23</td>
+      <td>2026-07-23 01:02:43</td>
     </tr>
   </table>
 </div>
@@ -71,16 +71,16 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l22">Svc::ActivePhaser::ActivePhaser(char const*) (line 22)</a></td><td>called 8 times</td><td>87.0%</td></tr>
-    <tr><td><a href="#l101">Svc::ActivePhaser::CycleIn_handler(short, Os::RawTime&amp;) (line 101)</a></td><td>called 98800 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l112">Svc::ActivePhaser::Tick_internalInterfaceHandler() (line 112)</a></td><td>called 38200 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l99">Svc::ActivePhaser::CycleIn_handler(short, Os::RawTime&amp;) (line 99)</a></td><td>called 98800 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l110">Svc::ActivePhaser::Tick_internalInterfaceHandler() (line 110)</a></td><td>called 38200 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l39">Svc::ActivePhaser::configure(unsigned int) (line 39)</a></td><td>called 8 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l132">Svc::ActivePhaser::finishChild(unsigned int) (line 132)</a></td><td>called 38200 times</td><td>91.0%</td></tr>
-    <tr><td><a href="#l178">Svc::ActivePhaser::getNextContext(short) (line 178)</a></td><td>called 25 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l130">Svc::ActivePhaser::finishChild(unsigned int) (line 130)</a></td><td>called 38200 times</td><td>91.0%</td></tr>
+    <tr><td><a href="#l176">Svc::ActivePhaser::getNextContext(short) (line 176)</a></td><td>called 25 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l33">Svc::ActivePhaser::init(unsigned long, short) (line 33)</a></td><td>called 8 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l44">Svc::ActivePhaser::register_phased(short, unsigned int, unsigned int, unsigned int) (line 44)</a></td><td>called 35 times</td><td>77.0%</td></tr>
-    <tr><td><a href="#l158">Svc::ActivePhaser::startChild(unsigned int) (line 158)</a></td><td>called 36100 times</td><td>92.0%</td></tr>
-    <tr><td><a href="#l191">Svc::ActivePhaser::timeInCycle(unsigned int) (line 191)</a></td><td>called 42900 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l95">Svc::ActivePhaser::~ActivePhaser() (line 95)</a></td><td>called 8 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l156">Svc::ActivePhaser::startChild(unsigned int) (line 156)</a></td><td>called 36100 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l189">Svc::ActivePhaser::timeInCycle(unsigned int) (line 189)</a></td><td>called 42900 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l93">Svc::ActivePhaser::~ActivePhaser() (line 93)</a></td><td>called 8 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -413,7 +413,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">register_phased</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">port</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">register_phased</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">port</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">userContext</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l45" href="#l45">45</a></td>
@@ -609,7 +609,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">context</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_cycle</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_cycle</span><span class="p">));</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">userContext</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_cycle</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">userContext</span><span class="p">),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_cycle</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
@@ -644,7 +644,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// By default, context is DONT_CARE, which means the context type is SEQUENTIAL</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// By default, userContext is DONT_CARE, which means the context type is SEQUENTIAL</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
@@ -658,45 +658,31 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// If a value is given to context, the context type becomes COUNT, and</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// If a value is given to userContext, the context type becomes COUNT, and</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// entry.context represents the ratio between the user-configured context and the phaser cycle.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// entry.context represents the ratio between userContext and the phaser cycle.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// The user-configured context must be greater than the phaser cycle.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// userContext must be greater than the phaser cycle.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Example: If context == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Example: If userContext == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// FIXME: This is a point of confusion because entry.context and context are</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l81" href="#l81">81</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// very different things, yet they have the same name.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -709,17 +695,17 @@
         </details>
       </td>
       <td class="linecount partialCoveredLine">35</td>
-      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_cycle</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">getNextContext</span><span class="p">(</span><span class="n">port</span><span class="p">);</span></td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">userContext</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">userContext</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_cycle</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">getNextContext</span><span class="p">(</span><span class="n">port</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l83" href="#l83">83</a></td>
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Update some common multiple of all contexts</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l84" href="#l84">84</a></td>
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -730,45 +716,45 @@
         </details>
       </td>
       <td class="linecount coveredLine">35</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">userContext</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l85" href="#l85">85</a></td>
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Check for overflow before multiply</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">m_ticks_rollover</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">m_ticks_rollover</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -779,28 +765,42 @@
         </details>
       </td>
       <td class="linecount coveredLine">35</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">contextType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">PhaserContextType</span><span class="o">::</span><span class="n">COUNT</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PhaserContextType</span><span class="o">::</span><span class="n">SEQUENTIAL</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">contextType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">userContext</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">DONT_CARE</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">PhaserContextType</span><span class="o">::</span><span class="n">COUNT</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PhaserContextType</span><span class="o">::</span><span class="n">SEQUENTIAL</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">35</td>
       <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">16</td>
+      <td class="src coveredLine"><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::~</span><span class="n">ActivePhaser</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l94" href="#l94">94</a></td>
@@ -813,15 +813,15 @@
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">16</td>
-      <td class="src coveredLine"><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::~</span><span class="n">ActivePhaser</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">// Handler implementations for typed input ports</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l97" href="#l97">97</a></td>
@@ -835,70 +835,70 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Handler implementations for typed input ports</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l99" href="#l99">99</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l100" href="#l100">100</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l101" href="#l101">101</a></td>
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">CycleIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cycleStart</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l102" href="#l102">102</a></td>
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_lock</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l103" href="#l103">103</a></td>
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_ticks</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l104" href="#l104">104</a></td>
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_lock</span><span class="p">.</span><span class="n">unLock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l105" href="#l105">105</a></td>
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">Tick_internalInterfaceInvoke</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">98800</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l106" href="#l106">106</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l107" href="#l107">107</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">// Handler implementations for user-defined internal interfaces</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
@@ -912,80 +912,66 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Handler implementations for user-defined internal interfaces</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l110" href="#l110">110</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">// ----------------------------------------------------------------------</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l111" href="#l111">111</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l112" href="#l112">112</a></td>
+      <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">Tick_internalInterfaceHandler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l113" href="#l113">113</a></td>
+      <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l114" href="#l114">114</a></td>
+      <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_lock</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">full_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_ticks</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="lineno"><a id="l115" href="#l115">115</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_lock</span><span class="p">.</span><span class="n">unLock</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l118" href="#l118">118</a></td>
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l119" href="#l119">119</a></td>
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If the cycle is over, wait for the cycle to end before restarting</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l120" href="#l120">120</a></td>
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/6</summary>
@@ -1003,21 +989,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timeInCycle</span><span class="p">(</span><span class="n">full_ticks</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_cycle</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l121" href="#l121">121</a></td>
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">793</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">m_last_cycle_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_ticks</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l122" href="#l122">122</a></td>
+      <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Increment cycle count modulo some common factor of all contexts</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l123" href="#l123">123</a></td>
+      <td class="lineno"><a id="l121" href="#l121">121</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -1031,28 +1017,28 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="n">m_cycle_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">m_cycle_count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">m_ticks_rollover</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l124" href="#l124">124</a></td>
+      <td class="lineno"><a id="l122" href="#l122">122</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">793</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Back to processing the first task.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l125" href="#l125">125</a></td>
+      <td class="lineno"><a id="l123" href="#l123">123</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l126" href="#l126">126</a></td>
+      <td class="lineno"><a id="l124" href="#l124">124</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Run the next child if the finishing child wast not late</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l127" href="#l127">127</a></td>
+      <td class="lineno"><a id="l125" href="#l125">125</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1066,49 +1052,49 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">finishChild</span><span class="p">(</span><span class="n">full_ticks</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="o">::</span><span class="n">FinishStatus</span><span class="o">::</span><span class="n">LATE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l128" href="#l128">128</a></td>
+      <td class="lineno"><a id="l126" href="#l126">126</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">36100</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">startChild</span><span class="p">(</span><span class="n">full_ticks</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l129" href="#l129">129</a></td>
+      <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l130" href="#l130">130</a></td>
+      <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l131" href="#l131">131</a></td>
+      <td class="lineno"><a id="l129" href="#l129">129</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l132" href="#l132">132</a></td>
+      <td class="lineno"><a id="l130" href="#l130">130</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">38200</td>
       <td class="src coveredLine"><span class="n">ActivePhaser</span><span class="o">::</span><span class="n">FinishStatus</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">finishChild</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">full_ticks</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l133" href="#l133">133</a></td>
+      <td class="lineno"><a id="l131" href="#l131">131</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Guard against finishing improperly</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l134" href="#l134">134</a></td>
+      <td class="lineno"><a id="l132" href="#l132">132</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">5/6</summary>
@@ -1126,49 +1112,49 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="p">].</span><span class="n">started</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l135" href="#l135">135</a></td>
+      <td class="lineno"><a id="l133" href="#l133">133</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">34700</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="o">::</span><span class="n">FinishStatus</span><span class="o">::</span><span class="n">UNKNOWN</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l136" href="#l136">136</a></td>
+      <td class="lineno"><a id="l134" href="#l134">134</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l137" href="#l137">137</a></td>
+      <td class="lineno"><a id="l135" href="#l135">135</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Only reachable here when current has not reached used</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l138" href="#l138">138</a></td>
+      <td class="lineno"><a id="l136" href="#l136">136</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// and the current task was previously marked started.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l139" href="#l139">139</a></td>
+      <td class="lineno"><a id="l137" href="#l137">137</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Now the task can be marked as done and the next task</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l140" href="#l140">140</a></td>
+      <td class="lineno"><a id="l138" href="#l138">138</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// can be launched.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l141" href="#l141">141</a></td>
+      <td class="lineno"><a id="l139" href="#l139">139</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -1182,49 +1168,49 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">PhaserStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">)];</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l142" href="#l142">142</a></td>
+      <td class="lineno"><a id="l140" href="#l140">140</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">execution_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_ticks</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_last_start_ticks</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l143" href="#l143">143</a></td>
+      <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">expected_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">length</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l144" href="#l144">144</a></td>
+      <td class="lineno"><a id="l142" href="#l142">142</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l145" href="#l145">145</a></td>
+      <td class="lineno"><a id="l143" href="#l143">143</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Mark entry as done</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l146" href="#l146">146</a></td>
+      <td class="lineno"><a id="l144" href="#l144">144</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l147" href="#l147">147</a></td>
+      <td class="lineno"><a id="l145" href="#l145">145</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Increment the current task index if it has not reached used, i.e., the max index registered.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l148" href="#l148">148</a></td>
+      <td class="lineno"><a id="l146" href="#l146">146</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -1238,14 +1224,14 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l149" href="#l149">149</a></td>
+      <td class="lineno"><a id="l147" href="#l147">147</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Check for overrun in timing. If a deadline violation is detected report this child as LATE</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l150" href="#l150">150</a></td>
+      <td class="lineno"><a id="l148" href="#l148">148</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1259,77 +1245,77 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">execution_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">expected_time</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l151" href="#l151">151</a></td>
+      <td class="lineno"><a id="l149" href="#l149">149</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2100</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_MissedDeadline</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">port</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">length</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">execution_time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">expected_time</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l152" href="#l152">152</a></td>
+      <td class="lineno"><a id="l150" href="#l150">150</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2100</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="o">::</span><span class="n">FinishStatus</span><span class="o">::</span><span class="n">LATE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l153" href="#l153">153</a></td>
+      <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l154" href="#l154">154</a></td>
+      <td class="lineno"><a id="l152" href="#l152">152</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If no overrun, proceed with the next child task.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l155" href="#l155">155</a></td>
+      <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1400</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="o">::</span><span class="n">FinishStatus</span><span class="o">::</span><span class="n">ON_TIME</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l156" href="#l156">156</a></td>
+      <td class="lineno"><a id="l154" href="#l154">154</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l157" href="#l157">157</a></td>
+      <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l158" href="#l158">158</a></td>
+      <td class="lineno"><a id="l156" href="#l156">156</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">36100</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">startChild</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">full_ticks</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l159" href="#l159">159</a></td>
+      <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Guard against starting improperly</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l160" href="#l160">160</a></td>
+      <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">36100</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">)</span><span class="w">  </span><span class="c1">// Invalid. Current index surpasses the indices of registered tasks.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l161" href="#l161">161</a></td>
+      <td class="lineno"><a id="l159" href="#l159">159</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1343,14 +1329,14 @@
       <td class="src coveredLine"><span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="p">].</span><span class="n">start</span><span class="w"> </span><span class="o">&gt;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l162" href="#l162">162</a></td>
+      <td class="lineno"><a id="l160" href="#l160">160</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4700</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">timeInCycle</span><span class="p">(</span><span class="n">full_ticks</span><span class="p">))</span><span class="w">                  </span><span class="c1">// Current time has not reached the intended start time.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l163" href="#l163">163</a></td>
+      <td class="lineno"><a id="l161" href="#l161">161</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/8</summary>
@@ -1370,28 +1356,28 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="o">||</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="p">].</span><span class="n">started</span><span class="p">)</span><span class="w">  </span><span class="c1">// The current child task has already started.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l164" href="#l164">164</a></td>
+      <td class="lineno"><a id="l162" href="#l162">162</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l165" href="#l165">165</a></td>
+      <td class="lineno"><a id="l163" href="#l163">163</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">32600</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l166" href="#l166">166</a></td>
+      <td class="lineno"><a id="l164" href="#l164">164</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l167" href="#l167">167</a></td>
+      <td class="lineno"><a id="l165" href="#l165">165</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -1405,35 +1391,35 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">PhaserStateEntry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[(</span><span class="n">m_state</span><span class="p">.</span><span class="n">current</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">)];</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l168" href="#l168">168</a></td>
+      <td class="lineno"><a id="l166" href="#l166">166</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l169" href="#l169">169</a></td>
+      <td class="lineno"><a id="l167" href="#l167">167</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l170" href="#l170">170</a></td>
+      <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// user-specified time window.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l171" href="#l171">171</a></td>
+      <td class="lineno"><a id="l169" href="#l169">169</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">((</span><span class="n">entry</span><span class="p">.</span><span class="n">contextType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SEQUENTIAL</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">port</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l172" href="#l172">172</a></td>
+      <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">4/6</summary>
@@ -1451,77 +1437,77 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">contextType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SEQUENTIAL</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_cycle_count</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">context</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l173" href="#l173">173</a></td>
+      <td class="lineno"><a id="l171" href="#l171">171</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">entry</span><span class="p">.</span><span class="n">started</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l174" href="#l174">174</a></td>
+      <td class="lineno"><a id="l172" href="#l172">172</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_last_start_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">full_ticks</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l175" href="#l175">175</a></td>
+      <td class="lineno"><a id="l173" href="#l173">173</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3500</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">PhaserMemberOut_out</span><span class="p">(</span><span class="n">entry</span><span class="p">.</span><span class="n">port</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l176" href="#l176">176</a></td>
+      <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l177" href="#l177">177</a></td>
+      <td class="lineno"><a id="l175" href="#l175">175</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l178" href="#l178">178</a></td>
+      <td class="lineno"><a id="l176" href="#l176">176</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">25</td>
       <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">getNextContext</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">port</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l179" href="#l179">179</a></td>
+      <td class="lineno"><a id="l177" href="#l177">177</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">25</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l180" href="#l180">180</a></td>
+      <td class="lineno"><a id="l178" href="#l178">178</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Linear search to see if the entry&#39;s port matches the target port,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l181" href="#l181">181</a></td>
+      <td class="lineno"><a id="l179" href="#l179">179</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// if so, increment the context.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l182" href="#l182">182</a></td>
+      <td class="lineno"><a id="l180" href="#l180">180</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Unlikely to overflow because this happens during registration.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l183" href="#l183">183</a></td>
+      <td class="lineno"><a id="l181" href="#l181">181</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1535,7 +1521,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">used</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l184" href="#l184">184</a></td>
+      <td class="lineno"><a id="l182" href="#l182">182</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -1549,84 +1535,84 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">port</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">port</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l185" href="#l185">185</a></td>
+      <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">16</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="p">.</span><span class="n">entries</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">context</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l186" href="#l186">186</a></td>
+      <td class="lineno"><a id="l184" href="#l184">184</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l187" href="#l187">187</a></td>
+      <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l188" href="#l188">188</a></td>
+      <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">25</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">context</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l189" href="#l189">189</a></td>
+      <td class="lineno"><a id="l187" href="#l187">187</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l190" href="#l190">190</a></td>
+      <td class="lineno"><a id="l188" href="#l188">188</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l191" href="#l191">191</a></td>
+      <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">42900</td>
       <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">ActivePhaser</span><span class="w"> </span><span class="o">::</span><span class="n">timeInCycle</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">full_ticks</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l192" href="#l192">192</a></td>
+      <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">42900</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">full_ticks</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_last_cycle_ticks</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l193" href="#l193">193</a></td>
+      <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l194" href="#l194">194</a></td>
+      <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l195" href="#l195">195</a></td>
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l196" href="#l196">196</a></td>
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

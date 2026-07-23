@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 23:18:24</td>
+      <td>2026-07-23 01:02:44</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>48</td>
-      <td>48</td>
-      <td class="coverage-high">100.0%</td>
+      <td>49</td>
+      <td>50</td>
+      <td class="coverage-high">98.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>24</td>
-      <td>26</td>
-      <td class="coverage-high">92.3%</td>
+      <td>25</td>
+      <td>30</td>
+      <td class="coverage-medium">83.3%</td>
     </tr>
   </table>
 </div>
@@ -71,9 +71,9 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l23">Svc::ActiveRateGroup::ActiveRateGroup(char const*) (line 23)</a></td><td>called 7 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l53">Svc::ActiveRateGroup::CycleIn_handler(short, Os::RawTime&amp;) (line 53)</a></td><td>called 27 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l105">Svc::ActiveRateGroup::CycleIn_preMsgHook(short, Os::RawTime&amp;) (line 105)</a></td><td>called 48 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l110">Svc::ActiveRateGroup::PingIn_handler(short, unsigned int) (line 110)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l53">Svc::ActiveRateGroup::CycleIn_handler(short, Os::RawTime&amp;) (line 53)</a></td><td>called 27 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l108">Svc::ActiveRateGroup::CycleIn_preMsgHook(short, Os::RawTime&amp;) (line 108)</a></td><td>called 48 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l113">Svc::ActiveRateGroup::PingIn_handler(short, unsigned int) (line 113)</a></td><td>called 1 time</td><td>100.0%</td></tr>
     <tr><td><a href="#l32">Svc::ActiveRateGroup::configure(unsigned int const*, short) (line 32)</a></td><td>called 7 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l49">Svc::ActiveRateGroup::preamble() (line 49)</a></td><td>called 6 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l47">Svc::ActiveRateGroup::~ActiveRateGroup() (line 47)</a></td><td>called 7 times</td><td>100.0%</td></tr>
@@ -611,45 +611,73 @@
         </details>
       </td>
       <td class="linecount coveredLine">27</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">endTime</span><span class="p">.</span><span class="n">now</span><span class="p">();</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">timeStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">endTime</span><span class="p">.</span><span class="n">now</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/2</summary>
+          <div class="linebranchContents">
+            <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
+            <div class="takenBranch">&check; Branch 1 taken 27 times.</div>
+          </div>
+        </details>
       </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="linecount partialCoveredLine">27</td>
+      <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">timeStatus</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">::</span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l71" href="#l71">71</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// get rate group execution time</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_RateGroupTimeGetError</span><span class="p">(</span><span class="n">Os</span><span class="o">::</span><span class="n">RawTimeStatus</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Os</span><span class="o">::</span><span class="n">RawTimeStatus</span><span class="o">::</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">timeStatus</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l72" href="#l72">72</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Cast to void as the only possible error is overflow, which we can&#39;t handle other</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// get rate group execution time</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">27</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Cast to void as the only possible error is overflow, which we can&#39;t handle other</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l78" href="#l78">78</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -662,21 +690,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">endTime</span><span class="p">.</span><span class="n">getDiffUsec</span><span class="p">(</span><span class="n">cycleStart</span><span class="p">,</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l76" href="#l76">76</a></td>
+      <td class="lineno"><a id="l79" href="#l79">79</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l77" href="#l77">77</a></td>
+      <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// check to see if the time has exceeded the previous maximum</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l78" href="#l78">78</a></td>
+      <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -690,46 +718,18 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cycleTime</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_maxTime</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l79" href="#l79">79</a></td>
+      <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_maxTime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cycleTime</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l80" href="#l80">80</a></td>
+      <td class="lineno"><a id="l83" href="#l83">83</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l81" href="#l81">81</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l82" href="#l82">82</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// update cycle telemetry</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l83" href="#l83">83</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">2/2</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 27 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 27 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">27</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_RgMaxTime</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_maxTime</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
@@ -743,17 +743,45 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// check for cycle slip. That will happen if new cycle message has been received</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// update cycle telemetry</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">2/2</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 6 taken 27 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 27 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">27</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_RgMaxTime</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_maxTime</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// check for cycle slip. That will happen if new cycle message has been received</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// which will cause flag will be set again.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l87" href="#l87">87</a></td>
+      <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -769,14 +797,14 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycleStarted</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l88" href="#l88">88</a></td>
+      <td class="lineno"><a id="l91" href="#l91">91</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">21</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycleSlips</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l89" href="#l89">89</a></td>
+      <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -790,7 +818,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_overrunThrottle</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ACTIVE_RATE_GROUP_OVERRUN_THROTTLE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l90" href="#l90">90</a></td>
+      <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -803,28 +831,28 @@
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_RateGroupCycleSlip</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycles</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l91" href="#l91">91</a></td>
+      <td class="lineno"><a id="l94" href="#l94">94</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">18</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_overrunThrottle</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l92" href="#l92">92</a></td>
+      <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l93" href="#l93">93</a></td>
+      <td class="lineno"><a id="l96" href="#l96">96</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// update cycle slips</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l94" href="#l94">94</a></td>
+      <td class="lineno"><a id="l97" href="#l97">97</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -838,14 +866,14 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">tlmWrite_RgCycleSlips</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycleSlips</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l95" href="#l95">95</a></td>
+      <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="c1">// if cycle is okay start decrementing throttle value</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l96" href="#l96">96</a></td>
+      <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -859,140 +887,140 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_overrunThrottle</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l97" href="#l97">97</a></td>
+      <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_overrunThrottle</span><span class="o">--</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l98" href="#l98">98</a></td>
+      <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l99" href="#l99">99</a></td>
+      <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l100" href="#l100">100</a></td>
+      <td class="lineno"><a id="l103" href="#l103">103</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l101" href="#l101">101</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// increment cycle</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l102" href="#l102">102</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">27</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycles</span><span class="o">++</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l103" href="#l103">103</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">54</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// increment cycle</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">48</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveRateGroup</span><span class="o">::</span><span class="n">CycleIn_preMsgHook</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cycleStart</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">27</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycles</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l106" href="#l106">106</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// set flag to indicate cycle has started. Check in thread for overflow.</span></td>
+      <td class="linecount coveredLine">54</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l107" href="#l107">107</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">48</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycleStarted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">48</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveRateGroup</span><span class="o">::</span><span class="n">CycleIn_preMsgHook</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">RawTime</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cycleStart</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// set flag to indicate cycle has started. Check in thread for overflow.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveRateGroup</span><span class="o">::</span><span class="n">PingIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">48</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cycleStarted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l111" href="#l111">111</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// return the key to health</span></td>
+      <td class="linecount coveredLine">48</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">PingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
+      <td class="linecount "></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ActiveRateGroup</span><span class="o">::</span><span class="n">PingIn_handler</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l114" href="#l114">114</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// return the key to health</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l115" href="#l115">115</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">PingOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l117" href="#l117">117</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l116" href="#l116">116</a></td>
+      <td class="lineno"><a id="l119" href="#l119">119</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

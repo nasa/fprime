@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 23:18:50</td>
+      <td>2026-07-23 01:03:15</td>
     </tr>
   </table>
 </div>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l50">Svc::ComQueue::cleanup() (line 50)</a></td><td>called 22 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l223">Svc::ComQueue::comPacketQueueIn_handler(short, Fw::LinearBufferTemplate&lt;512ul&gt;&amp;, unsigned int) (line 223)</a></td><td>called 41 times</td><td>74.0%</td></tr>
     <tr><td><a href="#l242">Svc::ComQueue::comStatusIn_handler(short, Fw::Success&amp;) (line 242)</a></td><td>called 55 times</td><td>67.0%</td></tr>
-    <tr><td><a href="#l57">Svc::ComQueue::configure(Svc::ComQueue::QueueConfigurationTable, int, Fw::MemAllocator&amp;) (line 57)</a></td><td>called 21 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l57">Svc::ComQueue::configure(Svc::ComQueue::QueueConfigurationTable const&amp;, int, Fw::MemAllocator&amp;) (line 57)</a></td><td>called 21 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l285">Svc::ComQueue::dataReturnIn_handler(short, Fw::Buffer&amp;, ComCfg::FrameContext const&amp;) (line 285)</a></td><td>called 44 times</td><td>87.0%</td></tr>
     <tr><td><a href="#l408">Svc::ComQueue::drainQueue(short) (line 408)</a></td><td>called 6 times</td><td>78.0%</td></tr>
     <tr><td><a href="#l318">Svc::ComQueue::enqueue(short, Svc::QueueType, unsigned char const*, unsigned long) (line 318)</a></td><td>called 63 times</td><td>88.0%</td></tr>
@@ -532,7 +532,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">21</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ComQueue</span><span class="o">::</span><span class="n">configure</span><span class="p">(</span><span class="n">QueueConfigurationTable</span><span class="w"> </span><span class="n">queueConfig</span><span class="p">,</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">ComQueue</span><span class="o">::</span><span class="n">configure</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QueueConfigurationTable</span><span class="o">&amp;</span><span class="w"> </span><span class="n">queueConfig</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
@@ -750,8 +750,8 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 3 taken 63 times.</div>
-            <div class="takenBranch">&check; Branch 4 taken 126 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 63 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 126 times.</div>
           </div>
         </details>
       </td>

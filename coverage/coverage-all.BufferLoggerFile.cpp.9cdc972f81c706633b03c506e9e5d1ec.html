@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-22 23:16:28</td>
+      <td>2026-07-23 01:00:37</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l23">Svc::BufferLogger::File::File(Svc::BufferLogger&amp;) (line 23)</a></td><td>called 14 times</td><td>53.0%</td></tr>
-    <tr><td><a href="#l207">Svc::BufferLogger::File::close() (line 207)</a></td><td>called 26 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l193">Svc::BufferLogger::File::close() (line 193)</a></td><td>called 26 times</td><td>94.0%</td></tr>
     <tr><td><a href="#l86">Svc::BufferLogger::File::closeAndEmitEvent() (line 86)</a></td><td>called 17 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l188">Svc::BufferLogger::File::flush() (line 188)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l42">Svc::BufferLogger::File::init(char const*, char const*, unsigned long, unsigned char) (line 42)</a></td><td>called 13 times</td><td>80.0%</td></tr>
@@ -1655,137 +1655,39 @@
       <td class="lineno"><a id="l189" href="#l189">189</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount uncoveredLine">&cross;</td>
-      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Unbuffered file I/O requires no flush; flush the Os::File here if using buffered I/O</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l190" href="#l190">190</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// NOTE(if your fprime uses buffered file I/O, re-enable this)</span></td>
+      <td class="linecount uncoveredLine">&cross;</td>
+      <td class="src uncoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l191" href="#l191">191</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="cm">/*bool status = true;</span></td>
+      <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l192" href="#l192">192</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cm">    if(this-&gt;mode == File::Mode::OPEN)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l193" href="#l193">193</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">    {</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l194" href="#l194">194</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      const Os::File::Status fileStatus = this-&gt;osFile.flush();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l195" href="#l195">195</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      if(fileStatus == Os::File::OP_OK)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l196" href="#l196">196</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      {</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l197" href="#l197">197</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">        status = true;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l198" href="#l198">198</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      }</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l199" href="#l199">199</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      else</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l200" href="#l200">200</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      {</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l201" href="#l201">201</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">        status = false;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l202" href="#l202">202</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">      }</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l203" href="#l203">203</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">    }</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l204" href="#l204">204</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="cm">    return status;*/</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l205" href="#l205">205</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l206" href="#l206">206</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l207" href="#l207">207</a></td>
+      <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">BufferLogger</span><span class="o">::</span><span class="n">File</span><span class="w"> </span><span class="o">::</span><span class="n">close</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l208" href="#l208">208</a></td>
+      <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/4</summary>
@@ -1801,77 +1703,77 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">Mode</span><span class="o">::</span><span class="n">OPEN</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l209" href="#l209">209</a></td>
+      <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Close file</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l210" href="#l210">210</a></td>
+      <td class="lineno"><a id="l196" href="#l196">196</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">13</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_osFile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l211" href="#l211">211</a></td>
+      <td class="lineno"><a id="l197" href="#l197">197</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Write out the hash file to disk</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l212" href="#l212">212</a></td>
+      <td class="lineno"><a id="l198" href="#l198">198</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">13</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">writeHashFile</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l213" href="#l213">213</a></td>
+      <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Update mode</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l214" href="#l214">214</a></td>
+      <td class="lineno"><a id="l200" href="#l200">200</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">13</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">Mode</span><span class="o">::</span><span class="n">CLOSED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l215" href="#l215">215</a></td>
+      <td class="lineno"><a id="l201" href="#l201">201</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l216" href="#l216">216</a></td>
+      <td class="lineno"><a id="l202" href="#l202">202</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">26</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l217" href="#l217">217</a></td>
+      <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l218" href="#l218">218</a></td>
+      <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l219" href="#l219">219</a></td>
+      <td class="lineno"><a id="l205" href="#l205">205</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
