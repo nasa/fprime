@@ -13,6 +13,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Com
     Fw_Comp
     Fw_CompQueued
+    Fw_DataStructures
     Fw_Fpy
     Fw_Log
     Fw_Logger
