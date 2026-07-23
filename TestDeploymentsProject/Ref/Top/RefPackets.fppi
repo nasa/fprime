@@ -287,6 +287,5 @@ telemetry packets RefPackets {
 
 } omit {
   CdhCore.cmdDisp.CommandErrors
-  # String channel; not suited to fixed-layout packets
   cmdSeq.CS_CurrentSequence
 }
