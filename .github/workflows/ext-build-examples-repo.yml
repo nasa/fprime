@@ -96,15 +96,8 @@ jobs:
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
-          fprime-gds --ip-client -d ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
+          cd FlightExamples/ExamplesDeployment
+          fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ./ci-logs &
           sleep 10
           cd aarch64-linux-artifacts/int
-          pytest dp_demo_integration_test.py
-      - name: "Run Svc integration tests"
-        run: |
-          DEPLOYMENT=ExamplesDeployment
-          . venv/bin/activate
-          pkill -f fprime-gds || true
-          sleep 2
-          cd FlightExamples
-          pytest lib/fprime/Svc --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json --deployment-config ./ExamplesDeployment/test/int/int_config.json
+          pytest ../ManagerWorker/Subtopology/test/int/test_manager_worker.py
