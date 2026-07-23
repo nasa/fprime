@@ -48,10 +48,19 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
         MAX_GPIO_CONFIGURATION
     };
 
+    //! \brief Linux GPIO character device uAPI version used for the opened pin
+    enum ApiVersion {
+        API_V2,             //!< Version 2 (gpio_v2_*) uAPI
+        API_V1,             //!< Deprecated version 1 (gpiohandle_*/gpioevent_*) uAPI
+        API_VERSION_UNSET,  //!< No pin opened yet
+    };
+
     //! \brief open a GPIO pin for use in the system
     //!
     //! This function opens and configures a GPIO pin. User must supply the device path and the gpio pin registered to
     //! that device. Pin configuration is also accepted and supports: input, output, and interrupts on either edge.
+    //! The version 2 GPIO character device uAPI is attempted first, falling back to the deprecated version 1 uAPI
+    //! when the kernel does not support version 2.
     //!
     //! If the user selects output, a default state can be set with the default_state flag.
     //!
@@ -81,14 +90,21 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     void join();
 
   private:
-    //! \brief helper to setup a line handle (read or write).
+    //! \brief helper to setup a line request using the v2 uAPI (all configurations)
+    Os::File::Status setupLineRequestV2(const int chip_descriptor,
+                                        const U32 gpio,
+                                        const GpioConfiguration& configuration,
+                                        const Fw::Logic& default_state,
+                                        int& fd);
+
+    //! \brief helper to setup a line handle (read or write) using the deprecated v1 uAPI
     Os::File::Status setupLineHandle(const int chip_descriptor,
                                      const U32 gpio,
                                      const GpioConfiguration& configuration,
                                      const Fw::Logic& default_state,
                                      int& fd);
 
-    //! \brief helper to setup a line event (interrupt)
+    //! \brief helper to setup a line event (interrupt) using the deprecated v1 uAPI
     Os::File::Status setupLineEvent(const int chip_descriptor,
                                     const U32 gpio,
                                     const GpioConfiguration& configuration,
@@ -127,6 +143,9 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
 
     //! Pin configuration
     GpioConfiguration m_configuration = GpioConfiguration::MAX_GPIO_CONFIGURATION;
+
+    //! uAPI version in use for the opened pin
+    ApiVersion m_apiVersion = ApiVersion::API_VERSION_UNSET;
 
     //! File descriptor for GPIO
     int m_fd = -1;
