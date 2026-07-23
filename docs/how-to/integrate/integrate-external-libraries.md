@@ -224,7 +224,7 @@ Before you can use `ExternalProject_Add`, you need to understand how the library
 
 The library source code must be made available to the ExternalProject_Add command. This can be done with a local path (e.g. a git submodule or local tarball) or by specifying a remote URL. 
 
-The `ExternalProject_Add` command is used to build the library as part of your CMake project. This is done by specifying the steps identified in Step 1 through the `CONFIGURE_COMMAND`, `BUILD_COMMAND`, `INSTALL_COMMAND`, and more. Please referer to the [ExternalProject documentation](https://cmake.org/cmake/help/v3.24/module/ExternalProject.html) for more information. 
+The `ExternalProject_Add` command is used to build the library as part of your CMake project. This is done by specifying the steps identified in Step 1 through the `CONFIGURE_COMMAND`, `BUILD_COMMAND`, `INSTALL_COMMAND`, and more. Please refer to the [ExternalProject documentation](https://cmake.org/cmake/help/v3.24/module/ExternalProject.html) for more information. 
 
 After this is done, you can create a CMake library using `add_library()` and set its properties to point to the built library and its include directories. This allows you to use the library in your F´ modules just like any other library.
 
