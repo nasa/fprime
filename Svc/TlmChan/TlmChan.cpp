@@ -70,13 +70,14 @@ TlmChan::TlmChan(const char* name)
 
     // get current time and use as non-deterministic source for seed
     Os::RawTime rawTime;
-    rawTime.now();
+    (void)rawTime.now();
     U8 timeBuf[FW_RAW_TIME_SERIALIZATION_MAX_SIZE] = {};
     Fw::ExternalSerializeBuffer serBuf(timeBuf, sizeof(timeBuf));
     (void)rawTime.serializeTo(serBuf);
 
     U32 foldedTime = 0;
-    for (U32 i = 0; i < static_cast<U32>(serBuf.getSize()); i++) {
+    const U32 timeSize = static_cast<U32>(serBuf.getSize());
+    for (U32 i = 0; i < timeSize; i++) {
         // Rotate-and-XOR each byte to avoid cancellation when bytes are equal
         foldedTime = (foldedTime << 8) | (foldedTime >> 24);
         foldedTime ^= static_cast<U32>(timeBuf[i]);
@@ -250,7 +251,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
                 // add new bucket from free list
                 entryToUse = &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
                                   .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
-                FW_ASSERT(prevEntry);
+                FW_ASSERT(prevEntry != nullptr);
                 prevEntry->next = entryToUse;
                 entryToUse->next = nullptr;
                 break;
@@ -265,7 +266,7 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
         entryToUse->next = nullptr;
     }
 
-    FW_ASSERT(entryToUse);
+    FW_ASSERT(entryToUse != nullptr);
     entryToUse->used = true;
     entryToUse->id = id;
     entryToUse->updated = true;
@@ -309,7 +310,8 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
     U32 entriesDeferred = 0;
 
     Fw::TlmPacket pkt;
-    pkt.resetPktSer();
+    Fw::SerializeStatus resetStat = pkt.resetPktSer();
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == resetStat, static_cast<FwAssertArgType>(resetStat));
 
     for (U32 entry = 0; entry < TLMCHAN_HASH_BUCKETS; entry++) {
         TlmEntry* p_entry = &this->m_tlmEntries[1 - static_cast<U8>(this->m_activeBuffer)].buckets[entry];
@@ -333,7 +335,8 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
 
             if (Fw::FW_SERIALIZE_NO_ROOM_LEFT == stat) {
                 this->PktSend_out(0, pkt.getBuffer(), 0);
-                pkt.resetPktSer();
+                resetStat = pkt.resetPktSer();
+                FW_ASSERT(Fw::FW_SERIALIZE_OK == resetStat, static_cast<FwAssertArgType>(resetStat));
                 stat = pkt.addValue(p_entry->id, p_entry->lastUpdate, p_entry->buffer);
                 // If a single channel doesn't fit in an empty packet the packet
                 // is misconfigured; assert so the error is visible immediately.
@@ -341,7 +344,7 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
             } else if (Fw::FW_SERIALIZE_OK == stat) {
                 // room available, continue filling packet
             } else {
-                FW_ASSERT(0, static_cast<FwAssertArgType>(stat));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(stat));
             }
 
             p_entry->updated = false;

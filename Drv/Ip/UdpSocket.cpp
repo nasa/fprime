@@ -54,7 +54,7 @@ SocketIpStatus UdpSocket::configure(const char* const ipv4_address,
     (void)port;
     (void)timeout_seconds;
     (void)timeout_microseconds;
-    FW_ASSERT(0);  // Must use configureSend and/or configureRecv
+    FW_ASSERT(false);  // Must use configureSend and/or configureRecv
     return SocketIpStatus::SOCK_INVALID_CALL;
 }
 
@@ -107,7 +107,8 @@ SocketIpStatus UdpSocket::bind(const int fd) {
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
+    const int socknameStatus = ::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size);
+    if (socknameStatus == -1) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
 
@@ -123,7 +124,6 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     SocketIpStatus status = SOCK_SUCCESS;
-    int socketFd = -1;
 
     // Initialize address structure to zero before use
     struct sockaddr_in address;
@@ -133,7 +133,8 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     U16 recv_port = ntohs(this->m_addr_recv.sin_port);
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_DGRAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
 
@@ -152,19 +153,19 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
         if (status != SOCK_SUCCESS) {
             Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
-            ::close(socketFd);
+            (void)::close(socketFd);
             return status;
         };
 
         if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-            ::close(socketFd);
+            (void)::close(socketFd);
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
 
         // Now apply timeouts
         status = this->setupTimeouts(socketFd);
         if (status != SOCK_SUCCESS) {
-            ::close(socketFd);
+            (void)::close(socketFd);
             return status;
         }
         FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),

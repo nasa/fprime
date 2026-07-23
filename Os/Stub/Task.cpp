@@ -30,7 +30,7 @@ bool StubTask::isCooperative() {
 }
 
 Os::Task::Status StubTask::_delay(const Fw::TimeInterval& interval) {
-    FW_ASSERT(0);
+    FW_ASSERT(false);
     return Os::Task::Status::UNKNOWN_ERROR;
 }
 

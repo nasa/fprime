@@ -34,6 +34,11 @@ TEST(FileDownlink, SendFilePort) {
     tester.sendFilePort();
 }
 
+TEST(FileDownlink, SourceOutOfSandbox) {
+    Svc::FileDownlinkTester tester;
+    tester.sourceOutOfSandbox();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

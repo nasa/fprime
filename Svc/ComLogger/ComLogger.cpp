@@ -72,10 +72,6 @@ ComLogger ::~ComLogger() {
 
         // Update mode:
         this->m_fileMode = CLOSED;
-
-        // Send event:
-        // Fw::LogStringArg logStringArg((char*) fileName);
-        // this->log_DIAGNOSTIC_FileClosed(logStringArg);
     }
 }
 
@@ -139,7 +135,8 @@ void ComLogger ::openFile() {
         "%s_%" PRI_FwTimeBaseStoreType "_%" PRIu32 "_%06" PRIu32 ".com", this->m_filePrefix.toChar(),
         static_cast<FwTimeBaseStoreType>(timestamp.getTimeBase()), timestamp.getSeconds(), timestamp.getUSeconds());
     FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
-    this->m_hashFileName.format("%s%s", this->m_fileName.toChar(), Utils::Hash::getFileExtensionString());
+    formatStatus =
+        this->m_hashFileName.format("%s%s", this->m_fileName.toChar(), Utils::Hash::getFileExtensionString());
     FW_ASSERT(formatStatus == Fw::FormatStatus::SUCCESS);
 
     Os::File::Status ret = m_file.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE);
@@ -181,8 +178,11 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
     if (this->m_storeBufferLength) {
         U8 buffer[sizeof(size)];
         Fw::SerialBuffer serialLength(&buffer[0], sizeof(size));
-        serialLength.serializeFrom(size);
-        if (this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()))) {
+        Fw::SerializeStatus serStatus = serialLength.serializeFrom(size);
+        FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+        const bool lengthWritten =
+            this->writeToFile(serialLength.getBuffAddr(), static_cast<U16>(serialLength.getSize()));
+        if (lengthWritten) {
             this->m_byteCount += static_cast<U32>(serialLength.getSize());
         } else {
             return;
@@ -190,7 +190,8 @@ void ComLogger ::writeComBufferToFile(Fw::ComBuffer& data, U16 size) {
     }
 
     // Write buffer to file:
-    if (this->writeToFile(data.getBuffAddr(), size)) {
+    const bool dataWritten = this->writeToFile(data.getBuffAddr(), size);
+    if (dataWritten) {
         this->m_byteCount += size;
     }
 }

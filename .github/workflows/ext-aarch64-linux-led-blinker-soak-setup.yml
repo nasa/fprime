@@ -15,7 +15,7 @@ on:
 
 # Group shared with soak test workflow, new setup should cancel all old setup and tests
 concurrency:
-  group: ledblinker-soak
+  group: soak-ledblinker
   cancel-in-progress: true
 
 permissions:
@@ -63,4 +63,6 @@ jobs:
       - name: "Deploy FSW + persistent GDS services"
         uses: nasa/fprime-actions/soak-setup@devel
         with:
-          platform: linux
+          deployment-name: ledblinker
+          platform: linux-remote
+          fsw-ip: "192.168.10.2"

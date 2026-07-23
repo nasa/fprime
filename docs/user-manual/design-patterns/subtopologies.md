@@ -149,4 +149,5 @@ F Prime provides several configurable core subtopologies that can be reused acro
 - [Svc.ComCcsds](../../../Svc/Subtopologies/ComCcsds): Communications stack using the CCSDS protocols
 - [Svc.ComFprime](../../../Svc/Subtopologies/ComFprime): Communications stack using the lightweight F´ protocol
 - [Svc.DataProducts](../../../Svc/Subtopologies/DataProducts): Data products handling components
+- [Svc.DpCompression](../../../Svc/Subtopologies/DpCompression): Data product lossless compressing processing
 - [Svc.FileHandling](../../../Svc/Subtopologies/FileHandling): File handling components

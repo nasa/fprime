@@ -47,7 +47,7 @@ def test_downlink_file(fprime_test_api):
     # Retrieve GDS sandbox area for file downlink
     down_store = Path(fprime_test_api.pipeline.down_store)
     if not down_store.exists():
-        raise RuntimeError("GDS sandbox area not found for file downlink test")
+        down_store.mkdir(parents=True, exist_ok=True)
 
     # Add some randomness to avoid collisions in the downlink folder
     output_filename = f"downlink_test_{random.randint(0, 10000)}.txt"

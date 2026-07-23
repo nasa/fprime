@@ -160,6 +160,10 @@ void PriorityQueue::teardown() {
 
 void PriorityQueue::teardownInternal() {
     if (this->m_handle.m_data != nullptr) {
+        // All backing arrays are allocated together in create()
+        FW_ASSERT(this->m_handle.m_indices != nullptr);
+        FW_ASSERT(this->m_handle.m_sizes != nullptr);
+        FW_ASSERT(this->m_handle.m_heap_pointer != nullptr);
         const FwEnumStoreType identifier = this->m_handle.m_id;
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
@@ -191,6 +195,7 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
             return QueueInterface::Status::FULL;
         }
         // Will loop and block until full is false
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isFull()) {
             this->m_handle.m_full.wait(this->m_handle.m_data_lock);
         }
@@ -217,6 +222,7 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
             return QueueInterface::Status::EMPTY;
         }
         // Loop and lock while empty
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isEmpty()) {
             this->m_handle.m_empty.wait(this->m_handle.m_data_lock);
         }

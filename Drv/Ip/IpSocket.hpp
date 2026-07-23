@@ -177,7 +177,7 @@ class IpSocket {
      * \param port: port to check
      * \return true if valid, false otherwise
      */
-    virtual bool isValidPort(U16 port);
+    virtual bool isValidPort(U16 port) const;
 
     /**
      * \brief setup the socket timeout properties of the opened outgoing socket

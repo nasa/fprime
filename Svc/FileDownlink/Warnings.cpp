@@ -27,4 +27,9 @@ void FileDownlink::Warnings ::zeroSize() {
     this->warning();
 }
 
+void FileDownlink::Warnings ::sourceOutOfSandbox() {
+    this->m_fileDownlink->log_WARNING_HI_SourceOutOfSandbox(this->m_fileDownlink->m_file.getSourceName());
+    this->warning();
+}
+
 }  // namespace Svc

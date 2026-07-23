@@ -92,5 +92,8 @@ module CdhCore {
         @ Input port for scheduling the Health component
         port healthRun  = $health.Run
 
+        @ Input port for scheduling the EventManager (dropped event telemetry)
+        port eventsRun  = events.run
+
     } # end topology
 } # end CdhCore Subtopology

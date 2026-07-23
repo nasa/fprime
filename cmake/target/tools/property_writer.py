@@ -2,7 +2,6 @@ import argparse
 import sys
 from pathlib import Path
 
-
 DEFINE = "define_property({})"
 SET = "set_property({})"
 APPEND = "include(utilities)\nappend_list_property({})"

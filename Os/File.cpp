@@ -309,7 +309,8 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
             return Os::File::Status::OP_OK;
         }
         // Loop from i to i + current_chunk_size looking for `\n`
-        for (FwSizeType j = i; j < (i + read); j++) {
+        const FwSizeType chunk_end = i + read;
+        for (FwSizeType j = i; j < chunk_end; j++) {
             // Newline seek back to after it, return the size read
             if (buffer[j] == '\n') {
                 size = j + 1;

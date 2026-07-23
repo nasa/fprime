@@ -51,6 +51,7 @@ class FileInterface {
         INVALID_ARGUMENT,   //!< Invalid argument passed in
         NO_MORE_RESOURCES,  //!< No more available resources
         OTHER_ERROR,        //!<  A catch-all for other errors. Have to look in implementation-specific code
+        OUTSIDE_SANDBOX,    //!<  Path falls outside the configured sandbox directory
         MAX_STATUS          //!< Maximum value of status
     };
 

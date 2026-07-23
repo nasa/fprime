@@ -26,7 +26,10 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
-    FW_ASSERT(this->m_sequenceFilePath.length() > 0);
+    if (this->m_sequenceFilePath.length() == 0) {
+        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(Os::File::INVALID_ARGUMENT));
+        return Fw::Success::FAILURE;
+    }
 
     // crc needs to be initialized with a particular value
     // for the calculation to work
@@ -182,7 +185,8 @@ Fw::Success FpySequencer::readBody() {
     }
 
     // deser statements
-    for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
+    const U16 statementCount = this->m_sequenceObj.get_header().get_statementCount();
+    for (U16 statementIdx = 0; statementIdx < statementCount; statementIdx++) {
         // deser statement
         deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {

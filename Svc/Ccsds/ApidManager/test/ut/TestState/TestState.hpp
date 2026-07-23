@@ -20,6 +20,7 @@
 #include <map>
 
 #include "Svc/Ccsds/ApidManager/ApidManager.hpp"
+#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
 
 namespace Svc {
 
@@ -56,9 +57,6 @@ class ApidManagerTestState {
 
     //! Return a uniformly random APID from the set currently tracked in the shadow.
     ComCfg::Apid::T shadow_getRandomTrackedApid() const;
-
-    //! Return a random APID that is not currently tracked in the shadow.
-    ComCfg::Apid::T shadow_getRandomUntrackedApid() const;
 };
 
 }  // namespace Ccsds

@@ -8,7 +8,6 @@
 from . import cmake
 from . import settings
 
-
 _ = cmake.get_build(
     "FIND_PACKAGE_BUILD",
     settings.DATA_DIR / "TestFindPackageProject",

@@ -97,7 +97,8 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     U16 computed_crc = Ccsds::Utils::CRC16::compute(data.getData(), total_frame_length - TCTrailer::SERIALIZED_SIZE);
     TCTrailer trailer;
     auto deserializer = data.getDeserializer();
-    deserializer.moveDeserToOffset(total_frame_length - TCTrailer::SERIALIZED_SIZE);
+    status = deserializer.moveDeserToOffset(total_frame_length - TCTrailer::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = deserializer.deserializeTo(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
