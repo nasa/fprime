@@ -1,0 +1,54 @@
+# Unit tests for the F Prime CodeQL query refinements in
+# .github/codeql/fprime-queries. Each test directory contains an intentional
+# violation of one query, so a refinement that stops reporting real errors
+# fails its test here.
+
+name: "Code Scan: JPL Coding Standard Query Tests"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+    paths:
+      - '.github/codeql/**'
+      - '.github/workflows/codeql-query-tests.yml'
+  pull_request:
+    branches: [ devel, release/** ]
+    paths:
+      - '.github/codeql/**'
+      - '.github/workflows/codeql-query-tests.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+env:
+  # Pinned so results (including compiler diagnostics recorded in the
+  # .expected files) are reproducible; regenerate the .expected files with
+  # `codeql test run --learn` when bumping.
+  CODEQL_CLI_VERSION: v2.26.1
+
+jobs:
+  query-tests:
+    name: Run CodeQL query unit tests
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install CodeQL CLI
+      run: |
+        curl -sSL -o codeql.zip \
+          "https://github.com/github/codeql-cli-binaries/releases/download/${CODEQL_CLI_VERSION}/codeql-linux64.zip"
+        unzip -q codeql.zip -d "${RUNNER_TEMP}"
+        echo "${RUNNER_TEMP}/codeql" >> "${GITHUB_PATH}"
+
+    - name: Install query pack dependencies
+      working-directory: .github/codeql
+      run: codeql pack install fprime-queries-tests --additional-packs=.
+
+    - name: Run query tests
+      working-directory: .github/codeql
+      run: codeql test run fprime-queries-tests --additional-packs=. --threads=0
