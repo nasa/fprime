@@ -13,7 +13,8 @@ module DataProducts{
             Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
             Fw::FileNameString dpState(DataProductsConfig::Paths::dpState);
             Os::FileSystem::createDirectory(dpDir.toChar());
-            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::memAllocator);
+            Fw::ExternalArray<Fw::FileNameString> dpDirs(&dpDir, 1);
+            DataProducts::dpCat.configure(dpDirs, dpState, 0, DataProducts::Allocation::memAllocator);
         """
     }
 
