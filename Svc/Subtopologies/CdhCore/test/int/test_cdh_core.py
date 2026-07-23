@@ -65,12 +65,11 @@ def test_telemetry_update(fprime_test_api: IntegrationTestAPI):
     begin_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
     begin_tlm_val = begin_result.val_obj.val
 
-    # Send command and wait for completion
+    # Send command and wait for completion with assert
     fprime_test_api.send_and_assert_command(
         f"{fprime_test_api.get_mnemonic('Svc.CommandDispatcher')}.CMD_NO_OP"
     )
-
-    # Clear stale telemetry, then wait for fresh telemetry after command completed
+    # Clear stale telemetry, then wait for fresh telemetry after command completes
     fprime_test_api.clear_histories()
     end_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
     assert end_result.val_obj.val == begin_tlm_val + 1
