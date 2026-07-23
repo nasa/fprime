@@ -17,7 +17,7 @@ import argparse
 import logging
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 from datetime import datetime
 from dataclasses import dataclass, field
 
@@ -320,8 +320,6 @@ class PriorityBufferAnalyzer:
         self, comp_instance: fpm_ComponentInstance, component: fpm_Component
     ) -> Optional[Path]:
         """Find component's build directory by deriving from source path"""
-        comp_qualified_name = comp_instance.get_qualified_name()
-
         # Get the source path from component's AST node using topology_model
         if not self.topology_model:
             return None
@@ -471,7 +469,6 @@ class PriorityBufferAnalyzer:
                     priority_val = int(expr.value)
                 # Handle named constant (e.g., "ActiveRateGroupOutputPorts")
                 elif isinstance(expr, fpm_fpp_ast.fpp_ast.ExprIdent):
-                    enum_name = expr.value
                     priority_val = analysis.value_map[
                         port_instance.specifier.priority._id
                     ].value

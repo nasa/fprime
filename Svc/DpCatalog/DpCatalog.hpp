@@ -173,13 +173,13 @@ class DpCatalog final : public DpCatalogComponentBase {
     /// @brief determine in which managed directory a file resides
     /// @param fullFile full path to file to be processed
     /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
-    FwSizeType determineDirectory(Fw::String fullFile);
+    FwSizeType determineDirectory(const Fw::String& fullFile);
 
     /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
     /// @return QUIT to stop processing, FAILED for failure but continue, SUCCESS for success
-    ProcessFileStatus processFile(Fw::String fullFile, FwSizeType dir);
+    ProcessFileStatus processFile(const Fw::String& fullFile, FwSizeType dir);
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry

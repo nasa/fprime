@@ -30,9 +30,8 @@ ActiveRateGroup::ActiveRateGroup(const char* compName)
       m_cycleSlips(0) {}
 
 void ActiveRateGroup::configure(const ContextArray& contexts) {
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
+                  "Context table size must match the number of rate group member output ports");
 
     this->m_numContexts = CONNECTION_COUNT_MAX;
     // copy context values
@@ -75,7 +74,10 @@ void ActiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
     }
 
     // grab timer for endTime of cycle
-    endTime.now();
+    Os::RawTime::Status timeStatus = endTime.now();
+    if (timeStatus != Os::RawTime::Status::OP_OK) {
+        this->log_WARNING_HI_RateGroupTimeGetError(Os::RawTimeStatus(static_cast<Os::RawTimeStatus::T>(timeStatus)));
+    }
 
     // get rate group execution time
     U32 cycleTime;

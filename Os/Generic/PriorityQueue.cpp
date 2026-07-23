@@ -202,7 +202,8 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
         FwSizeType index = this->m_handle.find_index();
 
         // Space must exist, push must work
-        FW_ASSERT(this->m_handle.m_heap.push(priority, index));
+        const bool pushed = this->m_handle.m_heap.push(priority, index);
+        FW_ASSERT(pushed);
         this->m_handle.store_data(index, buffer, size);
         this->m_handle.m_sizes[index] = size;
         this->m_handle.m_highMark = std::max(this->m_handle.m_highMark, this->getMessagesAvailable());
@@ -229,7 +230,8 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
 
         FwSizeType index;
         // Message must exist, so pop must pass and size must be valid
-        FW_ASSERT(this->m_handle.m_heap.pop(priority, index));
+        const bool popped = this->m_handle.m_heap.pop(priority, index);
+        FW_ASSERT(popped);
         actualSize = this->m_handle.m_sizes[index];
         FW_ASSERT(actualSize <= capacity);
         this->m_handle.load_data(index, destination, actualSize);

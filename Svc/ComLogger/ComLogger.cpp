@@ -72,10 +72,6 @@ ComLogger ::~ComLogger() {
 
         // Update mode:
         this->m_fileMode = CLOSED;
-
-        // Send event:
-        // Fw::LogStringArg logStringArg((char*) fileName);
-        // this->log_DIAGNOSTIC_FileClosed(logStringArg);
     }
 }
 

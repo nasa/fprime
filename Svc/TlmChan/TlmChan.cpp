@@ -70,7 +70,7 @@ TlmChan::TlmChan(const char* name)
 
     // get current time and use as non-deterministic source for seed
     Os::RawTime rawTime;
-    rawTime.now();
+    (void)rawTime.now();
     U8 timeBuf[FW_RAW_TIME_SERIALIZATION_MAX_SIZE] = {};
     Fw::ExternalSerializeBuffer serBuf(timeBuf, sizeof(timeBuf));
     (void)rawTime.serializeTo(serBuf);

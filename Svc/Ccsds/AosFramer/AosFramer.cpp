@@ -410,7 +410,6 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     // Use EPP if we can (solves for all sizes)
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
         // TODO: Serialize an EPP of the right size
-        FW_ASSERT(true);
     }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to

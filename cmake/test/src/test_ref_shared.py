@@ -8,7 +8,6 @@ import platform
 import tempfile
 import json
 import pytest
-from pathlib import Path
 from . import cmake
 from . import settings
 
