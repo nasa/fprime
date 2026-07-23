@@ -131,7 +131,7 @@ class DpCatalog final : public DpCatalogComponentBase {
         /// @param left an entry to compare
         /// @param right other entry to compare
         /// @return -1 if left is higher priority, 0 if equal, and 1 if right is higher priority
-        static int compareEntries(const DpStateEntry& left, const DpStateEntry& right);
+        static I8 compareEntries(const DpStateEntry& left, const DpStateEntry& right);
 
         bool operator==(const DpStateEntry& other) const;
         bool operator!=(const DpStateEntry& other) const;
@@ -150,16 +150,23 @@ class DpCatalog final : public DpCatalogComponentBase {
     // Private helpers
     // ----------------------------------
 
+    //! Status of a processFile() call
+    enum class ProcessFileStatus {
+        SUCCESS,  //!< file added to the catalog
+        FAILED,   //!< file could not be processed; continue with the next file
+        QUIT      //!< catalog is full; stop processing files
+    };
+
     /// @brief determine in which managed directory a file resides
     /// @param fullFile full path to file to be processed
     /// @return directory index in m_directories; DP_MAX_DIRECTORIES if not in a managed dir
-    FwSizeType determineDirectory(Fw::String fullFile);
+    FwSizeType determineDirectory(const Fw::String& fullFile);
 
     /// @brief add entry to sorted list and state file; called on each file in it & upon addToCat
     /// @param fullFile full path to file to be processed
     /// @param dir directory index in m_directories
-    /// @return -1 for quit, 0 for failure but continue, 1 for success
-    int processFile(Fw::String fullFile, FwSizeType dir);
+    /// @return QUIT to stop processing, FAILED for failure but continue, SUCCESS for success
+    ProcessFileStatus processFile(const Fw::String& fullFile, FwSizeType dir);
 
     /// @brief insert an entry into the sorted catalog; if it exists, update the metadata
     /// @param entry new entry

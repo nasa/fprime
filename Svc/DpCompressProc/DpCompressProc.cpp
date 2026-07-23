@@ -54,7 +54,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     }
 
     Fw::DpContainer container(0, fwBuffer);
-    container.deserializeHeader();
+    const Fw::SerializeStatus desStat = container.deserializeHeader();
+    if (desStat != Fw::FW_SERIALIZE_OK) {
+        // Cannot process a container with an invalid header. Give up
+        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(), static_cast<U32>(desStat));
+        return;
+    }
 
     FwSizeType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
     FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
@@ -235,8 +240,8 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                                    2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
                               static_cast<FwAssertArgType>(deser_loc), uncompressed_size,
                               CompressionMetadata::SERIALIZED_SIZE, compressed_size);
-                    std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
-                                 uncompressed_size);
+                    (void)std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
+                                       uncompressed_size);
 
                     // Serialize the header bytes to the front of the data
                     serializeCompressionHeader(data_reser, uncompressed_size,

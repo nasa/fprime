@@ -46,10 +46,10 @@ U16 TcpServerSocket::getListenPort() {
 }
 
 SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
-    int serverFd = -1;
     struct sockaddr_in address;
     // Acquire a socket, or return error
-    if ((serverFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    int serverFd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (serverFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
@@ -61,31 +61,33 @@ SocketIpStatus TcpServerSocket::startup(SocketDescriptor& socketDescriptor) {
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
     // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
-    if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
-        ::close(serverFd);
+    const SocketIpStatus addressStatus = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (addressStatus != SOCK_SUCCESS) {
+        (void)::close(serverFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
 
     if (IpSocket::setupSocketOptions(serverFd) != SOCK_SUCCESS) {
-        ::close(serverFd);
+        (void)::close(serverFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // TCP requires bind to an address to the socket
     if (::bind(serverFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
-        ::close(serverFd);
+        (void)::close(serverFd);
         return SOCK_FAILED_TO_BIND;
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(serverFd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
-        ::close(serverFd);
+    const int socknameStatus = ::getsockname(serverFd, reinterpret_cast<struct sockaddr*>(&address), &size);
+    if (socknameStatus == -1) {
+        (void)::close(serverFd);
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
     // TCP requires listening on the socket. Since we only expect a single client, set the TCP backlog (second argument)
     // to 1 to prevent queuing of multiple clients.
     if (::listen(serverFd, 1) < 0) {
-        ::close(serverFd);
+        (void)::close(serverFd);
         return SOCK_FAILED_TO_LISTEN;  // What we have here is a failure to communicate
     }
     Fw::Logger::log("Listening for single client at %s:%hu\n", this->m_ipv4_address, this->m_port);
@@ -118,7 +120,7 @@ SocketIpStatus TcpServerSocket::openProtocol(SocketDescriptor& socketDescriptor)
     }
     // Setup client send timeouts
     if (IpSocket::setupTimeouts(clientFd) != SOCK_SUCCESS) {
-        ::close(clientFd);
+        (void)::close(clientFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 

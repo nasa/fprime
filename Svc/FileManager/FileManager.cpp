@@ -242,12 +242,18 @@ void FileManager ::run_internalInterfaceHandler() {
             } else if (status == Os::Directory::OP_OK) {
                 // Construct full path for type checking
                 Fw::String fullPath;
-                fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
+                Fw::FormatStatus formatStatus = fullPath.format("%s/%s", m_currentDirName.toChar(), filename.toChar());
 
                 // Determine entry type
-                Os::FileSystem::PathType pathType = Os::FileSystem::getPathType(fullPath.toChar());
+                Os::FileSystem::PathType pathType = (formatStatus == Fw::FormatStatus::SUCCESS)
+                                                        ? Os::FileSystem::getPathType(fullPath.toChar())
+                                                        : Os::FileSystem::NOT_EXIST;
 
-                if (pathType == Os::FileSystem::FILE) {
+                if (formatStatus != Fw::FormatStatus::SUCCESS) {
+                    // Cannot determine the type of an entry whose path did not format
+                    this->log_WARNING_HI_FileNameFormatError(filename,
+                                                             static_cast<Fw::StringFormatStatus::T>(formatStatus));
+                } else if (pathType == Os::FileSystem::FILE) {
                     // Regular file: get size and emit file event
                     FwSizeType fileSize;
                     Os::FileSystem::Status sizeStatus = Os::FileSystem::getFileSize(fullPath.toChar(), fileSize);

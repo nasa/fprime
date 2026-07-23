@@ -445,6 +445,8 @@ void FpySequencer::updateDebugTelemetryStruct() {
             return;
         }
 
+        FW_ASSERT(this->m_runtime.nextStatementIndex < Fpy::MAX_SEQUENCE_STATEMENT_COUNT,
+                  static_cast<FwAssertArgType>(this->m_runtime.nextStatementIndex));
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);

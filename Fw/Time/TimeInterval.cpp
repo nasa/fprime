@@ -120,6 +120,8 @@ TimeInterval TimeInterval ::sub(const TimeInterval& t1,  //!< TimeInterval t1
     } else {
         uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
     }
+    // Microseconds portion must be normalized to less than 10^6
+    FW_ASSERT(uSeconds < 1000000, static_cast<FwAssertArgType>(uSeconds));
     return TimeInterval(seconds, static_cast<U32>(uSeconds));
 }
 

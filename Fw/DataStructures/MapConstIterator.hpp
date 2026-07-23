@@ -93,7 +93,7 @@ class MapConstIterator {
     MapConstIterator& operator=(const MapConstIterator&) = default;
 
     //! Equality comparison operator
-    bool operator==(const MapConstIterator& it) {
+    bool operator==(const MapConstIterator& it) const {
         bool result = false;
         const auto implKind1 = this->getImplIterator().implKind();
         const auto implKind2 = it.getImplIterator().implKind();
@@ -114,7 +114,7 @@ class MapConstIterator {
     }
 
     //! Inequality comparison operator
-    bool operator!=(const MapConstIterator& it) { return !(*this == it); };
+    bool operator!=(const MapConstIterator& it) const { return !(*this == it); };
 
     //! Prefix increment
     MapConstIterator& operator++() {

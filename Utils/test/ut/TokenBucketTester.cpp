@@ -119,6 +119,34 @@ void TokenBucketTester ::testInitialSettings() {
     ASSERT_FALSE(bucket.trigger(Fw::Time(0, 0)));
 }
 
+void TokenBucketTester ::testReplenishAndEdgeCases() {
+    const U32 interval = 1000000;
+    const U32 maxTokens = 5;
+
+    // Manual replenish when already full is a no-op
+    TokenBucket bucket(interval, maxTokens);
+    ASSERT_EQ(bucket.getTokens(), maxTokens);
+    bucket.replenish();
+    ASSERT_EQ(bucket.getTokens(), maxTokens);
+
+    // Zero replenish rate: tokens are never replenished
+    TokenBucket zeroRate(interval, maxTokens, 0, 2, Fw::Time(0, 0));
+    ASSERT_TRUE(zeroRate.trigger(Fw::Time(1, 0)));
+    ASSERT_TRUE(zeroRate.trigger(Fw::Time(100, 0)));
+    ASSERT_FALSE(zeroRate.trigger(Fw::Time(1000, 0)));
+    ASSERT_EQ(zeroRate.getTokens(), 0u);
+
+    // Time moving backwards: no replenishment occurs, existing tokens still consumable
+    TokenBucket backwards(interval, maxTokens, 1, 1, Fw::Time(50, 0));
+    ASSERT_TRUE(backwards.trigger(Fw::Time(10, 0)));
+    ASSERT_FALSE(backwards.trigger(Fw::Time(10, 0)));
+
+    // Replenish rate larger than the remaining capacity saturates at maxTokens
+    TokenBucket bigRate(interval, maxTokens, maxTokens * 10, 0, Fw::Time(0, 0));
+    ASSERT_TRUE(bigRate.trigger(Fw::Time(1, 0)));
+    ASSERT_EQ(bigRate.getTokens(), maxTokens - 1);
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

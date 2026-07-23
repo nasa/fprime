@@ -33,7 +33,7 @@ void SocketComponentHelper::start(const Fw::ConstStringBase& name,
               Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_reconnectStop = false;
     Fw::String reconnectName;
-    reconnectName.format("%s_reconnect", name.toChar());
+    (void)reconnectName.format("%s_reconnect", name.toChar());  // task name may safely truncate
     Os::Task::Arguments reconnectArguments(reconnectName, SocketComponentHelper::reconnectTask, this, priorityReconnect,
                                            stackReconnect, cpuAffinityReconnect);
     Os::Task::Status reconnectStat = m_reconnectTask.start(reconnectArguments);
@@ -268,11 +268,16 @@ bool SocketComponentHelper::runningReconnect() {
 
 void SocketComponentHelper::reconnectLoop() {
     SocketIpStatus status = SOCK_SUCCESS;
+    // @non-terminating@: runs until the reconnect thread is stopped
     while (this->runningReconnect()) {
         // Check if we need to reconnect
         bool reconnect = false;
         {
             Os::ScopeLock scopedLock(this->m_reconnectLock);
+            FW_ASSERT(this->m_reconnectState == ReconnectState::NOT_RECONNECTING ||
+                          this->m_reconnectState == ReconnectState::REQUEST_RECONNECT ||
+                          this->m_reconnectState == ReconnectState::RECONNECT_IN_PROGRESS,
+                      static_cast<FwAssertArgType>(this->m_reconnectState));
             if (this->m_reconnectState == ReconnectState::REQUEST_RECONNECT) {
                 this->m_reconnectState = ReconnectState::RECONNECT_IN_PROGRESS;
                 reconnect = true;

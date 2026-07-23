@@ -109,8 +109,9 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
     FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
 
     // Loop from source_size - sub_size to zero (inclusive)
-    for (FwSizeType ii = 0; ii <= (source_size - sub_size); ii++) {
-        const FwSizeType source_index = (source_size - sub_size) - ii;
+    const FwSizeType max_start_index = source_size - sub_size;
+    for (FwSizeType ii = 0; ii <= max_start_index; ii++) {
+        const FwSizeType source_index = max_start_index - ii;
 
         // if the current character matches
         for (FwSizeType sub_index = 0; sub_index < sub_size; sub_index++) {

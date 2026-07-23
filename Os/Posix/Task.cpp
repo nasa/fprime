@@ -33,8 +33,9 @@ void* pthread_entry_wrapper(void* wrapper_pointer) {
 #if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
     auto handle = reinterpret_cast<Os::Posix::Task::PosixTaskHandle*>(wrapper.m_task.getHandle());
     FW_ASSERT(handle != nullptr);
-    // Task name is on a best effort basis
-    (void)set_task_name(handle->m_task_descriptor, handle->m_name);
+    // Task name is on a best effort basis. Use pthread_self() since the handle's task
+    // descriptor is written by pthread_create concurrently with this thread's start.
+    (void)set_task_name(pthread_self(), handle->m_name);
 #endif
     wrapper.run(&wrapper);
     return nullptr;
@@ -69,6 +70,8 @@ int set_stack_size(pthread_attr_t& attributes, const Os::Task::Arguments& argume
             const_cast<CHAR*>(arguments.m_name.toChar()), stack, static_cast<FwSizeType>(PTHREAD_STACK_MIN));
         stack = static_cast<FwSizeType>(PTHREAD_STACK_MIN);
     }
+    // Clamping above guarantees a valid minimum stack size
+    FW_ASSERT(stack >= static_cast<FwSizeType>(PTHREAD_STACK_MIN), static_cast<FwAssertArgType>(stack));
     status = pthread_attr_setstacksize(&attributes, static_cast<size_t>(stack));
     return status;
 }
@@ -91,6 +94,9 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
         priority = max_priority;
     }
 
+    // Clamping above guarantees the priority is within the policy's valid range
+    FW_ASSERT(priority >= min_priority && priority <= max_priority, static_cast<FwAssertArgType>(priority));
+
     // Set attributes required for priority
     status = pthread_attr_setschedpolicy(&attributes, SCHED_POLICY);
     if (status == PosixTaskHandle::SUCCESS) {
@@ -98,7 +104,7 @@ int set_priority_params(pthread_attr_t& attributes, const Os::Task::Arguments& a
     }
     if (status == PosixTaskHandle::SUCCESS) {
         sched_param schedParam;
-        memset(&schedParam, 0, sizeof(sched_param));
+        (void)memset(&schedParam, 0, sizeof(sched_param));
         schedParam.sched_priority = static_cast<int>(priority);
         status = pthread_attr_setschedparam(&attributes, &schedParam);
     }
@@ -112,6 +118,8 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
 // That's the circumstance in which we expect this feature to work.
 #if defined(TGT_OS_TYPE_LINUX) && defined(__GLIBC__) && defined(_GNU_SOURCE)
     const FwSizeType affinity = arguments.m_cpuAffinity;
+    // CPU_SET is undefined for indices at or beyond CPU_SETSIZE
+    FW_ASSERT(affinity < static_cast<FwSizeType>(CPU_SETSIZE), static_cast<FwAssertArgType>(affinity));
     cpu_set_t cpu_set;
     CPU_ZERO(&cpu_set);
     CPU_SET(static_cast<int>(affinity), &cpu_set);
@@ -127,6 +135,7 @@ int set_cpu_affinity(pthread_attr_t& attributes, const Os::Task::Arguments& argu
 }
 
 int set_task_name(pthread_t thread, char* name) {
+    FW_ASSERT(name != nullptr);
     int status = 0;
 // pthread_setname_np is a non-POSIX function.
 // Limit its use to builds that involve glibc, on Linux, with _GNU_SOURCE defined.
@@ -147,7 +156,7 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     const bool expect_permission = (permissions == EXPECT_PERMISSION);
     // Initialize and clear pthread attributes
     pthread_attr_t attributes;
-    memset(&attributes, 0, sizeof(attributes));
+    (void)memset(&attributes, 0, sizeof(attributes));
     pthread_status = pthread_attr_init(&attributes);
     if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) &&
         (pthread_status == PosixTaskHandle::SUCCESS)) {
@@ -161,6 +170,11 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
         (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_cpu_affinity(attributes, arguments);
     }
+#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
+    // Copy the name before the thread starts, since the new thread reads it
+    (void)Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
+#endif
+
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         pthread_status =
             pthread_create(&handle.m_task_descriptor, &attributes, pthread_entry_wrapper, arguments.m_routine_argument);
@@ -169,10 +183,6 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     if (pthread_status == PosixTaskHandle::SUCCESS) {
         handle.m_is_valid = true;
     }
-
-#if defined(POSIX_THREADS_ENABLE_NAMES) && POSIX_THREADS_ENABLE_NAMES
-    Fw::StringUtils::string_copy(handle.m_name, arguments.m_name.toChar(), sizeof(handle.m_name));
-#endif
 
     (void)pthread_attr_destroy(&attributes);
     return Posix::posix_status_to_task_status(pthread_status);

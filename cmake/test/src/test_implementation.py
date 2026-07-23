@@ -4,11 +4,8 @@
 # Basic CMake tests.
 #
 ####
-import platform
-
 from . import cmake
 from . import settings
-
 
 _ = cmake.get_build(
     "IMPLEMENTATION_TEST",
