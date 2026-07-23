@@ -41,7 +41,7 @@ void ActivePhaser ::configure(U32 cycle_ticks) {
     m_cycle = cycle_ticks;
 }
 
-void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32 context) {
+void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32 userContext) {
     FW_ASSERT(m_cycle != 0);
     FW_ASSERT(m_state.used < 0xFFFF, static_cast<FwAssertArgType>(m_state.used));
     // Additional checks when there are previous entries
@@ -66,28 +66,26 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     FW_ASSERT(isConnected_PhaserMemberOut_OutputPort(port), static_cast<FwAssertArgType>(port));
     FW_ASSERT((start + length) <= m_cycle, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
               static_cast<FwAssertArgType>(m_cycle));
-    FW_ASSERT(context > m_cycle, static_cast<FwAssertArgType>(context), static_cast<FwAssertArgType>(m_cycle));
+    FW_ASSERT(userContext > m_cycle, static_cast<FwAssertArgType>(userContext), static_cast<FwAssertArgType>(m_cycle));
 
     entry.port = port;
     entry.start = start;
     entry.length = length;
-    // By default, context is DONT_CARE, which means the context type is SEQUENTIAL
+    // By default, userContext is DONT_CARE, which means the context type is SEQUENTIAL
     // and a port's context value by default increments every time it is registered.
-    // If a value is given to context, the context type becomes COUNT, and
-    // entry.context represents the ratio between the user-configured context and the phaser cycle.
-    // The user-configured context must be greater than the phaser cycle.
-    // Example: If context == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.
-    // FIXME: This is a point of confusion because entry.context and context are
-    // very different things, yet they have the same name.
-    entry.context = (context != DONT_CARE) ? context / m_cycle : getNextContext(port);
+    // If a value is given to userContext, the context type becomes COUNT, and
+    // entry.context represents the ratio between userContext and the phaser cycle.
+    // userContext must be greater than the phaser cycle.
+    // Example: If userContext == 2000 and m_cycle == 100, then entry.context == 20 while contextType == COUNT.
+    entry.context = (userContext != DONT_CARE) ? userContext / m_cycle : getNextContext(port);
     // Update some common multiple of all contexts
-    if (context != DONT_CARE) {
+    if (userContext != DONT_CARE) {
         // Check for overflow before multiply
         FW_ASSERT(std::numeric_limits<U32>::max() / m_ticks_rollover >= entry.context);
         m_ticks_rollover *= entry.context;
     }
 
-    entry.contextType = (context != DONT_CARE) ? PhaserContextType::COUNT : PhaserContextType::SEQUENTIAL;
+    entry.contextType = (userContext != DONT_CARE) ? PhaserContextType::COUNT : PhaserContextType::SEQUENTIAL;
     entry.started = false;
     m_state.used += 1;
 }
