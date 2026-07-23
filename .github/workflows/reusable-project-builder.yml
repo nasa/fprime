@@ -134,7 +134,7 @@ jobs:
           fprime-util build --ut -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Run Unit Tests"
-        continue-on-error: true
+        continue-on-error: false
         working-directory: ${{ inputs.build_location }}
         run: |
           if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
