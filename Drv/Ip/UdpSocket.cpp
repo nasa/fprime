@@ -168,8 +168,7 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
             (void)::close(socketFd);
             return status;
         }
-        FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
-                  static_cast<FwAssertArgType>(sizeof(address)));
+        static_assert(sizeof(m_addr_send) == sizeof(address), "Send address must match the local address structure");
         (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
     }
 
