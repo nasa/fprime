@@ -43,6 +43,7 @@ class RateLimiterTester {
     void testCounterTriggering();
     void testTimeTriggering();
     void testCounterAndTimeTriggering();
+    void testDefaultConstructorAndSetters();
 
   private:
     // ----------------------------------------------------------------------
