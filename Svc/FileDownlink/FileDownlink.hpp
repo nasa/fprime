@@ -17,6 +17,7 @@
 #include <Os/File.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Queue.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Svc/FileDownlink/FileDownlinkComponentAc.hpp>
 #include <config/FileDownlinkCfg.hpp>
 
@@ -81,8 +82,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! The destination file name
         Fw::LogStringArg m_destName;
 
-        //! The underlying OS file
-        Os::File m_osFile;
+        //! The underlying OS file (sandboxed to restrict read locations)
+        Os::SandboxedFile m_osFile;
 
         //! The file size
         U32 m_size;
@@ -108,8 +109,11 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Get the destination file name
         Fw::LogStringArg& getDestName(void) { return this->m_destName; }
 
+        //! Configure the allowed read directory for sandboxed file opens
+        void configureSandbox(const char* directory) { this->m_osFile.configure(directory); }
+
         //! Get the underlying OS file
-        Os::File& getOsFile(void) { return this->m_osFile; }
+        Os::SandboxedFile& getOsFile(void) { return this->m_osFile; }
 
         //! Get the file size
         U32 getSize(void) { return this->m_size; }
@@ -179,6 +183,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Issue a Zero-Size File warning
         void zeroSize();
 
+        //! Issue a Source Out Of Sandbox warning
+        void sourceOutOfSandbox();
+
       private:
         //! Record a warning
         void warning() {
@@ -229,6 +236,10 @@ class FileDownlink final : public FileDownlinkComponentBase {
                    U32 cycleTime,      //!< Rate at which we are running
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );
+
+    //! Restrict SendFile / SendPartial reads to paths under the configured directory.
+    //! Mirrors Svc::FileUplink::configure. Default sandbox is unrestricted until called.
+    void configure(const char* directory);
 
     //! Cleans up file queue before dispatching to underlying component
     void deinit();
@@ -333,7 +344,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void downlinkPacket();
     // Finish the file transfer
     void finishHelper(bool is_cancel);
-    // Convert internal status enum to a command response;
+    // Convert internal status enum to a command response
     Fw::CmdResponse statusToCmdResp(SendFileStatus status);
     // Send response after completing file downlink
     void sendResponse(SendFileStatus resp);

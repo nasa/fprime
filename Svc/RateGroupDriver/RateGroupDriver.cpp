@@ -10,12 +10,9 @@ RateGroupDriver::RateGroupDriver(const char* compName)
     : RateGroupDriverComponentBase(compName), m_ticks(0), m_rollover(1), m_configured(false) {}
 
 void RateGroupDriver::configure(const DividerSet& dividerSet) {
-    // check arguments
-    FW_ASSERT(dividerSet.dividers);
     // verify port/table size matches
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_dividers) == this->getNum_CycleOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_dividers)),
-              static_cast<FwAssertArgType>(this->getNum_CycleOut_OutputPorts()));
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_dividers) == NUM_CYCLEOUT_OUTPUT_PORTS,
+                  "Divider table size must match the number of cycle output ports");
     // copy provided array of dividers
     for (FwIndexType entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
         // A port with an offset equal or bigger than the divisor is not accepted because it would never be called

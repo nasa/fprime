@@ -24,6 +24,7 @@ PosixCountingSemaphore::~PosixCountingSemaphore() {
 
 PosixCountingSemaphore::Status PosixCountingSemaphore::wait() {
     int status = 0;
+    // @non-terminating@: retry on EINTR
     do {
         status = sem_wait(&this->m_handle.m_semaphore);
     } while (status != 0 && errno == EINTR);
@@ -45,6 +46,7 @@ PosixCountingSemaphore::Status PosixCountingSemaphore::waitTimeout(const Fw::Tim
     }
 
     int status = 0;
+    // @non-terminating@: retry on EINTR
     do {
         status = sem_timedwait(&this->m_handle.m_semaphore, &abstime);
     } while (status != 0 && errno == EINTR);

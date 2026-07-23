@@ -65,6 +65,7 @@ void BufferLogger::File ::setBaseName(const Fw::ConstStringBase& baseName) {
 }
 
 void BufferLogger::File ::logBuffer(const U8* const data, const FwSizeType size) {
+    FW_ASSERT(data != nullptr);
     // Close the file if it will be too big
     if (this->m_mode == File::Mode::OPEN) {
         const FwSizeType projectedByteCount = this->m_bytesWritten + this->m_sizeOfSize + size;
@@ -104,11 +105,17 @@ void BufferLogger::File ::open() {
         return;
     }
 
+    Fw::FormatStatus formatStatus;
     if (this->m_fileCounter == 0) {
-        this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
+        formatStatus =
+            this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
     } else {
-        this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
-                            this->m_fileCounter, this->m_suffix.toChar());
+        formatStatus = this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(),
+                                           this->m_baseName.toChar(), this->m_fileCounter, this->m_suffix.toChar());
+    }
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileNameError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        return;
     }
 
     const Os::File::Status status = this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_WRITE);
@@ -179,22 +186,8 @@ void BufferLogger::File ::writeHashFile() {
 }
 
 bool BufferLogger::File ::flush() {
+    // Unbuffered file I/O requires no flush; flush the Os::File here if using buffered I/O
     return true;
-    // NOTE(if your fprime uses buffered file I/O, re-enable this)
-    /*bool status = true;
-    if(this->mode == File::Mode::OPEN)
-    {
-      const Os::File::Status fileStatus = this->osFile.flush();
-      if(fileStatus == Os::File::OP_OK)
-      {
-        status = true;
-      }
-      else
-      {
-        status = false;
-      }
-    }
-    return status;*/
 }
 
 void BufferLogger::File ::close() {

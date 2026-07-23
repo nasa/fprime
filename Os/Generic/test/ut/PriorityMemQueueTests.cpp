@@ -940,13 +940,13 @@ TEST_F(PriorityMemQueueTestFixture, DuplicateQueueIdAssertion) {
 // validate the blocking behavior with a single receiver thread.
 struct BlockingReceiveContext {
     Os::Generic::PriorityMemQueue* queue;
-    bool messageReceived;
+    std::atomic<bool> messageReceived;
     U8 receivedData[64];
     FwSizeType receivedSize;
     FwQueuePriorityType receivedPriority;
     Os::QueueInterface::Status status;
     Os::Mutex mutex;
-    bool started;
+    std::atomic<bool> started;
 
     BlockingReceiveContext()
         : queue(nullptr),
@@ -1047,10 +1047,10 @@ TEST_F(PriorityMemQueueTestFixture, BlockingReceive) {
 // Context for blocking send test
 struct BlockingSendContext {
     Os::Generic::PriorityMemQueue* queue;
-    bool messageSent;
+    std::atomic<bool> messageSent;
     Os::QueueInterface::Status status;
     Os::Mutex mutex;
-    bool started;
+    std::atomic<bool> started;
 
     BlockingSendContext()
         : queue(nullptr), messageSent(false), status(Os::QueueInterface::Status::OP_OK), started(false) {}

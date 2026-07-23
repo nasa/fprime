@@ -44,7 +44,7 @@ void HealthImpl::init(const FwSizeType queueDepth, const FwEnumStoreType instanc
 }
 
 void HealthImpl::setPingEntries(PingEntry* pingEntries, FwIndexType numPingEntries, U32 watchDogCode) {
-    FW_ASSERT(pingEntries);
+    FW_ASSERT(pingEntries != nullptr);
     // make sure not asking for more pings than ports
     FW_ASSERT(numPingEntries <= NUM_PINGSEND_OUTPUT_PORTS);
 
@@ -161,6 +161,9 @@ void HealthImpl::HLTH_PING_ENABLE_cmdHandler(const FwOpcodeType opCode,
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
+    FW_ASSERT(
+        entryIndex >= 0 && entryIndex < static_cast<FwIndexType>(FW_NUM_ARRAY_ELEMENTS(this->m_pingTrackerEntries)),
+        static_cast<FwAssertArgType>(entryIndex));
 
     this->m_pingTrackerEntries[entryIndex].enabled = enable.e;
     Fw::Enabled isEnabled(Fw::Enabled::DISABLED);

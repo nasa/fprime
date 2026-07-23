@@ -134,7 +134,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_dispatchStateme
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }
@@ -223,6 +223,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_validate(
     Svc_FpySequencer_SequencerStateMachine::Signal signal  //!< The signal
 ) {
     Fw::Success result = this->validate();
+    FW_ASSERT(result == Fw::Success::SUCCESS || result == Fw::Success::FAILURE, static_cast<FwAssertArgType>(result));
     if (result == Fw::Success::FAILURE) {
         this->sequencer_sendSignal_result_failure();
         return;
@@ -252,7 +253,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkShouldWake
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }
@@ -279,7 +280,7 @@ void FpySequencer::Svc_FpySequencer_SequencerStateMachine_action_checkStatementT
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(result));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(result));
         }
     }
 }

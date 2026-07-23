@@ -58,7 +58,8 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
     Fw::SerializeStatus status;
     // make our own esb so we can deser from stmt without breaking its constness
     Fw::ExternalSerializeBuffer argBuf(const_cast<U8*>(stmt.get_argBuf().getBuffAddr()), stmt.get_argBuf().getSize());
-    argBuf.setBuffLen(stmt.get_argBuf().getSize());
+    status = argBuf.setBuffLen(stmt.get_argBuf().getSize());
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
     switch (stmt.get_opCode()) {
         case Fpy::DirectiveId::WAIT_REL: {
@@ -495,7 +496,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
     switch (id) {
         case Fpy::DirectiveId::INVALID: {
             // coding err
-            FW_ASSERT(0);
+            FW_ASSERT(false);
             return;
         }
         case Fpy::DirectiveId::WAIT_REL: {
@@ -672,7 +673,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         }
     }
     // coding err
-    FW_ASSERT(0, static_cast<FwAssertArgType>(id));
+    FW_ASSERT(false, static_cast<FwAssertArgType>(id));
 }
 
 Signal FpySequencer::checkShouldWake() {
@@ -728,8 +729,8 @@ Signal FpySequencer::checkStatementTimeout() {
         return Signal::result_checkStatementTimeout_noTimeout;
     }
 
-    U64 currentUSeconds = currentTime.getSeconds() * 1000000 + currentTime.getUSeconds();
-    U64 dispatchUSeconds = this->m_runtime.currentStatementDispatchTime.getSeconds() * 1000000 +
+    U64 currentUSeconds = static_cast<U64>(currentTime.getSeconds()) * 1000000 + currentTime.getUSeconds();
+    U64 dispatchUSeconds = static_cast<U64>(this->m_runtime.currentStatementDispatchTime.getSeconds()) * 1000000 +
                            this->m_runtime.currentStatementDispatchTime.getUSeconds();
 
     U64 timeoutUSeconds = static_cast<U64>(timeout * 1000000.0f);

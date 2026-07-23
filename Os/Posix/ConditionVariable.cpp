@@ -26,10 +26,12 @@ PosixConditionVariable::Status PosixConditionVariable::pend(Os::Mutex& mutex) {
     return posix_status_to_conditional_status(status);
 }
 void PosixConditionVariable::notify() {
-    FW_ASSERT(pthread_cond_signal(&this->m_handle.m_condition) == 0);
+    const int status = pthread_cond_signal(&this->m_handle.m_condition);
+    FW_ASSERT(status == 0);
 }
 void PosixConditionVariable::notifyAll() {
-    FW_ASSERT(pthread_cond_broadcast(&this->m_handle.m_condition) == 0);
+    const int status = pthread_cond_broadcast(&this->m_handle.m_condition);
+    FW_ASSERT(status == 0);
 }
 
 ConditionVariableHandle* PosixConditionVariable::getHandle() {

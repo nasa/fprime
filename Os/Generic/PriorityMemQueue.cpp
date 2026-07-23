@@ -56,6 +56,8 @@ static constexpr U32 priorityBitMask(FwQueuePriorityType priority) {
 }
 
 void PriorityMemQueueHandle::init() {
+    FW_ASSERT(this->m_numActivePriorities <= Os::Generic::Queue::MAX_PRIORITIES,
+              static_cast<FwAssertArgType>(this->m_numActivePriorities));
     // NOTE: Do NOT reset m_priorityMap here - it's already populated by create()
 
     // If arrays were allocated, teardown AtomicQueues
@@ -131,6 +133,8 @@ bool PriorityMemQueueHandle::allocateArrays(Fw::MemAllocator& allocator, FwEnumS
 }
 
 void PriorityMemQueueHandle::deallocateArrays(Fw::MemAllocator& allocator, FwEnumStoreType allocatorId) {
+    FW_ASSERT(this->m_numActivePriorities <= Os::Generic::Queue::MAX_PRIORITIES,
+              static_cast<FwAssertArgType>(this->m_numActivePriorities));
     // Deallocate arrays in reverse order
     if (this->m_highWaterMarks != nullptr) {
         // std::atomic<U32> is trivially destructible — no explicit destructor needed
@@ -163,7 +167,7 @@ void PriorityMemQueueHandle::enablePriority(FwQueuePriorityType priority) {
 
     // MEMORY ORDERING: seq_cst for control path operations ensures total ordering
     // Atomic update of priority mask using fetch_or with seq_cst (control path)
-    this->m_priorityMask.fetch_or(priorityBitMask(priority), std::memory_order_seq_cst);
+    (void)this->m_priorityMask.fetch_or(priorityBitMask(priority), std::memory_order_seq_cst);
 }
 
 void PriorityMemQueueHandle::disablePriority(FwQueuePriorityType priority) {
@@ -171,7 +175,7 @@ void PriorityMemQueueHandle::disablePriority(FwQueuePriorityType priority) {
 
     // MEMORY ORDERING: seq_cst for control path operations ensures total ordering
     // Atomic update of priority mask using fetch_and with seq_cst (control path)
-    this->m_priorityMask.fetch_and(~priorityBitMask(priority), std::memory_order_seq_cst);
+    (void)this->m_priorityMask.fetch_and(~priorityBitMask(priority), std::memory_order_seq_cst);
 }
 
 PriorityMemQueue::PriorityMemQueue() {
@@ -188,7 +192,8 @@ static inline I32 findMSB(U32 value) {
     }
     // Use compiler builtin for CLZ (count leading zeros) if available
 #if defined(__GNUC__) || defined(__clang__)
-    return 31 - __builtin_clz(value);
+    I32 msb = 31 - __builtin_clz(value);
+    return msb;
 #else
     // Fallback: software implementation with explicit bound (32 bits maximum)
     I32 msb = 31;
@@ -205,6 +210,8 @@ static inline I32 findMSB(U32 value) {
 }
 
 FwQueuePriorityType PriorityMemQueue::findHighestPriority(U32 priorities) {
+    // The priority bit mask is a U32, so priorities must fit in 32 bits
+    FW_ASSERT(static_cast<FwSizeType>(Os::Generic::Queue::MAX_PRIORITIES) <= 32);
     // MEMORY ORDERING: Use acquire to synchronize with priority enable/disable operations
     // Get enabled priorities
     if (priorities == 0) {
@@ -337,7 +344,7 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
         for (FwSizeType i = 0; i < numQueueConfigs; ++i) {
             s_configs[i] = queueConfigs[i];
             FwSizeType priorityConfigsSize = queueConfigs[i].numPriorities * sizeof(QueuePriorityConfig);
-            memcpy(priorityBase, queueConfigs[i].priorityConfigs, priorityConfigsSize);
+            (void)memcpy(priorityBase, queueConfigs[i].priorityConfigs, priorityConfigsSize);
             s_configs[i].priorityConfigs = priorityBase;
             priorityBase += queueConfigs[i].numPriorities;
         }
@@ -348,6 +355,8 @@ void PriorityMemQueue::configure(QueueConfig* queueConfigs,
 }
 
 void PriorityMemQueue::resetConfig() {
+    // Configs are allocated if and only if a nonzero count was configured
+    FW_ASSERT((s_configs != nullptr) || (s_numConfigs == 0), static_cast<FwAssertArgType>(s_numConfigs));
     // Only call this in test environments after all queues are destroyed
     if (s_configsUsed != nullptr || s_configs != nullptr) {
         // Get allocator (same as used in config())
@@ -582,7 +591,7 @@ static Types::AtomicQueue* resolvePriorityQueue(PriorityMemQueueHandle& handle,
     // If priority not configured, fall back to default
     if (index < 0) {
         if (requirePrioritySizing) {
-            FW_ASSERT(0, queueId, requirePrioritySizing, priority, handle.m_maxPriority);
+            FW_ASSERT(false, queueId, requirePrioritySizing, priority, handle.m_maxPriority);
         }
         priority = Os::Generic::Queue::DEFAULT_PRIORITY;
         index = handle.getPriorityIndex(priority);
@@ -719,7 +728,8 @@ QueueInterface::Status PriorityMemQueue::receive(U8* destination,
             if (aq->getSize() == 0) {
                 continue;
             }
-            if (aq->dequeue(destination, capacity, actualSize)) {
+            const bool dequeued = aq->dequeue(destination, capacity, actualSize);
+            if (dequeued) {
                 priority = testPriority;
                 return QueueInterface::Status::OP_OK;
             }
@@ -745,6 +755,8 @@ FwSizeType PriorityMemQueue::getMessagesAvailable() const {
     FwSizeType total = 0;
 
     if (this->m_handle.m_atomicQueues != nullptr) {
+        FW_ASSERT(this->m_handle.m_numActivePriorities <= Os::Generic::Queue::MAX_PRIORITIES,
+                  static_cast<FwAssertArgType>(this->m_handle.m_numActivePriorities));
         for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
             const Types::AtomicQueue* atomicQueue = &this->m_handle.m_atomicQueues[i];
             if (atomicQueue->isCreated()) {
@@ -761,6 +773,8 @@ FwSizeType PriorityMemQueue::getMessageHighWaterMark() const {
     // MEMORY ORDERING: Use acquire to ensure visibility of latest HWM updates
     U32 maxHwm = 0;
     if (this->m_handle.m_highWaterMarks != nullptr) {
+        FW_ASSERT(this->m_handle.m_numActivePriorities <= Os::Generic::Queue::MAX_PRIORITIES,
+                  static_cast<FwAssertArgType>(this->m_handle.m_numActivePriorities));
         for (FwSizeType i = 0; i < this->m_handle.m_numActivePriorities; ++i) {
             U32 hwm = this->m_handle.m_highWaterMarks[i].load(std::memory_order_acquire);
             if (hwm > maxHwm) {

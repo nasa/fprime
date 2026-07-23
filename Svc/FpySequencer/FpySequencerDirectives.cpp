@@ -27,7 +27,7 @@ void FpySequencer::sendSignal(Signal signal) {
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(signal));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(signal));
         }
     }
 }
@@ -452,6 +452,12 @@ Signal FpySequencer::pushPrm_directiveHandler(const FpySequencer_PushPrmDirectiv
 }
 
 Signal FpySequencer::constCmd_directiveHandler(const FpySequencer_ConstCmdDirective& directive, DirectiveError& error) {
+    // the cmd response code will be pushed to the stack when it comes back, so make sure
+    // there is room for it now, before the cmd is dispatched
+    if (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
     if (this->sendCmd(directive.get_opCode(), directive.get_argBuf(), directive.get__argBufSize()) ==
         Fw::Success::FAILURE) {
         return Signal::stmtResponse_failure;
@@ -1126,7 +1132,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
             error = this->op_itrunc_64_32();
             break;
         default:
-            FW_ASSERT(0, directive.get__op());
+            FW_ASSERT(false, directive.get__op());
             break;
     }
     if (error != DirectiveError::NO_ERROR) {
@@ -1294,6 +1300,14 @@ Signal FpySequencer::stackCmd_directiveHandler(const FpySequencer_StackCmdDirect
 
     // also pop the args off the stack
     this->m_runtime.stack.size -= directive.get_argsSize();
+
+    // the cmd response code will be pushed to the stack when it comes back, so make sure
+    // there is room for it now, before the cmd is dispatched. popping the opcode above
+    // frees some room, but FwOpcodeType is configurable so it may not be enough
+    if (Fpy::MAX_STACK_SIZE - sizeof(Fw::CmdResponse::SerialType) < this->m_runtime.stack.size) {
+        error = DirectiveError::STACK_OVERFLOW;
+        return Signal::stmtResponse_failure;
+    }
 
     if (this->sendCmd(opcode, this->m_runtime.stack.bytes + argBufOffset, directive.get_argsSize()) ==
         Fw::Success::FAILURE) {
@@ -1507,7 +1521,7 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
     // Save the return value if there is one
     U8 returnValue[Fpy::MAX_STACK_SIZE] = {};
     if (returnValSize > 0) {
-        memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
+        (void)memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
     }
 
     // Truncate the stack to stack_frame_start (discard all local variables)

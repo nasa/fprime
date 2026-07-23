@@ -85,6 +85,9 @@ class DpContainer {
     // Protected operators
     // ----------------------------------------------------------------------
 
+    //! Copy constructor
+    DpContainer(const DpContainer& src) = default;
+
     //! Copy assignment operator
     DpContainer& operator=(const DpContainer& src) = default;
 

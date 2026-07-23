@@ -94,3 +94,11 @@ event FilenameDestinationOverflow() \
   severity warning high \
   id 0x11 \
   format "Commanded destination filename too long"
+
+@ Source file path is outside the configured read sandbox
+event SourceOutOfSandbox(
+                        fileName: string size 100 @< The rejected source file path
+                      ) \
+  severity warning high \
+  id 0x12 \
+  format "Source file {} is outside the configured read sandbox"

@@ -12,8 +12,11 @@ from pathlib import Path
 def test_generate_file(fprime_test_api):
     """generate seq files before run seqgen"""
 
+    seq_file = Path(__file__).parent / "test_seq_new.seq"
+    seq_wait_file = Path(__file__).parent / "test_seq_wait_new.seq"
+
     # Create test_seq_new.seq file with Deployment name
-    with open("test_seq_new.seq", "w") as f:
+    with open(seq_file, "w") as f:
         f.write("; A test sequence " + "\n")
         f.write(";\n")
         f.write(
@@ -46,13 +49,13 @@ def test_generate_file(fprime_test_api):
 
     # raise error
     try:
-        with open("test_seq_new.seq", "x") as f:
+        with open(seq_file, "x") as f:
             f.write("Created using exclusive mode.")
     except FileExistsError:
         print("Already exists.")
 
     # Create test_seq_wait_new.seq file with Deployment name
-    with open("test_seq_wait_new.seq", "w") as f2:
+    with open(seq_wait_file, "w") as f2:
         f2.write("; A test sequence " + "\n")
         f2.write(";\n")
         f2.write(
@@ -115,7 +118,7 @@ def test_generate_file(fprime_test_api):
 
     # raise error
     try:
-        with open("test_seq_wait_new.seq", "x") as f2:
+        with open(seq_wait_file, "x") as f2:
             f2.write("Created using exclusive mode.")
     except FileExistsError:
         print("Already exists.")
@@ -152,7 +155,7 @@ def test_seqgen(fprime_test_api):
         subprocess.run(
             [
                 "fprime-seqgen",
-                "-d",
+                "--dictionary",
                 str(fprime_test_api.dictionaries.dictionary_path),
                 str(sequence2),
                 "ref_test_seq_wait.bin",
