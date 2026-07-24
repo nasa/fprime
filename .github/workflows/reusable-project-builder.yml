@@ -176,9 +176,14 @@ jobs:
         working-directory: ${{ inputs.build_location }}
         run: |
           mkdir -p aarch64-linux-artifacts
-          cp -r ./build-artifacts aarch64-linux-artifacts
+          # Copy source directories that contain integration tests
           if [ -d "ManagerWorker" ]; then
             cp -r ManagerWorker aarch64-linux-artifacts/
+          fi
+          # Copy aarch64-linux build artifacts (dictionaries, binaries) into the expected structure
+          if [ -d "./build-artifacts/aarch64-linux/ManagerWorker" ]; then
+            mkdir -p aarch64-linux-artifacts/ManagerWorker
+            cp -r ./build-artifacts/aarch64-linux/ManagerWorker/* aarch64-linux-artifacts/ManagerWorker/
           fi
       - name: "Archive Build Artifacts"
         if: ${{ !inputs.skip_aarch64_build }}
