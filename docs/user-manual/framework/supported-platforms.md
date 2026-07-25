@@ -33,6 +33,50 @@ These are platforms that the F Prime community or core team is actively working 
 | Vorago | Baremetal | ARM | In development | |TBD|
 | VOXL2 | Linux | ARM64 | In development | | TBD |
 
+## Other References
+
+The tables above list reference projects tied to a specific hardware and operating system pair. F Prime maintains further reference projects, tutorials, and examples that are not specific to a single platform.
+
+### Other Reference Projects
+
+| Reference Project | Description |
+| ----------------- | ----------- |
+| [`fprime_cfs_reference`](https://github.com/fprime-community/fprime_cfs_reference) | F Prime applications running under the Core Flight System (cFS) |
+| [`fprime-amsat-main-board-reference`](https://github.com/fprime-community/fprime-amsat-main-board-reference) | Port to the Pico main sensor board for the AMSAT CubeSat Simulator |
+| [`fprime-amsat-reference`](https://github.com/fprime-community/fprime-amsat-reference) | Port to the C&DH Pi Zero 2 board for the AMSAT CubeSat Simulator |
+| [`fprime-generic-hub-reference`](https://github.com/fprime-community/fprime-generic-hub-reference) | Applications built around the Hub pattern |
+| [`fprime-phased-deployment-reference`](https://github.com/fprime-community/fprime-phased-deployment-reference) | Deployment run entirely through phases |
+| [`fprime-python-reference`](https://github.com/fprime-community/fprime-python-reference) | Reference for the `fprime-python` package |
+| [`fprime-pycubed-baremetal-reference`](https://github.com/fprime-community/fprime-pycubed-baremetal-reference) | PyCubed baremetal deployment |
+| [`fprime-pycubed-zephyr-reference`](https://github.com/fprime-community/fprime-pycubed-zephyr-reference) | PyCubed Zephyr deployment |
+| [`fprime-sensors-reference`](https://github.com/fprime-community/fprime-sensors-reference) | Reference for the `fprime-sensors` library |
+| [`fprime-stm32h7-zephyr-reference`](https://github.com/fprime-community/fprime-stm32h7-zephyr-reference) | STM32H7 Zephyr deployment |
+| [`fprime-yamcs-reference`](https://github.com/fprime-community/fprime-yamcs-reference) | F Prime integrated with YAMCS mission control software |
+
+### External Repository CI
+
+F Prime runs continuous integration against external repositories so that reference projects and tutorials do not fall out of date as the framework changes. See [Automated Checks on Reference Repositories](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md#automated-checks-on-reference-repositories) for how these checks relate to pull requests opened against F Prime.
+
+| Workflow | Project Under Test | Trigger | Status |
+| -------- | ------------------ | ------- | ------ |
+| External Repo: AArch64 Linux LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Push / PR | [![External Repo: AArch64 Linux LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker.yml) |
+| External Repo: Cookiecutters Tests | [`fprime-bootstrap`](https://github.com/fprime-community/fprime-bootstrap), [`fprime-tools`](https://github.com/nasa/fprime-tools) | Push / PR | [![External Repo: Cookiecutters Tests](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-cookiecutters-test.yml) |
+| External Repo: RPI LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Push / PR | [![External Repo: RPI LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml) |
+| External Repo: Tutorial: HelloWorld | [`fprime-tutorial-hello-world`](https://github.com/fprime-community/fprime-tutorial-hello-world) | Push / PR | [![External Repo: Tutorial: HelloWorld](https://github.com/nasa/fprime/actions/workflows/ext-build-hello-world.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-hello-world.yml) |
+| External Repo: Tutorial: LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Push / PR | [![External Repo: Tutorial: LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-build-led-blinker.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-led-blinker.yml) |
+| External Repo: Tutorial: MathComponent | [`fprime-tutorial-math-component`](https://github.com/fprime-community/fprime-tutorial-math-component) | Push / PR | [![External Repo: Tutorial: MathComponent](https://github.com/nasa/fprime/actions/workflows/ext-build-math-comp.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-math-comp.yml) |
+| External Repo: YAMCS Reference | [`fprime-yamcs-reference`](https://github.com/fprime-community/fprime-yamcs-reference) | Push / PR / manual | [![External Repo: YAMCS Reference](https://github.com/nasa/fprime/actions/workflows/ext-yamcs-reference.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-yamcs-reference.yml) |
+| External Repo: Zephyr Reference (Pico 2) | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | Push / PR | [![External Repo: Zephyr Reference (Pico 2)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml) |
+| External Repo: Zephyr Reference (Teensy 4.1) | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | Push / PR | [![External Repo: Zephyr Reference (Teensy 4.1)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml) |
+| External Repo: cFS Reference | [`fprime_cfs_reference`](https://github.com/fprime-community/fprime_cfs_reference) | Push / PR | [![External Repo: cFS Reference](https://github.com/nasa/fprime/actions/workflows/ext-fprime-cfs-reference.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-cfs-reference.yml) |
+| External Repo: fprime-examples | [`fprime-examples`](https://github.com/nasa/fprime-examples) | Push / PR | [![External Repo: fprime-examples](https://github.com/nasa/fprime/actions/workflows/ext-build-examples-repo.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-build-examples-repo.yml) |
+| Soak Setup: AArch64 Linux LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Release / manual | [![Soak Setup: AArch64 Linux LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-setup.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-setup.yml) |
+| Soak Setup: Pico 2 Zephyr Reference | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | Release / manual | [![Soak Setup: Pico 2 Zephyr Reference](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-setup.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-setup.yml) |
+| Soak Summary: AArch64 Linux LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Manual | [![Soak Summary: AArch64 Linux LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-summary.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-summary.yml) |
+| Soak Summary: Pico 2 Zephyr Reference | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | Manual | [![Soak Summary: Pico 2 Zephyr Reference](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-summary.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-summary.yml) |
+| Soak Test: AArch64 Linux LedBlinker | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | Scheduled / manual | [![Soak Test: AArch64 Linux LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-aarch64-linux-led-blinker-soak-test.yml) |
+| Soak Test: Pico 2 Zephyr Reference | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | Scheduled / manual | [![Soak Test: Pico 2 Zephyr Reference](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-pico2-zephyr-reference-soak-test.yml) |
+
 ## What does "Supported Platform" Mean?
 
 A **platform** refers to a combination of hardware and operating system (OS). A **supported platform** satisfies the following criteria:
