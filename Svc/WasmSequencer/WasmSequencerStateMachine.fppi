@@ -229,8 +229,6 @@ state machine SequencerStateMachine {
     action report_seqFailed
     @ reports that the interpreter trapped, with the trap reason
     action report_seqTrap
-    @ reports that the interpreter failed to read an instruction from memory
-    action report_seqReadError
     @ reports that execution was paused at a breakpoint
     action report_seqPaused
     @ stores the requested wake time for the SLEEPING state
@@ -283,9 +281,6 @@ state machine SequencerStateMachine {
     @ A signal to put the interpreter to sleep until a given time
     signal interpreterSleep: Fw.Time
 
-    @ Failed to read an instruction from memory
-    signal interpreterReaderError
-
     @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
         initial enter PAUSE_CHECK
@@ -302,7 +297,6 @@ state machine SequencerStateMachine {
             # -->
             on interpreterFinished enter FINISHED
             on interpreterTrap do { report_seqTrap, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            on interpreterReaderError do { report_seqReadError, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             on interpreterOutOfFuel enter PAUSE_CHECK
             on interpreterPause enter HOST_FUNCTION
             on interpreterSleep do { set_sleepTime } enter SLEEPING

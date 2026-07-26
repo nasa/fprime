@@ -26,7 +26,7 @@ unsafe impl Sync for KeepPtr {}
 //
 // TODO(tumbar) This is a hack, we need to fix the C API crate...
 #[used]
-static KEEP: [KeepPtr; 19] = [
+static KEEP: [KeepPtr; 22] = [
     KeepPtr(spacewasm_c_api::global_alloc::spacewasm_set_global_allocator as *const ()),
     KeepPtr(spacewasm_c_api::spacewasm_memory_statistics as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_allocator_new as *const ()),
@@ -35,14 +35,17 @@ static KEEP: [KeepPtr; 19] = [
     KeepPtr(spacewasm_c_api::capi::spacewasm_host_destroy as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_add_host_module as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_add_host_function as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_new as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_load_module as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_find_export_func as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_module_invoke_start as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_invoke as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_run as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_get_result as *const ()),
-    KeepPtr(spacewasm_c_api::capi::spacewasm_store_destroy as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_new as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_load_module as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_find_module as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_find_export_func as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_invoke_start as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_invoke as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_run as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_resume as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_resume_value as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_get_result as *const ()),
+    KeepPtr(spacewasm_c_api::capi::spacewasm_destroy as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_mem_read as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_mem_write as *const ()),
     KeepPtr(spacewasm_c_api::capi::spacewasm_mem_size as *const ()),

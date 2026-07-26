@@ -17,18 +17,18 @@ checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
 
 [[package]]
 name = "spacewasm"
-version = "0.3.2"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3f125297057081853fe9b253eed40b197f3feaf6cecb42254cc5309a08a02cec"
+checksum = "54af5ecb5a2bb1da47ec791fe2d13de2d0244110d990465b373bd1e6de232970"
 dependencies = [
  "libm",
 ]
 
 [[package]]
 name = "spacewasm_c_api"
-version = "0.3.2"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39bb083f6c418b5478ea7e703fa0e8d95136de1b95cc2429de66cdddaecdd1d4"
+checksum = "b379d31b548069a1272fb76fdc157aa9ca39bfd187193c49d9d56e3262264f50"
 dependencies = [
  "spacewasm",
 ]

@@ -63,4 +63,4 @@ async command PAUSE
 async command TRACE
 
 @ 
-async command CONTINUE($block: Svc.BlockState)
+async command CONTINUE

@@ -109,8 +109,7 @@ Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
     options.max_backpatch_iterations = 0;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
-    status =
-        spacewasm_store_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, moduleCount, options, &this->m_store);
+    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, moduleCount, options, &this->m_store);
     if (status != SPACEWASM_OK || this->m_store == nullptr) {
         this->m_store = nullptr;
         this->log_WARNING_HI_StoreAllocationFailed(moduleCount,
@@ -124,7 +123,7 @@ Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
 
 void WasmSequencer ::destroyStore() {
     if (this->m_store != nullptr) {
-        spacewasm_store_destroy(this->m_store);
+        spacewasm_destroy(this->m_store);
         this->m_store = nullptr;
     }
     // Reset the guest linear-memory bump allocator; all guest allocations were

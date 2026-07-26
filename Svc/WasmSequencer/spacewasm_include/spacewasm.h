@@ -132,7 +132,7 @@ typedef int32_t spacewasm_read_result_t;
 #endif // __cplusplus
 
 /*
- Outcome of a call to `spacewasm_store_run`.
+ Outcome of a call to `spacewasm_run`.
  */
 enum spacewasm_run_status_t
 #if defined(__cplusplus) || __STDC_VERSION__ >= 202311L
@@ -143,7 +143,6 @@ enum spacewasm_run_status_t
     SPACEWASM_RUN_OUT_OF_FUEL = 1,
     SPACEWASM_RUN_PAUSE = 2,
     SPACEWASM_RUN_TRAP = 3,
-    SPACEWASM_RUN_READER_ERROR = 4,
 };
 #ifndef __cplusplus
 #if __STDC_VERSION__ >= 202311L
@@ -235,6 +234,12 @@ typedef int32_t spacewasm_trap_t;
 #endif // __STDC_VERSION__ >= 202311L
 #endif // __cplusplus
 
+/*
+ Handle holding the SpaceWasm engine and compiled IR code.
+ This handle is used for holding and executing the SpaceWasm interpreter.
+ */
+typedef struct spacewasm_t spacewasm_t;
+
 typedef struct spacewasm_host_module_t spacewasm_host_module_t;
 
 /*
@@ -242,16 +247,6 @@ typedef struct spacewasm_host_module_t spacewasm_host_module_t;
  a reference-counted [`WasmMemoryAllocator`] built from C callbacks.
  */
 typedef struct spacewasm_allocator_t spacewasm_allocator_t;
-
-/*
- SpaceWasm store handle (`spacewasm_store_t`).
-
- Owns the core [`Engine`] (which owns the store and execution state) and the
- persistent [`CodeBuilder`] that accumulates compiled text across successive
- module loads. The interpreter reads code directly from the builder's pages,
- so no separate copy is kept.
- */
-typedef struct spacewasm_store_t spacewasm_store_t;
 
 /*
  Allocate `size` bytes aligned to `align`. Return NULL on failure.
@@ -326,8 +321,8 @@ typedef spacewasm_read_result_t (*spacewasm_read_fn_t)(void *userdata,
                                                        size_t *out_len);
 
 /*
- FFI-safe mirror of [`spacewasm::CompilerOptions`], controlling how guest
- modules loaded onto a store are compiled. Passed to [`spacewasm_store_new`].
+ FFI-safe mirror of [`CompilerOptions`], controlling how guest
+ modules loaded onto a store are compiled. Passed to [`spacewasm_new`].
  */
 typedef struct spacewasm_compiler_options_t {
     /*
@@ -381,7 +376,7 @@ spacewasm_memory_statistics_t spacewasm_memory_statistics(void);
 /*
  Create a guest linear-memory allocator from three C callbacks, returning an
  opaque handle (or null if any callback is null or allocation fails). The
- handle is passed to [`spacewasm_store_load_module`] and must be released with
+ handle is passed to [`spacewasm_load_module`] and must be released with
  [`spacewasm_allocator_destroy`]. `userdata` is passed to every callback.
  */
 struct spacewasm_allocator_t *spacewasm_allocator_new(spacewasm_alloc_fn_t alloc,
@@ -409,8 +404,8 @@ void spacewasm_allocator_destroy(struct spacewasm_allocator_t *allocator);
 spacewasm_status_t spacewasm_host_new(uint32_t len, struct spacewasm_host_t *dest);
 
 /*
- Add a host module named `name` sized for `max_functions` functions and `max_globals` globals
- writing its index to `out_idx` (if non-null).
+ Add a host module named `name` sized for `max_functions` functions and
+ `max_globals` globals, writing its index to `out_idx` (if non-null).
 
  # Safety
  `host` must be live; all C strings valid and NUL-terminated.
@@ -438,67 +433,76 @@ spacewasm_status_t spacewasm_add_host_function(struct spacewasm_host_t *host,
                                                void *userdata);
 
 /*
- Load a guest module named `name` onto an existing store by streaming its
+ Load a guest module named `name` onto an existing engine by streaming its
  bytes through the `read` callback. The callback owns the buffer backing each
  chunk (see [`spacewasm_read_fn_t`]). This does not run the module's start
- function; use [`spacewasm_store_module_get_start`] and
- [`spacewasm_store_run_start`] for that. `allocator` supplies the guest linear
- memory (see [`spacewasm_allocator_new`]). Writes the new module's index to
- `out_module_idx` (if non-null). May be called repeatedly to load several
- modules onto the same store.
+ function; use [`spacewasm_invoke_start`] for that. `allocator` supplies the
+ guest linear memory (see [`spacewasm_allocator_new`]). Writes the new module's
+ index to `out_module_idx` (if non-null). May be called repeatedly to load
+ several modules onto the same engine.
 
  # Safety
- `store` and `allocator` must be live handles; `read` a valid callback;
+ `engine` and `allocator` must be live handles; `read` a valid callback;
  `out_module_idx` null or valid.
  */
-spacewasm_status_t spacewasm_store_load_module(struct spacewasm_store_t *store,
-                                               const char *name,
-                                               spacewasm_read_fn_t read,
-                                               void *read_userdata,
-                                               struct spacewasm_allocator_t *allocator,
-                                               uint32_t *out_module_idx);
+spacewasm_status_t spacewasm_load_module(struct spacewasm_t *engine,
+                                         const char *name,
+                                         spacewasm_read_fn_t read,
+                                         void *read_userdata,
+                                         struct spacewasm_allocator_t *allocator,
+                                         uint32_t *out_module_idx);
 
 /*
- Consume the host module vector `host` and finish it into a store handle,
- written to `out_store`. The store is sized with a `stack_size`-byte guest
- stack, room for `max_modules` guest modules (≤ 256), and compiles guest
+ Consume the host module vector `host` and finish it into an engine handle,
+ written to `out_engine`. The engine is sized with a `stack_size`-byte guest
+ stack, room for `max_modules` guest modules (<= 256), and compiles guest
  modules according to `options` (code-page budget, `memory.grow` support,
  backpatch bound). No guest module is loaded yet; use
- [`spacewasm_store_load_module`] to load one or more.
+ [`spacewasm_load_module`] to load one or more.
 
- `host` may be null to create a store with no host modules. The host vector
- is always consumed (its handle must not be used or destroyed afterwards),
- whether or not the store is created successfully.
+ `host` may be null to create an engine with no host modules. The host vector
+ is always consumed (its handle must not be used or destroyed afterward),
+ whether the engine is created successfully.
 
  # Safety
  `host` must be null or a live handle from [`spacewasm_host_new`], not already
- consumed/destroyed; `out_store` must be a valid pointer.
+ consumed/destroyed; `out_engine` must be a valid pointer.
  */
-spacewasm_status_t spacewasm_store_new(struct spacewasm_host_t *host,
-                                       size_t stack_size,
-                                       uint32_t max_modules,
-                                       struct spacewasm_compiler_options_t options,
-                                       struct spacewasm_store_t **out_store);
+spacewasm_status_t spacewasm_new(struct spacewasm_host_t *host,
+                                 size_t stack_size,
+                                 uint32_t max_modules,
+                                 struct spacewasm_compiler_options_t options,
+                                 struct spacewasm_t **out_engine);
 
 /*
- Destroy a host vector that was never consumed into a store. No-op on null.
+ Destroy a host vector that was never consumed into an engine. No-op on null.
 
  # Safety
- `host` must be a live handle, not already consumed/destroyed.
+ `host` must be null or a live unconsumed handle from [`spacewasm_host_new`].
  */
 void spacewasm_host_destroy(struct spacewasm_host_t *host);
+
+/*
+ Find a module with a given name in the engine.
+
+ # Safety
+ `engine` must be live; `name` valid; `out_index` valid.
+ */
+spacewasm_status_t spacewasm_find_module(struct spacewasm_t *engine,
+                                         const char *name,
+                                         uint32_t *out_index);
 
 /*
  Look up the exported function named `name` in module `module_idx` and write
  its index to `out_index`.
 
  # Safety
- `store` must be live; `name` valid; `out_index` valid.
+ `engine` must be live; `name` valid; `out_index` valid.
  */
-spacewasm_status_t spacewasm_store_find_export_func(struct spacewasm_store_t *store,
-                                                    uint32_t module_idx,
-                                                    const char *name,
-                                                    uint32_t *out_index);
+spacewasm_status_t spacewasm_find_export_func(struct spacewasm_t *engine,
+                                              uint32_t module_idx,
+                                              const char *name,
+                                              uint32_t *out_index);
 
 /*
  Invoke the start function of a module.
@@ -510,54 +514,72 @@ spacewasm_status_t spacewasm_store_find_export_func(struct spacewasm_store_t *st
  return [`spacewasm_run_status_t::SPACEWASM_RUN_TRAP`]
 
  # Safety
- `store` must be live
+ `engine` must be live
  */
-spacewasm_run_status_t spacewasm_store_module_invoke_start(struct spacewasm_store_t *store,
-                                                           uint32_t module_idx);
+spacewasm_run_status_t spacewasm_invoke_start(struct spacewasm_t *engine, uint32_t module_idx);
 
 /*
  Set up a call to exported function `func_index` of module `module_idx` with
  the `n` arguments in `params`. Does not run the function; drive execution
- with [`spacewasm_store_run`].
+ with [`spacewasm_run`].
 
  # Safety
- `store` must be live; `params` valid for `n` entries.
+ `engine` must be live; `params` valid for `n` entries.
  */
-spacewasm_status_t spacewasm_store_invoke(struct spacewasm_store_t *store,
-                                          uint32_t module_idx,
-                                          uint32_t func_index,
-                                          const struct spacewasm_value_t *params,
-                                          size_t n);
+spacewasm_status_t spacewasm_invoke(struct spacewasm_t *engine,
+                                    uint32_t module_idx,
+                                    uint32_t func_index,
+                                    const struct spacewasm_value_t *params,
+                                    size_t n);
 
 /*
  Run the pending invocation for up to `fuel` units of work, writing any trap
  to `out_trap`. Returns whether the call finished, trapped, or ran out of fuel.
 
  # Safety
- `store` must be live; `out_trap` null or valid.
+ `engine` must be live; `out_trap` null or valid.
  */
-spacewasm_run_status_t spacewasm_store_run(struct spacewasm_store_t *store,
-                                           size_t fuel,
-                                           spacewasm_trap_t *out_trap);
+spacewasm_run_status_t spacewasm_run(struct spacewasm_t *engine,
+                                     size_t fuel,
+                                     spacewasm_trap_t *out_trap);
+
+/*
+ Resume the interpreter from a paused state.
+
+ # Safety
+ `engine` must be live.
+ */
+spacewasm_status_t spacewasm_resume(struct spacewasm_t *engine);
+
+/*
+ Resume the interpreter from a paused state.
+ This function will also push a value to the interpreter stack
+ as the return value of the host function that requested a pause.
+
+ # Safety
+ `engine` must be live.
+ */
+spacewasm_status_t spacewasm_resume_value(struct spacewasm_t *engine,
+                                          struct spacewasm_value_t resume_value);
 
 /*
  Fetch the result of the last completed call, coerced to `expected`, into
  `out`.
 
  # Safety
- `store` must be live; `out` valid.
+ `engine` must be live; `out` valid.
  */
-spacewasm_status_t spacewasm_store_get_result(struct spacewasm_store_t *store,
-                                              spacewasm_valtype_t expected,
-                                              struct spacewasm_value_t *out);
+spacewasm_status_t spacewasm_get_result(struct spacewasm_t *engine,
+                                        spacewasm_valtype_t expected,
+                                        struct spacewasm_value_t *out);
 
 /*
- Destroy a store and free its resources. No-op on null.
+ Destroy an engine and free its resources. No-op on null.
 
  # Safety
- `store` must be a live handle, not already destroyed.
+ `engine` must be a live handle, not already destroyed.
  */
-void spacewasm_store_destroy(struct spacewasm_store_t *store);
+void spacewasm_destroy(struct spacewasm_t *engine);
 
 /*
  Read `len` bytes of guest linear memory starting at `addr` into `dst`.
@@ -572,7 +594,7 @@ spacewasm_status_t spacewasm_mem_read(struct spacewasm_caller_t *caller,
                                       size_t len);
 
 /*
- Write `len` bytes from `src` into guest linear memory starting at `addr`.
+ Write `len` bytes from `src` to guest linear memory starting at `addr`.
  Intended for use from within a host function.
 
  # Safety
@@ -584,10 +606,11 @@ spacewasm_status_t spacewasm_mem_write(struct spacewasm_caller_t *caller,
                                        size_t len);
 
 /*
- Write the current size of guest linear memory, in pages, to `out_pages`.
+ Report the size of guest linear memory in pages. Intended for use from
+ within a host function.
 
  # Safety
- `caller` must be a live caller handle; `out_pages` valid.
+ `caller` must be a live caller handle; `out_pages` must be a valid pointer.
  */
 spacewasm_status_t spacewasm_mem_size(struct spacewasm_caller_t *caller, uint32_t *out_pages);
 
@@ -609,15 +632,6 @@ extern void spacewasm_panic(const uint8_t *filename,
                             uint32_t line,
                             const uint8_t *msg,
                             size_t len);
-
-/*
- Stub for the exception-handling personality routine. The precompiled `core`
- is built for unwinding and references `rust_eh_personality` even though we
- compile with `panic = "abort"`, so a C consumer linking the staticlib would
- otherwise see an undefined symbol. Under `panic = "abort"` it is never
- actually invoked; providing it here keeps the archive self-contained.
- */
-void rust_eh_personality(void);
 
 /*
  Install the process-wide heap allocator backing the interpreter.

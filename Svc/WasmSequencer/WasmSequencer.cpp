@@ -14,6 +14,7 @@
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_SequencerStateMachine_StateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "config/FwAssertArgTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
@@ -71,11 +72,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
                                            FwOpcodeType opCode,
                                            U32 cmdSeq,
                                            const Fw::CmdResponse& response) {
-    // TODO(spacewasm lacks host-call resume-with-result primitives): the
-    // RUNNING.AWAITING_RESPONSE path (dispatching an F´ command from a paused
-    // host function and feeding the response back to guest code) is out of
-    // scope for this pass. Any response that arrives here is unexpected; nudge
-    // the state machine so a stray response cannot wedge a running sequence.
+    // TODO
     this->sequencer_sendSignal_stmtResponse_unexpected();
 }
 
@@ -86,7 +83,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    Svc::BlockState block) {
+                                    const Svc::BlockState& block) {
     // RUN is only valid from IDLE
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
@@ -152,7 +149,7 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
 void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        U32 cmdSeq,
                                        const Fw::CmdStringArg& module,
-                                       Svc::BlockState block) {
+                                       const Svc::BlockState& block) {
     // INVOKE is only valid from IDLE.
     if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::IDLE) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
@@ -160,8 +157,15 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
         return;
     }
 
-    // Look up the module with a certain name
-    // TODO(tumbar) SpaceWasm needs this!
+    // Resolve the module name to its index within the engine.
+    FW_ASSERT(this->m_store != nullptr);
+    U32 moduleIdx = 0;
+    const spacewasm_status_t findStatus = spacewasm_find_module(this->m_store, module.toChar(), &moduleIdx);
+    if (findStatus != SPACEWASM_OK) {
+        this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
 
     switch (block) {
         case BlockState::BLOCK: {
@@ -178,7 +182,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
             break;
     }
 
-    this->sequencer_sendSignal_cmd_INVOKE(Svc::WasmSequencer_ModuleInvokeMain(module));
+    this->sequencer_sendSignal_cmd_INVOKE(Svc::WasmSequencer_ModuleIdx(static_cast<U8>(moduleIdx)));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -188,8 +192,8 @@ void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void WasmSequencer ::BREAK_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->sequencer_sendSignal_cmd_BREAK();
+void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+    this->sequencer_sendSignal_cmd_PAUSE();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -199,8 +203,22 @@ void WasmSequencer ::TRACE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->sequencer_sendSignal_cmd_CONTINUE();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    switch (this->sequencer_getState()) {
+        case WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE:
+        case WasmSequencer_SequencerStateMachine_State::RUNNING_SLEEPING:
+        case WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING:
+            // Already running
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            break;
+        case WasmSequencer_SequencerStateMachine_State::RUNNING_PAUSED:
+            this->sequencer_sendSignal_cmd_CONTINUE();
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            break;
+        default:
+            this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            break;
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -249,12 +267,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
     // Resolve the exported function in the most-recently-loaded module.
     U32 funcIndex = 0;
     const spacewasm_status_t findStatus =
-        spacewasm_store_find_export_func(this->m_store, static_cast<U32>(value), "main", &funcIndex);
+        spacewasm_find_export_func(this->m_store, static_cast<U32>(value), "main", &funcIndex);
 
     if (findStatus == spacewasm_status_t::SPACEWASM_OK) {
         // Attempt to invoke the main function
         const spacewasm_status_t invokeStatus =
-            spacewasm_store_invoke(this->m_store, static_cast<U32>(value), funcIndex, nullptr, 0);
+            spacewasm_invoke(this->m_store, static_cast<U32>(value), funcIndex, nullptr, 0);
 
         // Set the invoke status
         if (invokeStatus == SPACEWASM_OK) {
@@ -272,7 +290,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartO
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     FW_ASSERT(this->m_store != nullptr);
 
-    auto invokeStatus = spacewasm_store_module_invoke_start(this->m_store, this->m_moduleIndex);
+    auto invokeStatus = spacewasm_invoke_start(this->m_store, this->m_moduleIndex);
     switch (invokeStatus) {
         case SPACEWASM_RUN_OUT_OF_FUEL:
             this->sequencer_sendSignal_startInvoked();
@@ -285,7 +303,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartO
             this->sequencer_sendSignal_startFinished();
             break;
         case SPACEWASM_RUN_TRAP:
-        case SPACEWASM_RUN_READER_ERROR:
             this->sequencer_sendSignal_startError();
             break;
     }
@@ -313,7 +330,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->log_WARNING_HI_ModuleLoadFailed(value.get_status());
+    // TODO(tumbar): the `load` action does not stash the spacewasm status yet, so
+    // we cannot surface the real failure code here.
+    this->log_WARNING_HI_ModuleLoadFailed(0);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
@@ -351,8 +370,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     spacewasm_allocator_t* alloc =
         spacewasm_allocator_new(&wasmSeqGuestAlloc, &wasmSeqGuestRealloc, &wasmSeqGuestDealloc, this);
 
-    const spacewasm_status_t status = spacewasm_store_load_module(
-        this->m_store, moduleName.toChar(), &wasmSeqReadModule, this, alloc, &this->m_moduleIndex);
+    const spacewasm_status_t status = spacewasm_load_module(this->m_store, moduleName.toChar(), &wasmSeqReadModule,
+                                                            this, alloc, &this->m_moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
     this->m_loadFile = nullptr;
@@ -380,7 +399,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
     auto fuel = this->paramGet_INSTRUCTION_FUEL(prmValid);
 
     spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
-    spacewasm_run_status_t runStatus = spacewasm_store_run(this->m_store, static_cast<FwSizeType>(fuel), &trap);
+    spacewasm_run_status_t runStatus = spacewasm_run(this->m_store, static_cast<FwSizeType>(fuel), &trap);
 
     this->m_lastTrap = trap;
 
@@ -396,9 +415,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
             break;
         case SPACEWASM_RUN_OUT_OF_FUEL:
             this->sequencer_sendSignal_interpreterOutOfFuel();
-            break;
-        case SPACEWASM_RUN_READER_ERROR:
-            this->sequencer_sendSignal_interpreterReaderError();
             break;
         default:
             FW_ASSERT(false, static_cast<FwAssertArgType>(runStatus));
@@ -430,30 +446,48 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTr
     this->log_WARNING_HI_SequenceTrap(WasmSequencer::mapTrapReason(this->m_lastTrap));
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqReadError(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->log_WARNING_HI_SequenceReadError();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqBroken(
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqPaused(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     this->log_ACTIVITY_HI_SequenceBroken();
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendCmdResponse_OK(
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendLoadCmdResponse_OK(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::OK);
+    if (this->m_hasPendingLoadCmd) {
+        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq, Fw::CmdResponse::OK);
+        this->m_hasPendingLoadCmd = false;
+    }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendCmdResponse_EXECUTION_ERROR(
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendLoadCmdResponse_EXECUTION_ERROR(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    if (this->m_shouldRespond) {
-        this->cmdResponse_out(this->m_savedOpCode, this->m_savedCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        this->m_shouldRespond = false;
+    if (this->m_hasPendingLoadCmd) {
+        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq,
+                              Fw::CmdResponse::EXECUTION_ERROR);
+        this->m_hasPendingLoadCmd = false;
+    }
+}
+
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdResponse_OK(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    // Respond to every command blocked on interpreter finish.
+    PendingCmd cmd;
+    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
+        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::OK);
+    }
+}
+
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdResponse_EXECUTION_ERROR(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    // Respond to every command blocked on interpreter finish.
+    PendingCmd cmd;
+    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
+        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
 
@@ -464,7 +498,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_set_sleepTim
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStatementTimeout(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO(tumbar): no statement timeout to
+    // TODO
     // check yet. Report "no timeout" so the SM does not wedge waiting on a check.
     this->sequencer_sendSignal_result_checkStatementTimeout_noTimeout();
 }
@@ -472,21 +506,26 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStateme
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO(tumbar) nothing sleeps yet. Report
-    // "keep sleeping" so a stray SLEEPING state does not spuriously wake.
+    // TODO
     this->sequencer_sendSignal_result_checkShouldWake_keepSleeping();
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_setBreakBeforeNextLine(
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendPause(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_breakBeforeNextLine = true;
+    this->m_pendingPause = true;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_clearBreakBeforeNextLine(
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_clearPause(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_breakBeforeNextLine = false;
+    this->m_pendingPause = false;
+}
+
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPendingHostFunction(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    // TODO
 }
 
 // ----------------------------------------------------------------------
@@ -520,7 +559,7 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingHostFu
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSucceeded(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_module
+    return !this->m_loadFailed;
 }
 
 }  // namespace Svc

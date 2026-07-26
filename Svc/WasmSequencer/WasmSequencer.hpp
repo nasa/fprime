@@ -76,7 +76,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        Svc::BlockState block              //!< Return command status when complete or not
+                        const Svc::BlockState& block       //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command WAIT
@@ -113,7 +113,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void INVOKE_cmdHandler(FwOpcodeType opCode,             //!< The opcode
                            U32 cmdSeq,                      //!< The command sequence number
                            const Fw::CmdStringArg& module,  //!< Name of the module to invoke a function from
-                           Svc::BlockState block) override;
+                           const Svc::BlockState& block) override;
 
     //! Handler implementation for command CANCEL
     //!
@@ -143,8 +143,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Handler implementation for command CONTINUE
     void CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                             U32 cmdSeq,           //!< The command sequence number
-                             Svc::BlockState block) override;
+                             U32 cmdSeq            //!< The command sequence number
+                             ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -301,14 +301,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! reports that the interpreter trapped, with the trap reason
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqTrap(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action report_seqReadError of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! reports that the interpreter failed to read an instruction from memory
-    void Svc_WasmSequencer_SequencerStateMachine_action_report_seqReadError(
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -485,8 +477,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[256];
 
-    //! Opaque handle to the spacewasm store, or null.
-    spacewasm_store_t* m_store;
+    //! Opaque handle to the spacewasm engine, or null.
+    spacewasm_t* m_store;
 
     //! Index of the most-recently-loaded module within the store.
     U32 m_moduleIndex;

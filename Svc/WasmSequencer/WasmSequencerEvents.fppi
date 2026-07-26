@@ -45,11 +45,6 @@ event SequenceTrap(reason: TrapReason) \
     severity warning high \
     format "Wasm program trapped: {}"
 
-@ The interpreter failed to read an instruction from memory
-event SequenceReadError() \
-    severity warning high \
-    format "Wasm interpreter reader error"
-
 @ Execution was paused at a breakpoint
 event SequenceBroken() \
     severity activity high \

@@ -9,7 +9,7 @@ name = "fprime_spacewasm"
 crate-type = ["staticlib"]
 
 [dependencies]
-spacewasm_c_api = "0.3.2"
+spacewasm_c_api = "0.4.0"
 
 [profile.release]
 opt-level = 3
