@@ -39,9 +39,11 @@ void TestComponentName ::structArgsAsync_handler(const FwIndexType portNum,
 void TestComponentName ::stringArgsAsync_handler(const FwIndexType portNum,
                                                  const Fw::StringBase& str80,
                                                  Fw::StringBase& str80Ref,
+                                                 const Fw::StringBase& str0,
+                                                 Fw::StringBase& str0Ref,
                                                  const Fw::StringBase& str100,
                                                  Fw::StringBase& str100Ref) {
-    this->stringArgsOut_out(portNum, str80, str80Ref, str100, str100Ref);
+    this->stringArgsOut_out(portNum, str80, str80Ref, str0, str0Ref, str100, str100Ref);
 }
 
 void TestComponentName ::enumArgsHook_handler(const FwIndexType portNum,

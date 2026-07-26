@@ -14,6 +14,8 @@ type StringDefaultAlias = string
 constant SizeofStringDefaultAlias = sizeof(StringDefaultAlias)
 type StringAlias = string size 100
 constant SizeofStringAlias = sizeof(StringAlias)
+type StringZeroAlias = string size 0
+constant SizeofStringZeroAlias = sizeof(StringZeroAlias)
 
 type U64Alias = U64
 constant SizeofU64Alias = sizeof(U64Alias)
@@ -38,6 +40,7 @@ struct TestStruct1 {
     m2: F64
     m3: [1] EnumAlias
     m4: [3] string size 10
+    m5: [3] string size 0
 }
 constant SizeofStruct = sizeof(TestStruct1)
 

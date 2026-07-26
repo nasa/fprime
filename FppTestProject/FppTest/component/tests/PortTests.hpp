@@ -117,7 +117,7 @@
         ASSERT_TRUE(this->isConnected_to_stringArgs##PORT_KIND(portNum));                                             \
                                                                                                                       \
         this->invoke_to_stringArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,                \
-                                              port.args.val4);                                                        \
+                                              port.args.val4, port.args.val5, port.args.val6);                         \
     }                                                                                                                 \
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumParams& port) {                \
@@ -467,6 +467,12 @@
         status = buf.serializeFrom(port.args.val4);                                                                 \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
                                                                                                                     \
+        status = buf.serializeFrom(port.args.val5);                                                                 \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
+        status = buf.serializeFrom(port.args.val6);                                                                 \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                                                     \
+                                                                                                                    \
         this->invoke##PORT_KIND##SerialPort(SerialPortIndex::STRING, buf);                                          \
                                                                                                                     \
         this->checkSerializeStatusSuccess();                                                                        \
@@ -625,7 +631,8 @@
     void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PortStringParams& port) {                              \
         ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
         ASSERT_from_stringArgsOut_SIZE(1);                                                                          \
-        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);               \
+        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,                 \
+                                  port.args.val5, port.args.val6);                                                   \
     }                                                                                                               \
                                                                                                                     \
     void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::EnumParams& port) {                                    \
@@ -736,6 +743,7 @@
     void Tester ::test##PORT_KIND##PortCheckSerial(FppTest::Types::PortStringParams& port) { \
         Fw::SerializeStatus status;                                                          \
         FppTest::Types::String1 str80, str80Ref;                                             \
+        Fw::String str0, str0Ref;                                                            \
         FppTest::Types::String2 str100, str100Ref;                                           \
                                                                                              \
         status = this->stringBuf.deserializeTo(str80);                                       \
@@ -744,6 +752,12 @@
         status = this->stringBuf.deserializeTo(str80Ref);                                    \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
+        status = this->stringBuf.deserializeTo(str0);                                        \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
+                                                                                              \
+        status = this->stringBuf.deserializeTo(str0Ref);                                     \
+        ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
+                                                                                              \
         status = this->stringBuf.deserializeTo(str100);                                      \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
@@ -752,8 +766,10 @@
                                                                                              \
         ASSERT_EQ(str80, port.args.val1);                                                    \
         ASSERT_EQ(str80Ref, port.args.val2);                                                 \
-        ASSERT_EQ(str100, port.args.val3);                                                   \
-        ASSERT_EQ(str100Ref, port.args.val4);                                                \
+        ASSERT_EQ(str0, port.args.val3);                                                     \
+        ASSERT_EQ(str0Ref, port.args.val4);                                                  \
+        ASSERT_EQ(str100, port.args.val5);                                                   \
+        ASSERT_EQ(str100Ref, port.args.val6);                                                \
     }                                                                                        \
                                                                                              \
     void Tester ::test##PORT_KIND##PortCheckSerial(FppTest::Types::EnumParams& port) {       \
