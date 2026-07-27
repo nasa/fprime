@@ -170,11 +170,13 @@ jobs:
         if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
+          export CMAKE_PREFIX_PATH=/usr/aarch64-linux-gnu:$CMAKE_PREFIX_PATH
           fprime-util generate aarch64-linux
       - name: "Build AArch64 Linux"
         if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
+          export CMAKE_PREFIX_PATH=/usr/aarch64-linux-gnu:$CMAKE_PREFIX_PATH
           fprime-util build aarch64-linux
       - name: "Prepare artifacts"
         if: ${{ !inputs.skip_aarch64_build }}
