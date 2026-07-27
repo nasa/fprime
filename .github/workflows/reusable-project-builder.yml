@@ -187,10 +187,9 @@ jobs:
           if [ -d "ManagerWorker" ]; then
             cp -r ManagerWorker aarch64-linux-artifacts/
           fi
-          # Copy aarch64-linux build artifacts (dictionaries, binaries) into the expected structure
-          if [ -d "./build-artifacts/aarch64-linux/ManagerWorker" ]; then
-            mkdir -p aarch64-linux-artifacts/ManagerWorker
-            cp -r ./build-artifacts/aarch64-linux/ManagerWorker/* aarch64-linux-artifacts/ManagerWorker/
+          # Copy the entire build-artifacts directory for integration tests
+          if [ -d "./build-artifacts" ]; then
+            cp -r ./build-artifacts aarch64-linux-artifacts/
           fi
       - name: "Archive Build Artifacts"
         if: ${{ !inputs.skip_aarch64_build }}
