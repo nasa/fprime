@@ -8,6 +8,13 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Deprecate.hpp"
 
+// FIXME: Rename (maybe) and move to FpConfig.h
+#if defined(__GNUC__) || defined(__clang__)
+#define ALWAYS_INLINE __attribute__((always_inline)) inline
+#else
+#define ALWAYS_INLINE
+#endif
+
 namespace Fw {
 
 class StringBase;  //!< forward declaration for string
