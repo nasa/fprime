@@ -168,7 +168,13 @@ state machine SequencerStateMachine {
 
         choice LOAD_CHECK {
             if moduleLoadSucceeded enter STARTING \
-            else do { reportLoadFailure, sendLoadCmdResponse_EXECUTION_ERROR, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
+            else do {
+                reportLoadFailure,
+                sendLoadCmdResponse_EXECUTION_ERROR,
+                sendRunCmdResponse_EXECUTION_ERROR
+                # A failing module load must reset because there could be lingering allocations
+                # and we explicitely do not allow fragmentation.
+            } enter RESET
         }
     }
 
@@ -180,7 +186,11 @@ state machine SequencerStateMachine {
         # Start finished might be either start=host function or start=None
         on startFinished enter RUN_CHECK
         on startInvoked enter RUNNING
-        on startError do { reportInvokeFailure, sendLoadCmdResponse_EXECUTION_ERROR, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
+        on startError do {
+            reportInvokeFailure,
+            sendLoadCmdResponse_EXECUTION_ERROR,
+            sendRunCmdResponse_EXECUTION_ERROR
+        } enter RESET
     }
 
     @ A module finished loading; decide whether to invoke a pending function or wait

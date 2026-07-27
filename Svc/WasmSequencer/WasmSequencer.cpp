@@ -175,7 +175,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
     U32 moduleIdx = 0;
     const spacewasm_status_t findStatus = spacewasm_find_module(this->m_wasm, module.toChar(), &moduleIdx);
     if (findStatus != SPACEWASM_OK) {
-        this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+        this->log_WARNING_LO_ModuleNotFound(module);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -383,7 +383,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     file.close();
 
     if (status != SPACEWASM_OK) {
-        // TODO(tumbar) We need an EVR here with the load error
         this->m_loadStatus = status;
         this->m_loadFailed = true;
         return;

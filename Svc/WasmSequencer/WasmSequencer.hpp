@@ -473,14 +473,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! (see fprime.h), returned to the guest on resume.
     static I32 mapCmdResponse(const Fw::CmdResponse& response);
 
-    //! Why the interpreter last returned SPACEWASM_RUN_PAUSE, so the spin
-    //! action can raise the right signal and the resume can push the right value.
-    enum class PauseReason {
-        None,     //!< Not paused
-        Command,  //!< Paused inside fprime.cmd, awaiting a command response
-        Sleep     //!< Paused inside fprime.rsleep/asleep, awaiting a wake time
-    };
-
     //! Static pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
 

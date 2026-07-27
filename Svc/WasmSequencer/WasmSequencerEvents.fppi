@@ -11,6 +11,11 @@ event InvalidCommand($state: SequencerStateMachine.State) \
     severity warning low \
     format "Command not valid in state {}"
 
+@ A command was issued in a state where it is not valid
+event ModuleNotFound(module_name: string size 16) \
+    severity warning low \
+    format "Failed to invoke main on module with name {}"
+
 @ Failed to open the requested Wasm module file
 event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
     severity warning high \
