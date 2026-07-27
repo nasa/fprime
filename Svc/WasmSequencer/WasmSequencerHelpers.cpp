@@ -6,6 +6,7 @@
 
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "default/config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -95,16 +96,15 @@ spacewasm_read_result_t WasmSequencer ::readModuleChunk(const U8** outBuf, std::
     return (size == 0) ? SPACEWASM_READ_EOF : SPACEWASM_READ_OK;
 }
 
-Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
+Fw::Success WasmSequencer ::createStore() {
     this->destroyStore();
 
+    static_assert(WasmSequencerConfig::MAX_GUEST_MODULES <= 255,
+                  "SpaceWasm does not support more than 255 WebAssembly guest modules");
+
     spacewasm_host_t host;
-    spacewasm_status_t status = spacewasm_host_new(0, &host);
-    if (status != SPACEWASM_OK) {
-        this->log_WARNING_HI_StoreAllocationFailed(
-            moduleCount, Svc::WasmSequencer_AllocError(Svc::WasmSequencer_AllocError::AllocationFailed));
-        return Fw::Success::FAILURE;
-    }
+    spacewasm_status_t status = spacewasm_host_new(1, &host);
+    FW_ASSERT(status == SPACEWASM_OK, status);
 
     U32 module_idx;
     status = spacewasm_add_host_module(&host, "fprime", 8, 0, &module_idx);
@@ -141,15 +141,13 @@ Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
     options.max_backpatch_iterations = 0;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
-    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, moduleCount, options, &this->m_wasm);
-    if (status != SPACEWASM_OK || this->m_wasm == nullptr) {
-        this->m_wasm = nullptr;
-        this->log_WARNING_HI_StoreAllocationFailed(moduleCount,
-                                                   Svc::WasmSequencer_AllocError(WasmSequencer::mapAllocError(status)));
-        return Fw::Success::FAILURE;
-    }
+    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, WasmSequencerConfig::MAX_GUEST_MODULES,
+                           options, &this->m_wasm);
 
-    this->log_ACTIVITY_LO_StoreAllocationSucceeded(moduleCount);
+    // If the store allocation fails, this means the dynamic memory is too small to host this number of modules...
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    this->log_ACTIVITY_LO_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
     return Fw::Success::SUCCESS;
 }
 

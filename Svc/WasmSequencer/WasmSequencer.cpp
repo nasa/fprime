@@ -14,7 +14,6 @@
 #include "Svc/WasmSequencer/WasmSequencer_SequencerStateMachine_StateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "config/FwAssertArgTypeAliasAc.h"
-#include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -55,6 +54,10 @@ WasmSequencer ::WasmSequencer(const char* const compName)
 WasmSequencer ::~WasmSequencer() {
     this->destroyStore();
     g_activeSequencer = nullptr;
+}
+
+void WasmSequencer ::preamble() {
+    this->createStore();
 }
 
 // ----------------------------------------------------------------------
@@ -198,7 +201,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, block);
     }
 
-    this->sequencer_sendSignal_cmd_INVOKE(Svc::WasmSequencer_ModuleIdx(static_cast<U8>(moduleIdx)));
+    this->sequencer_sendSignal_cmd_INVOKE(static_cast<Svc::WasmSequencer_ModuleIdx>(moduleIdx));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -251,16 +254,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_resetStore(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     Fw::ParamValid valid;
-    auto status = this->createStore(paramGet_MAX_MODULES(valid));
-
-    switch (status) {
-        case Fw::Success::FAILURE:
-            this->sequencer_sendSignal_storeAllocFailed();
-            break;
-        case Fw::Success::SUCCESS:
-            this->sequencer_sendSignal_storeAllocSucceeded();
-            break;
-    }
+    this->createStore();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMainOfLastModule(
@@ -346,7 +340,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFa
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     // TODO(tumbar): the `load` action does not stash the spacewasm status yet, so
     // we cannot surface the real failure code here.
-    this->log_WARNING_HI_ModuleLoadFailed(0);
+    this->log_WARNING_HI_ModuleLoadFailed(static_cast<WasmSequencer_SpaceWasmStatus::T>(this->m_loadStatus));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
@@ -366,6 +360,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 
     // Acknowledge the pending load
     this->m_hasPendingLoad = false;
+    this->m_loadFailed = true;
 
     Os::File file;
     const Os::File::Status openStatus = file.open(filePath.toChar(), Os::File::OPEN_READ);
@@ -393,6 +388,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 
     if (status != SPACEWASM_OK) {
         // TODO(tumbar) We need an EVR here with the load error
+        this->m_loadStatus = status;
         this->m_loadFailed = true;
         return;
     }
@@ -556,6 +552,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
 // ----------------------------------------------------------------------
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
+
+bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_alwaysTrue(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
+    return true;
+}
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
     SmId smId,

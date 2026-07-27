@@ -55,7 +55,7 @@ enum AllocError : U8 {
 type ModuleIdx = U8
 
 state machine SequencerStateMachine {
-    initial enter INIT
+    initial enter RESET
 
     ###############
     # Commands    #
@@ -97,6 +97,8 @@ state machine SequencerStateMachine {
 
     @ return true if the last module load succeeded
     guard moduleLoadSucceeded
+
+    guard alwaysTrue
 
     ###############
     # Actions     #
@@ -146,25 +148,14 @@ state machine SequencerStateMachine {
     @ Generic entry of a state
     signal entered
 
-    signal storeAllocSucceeded
-    signal storeAllocFailed
-
-    @ Interpreter is initializing a new Wasm store
-    state INIT {
-        entry do { resetStore }
-
-        on storeAllocSucceeded enter IDLE
-        on storeAllocFailed enter INVALID
-    }
-
-    @ Interpreter's store allocation failed
-    state INVALID {
-        on cmd_CANCEL enter INIT
+    choice RESET {
+        if alwaysTrue do { resetStore } enter IDLE \
+        else enter IDLE
     }
 
     @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
-        on cmd_CANCEL enter INIT
+        on cmd_CANCEL enter RESET
         on cmd_RUN do { pendRun } enter LOADING
         on cmd_LOAD do { pendLoad } enter LOADING
         on cmd_INVOKE do { invokeMain } enter INVOKE_CHECK
@@ -177,7 +168,7 @@ state machine SequencerStateMachine {
 
         choice LOAD_CHECK {
             if moduleLoadSucceeded enter STARTING \
-            else do { reportLoadFailure, sendLoadCmdResponse_EXECUTION_ERROR } enter IDLE
+            else do { reportLoadFailure, sendLoadCmdResponse_EXECUTION_ERROR, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
         }
     }
 
@@ -189,7 +180,7 @@ state machine SequencerStateMachine {
         # Start finished might be either start=host function or start=None
         on startFinished enter RUN_CHECK
         on startInvoked enter RUNNING
-        on startError do { reportInvokeFailure, sendLoadCmdResponse_EXECUTION_ERROR } enter IDLE
+        on startError do { reportInvokeFailure, sendLoadCmdResponse_EXECUTION_ERROR, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
     }
 
     @ A module finished loading; decide whether to invoke a pending function or wait
@@ -369,7 +360,7 @@ state machine SequencerStateMachine {
         ####################
         # commands         #
         ####################
-        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter INIT
+        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
         on cmd_PAUSE do { pendPause }
     }
 }

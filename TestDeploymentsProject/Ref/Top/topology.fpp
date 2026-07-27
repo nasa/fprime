@@ -46,6 +46,7 @@ module Ref {
     instance linuxTimer
     instance comDriver
     instance cmdSeq
+    instance wasmSeq
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -100,6 +101,7 @@ module Ref {
       rateGroup2Comp.RateGroupMemberOut[4] -> dpDemo.run
       #connection to FileManager listing feature command for sequencing
       rateGroup2Comp.RateGroupMemberOut[5] -> FileHandling.Subtopology.fileManagerSchedIn
+      rateGroup2Comp.RateGroupMemberOut[6] -> wasmSeq.checkTimers
 
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
@@ -147,6 +149,9 @@ module Ref {
       # Asynchronous request
       dpDemo.productRequestOut -> DataProducts.Subtopology.productRequestIn
       DataProducts.Subtopology.productResponseOut -> dpDemo.productRecvIn
+
+      wasmSeq.getTlmChan -> CdhCore.tlmSend.TlmGet
+      wasmSeq.getParam ->   FileHandling.prmDb.getPrm
     }
 
     connections ComCcsds_CdhCore {
@@ -159,6 +164,8 @@ module Ref {
       CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
       cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
       CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
+      wasmSeq.cmdOut                         -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> wasmSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {

@@ -45,6 +45,11 @@ constexpr U32 MAX_CODE_PAGES = 256;
 /// sequencer will accept.
 constexpr FwSizeType GUEST_MEMORY_SIZE = 65536;
 
+/// The maximum number of Wasm modules allowed to load into the sequencer's store.
+/// If this sequencer does not have enough memory to dynamic allocate this store,
+/// the sequencer's preamble will trigger an assertion.
+constexpr U8 MAX_GUEST_MODULES = 8;
+
 }  // namespace WasmSequencerConfig
 }  // namespace Svc
 

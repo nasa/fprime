@@ -37,6 +37,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Destroy WasmSequencer object
     ~WasmSequencer();
 
+    //! Initialize the Wasm engine
+    void preamble() override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -368,6 +371,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for guard pendingRun of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
     //! return true if the module is pending to execute after loading
+    bool Svc_WasmSequencer_SequencerStateMachine_guard_alwaysTrue(
+        SmId smId,                                              //!< The state machine id
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
+    ) const override;
+
+    //! Implementation for guard pendingRun of state machine Svc_WasmSequencer_SequencerStateMachine
+    //!
+    //! return true if the module is pending to execute after loading
     bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
@@ -446,8 +457,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
-    Fw::Success createStore(U16 moduleCount  //!< Maximum number of modules
-    );
+    Fw::Success createStore();
 
     //! Destroy the current interpreter store, if any, releasing its memory.
     void destroyStore();
@@ -528,6 +538,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Flag indicating module load failure/success
     bool m_loadFailed;
+    spacewasm_status_t m_loadStatus;
 
     //! Flag indicating module is pending execution of main
     bool m_pendingRun;
@@ -546,7 +557,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     spacewasm_trap_t m_lastTrap;
 
     struct PendingHostInvocation {
-        PendingHostInvocation();
+        PendingHostInvocation() = default;
 
         enum Kind {
             NONE,
