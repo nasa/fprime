@@ -182,19 +182,33 @@ jobs:
         if: ${{ !inputs.skip_aarch64_build }}
         working-directory: ${{ inputs.build_location }}
         run: |
+          echo "=== Debug: Current directory ==="
+          pwd
+          echo "=== Debug: Listing build-artifacts structure ==="
+          find ./build-artifacts -name "*.xml" || echo "No XML files found"
+          ls -laR ./build-artifacts/aarch64-linux/ || echo "aarch64-linux doesn't exist"
+
           mkdir -p aarch64-linux-artifacts
           # Copy source directories that contain integration tests
           if [ -d "ManagerWorker" ]; then
+            echo "Copying ManagerWorker source..."
             cp -r ManagerWorker aarch64-linux-artifacts/
           fi
           # Overlay aarch64-linux build artifacts (dictionaries, binaries) into the source structure
           if [ -d "./build-artifacts/aarch64-linux/ManagerWorker" ]; then
+            echo "Overlaying aarch64-linux build artifacts..."
             cp -r ./build-artifacts/aarch64-linux/ManagerWorker/* aarch64-linux-artifacts/ManagerWorker/
           fi
           # Also copy the entire build-artifacts directory for integration tests that need build root
           if [ -d "./build-artifacts" ]; then
+            echo "Copying entire build-artifacts directory..."
             cp -r ./build-artifacts aarch64-linux-artifacts/
           fi
+
+          echo "=== Debug: Final artifacts structure ==="
+          ls -laR ./aarch64-linux-artifacts/
+          echo "=== Debug: Searching for dictionary files ==="
+          find ./aarch64-linux-artifacts -name "*.xml"
       - name: "Archive Build Artifacts"
         if: ${{ !inputs.skip_aarch64_build }}
         uses: actions/upload-artifact@v7
