@@ -37,9 +37,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Destroy WasmSequencer object
     ~WasmSequencer();
 
-    //! Initialize the Wasm engine
-    void preamble() override;
-
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports

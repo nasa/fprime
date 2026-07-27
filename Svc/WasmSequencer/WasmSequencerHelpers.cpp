@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
+#include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "default/config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
@@ -276,6 +277,12 @@ extern "C" void spacewasm_panic(const U8* filename,
     (void)line;
     (void)msg;
     (void)len;
+
+    Fw::String fmtMsg;
+    fmtMsg.format("Rust panic %.*s:%d: %.*s\n", static_cast<int>(filename_len), reinterpret_cast<const char*>(filename),
+                  static_cast<int>(line), static_cast<int>(len), reinterpret_cast<const char*>(msg));
+    Os::Console::write(fmtMsg);
+
     // TODO(tumbar) Emit a WARNING_HI event and reset the Rust state gracefully.
     FW_ASSERT(false);
 }

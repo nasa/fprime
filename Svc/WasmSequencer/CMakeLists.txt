@@ -49,6 +49,7 @@ if (CARGO)
                 -P ${CMAKE_CURRENT_LIST_DIR}/cargo_build_staticlib.cmake
         DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
+                "${CMAKE_CURRENT_LIST_DIR}/cargo_build_staticlib.cmake"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
         COMMENT "Building fprime_spacewasm Rust static library"
         VERBATIM

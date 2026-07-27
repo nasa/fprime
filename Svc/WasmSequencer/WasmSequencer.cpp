@@ -56,10 +56,6 @@ WasmSequencer ::~WasmSequencer() {
     g_activeSequencer = nullptr;
 }
 
-void WasmSequencer ::preamble() {
-    this->createStore();
-}
-
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------

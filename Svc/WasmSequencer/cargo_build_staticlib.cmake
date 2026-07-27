@@ -29,7 +29,7 @@ endif()
 # Human-readable diagnostics go to stderr and pass straight through to the
 # console; only the JSON records (stdout) are captured here.
 execute_process(
-    COMMAND "${CARGO}" build --release --message-format=json
+    COMMAND "${CARGO}" build --message-format=json
             ${_target_args}
             --manifest-path "${MANIFEST_PATH}"
             --target-dir    "${TARGET_DIR}"

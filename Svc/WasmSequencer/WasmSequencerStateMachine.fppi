@@ -156,7 +156,7 @@ state machine SequencerStateMachine {
     @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
         on cmd_CANCEL enter RESET
-        on cmd_RUN do { pendRun } enter LOADING
+        on cmd_RUN do { resetStore, pendRun } enter LOADING
         on cmd_LOAD do { pendLoad } enter LOADING
         on cmd_INVOKE do { invokeMain } enter INVOKE_CHECK
     }
