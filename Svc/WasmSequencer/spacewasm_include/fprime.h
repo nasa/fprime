@@ -30,9 +30,17 @@ extern "C" {
 WASM_IMPORT("fprime", "exit")
 extern void fprime_wasm_exit(I32 code);
 
-typedef enum {
+/// @brief Exit the current Wasm program with a failure.
+/// This function does not return.
+///
+/// @param code: Aribtrary code to indicate source of the panic
+WASM_IMPORT("fprime", "panic")
+extern void fprime_wasm_panic(I32 code);
 
-} FprimeTlmValid;
+enum FprimeTlmValid {
+    FPRIME_TLM_VALID = 0,
+    FPRIME_TLM_INVALID = 1,
+};
 
 /// @brief Read a telemetry channel value and write it to the specified memory addresses
 ///
@@ -56,12 +64,60 @@ extern FprimeTlmValid fprime_wasm_read_telemetry(FwChanIdType id,
 WASM_IMPORT("fprime", "prm")
 extern FprimeTlmValid fprime_wasm_read_parameter(FwPrmIdType id, U32 value_ptr, U32 value_size);
 
-/// @brief Dispatch a command, blocking call
+enum FprimeCmdResponse {
+    /// Command successfully executed
+    FPRIME_CMD_OK = 0,
+    /// Invalid opcode dispatched
+    FPRIME_CMD_INVALID_OPCODE = 1,
+    /// Command failed validation
+    FPRIME_CMD_VALIDATION_ERROR = 2,
+    /// Command failed to deserialize
+    FPRIME_CMD_FORMAT_ERROR = 3,
+    /// Command had execution error
+    FPRIME_CMD_EXECUTION_ERROR = 4,
+    /// Component busy
+    FPRIME_CMD_BUSY = 5,
+};
+
+/// @brief Dispatch a command, blocking call.
 ///
-/// @param buf_ptr Guest memory address to 
+/// Command must be encoded with the FwOpcodeType + arguments.
+/// A FORMAT_ERROR will be returned if the format is not valid!
+///
+/// @param buf_ptr Guest memory address to encoded command
 /// @param value_len Size allocated for value_ptr
 WASM_IMPORT("fprime", "cmd")
-extern FprimeTlmValid fprime_wasm_command(U32 buf_ptr, U32 buf_len);
+extern FprimeCmdResponse fprime_wasm_command(U32 buf_ptr, U32 buf_len);
+
+enum FprimeEventSeverity {
+    FPRIME_EVENT_FATAL = 1,        //!< A fatal non-recoverable event
+    FPRIME_EVENT_WARNING_HI = 2,   //!< A serious but recoverable event
+    FPRIME_EVENT_WARNING_LO = 3,   //!< A less serious but recoverable event
+    FPRIME_EVENT_COMMAND = 4,      //!< An activity related to commanding
+    FPRIME_EVENT_ACTIVITY_HI = 5,  //!< Important informational events
+    FPRIME_EVENT_ACTIVITY_LO = 6,  //!< Less important informational events
+    FPRIME_EVENT_DIAGNOSTIC = 7,   //!< Software diagnostic events
+};
+
+/// @brief Emit an event from the current WasmSequencer component at a given severity level
+///
+/// @param severity Event severity level to emit
+/// @param buf_ptr Guest memory address to event message string
+/// @param value_len Size allocated for value_ptr
+WASM_IMPORT("fprime", "event")
+extern void fprime_wasm_event(FprimeEventSeverity severity, U32 msg_ptr, U32 msg_size);
+
+/// @brief Pause the runtime for a specified time
+///
+/// @param us Microseconds to pause the runtime for
+WASM_IMPORT("fprime", "rsleep")
+extern void fprime_wasm_rsleep(U64 us);
+
+/// @brief Pause the runtime until a specified time
+///
+/// @param us Microseconds from system epoch to pause until
+WASM_IMPORT("fprime", "asleep")
+extern void fprime_wasm_asleep(U64 us);
 
 #ifdef __cplusplus
 }  // extern "C"

@@ -16,6 +16,12 @@ module Svc {
         @ Response
         async input port cmdResponseIn: Fw.CmdResponse priority 5 assert
 
+        @ Port for getting telemetry channel values (backs the guest `tlm` host function)
+        output port getTlmChan: Fw.TlmGet
+
+        @ Port for getting parameter values (backs the guest `prm` host function)
+        output port getParam: Fw.PrmGet
+
         @ Port to periodically drive sleep-wake and statement-timeout checks
         async input port checkTimers: Svc.Sched priority 4 assert
 

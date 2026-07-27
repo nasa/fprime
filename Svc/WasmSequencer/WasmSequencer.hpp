@@ -20,7 +20,6 @@ void wasmSeqGlobalDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::s
 uint8_t* wasmSeqGuestAlloc(void* userdata, std::size_t size, std::size_t align);
 uint8_t* wasmSeqGuestRealloc(void* userdata, uint8_t* ptr, std::size_t oldSize, std::size_t newSize, std::size_t align);
 void wasmSeqGuestDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-spacewasm_read_result_t wasmSeqReadModule(void* userdata, const uint8_t** outBuf, std::size_t* outLen);
 }
 
 namespace Svc {
@@ -418,9 +417,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // spacewasm_allocator_t.
     // ----------------------------------------------------------------------
 
-    //! The C-linkage trampolines forward into these private instance methods.
-    //! Function names are parenthesized so the return type + `::name` is not
-    //! parsed as a qualified-id.
     friend uint8_t*(::wasmSeqGlobalAlloc)(void* userdata, std::size_t size, std::size_t align);
     friend void(::wasmSeqGlobalDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
     friend uint8_t*(::wasmSeqGuestAlloc)(void* userdata, std::size_t size, std::size_t align);
@@ -430,7 +426,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                            std::size_t newSize,
                                            std::size_t align);
     friend void(::wasmSeqGuestDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-    friend spacewasm_read_result_t(::wasmSeqReadModule)(void* userdata, const uint8_t** outBuf, std::size_t* outLen);
+
+    static spacewasm_read_result_t wasmSeqReadModule(void*, const uint8_t** outBuf, std::size_t* outLen);
 
     //! Hand out a fixed-size page from `m_memory_pool` for the Rust allocator.
     U8* allocPage(U32 size, U32 align);
@@ -461,6 +458,22 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Map a spacewasm_trap_t onto the TrapReason event enum.
     static Svc::WasmSequencer_TrapReason::T mapTrapReason(spacewasm_trap_t trap);
 
+    //! Emit a guest event at the requested severity id (see FprimeEventSeverity
+    //! in fprime.h); unknown severities fall back to ACTIVITY_HI.
+    void emitGuestEvent(U32 severity, const Fw::LogStringArg& msg);
+
+    //! Map an F´ command response onto the FprimeCmdResponse guest enum
+    //! (see fprime.h), returned to the guest on resume.
+    static I32 mapCmdResponse(const Fw::CmdResponse& response);
+
+    //! Why the interpreter last returned SPACEWASM_RUN_PAUSE, so the spin
+    //! action can raise the right signal and the resume can push the right value.
+    enum class PauseReason {
+        None,     //!< Not paused
+        Command,  //!< Paused inside fprime.cmd, awaiting a command response
+        Sleep     //!< Paused inside fprime.rsleep/asleep, awaiting a wake time
+    };
+
     //! Static pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
 
@@ -478,7 +491,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     U8 m_readBuf[256];
 
     //! Opaque handle to the spacewasm engine, or null.
-    spacewasm_t* m_store;
+    spacewasm_t* m_wasm;
 
     //! Index of the most-recently-loaded module within the store.
     U32 m_moduleIndex;
@@ -523,7 +536,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool m_pendingPause;
 
     //! Flag indicating there is a pending host function waiting to be dispatched
-    bool m_pendingHostFunction;
+    bool m_hasPendingHostFunction;
 
     //! Currently loading file handle
     Os::File* m_loadFile;
@@ -531,6 +544,70 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Most recent trap reason, stashed so the payload-less report_seqTrap
     //! action can render it.
     spacewasm_trap_t m_lastTrap;
+
+    struct PendingHostInvocation {
+        PendingHostInvocation();
+
+        enum Kind {
+            NONE,
+            COMMAND,
+        } kind = NONE;
+
+        Fw::ComBuffer buffer;
+    } m_pendingHostFunction;
+
+    //! Command sequence index to track dispatch/response
+    //! This will be incremented on every response/cancellation
+    U32 m_cmdSeq;
+
+    /// FPrime Wasm Interface Host Functions
+    static spacewasm_hostcall_result_t fprime_wasm_exit(struct spacewasm_caller_t* caller,
+                                                        void* userdata,
+                                                        const struct spacewasm_value_t* params,
+                                                        size_t n_params,
+                                                        struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_panic(struct spacewasm_caller_t* caller,
+                                                         void* userdata,
+                                                         const struct spacewasm_value_t* params,
+                                                         size_t n_params,
+                                                         struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_read_telemetry(struct spacewasm_caller_t* caller,
+                                                                  void* userdata,
+                                                                  const struct spacewasm_value_t* params,
+                                                                  size_t n_params,
+                                                                  struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_read_parameter(struct spacewasm_caller_t* caller,
+                                                                  void* userdata,
+                                                                  const struct spacewasm_value_t* params,
+                                                                  size_t n_params,
+                                                                  struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_command(struct spacewasm_caller_t* caller,
+                                                           void* userdata,
+                                                           const struct spacewasm_value_t* params,
+                                                           size_t n_params,
+                                                           struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_event(struct spacewasm_caller_t* caller,
+                                                         void* userdata,
+                                                         const struct spacewasm_value_t* params,
+                                                         size_t n_params,
+                                                         struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_rsleep(struct spacewasm_caller_t* caller,
+                                                          void* userdata,
+                                                          const struct spacewasm_value_t* params,
+                                                          size_t n_params,
+                                                          struct spacewasm_value_t* out_result);
+
+    static spacewasm_hostcall_result_t fprime_wasm_asleep(struct spacewasm_caller_t* caller,
+                                                          void* userdata,
+                                                          const struct spacewasm_value_t* params,
+                                                          size_t n_params,
+                                                          struct spacewasm_value_t* out_result);
 };
 
 }  // namespace Svc

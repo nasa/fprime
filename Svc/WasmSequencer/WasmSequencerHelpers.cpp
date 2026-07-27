@@ -4,7 +4,9 @@
 // \brief  cpp file for WasmSequencer component implementation class helpers
 // ======================================================================
 
+#include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "spacewasm.h"
 
 namespace Svc {
 // ----------------------------------------------------------------------
@@ -104,14 +106,44 @@ Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
         return Fw::Success::FAILURE;
     }
 
+    U32 module_idx;
+    status = spacewasm_add_host_module(&host, "fprime", 8, 0, &module_idx);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "exit", "i", "", WasmSequencer::fprime_wasm_exit, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "panic", "i", "", WasmSequencer::fprime_wasm_panic, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "tlm", "iiiii", "i",
+                                         WasmSequencer::fprime_wasm_read_telemetry, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "prm", "iii", "i",
+                                         WasmSequencer::fprime_wasm_read_parameter, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "cmd", "ii", "i", WasmSequencer::fprime_wasm_command, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "event", "iii", "", WasmSequencer::fprime_wasm_event, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(&host, module_idx, "rsleep", "I", "", WasmSequencer::fprime_wasm_rsleep, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
     spacewasm_compiler_options_t options;
+    status = spacewasm_add_host_function(&host, module_idx, "asleep", "I", "", WasmSequencer::fprime_wasm_asleep, this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
     options.allow_memory_grow = false;
     options.max_backpatch_iterations = 0;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
-    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, moduleCount, options, &this->m_store);
-    if (status != SPACEWASM_OK || this->m_store == nullptr) {
-        this->m_store = nullptr;
+    status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, moduleCount, options, &this->m_wasm);
+    if (status != SPACEWASM_OK || this->m_wasm == nullptr) {
+        this->m_wasm = nullptr;
         this->log_WARNING_HI_StoreAllocationFailed(moduleCount,
                                                    Svc::WasmSequencer_AllocError(WasmSequencer::mapAllocError(status)));
         return Fw::Success::FAILURE;
@@ -122,9 +154,9 @@ Fw::Success WasmSequencer ::createStore(U16 moduleCount) {
 }
 
 void WasmSequencer ::destroyStore() {
-    if (this->m_store != nullptr) {
-        spacewasm_destroy(this->m_store);
-        this->m_store = nullptr;
+    if (this->m_wasm != nullptr) {
+        spacewasm_destroy(this->m_wasm);
+        this->m_wasm = nullptr;
     }
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
@@ -226,7 +258,7 @@ extern "C" void wasmSeqGuestDealloc(void* userdata, U8* ptr, std::size_t size, s
     }
 }
 
-extern "C" spacewasm_read_result_t wasmSeqReadModule(void* userdata, const U8** outBuf, std::size_t* outLen) {
+spacewasm_read_result_t WasmSequencer::wasmSeqReadModule(void* userdata, const U8** outBuf, std::size_t* outLen) {
     if (userdata == nullptr) {
         *outLen = 0;
         return SPACEWASM_READ_ERROR;
@@ -248,9 +280,6 @@ extern "C" void spacewasm_panic(const U8* filename,
     (void)len;
     // TODO(tumbar) Emit a WARNING_HI event and reset the Rust state gracefully.
     FW_ASSERT(false);
-    // FW_ASSERT should not return, but abort defensively to satisfy the
-    // never-returns contract.
-    abort();
 }
 
 }  // namespace Svc

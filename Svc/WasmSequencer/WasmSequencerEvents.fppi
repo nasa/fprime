@@ -30,6 +30,15 @@ event SequenceSucceeded() \
     severity activity high \
     format "Wasm program completed successfully"
 
+event CommandTooLarge($size: U32, maxSize: U32) \
+    severity warning high \
+    format "Command payload size {} larger than host maximum size {}"
+
+# TODO(tumbar) Expose spacewasm_status_t to FPP
+event CommandInvalidPointer(code: I32) \
+    severity warning high \
+    format "Failed to reach command payload from guest: {}"
+
 @ The sequence was cancelled
 event SequenceCancelled() \
     severity activity high \
@@ -49,3 +58,59 @@ event SequenceTrap(reason: TrapReason) \
 event SequenceBroken() \
     severity activity high \
     format "Wasm program paused at breakpoint"
+
+@ The guest program called fprime.exit with a non-zero code
+event ProgramExited(code: I32) \
+    severity warning high \
+    format "Wasm program exited with code {}"
+
+@ The guest program called fprime.panic, or the interpreter itself panicked
+event PanicOccurred(code: I32) \
+    severity warning high \
+    format "Wasm program panicked: code {}"
+
+@ A guest host function could not access guest linear memory
+event GuestMemoryError(status: I32) \
+    severity warning high \
+    format "Guest memory access failed: spacewasm status {}"
+
+# ----------------------------------------------------------------------
+# Guest-emitted events (fprime.event host function). One event per F´
+# severity; the host function switches on the requested severity id to
+# emit the matching one so the event carries the correct FPP severity.
+# ----------------------------------------------------------------------
+
+@ A FATAL event emitted by the guest program
+event GuestFatal(msg: string size 128) \
+    severity fatal \
+    format "Guest: {}"
+
+@ A WARNING_HI event emitted by the guest program
+event GuestWarningHi(msg: string size 128) \
+    severity warning high \
+    format "Guest: {}"
+
+@ A WARNING_LO event emitted by the guest program
+event GuestWarningLo(msg: string size 128) \
+    severity warning low \
+    format "Guest: {}"
+
+@ A COMMAND event emitted by the guest program
+event GuestCommand(msg: string size 128) \
+    severity command \
+    format "Guest: {}"
+
+@ An ACTIVITY_HI event emitted by the guest program
+event GuestActivityHi(msg: string size 128) \
+    severity activity high \
+    format "Guest: {}"
+
+@ An ACTIVITY_LO event emitted by the guest program
+event GuestActivityLo(msg: string size 128) \
+    severity activity low \
+    format "Guest: {}"
+
+@ A DIAGNOSTIC event emitted by the guest program
+event GuestDiagnostic(msg: string size 128) \
+    severity diagnostic \
+    format "Guest: {}"
