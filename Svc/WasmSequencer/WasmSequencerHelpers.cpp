@@ -15,7 +15,7 @@ namespace Svc {
 // Interpreter store and page-backed allocators
 // ----------------------------------------------------------------------
 
-U8* WasmSequencer ::allocPage(U32 size, U32 align) {
+U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     // The spacewasm PageAllocator only ever requests fixed-size pages of exactly
     // SPACEWASM_PAGE_SIZE, aligned no more than the pool's alignment.
     FW_ASSERT(size == Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE, static_cast<FwAssertArgType>(size));
@@ -32,7 +32,7 @@ U8* WasmSequencer ::allocPage(U32 size, U32 align) {
     return nullptr;
 }
 
-void WasmSequencer ::deallocPage(U8* ptr) {
+void WasmSequencer ::globalDealloc(const U8* ptr) {
     if (ptr == nullptr) {
         return;
     }
@@ -49,9 +49,10 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
     if (size == 0) {
         return nullptr;
     }
+
     // Round the current offset up to the requested alignment.
     const FwSizeType a = (align < 1) ? 1 : static_cast<FwSizeType>(align);
-    FwSizeType start = (this->m_guest_offset + a - 1) & ~(a - 1);
+    FwSizeType start = this->m_guest_offset + a - 1 & ~(a - 1);
     if (start + size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
         return nullptr;
     }
@@ -59,20 +60,7 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
     return &this->m_guest_pool[start];
 }
 
-U8* WasmSequencer ::guestRealloc(U8* ptr, U32 oldSize, U32 newSize, U32 align) {
-    // memory.grow is disabled at compile time, so realloc should not be hit in
-    // practice. Serve it conservatively: a fresh block plus a copy.
-    U8* fresh = this->guestAlloc(newSize, align);
-    if (fresh != nullptr && ptr != nullptr) {
-        const U32 copy = (oldSize < newSize) ? oldSize : newSize;
-        for (U32 i = 0; i < copy; i++) {
-            fresh[i] = ptr[i];
-        }
-    }
-    return fresh;
-}
-
-void WasmSequencer ::guestDealloc(U8* ptr, U32 size) {
+void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
     // Bump allocator: individual frees are no-ops. The whole guest pool is reset
     // when a new store is created (destroyStore).
     (void)ptr;
@@ -210,59 +198,6 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
         default:
             return Svc::WasmSequencer_TrapReason::Host;
     }
-}
-
-// ----------------------------------------------------------------------
-// C ABI trampolines imported by the spacewasm_c_api crate
-// ----------------------------------------------------------------------
-
-extern "C" U8* wasmSeqGlobalAlloc(void* userdata, std::size_t size, std::size_t align) {
-    if (userdata == nullptr) {
-        return nullptr;
-    }
-    return static_cast<WasmSequencer*>(userdata)->allocPage(static_cast<U32>(size), static_cast<U32>(align));
-}
-
-extern "C" void wasmSeqGlobalDealloc(void* userdata, U8* ptr, std::size_t size, std::size_t align) {
-    (void)size;
-    (void)align;
-    if (userdata != nullptr) {
-        static_cast<WasmSequencer*>(userdata)->deallocPage(ptr);
-    }
-}
-
-extern "C" U8* wasmSeqGuestAlloc(void* userdata, std::size_t size, std::size_t align) {
-    if (userdata == nullptr) {
-        return nullptr;
-    }
-    return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
-}
-
-extern "C" U8* wasmSeqGuestRealloc(void* userdata,
-                                   U8* ptr,
-                                   std::size_t oldSize,
-                                   std::size_t newSize,
-                                   std::size_t align) {
-    if (userdata == nullptr) {
-        return nullptr;
-    }
-    return static_cast<WasmSequencer*>(userdata)->guestRealloc(ptr, static_cast<U32>(oldSize),
-                                                               static_cast<U32>(newSize), static_cast<U32>(align));
-}
-
-extern "C" void wasmSeqGuestDealloc(void* userdata, U8* ptr, std::size_t size, std::size_t align) {
-    (void)align;
-    if (userdata != nullptr) {
-        static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
-    }
-}
-
-spacewasm_read_result_t WasmSequencer::wasmSeqReadModule(void* userdata, const U8** outBuf, std::size_t* outLen) {
-    if (userdata == nullptr) {
-        *outLen = 0;
-        return SPACEWASM_READ_ERROR;
-    }
-    return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
 }
 
 //! Panic hook the spacewasm interpreter calls on a fatal internal error. Must

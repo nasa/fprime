@@ -18,13 +18,6 @@
 
 namespace Svc {
 
-namespace {
-// FIXME(tumbar) This only allows a singleton WasmSequencer: spacewasm_set_global_allocator
-//               installs a single process-wide backend, so only one instance may
-//               register its pool at a time.
-WasmSequencer* g_activeSequencer = nullptr;
-}  // namespace
-
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -42,18 +35,29 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_breakBeforeNextLine(false),
       m_loadFile(nullptr),
       m_lastTrap(SPACEWASM_TRAP_NONE) {
-    FW_ASSERT(g_activeSequencer == nullptr);
-    g_activeSequencer = this;
-
     // Install the process-wide global page allocator, backed by this instance's
     // page pool. The store/bytecode live entirely within m_memory_pool.
-    const I32 status = spacewasm_set_global_allocator(&wasmSeqGlobalAlloc, &wasmSeqGlobalDealloc, this);
+    // TODO(tumbar) We need to figure out a thread-local or context sensitive way to allow multiple sequencers...
+    const I32 status = spacewasm_set_global_allocator(
+        [](void* userdata, std::size_t size, std::size_t align) -> U8* {
+            if (userdata == nullptr) {
+                return nullptr;
+            }
+            return static_cast<WasmSequencer*>(userdata)->globalAlloc(static_cast<U32>(size), static_cast<U32>(align));
+        },
+        [](void* userdata, U8* ptr, std::size_t size, std::size_t align) {
+            (void)size;
+            (void)align;
+            if (userdata != nullptr) {
+                static_cast<WasmSequencer*>(userdata)->globalDealloc(ptr);
+            }
+        },
+        this);
     FW_ASSERT(status == 0, status);
 }
 
 WasmSequencer ::~WasmSequencer() {
     this->destroyStore();
-    g_activeSequencer = nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -372,11 +376,36 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 
     // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
     // immediately after load (the module retains its own reference).
-    spacewasm_allocator_t* alloc =
-        spacewasm_allocator_new(&wasmSeqGuestAlloc, &wasmSeqGuestRealloc, &wasmSeqGuestDealloc, this);
+    spacewasm_allocator_t* alloc = spacewasm_allocator_new(
+        [](void* userdata, const size_t size, const size_t align) -> U8* {
+            FW_ASSERT(userdata != nullptr);
+            return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
+        },
+        [](void* userdata, uint8_t* ptr, size_t old_size, size_t new_size, size_t align) -> U8* {
+            (void)userdata;
+            (void)ptr;
+            (void)old_size;
+            (void)new_size;
+            (void)align;
 
-    const spacewasm_status_t status = spacewasm_load_module(this->m_wasm, moduleName.toChar(), &this->wasmSeqReadModule,
-                                                            this, alloc, &this->m_moduleIndex);
+            // We turn off memory.grow so this should never be called!
+            FW_ASSERT(false);
+            return nullptr;
+        },
+        [](void* userdata, U8* ptr, size_t size, size_t align) {
+            FW_ASSERT(userdata != nullptr);
+            (void)align;
+            static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
+        },
+        this);
+
+    const spacewasm_status_t status = spacewasm_load_module(
+        this->m_wasm, moduleName.toChar(),
+        [](void* userdata, const U8** outBuf, std::size_t* outLen) -> spacewasm_read_result_t {
+            FW_ASSERT(userdata != nullptr);
+            return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
+        },
+        this, alloc, &this->m_moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
     this->m_loadFile = nullptr;

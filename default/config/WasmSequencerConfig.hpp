@@ -26,14 +26,14 @@ namespace WasmSequencerConfig {
 /// static pool. This memory is used only for the Wasm store and bytecode, NOT
 /// for guest linear-memory pages (see GUEST_MEMORY_SIZE).
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = 8192;
-constexpr FwSizeType SPACEWASM_MAX_PAGES = 16;
+constexpr FwSizeType SPACEWASM_MAX_PAGES = 4;
 
 /// Total static pool backing the interpreter heap: 16 * 8192 = 128 KiB.
 constexpr FwSizeType DYNAMIC_MEMORY_SIZE = SPACEWASM_PAGE_SIZE * SPACEWASM_MAX_PAGES;
 
 /// Size in bytes of the guest operand stack allocated per store
 /// (spacewasm_store_new `stack_size`).
-constexpr FwSizeType GUEST_STACK_SIZE = 1024;
+constexpr FwSizeType GUEST_STACK_SIZE = 256;
 
 /// Maximum number of compiled code pages allowed across all modules loaded onto
 /// a store (spacewasm_compiler_options_t `max_code_pages`).
@@ -43,7 +43,7 @@ constexpr U32 MAX_CODE_PAGES = 256;
 /// (spacewasm_allocator_new). A Wasm page is 64 KiB; modules are compiled with
 /// memory.grow disabled, so this bounds the largest guest linear memory the
 /// sequencer will accept.
-constexpr FwSizeType GUEST_MEMORY_SIZE = 65536;
+constexpr FwSizeType GUEST_MEMORY_SIZE = 2048;
 
 /// The maximum number of Wasm modules allowed to load into the sequencer's store.
 /// If this sequencer does not have enough memory to dynamic allocate this store,

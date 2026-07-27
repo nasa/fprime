@@ -11,16 +11,9 @@
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
+#include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
-
-extern "C" {
-uint8_t* wasmSeqGlobalAlloc(void* userdata, std::size_t size, std::size_t align);
-void wasmSeqGlobalDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-uint8_t* wasmSeqGuestAlloc(void* userdata, std::size_t size, std::size_t align);
-uint8_t* wasmSeqGuestRealloc(void* userdata, uint8_t* ptr, std::size_t oldSize, std::size_t newSize, std::size_t align);
-void wasmSeqGuestDealloc(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-}
 
 namespace Svc {
 
@@ -414,43 +407,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     ) const override;
 
   private:
-    // ----------------------------------------------------------------------
-    // Interpreter store and page-backed allocators
-    //
-    // The `spacewasm_c_api` crate installs a process-wide page allocator as its
-    // global (Rust) allocator via spacewasm_set_global_allocator. Each page it
-    // requests is served from `m_memory_pool` below, so the interpreter's store
-    // and compiled bytecode live entirely within this component's memory. Guest
-    // linear memory is served separately from `m_guest_pool` via a per-load
-    // spacewasm_allocator_t.
-    // ----------------------------------------------------------------------
+    /// The global allocator callbacks
+    U8* globalAlloc(U32 size, U32 align);
+    void globalDealloc(const U8* ptr);
 
-    friend uint8_t*(::wasmSeqGlobalAlloc)(void* userdata, std::size_t size, std::size_t align);
-    friend void(::wasmSeqGlobalDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-    friend uint8_t*(::wasmSeqGuestAlloc)(void* userdata, std::size_t size, std::size_t align);
-    friend uint8_t*(::wasmSeqGuestRealloc)(void* userdata,
-                                           uint8_t* ptr,
-                                           std::size_t oldSize,
-                                           std::size_t newSize,
-                                           std::size_t align);
-    friend void(::wasmSeqGuestDealloc)(void* userdata, uint8_t* ptr, std::size_t size, std::size_t align);
-
-    static spacewasm_read_result_t wasmSeqReadModule(void*, const uint8_t** outBuf, std::size_t* outLen);
-
-    //! Hand out a fixed-size page from `m_memory_pool` for the Rust allocator.
-    U8* allocPage(U32 size, U32 align);
-    //! Return a page previously handed out by allocPage back to the pool.
-    void deallocPage(U8* ptr);
-
-    //! Serve `size` bytes for a guest linear memory from `m_guest_pool`.
+    /// The Wasm guest allocator callbacks
     U8* guestAlloc(U32 size, U32 align);
-    //! Grow/shrink a guest linear-memory allocation.
-    U8* guestRealloc(U8* ptr, U32 oldSize, U32 newSize, U32 align);
-    //! Release a guest linear-memory allocation.
-    void guestDealloc(U8* ptr, U32 size);
+    void guestDealloc(const U8* ptr, U32 size);
 
     //! Fill `m_readBuf` with the next chunk of the module file being loaded.
-    spacewasm_read_result_t readModuleChunk(const U8** outBuf, std::size_t* outLen);
+    spacewasm_read_result_t readModuleChunk(const U8** outBuf, size_t* outLen);
 
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.

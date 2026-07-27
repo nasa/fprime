@@ -33,6 +33,7 @@ enum spacewasm_status_t
     SPACEWASM_ERR_CAPACITY = 6,
     SPACEWASM_ERR_NOT_FOUND = 7,
     SPACEWASM_ERR_WRONG_STATE = 8,
+    SPACEWASM_ERR_GUEST_MEMORY_ALLOC_FAILED = 15,
     SPACEWASM_ERR_ALLOC_FAILED = 16,
     SPACEWASM_ERR_OUT_OF_MEMORY = 17,
     SPACEWASM_ERR_PAGE_TOO_SMALL = 18,
@@ -143,17 +144,21 @@ enum spacewasm_hostcall_result_t
 #endif // defined(__cplusplus) || __STDC_VERSION__ >= 202311L
  {
     /*
+     Continue, do not return a value
+     */
+    SPACEWASM_CONTINUE_NONE = 0,
+    /*
      Continue; populate `out_result` if the function has a result type.
      */
-    SPACEWASM_CONTINUE = 0,
+    SPACEWASM_CONTINUE_SOME = 1,
     /*
      Trap the interpreter.
      */
-    SPACEWASM_TRAP = 1,
+    SPACEWASM_TRAP = 2,
     /*
      Pause the interpreter (cooperative yield).
      */
-    SPACEWASM_PAUSE = 2,
+    SPACEWASM_PAUSE = 3,
 };
 #ifndef __cplusplus
 #if __STDC_VERSION__ >= 202311L
@@ -318,18 +323,21 @@ typedef int32_t spacewasm_trap_t;
 #endif // __cplusplus
 
 /*
+ A struct holding the alloc, realloc, dealloc, userdata pointers to adapt
+ the C API to the Rc<dyn WasmMemoryAllocator> API.
+
+ This struct is reference counted and deallocated once all modules using this allocator
+ are dropped.
+ */
+typedef struct spacewasm_allocator_t spacewasm_allocator_t;
+
+/*
  Handle holding the SpaceWasm engine and compiled IR code.
  This handle is used for holding and executing the SpaceWasm interpreter.
  */
 typedef struct spacewasm_t spacewasm_t;
 
 typedef struct spacewasm_host_module_t spacewasm_host_module_t;
-
-/*
- Opaque guest linear-memory allocator handle (`spacewasm_allocator_t`), owning
- a reference-counted [`WasmMemoryAllocator`] built from C callbacks.
- */
-typedef struct spacewasm_allocator_t spacewasm_allocator_t;
 
 /*
  Allocate `size` bytes aligned to `align`. Return NULL on failure.
