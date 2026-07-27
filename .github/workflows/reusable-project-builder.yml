@@ -113,6 +113,11 @@ jobs:
         run: |
           pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
+      - name: "Install ZLIB development library"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zlib1g-dev
+        shell: bash
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
