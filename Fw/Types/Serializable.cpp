@@ -424,29 +424,30 @@ ALWAYS_INLINE SerializeStatus LinearBufferBase::deserializeTo(U64& val, Endianne
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
-    FW_ASSERT(this->getBuffAddr());
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
-            val = (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 0) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 8) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 16) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 24) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 32) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 40) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 48) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 56);
+            val = (static_cast<U64>(buffAddr[this->m_deserLoc + 7]) << 0) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 6]) << 8) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 5]) << 16) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 4]) << 24) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 3]) << 32) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 2]) << 40) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 1]) << 48) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 0]) << 56);
             break;
         case Endianness::LITTLE:
             // LSB first
-            val = (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 0]) << 0) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 1]) << 8) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 2]) << 16) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 3]) << 24) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 4]) << 32) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 5]) << 40) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 6]) << 48) |
-                  (static_cast<U64>(this->getBuffAddr()[this->m_deserLoc + 7]) << 56);
+            val = (static_cast<U64>(buffAddr[this->m_deserLoc + 0]) << 0) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 1]) << 8) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 2]) << 16) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 3]) << 24) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 4]) << 32) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 5]) << 40) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 6]) << 48) |
+                  (static_cast<U64>(buffAddr[this->m_deserLoc + 7]) << 56);
             break;
         default:
             FW_ASSERT(false);
@@ -745,14 +746,16 @@ ALWAYS_INLINE SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& 
 // return address of buffer not yet deserialized. This is used
 // to copy the remainder of a buffer.
 ALWAYS_INLINE const U8* LinearBufferBase::getBuffAddrLeft() const {
-    FW_ASSERT(this->getBuffAddr());
-    return &this->getBuffAddr()[this->m_deserLoc];
+    const U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    return &buffAddr[this->m_deserLoc];
 }
 
 //!< gets address of end of serialization. Used to manually place data at the end
 ALWAYS_INLINE U8* LinearBufferBase::getBuffAddrSer() {
-    FW_ASSERT(this->getBuffAddr());
-    return &this->getBuffAddr()[this->m_serLoc];
+    U8* buffAddr = this->getBuffAddr();
+    FW_ASSERT(buffAddr != nullptr);
+    return &buffAddr[this->m_serLoc];
 }
 
 #ifdef BUILD_UT
