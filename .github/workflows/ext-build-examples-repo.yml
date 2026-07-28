@@ -96,12 +96,15 @@ jobs:
       - name: "Run integration tests"
         continue-on-error: false
         run: |
-          DEPLOYMENT=ExamplesDeployment
+          DEPLOYMENT=ManagerWorker
           . venv/bin/activate
           mkdir -p ci-logs
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
-          cd FlightExamples/ExamplesDeployment
+          cd FlightExamples/ManagerWorker
           fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection fprime &
           sleep 10
           cd ../..
-          pytest --dictionary aarch64-linux-artifacts/ManagerWorker/Subtopology/ManagerWorkerAppDictionary.xml aarch64-linux-artifacts/ManagerWorker/Subtopology/test/int/test_manager_worker.py
+          pytest --dictionary aarch64-linux-artifacts/ManagerWorker/Subtopology/ManagerWorkerAppDictionary.json \
+            --deployment-config Subtopology/test/int/int_config.json \
+            -v \
+            aarch64-linux-artifacts/ManagerWorker/Subtopology/test/int/test_manager_worker.py
