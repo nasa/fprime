@@ -305,14 +305,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action set_sleepTime of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! stores the requested wake time for the SLEEPING state
-    void Svc_WasmSequencer_SequencerStateMachine_action_set_sleepTime(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
-
     //! Implementation for action checkStatementTimeout of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
     //! checks if the current statement has timed out
@@ -402,6 +394,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! a host function is waiting to be processed
     bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingHostFunction(
+        SmId smId,                                              //!< The state machine id
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
+    ) const override;
+
+    //! Implementation for guard pendingTimer of state machine Svc_WasmSequencer_SequencerStateMachine
+    //!
+    //! return true if there is a pending sleep timer
+    bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingTimer(
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
     ) const override;

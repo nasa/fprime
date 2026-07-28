@@ -222,7 +222,6 @@ void WasmSequencer ::TRACE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     switch (this->sequencer_getState()) {
         case WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE:
-        case WasmSequencer_SequencerStateMachine_State::RUNNING_SLEEPING:
         case WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING:
             // Already running
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -524,10 +523,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdRe
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_set_sleepTime(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {}
-
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStatementTimeout(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
@@ -537,7 +532,24 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStateme
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO
+    // Check if we have overrun the timer
+    FW_ASSERT(this->m_hasPendingTimer);
+
+    Fw::Time now = this->getTime();
+    switch (now.compare(now, this->m_pendingTimer)) {
+        case Fw::TimeComparison::LT:
+            // No timer overrun
+            break;
+        case Fw::TimeComparison::EQ:
+        case Fw::TimeComparison::GT:
+            // Timeout!
+            this->sequencer_sendSignal_stmtResponse_success();
+            break;
+        case Fw::TimeComparison::INCOMPARABLE:
+            // Time base / context changed since we set the timer
+            this->sequencer_sendSignal_result_timeOpFailed();
+            break;
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendPause(
@@ -652,10 +664,30 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             }
 
         } break;
-        case PendingHostFunction::RSLEEP:
+        case PendingHostFunction::RSLEEP: {
+            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.time_us / 1000000);
+            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.time_us % 1000000);
+
+            // Relative sleep from now
+            Fw::Time timer = this->getTime();
+            timer.add(seconds, useconds);
+
+            this->m_pendingTimer = timer;
+            this->m_hasPendingTimer = true;
             break;
-        case PendingHostFunction::ASLEEP:
+        }
+        case PendingHostFunction::ASLEEP: {
+            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.time_us / 1000000);
+            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.time_us % 1000000);
+
+            // Absolute is relative to epoch, we still need to get the time for base/context
+            Fw::Time timer = this->getTime();
+            timer.set(seconds, useconds);
+
+            this->m_pendingTimer = timer;
+            this->m_hasPendingTimer = true;
             break;
+        }
     }
 }
 void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingHostFunction(
@@ -663,6 +695,7 @@ void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingH
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     this->m_pendingHostFunction.kind = PendingHostFunction::NONE;
     this->m_pendingHostFunction.caller = nullptr;
+    this->m_hasPendingTimer = false;
 }
 
 // ----------------------------------------------------------------------
@@ -697,6 +730,12 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingHostFu
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
     return this->m_pendingHostFunction.isPending();
+}
+
+bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingTimer(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
+    return this->m_hasPendingTimer;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSucceeded(

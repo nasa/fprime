@@ -92,6 +92,9 @@ state machine SequencerStateMachine {
     @ return true if execution should pause before spinning the next statement
     guard pendingPause
 
+    @ return true if there is a pending sleep timer
+    guard pendingTimer
+
     @ a host function is waiting to be processed
     guard pendingHostFunction
 
@@ -232,8 +235,6 @@ state machine SequencerStateMachine {
     action report_seqTrap
     @ reports that execution was paused at a breakpoint
     action report_seqPaused
-    @ stores the requested wake time for the SLEEPING state
-    action set_sleepTime
     @ checks if the current statement has timed out
     action checkStatementTimeout
     @ checks if the sequencer should wake from sleep
@@ -249,10 +250,6 @@ state machine SequencerStateMachine {
 
     @ raised whenever the checkTimers port is called
     signal checkTimersIn
-    @ raised when we are done sleeping
-    signal result_checkShouldWake_wakeup
-    @ raised when we should keep sleeping
-    signal result_checkShouldWake_keepSleeping
     @ raised when an operation could not be performed on a Fw::Time object due to a
     @ mismatched time base or context
     signal result_timeOpFailed
@@ -277,9 +274,6 @@ state machine SequencerStateMachine {
     @ An asynchronous host function has been called and has requested the interpreter pause
     signal interpreterPause
 
-    @ A signal to put the interpreter to sleep until a given time
-    signal interpreterSleep: Fw.Time
-
     @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
         initial enter PAUSE_CHECK
@@ -298,7 +292,6 @@ state machine SequencerStateMachine {
             on interpreterTrap do { report_seqTrap, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             on interpreterOutOfFuel enter PAUSE_CHECK
             on interpreterPause enter HOST_FUNCTION
-            on interpreterSleep do { set_sleepTime } enter SLEEPING
 
             # Check if there is a pending 
             choice HOST_FUNCTION {
@@ -323,26 +316,20 @@ state machine SequencerStateMachine {
         @ a host function paused the interpreter to dispatch an F´ command;
         @ waiting for the command response to come back in
         state AWAITING_RESPONSE {
-            on checkTimersIn do { checkStatementTimeout }
+            on checkTimersIn enter CHECK_TIMERS
+
+            choice CHECK_TIMERS {
+                if pendingTimer do { checkShouldWake, checkStatementTimeout } enter AWAITING_RESPONSE \
+                else do { checkStatementTimeout } enter AWAITING_RESPONSE
+            }
+
             # -->
             on result_checkStatementTimeout_statementTimeout do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # this can occur if the time base/ctx changes, or was invalid from the start
             on result_timeOpFailed do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
 
-            on stmtResponse_success enter PAUSE_CHECK
+            on stmtResponse_success do { clearPendingHostFunction } enter PAUSE_CHECK
             on stmtResponse_failure do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-        }
-
-        @ sequencer is not taking any action, waiting for a time in the future to continue
-        state SLEEPING {
-            on checkTimersIn do { checkShouldWake, checkStatementTimeout }
-            # -->
-            on result_checkShouldWake_wakeup enter PAUSE_CHECK
-            # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            # if result_checkShouldWake_keepSleeping is raised, stay asleep
-            # if result_checkStatementTimeout_noTimeout is raised, stay asleep
         }
 
         state PAUSED {

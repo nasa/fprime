@@ -4,13 +4,9 @@
 // \brief  cpp file for WasmSequencer Wasm Host functions
 // ======================================================================
 
-#include "Fw/Com/ComPacket.hpp"
 #include "Fw/Log/LogSeverityEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/ExternalString.hpp"
-#include "Fw/Types/Serializable.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
 #include "spacewasm.h"
 
