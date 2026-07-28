@@ -43,13 +43,13 @@ enum TrapReason {
 
 enum AllocError : U8 {
     @ Not enough pages could be allocated to accommodate this allocation
-    OutOfMemory,
+    OUT_OF_MEMORY,
 
     @ Page was too small to fit this allocation
-    PageTooSmall,
+    PAGE_TOO_SMALL,
 
     @ A generic allocation failure
-    AllocationFailed,
+    ALLOCATION_FAILED,
 }
 
 type ModuleIdx = U8
