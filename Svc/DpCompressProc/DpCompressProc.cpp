@@ -53,6 +53,39 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
+    // Defense-in-depth: reject buffers smaller than a well-formed DP packet
+    // BEFORE constructing the DpContainer (which asserts the same
+    // invariant via FW_ASSERT). Two motivations, both from the SCJ
+    // brick-wall audit:
+    //
+    //   (1) `Fw::DpContainer::setBuffer` uses FW_ASSERT to enforce
+    //       bufferSize >= MIN_PACKET_SIZE. FW_ASSERT is compiled out at
+    //       lower FW_ASSERT_LEVEL settings; when it is, a caller that
+    //       hands us a buffer of length in [Header::SIZE, MIN_PACKET_SIZE)
+    //       gets past the constructor (deserializeHeader only touches
+    //       the header), and the subsequent
+    //           fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE
+    //       below is an unsigned underflow. The resulting `data_buffer`
+    //       has an astronomically-large size and downstream deserializer
+    //       loops walk off the buffer.
+    //
+    //   (2) The invariant is enforced in a different translation unit
+    //       (Fw/Dp/DpContainer.cpp) from where it's *relied on* here.
+    //       Same brick-wall-on-upstream-defense shape as the merged
+    //       nasa/fprime#5262 (FileUplink::File::open, June 2026): a
+    //       future widening of MIN_PACKET_SIZE or refactor of setBuffer
+    //       could silently break this consumer without any diff to
+    //       this file. Adding a local check makes the invariant
+    //       load-bearing on THIS site's own text.
+    if (fwBuffer.getSize() < Fw::DpContainer::MIN_PACKET_SIZE) {
+        // Buffer is too small to be a well-formed DP packet.
+        // Reuse the InvalidHeader EVR; the header is trivially invalid
+        // if the buffer can't even hold the container's minimum.
+        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(),
+                                           static_cast<U32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH));
+        return;
+    }
+
     Fw::DpContainer container(0, fwBuffer);
     const Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
