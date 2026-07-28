@@ -28,6 +28,8 @@ predicate initializesConstant(Literal l) {
 from Literal l
 where
   l.fromSource() and
+  // Test code (test/ut directories) is exempt
+  not l.getFile().getAbsolutePath().matches(["%/test/%", "%/ut/%"]) and
   (l.getUnspecifiedType() instanceof IntegralType or
     l.getUnspecifiedType() instanceof FloatingPointType) and
   not l instanceof CharLiteral and
