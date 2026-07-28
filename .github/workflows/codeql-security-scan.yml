@@ -116,6 +116,9 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      # Read dismissed code-scanning alerts so UI dismissals are excluded
+      # from the published findings tables.
+      security-events: read
     concurrency:
       group: baseline-publish-${{ github.ref }}
       cancel-in-progress: false
