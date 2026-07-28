@@ -20,8 +20,11 @@ predicate isFprimeHandler(Function f) {
 /** A call that sends a failed (non-OK) command response. */
 predicate failureReport(FunctionCall fc) {
   fc.getTarget().getName() = "cmdResponse_out" and
-  exists(Expr resp | resp = fc.getArgument(2) |
-    not resp.toString().matches("%OK%")
+  exists(EnumConstantAccess eca | eca.getParent*() = fc.getArgument(2) |
+    eca.getTarget().getName() != "OK"
+  ) and
+  not exists(EnumConstantAccess eca | eca.getParent*() = fc.getArgument(2) |
+    eca.getTarget().getName() = "OK"
   )
 }
 
@@ -43,6 +46,8 @@ where
   failureReport(report) and
   // ... but does not stop execution ...
   not transfersControl(guard.getThen()) and
+  // ... the nominal path is not confined to an else branch ...
+  not exists(guard.getElse()) and
   // ... and there is code after the guard that would run anyway
   exists(guard.getFollowingStmt())
 select guard,
