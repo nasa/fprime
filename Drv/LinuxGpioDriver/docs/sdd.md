@@ -65,7 +65,7 @@ A line is configured once through the `open()` method, which selects one of five
 4. Requests a line handle (`GPIO_GET_LINEHANDLE_IOCTL`) for the input and output modes, or a line event (`GPIO_GET_LINEEVENT_IOCTL`) for the interrupt modes
 5. Retains the resulting file descriptor and configuration on success
 
-The component name is passed to the kernel as the consumer label for the line, so the owning component is identifiable in tools such as `gpioinfo`.
+The component name is passed to the kernel as the consumer label for the line (when object names are enabled via `FW_OBJECT_NAMES`), so the owning component is identifiable in tools such as `gpioinfo`.
 
 ### 3.4 Read and Write Operations
 
@@ -86,15 +86,15 @@ The polling loop performs the following:
 2. Reads the kernel event record when the descriptor becomes ready
 3. Captures a timestamp with `Os::RawTime`
 4. Invokes the `gpioInterrupt` output port with that timestamp
-5. Reports short reads, polling failures, and timestamp failures via events
+5. Reports short reads, polling failures, and timestamp failures via events; on a timestamp failure the interrupt is still emitted with the (possibly invalid) timestamp
 
-Because `gpioInterrupt` is invoked directly from the polling thread, the receiving component is responsible for any thread-safety and execution-time constraints on that path. Connecting the port to an active component, such as `Svc::ActiveRateGroup`, keeps work off the polling thread.
+Because `gpioInterrupt` is invoked directly from the polling thread, the receiving component is responsible for any thread-safety and execution-time constraints on that path. Connecting the port to an `async` input port, such as `CycleIn` on `Svc::ActiveRateGroup`, keeps work off the polling thread.
 
 ### 3.6 Threading Model
 
 The interrupt thread is controlled by three methods:
 
-- `start()`: sets the running flag and starts the polling task
+- `start()`: sets the running flag and starts the polling task; returns `Drv::GpioStatus::UNKNOWN_ERROR` if the task fails to start
 - `stop()`: clears the running flag, requesting shutdown
 - `join()`: blocks until the polling task exits
 
@@ -198,7 +198,7 @@ Port handlers return `Drv::GpioStatus`:
 | INVALID_MODE | Operation not permitted with the current configuration |
 | UNKNOWN_ERROR | An unknown error occurred |
 
-`open()` returns `Os::File::Status`, translated from the `errno` reported by the underlying system call.
+`open()` returns `Os::File::Status`, translated from the `errno` reported by the underlying system call. Note: in the current implementation, a request for a line number beyond the chip's line count logs `OpenPinError` but returns the preceding status (`OP_OK`); callers should not rely on `open()` returning an error in that case.
 
 ### 5.4 Events
 
