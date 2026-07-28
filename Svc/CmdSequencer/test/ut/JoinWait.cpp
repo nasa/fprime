@@ -79,6 +79,39 @@ void CmdSequencerTester ::test_join_wait_with_active_seq() {
     ASSERT_FALSE(this->component.m_join_waiting);
 }
 
+void CmdSequencerTester ::test_join_wait_with_blocking_seq() {
+    const U32 numRecords = 1;
+    SequenceFiles::RelativeFile file(numRecords, this->format);
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
+    this->setTestTime(testTime);
+    // Write the file
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // Validate the file
+    this->validateFile(0, fileName);
+
+    // Run the sequence in BLOCK mode; no response until completion
+    const U32 runCmdSeq = 12;
+    this->sendCmd_CS_RUN(0, runCmdSeq, Fw::CmdStringArg(fileName), Svc::BlockState::BLOCK);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // JOIN_WAIT must be rejected while a BLOCK-mode response is pending
+    this->sendCmd_CS_JOIN_WAIT(0, 34);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_JOIN_WAIT, 34, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_CS_JoinWaitingNotComplete_SIZE(1);
+    ASSERT_FALSE(this->component.m_join_waiting);
+
+    // Complete the sequence; BLOCK-mode caller receives its completion response
+    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::OK);
+}
+
 }  // namespace JoinWait
 
 }  // namespace Svc

@@ -395,6 +395,11 @@ TEST(JoinWait, JoinWaitWithActiveSeq) {
     tester.test_join_wait_with_active_seq();
 }
 
+TEST(JoinWait, JoinWaitWithBlockingSeq) {
+    Svc::JoinWait::CmdSequencerTester tester;
+    tester.test_join_wait_with_blocking_seq();
+}
+
 TEST(InvalidFiles, RunNoRecords) {
     Svc::NoRecords::CmdSequencerTester tester;
     tester.RunNoRecords();

@@ -215,6 +215,12 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
         this->log_WARNING_LO_CS_NoSequenceActive();
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
+    } else if ((Svc::BlockState::BLOCK == this->m_blockState) || this->m_join_waiting) {
+        // A command response is already owed to a BLOCK-mode CS_RUN caller or a
+        // previous CS_JOIN_WAIT caller. Reject rather than overwrite that state,
+        // which would leave the original caller without a completion response.
+        this->log_WARNING_HI_CS_JoinWaitingNotComplete();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     } else {
         m_join_waiting = true;
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
