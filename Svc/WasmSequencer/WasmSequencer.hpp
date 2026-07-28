@@ -527,53 +527,45 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     U32 m_cmdSeq;
 
     /// FPrime Wasm Interface Host Functions
-    static spacewasm_hostcall_result_t fprime_wasm_exit(struct spacewasm_caller_t* caller,
-                                                        void* userdata,
-                                                        const struct spacewasm_value_t* params,
-                                                        size_t n_params,
-                                                        struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmExit(struct spacewasm_caller_t* caller,
+                                         const struct spacewasm_value_t* params,
+                                         size_t n_params,
+                                         struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_panic(struct spacewasm_caller_t* caller,
-                                                         void* userdata,
-                                                         const struct spacewasm_value_t* params,
-                                                         size_t n_params,
-                                                         struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmPanic(struct spacewasm_caller_t* caller,
+                                          const struct spacewasm_value_t* params,
+                                          size_t n_params,
+                                          struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_read_telemetry(struct spacewasm_caller_t* caller,
-                                                                  void* userdata,
-                                                                  const struct spacewasm_value_t* params,
-                                                                  size_t n_params,
-                                                                  struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmReadTelemetry(struct spacewasm_caller_t* caller,
+                                                  const struct spacewasm_value_t* params,
+                                                  size_t n_params,
+                                                  struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_read_parameter(struct spacewasm_caller_t* caller,
-                                                                  void* userdata,
-                                                                  const struct spacewasm_value_t* params,
-                                                                  size_t n_params,
-                                                                  struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmReadParameter(struct spacewasm_caller_t* caller,
+                                                  const struct spacewasm_value_t* params,
+                                                  size_t n_params,
+                                                  struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_command(struct spacewasm_caller_t* caller,
-                                                           void* userdata,
-                                                           const struct spacewasm_value_t* params,
-                                                           size_t n_params,
-                                                           struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmCommand(struct spacewasm_caller_t* caller,
+                                            const struct spacewasm_value_t* params,
+                                            size_t n_params,
+                                            struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_event(struct spacewasm_caller_t* caller,
-                                                         void* userdata,
-                                                         const struct spacewasm_value_t* params,
-                                                         size_t n_params,
-                                                         struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmEvent(struct spacewasm_caller_t* caller,
+                                          const struct spacewasm_value_t* params,
+                                          size_t n_params,
+                                          struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_rsleep(struct spacewasm_caller_t* caller,
-                                                          void* userdata,
-                                                          const struct spacewasm_value_t* params,
-                                                          size_t n_params,
-                                                          struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmRsleep(struct spacewasm_caller_t* caller,
+                                           const struct spacewasm_value_t* params,
+                                           size_t n_params,
+                                           struct spacewasm_value_t* out_result);
 
-    static spacewasm_hostcall_result_t fprime_wasm_asleep(struct spacewasm_caller_t* caller,
-                                                          void* userdata,
-                                                          const struct spacewasm_value_t* params,
-                                                          size_t n_params,
-                                                          struct spacewasm_value_t* out_result);
+    spacewasm_hostcall_result_t wasmAsleep(struct spacewasm_caller_t* caller,
+                                           const struct spacewasm_value_t* params,
+                                           size_t n_params,
+                                           struct spacewasm_value_t* out_result);
 };
 
 }  // namespace Svc

@@ -377,10 +377,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
     // immediately after load (the module retains its own reference).
     spacewasm_allocator_t* alloc = spacewasm_allocator_new(
+        /* alloc */
         [](void* userdata, const size_t size, const size_t align) -> U8* {
             FW_ASSERT(userdata != nullptr);
             return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
         },
+        /* realloc */
         [](void* userdata, uint8_t* ptr, size_t old_size, size_t new_size, size_t align) -> U8* {
             (void)userdata;
             (void)ptr;
@@ -392,12 +394,13 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
             FW_ASSERT(false);
             return nullptr;
         },
+        /* dealloc */
         [](void* userdata, U8* ptr, size_t size, size_t align) {
             FW_ASSERT(userdata != nullptr);
             (void)align;
             static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
         },
-        this);
+        /* userdata */ this);
 
     const spacewasm_status_t status = spacewasm_load_module(
         this->m_wasm, moduleName.toChar(),

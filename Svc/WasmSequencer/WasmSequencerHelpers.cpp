@@ -95,36 +95,43 @@ Fw::Success WasmSequencer ::createStore() {
     spacewasm_status_t status = spacewasm_host_new(1, &host);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
+#define HOST_FN(member_fn)                                                                                         \
+    [](struct spacewasm_caller_t* caller, void* userdata, const struct spacewasm_value_t* params, size_t n_params, \
+       struct spacewasm_value_t* out_result) {                                                                     \
+        FW_ASSERT(userdata);                                                                                       \
+        return static_cast<WasmSequencer*>(userdata)->member_fn(caller, params, n_params, out_result);             \
+    }
+
     U32 module_idx;
     status = spacewasm_add_host_module(&host, "fprime", 8, 0, &module_idx);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "exit", "i", "", WasmSequencer::fprime_wasm_exit, this);
+    status = spacewasm_add_host_function(&host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "panic", "i", "", WasmSequencer::fprime_wasm_panic, this);
+    status = spacewasm_add_host_function(&host, module_idx, "panic", "i", "", HOST_FN(wasmPanic), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "tlm", "iiiii", "i",
-                                         WasmSequencer::fprime_wasm_read_telemetry, this);
+    status = spacewasm_add_host_function(&host, module_idx, "tlm", "iiiii", "i", HOST_FN(wasmReadTelemetry), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "prm", "iii", "i",
-                                         WasmSequencer::fprime_wasm_read_parameter, this);
+    status = spacewasm_add_host_function(&host, module_idx, "prm", "iii", "i", HOST_FN(wasmReadParameter), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "cmd", "ii", "i", WasmSequencer::fprime_wasm_command, this);
+    status = spacewasm_add_host_function(&host, module_idx, "cmd", "ii", "i", HOST_FN(wasmCommand), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "event", "iii", "", WasmSequencer::fprime_wasm_event, this);
+    status = spacewasm_add_host_function(&host, module_idx, "event", "iii", "", HOST_FN(wasmEvent), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "rsleep", "I", "", WasmSequencer::fprime_wasm_rsleep, this);
+    status = spacewasm_add_host_function(&host, module_idx, "rsleep", "I", "", HOST_FN(wasmRsleep), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     spacewasm_compiler_options_t options;
-    status = spacewasm_add_host_function(&host, module_idx, "asleep", "I", "", WasmSequencer::fprime_wasm_asleep, this);
+    status = spacewasm_add_host_function(&host, module_idx, "asleep", "I", "", HOST_FN(wasmAsleep), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
+
+#undef HOST_FN
 
     options.allow_memory_grow = false;
     options.max_backpatch_iterations = 0;
