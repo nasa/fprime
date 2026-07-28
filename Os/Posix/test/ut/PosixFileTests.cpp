@@ -192,8 +192,7 @@ TEST(PosixFileErrorHandling, WriteBadDescriptorSurfacesError) {
     ASSERT_EQ(file.open(path_template, Os::File::OPEN_WRITE), Os::File::Status::OP_OK);
 
     // Close the descriptor Os::File is holding so the next ::write() -> EBADF.
-    Os::Posix::File::PosixFileHandle* handle =
-        static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
+    Os::Posix::File::PosixFileHandle* handle = static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
     ASSERT_GE(handle->m_file_descriptor, 0);
     ::close(handle->m_file_descriptor);
 
@@ -223,8 +222,7 @@ TEST(PosixFileErrorHandling, ReadBadDescriptorSurfacesError) {
     Os::File file;
     ASSERT_EQ(file.open(path_template, Os::File::OPEN_READ), Os::File::Status::OP_OK);
 
-    Os::Posix::File::PosixFileHandle* handle =
-        static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
+    Os::Posix::File::PosixFileHandle* handle = static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
     ASSERT_GE(handle->m_file_descriptor, 0);
     ::close(handle->m_file_descriptor);
 
