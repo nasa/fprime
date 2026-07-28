@@ -2,8 +2,8 @@
  * @name Public data member
  * @description Non-static data members of classes with behavior (member
  *              functions) should be private or protected to preserve
- *              encapsulation. Plain aggregate types (no member functions)
- *              are not flagged.
+ *              encapsulation. Types declared with the `struct` keyword and
+ *              plain aggregates (no member functions) are not flagged.
  * @kind problem
  * @id cpp/fprime/public-data-member
  * @problem.severity recommendation
@@ -20,7 +20,8 @@ where
   mv.isPublic() and
   not mv.isStatic() and
   not mv.isConst() and
-  not c instanceof Union and
+  // `struct` (and `union`) declarations are conventionally plain data carriers
+  not c instanceof Struct and
   // Aggregates without behavior are acceptable as plain data carriers
   exists(MemberFunction f |
     f.getDeclaringType() = c and
