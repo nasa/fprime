@@ -119,10 +119,10 @@ Fw::Success WasmSequencer ::createStore() {
     status = spacewasm_add_host_function(&host, module_idx, "panic", "i", "", HOST_FN(wasmPanic), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "tlm", "iiiii", "i", HOST_FN(wasmReadTelemetry), this);
+    status = spacewasm_add_host_function(&host, module_idx, "tlm", "Iiiii", "i", HOST_FN(wasmReadTelemetry), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(&host, module_idx, "prm", "iii", "i", HOST_FN(wasmReadParameter), this);
+    status = spacewasm_add_host_function(&host, module_idx, "prm", "Iii", "i", HOST_FN(wasmReadParameter), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     status = spacewasm_add_host_function(&host, module_idx, "cmd", "ii", "i", HOST_FN(wasmCommand), this);

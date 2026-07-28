@@ -7,7 +7,10 @@
 #include "Fw/Log/LogSeverityEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
+#include "config/FppConstantsAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
+#include "config/FwPrmIdTypeAliasAc.h"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -26,6 +29,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t*,
                                                      const spacewasm_value_t*,
                                                      size_t,
                                                      spacewasm_value_t*) {
+    // TODO(tumbar) Extract status code
     return SPACEWASM_TRAP;
 }
 
@@ -33,14 +37,83 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
                                                              const spacewasm_value_t* params,
                                                              size_t n_params,
                                                              spacewasm_value_t*) {
-    return SPACEWASM_TRAP;
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    // These are automatically validated by spacewasm so it should be safe to assert them
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 5, static_cast<FwAssertArgType>(n_params));
+
+    // FwChanIdType always in 64-bits
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
+    FW_ASSERT(params[3].tag == spacewasm_valtype_t::SPACEWASM_I32, params[3].tag);
+    FW_ASSERT(params[4].tag == spacewasm_valtype_t::SPACEWASM_I32, params[4].tag);
+
+    I64 id = params[0].u.i64_;
+    const U32 time_ptr = static_cast<U32>(params[1].u.i32_);
+    const U32 time_size = static_cast<U32>(params[2].u.i32_);
+    const U32 value_ptr = static_cast<U32>(params[3].u.i32_);
+    const U32 value_size = static_cast<U32>(params[4].u.i32_);
+
+    spacewasm_hostcall_result_t return_status;
+    if (value_size > FW_TLM_BUFFER_MAX_SIZE) {
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TELEMETRY, value_size, FW_TLM_BUFFER_MAX_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else if (time_size != Fw::Time::SERIALIZED_SIZE) {
+        // We expect an expact match for serialized time
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TELEMETRY, time_size,
+                                            Fw::Time::SERIALIZED_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else {
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TELEMETRY;
+        this->m_pendingHostFunction.caller = caller;
+        this->m_pendingHostFunction.prm_id = static_cast<FwPrmIdType>(id);
+        this->m_pendingHostFunction.ptr1 = time_ptr;
+        this->m_pendingHostFunction.len1 = time_size;
+        this->m_pendingHostFunction.ptr2 = value_ptr;
+        this->m_pendingHostFunction.len2 = value_size;
+
+        // Always pause the interpreter to allow the state machine to process this request
+        return_status = SPACEWASM_PAUSE;
+    }
+
+    return return_status;
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmReadParameter(spacewasm_caller_t* caller,
                                                              const spacewasm_value_t* params,
                                                              size_t n_params,
                                                              spacewasm_value_t*) {
-    return SPACEWASM_TRAP;
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    // These are automatically validated by spacewasm so it should be safe to assert them
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 3, static_cast<FwAssertArgType>(n_params));
+
+    // FwPrmIdType always in 64-bits
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
+
+    I64 id = params[0].u.i64_;
+    const U32 ptr = static_cast<U32>(params[1].u.i32_);
+    const U32 len = static_cast<U32>(params[2].u.i32_);
+
+    spacewasm_hostcall_result_t return_status;
+    if (len > FW_PARAM_BUFFER_MAX_SIZE) {
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::PARAMETER, len, FW_PARAM_BUFFER_MAX_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else {
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::PARAMETER;
+        this->m_pendingHostFunction.caller = caller;
+        this->m_pendingHostFunction.prm_id = static_cast<FwPrmIdType>(id);
+        this->m_pendingHostFunction.ptr1 = ptr;
+        this->m_pendingHostFunction.len1 = len;
+
+        // Always pause the interpreter to allow the state machine to process this request
+        return_status = SPACEWASM_PAUSE;
+    }
+
+    return return_status;
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmCommand(struct spacewasm_caller_t* caller,
@@ -59,10 +132,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmCommand(struct spacewasm_caller_t
 
     spacewasm_hostcall_result_t return_status;
     if (len + sizeof(FwPacketDescriptorType) > FW_COM_BUFFER_MAX_SIZE) {
-        this->log_WARNING_HI_CommandTooLarge(len, FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType));
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::COMMAND, len,
+                                            FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType));
         return_status = SPACEWASM_TRAP;
     } else {
-        this->m_pendingHostFunction.kind = PendingHostFunction::COMMAND;
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::COMMAND;
         this->m_pendingHostFunction.caller = caller;
         this->m_pendingHostFunction.ptr1 = ptr;
         this->m_pendingHostFunction.len1 = len;
@@ -98,7 +172,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmEvent(spacewasm_caller_t* caller,
     }
 
     // Pend this event dispatch to be executed by the sequencer state machine
-    this->m_pendingHostFunction.kind = PendingHostFunction::EVENT;
+    this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::EVENT;
     this->m_pendingHostFunction.caller = caller;
     this->m_pendingHostFunction.severity = static_cast<Fw::LogSeverity::T>(params[0].u.i32_);
     this->m_pendingHostFunction.ptr1 = ptr;
@@ -117,7 +191,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmRsleep(spacewasm_caller_t* caller
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
 
     const U64 us = static_cast<U64>(params[0].u.i64_);
-    this->m_pendingHostFunction.kind = PendingHostFunction::RSLEEP;
+    this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::RSLEEP;
     this->m_pendingHostFunction.caller = caller;
     this->m_pendingHostFunction.time_us = us;
 
@@ -134,7 +208,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
 
     const U64 us = static_cast<U64>(params[0].u.i64_);
-    this->m_pendingHostFunction.kind = PendingHostFunction::ASLEEP;
+    this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASLEEP;
     this->m_pendingHostFunction.caller = caller;
     this->m_pendingHostFunction.time_us = us;
 

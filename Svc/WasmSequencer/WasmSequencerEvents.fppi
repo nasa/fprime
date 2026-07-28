@@ -35,11 +35,11 @@ event SequenceSucceeded() \
     severity activity high \
     format "Wasm program completed successfully"
 
-event CommandTooLarge($size: U32, maxSize: U32) \
+event BufferTooLarge(host_function: HostFunction, $size: U32, maxSize: U32) \
     severity warning high \
-    format "Command payload size {} larger than host maximum size {}"
+    format "Host function {} buffer payload size {} larger than host maximum size {}"
 
-event HostFunctionInvalidPointer(f: HostFunction, code: Status) \
+event HostFunctionInvalidPointer(host_function: HostFunction, code: Status) \
     severity warning high \
     format "Failed to read guest pointer in host function {}: {}"
 

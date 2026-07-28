@@ -11,6 +11,7 @@
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
@@ -518,18 +519,10 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     struct PendingHostFunction {
         PendingHostFunction() = default;
-        bool isPending() const { return kind != NONE; }
-        void clear() { kind = NONE; }
+        bool isPending() const { return kind != WasmSequencer_HostFunction::NONE; }
+        void clear() { kind = WasmSequencer_HostFunction::NONE; }
 
-        enum Kind {
-            NONE,
-            TELEMETRY,
-            PARAMETER,
-            COMMAND,
-            EVENT,
-            RSLEEP,
-            ASLEEP,
-        } kind = NONE;
+        WasmSequencer_HostFunction kind;
 
         // TODO(tumbar) We should be able to do memory ops on `spacewasm_t`
         spacewasm_caller_t* caller;

@@ -1,6 +1,11 @@
-enum HostFunction : I32 {
+enum HostFunction : U8 {
+    NONE,
+    TELEMETRY,
+    PARAMETER,
     COMMAND,
     EVENT,
+    RSLEEP,
+    ASLEEP,
 }
 
 enum Status : I32 {
