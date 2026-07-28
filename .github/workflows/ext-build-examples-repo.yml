@@ -104,7 +104,7 @@ jobs:
           fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection fprime &
           sleep 10
           cd ../..
-          pytest --dictionary aarch64-linux-artifacts/ManagerWorker/Subtopology/ManagerWorkerAppDictionary.json \
-            --deployment-config Subtopology/test/int/int_config.json \
+          pytest --dictionary build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
+            --deployment-config ManagerWorker/Subtopology/test/int/int_config.json \
             -v \
             aarch64-linux-artifacts/ManagerWorker/Subtopology/test/int/test_manager_worker.py
