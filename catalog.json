@@ -2,17 +2,17 @@
   "schema": 1,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "ac44212868394a57db820e79c4fa8c5c0c4e527c",
-  "generated_at": "2026-07-28T00:39:30Z",
+  "commit": "60611441291ac8883d28f197aa24f037554e42e8",
+  "generated_at": "2026-07-28T16:28:53Z",
   "overall": {
-    "line_pct": 82.2,
-    "line_covered": 15600,
+    "line_pct": 82.18,
+    "line_covered": 15597,
     "line_total": 18978,
     "function_pct": 62.63,
     "function_covered": 5525,
     "function_total": 8822,
-    "branch_pct": 72.0,
-    "branch_covered": 8885,
+    "branch_pct": 71.99,
+    "branch_covered": 8883,
     "branch_total": 12340,
     "report": "coverage/coverage-all.html"
   },
@@ -653,14 +653,14 @@
       "has_coverage": true,
       "report": "Os/Generic/coverage/index.html",
       "summary": "Os/Generic/coverage/summary.json",
-      "line_pct": 88.99,
-      "line_covered": 711,
+      "line_pct": 89.24,
+      "line_covered": 713,
       "line_total": 799,
       "function_pct": 88.16,
       "function_covered": 67,
       "function_total": 76,
-      "branch_pct": 72.99,
-      "branch_covered": 300,
+      "branch_pct": 73.72,
+      "branch_covered": 303,
       "branch_total": 411
     },
     {
@@ -675,8 +675,8 @@
       "function_pct": 92.86,
       "function_covered": 26,
       "function_total": 28,
-      "branch_pct": 74.29,
-      "branch_covered": 78,
+      "branch_pct": 75.24,
+      "branch_covered": 79,
       "branch_total": 105
     },
     {
@@ -697,8 +697,8 @@
       "function_pct": 84.21,
       "function_covered": 80,
       "function_total": 95,
-      "branch_pct": 44.08,
-      "branch_covered": 190,
+      "branch_pct": 43.85,
+      "branch_covered": 189,
       "branch_total": 431
     },
     {
@@ -911,8 +911,8 @@
       "function_pct": 100.0,
       "function_covered": 5,
       "function_total": 5,
-      "branch_pct": 91.3,
-      "branch_covered": 21,
+      "branch_pct": 86.96,
+      "branch_covered": 20,
       "branch_total": 23
     },
     {
