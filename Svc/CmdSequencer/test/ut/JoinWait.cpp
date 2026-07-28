@@ -101,7 +101,7 @@ void CmdSequencerTester ::test_join_wait_with_blocking_seq() {
     this->sendCmd_CS_JOIN_WAIT(0, 34);
     this->clearAndDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_JOIN_WAIT, 34, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_JOIN_WAIT, 34, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EVENTS_CS_JoinWaitingNotComplete_SIZE(1);
     ASSERT_FALSE(this->component.m_join_waiting);
 
@@ -109,7 +109,7 @@ void CmdSequencerTester ::test_join_wait_with_blocking_seq() {
     this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
     this->clearAndDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentBase::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::OK);
 }
 
 }  // namespace JoinWait
