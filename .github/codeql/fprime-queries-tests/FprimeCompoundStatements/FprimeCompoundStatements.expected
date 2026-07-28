@@ -1,0 +1,3 @@
+| test.cpp:6:9:6:18 | ExprStmt | The body of this if statement is not a compound statement (missing braces). |
+| test.cpp:9:9:9:18 | ExprStmt | The body of this for loop is not a compound statement (missing braces). |
+| test.cpp:12:9:12:12 | ExprStmt | The body of this while loop is not a compound statement (missing braces). |
