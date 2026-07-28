@@ -10,35 +10,35 @@ struct ModuleLoad {
 
 enum TrapReason {
     @ Triggered by unreachable instruction
-    Unreachable,
+    UNREACHABLE,
     @ A host function has noted an unrecoverable failure
-    Host,
+    HOST,
     @ Integer or floating point division by zero
-    DivideByZero,
+    DIVIDE_BY_ZERO,
     @ An indirect call tried to map to a table function out of range
-    InvalidTableIndex,
+    INVALID_TABLE_INDEX,
     @ The function type in an indirect call does not match the function pointer's type
-    InvalidTableFunctionType,
+    INVALID_TABLE_FUNCTION_TYPE,
     @ An indirect call tried to map to a table function out of range
-    UninitializedTableElement,
+    UNINTIIALIZED_TABLE_ELEMENT,
     @ An imported global could not be read
-    GlobalGetFailed,
+    GLOBAL_GET_FAILED,
     @ An imported global could not be set
-    GlobalSetFailed,
+    GLOBAL_SET_FAILED,
     @ A memory operation is out of bounds
-    OutOfMemory,
+    OUT_OF_MEMORY,
     @ memory.grow failed because a host function has taken ownership of a memory
-    MemoryRefNotUnique,
+    MEMORY_REF_NOT_UNIQUE,
     @ A memory operation is out of bounds
-    MemoryOutOfBounds,
+    MEMORY_OUT_OF_BOUNDS,
     @ Ran out of stack space
-    StackOverflow,
+    STACK_OVERFLOW,
     @ Attempting to convert Inf to integer
-    UnrepresentableResult,
+    UNREPRESENTABLE_RESULT,
     @ Signed division causes integer overflow
-    IntegerOverflow,
+    INTEGER_OVERFLOW,
     @ Attempting to convert NaN to integer
-    BadConversionToInteger,
+    BAD_CONVERSION_TO_INTEGER,
 }
 
 enum AllocError : U8 {

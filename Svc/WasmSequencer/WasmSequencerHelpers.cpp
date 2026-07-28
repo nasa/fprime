@@ -185,37 +185,37 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
     // spacewasm_trap_t values 0..14 map 1:1 onto the TrapReason enum ordinals.
     switch (trap) {
         case SPACEWASM_TRAP_UNREACHABLE:
-            return Svc::WasmSequencer_TrapReason::Unreachable;
+            return Svc::WasmSequencer_TrapReason::UNREACHABLE;
         case SPACEWASM_TRAP_HOST:
-            return Svc::WasmSequencer_TrapReason::Host;
+            return Svc::WasmSequencer_TrapReason::HOST;
         case SPACEWASM_TRAP_DIVIDE_BY_ZERO:
-            return Svc::WasmSequencer_TrapReason::DivideByZero;
+            return Svc::WasmSequencer_TrapReason::DIVIDE_BY_ZERO;
         case SPACEWASM_TRAP_INVALID_TABLE_INDEX:
-            return Svc::WasmSequencer_TrapReason::InvalidTableIndex;
+            return Svc::WasmSequencer_TrapReason::INVALID_TABLE_INDEX;
         case SPACEWASM_TRAP_INVALID_TABLE_FUNCTION_TYPE:
-            return Svc::WasmSequencer_TrapReason::InvalidTableFunctionType;
+            return Svc::WasmSequencer_TrapReason::INVALID_TABLE_FUNCTION_TYPE;
         case SPACEWASM_TRAP_UNINITIALIZED_TABLE_ELEMENT:
-            return Svc::WasmSequencer_TrapReason::UninitializedTableElement;
+            return Svc::WasmSequencer_TrapReason::UNINTIIALIZED_TABLE_ELEMENT;
         case SPACEWASM_TRAP_GLOBAL_GET_FAILED:
-            return Svc::WasmSequencer_TrapReason::GlobalGetFailed;
+            return Svc::WasmSequencer_TrapReason::GLOBAL_GET_FAILED;
         case SPACEWASM_TRAP_GLOBAL_SET_FAILED:
-            return Svc::WasmSequencer_TrapReason::GlobalSetFailed;
+            return Svc::WasmSequencer_TrapReason::GLOBAL_SET_FAILED;
         case SPACEWASM_TRAP_OUT_OF_MEMORY:
-            return Svc::WasmSequencer_TrapReason::OutOfMemory;
+            return Svc::WasmSequencer_TrapReason::OUT_OF_MEMORY;
         case SPACEWASM_TRAP_MEMORY_REF_NOT_UNIQUE:
-            return Svc::WasmSequencer_TrapReason::MemoryRefNotUnique;
+            return Svc::WasmSequencer_TrapReason::MEMORY_REF_NOT_UNIQUE;
         case SPACEWASM_TRAP_MEMORY_OUT_OF_BOUNDS:
-            return Svc::WasmSequencer_TrapReason::MemoryOutOfBounds;
+            return Svc::WasmSequencer_TrapReason::MEMORY_OUT_OF_BOUNDS;
         case SPACEWASM_TRAP_STACK_OVERFLOW:
-            return Svc::WasmSequencer_TrapReason::StackOverflow;
+            return Svc::WasmSequencer_TrapReason::STACK_OVERFLOW;
         case SPACEWASM_TRAP_UNREPRESENTABLE_RESULT:
-            return Svc::WasmSequencer_TrapReason::UnrepresentableResult;
+            return Svc::WasmSequencer_TrapReason::UNREPRESENTABLE_RESULT;
         case SPACEWASM_TRAP_INTEGER_OVERFLOW:
-            return Svc::WasmSequencer_TrapReason::IntegerOverflow;
+            return Svc::WasmSequencer_TrapReason::INTEGER_OVERFLOW;
         case SPACEWASM_TRAP_BAD_CONVERSION_TO_INTEGER:
-            return Svc::WasmSequencer_TrapReason::BadConversionToInteger;
+            return Svc::WasmSequencer_TrapReason::BAD_CONVERSION_TO_INTEGER;
         default:
-            return Svc::WasmSequencer_TrapReason::Host;
+            return Svc::WasmSequencer_TrapReason::HOST;
     }
 }
 

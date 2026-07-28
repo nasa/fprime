@@ -400,10 +400,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    if (this->m_wasm == nullptr) {
-        this->sequencer_sendSignal_interpreterTrap(Svc::WasmSequencer_TrapReason::Host);
-        return;
-    }
+    FW_ASSERT(this->m_wasm);
 
     Fw::ParamValid prmValid;
     const auto fuel = this->paramGet_INSTRUCTION_FUEL(prmValid);
