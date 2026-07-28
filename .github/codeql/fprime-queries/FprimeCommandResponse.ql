@@ -47,39 +47,83 @@ class CmdResponseCall extends FunctionCall {
 }
 
 /**
- * Holds if `node` is a call inside `h` that sends the command response
- * directly, i.e. any `cmdResponse_out` call. The opcode/sequence arguments are
- * not constrained: passing the wrong values is a different defect than never
- * responding at all.
+ * Holds if `call` sends a command response with `opExpr`/`seqExpr` as opcode
+ * and sequence: a `cmdResponse_out` call, or a call to a helper that forwards
+ * two of its parameters to a (transitive) `cmdResponse_out` call.
  */
-predicate directResponse(CmdHandler h, ControlFlowNode node) {
-  node.(CmdResponseCall).getEnclosingFunction() = h
-}
-
-/**
- * Holds if `node` is an assignment inside `h` that stores parameter `p` into
- * member variable `f` of the handler's component class (directly or via a
- * base class).
- */
-predicate memberStore(CmdHandler h, Parameter p, Field f, ControlFlowNode node) {
-  exists(Assignment a |
-    a = node and
-    a.getEnclosingFunction() = h and
-    a.getRValue() = p.getAnAccess() and
-    a.getLValue().(FieldAccess).getTarget() = f and
-    h.getDeclaringType().getABaseClass*() = f.getDeclaringType()
+predicate responseCall(FunctionCall call, Expr opExpr, Expr seqExpr) {
+  call instanceof CmdResponseCall and
+  opExpr = call.getArgument(0) and
+  seqExpr = call.getArgument(1)
+  or
+  exists(Function g, Parameter gOp, Parameter gSeq, FunctionCall inner |
+    call.getTarget() = g and
+    gOp = g.getAParameter() and
+    gSeq = g.getAParameter() and
+    inner.getEnclosingFunction() = g and
+    responseCall(inner, gOp.getAnAccess(), gSeq.getAnAccess()) and
+    opExpr = call.getArgument(gOp.getIndex()) and
+    seqExpr = call.getArgument(gSeq.getIndex())
   )
 }
 
 /**
- * Holds if some `cmdResponse_out` call reads member variables `fOp` and
- * `fSeq` as its opcode and sequence arguments, completing a deferred command
- * response.
+ * Holds if `node` is a call inside `h` that sends the command response
+ * directly (possibly via a helper), reading both the opcode and sequence
+ * parameters. The response value is not constrained: sending the wrong value
+ * is a different defect than never responding at all.
+ */
+predicate directResponse(CmdHandler h, ControlFlowNode node) {
+  exists(FunctionCall call | call = node |
+    call.getEnclosingFunction() = h and
+    (
+      call instanceof CmdResponseCall
+      or
+      responseCall(call, h.getOpCodeParameter().getAnAccess(), h.getCmdSeqParameter().getAnAccess())
+    )
+  )
+}
+
+/**
+ * Holds if `node` stores `valueExpr` into member variable `f`: a direct
+ * assignment, or a call to a helper that assigns one of its parameters to `f`.
+ */
+predicate fieldStore(ControlFlowNode node, Expr valueExpr, Field f) {
+  exists(Assignment a | a = node |
+    a.getRValue() = valueExpr and
+    a.getLValue().(FieldAccess).getTarget() = f
+  )
+  or
+  exists(FunctionCall call, Function g, Parameter gP | call = node |
+    call.getTarget() = g and
+    gP = g.getAParameter() and
+    exists(ControlFlowNode inner |
+      inner.(Expr).getEnclosingFunction() = g and
+      fieldStore(inner, gP.getAnAccess(), f)
+    ) and
+    valueExpr = call.getArgument(gP.getIndex())
+  )
+}
+
+/**
+ * Holds if `node`, inside `h`, stores parameter `p` into member variable `f`
+ * of the handler's component class (directly or via a base class).
+ */
+predicate memberStore(CmdHandler h, Parameter p, Field f, ControlFlowNode node) {
+  node.getControlFlowScope() = h and
+  fieldStore(node, p.getAnAccess(), f) and
+  h.getDeclaringType().getABaseClass*() = f.getDeclaringType()
+}
+
+/**
+ * Holds if some response call reads member variables `fOp` and `fSeq` as its
+ * opcode and sequence arguments, completing a deferred command response.
  */
 predicate deferredResponseRead(Field fOp, Field fSeq) {
-  exists(CmdResponseCall c |
-    c.getArgument(0).(FieldAccess).getTarget() = fOp and
-    c.getArgument(1).(FieldAccess).getTarget() = fSeq
+  exists(Expr opExpr, Expr seqExpr |
+    responseCall(_, opExpr, seqExpr) and
+    opExpr.(FieldAccess).getTarget() = fOp and
+    seqExpr.(FieldAccess).getTarget() = fSeq
   )
 }
 

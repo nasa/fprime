@@ -44,6 +44,27 @@ class Component {
         this->m_busy = true;
     }
 
+    // Compliant: responds on every path via a helper that forwards opCode
+    // and cmdSeq to cmdResponse_out.
+    void HELPER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) { this->sendCommandResponse(opCode, cmdSeq, 0); }
+
+    // Compliant: deferred pattern where the completing cmdResponse_out call
+    // reads the saved members through a helper.
+    void DEFERRED_HELPER_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+        this->m_opCode = opCode;
+        this->m_cmdSeq = cmdSeq;
+        this->m_busy = true;
+    }
+
+    void completeDeferredViaHelper() {
+        this->m_busy = false;
+        this->sendCommandResponse(this->m_opCode, this->m_cmdSeq, 0);
+    }
+
+    void sendCommandResponse(FwOpcodeType opCode, U32 cmdSeq, int status) {
+        this->cmdResponse_out(opCode, cmdSeq, status == 0 ? Fw::OK : Fw::EXECUTION_ERROR);
+    }
+
     void completeDeferred() {
         this->m_busy = false;
         this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::OK);
