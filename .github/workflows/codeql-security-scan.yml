@@ -93,3 +93,44 @@ jobs:
       with:
         sarif_file: sarif-results/${{ matrix.language }}.sarif
         category: "/language:${{matrix.language}}"
+
+    # Hand the filtered SARIF to the publish-findings job so per-module
+    # findings can be published without re-running CodeQL.
+    - name: Upload SARIF artifact for publishing
+      if: github.event_name == 'push'
+      uses: actions/upload-artifact@v4
+      with:
+        name: codeql-sarif-${{ matrix.language }}
+        path: sarif-results/${{ matrix.language }}.sarif
+
+  # Publish per-module findings (line, rule, severity) to the baseline
+  # branch (coverage/<ref>) and regenerate the checklist landing page.
+  # Runs only on push (the run-for-record); consumes the analyze job's
+  # filtered SARIF so CodeQL is never re-run.  The concurrency group is
+  # shared with every other baseline publisher (coverage-update, future
+  # int-coverage) so writers to the branch serialize across workflows.
+  publish-findings:
+    name: Publish per-module findings
+    needs: analyze
+    if: github.event_name == 'push'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    concurrency:
+      group: baseline-publish-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download SARIF artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: codeql-sarif-*
+          path: sarif-results
+          merge-multiple: true
+      - name: Publish findings to baseline branch
+        uses: nasa/fprime-actions/codeql-publish@devel
+        with:
+          sarif-files: |
+            sarif-results/cpp.sarif
+            sarif-results/python.sarif
