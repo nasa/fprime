@@ -15,25 +15,6 @@
 #include "spacewasm.h"
 
 namespace Svc {
-// A helper template type that converts C++ member functions into pure
-template <typename T>
-struct CppCallback;
-
-// Specialization for non-const member functions
-template <typename Class, typename Ret, typename... Args>
-struct CppCallback<Ret (Class::*)(Args...)> {
-    template <Ret (Class::*MemberFn)(Args...)>
-    static Ret c_fn(void* user_data, Args... args) noexcept {
-        auto* self = static_cast<Class*>(user_data);
-        try {
-            return (self->*MemberFn)(std::forward<Args>(args)...);
-        } catch (...) {
-            return Ret();  // Default fallback on exception
-        }
-    }
-};
-
-#define C_CB(mem_fn) &CppCallback<decltype(mem_fn)>::c_fn<mem_fn>
 
 spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t*,
                                                     const spacewasm_value_t*,
