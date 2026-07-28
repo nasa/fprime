@@ -16,6 +16,7 @@ MemoryInterface::Status LinuxMemory::_getUsage(Os::Memory::Usage& memory_usage) 
     // Only error in sysinfo call is invalid address
     const int sysinfoStatus = sysinfo(&info);
     FW_ASSERT(sysinfoStatus == 0);
+    FW_ASSERT(info.mem_unit > 0);
     const FwSizeType MAX_MEASURABLE_RAM_UNITS = std::numeric_limits<FwSizeType>::max() / info.mem_unit;
     if ((MAX_MEASURABLE_RAM_UNITS < info.totalram) || (MAX_MEASURABLE_RAM_UNITS < info.freeram)) {
         memory_usage.total = 1;

@@ -868,6 +868,10 @@ DirectiveError FpySequencer::op_fdiv() {
     }
     F64 rhs = this->m_runtime.stack.pop<F64>();
     F64 lhs = this->m_runtime.stack.pop<F64>();
+    // Prevent division by zero
+    if (rhs == 0.0) {
+        return DirectiveError::DOMAIN_ERROR;
+    }
     this->m_runtime.stack.push(static_cast<F64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
 }
