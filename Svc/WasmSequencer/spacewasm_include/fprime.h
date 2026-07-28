@@ -48,7 +48,7 @@ enum FprimeTlmValid {
 /// @param time_ptr Guest memory address to write channel update time
 /// @param time_size Size allocated for time_ptr, should be Fw::Time::SERIALIZED_SIZE
 /// @param value_ptr Guest memory address to channel's value
-/// @param value_len Size allocated for value_ptr
+/// @param value_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "tlm")
 extern FprimeTlmValid fprime_wasm_read_telemetry(FwChanIdType id,
                                                  U32 time_ptr,
@@ -60,7 +60,7 @@ extern FprimeTlmValid fprime_wasm_read_telemetry(FwChanIdType id,
 ///
 /// @param id Parameter ID to read
 /// @param value_ptr Guest memory address to parameters's value
-/// @param value_len Size allocated for value_ptr
+/// @param value_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "prm")
 extern FprimeTlmValid fprime_wasm_read_parameter(FwPrmIdType id, U32 value_ptr, U32 value_size);
 
@@ -85,9 +85,9 @@ enum FprimeCmdResponse {
 /// A FORMAT_ERROR will be returned if the format is not valid!
 ///
 /// @param buf_ptr Guest memory address to encoded command
-/// @param value_len Size allocated for value_ptr
+/// @param buf_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "cmd")
-extern FprimeCmdResponse fprime_wasm_command(U32 buf_ptr, U32 buf_len);
+extern FprimeCmdResponse fprime_wasm_command(U32 buf_ptr, U32 buf_size);
 
 enum FprimeEventSeverity {
     FPRIME_EVENT_FATAL = 1,        //!< A fatal non-recoverable event
@@ -102,8 +102,8 @@ enum FprimeEventSeverity {
 /// @brief Emit an event from the current WasmSequencer component at a given severity level
 ///
 /// @param severity Event severity level to emit
-/// @param buf_ptr Guest memory address to event message string
-/// @param value_len Size allocated for value_ptr
+/// @param msg_ptr Guest memory address to event message string
+/// @param msg_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "event")
 extern void fprime_wasm_event(FprimeEventSeverity severity, U32 msg_ptr, U32 msg_size);
 

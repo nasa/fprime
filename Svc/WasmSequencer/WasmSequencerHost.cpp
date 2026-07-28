@@ -5,10 +5,12 @@
 // ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
+#include "Fw/Log/LogSeverityEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/ExternalString.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_SpaceWasmStatusEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
 #include "spacewasm.h"
 
@@ -95,7 +97,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmCommand(struct spacewasm_caller_t
             caller, ptr, this->m_pendingHostFunction.buffer.getBuffAddr() + sizeof(FwPacketDescriptorType), len);
         if (status != SPACEWASM_OK) {
             // Memory read failed
-            this->log_WARNING_HI_CommandInvalidPointer(static_cast<WasmSequencer_SpaceWasmStatus::T>(status));
+            this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::COMMAND,
+                                                            static_cast<WasmSequencer_Status::T>(status));
             return_status = SPACEWASM_TRAP;
         } else {
             // Memory read succeeded. Pause the interpreter and process it in the state machine
@@ -115,7 +118,61 @@ spacewasm_hostcall_result_t WasmSequencer::wasmEvent(spacewasm_caller_t* caller,
                                                      const spacewasm_value_t* params,
                                                      size_t n_params,
                                                      spacewasm_value_t*) {
-    return SPACEWASM_TRAP;
+    // These are automatically validated by spacewasm so it should be safe to assert them
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 3, static_cast<FwAssertArgType>(n_params));
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
+
+    if (!Fw::LogSeverity::isValid(static_cast<Fw::LogSeverity::SerialType>(params[0].u.i32_))) {
+        this->log_WARNING_HI_HostFunctionInvalidSeverity(params[0].u.i32_);
+        return SPACEWASM_TRAP;
+    }
+
+    U8 stringStorage[FW_LOG_STRING_MAX_SIZE];
+
+    U32 len = static_cast<U32>(params[2].u.i32_);
+    if (len > FW_LOG_STRING_MAX_SIZE) {
+        len = FW_LOG_STRING_MAX_SIZE;
+    }
+
+    auto status = spacewasm_mem_read(caller, static_cast<U32>(params[1].u.i32_), stringStorage, len);
+    if (status != SPACEWASM_OK) {
+        this->log_WARNING_HI_HostFunctionInvalidPointer(
+            Svc::WasmSequencer_HostFunction::EVENT,
+            Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+        return SPACEWASM_TRAP;
+    }
+
+    Fw::LogSeverity severity(static_cast<Fw::LogSeverity::T>(params[0].u.i32_));
+    Fw::ExternalString msg(reinterpret_cast<char*>(stringStorage), len);
+
+    switch (severity) {
+        case Fw::LogSeverity::FATAL:
+            this->log_FATAL_GuestFatal(msg);
+            break;
+        case Fw::LogSeverity::WARNING_HI:
+            this->log_WARNING_HI_GuestWarningHi(msg);
+            break;
+        case Fw::LogSeverity::WARNING_LO:
+            this->log_WARNING_LO_GuestWarningLo(msg);
+            break;
+        case Fw::LogSeverity::COMMAND:
+            this->log_COMMAND_GuestCommand(msg);
+            break;
+        case Fw::LogSeverity::ACTIVITY_HI:
+            this->log_ACTIVITY_HI_GuestActivityHi(msg);
+            break;
+        case Fw::LogSeverity::ACTIVITY_LO:
+            this->log_ACTIVITY_LO_GuestActivityLo(msg);
+            break;
+        case Fw::LogSeverity::DIAGNOSTIC:
+            this->log_DIAGNOSTIC_GuestDiagnostic(msg);
+            break;
+    }
+
+    return SPACEWASM_CONTINUE_NONE;
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmRsleep(spacewasm_caller_t* caller,

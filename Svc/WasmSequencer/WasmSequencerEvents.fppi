@@ -22,7 +22,7 @@ event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
     format "Failed to open Wasm module file {}: status {}"
 
 @ A module failed to decode/validate while loading
-event ModuleLoadFailed(status: SpaceWasmStatus) \
+event ModuleLoadFailed(status: Status) \
     severity warning high \
     format "Module load failed: spacewasm status {}"
 
@@ -39,10 +39,13 @@ event CommandTooLarge($size: U32, maxSize: U32) \
     severity warning high \
     format "Command payload size {} larger than host maximum size {}"
 
-# TODO(tumbar) Expose spacewasm_status_t to FPP
-event CommandInvalidPointer(code: SpaceWasmStatus) \
+event HostFunctionInvalidPointer(f: HostFunction, code: Status) \
     severity warning high \
-    format "Failed to reach command payload from guest: {}"
+    format "Failed to read guest pointer in host function {}: {}"
+
+event HostFunctionInvalidSeverity(raw: I32) \
+    severity warning high \
+    format "Invalid event severity '{}'"
 
 @ The sequence was cancelled
 event SequenceCancelled() \
@@ -75,7 +78,7 @@ event PanicOccurred(code: I32) \
     format "Wasm program panicked: code {}"
 
 @ A guest host function could not access guest linear memory
-event GuestMemoryError(status: SpaceWasmStatus) \
+event GuestMemoryError(status: Status) \
     severity warning high \
     format "Guest memory access failed: spacewasm status {}"
 

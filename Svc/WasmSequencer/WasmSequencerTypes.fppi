@@ -1,4 +1,9 @@
-enum SpaceWasmStatus : I32 {
+enum HostFunction : I32 {
+    COMMAND,
+    EVENT,
+}
+
+enum Status : I32 {
     OK = 0,
     ERR_NULL_ARG = 1,
     ERR_BAD_ARG = 2,

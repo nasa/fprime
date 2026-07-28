@@ -2,7 +2,7 @@ module Svc {
     @ A sequence engine based around a WebAssembly interpreter
     active component WasmSequencer {
 
-        include "WasmSequencerSpaceWasm.fppi"
+        include "WasmSequencerTypes.fppi"
         include "WasmSequencerCommands.fppi"
         include "WasmSequencerStateMachine.fppi"
         include "WasmSequencerParams.fppi"
