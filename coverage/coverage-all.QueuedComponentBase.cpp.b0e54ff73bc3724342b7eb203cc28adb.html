@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-28 20:18:17</td>
+      <td>2026-07-28 21:22:14</td>
     </tr>
   </table>
 </div>
@@ -70,15 +70,15 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l10">Fw::QueuedComponentBase::QueuedComponentBase(char const*) (line 10)</a></td><td>called 1114 times</td><td>76.0%</td></tr>
-    <tr><td><a href="#l28">Fw::QueuedComponentBase::createQueue(unsigned long, unsigned long) (line 28)</a></td><td>called 1113 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l18">Fw::QueuedComponentBase::deinit() (line 18)</a></td><td>called 1113 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l10">Fw::QueuedComponentBase::QueuedComponentBase(char const*) (line 10)</a></td><td>called 1115 times</td><td>76.0%</td></tr>
+    <tr><td><a href="#l28">Fw::QueuedComponentBase::createQueue(unsigned long, unsigned long) (line 28)</a></td><td>called 1114 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l18">Fw::QueuedComponentBase::deinit() (line 18)</a></td><td>called 1114 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l46">Fw::QueuedComponentBase::dispatchAvailableMessages() (line 46)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l38">Fw::QueuedComponentBase::getNumMsgsDropped() (line 38)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l23">Fw::QueuedComponentBase::getToStringFormatString() (line 23)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l42">Fw::QueuedComponentBase::incNumMsgDropped() (line 42)</a></td><td>called 60595 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l14">Fw::QueuedComponentBase::init(int) (line 14)</a></td><td>called 1113 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l12">Fw::QueuedComponentBase::~QueuedComponentBase() (line 12)</a></td><td>called 1114 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l14">Fw::QueuedComponentBase::init(int) (line 14)</a></td><td>called 1114 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l12">Fw::QueuedComponentBase::~QueuedComponentBase() (line 12)</a></td><td>called 1115 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -161,11 +161,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 1114 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1115 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1114</td>
+      <td class="linecount coveredLine">1115</td>
       <td class="src coveredLine"><span class="n">QueuedComponentBase</span><span class="o">::</span><span class="n">QueuedComponentBase</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PassiveComponentBase</span><span class="p">(</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="n">m_msgsDropped</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -179,7 +179,7 @@
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2228</td>
+      <td class="linecount coveredLine">2230</td>
       <td class="src coveredLine"><span class="n">QueuedComponentBase</span><span class="o">::~</span><span class="n">QueuedComponentBase</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -193,21 +193,21 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">QueuedComponentBase</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">instance</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">PassiveComponentBase</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="n">instance</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -221,21 +221,21 @@
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">QueuedComponentBase</span><span class="o">::</span><span class="n">deinit</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_queue</span><span class="p">.</span><span class="n">teardown</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -291,7 +291,7 @@
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="n">Os</span><span class="o">::</span><span class="n">Queue</span><span class="o">::</span><span class="n">Queue</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">QueuedComponentBase</span><span class="o">::</span><span class="n">createQueue</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">depth</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">msgSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -300,11 +300,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 1113 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1114 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">QueueString</span><span class="w"> </span><span class="n">queueName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -320,11 +320,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 1113 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 1114 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">queueName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_objName</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -354,19 +354,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 10 taken 1113 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 1113 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1114 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 1114 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">2226</td>
+      <td class="linecount coveredLine">2228</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_queue</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getInstance</span><span class="p">(),</span><span class="w"> </span><span class="n">queueName</span><span class="p">,</span><span class="w"> </span><span class="n">depth</span><span class="p">,</span><span class="w"> </span><span class="n">msgSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1113</td>
+      <td class="linecount coveredLine">1114</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-28 20:18:17</td>
+      <td>2026-07-28 21:22:14</td>
     </tr>
   </table>
 </div>
@@ -77,12 +77,12 @@
     <tr><td><a href="#l191">testing::AssertionResult&amp; testing::AssertionResult::operator&lt;&lt; &lt;std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; &gt;(std::__cxx11::basic_string&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt; const&amp;) (line 191)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l206">testing::AssertionResult::AppendMessage(testing::Message const&amp;) (line 206)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;bool volatile&gt;(bool volatile const&amp;, std::enable_if&lt;!std::is_convertible&lt;bool volatile, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 66 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;bool&gt;(bool const&amp;, std::enable_if&lt;!std::is_convertible&lt;bool, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 214832248 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;int&gt;(int const&amp;, std::enable_if&lt;!std::is_convertible&lt;int, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 58 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;bool&gt;(bool const&amp;, std::enable_if&lt;!std::is_convertible&lt;bool, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 229601874 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;int&gt;(int const&amp;, std::enable_if&lt;!std::is_convertible&lt;int, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 65 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l155">testing::AssertionResult::AssertionResult&lt;std::atomic&lt;bool&gt; &gt;(std::atomic&lt;bool&gt; const&amp;, std::enable_if&lt;!std::is_convertible&lt;std::atomic&lt;bool&gt;, testing::AssertionResult&gt;::value, void&gt;::type*) (line 155)</a></td><td>called 1006 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l187">testing::AssertionResult::failure_message() const (line 187)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l183">testing::AssertionResult::message() const (line 183)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l174">testing::AssertionResult::operator bool() const (line 174)</a></td><td>called 229289120 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l174">testing::AssertionResult::operator bool() const (line 174)</a></td><td>called 244062124 times</td><td>80.0%</td></tr>
   </table>
 </details>
 
@@ -1178,7 +1178,7 @@
       <td class="lineno"><a id="l155" href="#l155">155</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">214846048</td>
+      <td class="linecount coveredLine">229615843</td>
       <td class="src coveredLine"><span class="w">  </span><span class="n">explicit</span><span class="w"> </span><span class="n">AssertionResult</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
@@ -1223,11 +1223,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 214832316 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 229602073 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">214846048</td>
+      <td class="linecount partialCoveredLine">229615843</td>
       <td class="src partialCoveredLine"><span class="w">      </span><span class="o">:</span><span class="w"> </span><span class="n">success_</span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -1321,11 +1321,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 229289123 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 244062196 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">229289120</td>
+      <td class="linecount partialCoveredLine">244062124</td>
       <td class="src partialCoveredLine"><span class="w">  </span><span class="n">operator</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">success_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="c1">// NOLINT</span></td>
     </tr>
     <tr class="source-line">
