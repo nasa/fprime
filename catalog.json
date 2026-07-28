@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "307acd782f6fb5a686babd4ef4f07085801ac575",
-  "generated_at": "2026-07-28T23:08:47Z",
+  "generated_at": "2026-07-28T23:09:33Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -31,7 +31,7 @@
     },
     "worst": null,
     "tier": "platinum",
-    "dismissed": 1232,
+    "dismissed": 1273,
     "report": "codeql/index.html"
   },
   "modules": [
@@ -338,7 +338,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 9,
+        "dismissed": 10,
         "report": "Drv/LinuxUartDriver/codeql/index.html"
       },
       "tiers": {
@@ -1358,7 +1358,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 19,
+        "dismissed": 24,
         "report": "Fw/DataStructures/codeql/index.html"
       },
       "tiers": {
@@ -1886,7 +1886,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 5,
+        "dismissed": 6,
         "report": "Fw/Time/codeql/index.html"
       },
       "tiers": {
@@ -1958,7 +1958,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 195,
+        "dismissed": 218,
         "report": "Fw/Types/codeql/index.html"
       },
       "tiers": {
@@ -2174,7 +2174,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 48,
+        "dismissed": 49,
         "report": "Os/Posix/codeql/index.html"
       },
       "tiers": {
@@ -2318,7 +2318,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 10,
+        "dismissed": 12,
         "report": "Svc/AssertFatalAdapter/codeql/index.html"
       },
       "tiers": {
@@ -3914,7 +3914,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 30,
+        "dismissed": 35,
         "report": "Svc/FpySequencer/codeql/index.html"
       },
       "tiers": {
@@ -4850,7 +4850,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 5,
+        "dismissed": 12,
         "report": "Svc/SystemResources/codeql/index.html"
       },
       "tiers": {
@@ -4886,7 +4886,7 @@
         },
         "worst": null,
         "tier": "platinum",
-        "dismissed": 11,
+        "dismissed": 14,
         "report": "Svc/TlmChan/codeql/index.html"
       },
       "tiers": {
