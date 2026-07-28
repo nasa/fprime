@@ -7,8 +7,6 @@
 #ifndef FPRIME_SPACEWASM_H
 #define FPRIME_SPACEWASM_H
 
-#include "config/FwChanIdTypeAliasAc.h"
-#include "config/FwPrmIdTypeAliasAc.h"
 #ifdef __cplusplus
 extern "C" {
 #endif  // __cplusplus
@@ -50,7 +48,7 @@ enum FprimeTlmValid {
 /// @param value_ptr Guest memory address to channel's value
 /// @param value_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "tlm")
-extern FprimeTlmValid fprime_wasm_read_telemetry(FwChanIdType id,
+extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id,
                                                  U32 time_ptr,
                                                  U32 time_size,
                                                  U32 value_ptr,
@@ -62,7 +60,7 @@ extern FprimeTlmValid fprime_wasm_read_telemetry(FwChanIdType id,
 /// @param value_ptr Guest memory address to parameters's value
 /// @param value_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "prm")
-extern FprimeTlmValid fprime_wasm_read_parameter(FwPrmIdType id, U32 value_ptr, U32 value_size);
+extern FprimeTlmValid fprime_wasm_read_parameter(I64 id, U32 value_ptr, U32 value_size);
 
 enum FprimeCmdResponse {
     /// Command successfully executed
