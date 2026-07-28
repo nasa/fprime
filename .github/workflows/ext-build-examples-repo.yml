@@ -87,12 +87,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y zlib1g-dev
       - name: "Build native x86_64 binary for integration tests"
-        working-directory: FlightExamples
+        working-directory: FlightExamples/ExamplesDeployment
         run: |
-          . ../venv/bin/activate
-          fprime-util purge
+          . ../../venv/bin/activate
+          fprime-util purge --force
           fprime-util generate
-          fprime-util build
+          fprime-util build -j8
       - name: "Run integration tests"
         continue-on-error: false
         run: |
@@ -100,11 +100,11 @@ jobs:
           . venv/bin/activate
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs
-          cd FlightExamples/ManagerWorker
+          cd FlightExamples/${DEPLOYMENT}
           fprime-gds --ip-client -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection fprime &
           sleep 10
           cd ../..
-          pytest --dictionary build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
-            --deployment-config ManagerWorker/Subtopology/test/int/int_config.json \
+          pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
+            --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
             -v \
-            aarch64-linux-artifacts/ManagerWorker/Subtopology/test/int/test_manager_worker.py
+            FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py
