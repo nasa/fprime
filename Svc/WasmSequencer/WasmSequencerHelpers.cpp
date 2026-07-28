@@ -160,16 +160,11 @@ void WasmSequencer ::destroyStore() {
         this->m_wasm = nullptr;
     }
 
-    FW_ASSERT(!this->m_hasPendingLoadCmd);
-    FW_ASSERT(this->m_pendingFinishCmds.isEmpty());
-
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
     this->m_guest_offset = 0;
 
     // Clear any pending state.
-    this->m_pendingHostFunction.clear();
-    this->m_pendingRun = false;
     this->m_invokeStatus = SPACEWASM_OK;
     this->m_loadStatus = SPACEWASM_OK;
 }

@@ -513,16 +513,20 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldW
     // Check if we have overrun the timer
     FW_ASSERT(this->m_hasPendingTimer);
 
-    Fw::Time now = this->getTime();
+    const Fw::Time now = this->getTime();
     switch (now.compare(now, this->m_pendingTimer)) {
         case Fw::TimeComparison::LT:
             // No timer overrun
             break;
         case Fw::TimeComparison::EQ:
-        case Fw::TimeComparison::GT:
+        case Fw::TimeComparison::GT: {
             // Timeout!
+            const auto status = spacewasm_resume(this->m_wasm);
+            FW_ASSERT(status == SPACEWASM_OK, status);
+
             this->sequencer_sendSignal_stmtResponse_success();
             break;
+        }
         case Fw::TimeComparison::INCOMPARABLE:
             // Time base / context changed since we set the timer
             this->sequencer_sendSignal_result_timeOpFailed();
@@ -697,6 +701,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                         this->log_DIAGNOSTIC_GuestDiagnostic(msg);
                         break;
                 }
+
+                status = spacewasm_resume(this->m_wasm);
+                FW_ASSERT(status == SPACEWASM_OK, status);
 
                 this->sequencer_sendSignal_stmtResponse_success();
             }
