@@ -79,6 +79,10 @@ where
   not l.getUnspecifiedType() instanceof BoolType and
   not trivialValue(l) and
   not l.isInMacroExpansion() and
+  // Template instantiations materialize template arguments as literals
+  not l.isFromTemplateInstantiation(_) and
+  // Only actual numeric tokens (not template parameters or folded expressions)
+  l.getValueText().regexpMatch("[0-9+\\-.].*") and
   not constantDefinition(l)
 select l,
   "Magic number " + l.getValueText() +

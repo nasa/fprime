@@ -1,8 +1,7 @@
 /**
  * @name Validation failure path does not return
- * @description In F Prime port and command handlers, a branch that reports a
- *              validation failure (warning event or failed command response)
- *              should return rather than continue executing.
+ * @description In F Prime handlers, a branch that sends a failed command
+ *              response should return rather than continue executing.
  * @kind problem
  * @id cpp/fprime/validation-failure-return
  * @problem.severity warning
@@ -18,10 +17,8 @@ predicate isFprimeHandler(Function f) {
   f.getName().matches(["%\\_handler", "%\\_cmdHandler", "%\\_internalInterfaceHandler"])
 }
 
-/** A call that reports a failure: a warning event or a failed command response. */
+/** A call that sends a failed (non-OK) command response. */
 predicate failureReport(FunctionCall fc) {
-  fc.getTarget().getName().matches("log\\_WARNING\\_%")
-  or
   fc.getTarget().getName() = "cmdResponse_out" and
   exists(Expr resp | resp = fc.getArgument(2) |
     not resp.toString().matches("%OK%")
@@ -50,4 +47,4 @@ where
   exists(guard.getFollowingStmt())
 select guard,
   "This validation-failure branch in handler " + handler.getName() +
-    " reports a failure but does not return."
+    " sends a failed command response but does not return."
