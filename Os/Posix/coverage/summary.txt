@@ -7,7 +7,7 @@ File                                       Lines    Exec  Cover   Missing
 Os/Posix/ConditionVariable.cpp                22      20    90%   37-38
 Os/Posix/Console.cpp                          20      11    55%   14,18-21,23,37-39
 Os/Posix/Console.hpp                           3       2    66%   39
-Os/Posix/CountingSemaphore.cpp                37      33    89%   44-45,69-70
+Os/Posix/CountingSemaphore.cpp                37      35    94%   69-70
 Os/Posix/DefaultConsole.cpp                    2       0     0%   10,12
 Os/Posix/DefaultCountingSemaphore.cpp          4       4   100%
 Os/Posix/DefaultFile.cpp                       6       6   100%
@@ -27,5 +27,5 @@ Os/Posix/RawTime.hpp                           2       2   100%
 Os/Posix/Task.cpp                            141      58    41%   44-46,50,54-57,59-60,62-63,67-68,70-71,74-76,79-83,85-88,91-94,98,101-103,105-109,111,114-115,120,122-125,128-129,134,163,167,171,200-204,206-213,216,218,226,240-242,244-246,265-267,271-272,274
 Os/Posix/Task.hpp                              2       2   100%
 ------------------------------------------------------------------------------
-TOTAL                                        759     471    62%
+TOTAL                                        759     473    62%
 ------------------------------------------------------------------------------
