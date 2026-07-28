@@ -127,13 +127,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                           U32 cmdSeq            //!< The command sequence number
                           ) override;
 
-    //! Handler implementation for command TRACE
-    //!
-    //! Dump a stack trace in events
-    void TRACE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                          U32 cmdSeq            //!< The command sequence number
-                          ) override;
-
     //! Handler implementation for command CONTINUE
     void CONTINUE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                              U32 cmdSeq            //!< The command sequence number

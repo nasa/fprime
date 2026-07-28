@@ -8,10 +8,10 @@
 async command RUN(
                       fileName: string size FileNameStringSize @< The name of the sequence file
                       $block: Svc.BlockState @< Return command status when complete or not
-                    )
+                    ) opcode 0x0
 
 @ Wait for the interpreter to finish and return it's result as a CmdResponse
-async command WAIT
+async command WAIT opcode 0x1
 
 # async command RUN_ARGS(
 #                       fileName: string size FileNameStringSize @< The name of the sequence file
@@ -25,20 +25,20 @@ async command WAIT
 @ To allow multiple modules, use the `LOAD_NAME` command instead.
 async command LOAD(
     fileName: string size FileNameStringSize @< The name of the sequence file
-)
+) opcode 0x2
 
 @ Load and validate a WebAssembly module into the store. This module is given a name so that
 @ it's exports can be referenced by other modules.
 async command LOAD_NAME(
     fileName: string size FileNameStringSize @< The name of the sequence file
     name: string size 16 @< WebAssembly module name, must not conflict with previously loaded modules
-)
+) opcode 0x3
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
     $module: string size 16, @< Name of the module to invoke a function from
     $block: Svc.BlockState
-)
+) opcode 0x4
 
 # @ Loads and validates a sequence with arguments
 # # prio: lower than sm sig and CANCEL
@@ -52,15 +52,16 @@ async command INVOKE(
 @ This completely clears the store.
 @ Cancelling during LOADING will trigger a fail response in the reader and
 @ return to IDLE mode.
-sync command CANCEL
+sync command CANCEL opcode 0x5
 
 @ Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
 @ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
 @ substates of the RUNNING state that are not RUNNING.PAUSED.
-async command PAUSE
+async command PAUSE opcode 0x6
 
-@ Dump a stack trace in events
-async command TRACE
+@ Resume the sequence from a paused state
+async command CONTINUE opcode 0x7
 
-@ 
-async command CONTINUE
+# TODO(tumbar) Expose an unwind/tracing mechanism in SpaceWasm
+# @ Dump a stack trace in events
+# @ async command TRACE opcode 0x8

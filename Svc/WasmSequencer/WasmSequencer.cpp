@@ -216,11 +216,6 @@ void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void WasmSequencer ::TRACE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // TODO(tumbar) Dump a stack trace as an event once the interpreter exposes one.
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     switch (this->sequencer_getState()) {
         case WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE:
@@ -725,7 +720,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                 this->sequencer_sendSignal_stmtResponse_success();
             }
 
-        } break;
+            break;
+        }
         case WasmSequencer_HostFunction::RSLEEP: {
             U32 seconds = static_cast<U32>(this->m_pendingHostFunction.time_us / 1000000);
             U32 useconds = static_cast<U32>(this->m_pendingHostFunction.time_us % 1000000);
