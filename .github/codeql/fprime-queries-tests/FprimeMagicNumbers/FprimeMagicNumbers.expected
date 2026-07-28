@@ -1,2 +1,2 @@
 | test.cpp:7:18:7:19 | 37 | Magic number 37; consider a named constant (enum, static constexpr, or #define). |
-| test.cpp:31:18:31:19 | 77 | Magic number 77; consider a named constant (enum, static constexpr, or #define). |
+| test.cpp:37:18:37:19 | 77 | Magic number 77; consider a named constant (enum, static constexpr, or #define). |

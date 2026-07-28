@@ -3,7 +3,8 @@
  * @description Invariant numeric literals used inline or assigned to local
  *              variables should be given symbolic names via enum, static
  *              constexpr/const, or #define. Trivial values, powers of 2 up to
- *              4096, all-ones masks, and powers of 10 are permitted.
+ *              4096, all-ones masks, powers of 10, multiples of 8 as shift
+ *              amounts, and floating-point multiples of 10 are permitted.
  * @kind problem
  * @id cpp/fprime/magic-numbers
  * @problem.severity recommendation
@@ -36,6 +37,19 @@ predicate trivialValue(Literal l) {
   l.getValue().toInt() = [10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000]
   or
   l.getValue() = ["10000000000", "100000000000", "1000000000000"]
+  or
+  // Multiples of 8 used as shift amounts (byte-oriented shifts)
+  l.getValue().toInt() % 8 = 0 and
+  exists(Expr shift |
+    shift.(LShiftExpr).getRightOperand() = l or
+    shift.(RShiftExpr).getRightOperand() = l or
+    shift.(AssignLShiftExpr).getRValue() = l or
+    shift.(AssignRShiftExpr).getRValue() = l
+  )
+  or
+  // Floating-point multiples of 10 (unit conversions)
+  l.getUnspecifiedType() instanceof FloatingPointType and
+  exists(float f | f = l.getValue().toFloat() | (f / 10.0).floor() * 10.0 = f)
 }
 
 /**

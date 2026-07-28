@@ -26,6 +26,12 @@ U32 idiomaticValues(U32 value) {
 // Compliant: non-local (file-scope) definition, even when not const.
 U32 g_counter = 500;
 
+// Compliant: multiples of 8 as shift amounts; float/double multiples of 10.
+double byteSwapAndScale(unsigned long long value) {
+    unsigned long long high = value >> 56;
+    return static_cast<double>(high) / 250.0;
+}
+
 // Violation: magic number assigned to a local variable.
 U32 localAssignment() {
     U32 window = 77;
