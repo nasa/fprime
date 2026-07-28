@@ -32,11 +32,7 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
                                    Fw::Time& timeTag,
                                    const Fw::LogSeverity& severity,
                                    Fw::LogBuffer& args) {
-    // Assert and guard against invalid severity values
     FW_ASSERT(severity.isValid(), static_cast<FwAssertArgType>(severity.e));
-    if (!severity.isValid()) {
-        return;
-    }
 
     // Check severity filter (FATAL always passes through)
     if (this->m_severityFilter.isFiltered(severity)) {
@@ -79,10 +75,14 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
 
 void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
-                                               FilterSeverity filterLevel,
-                                               Enabled filterEnable) {
+                                               const FilterSeverity& filterLevel,
+                                               const Enabled& filterEnable) {
     // Verify FilterSeverity enum values match EventSeverityFilter index ordering
     static_assert(static_cast<FwSizeType>(FilterSeverity::WARNING_HI) == 0, "FilterSeverity ordering mismatch");
+    static_assert(static_cast<FwSizeType>(FilterSeverity::WARNING_LO) == 1, "FilterSeverity ordering mismatch");
+    static_assert(static_cast<FwSizeType>(FilterSeverity::COMMAND) == 2, "FilterSeverity ordering mismatch");
+    static_assert(static_cast<FwSizeType>(FilterSeverity::ACTIVITY_HI) == 3, "FilterSeverity ordering mismatch");
+    static_assert(static_cast<FwSizeType>(FilterSeverity::ACTIVITY_LO) == 4, "FilterSeverity ordering mismatch");
     static_assert(static_cast<FwSizeType>(FilterSeverity::DIAGNOSTIC) == 5, "FilterSeverity ordering mismatch");
 
     Fw::LogSeverity logSeverity;
@@ -98,7 +98,7 @@ void EventManager::SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
 void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                             U32 cmdSeq,           //!< The command sequence number
                                             FwEventIdType ID,
-                                            Enabled idEnabled  //!< ID filter state
+                                            const Enabled& idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
         if (m_filteredIDs.insert(ID) == Fw::Success::SUCCESS) {
@@ -139,6 +139,10 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void EventManager::run_handler(FwIndexType portNum, U32 context) {
+    this->tlmWrite_EventsDropped(this->getNumMsgsDropped());
 }
 
 void EventManager::pingIn_handler(const FwIndexType portNum, U32 key) {

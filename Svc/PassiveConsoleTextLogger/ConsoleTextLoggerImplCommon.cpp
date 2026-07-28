@@ -21,6 +21,7 @@ ConsoleTextLoggerImpl::ConsoleTextLoggerImpl(const char* compName)
 ConsoleTextLoggerImpl::~ConsoleTextLoggerImpl() {}
 
 void ConsoleTextLoggerImpl::configure(const FwEventIdType* filteredIds, FwSizeType count) {
+    FW_ASSERT(filteredIds != nullptr || count == 0);
     FW_ASSERT(count < PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
               PASSIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 
@@ -78,6 +79,7 @@ void ConsoleTextLoggerImpl::TextLogger_handler(FwIndexType portNum,
             severityString = "SEVERITY ERROR";
             break;
     }
+    FW_ASSERT(severityString != nullptr);
     Fw::Logger::log("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32 ") %s: %s\n",
                     id, static_cast<FwTimeBaseStoreType>(timeTag.getTimeBase()), timeTag.getSeconds(),
                     timeTag.getUSeconds(), severityString, text.toChar());

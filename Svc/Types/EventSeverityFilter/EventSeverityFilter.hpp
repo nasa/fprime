@@ -49,7 +49,18 @@ class EventSeverityFilter {
     static Fw::Success toIndex(Fw::LogSeverity severity, FwSizeType& index);
 
     //! Severity values in filter index order
-    static const Fw::LogSeverity::t SEVERITY_ORDER[NUM_FILTER_LEVELS];
+    static constexpr Fw::LogSeverity::t SEVERITY_ORDER[NUM_FILTER_LEVELS] = {
+        Fw::LogSeverity::WARNING_HI,  Fw::LogSeverity::WARNING_LO,  Fw::LogSeverity::COMMAND,
+        Fw::LogSeverity::ACTIVITY_HI, Fw::LogSeverity::ACTIVITY_LO, Fw::LogSeverity::DIAGNOSTIC,
+    };
+
+    // Verify each severity maps to its expected filter index
+    static_assert(SEVERITY_ORDER[0] == Fw::LogSeverity::WARNING_HI, "WARNING_HI must map to index 0");
+    static_assert(SEVERITY_ORDER[1] == Fw::LogSeverity::WARNING_LO, "WARNING_LO must map to index 1");
+    static_assert(SEVERITY_ORDER[2] == Fw::LogSeverity::COMMAND, "COMMAND must map to index 2");
+    static_assert(SEVERITY_ORDER[3] == Fw::LogSeverity::ACTIVITY_HI, "ACTIVITY_HI must map to index 3");
+    static_assert(SEVERITY_ORDER[4] == Fw::LogSeverity::ACTIVITY_LO, "ACTIVITY_LO must map to index 4");
+    static_assert(SEVERITY_ORDER[5] == Fw::LogSeverity::DIAGNOSTIC, "DIAGNOSTIC must map to index 5");
 
     //! Per-severity enabled state
     bool m_enabled[NUM_FILTER_LEVELS];

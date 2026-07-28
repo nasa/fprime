@@ -6,6 +6,15 @@ module Fw {
   @ A value of polymorphic type
   type PolyType
 
+  @ FPP shadow-enum representing Fw::FormatStatus
+  enum StringFormatStatus : U8 {
+    SUCCESS, @< Format worked
+    OVERFLOWED, @< Format overflowed
+    INVALID_FORMAT_STRING, @< Format provided invalid format string
+    SIZE_OVERFLOW, @< FwSizeType overflowed the range of size_t
+    OTHER_ERROR @< An error was returned from an underlying call
+  }
+
   @ Serialization status
   enum SerialStatus : U8 {
     OK, @< Serialization operation succeeded

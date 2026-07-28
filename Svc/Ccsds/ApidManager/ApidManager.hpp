@@ -37,7 +37,6 @@ class ApidManager final : public ApidManagerComponentBase {
 
   public:
     static constexpr U16 MAX_TRACKED_APIDS = ComCfg::Apid::NUM_CONSTANTS;
-    static constexpr U16 SEQUENCE_COUNT_ERROR = std::numeric_limits<U16>::max();
     // ----------------------------------------------------------------------
     // Component construction and destruction
     // ----------------------------------------------------------------------

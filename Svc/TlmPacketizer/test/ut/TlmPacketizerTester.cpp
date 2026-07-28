@@ -1852,6 +1852,52 @@ void TlmPacketizerTester::setLevelInvalidTest() {
     ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 }
 
+// A channel ID may appear in more than one packet as long as the definition
+// (serialized size) is identical.  Channel 10 (size 4) is shared by both
+// packets below, matching the semantics that identical duplicates are allowed.
+namespace {
+TlmPacketizerChannelEntry dupMatchPacketAList[] = {{10, 4}, {100, 2}};
+TlmPacketizerChannelEntry dupMatchPacketBList[] = {{10, 4}, {200, 2}};
+TlmPacketizerPacket dupMatchPacketA = {dupMatchPacketAList, 4, 1, FW_NUM_ARRAY_ELEMENTS(dupMatchPacketAList)};
+TlmPacketizerPacket dupMatchPacketB = {dupMatchPacketBList, 8, 1, FW_NUM_ARRAY_ELEMENTS(dupMatchPacketBList)};
+TlmPacketizerPacketList dupMatchPacketList = {{&dupMatchPacketA, &dupMatchPacketB}, 2};
+
+// Channel 10 is declared with size 4 in packet A and size 6 in packet B. This
+// conflicting definition would corrupt the packet offsets and overflow the
+// fill buffer, so setPacketList must assert.
+TlmPacketizerChannelEntry dupConflictPacketAList[] = {{10, 4}, {100, 2}};
+TlmPacketizerChannelEntry dupConflictPacketBList[] = {{10, 6}, {200, 2}};
+TlmPacketizerPacket dupConflictPacketA = {dupConflictPacketAList, 4, 1, FW_NUM_ARRAY_ELEMENTS(dupConflictPacketAList)};
+TlmPacketizerPacket dupConflictPacketB = {dupConflictPacketBList, 8, 1, FW_NUM_ARRAY_ELEMENTS(dupConflictPacketBList)};
+TlmPacketizerPacketList dupConflictPacketList = {{&dupConflictPacketA, &dupConflictPacketB}, 2};
+}  // namespace
+
+void TlmPacketizerTester::duplicateChannelIdMatchingSizeTest() {
+    this->stockConfiguration();
+    // Identical channel definition across packets is permitted and must not assert.
+    this->component.setPacketList(dupMatchPacketList, IGNORE_OMIT_LIST, 1);
+
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+
+    // Push the shared channel and confirm it lands in both packets without overflow.
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(20)));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);
+
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Both packets carry channel 10, so both are emitted once per section.
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS);
+}
+
+void TlmPacketizerTester::duplicateChannelIdConflictingSizeTest() {
+    this->stockConfiguration();
+    // Conflicting size for the same channel ID must trip the configuration-time assert.
+    ASSERT_DEATH_IF_SUPPORTED(this->component.setPacketList(dupConflictPacketList, IGNORE_OMIT_LIST, 1),
+                              "TlmPacketizer.cpp");
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

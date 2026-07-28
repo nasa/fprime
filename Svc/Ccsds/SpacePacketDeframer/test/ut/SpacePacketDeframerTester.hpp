@@ -52,6 +52,10 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
     void testBufferExactlyHeaderSize();
     void testBufferSmallerThanHeaderSize();
     void testBufferSingleByte();
+    void testInvalidPacketIdentificationControlFields();
+    void testCommandPacketTypeAccepted();
+    void testSecondaryHeaderFlagAccepted();
+    void testSequenceFlagsAccepted();
 
   private:
     // ----------------------------------------------------------------------
@@ -71,6 +75,24 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
                               U8* packetData,
                               U16 packetDataLen,
                               bool hasSecHdr = false);
+
+    //! Verify that protocol-valid control fields are accepted
+    void testControlFieldAccepted(U16 pvn,
+                                  U16 packetType,
+                                  U16 secondaryHeaderFlag,
+                                  ComCfg::Apid::T expectedApid,
+                                  U16 sequenceFlags);
+
+    //! Assemble a packet with explicit CCSDS control fields
+    Fw::Buffer assemblePacketWithControlFields(U16 pvn,
+                                               U16 packetType,
+                                               U16 secondaryHeaderFlag,
+                                               U16 apid,
+                                               U16 sequenceFlags,
+                                               U16 seqCount,
+                                               U16 lengthToken,
+                                               U8* packetData,
+                                               U16 packetDataLen);
 
   private:
     // ----------------------------------------------------------------------

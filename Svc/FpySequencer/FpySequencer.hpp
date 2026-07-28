@@ -78,6 +78,7 @@ class FpySequencer : public FpySequencerComponentBase {
         FpySequencer_StoreAbsDirective storeAbs;
         FpySequencer_StoreAbsConstOffsetDirective storeAbsConstOffset;
         FpySequencer_PopEventDirective popEvent;
+        FpySequencer_PopSerializableDirective popSerializable;
 
         DirectiveUnion() {}
         ~DirectiveUnion() {}
@@ -149,15 +150,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                         U32 cmdSeq,                        //!< The command sequence number
                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        Svc::BlockState block              //!< Return command status when complete or not
+                        const Svc::BlockState& block       //!< Return command status when complete or not
                         ) override;
 
     //! Handler implementation for command RUN_ARGS
     void RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                              U32 cmdSeq,                        //!< The command sequence number
                              const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                             Svc::BlockState block,             //!< Return command status when complete or not
-                             Svc::SeqArgs args                  //!< Arguments to pass to the sequencer
+                             const Svc::BlockState& block,      //!< Return command status when complete or not
+                             const Svc::SeqArgs& args           //!< Arguments to pass to the sequencer
                              ) override;
 
     //! Handler for command VALIDATE
@@ -174,15 +175,15 @@ class FpySequencer : public FpySequencerComponentBase {
     void VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                   U32 cmdSeq,                        //!< The command sequence number
                                   const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                  Svc::SeqArgs buffer                //!< Arguments to pass to the sequencer
+                                  const Svc::SeqArgs& buffer         //!< Arguments to pass to the sequencer
                                   ) override;
 
     //! Handler implementation for command RUN_VALIDATED
     //!
     //! Must be called after VALIDATE. Runs the sequence that was validated.
-    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,   //!< The opcode
-                                  U32 cmdSeq,            //!< The command sequence number
-                                  Svc::BlockState block  //!< Return command status when complete or not
+    void RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,          //!< The opcode
+                                  U32 cmdSeq,                   //!< The command sequence number
+                                  const Svc::BlockState& block  //!< Return command status when complete or not
                                   ) override;
 
     //! Handler for command CANCEL
@@ -629,6 +630,10 @@ class FpySequencer : public FpySequencerComponentBase {
     //! Internal interface handler for directive_popEvent
     void directive_popEvent_internalInterfaceHandler(const Svc::FpySequencer_PopEventDirective& directive) override;
 
+    //! Internal interface handler for directive_popSerializable
+    void directive_popSerializable_internalInterfaceHandler(
+        const Svc::FpySequencer_PopSerializableDirective& directive) override;
+
     void parametersLoaded() override;
     void parameterUpdated(FwPrmIdType id) override;
 
@@ -917,6 +922,8 @@ class FpySequencer : public FpySequencerComponentBase {
     Signal storeAbsConstOffset_directiveHandler(const FpySequencer_StoreAbsConstOffsetDirective& directive,
                                                 DirectiveError& error);
     Signal popEvent_directiveHandler(const FpySequencer_PopEventDirective& directive, DirectiveError& error);
+    Signal popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
+                                            DirectiveError& error);
 };
 
 }  // namespace Svc

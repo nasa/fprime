@@ -10,9 +10,9 @@
 //
 // ======================================================================
 
-#include "Os/ValidateFile.hpp"
 #include "Os/ValidatedFile.hpp"
 #include "Svc/BufferLogger/BufferLogger.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 
@@ -65,6 +65,7 @@ void BufferLogger::File ::setBaseName(const Fw::ConstStringBase& baseName) {
 }
 
 void BufferLogger::File ::logBuffer(const U8* const data, const FwSizeType size) {
+    FW_ASSERT(data != nullptr);
     // Close the file if it will be too big
     if (this->m_mode == File::Mode::OPEN) {
         const FwSizeType projectedByteCount = this->m_bytesWritten + this->m_sizeOfSize + size;
@@ -104,11 +105,17 @@ void BufferLogger::File ::open() {
         return;
     }
 
+    Fw::FormatStatus formatStatus;
     if (this->m_fileCounter == 0) {
-        this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
+        formatStatus =
+            this->m_name.format("%s%s%s", this->m_prefix.toChar(), this->m_baseName.toChar(), this->m_suffix.toChar());
     } else {
-        this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(), this->m_baseName.toChar(),
-                            this->m_fileCounter, this->m_suffix.toChar());
+        formatStatus = this->m_name.format("%s%s%" PRI_FwSizeType "%s", this->m_prefix.toChar(),
+                                           this->m_baseName.toChar(), this->m_fileCounter, this->m_suffix.toChar());
+    }
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileNameError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        return;
     }
 
     const Os::File::Status status = this->m_osFile.open(this->m_name.toChar(), Os::File::OPEN_WRITE);
@@ -116,6 +123,8 @@ void BufferLogger::File ::open() {
         this->m_fileCounter++;
         // Reset bytes written
         this->m_bytesWritten = 0;
+        // Initialize incremental hash
+        this->m_hash.init();
         // Set mode
         this->m_mode = File::Mode::OPEN;
     } else {
@@ -150,6 +159,7 @@ bool BufferLogger::File ::writeBytes(const void* const data, const FwSizeType le
     bool status;
     if (fileStatus == Os::File::OP_OK && static_cast<FwSizeType>(size) == length) {
         this->m_bytesWritten += length;
+        this->m_hash.update(data, length);
         status = true;
     } else {
         Fw::LogStringArg string(this->m_name.toChar());
@@ -162,32 +172,22 @@ bool BufferLogger::File ::writeBytes(const void* const data, const FwSizeType le
 }
 
 void BufferLogger::File ::writeHashFile() {
+    // Finalize the incrementally computed hash
+    Utils::HashBuffer hashBuffer;
+    this->m_hash.finalize(hashBuffer);
+
+    // Write hash file via ValidatedFile
     Os::ValidatedFile validatedFile(this->m_name.toChar());
-    const Os::ValidateFile::Status status = validatedFile.createHashFile();
+    const Os::ValidateFile::Status status = validatedFile.createHashFile(hashBuffer);
     if (status != Os::ValidateFile::VALIDATION_OK) {
-        const Fw::ConstStringBase& hashFileName = validatedFile.getHashFileName();
-        Fw::LogStringArg logStringArg(hashFileName.toChar());
+        Fw::LogStringArg logStringArg(validatedFile.getHashFileName().toChar());
         this->m_bufferLogger.log_WARNING_HI_BL_LogFileValidationError(logStringArg, status);
     }
 }
 
 bool BufferLogger::File ::flush() {
+    // Unbuffered file I/O requires no flush; flush the Os::File here if using buffered I/O
     return true;
-    // NOTE(if your fprime uses buffered file I/O, re-enable this)
-    /*bool status = true;
-    if(this->mode == File::Mode::OPEN)
-    {
-      const Os::File::Status fileStatus = this->osFile.flush();
-      if(fileStatus == Os::File::OP_OK)
-      {
-        status = true;
-      }
-      else
-      {
-        status = false;
-      }
-    }
-    return status;*/
 }
 
 void BufferLogger::File ::close() {

@@ -37,7 +37,7 @@ Index | Severity
 4 | ACTIVITY_LO
 5 | DIAGNOSTIC
 
-This ordering matches the `EventManager::FilterSeverity` FPP enum. The `EventManager` uses `static_assert` to verify this correspondence at compile time.
+This ordering matches the `EventManager::FilterSeverity` FPP enum. `static_assert` statements verify this correspondence at compile time: `EventSeverityFilter` asserts each `SEVERITY_ORDER` entry maps to its expected index, and `EventManager` asserts each `FilterSeverity` enum value matches the corresponding index.
 
 ### 2.3 FATAL Invariant
 

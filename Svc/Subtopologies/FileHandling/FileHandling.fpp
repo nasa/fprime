@@ -6,7 +6,7 @@ module FileHandling {
     instance fileUplink: Svc.FileUplink base id FileHandlingConfig.BASE_ID + 0x00000 \
         queue size FileHandlingConfig.QueueSizes.fileUplink \
         stack size FileHandlingConfig.StackSizes.fileUplink \
-        priority FileHandlingConfig.Priorities.fileUplink 
+        priority FileHandlingConfig.Priorities.fileUplink
 
     instance fileDownlink: Svc.FileDownlink base id FileHandlingConfig.BASE_ID + 0x01000 \
         queue size FileHandlingConfig.QueueSizes.fileDownlink \
@@ -32,9 +32,6 @@ module FileHandling {
         stack size FileHandlingConfig.StackSizes.prmDb \
         priority FileHandlingConfig.Priorities.prmDb \
     {
-        phase Fpp.ToCpp.Phases.configComponents """
-            FileHandling::prmDb.configure("PrmDb.dat");
-        """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """

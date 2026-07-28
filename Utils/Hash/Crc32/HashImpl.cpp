@@ -33,7 +33,7 @@ void Hash ::init() {
 
 void Hash ::update(const void* const data, FwSizeType len) {
     static_assert(sizeof(Utils::Hash::hash_handle) == sizeof(U32), "hash handle size must match CRC32 size");
-    FW_ASSERT(data);
+    FW_ASSERT(data != nullptr);
     this->hash_handle = crc32_ieee802_3_update(static_cast<const U8*>(data), len, this->hash_handle);
 }
 

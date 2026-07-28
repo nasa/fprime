@@ -161,6 +161,9 @@ endfunction(add_fprime_subdirectory)
 ####
 function(fprime_attach_custom_targets BUILD_TARGET_NAME)
     setup_module_targets("${BUILD_TARGET_NAME}")
+    # After all targets (build + custom) have run their autocoders, validate that every
+    # user-supplied AUTOCODER_INPUT was picked up by at least one autocoder.
+    _validate_all_autocoder_inputs_handled("${BUILD_TARGET_NAME}")
 endfunction()
 
 ####

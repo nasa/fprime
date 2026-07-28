@@ -121,7 +121,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             mode_flags = O_WRONLY | O_CREAT | O_APPEND;
             break;
         default:
-            FW_ASSERT(0, requested_mode);
+            FW_ASSERT(false, requested_mode);
             break;
     }
     int descriptor = ::open(filepath, mode_flags, map_open_create_mode(Os::FILE_DEFAULT_CREATE_MODE));
@@ -259,6 +259,7 @@ PosixFile::Status PosixFile::flush() {
 }
 
 PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -299,6 +300,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
 }
 
 PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow

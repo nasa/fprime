@@ -20,7 +20,7 @@ CmdPacket::~CmdPacket() {}
 // New serialization interface methods
 SerializeStatus CmdPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // Shouldn't be called, no use case for serializing CmdPackets in FSW (currently)
-    FW_ASSERT(0);
+    FW_ASSERT(false);
     return FW_SERIALIZE_OK;  // for compiler
 }
 

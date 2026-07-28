@@ -7,137 +7,49 @@ hide:
 
 How-To guides offer step-by-step instructions for specific development tasks in F Prime.
 
+> [!TIP]
+> **← Navigation pane**  
+> Use the navigation pane on the left to explore the different chapters of the How-To documentation. If the navigation pane is not visible, click on the menu icon (three horizontal lines) at the top left corner of the page. The navigation pane is hidden on narrow screens or if zoomed in.
 
-<div class="grid cards" markdown>
+## Table of Contents
 
--   <span class="card-title">__F´ GDS Plugin Development__</span>
+<details markdown="1">
+<summary><strong>Develop</strong> — Learn how to develop components, libraries, and other F´ artifacts.</summary>
 
-    ---
+- [Generate Data Products](develop/data-products.md)
+- [Define State Machines in F Prime](develop/define-state-machines.md)
+- [Develop a Device Driver](develop/develop-device-driver.md)
+- [Develop an F´ Library](develop/develop-fprime-libraries.md)
+- [Develop a Subtopology](develop/develop-subtopologies.md)
+- [Implement a Radio Manager Component](develop/implement-radio-manager.md)
+- [Develop Components in Python](develop/python-development.md)
 
-    This guide will walk you through the process of developing GDS plugins.
+</details>
 
-    [View Develop F´ GDS Plugins](develop-gds-plugins.md){ .md-button .md-button--primary }
+<details markdown="1">
+<summary><strong>Integrate</strong> — Learn how to integrate F´ with external libraries and platforms.</summary>
 
--   <span class="card-title">__F´ Library Development__</span>
+- [Implement a Framing Protocol](integrate/custom-framing.md)
+- [Implement an OS Abstraction Layer](integrate/implement-osal.md)
+- [Integrate a Third-Party Library](integrate/integrate-external-libraries.md)
+- [Porting to new platforms](integrate/porting-guide.md)
 
-    ---
+</details>
 
-    This how to will walk you through the structure and best practices in developing an F´ library.
+<details markdown="1">
+<summary><strong>Operate</strong> — Learn how to operate F´ applications and the Ground Data System.</summary>
 
-    [View Develop F´ Libraries](develop-fprime-libraries.md){ .md-button .md-button--primary }
+- [Create Ground-Derived Channels in F Prime GDS](operate/derive-channels-on-ground.md)
+- [Develop a GDS Plugin](operate/develop-gds-plugins.md)
+- [Load Parameters in Batch](operate/prm-write-how-to.md)
 
--   <span class="card-title">__Integrating Third-Party Libraries__</span>
+</details>
 
-    ---
+<details markdown="1">
+<summary><strong>Test</strong> — Learn how to test F´ components and applications.</summary>
 
-    This how to will walk you through how to integrate non-F´ libraries into your F´ project. It
-    will cover multiple approaches based on examples with [OpenCV](https://github.com/opencv/opencv), [OpenSSL](https://github.com/openssl/openssl) and [ETL](https://github.com/etlcpp/etl).
+- [Write Rule-Based Tests for F Prime Components](test/rule-based-testing.md)
+- [Test-Driven Development in F Prime (F´)](test/test-driven-development.md)
 
-    [View Integrating Third-Party Libraries](integrate-external-libraries.md){ .md-button .md-button--primary }
+</details>
 
--   <span class="card-title">__Porting F´ To a New Platform__</span>
-
-    ---
-
-    This how to will walk you through porting F´ to a new platform.
-
-    [View Porting Guide](porting-guide.md){ .md-button .md-button--primary }
-
-
--   <span class="card-title">__Implement a Framing Protocol__</span>
-
-    ---
-
-    This guide shows you how to implement a custom framing protocol in F Prime flight software and integrate it with the F Prime GDS.
-
-    [View Implement a Framing Protocol](custom-framing.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Generate Data Products__</span>
-
-    ---
-
-    This guide shows you when to use data products, how to generate them, how to test them, and how to integrate them into your topology and ground system.
-
-    [View Generate Data Products](data-products.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Define State Machines__</span>
-
-    ---
-
-    This guide shows you how to define and use state machines in F Prime with FPP so complex component behavior is explicit, testable, and maintainable.
-
-    [View Define State Machines](define-state-machines.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Create Ground-Derived Channels__</span>
-
-    ---
-
-    This guide shows you how to compute telemetry-derived values on the ground and publish them through the F Prime GDS plugin system.
-
-    [View Create Ground-Derived Channels](derive-channels-on-ground.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Develop a Device Driver__</span>
-
-    ---
-
-    This guide shows you how to build a new device driver in F Prime using the application-manager-driver pattern.
-
-    [View Develop a Device Driver](develop-device-driver.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Develop a Subtopology__</span>
-
-    ---
-
-    This guide shows you how to organize reusable topology architecture into subtopologies that can be imported into deployments.
-
-    [View Develop a Subtopology](develop-subtopologies.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Implement an OS Abstraction Layer__</span>
-
-    ---
-
-    This guide shows you how to implement a new OS Abstraction Layer for F´ so the framework can run on another operating system.
-
-    [View Implement an OS Abstraction Layer](implement-osal.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Implement a Radio Manager Component__</span>
-
-    ---
-
-    This guide shows you how to implement a radio manager component using the communications adapter interface.
-
-    [View Implement a Radio Manager Component](implement-radio-manager.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Develop Components in Python__</span>
-
-    ---
-
-    This guide shows you how to develop Python-based F Prime applications and integrate Python components into a larger system.
-
-    [View Develop Components in Python](python-development.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Write Rule-Based Tests__</span>
-
-    ---
-
-    This guide shows you how to write rule-based unit tests for F Prime components using the RuleDemo example component.
-
-    [View Write Rule-Based Tests](rule-based-testing.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Test-Driven Development__</span>
-
-    ---
-
-    This guide shows you a practical test-driven development loop for building an F´ component from model to implementation.
-
-    [View Test-Driven Development](test-driven-development.md){ .md-button .md-button--primary }
-
--   <span class="card-title">__Import Parameters in Batch__</span>
-
-    ---
-
-    This guide covers two methods of updating parameters: through a `.dat` file that PrmDb loads directly, or by generating a command sequence (`.seq` file) to dispatch a series of commands.
-
-    [View Import Parameters in Batch](prm-write-how-to.md){ .md-button .md-button--primary }
-
-</div>

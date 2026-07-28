@@ -18,9 +18,6 @@
 #include <Utils/Hash/Hash.hpp>
 
 namespace Utils {
-static_assert(FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING,
-              "Cannot use CRC checker without full string formatting");
-
 crc_stat_t create_checksum_file(const char* const fname) {
     FW_ASSERT(fname != nullptr);
 

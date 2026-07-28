@@ -72,7 +72,7 @@ CmdSequencerComponentImpl::~CmdSequencerComponentImpl() {}
 void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   const Fw::CmdStringArg& fileName,
-                                                  Svc::BlockState block) {
+                                                  const Svc::BlockState& block) {
     if (not this->requireRunMode(STOPPED)) {
         if (m_join_waiting) {
             // Inform user previous seq file is not complete
@@ -114,6 +114,7 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
 void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
                                                        U32 cmdSeq,
                                                        const Fw::CmdStringArg& fileName) {
+    FW_ASSERT(this->m_sequence != nullptr);
     if (!this->requireRunMode(STOPPED)) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -254,6 +255,7 @@ void CmdSequencerComponentImpl::error() {
 }
 
 void CmdSequencerComponentImpl::performCmd_Cancel() {
+    FW_ASSERT(this->m_sequence != nullptr);
     this->m_sequence->reset();
     this->m_runMode = STOPPED;
     this->m_cmdTimer.clear();
@@ -347,6 +349,7 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
 }
 
 void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) {
+    FW_ASSERT(this->m_sequence != nullptr);
     if (this->requireRunMode(RUNNING)) {
         this->performCmd_Step();
         // check for special case where end of sequence entry was encountered
@@ -417,11 +420,12 @@ void CmdSequencerComponentImpl::performCmd_Step() {
             this->performCmd_Step_ABSOLUTE(currentTime);
             break;
         default:
-            FW_ASSERT(0, m_record.m_descriptor);
+            FW_ASSERT(false, m_record.m_descriptor);
     }
 }
 
 void CmdSequencerComponentImpl::sequenceComplete() {
+    FW_ASSERT(this->m_sequence != nullptr);
     ++this->m_sequencesCompletedCount;
     // reset buffer
     this->m_sequence->clear();

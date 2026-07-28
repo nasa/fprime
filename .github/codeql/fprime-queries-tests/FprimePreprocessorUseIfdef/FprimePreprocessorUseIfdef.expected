@@ -1,0 +1,1 @@
+| test.cpp:6:1:6:16 | #if FEATURE_MODE | Use of conditional compilation must be kept to a minimum. |

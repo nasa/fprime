@@ -68,14 +68,14 @@ void Version ::setVersion_handler(FwIndexType portNum,
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionEnabled enable) {
+void Version ::ENABLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::VersionEnabled& enable) {
     this->m_enable = (enable == VersionEnabled::ENABLED);
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 // Command handler to event versions
-void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionType version_type) {
+void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Svc::VersionType& version_type) {
     FW_ASSERT(version_type.isValid(), version_type.e);
 
     switch (version_type) {
@@ -102,7 +102,7 @@ void Version ::VERSION_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::VersionT
             this->customVersion_tlm_all();
             break;
         default:
-            FW_ASSERT(0, version_type);
+            FW_ASSERT(false, version_type);
             break;
     }
 
@@ -131,6 +131,7 @@ void Version ::projectVersion_tlm() {
 void Version ::libraryVersion_tlm() {
     // Process libraries array
     for (U8 i = 0; i < Project::Version::LIBRARY_VERSIONS_COUNT; i++) {
+        FW_ASSERT(Project::Version::LIBRARY_VERSIONS[i] != nullptr, static_cast<FwAssertArgType>(i));
         // Emit Event/TLM on library versions
         this->log_ACTIVITY_LO_LibraryVersions(Fw::LogStringArg(Project::Version::LIBRARY_VERSIONS[i]));
         // Write to Events
@@ -227,7 +228,7 @@ void Version ::customVersion_tlm(VersionSlot custom_slot) {
                     break;
                 default:
                     // There are only 10 custom slots available
-                    FW_ASSERT(0, custom_slot);
+                    FW_ASSERT(false, custom_slot);
                     break;
             }
         }

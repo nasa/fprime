@@ -47,7 +47,8 @@ void DpCatalogTester ::doInit() {
     dirs[0] = "dir0";
     dirs[1] = "dir1";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
-    this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, FW_NUM_ARRAY_ELEMENTS(dirs)), stateFile, 100,
+                              alloc);
     this->component.shutdown();
 }
 
@@ -60,7 +61,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input, FwIndexType numEn
     Fw::FileNameString dirs[1];
     dirs[0] = "dir0";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
-    this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, FW_NUM_ARRAY_ELEMENTS(dirs)), stateFile, 100,
+                              alloc);
 
     // reset catalog
     this->component.resetCatalog();
@@ -143,7 +145,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
 
-    this->component.configure(dpDirs, numDirs, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dpDirs, numDirs), stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -681,7 +683,7 @@ void DpCatalogTester ::test_BadFileDone() {
     Fw::MallocAllocator alloc;
 
     Fw::FileNameString dirs[1];
-    this->component.configure(dirs, 0, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 0), stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -719,7 +721,7 @@ void DpCatalogTester::test_ProcessFileInvalidDir() {
     Fw::FileNameString dirs[1];
     dirs[0] = "./DpTest_InvalidDir";
     Fw::FileNameString stateFile("");
-    this->component.configure(dirs, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
 
     ASSERT_DEATH_IF_SUPPORTED(this->component.processFile("somefile.dp", DP_MAX_DIRECTORIES), "Assert");
 
@@ -744,7 +746,7 @@ void DpCatalogTester::test_MalformedFile() {
     // 3. Configure the Component
     Fw::MallocAllocator mockAllocator;
     Fw::FileNameString dirs[DP_MAX_DIRECTORIES];
-    this->component.configure(dirs, 0, stateFile, 0, mockAllocator);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 0), stateFile, 0, mockAllocator);
 
     // 4. Dispatch the BUILD_CATALOG command
     this->sendCmd_BUILD_CATALOG(0, 0);
@@ -795,7 +797,7 @@ void DpCatalogTester::test_TruncatedDpRejected() {
     ASSERT_EQ(size, headerSize);
     dpFile.close();
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -826,7 +828,7 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     rogueFile.format("%s/rogue.fdp", dir.toChar());
     ASSERT_EQ(Os::FileSystem::moveFile(canonicalFile.toChar(), rogueFile.toChar()), Os::FileSystem::OP_OK);
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -853,7 +855,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
     ASSERT_STRNE(fileName.toChar(), "");
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);

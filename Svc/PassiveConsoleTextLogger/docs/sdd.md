@@ -34,7 +34,7 @@ The `Svc::PassiveConsoleTextLogger` prints formatted event text to stdout via `F
 
 The component supports per-severity event filtering via the `setSeverityFilter(Fw::LogSeverity, bool)` method. Each of the six filterable severity levels (WARNING_HI, WARNING_LO, COMMAND, ACTIVITY_HI, ACTIVITY_LO, DIAGNOSTIC) can be independently enabled or disabled. When a severity is disabled, events at that level are silently dropped. FATAL events are never filtered regardless of configuration.
 
-Default filter states are configured via constants in `PassiveTextLoggerCfg.hpp`. By default, all severities pass through (all defaults are `true`).
+Default filter states are configured via constants in `PassiveTextLoggerCfg.hpp`. By default, all severities pass through except DIAGNOSTIC, which is filtered out.
 
 The filtering logic is provided by the shared `Svc::EventSeverityFilter` utility class.
 

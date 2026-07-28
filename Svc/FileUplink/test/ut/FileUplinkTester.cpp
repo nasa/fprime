@@ -10,9 +10,11 @@
 //
 // ======================================================================
 
+#include <unistd.h>
 #include <cerrno>
 #include <cstring>
 
+#include <Os/FilePathUtils.hpp>
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 
@@ -33,6 +35,16 @@ FileUplinkTester ::FileUplinkTester()
       sequenceIndex(0) {
     this->connectPorts();
     this->initComponents();
+    // Configure sandbox to allow the current working directory for test files
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
+    const FwSizeType cwdLen = std::strlen(cwd);
+    FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
+    if (cwd[cwdLen - 1] != '/') {
+        cwd[cwdLen] = '/';
+        cwd[cwdLen + 1] = '\0';
+    }
+    this->component.configure(cwd);
 }
 
 FileUplinkTester ::~FileUplinkTester() {

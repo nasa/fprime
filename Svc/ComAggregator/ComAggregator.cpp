@@ -108,7 +108,7 @@ void ComAggregator ::Svc_AggregationMachine_action_doHold(SmId smId,
 
 void ComAggregator ::Svc_AggregationMachine_action_assertNoStatus(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Status is not possible in this state, confirm by assertion
-    FW_ASSERT(0);
+    FW_ASSERT(false);
 }
 
 // ----------------------------------------------------------------------

@@ -110,7 +110,7 @@ void BufferAccumulator ::pingIn_handler(const FwIndexType portNum, U32 key) {
 
 void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
                                                const U32 cmdSeq,
-                                               BufferAccumulator_OpState mode) {
+                                               const BufferAccumulator_OpState& mode) {
     // cancel an in-progress partial drain
     if (this->m_numToDrain > 0) {
         // reset counters for partial buffer drain
@@ -135,7 +135,7 @@ void BufferAccumulator ::BA_SetMode_cmdHandler(const FwOpcodeType opCode,
 void BufferAccumulator ::BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode,
                                                     const U32 cmdSeq,
                                                     U32 numToDrain,
-                                                    BufferAccumulator_BlockMode blockMode) {
+                                                    const BufferAccumulator_BlockMode& blockMode) {
     if (this->m_numDrained < this->m_numToDrain) {
         this->log_WARNING_HI_BA_StillDraining(static_cast<U32>(this->m_numDrained),
                                               static_cast<U32>(this->m_numToDrain));
@@ -181,7 +181,7 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode,
     // We are still waiting for a buffer from last time
     if (!this->m_waitForBuffer) {
         this->m_send = true;
-        this->sendStoredBuffer();  // kick off the draining;
+        this->sendStoredBuffer();  // kick off the draining
     }
 }
 

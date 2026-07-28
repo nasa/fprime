@@ -35,18 +35,21 @@ class EventManager final : public EventManagerComponentBase {
 
     void SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                      U32 cmdSeq,
-                                     EventManager_FilterSeverity filterLevel,
-                                     EventManager_Enabled filterEnabled);
+                                     const EventManager_FilterSeverity& filterLevel,
+                                     const EventManager_Enabled& filterEnabled);
 
     void SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                   U32 cmdSeq,           //!< The command sequence number
                                   FwEventIdType ID,
-                                  EventManager_Enabled idFilterEnabled  //!< ID filter state
+                                  const EventManager_Enabled& idFilterEnabled  //!< ID filter state
     );
 
     void DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                       U32 cmdSeq            //!< The command sequence number
     );
+
+    //! Handler for rate group port — writes dropped-event telemetry
+    void run_handler(FwIndexType portNum, U32 context);
 
     //! Handler implementation for pingIn
     //!

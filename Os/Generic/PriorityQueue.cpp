@@ -160,6 +160,10 @@ void PriorityQueue::teardown() {
 
 void PriorityQueue::teardownInternal() {
     if (this->m_handle.m_data != nullptr) {
+        // All backing arrays are allocated together in create()
+        FW_ASSERT(this->m_handle.m_indices != nullptr);
+        FW_ASSERT(this->m_handle.m_sizes != nullptr);
+        FW_ASSERT(this->m_handle.m_heap_pointer != nullptr);
         const FwEnumStoreType identifier = this->m_handle.m_id;
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
@@ -191,13 +195,15 @@ QueueInterface::Status PriorityQueue::send(const U8* buffer,
             return QueueInterface::Status::FULL;
         }
         // Will loop and block until full is false
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isFull()) {
             this->m_handle.m_full.wait(this->m_handle.m_data_lock);
         }
         FwSizeType index = this->m_handle.find_index();
 
         // Space must exist, push must work
-        FW_ASSERT(this->m_handle.m_heap.push(priority, index));
+        const bool pushed = this->m_handle.m_heap.push(priority, index);
+        FW_ASSERT(pushed);
         this->m_handle.store_data(index, buffer, size);
         this->m_handle.m_sizes[index] = size;
         this->m_handle.m_highMark = std::max(this->m_handle.m_highMark, this->getMessagesAvailable());
@@ -217,13 +223,15 @@ QueueInterface::Status PriorityQueue::receive(U8* destination,
             return QueueInterface::Status::EMPTY;
         }
         // Loop and lock while empty
+        // @non-terminating@: condition-variable wait loop
         while (this->m_handle.m_heap.isEmpty()) {
             this->m_handle.m_empty.wait(this->m_handle.m_data_lock);
         }
 
         FwSizeType index;
         // Message must exist, so pop must pass and size must be valid
-        FW_ASSERT(this->m_handle.m_heap.pop(priority, index));
+        const bool popped = this->m_handle.m_heap.pop(priority, index);
+        FW_ASSERT(popped);
         actualSize = this->m_handle.m_sizes[index];
         FW_ASSERT(actualSize <= capacity);
         this->m_handle.load_data(index, destination, actualSize);

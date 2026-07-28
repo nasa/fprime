@@ -1,0 +1,188 @@
+name: "External Repo: Generic Hub Reference"
+
+on:
+  push:
+    branches: [devel, release/**]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [devel, release/**]
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/agents/**"
+
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-generic-hub-reference
+
+  hub-communication:
+    name: "Generic Hub round-trip"
+    runs-on: ubuntu-22.04
+    needs: get-branch
+    steps:
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          repository: fprime-community/fprime-generic-hub-reference
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+          submodules: recursive
+
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          path: lib/fprime
+          submodules: true
+          fetch-depth: 0
+
+      - name: "Setup F´ toolchain"
+        uses: ./lib/fprime/.github/actions/setup
+        with:
+          location: lib/fprime
+
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+
+      - name: "Generate"
+        run: fprime-util generate
+
+      - name: "Build"
+        run: fprime-util build -j8
+
+      - name: "Set up runtime config variables"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          BUILD_DIR="${GITHUB_WORKSPACE}/build-artifacts/Linux"
+          A_DIR="${BUILD_DIR}/FprimeGenericHubReference_Deployments_DeploymentA"
+          B_BIN="${BUILD_DIR}/FprimeGenericHubReference_Deployments_DeploymentB/bin/FprimeGenericHubReference_Deployments_DeploymentB"
+          A_DICT="${A_DIR}/dict/DeploymentATopologyDictionary.json"
+          A_TEST_DIR="${GITHUB_WORKSPACE}/FprimeGenericHubReference/Deployments/DeploymentA/test/int"
+          A_TEST_CONFIG="${A_TEST_DIR}/int_config.json"
+          LOG_DIR="${GITHUB_WORKSPACE}/hub-communication-logs"
+          B_LOG="${LOG_DIR}/deploymentB.stdout.log"
+          GDS_LOG="${LOG_DIR}/gds.stdout.log"
+          GDS_LOG_DIR="${LOG_DIR}/gds"
+          PORT_A=50000
+          PORT_B=50001
+
+          # Resolve the HubCommandTest opcode from the dictionary instead of hardcoding it.
+          # F´ renders opcodes in the console as lowercase, unpadded hex, e.g. 0x11017500.
+          CMD_OPCODE="$(jq -r '.commands[] | select(.name | endswith(".HubCommandTest")) | .opcode' "${A_DICT}")"
+          if [[ -z "${CMD_OPCODE}" || "${CMD_OPCODE}" == "null" ]]; then
+            echo "Could not resolve HubCommandTest opcode from ${A_DICT}" >&2
+            exit 1
+          fi
+          # Convert the dictionary's decimal opcode to the console's lowercase hexadecimal format.
+          CMD_OPCODE_HEX="$(printf '0x%x' "${CMD_OPCODE}")"
+          echo "HubCommandTest opcode: ${CMD_OPCODE_HEX}"
+
+          {
+            echo "A_DIR=${A_DIR}"
+            echo "B_BIN=${B_BIN}"
+            echo "A_DICT=${A_DICT}"
+            echo "A_TEST_DIR=${A_TEST_DIR}"
+            echo "A_TEST_CONFIG=${A_TEST_CONFIG}"
+            echo "LOG_DIR=${LOG_DIR}"
+            echo "B_LOG=${B_LOG}"
+            echo "GDS_LOG=${GDS_LOG}"
+            echo "GDS_LOG_DIR=${GDS_LOG_DIR}"
+            echo "PORT_A=${PORT_A}"
+            echo "PORT_B=${PORT_B}"
+            echo "CMD_OPCODE=${CMD_OPCODE}"
+            echo "CMD_OPCODE_HEX=${CMD_OPCODE_HEX}"
+          } >> "${GITHUB_ENV}"
+
+      - name: "Run Generic Hub round-trip"
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          mkdir -p "${LOG_DIR}"
+
+          echo "Starting DeploymentB on TCP port ${PORT_B}"
+          # stdbuf line-buffers B's output so its logs are ensured to be on disk when we grep below
+          stdbuf -oL -eL "${B_BIN}" -a 127.0.0.1 -p "${PORT_B}" >"${B_LOG}" 2>&1 &
+
+          echo "Starting DeploymentA through GDS on TCP port ${PORT_A}"
+          mkdir -p "${GDS_LOG_DIR}"
+          fprime-gds \
+            --ip-client \
+            --ip-address 127.0.0.1 \
+            --ip-port "${PORT_A}" \
+            -d "${A_DIR}" \
+            --dictionary "${A_DICT}" \
+            -g none \
+            --logs "${GDS_LOG_DIR}" \
+            --log-to-stdout \
+            >"${GDS_LOG}" 2>&1 &
+
+          # Wait for GDS to connect DeploymentA before pytest
+          a_timeout=$((SECONDS + 60))
+          until grep -q "tcp_handler: Client connected" "${GDS_LOG}"; do
+            (( SECONDS < a_timeout )) || {
+              echo "DeploymentA/GDS did not establish its TCP connection before timeout" >&2
+              exit 1
+            }
+            sleep 1
+          done
+
+          # Exercise message paths and verify return events through pytest.
+          pytest "${A_TEST_DIR}" \
+            --dictionary "${A_DICT}" \
+            --deployment-config "${A_TEST_CONFIG}" \
+            --logs "${GDS_LOG_DIR}"
+
+      - name: "Verify HubCommandTest on DeploymentB"
+        shell: bash
+        run: |
+          # Verify in DeploymentB's logs that the commands have been dispatched
+          # this is a current limitation - FprimeRouter::cmdResponseIn_handler
+          # is a no-op that discards the hub-returned command response
+
+          set -Eeuo pipefail
+          sleep 1
+
+          if ! grep -q "OpCodeDispatched : Opcode ${CMD_OPCODE_HEX} dispatched" "${B_LOG}"; then
+            echo "DeploymentB did not dispatch HubCommandTest opcode ${CMD_OPCODE_HEX}" >&2
+            exit 1
+          fi
+          if ! grep -q "HubCommandTestEvr" "${B_LOG}"; then
+            echo "DeploymentB did not log HubCommandTestEvr" >&2
+            exit 1
+          fi
+          if ! grep -q "OpCodeCompleted : Opcode ${CMD_OPCODE_HEX} completed" "${B_LOG}"; then
+            echo "DeploymentB did not complete HubCommandTest opcode ${CMD_OPCODE_HEX}" >&2
+            exit 1
+          fi
+
+          echo "Generic Hub round-trip assertions passed"
+
+      - name: "Archive Generic Hub logs"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: generic-hub-reference-logs
+          path: |
+            hub-communication-logs
+            !hub-communication-logs/gds/**/TestLog_*.xlsx
+          if-no-files-found: warn
+          retention-days: 5

@@ -70,7 +70,11 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
     // Check output context (header info)
     ComCfg::FrameContext context = this->fromPortHistory_dataOut->at(0).context;
-    ASSERT_EQ(context.get_apid(), apid);
+    if (ComCfg::Apid::isValid(apid)) {
+        ASSERT_EQ(context.get_apid(), apid);
+    } else {
+        ASSERT_EQ(context.get_apid(), ComCfg::Apid::INVALID_UNINITIALIZED);
+    }
     ASSERT_EQ(context.get_sequenceCount(), seqCount);
     ASSERT_EQ(context.get_hasSecHdr(), hasSecHdr);
 
@@ -190,9 +194,65 @@ void SpacePacketDeframerTester ::testBufferSingleByte() {
     ASSERT_EVENTS_InvalidPacket_SIZE(1);
 }
 
+void SpacePacketDeframerTester ::testInvalidPacketIdentificationControlFields() {
+    U8 payload[2] = {0xAA, 0xBB};
+    ComCfg::FrameContext nullContext;
+
+    Fw::Buffer buffer =
+        this->assemblePacketWithControlFields(0x1,  // invalid PVN for Space Packet Protocol in this component
+                                              0x0, 0x0, static_cast<U16>(ComCfg::Apid::FW_PACKET_TELEM), 0x3, 0x0012,
+                                              static_cast<U16>(sizeof(payload) - 1), payload, sizeof(payload));
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_validateApidSeqCount_SIZE(0);
+    ASSERT_from_dataReturnOut_SIZE(1);
+    ASSERT_from_errorNotify(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPacket_SIZE(1);
+}
+
+void SpacePacketDeframerTester ::testCommandPacketTypeAccepted() {
+    this->testControlFieldAccepted(0x0, 0x1, 0x0, ComCfg::Apid::FW_PACKET_COMMAND, 0x3);
+}
+
+void SpacePacketDeframerTester ::testSecondaryHeaderFlagAccepted() {
+    this->testControlFieldAccepted(0x0, 0x0, 0x1, ComCfg::Apid::FW_PACKET_COMMAND, 0x3);
+}
+
+void SpacePacketDeframerTester ::testSequenceFlagsAccepted() {
+    this->testControlFieldAccepted(0x0, 0x0, 0x0, ComCfg::Apid::FW_PACKET_TELEM, 0x1);
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
+
+void SpacePacketDeframerTester ::testControlFieldAccepted(U16 pvn,
+                                                          U16 packetType,
+                                                          U16 secondaryHeaderFlag,
+                                                          ComCfg::Apid::T expectedApid,
+                                                          U16 sequenceFlags) {
+    U8 payload[2] = {0xAA, 0xBB};
+    const U16 seqCount = 0x0012;
+    ComCfg::FrameContext nullContext;
+
+    Fw::Buffer buffer = this->assemblePacketWithControlFields(
+        pvn, packetType, secondaryHeaderFlag, static_cast<U16>(expectedApid), sequenceFlags, seqCount,
+        static_cast<U16>(sizeof(payload) - 1), payload, sizeof(payload));
+
+    this->invoke_to_dataIn(0, buffer, nullContext);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_validateApidSeqCount_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(2);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), expectedApid);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_sequenceCount(), seqCount);
+    ASSERT_EVENTS_SIZE(0);
+}
 
 Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 seqCount,
@@ -200,13 +260,31 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U8* packetData,
                                                       U16 packetDataLen,
                                                       bool hasSecHdr) {
+    return this->assemblePacketWithControlFields(0x0, 0x0, static_cast<U16>(hasSecHdr), apid, 0x3, seqCount,
+                                                 lengthToken, packetData, packetDataLen);
+}
+
+Fw::Buffer SpacePacketDeframerTester ::assemblePacketWithControlFields(U16 pvn,
+                                                                       U16 packetType,
+                                                                       U16 secondaryHeaderFlag,
+                                                                       U16 apid,
+                                                                       U16 sequenceFlags,
+                                                                       U16 seqCount,
+                                                                       U16 lengthToken,
+                                                                       U8* packetData,
+                                                                       U16 packetDataLen) {
     SpacePacketHeader header;
-    U16 packetId = apid & SpacePacketSubfields::ApidMask;
-    if (hasSecHdr) {
-        packetId |= SpacePacketSubfields::SecHdrMask;
-    }
-    header.set_packetIdentification(packetId);
-    header.set_packetSequenceControl(seqCount);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
+    const U16 packetIdentification = static_cast<U16>(
+        ((pvn << SpacePacketSubfields::PvnOffset) & SpacePacketSubfields::PvnMask) |
+        ((packetType << SpacePacketSubfields::PktTypeOffset) & SpacePacketSubfields::PktTypeMask) |
+        ((secondaryHeaderFlag << SpacePacketSubfields::SecHdrOffset) & SpacePacketSubfields::SecHdrMask) |
+        (apid & SpacePacketSubfields::ApidMask));
+    const U16 packetSequenceControl = static_cast<U16>(
+        ((sequenceFlags << SpacePacketSubfields::SeqFlagsOffset) & SpacePacketSubfields::SeqFlagsMask) |
+        (seqCount & SpacePacketSubfields::SeqCountMask));
+
+    header.set_packetIdentification(packetIdentification);
+    header.set_packetSequenceControl(packetSequenceControl);
     header.set_packetDataLength(lengthToken);
 
     Fw::ExternalSerializeBuffer serializer(static_cast<U8*>(this->m_packetBuffer), sizeof(this->m_packetBuffer));
