@@ -1,9 +1,14 @@
 {
-  "schema": 1,
+  "schema": 2,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "abc515413d083f6d70a203f3b4d8a5e82f1b0405",
-  "generated_at": "2026-07-28T20:22:15Z",
+  "commit": "e3298e02cbcc50ffed510dc29716ebf565ee062d",
+  "generated_at": "2026-07-28T21:08:37Z",
+  "thresholds": {
+    "platinum": 95.0,
+    "gold": 90.0,
+    "silver": 80.0
+  },
   "overall": {
     "line_pct": 82.21,
     "line_covered": 15602,
@@ -14,1956 +19,5517 @@
     "branch_pct": 72.01,
     "branch_covered": 8886,
     "branch_total": 12340,
-    "report": "coverage/coverage-all.html"
+    "report": "coverage/coverage-all.html",
+    "tier": "silver"
+  },
+  "overall_codeql": {
+    "findings": 0,
+    "by_severity": {
+      "error": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "worst": null,
+    "tier": "platinum",
+    "dismissed": 1197,
+    "report": "codeql/index.html"
   },
   "modules": [
     {
       "path": "CFDP/Checksum",
       "has_ut": true,
       "has_coverage": true,
-      "report": "CFDP/Checksum/coverage/index.html",
-      "summary": "CFDP/Checksum/coverage/summary.json",
-      "line_pct": 73.21,
-      "line_covered": 41,
-      "line_total": 56,
-      "function_pct": 57.14,
-      "function_covered": 8,
-      "function_total": 14,
-      "branch_pct": 53.85,
-      "branch_covered": 14,
-      "branch_total": 26
+      "ut": {
+        "line_pct": 73.21,
+        "line_covered": 41,
+        "line_total": 56,
+        "function_pct": 57.14,
+        "function_covered": 8,
+        "function_total": 14,
+        "branch_pct": 53.85,
+        "branch_covered": 14,
+        "branch_total": 26,
+        "report": "CFDP/Checksum/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "CFDP/Checksum/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "CFDP/Checksum/GTest",
       "has_ut": false,
       "has_coverage": false,
-      "report": "CFDP/Checksum/GTest/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "CFDP/Checksum/GTest/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/AsyncByteStreamBufferAdapter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/AsyncByteStreamBufferAdapter/coverage/index.html",
-      "summary": "Drv/AsyncByteStreamBufferAdapter/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 26,
-      "line_total": 26,
-      "function_pct": 100.0,
-      "function_covered": 7,
-      "function_total": 7,
-      "branch_pct": 100.0,
-      "branch_covered": 6,
-      "branch_total": 6
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 26,
+        "line_total": 26,
+        "function_pct": 100.0,
+        "function_covered": 7,
+        "function_total": 7,
+        "branch_pct": 100.0,
+        "branch_covered": 6,
+        "branch_total": 6,
+        "report": "Drv/AsyncByteStreamBufferAdapter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Drv/AsyncByteStreamBufferAdapter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/ByteStreamBufferAdapter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/ByteStreamBufferAdapter/coverage/index.html",
-      "summary": "Drv/ByteStreamBufferAdapter/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 24,
-      "line_total": 24,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 100.0,
-      "branch_covered": 8,
-      "branch_total": 8
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 24,
+        "line_total": 24,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 100.0,
+        "branch_covered": 8,
+        "branch_total": 8,
+        "report": "Drv/ByteStreamBufferAdapter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Drv/ByteStreamBufferAdapter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/ByteStreamDriverModel",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/ByteStreamDriverModel/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/ByteStreamDriverModel/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/Interfaces",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/Interfaces/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/Interfaces/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/Ip",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/Ip/coverage/index.html",
-      "summary": "Drv/Ip/coverage/summary.json",
-      "line_pct": 45.56,
-      "line_covered": 241,
-      "line_total": 529,
-      "function_pct": 57.38,
-      "function_covered": 35,
-      "function_total": 61,
-      "branch_pct": 27.17,
-      "branch_covered": 97,
-      "branch_total": 357
+      "ut": {
+        "line_pct": 45.56,
+        "line_covered": 241,
+        "line_total": 529,
+        "function_pct": 57.38,
+        "function_covered": 35,
+        "function_total": 61,
+        "branch_pct": 27.17,
+        "branch_covered": 97,
+        "branch_total": 357,
+        "report": "Drv/Ip/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 65,
+        "report": "Drv/Ip/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/LinuxGpioDriver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/LinuxGpioDriver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/LinuxGpioDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/LinuxI2cDriver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/LinuxI2cDriver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Drv/LinuxI2cDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/LinuxSpiDriver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/LinuxSpiDriver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/LinuxSpiDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/LinuxUartDriver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/LinuxUartDriver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 9,
+        "report": "Drv/LinuxUartDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/Ports",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/Ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Drv/Ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/Ports/DataTypes",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Drv/Ports/DataTypes/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Drv/Ports/DataTypes/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/TcpClient",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/TcpClient/coverage/index.html",
-      "summary": "Drv/TcpClient/coverage/summary.json",
-      "line_pct": 80.49,
-      "line_covered": 33,
-      "line_total": 41,
-      "function_pct": 100.0,
-      "function_covered": 9,
-      "function_total": 9,
-      "branch_pct": 63.16,
-      "branch_covered": 12,
-      "branch_total": 19
+      "ut": {
+        "line_pct": 80.49,
+        "line_covered": 33,
+        "line_total": 41,
+        "function_pct": 100.0,
+        "function_covered": 9,
+        "function_total": 9,
+        "branch_pct": 63.16,
+        "branch_covered": 12,
+        "branch_total": 19,
+        "report": "Drv/TcpClient/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 6,
+        "report": "Drv/TcpClient/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/TcpServer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/TcpServer/coverage/index.html",
-      "summary": "Drv/TcpServer/coverage/summary.json",
-      "line_pct": 85.14,
-      "line_covered": 63,
-      "line_total": 74,
-      "function_pct": 100.0,
-      "function_covered": 14,
-      "function_total": 14,
-      "branch_pct": 60.0,
-      "branch_covered": 27,
-      "branch_total": 45
+      "ut": {
+        "line_pct": 85.14,
+        "line_covered": 63,
+        "line_total": 74,
+        "function_pct": 100.0,
+        "function_covered": 14,
+        "function_total": 14,
+        "branch_pct": 60.0,
+        "branch_covered": 27,
+        "branch_total": 45,
+        "report": "Drv/TcpServer/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 9,
+        "report": "Drv/TcpServer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Drv/Udp",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Drv/Udp/coverage/index.html",
-      "summary": "Drv/Udp/coverage/summary.json",
-      "line_pct": 68.75,
-      "line_covered": 33,
-      "line_total": 48,
-      "function_pct": 90.91,
-      "function_covered": 10,
-      "function_total": 11,
-      "branch_pct": 42.86,
-      "branch_covered": 9,
-      "branch_total": 21
+      "ut": {
+        "line_pct": 68.75,
+        "line_covered": 33,
+        "line_total": 48,
+        "function_pct": 90.91,
+        "function_covered": 10,
+        "function_total": 11,
+        "branch_pct": 42.86,
+        "branch_covered": 9,
+        "branch_total": 21,
+        "report": "Drv/Udp/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 7,
+        "report": "Drv/Udp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/array",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/array/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/array/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/component/active",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/component/active/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/component/active/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/component/empty",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/component/empty/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/component/empty/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/component/passive",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/component/passive/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/component/passive/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/component/queued",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/component/queued/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/component/queued/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/dp",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/dp/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/dp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/enum",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/enum/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/enum/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/interfaces",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/interfaces/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/interfaces/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/sizeof",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/sizeof/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/sizeof/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/external_instance",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/external_instance/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/external_instance/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal/choice",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal/choice/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal/choice/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal/harness",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal/harness/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal/harness/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal/initial",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal/initial/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal/initial/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal/state",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal/state/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal/state/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal_instance/choice",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal_instance/initial",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/state_machine/internal_instance/state",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/state_machine/internal_instance/state/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/state/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/struct",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/struct/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/struct/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/async",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/async/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/async/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/components/Comp",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/components/Comp/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/components/Comp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/components/Framework",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/components/Framework/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/components/Framework/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/components/Receiver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/components/Receiver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/components/Receiver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/components/Sender",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/components/Sender/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/components/Sender/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/guarded",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/guarded/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/guarded/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/main",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/main/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/main/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/ports",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/special_ports",
       "has_ut": true,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/special_ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/special_ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/sync",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/sync/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/sync/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/top_ports",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/top_ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/top_ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "FppTestProject/FppTest/topology/types",
       "has_ut": false,
       "has_coverage": false,
-      "report": "FppTestProject/FppTest/topology/types/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "FppTestProject/FppTest/topology/types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Buffer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Buffer/coverage/index.html",
-      "summary": "Fw/Buffer/coverage/summary.json",
-      "line_pct": 80.41,
-      "line_covered": 78,
-      "line_total": 97,
-      "function_pct": 89.47,
-      "function_covered": 17,
-      "function_total": 19,
-      "branch_pct": 58.62,
-      "branch_covered": 34,
-      "branch_total": 58
+      "ut": {
+        "line_pct": 80.41,
+        "line_covered": 78,
+        "line_total": 97,
+        "function_pct": 89.47,
+        "function_covered": 17,
+        "function_total": 19,
+        "branch_pct": 58.62,
+        "branch_covered": 34,
+        "branch_total": 58,
+        "report": "Fw/Buffer/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Fw/Buffer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Cmd",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Cmd/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 6,
+        "report": "Fw/Cmd/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Com",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Com/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Fw/Com/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Comp",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Comp/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 19,
+        "report": "Fw/Comp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/DataStructures",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/DataStructures/coverage/index.html",
-      "summary": "Fw/DataStructures/coverage/summary.json",
-      "line_pct": 98.31,
-      "line_covered": 1103,
-      "line_total": 1122,
-      "function_pct": 96.95,
-      "function_covered": 508,
-      "function_total": 524,
-      "branch_pct": 83.03,
-      "branch_covered": 450,
-      "branch_total": 542
+      "ut": {
+        "line_pct": 98.31,
+        "line_covered": 1103,
+        "line_total": 1122,
+        "function_pct": 96.95,
+        "function_covered": 508,
+        "function_total": 524,
+        "branch_pct": 83.03,
+        "branch_covered": 450,
+        "branch_total": 542,
+        "report": "Fw/DataStructures/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 14,
+        "report": "Fw/DataStructures/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Dp",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Dp/coverage/index.html",
-      "summary": "Fw/Dp/coverage/summary.json",
-      "line_pct": 94.83,
-      "line_covered": 165,
-      "line_total": 174,
-      "function_pct": 96.67,
-      "function_covered": 29,
-      "function_total": 30,
-      "branch_pct": 95.95,
-      "branch_covered": 71,
-      "branch_total": 74
+      "ut": {
+        "line_pct": 94.83,
+        "line_covered": 165,
+        "line_total": 174,
+        "function_pct": 96.67,
+        "function_covered": 29,
+        "function_total": 30,
+        "branch_pct": 95.95,
+        "branch_covered": 71,
+        "branch_total": 74,
+        "report": "Fw/Dp/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 47,
+        "report": "Fw/Dp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/FilePacket",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/FilePacket/coverage/index.html",
-      "summary": "Fw/FilePacket/coverage/summary.json",
-      "line_pct": 75.24,
-      "line_covered": 231,
-      "line_total": 307,
-      "function_pct": 89.06,
-      "function_covered": 57,
-      "function_total": 64,
-      "branch_pct": 54.3,
-      "branch_covered": 82,
-      "branch_total": 151
+      "ut": {
+        "line_pct": 75.24,
+        "line_covered": 231,
+        "line_total": 307,
+        "function_pct": 89.06,
+        "function_covered": 57,
+        "function_total": 64,
+        "branch_pct": 54.3,
+        "branch_covered": 82,
+        "branch_total": 151,
+        "report": "Fw/FilePacket/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Fw/FilePacket/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/FilePacket/GTest",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/FilePacket/GTest/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/FilePacket/GTest/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Fpy",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Fpy/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Fw/Fpy/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Interfaces",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Interfaces/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Interfaces/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Log",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Log/coverage/index.html",
-      "summary": "Fw/Log/coverage/summary.json",
-      "line_pct": 86.96,
-      "line_covered": 40,
-      "line_total": 46,
-      "function_pct": 100.0,
-      "function_covered": 10,
-      "function_total": 10,
-      "branch_pct": 68.18,
-      "branch_covered": 15,
-      "branch_total": 22
+      "ut": {
+        "line_pct": 86.96,
+        "line_covered": 40,
+        "line_total": 46,
+        "function_pct": 100.0,
+        "function_covered": 10,
+        "function_total": 10,
+        "branch_pct": 68.18,
+        "branch_covered": 15,
+        "branch_total": 22,
+        "report": "Fw/Log/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Fw/Log/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Logger",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Logger/coverage/index.html",
-      "summary": "Fw/Logger/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 16,
-      "line_total": 16,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 100.0,
-      "branch_covered": 5,
-      "branch_total": 5
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 16,
+        "line_total": 16,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 5,
+        "branch_total": 5,
+        "report": "Fw/Logger/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 4,
+        "report": "Fw/Logger/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Obj",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Obj/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Fw/Obj/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Port",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Port/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 21,
+        "report": "Fw/Port/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Ports/CompletionStatus",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Ports/CompletionStatus/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Ports/CompletionStatus/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Ports/Ready",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Ports/Ready/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Ports/Ready/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Ports/Signal",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Ports/Signal/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Ports/Signal/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Ports/SuccessCondition",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Ports/SuccessCondition/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Ports/SuccessCondition/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Prm",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Prm/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Fw/Prm/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/SerializableFile",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/SerializableFile/coverage/index.html",
-      "summary": "Fw/SerializableFile/coverage/summary.json",
-      "line_pct": 90.0,
-      "line_covered": 45,
-      "line_total": 50,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 79.41,
-      "branch_covered": 27,
-      "branch_total": 34
+      "ut": {
+        "line_pct": 90.0,
+        "line_covered": 45,
+        "line_total": 50,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 79.41,
+        "branch_covered": 27,
+        "branch_total": 34,
+        "report": "Fw/SerializableFile/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/SerializableFile/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/SerializableFile/test/TestSerializable",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/SerializableFile/test/TestSerializable/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/SerializableFile/test/TestSerializable/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Sm",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Sm/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Fw/Sm/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Test",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Test/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Fw/Test/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Time",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Time/coverage/index.html",
-      "summary": "Fw/Time/coverage/summary.json",
-      "line_pct": 88.66,
-      "line_covered": 219,
-      "line_total": 247,
-      "function_pct": 85.48,
-      "function_covered": 53,
-      "function_total": 62,
-      "branch_pct": 86.84,
-      "branch_covered": 99,
-      "branch_total": 114
+      "ut": {
+        "line_pct": 88.66,
+        "line_covered": 219,
+        "line_total": 247,
+        "function_pct": 85.48,
+        "function_covered": 53,
+        "function_total": 62,
+        "branch_pct": 86.84,
+        "branch_covered": 99,
+        "branch_total": 114,
+        "report": "Fw/Time/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Fw/Time/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Tlm",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Tlm/coverage/index.html",
-      "summary": "Fw/Tlm/coverage/summary.json",
-      "line_pct": 63.77,
-      "line_covered": 44,
-      "line_total": 69,
-      "function_pct": 72.73,
-      "function_covered": 8,
-      "function_total": 11,
-      "branch_pct": 44.12,
-      "branch_covered": 15,
-      "branch_total": 34
+      "ut": {
+        "line_pct": 63.77,
+        "line_covered": 44,
+        "line_total": 69,
+        "function_pct": 72.73,
+        "function_covered": 8,
+        "function_total": 11,
+        "branch_pct": 44.12,
+        "branch_covered": 15,
+        "branch_total": 34,
+        "report": "Fw/Tlm/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Fw/Tlm/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Types",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Fw/Types/coverage/index.html",
-      "summary": "Fw/Types/coverage/summary.json",
-      "line_pct": 55.36,
-      "line_covered": 878,
-      "line_total": 1586,
-      "function_pct": 59.06,
-      "function_covered": 202,
-      "function_total": 342,
-      "branch_pct": 35.38,
-      "branch_covered": 231,
-      "branch_total": 653
+      "ut": {
+        "line_pct": 55.36,
+        "line_covered": 878,
+        "line_total": 1586,
+        "function_pct": 59.06,
+        "function_covered": 202,
+        "function_total": 342,
+        "branch_pct": 35.38,
+        "branch_covered": 231,
+        "branch_total": 653,
+        "report": "Fw/Types/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 194,
+        "report": "Fw/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Fw/Types/GTest",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Fw/Types/GTest/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Fw/Types/GTest/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Os/coverage/index.html",
-      "summary": "Os/coverage/summary.json",
-      "line_pct": 21.1,
-      "line_covered": 665,
-      "line_total": 3151,
-      "function_pct": 23.26,
-      "function_covered": 134,
-      "function_total": 576,
-      "branch_pct": 18.86,
-      "branch_covered": 295,
-      "branch_total": 1564
+      "ut": {
+        "line_pct": 21.1,
+        "line_covered": 665,
+        "line_total": 3151,
+        "function_pct": 23.26,
+        "function_covered": 134,
+        "function_total": 576,
+        "branch_pct": 18.86,
+        "branch_covered": 295,
+        "branch_total": 1564,
+        "report": "Os/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 71,
+        "report": "Os/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os/Darwin",
       "has_ut": true,
       "has_coverage": false,
-      "report": "Os/Darwin/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Os/Darwin/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os/Generic",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Os/Generic/coverage/index.html",
-      "summary": "Os/Generic/coverage/summary.json",
-      "line_pct": 89.11,
-      "line_covered": 712,
-      "line_total": 799,
-      "function_pct": 88.16,
-      "function_covered": 67,
-      "function_total": 76,
-      "branch_pct": 73.48,
-      "branch_covered": 302,
-      "branch_total": 411
+      "ut": {
+        "line_pct": 89.11,
+        "line_covered": 712,
+        "line_total": 799,
+        "function_pct": 88.16,
+        "function_covered": 67,
+        "function_total": 76,
+        "branch_pct": 73.48,
+        "branch_covered": 302,
+        "branch_total": 411,
+        "report": "Os/Generic/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 10,
+        "report": "Os/Generic/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os/Generic/Types",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Os/Generic/Types/coverage/index.html",
-      "summary": "Os/Generic/Types/coverage/summary.json",
-      "line_pct": 92.11,
-      "line_covered": 257,
-      "line_total": 279,
-      "function_pct": 92.86,
-      "function_covered": 26,
-      "function_total": 28,
-      "branch_pct": 75.24,
-      "branch_covered": 79,
-      "branch_total": 105
+      "ut": {
+        "line_pct": 92.11,
+        "line_covered": 257,
+        "line_total": 279,
+        "function_pct": 92.86,
+        "function_covered": 26,
+        "function_total": 28,
+        "branch_pct": 75.24,
+        "branch_covered": 79,
+        "branch_total": 105,
+        "report": "Os/Generic/Types/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Os/Generic/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os/Models",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Os/Models/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Os/Models/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Os/Posix",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Os/Posix/coverage/index.html",
-      "summary": "Os/Posix/coverage/summary.json",
-      "line_pct": 62.32,
-      "line_covered": 473,
-      "line_total": 759,
-      "function_pct": 84.21,
-      "function_covered": 80,
-      "function_total": 95,
-      "branch_pct": 44.08,
-      "branch_covered": 190,
-      "branch_total": 431
+      "ut": {
+        "line_pct": 62.32,
+        "line_covered": 473,
+        "line_total": 759,
+        "function_pct": 84.21,
+        "function_covered": 80,
+        "function_total": 95,
+        "branch_pct": 44.08,
+        "branch_covered": 190,
+        "branch_total": 431,
+        "report": "Os/Posix/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 48,
+        "report": "Os/Posix/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ActivePhaser",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ActivePhaser/coverage/index.html",
-      "summary": "Svc/ActivePhaser/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 93,
-      "line_total": 93,
-      "function_pct": 100.0,
-      "function_covered": 11,
-      "function_total": 11,
-      "branch_pct": 81.97,
-      "branch_covered": 50,
-      "branch_total": 61
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 93,
+        "line_total": 93,
+        "function_pct": 100.0,
+        "function_covered": 11,
+        "function_total": 11,
+        "branch_pct": 81.97,
+        "branch_covered": 50,
+        "branch_total": 61,
+        "report": "Svc/ActivePhaser/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/ActivePhaser/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ActiveRateGroup",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ActiveRateGroup/coverage/index.html",
-      "summary": "Svc/ActiveRateGroup/coverage/summary.json",
-      "line_pct": 83.64,
-      "line_covered": 46,
-      "line_total": 55,
-      "function_pct": 87.5,
-      "function_covered": 7,
-      "function_total": 8,
-      "branch_pct": 73.53,
-      "branch_covered": 25,
-      "branch_total": 34
+      "ut": {
+        "line_pct": 83.64,
+        "line_covered": 46,
+        "line_total": 55,
+        "function_pct": 87.5,
+        "function_covered": 7,
+        "function_total": 8,
+        "branch_pct": 73.53,
+        "branch_covered": 25,
+        "branch_total": 34,
+        "report": "Svc/ActiveRateGroup/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 4,
+        "report": "Svc/ActiveRateGroup/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ActiveTextLogger",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ActiveTextLogger/coverage/index.html",
-      "summary": "Svc/ActiveTextLogger/coverage/summary.json",
-      "line_pct": 78.5,
-      "line_covered": 84,
-      "line_total": 107,
-      "function_pct": 90.0,
-      "function_covered": 9,
-      "function_total": 10,
-      "branch_pct": 71.23,
-      "branch_covered": 52,
-      "branch_total": 73
+      "ut": {
+        "line_pct": 78.5,
+        "line_covered": 84,
+        "line_total": 107,
+        "function_pct": 90.0,
+        "function_covered": 9,
+        "function_total": 10,
+        "branch_pct": 71.23,
+        "branch_covered": 52,
+        "branch_total": 73,
+        "report": "Svc/ActiveTextLogger/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/ActiveTextLogger/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/AssertFatalAdapter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/AssertFatalAdapter/coverage/index.html",
-      "summary": "Svc/AssertFatalAdapter/coverage/summary.json",
-      "line_pct": 94.74,
-      "line_covered": 54,
-      "line_total": 57,
-      "function_pct": 100.0,
-      "function_covered": 8,
-      "function_total": 8,
-      "branch_pct": 86.67,
-      "branch_covered": 26,
-      "branch_total": 30
+      "ut": {
+        "line_pct": 94.74,
+        "line_covered": 54,
+        "line_total": 57,
+        "function_pct": 100.0,
+        "function_covered": 8,
+        "function_total": 8,
+        "branch_pct": 86.67,
+        "branch_covered": 26,
+        "branch_total": 30,
+        "report": "Svc/AssertFatalAdapter/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 10,
+        "report": "Svc/AssertFatalAdapter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/BufferAccumulator",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/BufferAccumulator/coverage/index.html",
-      "summary": "Svc/BufferAccumulator/coverage/summary.json",
-      "line_pct": 88.16,
-      "line_covered": 134,
-      "line_total": 152,
-      "function_pct": 94.12,
-      "function_covered": 16,
-      "function_total": 17,
-      "branch_pct": 74.75,
-      "branch_covered": 74,
-      "branch_total": 99
+      "ut": {
+        "line_pct": 88.16,
+        "line_covered": 134,
+        "line_total": 152,
+        "function_pct": 94.12,
+        "function_covered": 16,
+        "function_total": 17,
+        "branch_pct": 74.75,
+        "branch_covered": 74,
+        "branch_total": 99,
+        "report": "Svc/BufferAccumulator/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/BufferAccumulator/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/BufferLogger",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/BufferLogger/coverage/index.html",
-      "summary": "Svc/BufferLogger/coverage/summary.json",
-      "line_pct": 91.67,
-      "line_covered": 143,
-      "line_total": 156,
-      "function_pct": 86.96,
-      "function_covered": 20,
-      "function_total": 23,
-      "branch_pct": 78.95,
-      "branch_covered": 75,
-      "branch_total": 95
+      "ut": {
+        "line_pct": 91.67,
+        "line_covered": 143,
+        "line_total": 156,
+        "function_pct": 86.96,
+        "function_covered": 20,
+        "function_total": 23,
+        "branch_pct": 78.95,
+        "branch_covered": 75,
+        "branch_total": 95,
+        "report": "Svc/BufferLogger/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/BufferLogger/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/BufferManager",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/BufferManager/coverage/index.html",
-      "summary": "Svc/BufferManager/coverage/summary.json",
-      "line_pct": 99.05,
-      "line_covered": 104,
-      "line_total": 105,
-      "function_pct": 100.0,
-      "function_covered": 7,
-      "function_total": 7,
-      "branch_pct": 83.64,
-      "branch_covered": 46,
-      "branch_total": 55
+      "ut": {
+        "line_pct": 99.05,
+        "line_covered": 104,
+        "line_total": 105,
+        "function_pct": 100.0,
+        "function_covered": 7,
+        "function_total": 7,
+        "branch_pct": 83.64,
+        "branch_covered": 46,
+        "branch_total": 55,
+        "report": "Svc/BufferManager/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Svc/BufferManager/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/BufferRepeater",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/BufferRepeater/coverage/index.html",
-      "summary": "Svc/BufferRepeater/coverage/summary.json",
-      "line_pct": 91.89,
-      "line_covered": 34,
-      "line_total": 37,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 75.0,
-      "branch_covered": 27,
-      "branch_total": 36
+      "ut": {
+        "line_pct": 91.89,
+        "line_covered": 34,
+        "line_total": 37,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 75.0,
+        "branch_covered": 27,
+        "branch_total": 36,
+        "report": "Svc/BufferRepeater/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 7,
+        "report": "Svc/BufferRepeater/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/AosDeframer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/AosDeframer/coverage/index.html",
-      "summary": "Svc/Ccsds/AosDeframer/coverage/summary.json",
-      "line_pct": 98.56,
-      "line_covered": 273,
-      "line_total": 277,
-      "function_pct": 100.0,
-      "function_covered": 16,
-      "function_total": 16,
-      "branch_pct": 89.35,
-      "branch_covered": 193,
-      "branch_total": 216
+      "ut": {
+        "line_pct": 98.56,
+        "line_covered": 273,
+        "line_total": 277,
+        "function_pct": 100.0,
+        "function_covered": 16,
+        "function_total": 16,
+        "branch_pct": 89.35,
+        "branch_covered": 193,
+        "branch_total": 216,
+        "report": "Svc/Ccsds/AosDeframer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/AosDeframer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/AosFramer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/AosFramer/coverage/index.html",
-      "summary": "Svc/Ccsds/AosFramer/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 190,
-      "line_total": 190,
-      "function_pct": 100.0,
-      "function_covered": 17,
-      "function_total": 17,
-      "branch_pct": 84.09,
-      "branch_covered": 111,
-      "branch_total": 132
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 190,
+        "line_total": 190,
+        "function_pct": 100.0,
+        "function_covered": 17,
+        "function_total": 17,
+        "branch_pct": 84.09,
+        "branch_covered": 111,
+        "branch_total": 132,
+        "report": "Svc/Ccsds/AosFramer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/Ccsds/AosFramer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/ApidManager",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/ApidManager/coverage/index.html",
-      "summary": "Svc/Ccsds/ApidManager/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 21,
-      "line_total": 21,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 100.0,
-      "branch_covered": 7,
-      "branch_total": 7
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 21,
+        "line_total": 21,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 100.0,
+        "branch_covered": 7,
+        "branch_total": 7,
+        "report": "Svc/Ccsds/ApidManager/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/ApidManager/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/Ports",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ccsds/Ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/Ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/SpacePacketDeframer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/SpacePacketDeframer/coverage/index.html",
-      "summary": "Svc/Ccsds/SpacePacketDeframer/coverage/summary.json",
-      "line_pct": 90.57,
-      "line_covered": 48,
-      "line_total": 53,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 79.66,
-      "branch_covered": 47,
-      "branch_total": 59
+      "ut": {
+        "line_pct": 90.57,
+        "line_covered": 48,
+        "line_total": 53,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 79.66,
+        "branch_covered": 47,
+        "branch_total": 59,
+        "report": "Svc/Ccsds/SpacePacketDeframer/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/Ccsds/SpacePacketDeframer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/SpacePacketFramer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/SpacePacketFramer/coverage/index.html",
-      "summary": "Svc/Ccsds/SpacePacketFramer/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 39,
-      "line_total": 39,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 91.3,
-      "branch_covered": 21,
-      "branch_total": 23
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 39,
+        "line_total": 39,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 91.3,
+        "branch_covered": 21,
+        "branch_total": 23,
+        "report": "Svc/Ccsds/SpacePacketFramer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/SpacePacketFramer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/TcDeframer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/TcDeframer/coverage/index.html",
-      "summary": "Svc/Ccsds/TcDeframer/coverage/summary.json",
-      "line_pct": 94.92,
-      "line_covered": 56,
-      "line_total": 59,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 87.04,
-      "branch_covered": 47,
-      "branch_total": 54
+      "ut": {
+        "line_pct": 94.92,
+        "line_covered": 56,
+        "line_total": 59,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 87.04,
+        "branch_covered": 47,
+        "branch_total": 54,
+        "report": "Svc/Ccsds/TcDeframer/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/Ccsds/TcDeframer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/TestUtils",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/TestUtils/coverage/index.html",
-      "summary": "Svc/Ccsds/TestUtils/coverage/summary.json",
-      "line_pct": 11.76,
-      "line_covered": 2,
-      "line_total": 17,
-      "function_pct": 50.0,
-      "function_covered": 1,
-      "function_total": 2,
-      "branch_pct": 0.0,
-      "branch_covered": 0,
-      "branch_total": 16
+      "ut": {
+        "line_pct": 11.76,
+        "line_covered": 2,
+        "line_total": 17,
+        "function_pct": 50.0,
+        "function_covered": 1,
+        "function_total": 2,
+        "branch_pct": 0.0,
+        "branch_covered": 0,
+        "branch_total": 16,
+        "report": "Svc/Ccsds/TestUtils/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/TestUtils/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/TmFramer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Ccsds/TmFramer/coverage/index.html",
-      "summary": "Svc/Ccsds/TmFramer/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 63,
-      "line_total": 63,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 93.94,
-      "branch_covered": 31,
-      "branch_total": 33
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 63,
+        "line_total": 63,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 93.94,
+        "branch_covered": 31,
+        "branch_total": 33,
+        "report": "Svc/Ccsds/TmFramer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/Ccsds/TmFramer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ccsds/Types",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ccsds/Types/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ChronoTime",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ChronoTime/coverage/index.html",
-      "summary": "Svc/ChronoTime/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 8,
-      "line_total": 8,
-      "function_pct": 100.0,
-      "function_covered": 3,
-      "function_total": 3,
-      "branch_pct": 100.0,
-      "branch_covered": 4,
-      "branch_total": 4
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 8,
+        "line_total": 8,
+        "function_pct": 100.0,
+        "function_covered": 3,
+        "function_total": 3,
+        "branch_pct": 100.0,
+        "branch_covered": 4,
+        "branch_total": 4,
+        "report": "Svc/ChronoTime/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Svc/ChronoTime/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/CmdDispatcher",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/CmdDispatcher/coverage/index.html",
-      "summary": "Svc/CmdDispatcher/coverage/summary.json",
-      "line_pct": 96.97,
-      "line_covered": 96,
-      "line_total": 99,
-      "function_pct": 91.67,
-      "function_covered": 11,
-      "function_total": 12,
-      "branch_pct": 91.58,
-      "branch_covered": 87,
-      "branch_total": 95
+      "ut": {
+        "line_pct": 96.97,
+        "line_covered": 96,
+        "line_total": 99,
+        "function_pct": 91.67,
+        "function_covered": 11,
+        "function_total": 12,
+        "branch_pct": 91.58,
+        "branch_covered": 87,
+        "branch_total": 95,
+        "report": "Svc/CmdDispatcher/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 6,
+        "report": "Svc/CmdDispatcher/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/CmdSequencer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/CmdSequencer/coverage/index.html",
-      "summary": "Svc/CmdSequencer/coverage/summary.json",
-      "line_pct": 93.93,
-      "line_covered": 774,
-      "line_total": 824,
-      "function_pct": 97.12,
-      "function_covered": 101,
-      "function_total": 104,
-      "branch_pct": 84.57,
-      "branch_covered": 455,
-      "branch_total": 538
+      "ut": {
+        "line_pct": 93.93,
+        "line_covered": 774,
+        "line_total": 824,
+        "function_pct": 97.12,
+        "function_covered": 101,
+        "function_total": 104,
+        "branch_pct": 84.57,
+        "branch_covered": 455,
+        "branch_total": 538,
+        "report": "Svc/CmdSequencer/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/CmdSequencer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/CmdSplitter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/CmdSplitter/coverage/index.html",
-      "summary": "Svc/CmdSplitter/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 19,
-      "line_total": 19,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 100.0,
-      "branch_covered": 10,
-      "branch_total": 10
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 19,
+        "line_total": 19,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 100.0,
+        "branch_covered": 10,
+        "branch_total": 10,
+        "report": "Svc/CmdSplitter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 4,
+        "report": "Svc/CmdSplitter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComAggregator",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComAggregator/coverage/index.html",
-      "summary": "Svc/ComAggregator/coverage/summary.json",
-      "line_pct": 95.65,
-      "line_covered": 66,
-      "line_total": 69,
-      "function_pct": 93.75,
-      "function_covered": 15,
-      "function_total": 16,
-      "branch_pct": 96.0,
-      "branch_covered": 24,
-      "branch_total": 25
+      "ut": {
+        "line_pct": 95.65,
+        "line_covered": 66,
+        "line_total": 69,
+        "function_pct": 93.75,
+        "function_covered": 15,
+        "function_total": 16,
+        "branch_pct": 96.0,
+        "branch_covered": 24,
+        "branch_total": 25,
+        "report": "Svc/ComAggregator/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 16,
+        "report": "Svc/ComAggregator/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComLogger",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComLogger/coverage/index.html",
-      "summary": "Svc/ComLogger/coverage/summary.json",
-      "line_pct": 97.44,
-      "line_covered": 114,
-      "line_total": 117,
-      "function_pct": 91.67,
-      "function_covered": 11,
-      "function_total": 12,
-      "branch_pct": 83.91,
-      "branch_covered": 73,
-      "branch_total": 87
+      "ut": {
+        "line_pct": 97.44,
+        "line_covered": 114,
+        "line_total": 117,
+        "function_pct": 91.67,
+        "function_covered": 11,
+        "function_total": 12,
+        "branch_pct": 83.91,
+        "branch_covered": 73,
+        "branch_total": 87,
+        "report": "Svc/ComLogger/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 6,
+        "report": "Svc/ComLogger/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComQueue",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComQueue/coverage/index.html",
-      "summary": "Svc/ComQueue/coverage/summary.json",
-      "line_pct": 97.95,
-      "line_covered": 239,
-      "line_total": 244,
-      "function_pct": 100.0,
-      "function_covered": 20,
-      "function_total": 20,
-      "branch_pct": 88.89,
-      "branch_covered": 160,
-      "branch_total": 180
+      "ut": {
+        "line_pct": 97.95,
+        "line_covered": 239,
+        "line_total": 244,
+        "function_pct": 100.0,
+        "function_covered": 20,
+        "function_total": 20,
+        "branch_pct": 88.89,
+        "branch_covered": 160,
+        "branch_total": 180,
+        "report": "Svc/ComQueue/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 28,
+        "report": "Svc/ComQueue/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComRetry",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComRetry/coverage/index.html",
-      "summary": "Svc/ComRetry/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 50,
-      "line_total": 50,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 85.71,
-      "branch_covered": 24,
-      "branch_total": 28
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 50,
+        "line_total": 50,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 85.71,
+        "branch_covered": 24,
+        "branch_total": 28,
+        "report": "Svc/ComRetry/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 14,
+        "report": "Svc/ComRetry/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComSplitter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComSplitter/coverage/index.html",
-      "summary": "Svc/ComSplitter/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 12,
-      "line_total": 12,
-      "function_pct": 100.0,
-      "function_covered": 3,
-      "function_total": 3,
-      "branch_pct": 100.0,
-      "branch_covered": 6,
-      "branch_total": 6
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 12,
+        "line_total": 12,
+        "function_pct": 100.0,
+        "function_covered": 3,
+        "function_total": 3,
+        "branch_pct": 100.0,
+        "branch_covered": 6,
+        "branch_total": 6,
+        "report": "Svc/ComSplitter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/ComSplitter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/ComStub",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/ComStub/coverage/index.html",
-      "summary": "Svc/ComStub/coverage/summary.json",
-      "line_pct": 98.53,
-      "line_covered": 67,
-      "line_total": 68,
-      "function_pct": 100.0,
-      "function_covered": 10,
-      "function_total": 10,
-      "branch_pct": 85.19,
-      "branch_covered": 46,
-      "branch_total": 54
+      "ut": {
+        "line_pct": 98.53,
+        "line_covered": 67,
+        "line_total": 68,
+        "function_pct": 100.0,
+        "function_covered": 10,
+        "function_total": 10,
+        "branch_pct": 85.19,
+        "branch_covered": 46,
+        "branch_total": 54,
+        "report": "Svc/ComStub/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Svc/ComStub/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Cycle",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Cycle/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Cycle/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpCatalog",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/DpCatalog/coverage/index.html",
-      "summary": "Svc/DpCatalog/coverage/summary.json",
-      "line_pct": 76.12,
-      "line_covered": 357,
-      "line_total": 469,
-      "function_pct": 96.97,
-      "function_covered": 32,
-      "function_total": 33,
-      "branch_pct": 64.98,
-      "branch_covered": 282,
-      "branch_total": 434
+      "ut": {
+        "line_pct": 76.12,
+        "line_covered": 357,
+        "line_total": 469,
+        "function_pct": 96.97,
+        "function_covered": 32,
+        "function_total": 33,
+        "branch_pct": 64.98,
+        "branch_covered": 282,
+        "branch_total": 434,
+        "report": "Svc/DpCatalog/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 46,
+        "report": "Svc/DpCatalog/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpCompressProc",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/DpCompressProc/coverage/index.html",
-      "summary": "Svc/DpCompressProc/coverage/summary.json",
-      "line_pct": 89.51,
-      "line_covered": 145,
-      "line_total": 162,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 84.31,
-      "branch_covered": 86,
-      "branch_total": 102
+      "ut": {
+        "line_pct": 89.51,
+        "line_covered": 145,
+        "line_total": 162,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 84.31,
+        "branch_covered": 86,
+        "branch_total": 102,
+        "report": "Svc/DpCompressProc/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpCompressProc/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpCompressProc/Ports",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/DpCompressProc/Ports/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpCompressProc/Ports/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpCompressProc/Types",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/DpCompressProc/Types/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpCompressProc/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpManager",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/DpManager/coverage/index.html",
-      "summary": "Svc/DpManager/coverage/summary.json",
-      "line_pct": 97.44,
-      "line_covered": 38,
-      "line_total": 39,
-      "function_pct": 100.0,
-      "function_covered": 8,
-      "function_total": 8,
-      "branch_pct": 100.0,
-      "branch_covered": 23,
-      "branch_total": 23
+      "ut": {
+        "line_pct": 97.44,
+        "line_covered": 38,
+        "line_total": 39,
+        "function_pct": 100.0,
+        "function_covered": 8,
+        "function_total": 8,
+        "branch_pct": 100.0,
+        "branch_covered": 23,
+        "branch_total": 23,
+        "report": "Svc/DpManager/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 26,
+        "report": "Svc/DpManager/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpPorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/DpPorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpPorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpWriter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/DpWriter/coverage/index.html",
-      "summary": "Svc/DpWriter/coverage/summary.json",
-      "line_pct": 96.06,
-      "line_covered": 122,
-      "line_total": 127,
-      "function_pct": 90.0,
-      "function_covered": 9,
-      "function_total": 10,
-      "branch_pct": 94.64,
-      "branch_covered": 106,
-      "branch_total": 112
+      "ut": {
+        "line_pct": 96.06,
+        "line_covered": 122,
+        "line_total": 127,
+        "function_pct": 90.0,
+        "function_covered": 9,
+        "function_total": 10,
+        "branch_pct": 94.64,
+        "branch_covered": 106,
+        "branch_total": 112,
+        "report": "Svc/DpWriter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 10,
+        "report": "Svc/DpWriter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpZLibCompressor",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/DpZLibCompressor/coverage/index.html",
-      "summary": "Svc/DpZLibCompressor/coverage/summary.json",
-      "line_pct": 93.83,
-      "line_covered": 76,
-      "line_total": 81,
-      "function_pct": 100.0,
-      "function_covered": 8,
-      "function_total": 8,
-      "branch_pct": 80.65,
-      "branch_covered": 75,
-      "branch_total": 93
+      "ut": {
+        "line_pct": 93.83,
+        "line_covered": 76,
+        "line_total": 81,
+        "function_pct": 100.0,
+        "function_covered": 8,
+        "function_total": 8,
+        "branch_pct": 80.65,
+        "branch_covered": 75,
+        "branch_total": 93,
+        "report": "Svc/DpZLibCompressor/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpZLibCompressor/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/DpZLibCompressor/Types",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/DpZLibCompressor/Types/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/DpZLibCompressor/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/EventManager",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/EventManager/coverage/index.html",
-      "summary": "Svc/EventManager/coverage/summary.json",
-      "line_pct": 93.88,
-      "line_covered": 92,
-      "line_total": 98,
-      "function_pct": 88.89,
-      "function_covered": 8,
-      "function_total": 9,
-      "branch_pct": 84.76,
-      "branch_covered": 89,
-      "branch_total": 105
+      "ut": {
+        "line_pct": 93.88,
+        "line_covered": 92,
+        "line_total": 98,
+        "function_pct": 88.89,
+        "function_covered": 8,
+        "function_total": 9,
+        "branch_pct": 84.76,
+        "branch_covered": 89,
+        "branch_total": 105,
+        "report": "Svc/EventManager/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/EventManager/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Fatal",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Fatal/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Fatal/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FatalHandler",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/FatalHandler/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/FatalHandler/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileDispatcher",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FileDispatcher/coverage/index.html",
-      "summary": "Svc/FileDispatcher/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 41,
-      "line_total": 41,
-      "function_pct": 100.0,
-      "function_covered": 6,
-      "function_total": 6,
-      "branch_pct": 85.19,
-      "branch_covered": 23,
-      "branch_total": 27
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 41,
+        "line_total": 41,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 85.19,
+        "branch_covered": 23,
+        "branch_total": 27,
+        "report": "Svc/FileDispatcher/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 10,
+        "report": "Svc/FileDispatcher/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileDownlink",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FileDownlink/coverage/index.html",
-      "summary": "Svc/FileDownlink/coverage/summary.json",
-      "line_pct": 84.03,
-      "line_covered": 321,
-      "line_total": 382,
-      "function_pct": 91.49,
-      "function_covered": 43,
-      "function_total": 47,
-      "branch_pct": 71.37,
-      "branch_covered": 177,
-      "branch_total": 248
+      "ut": {
+        "line_pct": 84.03,
+        "line_covered": 321,
+        "line_total": 382,
+        "function_pct": 91.49,
+        "function_covered": 43,
+        "function_total": 47,
+        "branch_pct": 71.37,
+        "branch_covered": 177,
+        "branch_total": 248,
+        "report": "Svc/FileDownlink/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 17,
+        "report": "Svc/FileDownlink/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileDownlinkPorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/FileDownlinkPorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/FileDownlinkPorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileManager",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FileManager/coverage/index.html",
-      "summary": "Svc/FileManager/coverage/summary.json",
-      "line_pct": 88.02,
-      "line_covered": 147,
-      "line_total": 167,
-      "function_pct": 93.33,
-      "function_covered": 14,
-      "function_total": 15,
-      "branch_pct": 80.29,
-      "branch_covered": 110,
-      "branch_total": 137
+      "ut": {
+        "line_pct": 88.02,
+        "line_covered": 147,
+        "line_total": 167,
+        "function_pct": 93.33,
+        "function_covered": 14,
+        "function_total": 15,
+        "branch_pct": 80.29,
+        "branch_covered": 110,
+        "branch_total": 137,
+        "report": "Svc/FileManager/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 13,
+        "report": "Svc/FileManager/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileUplink",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FileUplink/coverage/index.html",
-      "summary": "Svc/FileUplink/coverage/summary.json",
-      "line_pct": 92.54,
-      "line_covered": 186,
-      "line_total": 201,
-      "function_pct": 96.67,
-      "function_covered": 29,
-      "function_total": 30,
-      "branch_pct": 80.95,
-      "branch_covered": 85,
-      "branch_total": 105
+      "ut": {
+        "line_pct": 92.54,
+        "line_covered": 186,
+        "line_total": 201,
+        "function_pct": 96.67,
+        "function_covered": 29,
+        "function_total": 30,
+        "branch_pct": 80.95,
+        "branch_covered": 85,
+        "branch_total": 105,
+        "report": "Svc/FileUplink/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 10,
+        "report": "Svc/FileUplink/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FileWorker",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FileWorker/coverage/index.html",
-      "summary": "Svc/FileWorker/coverage/summary.json",
-      "line_pct": 90.38,
-      "line_covered": 282,
-      "line_total": 312,
-      "function_pct": 100.0,
-      "function_covered": 14,
-      "function_total": 14,
-      "branch_pct": 85.77,
-      "branch_covered": 211,
-      "branch_total": 246
+      "ut": {
+        "line_pct": 90.38,
+        "line_covered": 282,
+        "line_total": 312,
+        "function_pct": 100.0,
+        "function_covered": 14,
+        "function_total": 14,
+        "branch_pct": 85.77,
+        "branch_covered": 211,
+        "branch_total": 246,
+        "report": "Svc/FileWorker/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 47,
+        "report": "Svc/FileWorker/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FprimeDeframer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FprimeDeframer/coverage/index.html",
-      "summary": "Svc/FprimeDeframer/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 54,
-      "line_total": 54,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 100.0,
-      "branch_covered": 50,
-      "branch_total": 50
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 54,
+        "line_total": 54,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 50,
+        "branch_total": 50,
+        "report": "Svc/FprimeDeframer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 7,
+        "report": "Svc/FprimeDeframer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FprimeFramer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FprimeFramer/coverage/index.html",
-      "summary": "Svc/FprimeFramer/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 31,
-      "line_total": 31,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 95.45,
-      "branch_covered": 21,
-      "branch_total": 22
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 31,
+        "line_total": 31,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 95.45,
+        "branch_covered": 21,
+        "branch_total": 22,
+        "report": "Svc/FprimeFramer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/FprimeFramer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FprimeProtocol",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/FprimeProtocol/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/FprimeProtocol/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FprimeRouter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FprimeRouter/coverage/index.html",
-      "summary": "Svc/FprimeRouter/coverage/summary.json",
-      "line_pct": 88.89,
-      "line_covered": 32,
-      "line_total": 36,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 78.26,
-      "branch_covered": 18,
-      "branch_total": 23
+      "ut": {
+        "line_pct": 88.89,
+        "line_covered": 32,
+        "line_total": 36,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 78.26,
+        "branch_covered": 18,
+        "branch_total": 23,
+        "report": "Svc/FprimeRouter/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 7,
+        "report": "Svc/FprimeRouter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FpySequencer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FpySequencer/coverage/index.html",
-      "summary": "Svc/FpySequencer/coverage/summary.json",
-      "line_pct": 86.51,
-      "line_covered": 1859,
-      "line_total": 2149,
-      "function_pct": 98.57,
-      "function_covered": 207,
-      "function_total": 210,
-      "branch_pct": 77.18,
-      "branch_covered": 1546,
-      "branch_total": 2003
+      "ut": {
+        "line_pct": 86.51,
+        "line_covered": 1859,
+        "line_total": 2149,
+        "function_pct": 98.57,
+        "function_covered": 207,
+        "function_total": 210,
+        "branch_pct": 77.18,
+        "branch_covered": 1546,
+        "branch_total": 2003,
+        "report": "Svc/FpySequencer/coverage/index.html",
+        "tier": "silver"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 23,
+        "report": "Svc/FpySequencer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "silver",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/FrameAccumulator",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/FrameAccumulator/coverage/index.html",
-      "summary": "Svc/FrameAccumulator/coverage/summary.json",
-      "line_pct": 95.81,
-      "line_covered": 183,
-      "line_total": 191,
-      "function_pct": 100.0,
-      "function_covered": 11,
-      "function_total": 11,
-      "branch_pct": 90.48,
-      "branch_covered": 114,
-      "branch_total": 126
+      "ut": {
+        "line_pct": 95.81,
+        "line_covered": 183,
+        "line_total": 191,
+        "function_pct": 100.0,
+        "function_covered": 11,
+        "function_total": 11,
+        "branch_pct": 90.48,
+        "branch_covered": 114,
+        "branch_total": 126,
+        "report": "Svc/FrameAccumulator/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 18,
+        "report": "Svc/FrameAccumulator/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/GenericHub",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/GenericHub/coverage/index.html",
-      "summary": "Svc/GenericHub/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 179,
-      "line_total": 179,
-      "function_pct": 100.0,
-      "function_covered": 12,
-      "function_total": 12,
-      "branch_pct": 85.56,
-      "branch_covered": 154,
-      "branch_total": 180
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 179,
+        "line_total": 179,
+        "function_pct": 100.0,
+        "function_covered": 12,
+        "function_total": 12,
+        "branch_pct": 85.56,
+        "branch_covered": 154,
+        "branch_total": 180,
+        "report": "Svc/GenericHub/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Svc/GenericHub/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Health",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Health/coverage/index.html",
-      "summary": "Svc/Health/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 113,
-      "line_total": 113,
-      "function_pct": 100.0,
-      "function_covered": 10,
-      "function_total": 10,
-      "branch_pct": 88.42,
-      "branch_covered": 84,
-      "branch_total": 95
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 113,
+        "line_total": 113,
+        "function_pct": 100.0,
+        "function_covered": 10,
+        "function_total": 10,
+        "branch_pct": 88.42,
+        "branch_covered": 84,
+        "branch_total": 95,
+        "report": "Svc/Health/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/Health/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Interfaces",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Interfaces/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Interfaces/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/LinuxTimer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/LinuxTimer/coverage/index.html",
-      "summary": "Svc/LinuxTimer/coverage/summary.json",
-      "line_pct": 92.11,
-      "line_covered": 35,
-      "line_total": 38,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 69.57,
-      "branch_covered": 16,
-      "branch_total": 23
+      "ut": {
+        "line_pct": 92.11,
+        "line_covered": 35,
+        "line_total": 38,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 69.57,
+        "branch_covered": 16,
+        "branch_total": 23,
+        "report": "Svc/LinuxTimer/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/LinuxTimer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/OsTime",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/OsTime/coverage/index.html",
-      "summary": "Svc/OsTime/coverage/summary.json",
-      "line_pct": 70.0,
-      "line_covered": 35,
-      "line_total": 50,
-      "function_pct": 83.33,
-      "function_covered": 5,
-      "function_total": 6,
-      "branch_pct": 60.98,
-      "branch_covered": 25,
-      "branch_total": 41
+      "ut": {
+        "line_pct": 70.0,
+        "line_covered": 35,
+        "line_total": 50,
+        "function_pct": 83.33,
+        "function_covered": 5,
+        "function_total": 6,
+        "branch_pct": 60.98,
+        "branch_covered": 25,
+        "branch_total": 41,
+        "report": "Svc/OsTime/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Svc/OsTime/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PassThroughRouter",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/PassThroughRouter/coverage/index.html",
-      "summary": "Svc/PassThroughRouter/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 9,
-      "line_total": 9,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 100.0,
-      "branch_covered": 2,
-      "branch_total": 2
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 9,
+        "line_total": 9,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 2,
+        "branch_total": 2,
+        "report": "Svc/PassThroughRouter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Svc/PassThroughRouter/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PassiveConsoleTextLogger",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/PassiveConsoleTextLogger/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/PassiveConsoleTextLogger/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PassiveRateGroup",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/PassiveRateGroup/coverage/index.html",
-      "summary": "Svc/PassiveRateGroup/coverage/summary.json",
-      "line_pct": 77.14,
-      "line_covered": 27,
-      "line_total": 35,
-      "function_pct": 80.0,
-      "function_covered": 4,
-      "function_total": 5,
-      "branch_pct": 76.92,
-      "branch_covered": 20,
-      "branch_total": 26
+      "ut": {
+        "line_pct": 77.14,
+        "line_covered": 27,
+        "line_total": 35,
+        "function_pct": 80.0,
+        "function_covered": 4,
+        "function_total": 5,
+        "branch_pct": 76.92,
+        "branch_covered": 20,
+        "branch_total": 26,
+        "report": "Svc/PassiveRateGroup/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Svc/PassiveRateGroup/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ping",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ping/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ping/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PolyDb",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/PolyDb/coverage/index.html",
-      "summary": "Svc/PolyDb/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 17,
-      "line_total": 17,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 53.57,
-      "branch_covered": 15,
-      "branch_total": 28
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 17,
+        "line_total": 17,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 53.57,
+        "branch_covered": 15,
+        "branch_total": 28,
+        "report": "Svc/PolyDb/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 23,
+        "report": "Svc/PolyDb/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PolyIf",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/PolyIf/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/PolyIf/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ports/CommsPorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ports/CommsPorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ports/CommsPorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ports/FilePorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ports/FilePorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ports/FilePorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ports/OsTimeEpoch",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ports/OsTimeEpoch/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ports/OsTimeEpoch/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ports/TlmPacketizerPorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ports/TlmPacketizerPorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ports/TlmPacketizerPorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Ports/VersionPorts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Ports/VersionPorts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ports/VersionPorts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PosixTime",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/PosixTime/coverage/index.html",
-      "summary": "Svc/PosixTime/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 7,
-      "line_total": 7,
-      "function_pct": 100.0,
-      "function_covered": 3,
-      "function_total": 3,
-      "branch_pct": 75.0,
-      "branch_covered": 3,
-      "branch_total": 4
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 7,
+        "line_total": 7,
+        "function_pct": 100.0,
+        "function_covered": 3,
+        "function_total": 3,
+        "branch_pct": 75.0,
+        "branch_covered": 3,
+        "branch_total": 4,
+        "report": "Svc/PosixTime/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 1,
+        "report": "Svc/PosixTime/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/PrmDb",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/PrmDb/coverage/index.html",
-      "summary": "Svc/PrmDb/coverage/summary.json",
-      "line_pct": 92.75,
-      "line_covered": 320,
-      "line_total": 345,
-      "function_pct": 89.47,
-      "function_covered": 17,
-      "function_total": 19,
-      "branch_pct": 87.98,
-      "branch_covered": 322,
-      "branch_total": 366
+      "ut": {
+        "line_pct": 92.75,
+        "line_covered": 320,
+        "line_total": 345,
+        "function_pct": 89.47,
+        "function_covered": 17,
+        "function_total": 19,
+        "branch_pct": 87.98,
+        "branch_covered": 322,
+        "branch_total": 366,
+        "report": "Svc/PrmDb/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 6,
+        "report": "Svc/PrmDb/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/RateGroupDriver",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/RateGroupDriver/coverage/index.html",
-      "summary": "Svc/RateGroupDriver/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 22,
-      "line_total": 22,
-      "function_pct": 100.0,
-      "function_covered": 5,
-      "function_total": 5,
-      "branch_pct": 68.75,
-      "branch_covered": 11,
-      "branch_total": 16
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 22,
+        "line_total": 22,
+        "function_pct": 100.0,
+        "function_covered": 5,
+        "function_total": 5,
+        "branch_pct": 68.75,
+        "branch_covered": 11,
+        "branch_total": 16,
+        "report": "Svc/RateGroupDriver/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 3,
+        "report": "Svc/RateGroupDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Sched",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Sched/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Sched/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Seq",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Seq/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Seq/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/SeqDispatcher",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/SeqDispatcher/coverage/index.html",
-      "summary": "Svc/SeqDispatcher/coverage/summary.json",
-      "line_pct": 73.08,
-      "line_covered": 57,
-      "line_total": 78,
-      "function_pct": 80.0,
-      "function_covered": 8,
-      "function_total": 10,
-      "branch_pct": 69.86,
-      "branch_covered": 51,
-      "branch_total": 73
+      "ut": {
+        "line_pct": 73.08,
+        "line_covered": 57,
+        "line_total": 78,
+        "function_pct": 80.0,
+        "function_covered": 8,
+        "function_total": 10,
+        "branch_pct": 69.86,
+        "branch_covered": 51,
+        "branch_total": 73,
+        "report": "Svc/SeqDispatcher/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 11,
+        "report": "Svc/SeqDispatcher/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/StaticMemory",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/StaticMemory/coverage/index.html",
-      "summary": "Svc/StaticMemory/coverage/summary.json",
-      "line_pct": 100.0,
-      "line_covered": 20,
-      "line_total": 20,
-      "function_pct": 100.0,
-      "function_covered": 4,
-      "function_total": 4,
-      "branch_pct": 100.0,
-      "branch_covered": 2,
-      "branch_total": 2
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 20,
+        "line_total": 20,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 2,
+        "branch_total": 2,
+        "report": "Svc/StaticMemory/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/StaticMemory/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/CdhCore",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/CdhCore/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/CdhCore/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/ComCcsds",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/ComCcsds/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/ComCcsds/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/ComFprime",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/ComFprime/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/ComFprime/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/ComLoggerTee",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/ComLoggerTee/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/ComLoggerTee/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/DataProducts",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/DataProducts/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/DataProducts/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/DpCompression",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/DpCompression/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/DpCompression/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Subtopologies/FileHandling",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Subtopologies/FileHandling/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Subtopologies/FileHandling/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/SystemResources",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/SystemResources/coverage/index.html",
-      "summary": "Svc/SystemResources/coverage/summary.json",
-      "line_pct": 98.68,
-      "line_covered": 75,
-      "line_total": 76,
-      "function_pct": 100.0,
-      "function_covered": 8,
-      "function_total": 8,
-      "branch_pct": 76.19,
-      "branch_covered": 32,
-      "branch_total": 42
+      "ut": {
+        "line_pct": 98.68,
+        "line_covered": 75,
+        "line_total": 76,
+        "function_pct": 100.0,
+        "function_covered": 8,
+        "function_total": 8,
+        "branch_pct": 76.19,
+        "branch_covered": 32,
+        "branch_total": 42,
+        "report": "Svc/SystemResources/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 5,
+        "report": "Svc/SystemResources/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/TlmChan",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/TlmChan/coverage/index.html",
-      "summary": "Svc/TlmChan/coverage/summary.json",
-      "line_pct": 77.4,
-      "line_covered": 137,
-      "line_total": 177,
-      "function_pct": 85.71,
-      "function_covered": 6,
-      "function_total": 7,
-      "branch_pct": 63.03,
-      "branch_covered": 75,
-      "branch_total": 119
+      "ut": {
+        "line_pct": 77.4,
+        "line_covered": 137,
+        "line_total": 177,
+        "function_pct": 85.71,
+        "function_covered": 6,
+        "function_total": 7,
+        "branch_pct": 63.03,
+        "branch_covered": 75,
+        "branch_total": 119,
+        "report": "Svc/TlmChan/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 11,
+        "report": "Svc/TlmChan/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/TlmPacketizer",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/TlmPacketizer/coverage/index.html",
-      "summary": "Svc/TlmPacketizer/coverage/summary.json",
-      "line_pct": 92.26,
-      "line_covered": 274,
-      "line_total": 297,
-      "function_pct": 100.0,
-      "function_covered": 20,
-      "function_total": 20,
-      "branch_pct": 78.0,
-      "branch_covered": 234,
-      "branch_total": 300
+      "ut": {
+        "line_pct": 92.26,
+        "line_covered": 274,
+        "line_total": 297,
+        "function_pct": 100.0,
+        "function_covered": 20,
+        "function_total": 20,
+        "branch_pct": 78.0,
+        "branch_covered": 234,
+        "branch_total": 300,
+        "report": "Svc/TlmPacketizer/coverage/index.html",
+        "tier": "gold"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 47,
+        "report": "Svc/TlmPacketizer/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "gold",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Types/TlmPacketizerTypes",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/Types/TlmPacketizerTypes/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Types/TlmPacketizerTypes/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/Version",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Svc/Version/coverage/index.html",
-      "summary": "Svc/Version/coverage/summary.json",
-      "line_pct": 96.13,
-      "line_covered": 149,
-      "line_total": 155,
-      "function_pct": 100.0,
-      "function_covered": 12,
-      "function_total": 12,
-      "branch_pct": 86.96,
-      "branch_covered": 120,
-      "branch_total": 138
+      "ut": {
+        "line_pct": 96.13,
+        "line_covered": 149,
+        "line_total": 155,
+        "function_pct": 100.0,
+        "function_covered": 12,
+        "function_total": 12,
+        "branch_pct": 86.96,
+        "branch_covered": 120,
+        "branch_total": 138,
+        "report": "Svc/Version/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Svc/Version/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Svc/WatchDog",
       "has_ut": false,
       "has_coverage": false,
-      "report": "Svc/WatchDog/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/WatchDog/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/BlockDriver",
       "has_ut": true,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/BlockDriver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/BlockDriver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/DpDemo",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/DpDemo/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/DpDemo/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/PingReceiver",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/PingReceiver/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/PingReceiver/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/RecvBuffApp",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/RecvBuffApp/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/RecvBuffApp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/SendBuffApp",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/SendBuffApp/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/SendBuffApp/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/SignalGen",
       "has_ut": true,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/SignalGen/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/SignalGen/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/Top",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/Top/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/Top/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "TestDeploymentsProject/Ref/TypeDemo",
       "has_ut": false,
       "has_coverage": false,
-      "report": "TestDeploymentsProject/Ref/TypeDemo/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "TestDeploymentsProject/Ref/TypeDemo/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Utils",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Utils/coverage/index.html",
-      "summary": "Utils/coverage/summary.json",
-      "line_pct": 52.35,
-      "line_covered": 290,
-      "line_total": 554,
-      "function_pct": 55.17,
-      "function_covered": 48,
-      "function_total": 87,
-      "branch_pct": 54.92,
-      "branch_covered": 162,
-      "branch_total": 295
+      "ut": {
+        "line_pct": 52.35,
+        "line_covered": 290,
+        "line_total": 554,
+        "function_pct": 55.17,
+        "function_covered": 48,
+        "function_total": 87,
+        "branch_pct": 54.92,
+        "branch_covered": 162,
+        "branch_total": 295,
+        "report": "Utils/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 2,
+        "report": "Utils/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Utils/Hash",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Utils/Hash/coverage/index.html",
-      "summary": "Utils/Hash/coverage/summary.json",
-      "line_pct": 36.42,
-      "line_covered": 63,
-      "line_total": 173,
-      "function_pct": 41.18,
-      "function_covered": 14,
-      "function_total": 34,
-      "branch_pct": 20.99,
-      "branch_covered": 17,
-      "branch_total": 81
+      "ut": {
+        "line_pct": 36.42,
+        "line_covered": 63,
+        "line_total": 173,
+        "function_pct": 41.18,
+        "function_covered": 14,
+        "function_total": 34,
+        "branch_pct": 20.99,
+        "branch_covered": 17,
+        "branch_total": 81,
+        "report": "Utils/Hash/coverage/index.html",
+        "tier": "bronze"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 7,
+        "report": "Utils/Hash/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "Utils/Types",
       "has_ut": true,
       "has_coverage": true,
-      "report": "Utils/Types/coverage/index.html",
-      "summary": "Utils/Types/coverage/summary.json",
-      "line_pct": 98.03,
-      "line_covered": 149,
-      "line_total": 152,
-      "function_pct": 100.0,
-      "function_covered": 24,
-      "function_total": 24,
-      "branch_pct": 83.33,
-      "branch_covered": 40,
-      "branch_total": 48
+      "ut": {
+        "line_pct": 98.03,
+        "line_covered": 149,
+        "line_total": 152,
+        "function_pct": 100.0,
+        "function_covered": 24,
+        "function_total": 24,
+        "branch_pct": 83.33,
+        "branch_covered": 40,
+        "branch_total": 48,
+        "report": "Utils/Types/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 13,
+        "report": "Utils/Types/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestConfigDeployment",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestConfigDeployment/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestConfigDeployment/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestBuildAutocoder",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestChainedAutocoder",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestChainedAutocoder/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestChainedAutocoder/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestHeaderAutocoder",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestLinkDepends",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestLinkDepends/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestLinkDepends/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestRelative",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestRelative/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestRelative/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/TestDeployment/TestTargetAutocoder",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/TestDeployment/TestTargetAutocoder/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/TestDeployment/TestTargetAutocoder/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     },
     {
       "path": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent",
       "has_ut": false,
       "has_coverage": false,
-      "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/coverage/index.html"
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/codeql/index.html"
+      },
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum"
+      }
     }
   ]
 }
