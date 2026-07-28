@@ -353,6 +353,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action dispatchPendingHostFunction of state machine Svc_WasmSequencer_SequencerStateMachine
+    //!
+    //! dispatch a host function port call
+    void Svc_WasmSequencer_SequencerStateMachine_action_clearPendingHostFunction(
+        SmId smId,                                              //!< The state machine id
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine guards
@@ -501,9 +509,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Flag indicating interpreter is waiting to be paused
     bool m_pendingPause;
 
-    //! Flag indicating there is a pending host function waiting to be dispatched
-    bool m_hasPendingHostFunction;
-
     //! Currently loading file handle
     Os::File* m_loadFile;
 
@@ -511,20 +516,41 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! action can render it.
     spacewasm_trap_t m_lastTrap;
 
-    struct PendingHostInvocation {
-        PendingHostInvocation() = default;
+    struct PendingHostFunction {
+        PendingHostFunction() = default;
+        bool isPending() const { return kind != NONE; }
+        void clear() { kind = NONE; }
 
         enum Kind {
             NONE,
+            TELEMETRY,
+            PARAMETER,
             COMMAND,
+            EVENT,
+            RSLEEP,
+            ASLEEP,
         } kind = NONE;
 
-        Fw::ComBuffer buffer;
-    } m_pendingHostFunction;
+        // TODO(tumbar) We should be able to do memory ops on `spacewasm_t`
+        spacewasm_caller_t* caller;
 
-    //! Command sequence index to track dispatch/response
-    //! This will be incremented on every response/cancellation
-    U32 m_cmdSeq;
+        FwChanIdType chan_id;
+        FwPrmIdType prm_id;
+        Fw::LogSeverity severity;
+
+        // The first pointer/length in one of the host commands
+        U32 ptr1;
+        U32 len1;
+
+        // The second pointer/length in one of the host commands
+        U32 ptr2;
+        U32 len2;
+
+        // The absolute/relative time for [ar]sleep
+        U64 time_us;
+    };
+
+    PendingHostFunction m_pendingHostFunction;
 
     /// FPrime Wasm Interface Host Functions
     spacewasm_hostcall_result_t wasmExit(struct spacewasm_caller_t* caller,

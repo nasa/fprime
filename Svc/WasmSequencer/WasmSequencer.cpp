@@ -7,6 +7,7 @@
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
+#include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
@@ -75,9 +76,11 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
                                            const Fw::CmdResponse& response) {
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE) {
         this->sequencer_sendSignal_stmtResponse_unexpected();
-    } else if (this->m_pendingHostFunction.kind != PendingHostInvocation::COMMAND) {
+    } else if (this->m_pendingHostFunction.kind != PendingHostFunction::COMMAND) {
         this->sequencer_sendSignal_stmtResponse_unexpected();
     } else {
+        this->m_pendingHostFunction.clear();
+
         // Respond to the host command by pushing a value to the Wasm operand stack
         spacewasm_value_t return_val;
         return_val.tag = SPACEWASM_I32;
@@ -85,9 +88,6 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 
         const auto status = spacewasm_resume_value(this->m_wasm, return_val);
         FW_ASSERT(status == SPACEWASM_OK, status);
-
-        // Increment the cmdSeq to track unique cmd dispatch
-        this->m_cmdSeq += 1;
 
         this->sequencer_sendSignal_stmtResponse_success();
     }
@@ -205,9 +205,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // Cancel is a no-op in IDLE; otherwise it aborts back to IDLE.
     this->sequencer_sendSignal_cmd_CANCEL();
-    // Cancel returns immediately and always succeeds.
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
@@ -389,7 +387,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
             (void)align;
 
             // We turn off memory.grow so this should never be called!
-            FW_ASSERT(false);
+            // This nullptr will bubble as a reallocation failure
             return nullptr;
         },
         /* dealloc */
@@ -534,15 +532,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStateme
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     // TODO
-    // check yet. Report "no timeout" so the SM does not wedge waiting on a check.
-    this->sequencer_sendSignal_result_checkStatementTimeout_noTimeout();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     // TODO
-    this->sequencer_sendSignal_result_checkShouldWake_keepSleeping();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendPause(
@@ -560,18 +555,114 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_clearPause(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPendingHostFunction(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    FW_ASSERT(this->m_hasPendingHostFunction);
-    this->m_hasPendingHostFunction = false;
     switch (this->m_pendingHostFunction.kind) {
-        case PendingHostInvocation::NONE:
+        case PendingHostFunction::NONE:
             // Invalid host function
             FW_ASSERT(false);
-            return;
-        case PendingHostInvocation::COMMAND:
-            // Dispatch command to CmdDisp
-            this->cmdOut_out(0, this->m_pendingHostFunction.buffer, this->m_cmdSeq);
+        case PendingHostFunction::COMMAND: {
+            Fw::ComBuffer cmd;
+
+            // Write the CMD descriptor to the ComBuffer
+            auto serStatus =
+                cmd.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
+            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+
+            // Copy the com buffer from the guest memory into our memory
+            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
+                                             cmd.getBuffAddr() + sizeof(FwPacketDescriptorType),
+                                             this->m_pendingHostFunction.len1);
+
+            if (status != SPACEWASM_OK) {
+                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::COMMAND,
+                                                                static_cast<WasmSequencer_Status::T>(status));
+
+                this->sequencer_sendSignal_stmtResponse_failure();
+            } else {
+                // Memory read succeeded, update the ComBuffer to hold the encoded command
+                serStatus = cmd.moveSerToOffset(this->m_pendingHostFunction.len1 + sizeof(FwPacketDescriptorType));
+                FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+
+                // Dispatch command to CmdDisp
+                // TODO(tumbar) Use ctx to keep track of which command was sent?
+                this->cmdOut_out(0, cmd, 0);
+            }
+
+            break;
+        }
+        case PendingHostFunction::TELEMETRY: {
+            Fw::Time time;
+            Fw::TlmBuffer tlm_buffer;
+
+            auto valid = this->getTlmChan_out(0, this->m_pendingHostFunction.chan_id, time, tlm_buffer);
+
+            spacewasm_value_t return_val;
+            return_val.tag = SPACEWASM_I32;
+            return_val.u.i32_ = static_cast<I32>(valid.e);
+
+            // Write the response into guest memory
+
+            const auto status = spacewasm_resume_value(this->m_wasm, return_val);
+            FW_ASSERT(status == SPACEWASM_OK, status);
+
+            this->sequencer_sendSignal_stmtResponse_success();
+            break;
+        }
+        case PendingHostFunction::PARAMETER:
+            break;
+        case PendingHostFunction::EVENT: {
+            U8 stringStorage[FW_LOG_STRING_MAX_SIZE];
+            FW_ASSERT(this->m_pendingHostFunction.len1 <= FW_LOG_STRING_MAX_SIZE,
+                      static_cast<FwAssertArgType>(this->m_pendingHostFunction.len1), FW_LOG_STRING_MAX_SIZE);
+
+            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
+                                             stringStorage, this->m_pendingHostFunction.len1);
+            if (status != SPACEWASM_OK) {
+                this->log_WARNING_HI_HostFunctionInvalidPointer(
+                    Svc::WasmSequencer_HostFunction::EVENT,
+                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+                this->sequencer_sendSignal_stmtResponse_failure();
+            } else {
+                // Emit the event
+                const Fw::ExternalString msg(reinterpret_cast<char*>(stringStorage), this->m_pendingHostFunction.len1);
+                switch (this->m_pendingHostFunction.severity) {
+                    case Fw::LogSeverity::FATAL:
+                        this->log_FATAL_GuestFatal(msg);
+                        break;
+                    case Fw::LogSeverity::WARNING_HI:
+                        this->log_WARNING_HI_GuestWarningHi(msg);
+                        break;
+                    case Fw::LogSeverity::WARNING_LO:
+                        this->log_WARNING_LO_GuestWarningLo(msg);
+                        break;
+                    case Fw::LogSeverity::COMMAND:
+                        this->log_COMMAND_GuestCommand(msg);
+                        break;
+                    case Fw::LogSeverity::ACTIVITY_HI:
+                        this->log_ACTIVITY_HI_GuestActivityHi(msg);
+                        break;
+                    case Fw::LogSeverity::ACTIVITY_LO:
+                        this->log_ACTIVITY_LO_GuestActivityLo(msg);
+                        break;
+                    case Fw::LogSeverity::DIAGNOSTIC:
+                        this->log_DIAGNOSTIC_GuestDiagnostic(msg);
+                        break;
+                }
+
+                this->sequencer_sendSignal_stmtResponse_success();
+            }
+
+        } break;
+        case PendingHostFunction::RSLEEP:
+            break;
+        case PendingHostFunction::ASLEEP:
             break;
     }
+}
+void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingHostFunction(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    this->m_pendingHostFunction.kind = PendingHostFunction::NONE;
+    this->m_pendingHostFunction.caller = nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -605,7 +696,7 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingPause(
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingHostFunction(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_hasPendingHostFunction;
+    return this->m_pendingHostFunction.isPending();
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSucceeded(

@@ -244,6 +244,8 @@ state machine SequencerStateMachine {
     action clearPause
     @ dispatch a host function port call
     action dispatchPendingHostFunction
+    @ clears the pending host function port call
+    action clearPendingHostFunction
 
     @ raised whenever the checkTimers port is called
     signal checkTimersIn
@@ -256,16 +258,12 @@ state machine SequencerStateMachine {
     signal result_timeOpFailed
     @ raised when the statement times out, according to the timeout parameter
     signal result_checkStatementTimeout_statementTimeout
-    @ raised when the statement has not timed out yet
-    signal result_checkStatementTimeout_noTimeout
     @ called when a paused host statement (F´ command) successfully executed. only raised in RUNNING.AWAITING_RESPONSE
     signal stmtResponse_success
     @ called when a paused host statement (F´ command) unsuccessfully executed. only raised in RUNNING.AWAITING_RESPONSE
     signal stmtResponse_failure
     @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
     signal stmtResponse_unexpected
-    @ called when the statement is telling the sequencer to await a later stmt response
-    signal stmtResponse_keepWaiting
 
     @ The program has completed
     signal interpreterFinished
@@ -327,14 +325,12 @@ state machine SequencerStateMachine {
         state AWAITING_RESPONSE {
             on checkTimersIn do { checkStatementTimeout }
             # -->
-            on result_checkStatementTimeout_statementTimeout do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            # result_checkStatementTimeout_noTimeout not handled, no need
+            on result_timeOpFailed do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
 
             on stmtResponse_success enter PAUSE_CHECK
-            on stmtResponse_failure do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            # stmtResponse_keepWaiting not handled, we're already in the awaiting state
+            on stmtResponse_failure do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
         }
 
         @ sequencer is not taking any action, waiting for a time in the future to continue

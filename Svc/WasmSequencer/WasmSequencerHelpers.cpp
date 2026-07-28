@@ -159,9 +159,20 @@ void WasmSequencer ::destroyStore() {
         spacewasm_destroy(this->m_wasm);
         this->m_wasm = nullptr;
     }
+
+    FW_ASSERT(!this->m_hasPendingLoadCmd);
+    FW_ASSERT(this->m_pendingFinishCmds.isEmpty());
+
     // Reset the guest linear-memory bump allocator; all guest allocations were
     // owned by the store that just went away.
     this->m_guest_offset = 0;
+
+    // Clear any pending state.
+    this->m_pendingHostFunction.clear();
+    this->m_pendingRun = false;
+    this->m_invokeFailed = false;
+    this->m_loadFailed = false;
+    this->m_loadStatus = SPACEWASM_OK;
 }
 
 Svc::WasmSequencer_AllocError::T WasmSequencer ::mapAllocError(spacewasm_status_t status) {
@@ -232,7 +243,7 @@ extern "C" void spacewasm_panic(const U8* filename,
                   static_cast<int>(line), static_cast<int>(len), reinterpret_cast<const char*>(msg));
     Os::Console::write(fmtMsg);
 
-    // TODO(tumbar) Emit a WARNING_HI event and reset the Rust state gracefully.
+    // TODO(tumbar) Is there a clean way to expose the filename/line to FW_ASSERT?
     FW_ASSERT(false);
 }
 
