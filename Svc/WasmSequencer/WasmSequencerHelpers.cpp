@@ -68,21 +68,28 @@ void WasmSequencer ::guestDealloc(const U8* ptr, const U32 size) {
 }
 
 spacewasm_read_result_t WasmSequencer ::readModuleChunk(const U8** outBuf, std::size_t* outLen) {
-    if (this->m_loadFile == nullptr) {
-        *outLen = 0;
-        return SPACEWASM_READ_ERROR;
-    }
+    FW_ASSERT(this->m_loadFile != nullptr);
 
-    FwSizeType size = static_cast<FwSizeType>(sizeof(this->m_readBuf));
+    FwSizeType size = sizeof(this->m_readBuf);
     const Os::File::Status status = this->m_loadFile->read(this->m_readBuf, size);
+
+    spacewasm_read_result_t readStatus;
     if (status != Os::File::Status::OP_OK) {
         *outLen = 0;
-        return SPACEWASM_READ_ERROR;
+        readStatus = SPACEWASM_READ_ERROR;
+    } else {
+        // `size` is updated in-place with the number of bytes actually read.
+        *outBuf = this->m_readBuf;
+        *outLen = static_cast<std::size_t>(size);
+
+        if (size == 0) {
+            readStatus = SPACEWASM_READ_EOF;
+        } else {
+            readStatus = SPACEWASM_READ_OK;
+        }
     }
-    // `size` is updated in-place with the number of bytes actually read.
-    *outBuf = this->m_readBuf;
-    *outLen = static_cast<std::size_t>(size);
-    return (size == 0) ? SPACEWASM_READ_EOF : SPACEWASM_READ_OK;
+
+    return readStatus;
 }
 
 Fw::Success WasmSequencer ::createStore() {

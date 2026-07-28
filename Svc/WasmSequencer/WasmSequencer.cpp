@@ -338,8 +338,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO(tumbar): the `load` action does not stash the spacewasm status yet, so
-    // we cannot surface the real failure code here.
     this->log_WARNING_HI_ModuleLoadFailed(static_cast<WasmSequencer_Status::T>(this->m_loadStatus));
 }
 
