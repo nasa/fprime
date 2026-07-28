@@ -270,20 +270,11 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
 
     // Resolve the exported function in the most-recently-loaded module.
     U32 funcIndex = 0;
-    const spacewasm_status_t findStatus = spacewasm_find_export_func(this->m_wasm, value, "main", &funcIndex);
+    this->m_invokeStatus = spacewasm_find_export_func(this->m_wasm, value, "main", &funcIndex);
 
-    if (findStatus == SPACEWASM_OK) {
+    if (this->m_invokeStatus == SPACEWASM_OK) {
         // Attempt to invoke the main function
-        const spacewasm_status_t invokeStatus = spacewasm_invoke(this->m_wasm, value, funcIndex, nullptr, 0);
-
-        // Set the invoke status
-        if (invokeStatus == SPACEWASM_OK) {
-            this->m_invokeFailed = false;
-        } else {
-            this->m_invokeFailed = true;
-        }
-    } else {
-        this->m_invokeFailed = true;
+        this->m_invokeStatus = spacewasm_invoke(this->m_wasm, value, funcIndex, nullptr, 0);
     }
 }
 
@@ -338,7 +329,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFa
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO
+    this->log_WARNING_HI_ModuleInvokeFailed(static_cast<WasmSequencer_Status::T>(this->m_invokeStatus));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
@@ -352,13 +343,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 
     // Acknowledge the pending load
     this->m_hasPendingLoad = false;
-    this->m_loadFailed = true;
 
     Os::File file;
     const Os::File::Status openStatus = file.open(filePath.toChar(), Os::File::OPEN_READ);
     if (openStatus != Os::File::Status::OP_OK) {
         this->log_WARNING_HI_FileOpenError(filePath, openStatus);
-        this->m_loadFailed = true;
+        this->m_loadStatus = SPACEWASM_ERR_READER_ERROR;
         return;
     }
 
@@ -394,7 +384,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
         },
         /* userdata */ this);
 
-    const spacewasm_status_t status = spacewasm_load_module(
+    this->m_loadStatus = spacewasm_load_module(
         this->m_wasm, moduleName.toChar(),
         [](void* userdata, const U8** outBuf, std::size_t* outLen) -> spacewasm_read_result_t {
             FW_ASSERT(userdata != nullptr);
@@ -405,15 +395,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     spacewasm_allocator_destroy(alloc);
     this->m_loadFile = nullptr;
     file.close();
-
-    if (status != SPACEWASM_OK) {
-        this->m_loadStatus = status;
-        this->m_loadFailed = true;
-        return;
-    }
-
-    // Load succeeded
-    this->m_loadFailed = false;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
@@ -775,7 +756,7 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_invokeFailed(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_invokeFailed;
+    return this->m_invokeStatus != SPACEWASM_OK;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingPause(
@@ -799,7 +780,7 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingTimer(
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSucceeded(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return !this->m_loadFailed;
+    return this->m_loadStatus == SPACEWASM_OK;
 }
 
 }  // namespace Svc

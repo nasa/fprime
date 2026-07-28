@@ -170,8 +170,7 @@ void WasmSequencer ::destroyStore() {
     // Clear any pending state.
     this->m_pendingHostFunction.clear();
     this->m_pendingRun = false;
-    this->m_invokeFailed = false;
-    this->m_loadFailed = false;
+    this->m_invokeStatus = SPACEWASM_OK;
     this->m_loadStatus = SPACEWASM_OK;
 }
 

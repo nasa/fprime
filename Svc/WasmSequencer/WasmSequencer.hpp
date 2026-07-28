@@ -490,11 +490,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool m_breakBeforeNextLine;
 
     //! Flag indicating a function invocation failed
-    //! TODO(tumbar) This should probably be a status?
-    bool m_invokeFailed;
+    spacewasm_status_t m_invokeStatus;
 
     //! Flag indicating module load failure/success
-    bool m_loadFailed;
     spacewasm_status_t m_loadStatus;
 
     //! Flag indicating module is pending execution of main

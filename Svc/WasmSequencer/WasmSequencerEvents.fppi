@@ -24,7 +24,12 @@ event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
 @ A module failed to decode/validate while loading
 event ModuleLoadFailed(status: Status) \
     severity warning high \
-    format "Module load failed: spacewasm status {}"
+    format "Module load failed: {}"
+
+@ A module failed to decode/validate while loading
+event ModuleInvokeFailed(status: Status) \
+    severity warning high \
+    format "Module main invoke failed: {}"
 
 event TooManyBlockingCommands \
     severity warning high \
