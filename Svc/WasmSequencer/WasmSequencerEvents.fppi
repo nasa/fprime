@@ -3,7 +3,7 @@ event StoreAllocationFailed(moduleCount: U16, err: AllocError) \
     format "Failed to allocate store with {} modules: {}"
 
 event StoreAllocationSucceeded(moduleCount: U16) \
-    severity activity low \
+    severity diagnostic \
     format "Successfully allocated store with {} modules"
 
 @ A command was issued in a state where it is not valid

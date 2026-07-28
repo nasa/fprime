@@ -150,7 +150,7 @@ Fw::Success WasmSequencer ::createStore() {
     // If the store allocation fails, this means the dynamic memory is too small to host this number of modules...
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    this->log_ACTIVITY_LO_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
+    this->log_DIAGNOSTIC_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
     return Fw::Success::SUCCESS;
 }
 
