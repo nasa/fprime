@@ -9,6 +9,8 @@ import cpp
 /** A call to a known blocking operation. */
 class BlockingCall extends FunctionCall {
   BlockingCall() {
+    // POSIX free functions only; member functions may legitimately share these names
+    not this.getTarget() instanceof MemberFunction and
     this.getTarget().getName() =
       [
         "sleep", "usleep", "nanosleep", "sem_wait", "sem_timedwait", "pthread_mutex_lock",
