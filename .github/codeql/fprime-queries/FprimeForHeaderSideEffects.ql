@@ -25,6 +25,15 @@ Variable mutatedVariable(Expr e) {
   result = e.(CrementOperation).getOperand().(VariableAccess).getTarget()
 }
 
+/** A call to an overloaded increment/decrement on a loop-control variable (e.g. `++it` on an iterator). */
+predicate iteratorCrement(ForStmt f, FunctionCall fc) {
+  fc.getTarget().getName() = ["operator++", "operator--"] and
+  exists(Variable v | conditionVariable(f, v) |
+    fc.getQualifier().(VariableAccess).getTarget() = v or
+    fc.getArgument(0).(VariableAccess).getTarget() = v
+  )
+}
+
 from ForStmt f, Expr offender, string reason
 where
   f.fromSource() and
@@ -32,6 +41,7 @@ where
     // A call in the init or update expression (I/O or other side effects)
     offender.getParent*() = [f.getInitialization().(ExprStmt).getExpr(), f.getUpdate()] and
     offender instanceof FunctionCall and
+    not iteratorCrement(f, offender) and
     reason = "calls the function " + offender.(FunctionCall).getTarget().getName()
     or
     // Mutation of a variable that does not control the loop
