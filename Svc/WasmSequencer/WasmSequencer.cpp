@@ -654,10 +654,34 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             this->sequencer_sendSignal_stmtResponse_success();
             break;
         }
-        case WasmSequencer_HostFunction::PARAMETER:
-            
+        case WasmSequencer_HostFunction::PARAMETER: {
+            Fw::ParamBuffer prmBuf;
+            auto prmStatus = this->getParam_out(0, this->m_pendingHostFunction.prm_id, prmBuf);
 
+            // Write the parameter to linear memory
+            spacewasm_status_t status =
+                spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
+                                    prmBuf.getBuffAddr(), this->m_pendingHostFunction.len1);
+            if (status != SPACEWASM_OK) {
+                // TODO(tumbar) Validate pointer region synchronously and assert here
+                this->log_WARNING_HI_HostFunctionInvalidPointer(
+                    Svc::WasmSequencer_HostFunction::PARAMETER,
+                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
+                this->sequencer_sendSignal_stmtResponse_failure();
+                break;
+            }
+
+            // Resume the interpreter
+            spacewasm_value_t return_val;
+            return_val.tag = SPACEWASM_I32;
+            return_val.u.i32_ = static_cast<I32>(prmStatus.e);
+            status = spacewasm_resume_value(this->m_wasm, return_val);
+            FW_ASSERT(status == SPACEWASM_OK, status);
+
+            // Wake up the state machine
+            this->sequencer_sendSignal_stmtResponse_success();
             break;
+        }
         case WasmSequencer_HostFunction::EVENT: {
             U8 stringStorage[FW_LOG_STRING_MAX_SIZE];
             FW_ASSERT(this->m_pendingHostFunction.len1 <= FW_LOG_STRING_MAX_SIZE,
