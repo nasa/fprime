@@ -16,3 +16,18 @@ U32 increment(U32 value) {
 U32 bufferSize() {
     return BUFFER_SIZE;
 }
+
+// Compliant: powers of 2 (up to 4096), all-ones masks, and powers of 10.
+U32 idiomaticValues(U32 value) {
+    U32 shifted = (value >> 8) & 0xFF;
+    return (shifted * 1000) % 4096;
+}
+
+// Compliant: non-local (file-scope) definition, even when not const.
+U32 g_counter = 500;
+
+// Violation: magic number assigned to a local variable.
+U32 localAssignment() {
+    U32 window = 77;
+    return window;
+}
