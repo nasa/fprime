@@ -981,9 +981,42 @@ DirectiveError FpySequencer::op_itrunc_64_32() {
     this->m_runtime.stack.push(static_cast<U32>(src));
     return DirectiveError::NO_ERROR;
 }
+DirectiveError FpySequencer::op_ffloor() {
+    if (this->m_runtime.stack.size < sizeof(F64)) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    F64 val = this->m_runtime.stack.pop<F64>();
+    // std::floor implements IEEE 754 roundToIntegralTowardNegative: +-0, +-inf
+    // and NaN pass through, and the sign of a zero is preserved.
+    this->m_runtime.stack.push(std::floor(val));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_iabs() {
+    if (this->m_runtime.stack.size < sizeof(I64)) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    I64 val = this->m_runtime.stack.pop<I64>();
+    // abs(I64 min) must wrap back to I64 min per the bytecode spec. Negating in
+    // the unsigned domain avoids the signed-overflow UB that llabs and -val
+    // have for I64 min.
+    U64 mag = (val < 0) ? (0 - static_cast<U64>(val)) : static_cast<U64>(val);
+    this->m_runtime.stack.push(static_cast<I64>(mag));
+    return DirectiveError::NO_ERROR;
+}
+DirectiveError FpySequencer::op_fabs() {
+    if (this->m_runtime.stack.size < sizeof(F64)) {
+        return DirectiveError::STACK_UNDERFLOW;
+    }
+    F64 val = this->m_runtime.stack.pop<F64>();
+    // IEEE 754 abs: clears the sign bit and changes nothing else, so NaN
+    // payloads pass through.
+    this->m_runtime.stack.push(std::fabs(val));
+    return DirectiveError::NO_ERROR;
+}
 Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirective& directive, DirectiveError& error) {
     // coding error, should not have gotten to this stack op handler
-    FW_ASSERT(directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::ITRUNC_64_32,
+    FW_ASSERT((directive.get__op() >= Fpy::DirectiveId::OR && directive.get__op() <= Fpy::DirectiveId::ITRUNC_64_32) ||
+                  (directive.get__op() >= Fpy::DirectiveId::FFLOOR && directive.get__op() <= Fpy::DirectiveId::FABS),
               static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get__op()) {
@@ -1131,6 +1164,15 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::ITRUNC_64_32:
             error = this->op_itrunc_64_32();
             break;
+        case Fpy::DirectiveId::FFLOOR:
+            error = this->op_ffloor();
+            break;
+        case Fpy::DirectiveId::IABS:
+            error = this->op_iabs();
+            break;
+        case Fpy::DirectiveId::FABS:
+            error = this->op_fabs();
+            break;
         default:
             FW_ASSERT(false, directive.get__op());
             break;
@@ -1142,11 +1184,11 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
 }
 
 Signal FpySequencer::exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error) {
-    if (this->m_runtime.stack.size < 1) {
+    if (this->m_runtime.stack.size < sizeof(I32)) {
         error = DirectiveError::STACK_UNDERFLOW;
         return Signal::stmtResponse_failure;
     }
-    U8 errorCode = this->m_runtime.stack.pop<U8>();
+    I32 errorCode = this->m_runtime.stack.pop<I32>();
     // exit(0), no error
     if (errorCode == 0) {
         // just goto the end of the sequence

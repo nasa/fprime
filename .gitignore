@@ -87,6 +87,7 @@ depend
 
 /.idea/
 /venv/
+.venv
 
 Packet-Views
 docs/reference/api/cpp
