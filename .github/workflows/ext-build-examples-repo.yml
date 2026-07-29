@@ -117,7 +117,7 @@ jobs:
           cd FlightExamples/${DEPLOYMENT}
 
           echo "=== Debug: Starting fprime-gds ==="
-          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection fprime &
+          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
           GDS_PID=$!
           sleep 15
 
