@@ -15,3 +15,9 @@ async command RUN_ARGS(
 
 @ Logs via Events the state of each connected command sequencer
 async command LOG_STATUS() opcode 2
+
+@ Cancels any running sequence matching the given file name
+async command CANCEL_NAME(
+                      fileName: string size FileNameStringSize @< The name of the sequence file to cancel
+                    ) \
+    opcode 3
