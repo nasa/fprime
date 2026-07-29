@@ -965,11 +965,10 @@ TEST_F(FpySequencerTester, iabs) {
     ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::max());
 }
 
-TEST_F(FpySequencerTester, iabs_int_min_wraps) {
-    // abs(I64 min) is unrepresentable; it wraps back to I64 min (no trap)
+TEST_F(FpySequencerTester, iabs_int_min_overflows) {
+    // abs(I64 min) is not representable in I64
     tester_push<I64>(std::numeric_limits<I64>::min());
-    ASSERT_EQ(tester_op_iabs(), DirectiveError::NO_ERROR);
-    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::min());
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::ARITHMETIC_OVERFLOW);
 }
 
 TEST_F(FpySequencerTester, fabs) {

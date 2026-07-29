@@ -990,11 +990,11 @@ DirectiveError FpySequencer::op_iabs() {
         return DirectiveError::STACK_UNDERFLOW;
     }
     I64 val = this->m_runtime.stack.pop<I64>();
-    // abs(I64 min) must wrap back to I64 min per the bytecode spec. Negating in
-    // the unsigned domain avoids the signed-overflow UB that llabs and -val
-    // have for I64 min.
-    U64 mag = (val < 0) ? (0 - static_cast<U64>(val)) : static_cast<U64>(val);
-    this->m_runtime.stack.push(static_cast<I64>(mag));
+    // abs(I64 min) is not representable in I64 (and -val on it is UB)
+    if (val == std::numeric_limits<I64>::min()) {
+        return DirectiveError::ARITHMETIC_OVERFLOW;
+    }
+    this->m_runtime.stack.push(val < 0 ? -val : val);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_fabs() {
