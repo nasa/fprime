@@ -756,17 +756,10 @@ void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingH
 // ----------------------------------------------------------------------
 // Implementations for internal state machine guards
 // ----------------------------------------------------------------------
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_alwaysTrue(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return true;
-}
-
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return m_pendingRun;
+    return this->m_pendingRun;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_invokeFailed(

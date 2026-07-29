@@ -101,8 +101,6 @@ state machine SequencerStateMachine {
     @ return true if the last module load succeeded
     guard moduleLoadSucceeded
 
-    guard alwaysTrue
-
     ###############
     # Actions     #
     ###############

@@ -355,14 +355,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for guard pendingRun of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
     //! return true if the module is pending to execute after loading
-    bool Svc_WasmSequencer_SequencerStateMachine_guard_alwaysTrue(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-    ) const override;
-
-    //! Implementation for guard pendingRun of state machine Svc_WasmSequencer_SequencerStateMachine
-    //!
-    //! return true if the module is pending to execute after loading
     bool Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
