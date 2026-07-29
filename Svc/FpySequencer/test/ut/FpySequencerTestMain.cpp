@@ -1210,6 +1210,51 @@ TEST_F(FpySequencerTester, mul_overflow_neg_neg) {
     tester_push<I64>(-3);
     ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
 }
+// I64 min has no positive counterpart, so any negation-based guard misses these cases
+TEST_F(FpySequencerTester, mul_overflow_min_neg_one) {
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_overflow_neg_one_min) {
+    tester_push<I64>(-1);
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_overflow_min_neg_two) {
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_overflow_neg_two_min) {
+    tester_push<I64>(-2);
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_overflow_min_min) {
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_neg_neg_boundary_ok) {
+    // (-3037000499)^2 = 9223372030926249001, the largest both-negative square within I64 max
+    tester_push<I64>(-3037000499LL);
+    tester_push<I64>(-3037000499LL);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 9223372030926249001LL);
+}
+TEST_F(FpySequencerTester, mul_neg_neg_boundary_overflow) {
+    // (-3037000500)^2 = 9223372037000250000, just above I64 max
+    tester_push<I64>(-3037000500LL);
+    tester_push<I64>(-3037000500LL);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::ARITHMETIC_OVERFLOW);
+}
+TEST_F(FpySequencerTester, mul_neg_one_neg_one) {
+    tester_push<I64>(-1);
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_mul(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 1);
+}
 TEST_F(FpySequencerTester, mul_underflow_neg_pos) {
     // lhs negative, rhs positive
     tester_push<I64>(std::numeric_limits<I64>::min());
