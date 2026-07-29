@@ -23,6 +23,7 @@ Dispatches command sequences to available command sequencers, allowing the space
 |RUN|Dispatches a sequence to the first available sequencer|
 |LOG_STATUS|Logs via Events the state of each connected command sequencer|
 |CANCEL_NAME|Cancels any running sequence matching the given file name. Cancels the sequencer(s) running that file; the resulting seqDoneIn clears the dispatcher's state|
+|CANCEL_ALL|Cancels every currently running sequence on all connected sequencers. This is a broadcast and does not exclude the caller: a sequence that issues CANCEL_ALL is itself canceled. The resulting seqDoneIn calls clear the dispatcher's state|
 
 ## Events
 | Name | Description |
@@ -31,7 +32,7 @@ Dispatches command sequences to available command sequencers, allowing the space
 |UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call|
 |UnexpectedSequenceStarted|We received a call to seqStartIn but we didn't receive a call to seqDoneIn before that|
 |LogSequencerStatus|Shows the current state and sequence filename for a particular sequencer. Produced by the LOG_STATUS command|
-|SequenceCanceled|A running sequence matching the CANCEL_NAME file name was canceled on the given sequencer|
+|SequenceCanceled|A running sequence was canceled on the given sequencer (by CANCEL_NAME or CANCEL_ALL)|
 |CancelSequenceNotFound|No running sequence matched the CANCEL_NAME file name|
 
 
@@ -41,7 +42,7 @@ Dispatches command sequences to available command sequencers, allowing the space
 |dispatchedCount|Number of sequences dispatched|
 |errorCount|Number of sequences dispatched that returned an error. Note: if a sequence was run in non-blocking mode, even if the sequence errors out, this error count will never increase|
 |sequencersAvailable|Number of sequencers ready to run a sequence|
-|canceledCount|Number of sequences canceled by the CANCEL_NAME command|
+|canceledCount|Number of sequences canceled by the CANCEL_NAME and CANCEL_ALL commands|
 
 ## Unit Tests
 Add unit test descriptions in the chart below
@@ -50,6 +51,8 @@ Add unit test descriptions in the chart below
 |testLogStatus|Tests the LOG_STATUS command|
 |testCancelName|Tests that CANCEL_NAME cancels the matching sequencer and clears state on seqDoneIn|
 |testCancelNameNotFound|Tests that CANCEL_NAME with an unmatched file name errors and cancels nothing|
+|testCancelAll|Tests that CANCEL_ALL cancels every running sequencer and clears state on seqDoneIn|
+|testCancelAllNoneRunning|Tests that CANCEL_ALL with no running sequences succeeds and cancels nothing|
 
 ## Requirements
 Add requirements in the chart below
