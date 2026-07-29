@@ -721,10 +721,10 @@ Truncates a 64-bit integer to a 32-bit integer, pushes result to stack. Integers
 **Requirement:**  FPY-SEQ-015
 
 ## EXIT (57)
-Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code.
+Pops an `I32` exit code off the stack. If the code == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with the error code.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| success    | U8      | stack  | 0 if should exit without error |
+| exit_code    | I32      | stack  | 0 if should exit without error |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -1150,6 +1150,42 @@ Pops serialized data from the stack and sends it to an external component via a 
 2. Check that the specified port is connected.
 3. Pop `size` bytes from the stack.
 4. Send the popped bytes to the target component via `serialOut[port_index]`.
+
+## FFLOOR (79)
+Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNegative` operation), pushes result to stack. A zero, infinite, or NaN value passes through unchanged; the sign of a zero is preserved (`-0.0` floors to `-0.0`). The bit pattern of a NaN result is unspecified. A value in `(0, 1)` floors to `0.0`; a value in `(-1, 0)` floors to `-1.0`. Never raises an error. Used to lower float floor division (`//`).
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to floor |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The floored value |
+
+**Requirement:**  FPY-SEQ-002
+
+## IABS (80)
+Pops a signed `I64`, pushes its absolute value to the stack: the value itself if non-negative, its two's-complement negation otherwise. The absolute value of `I64` min (`-2**63`) is not representable, so it wraps back to `I64` min rather than trapping (matching `llvm.abs` with `is_int_min_poison=0`). Never raises an error.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | I64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| I64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002
+
+## FABS (81)
+Pops an `F64`, clears its sign bit, and pushes the result to the stack (the IEEE 754 `abs` operation, matching `llvm.fabs` and wasm's `f64.abs`). No bits other than the sign bit change: `-0.0` becomes `0.0`, `-inf` becomes `inf`, and a NaN keeps its payload and signaling bit. Never raises an error or floating-point exception.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002
 
 **Error Conditions:**
 - If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`

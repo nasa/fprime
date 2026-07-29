@@ -914,6 +914,108 @@ TEST_F(FpySequencerTester, fmod) {
     ASSERT_EQ(tester_pop<F64>(), -1.0);
 }
 
+TEST_F(FpySequencerTester, ffloor) {
+    tester_push<F64>(7.5);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 7.0);
+    // floors toward -inf, not toward zero
+    tester_push<F64>(-0.5);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), -1.0);
+    // a value in (0, 1) floors to 0.0
+    tester_push<F64>(0.5);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 0.0);
+}
+
+TEST_F(FpySequencerTester, ffloor_preserves_zero_sign) {
+    tester_push<F64>(-0.0);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    F64 res = tester_pop<F64>();
+    ASSERT_EQ(res, 0.0);
+    ASSERT_TRUE(std::signbit(res));
+    tester_push<F64>(0.0);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    res = tester_pop<F64>();
+    ASSERT_EQ(res, 0.0);
+    ASSERT_FALSE(std::signbit(res));
+}
+
+TEST_F(FpySequencerTester, ffloor_inf_nan_passthrough) {
+    tester_push<F64>(std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), std::numeric_limits<F64>::infinity());
+    tester_push<F64>(-std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), -std::numeric_limits<F64>::infinity());
+    tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::NO_ERROR);
+    ASSERT_TRUE(std::isnan(tester_pop<F64>()));
+}
+
+TEST_F(FpySequencerTester, iabs) {
+    tester_push<I64>(-5);
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 5);
+    tester_push<I64>(5);
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 5);
+    tester_push<I64>(std::numeric_limits<I64>::max());
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::max());
+}
+
+TEST_F(FpySequencerTester, iabs_int_min_wraps) {
+    // abs(I64 min) is unrepresentable; it wraps back to I64 min (no trap)
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::min());
+}
+
+TEST_F(FpySequencerTester, fabs) {
+    tester_push<F64>(-2.5);
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 2.5);
+    tester_push<F64>(2.5);
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), 2.5);
+}
+
+TEST_F(FpySequencerTester, fabs_clears_zero_sign) {
+    tester_push<F64>(-0.0);
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::NO_ERROR);
+    F64 res = tester_pop<F64>();
+    ASSERT_EQ(res, 0.0);
+    ASSERT_FALSE(std::signbit(res));
+}
+
+TEST_F(FpySequencerTester, fabs_inf_nan) {
+    tester_push<F64>(-std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<F64>(), std::numeric_limits<F64>::infinity());
+    tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::NO_ERROR);
+    ASSERT_TRUE(std::isnan(tester_pop<F64>()));
+}
+
+TEST_F(FpySequencerTester, ffloor_underflow) {
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U32>(0);
+    ASSERT_EQ(tester_op_ffloor(), DirectiveError::STACK_UNDERFLOW);
+}
+
+TEST_F(FpySequencerTester, iabs_underflow) {
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U32>(0);
+    ASSERT_EQ(tester_op_iabs(), DirectiveError::STACK_UNDERFLOW);
+}
+
+TEST_F(FpySequencerTester, fabs_underflow) {
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::STACK_UNDERFLOW);
+    tester_push<U32>(0);
+    ASSERT_EQ(tester_op_fabs(), DirectiveError::STACK_UNDERFLOW);
+}
+
 // ======================================================================
 // Binary op stack underflow tests
 // Each binary op is tested with an empty stack and with only one operand.
@@ -1304,18 +1406,26 @@ TEST_F(FpySequencerTester, exit) {
     FpySequencer_ExitDirective directive;
     DirectiveError err = DirectiveError::NO_ERROR;
     tester_get_m_sequenceObj_ptr()->get_header().set_statementCount(123);
-    tester_push<U8>(0);
+    tester_push<I32>(0);
     Signal result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_success);
     ASSERT_EQ(err, DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_get_m_sequenceObj_ptr()->get_header().get_statementCount(), 123);
 
-    tester_push<U8>(123);
+    tester_push<I32>(123);
     result = tester_exit_directiveHandler(directive, err);
     ASSERT_EQ(result, Signal::stmtResponse_failure);
     ASSERT_EQ(err, DirectiveError::EXIT_WITH_ERROR);
     ASSERT_EVENTS_SequenceExitedWithError_SIZE(1);
     ASSERT_EVENTS_SequenceExitedWithError(0, tester_get_m_sequenceFilePath().toChar(), 123);
+
+    // the exit code is a signed I32; a negative code is an error too
+    tester_push<I32>(-5);
+    result = tester_exit_directiveHandler(directive, err);
+    ASSERT_EQ(result, Signal::stmtResponse_failure);
+    ASSERT_EQ(err, DirectiveError::EXIT_WITH_ERROR);
+    ASSERT_EVENTS_SequenceExitedWithError_SIZE(2);
+    ASSERT_EVENTS_SequenceExitedWithError(1, tester_get_m_sequenceFilePath().toChar(), -5);
 }
 
 TEST_F(FpySequencerTester, discard) {
