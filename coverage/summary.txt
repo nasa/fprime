@@ -148,7 +148,7 @@ Os/CountingSemaphore.hpp                       2       2   100%
 Os/Cpu.cpp                                    23      20    87%   35-37
 Os/Cpu.hpp                                     2       2   100%
 Os/Delegate.hpp                               12      12   100%
-Os/Directory.cpp                              91      73    80%   26-28,68,85,89,101-102,104,108,117,121,134,140,146,149-151
+Os/Directory.cpp                              91      75    82%   26-28,68,85,89,102,108,117,121,134,140,146,149-151
 Os/Directory.hpp                               2       2   100%
 Os/File.cpp                                  203     178    87%   52-53,81-83,108,130,162-166,168-169,283-284,286-287,292-294,304,308-309,326
 Os/File.hpp                                    1       1   100%
@@ -161,7 +161,7 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 161     134    83%   75,77-78,88-89,91-93,103-105,107-110,120-123,125-129,189,254-255
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               3       3   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -197,7 +197,7 @@ Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            141     108    76%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,265-267,271-272,274
+Os/Posix/Task.cpp                            141     109    77%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,266-267,271-272,274
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -370,5 +370,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      19005   15647    82%
+TOTAL                                      19005   15648    82%
 ------------------------------------------------------------------------------
