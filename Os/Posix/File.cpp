@@ -259,6 +259,7 @@ PosixFile::Status PosixFile::flush() {
 }
 
 PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -278,7 +279,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
             int errno_store = errno;
             // Interrupted w/o read, try again
-            if (EINTR != errno_store) {
+            if (EINTR == errno_store) {
                 continue;
             }
             status = Os::Posix::errno_to_file_status(errno_store);
@@ -299,6 +300,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
 }
 
 PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -319,7 +321,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size || write_size < 0) {
             int errno_store = errno;
             // Interrupted w/o write, try again
-            if (EINTR != errno_store) {
+            if (EINTR == errno_store) {
                 continue;
             }
             status = Os::Posix::errno_to_file_status(errno_store);

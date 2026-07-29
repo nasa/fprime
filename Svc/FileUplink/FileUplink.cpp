@@ -140,6 +140,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
+    FW_ASSERT(dataPacket.getData() != nullptr);
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);
@@ -188,7 +189,8 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
 }
 
 void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
-    CFDP::Checksum computed, stored;
+    CFDP::Checksum computed;
+    CFDP::Checksum stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
     if (computed != stored) {

@@ -45,13 +45,153 @@ Type getAnImmediateUsedType(Declaration d) {
 }
 
 /**
- * Gets a type which appears indirectly in `t`, stopping at allowed typedefs.
+ * Holds if `t` is a typedef declared outside the repository (a system or
+ * toolchain header, e.g. `off_t`, `mode_t`, `ssize_t`, `size_t`). Such a
+ * typedef is the type an external API dictates, so a declaration using it is
+ * honoring the external interface contract; replacing it with an F Prime
+ * sized type would be wrong on platforms where the sizes differ.
+ */
+predicate systemTypedef(TypedefType t) { not exists(t.getFile().getRelativePath()) }
+
+/**
+ * Gets a type which appears indirectly in `t`, stopping at allowed typedefs
+ * and at typedefs declared by system headers.
  */
 Type getAUsedType(Type t) {
   not allowedTypedefs(t) and
+  not systemTypedef(t) and
   (
     result = t.(TypedefType).getBaseType() or
     result = t.(DerivedType).getBaseType()
+  )
+}
+
+/**
+ * Holds if `f` is declared outside the repository: a system, libc, or
+ * toolchain function (e.g. `::open`, `::ioctl`, `::lseek`). Functions
+ * declared anywhere in the repository are NOT external, so APIs introduced
+ * in this repository that use basic integral types are still reported.
+ */
+predicate externalFunction(Function f) { not exists(f.getFile().getRelativePath()) }
+
+/**
+ * Gets an expression whose value `v` receives, either by initialization or
+ * by assignment.
+ */
+Expr getAnAssignedExpr(Variable v) {
+  result = v.getInitializer().getExpr()
+  or
+  exists(AssignExpr a | a.getLValue() = v.getAnAccess() and result = a.getRValue())
+}
+
+/**
+ * Holds if `e` is a value dictated by an external (system/libc/toolchain) API:
+ * the result of calling an external function (e.g. `::open(...)`,
+ * `::pthread_create(...)`), or the `errno` macro, which is `int` by contract.
+ */
+predicate isExternalValueExpr(Expr e) {
+  exists(FunctionCall c | externalFunction(c.getTarget()) and c = e)
+  or
+  exists(MacroInvocation mi | mi.getMacroName() = "errno" and mi.getExpr() = e)
+  or
+  // a field of a system-declared struct (e.g. `request.fd` of a kernel ioctl
+  // request struct): its type is fixed by the external definition
+  exists(FieldAccess fa | fa = e and not exists(fa.getTarget().getFile().getRelativePath()))
+}
+
+/**
+ * Holds if `e` conveys an externally-dictated value: either directly (see
+ * `isExternalValueExpr`), or by reading a variable that itself receives such a
+ * value (e.g. `int errno_store = errno; ...; f(errno_store)`, or
+ * `int status = ::pthread_x(...); return status;`). This lets the external
+ * contract be recognized one indirection away, which is how the Posix layer
+ * captures `errno`/return codes into a local before translating them.
+ */
+predicate carriesExternalValue(Expr e) {
+  isExternalValueExpr(e)
+  or
+  exists(Variable v | e = v.getAnAccess() and isExternalValueExpr(getAnAssignedExpr(v)))
+}
+
+/**
+ * Holds if declaration `d` exists to interface with an external API, which
+ * dictates its basic integral type. Unlike a value the repository chooses
+ * freely, one that crosses a system/libc boundary must match the external
+ * contract, so replacing it with an F Prime sized type would be wrong.
+ *
+ * This covers, symmetrically for local variables, parameters, members and the
+ * return types they belong to:
+ * - a variable that receives an externally-dictated value by initialization or
+ *   assignment (e.g. `int descriptor = ::open(...)`, `fd = ::open(...)`);
+ * - a variable that is passed to an external function, directly or by address
+ *   (e.g. `::ioctl(chip_descriptor, ...)`, the flags built for `::open`);
+ * - a parameter whose argument at a call site is externally dictated, i.e. the
+ *   errno/status-conversion helpers invoked as `f(errno)` or `f(::pthread_*())`
+ *   (their `int` parameter mirrors the external value they translate);
+ * - a function whose return value forwards an external call (its `int` return
+ *   mirrors the external API it wraps, e.g. thin wrappers around `pthread_*`);
+ * - a variable initialized from a system/toolchain macro (e.g. `SCHED_RR`,
+ *   `SOL_SOCKET`), whose integer type is fixed by that external definition;
+ * - a sentinel constant or parameter whose value flows into, or is compared
+ *   against, a declaration that is itself externally dictated (e.g.
+ *   `INVALID_FILE_DESCRIPTOR` assigned to / compared with a posix fd,
+ *   `SUCCESS` compared with a `pthread_*` status);
+ * - a variable passed (by value, reference, or address) to a repository
+ *   function whose corresponding parameter is externally dictated (an fd
+ *   out-parameter chain, e.g. `setupLineHandle(..., int& fd)`).
+ */
+predicate externalApiDeclaration(Declaration d) {
+  exists(Variable v | v = d | isExternalValueExpr(getAnAssignedExpr(v)))
+  or
+  exists(FunctionCall c, Variable v | v = d and externalFunction(c.getTarget()) |
+    c.getAnArgument() = v.getAnAccess() or
+    c.getAnArgument().(AddressOfExpr).getOperand() = v.getAnAccess()
+  )
+  or
+  exists(Parameter p, Call call |
+    p = d and call.getTarget() = p.getFunction() and
+    carriesExternalValue(call.getArgument(p.getIndex()))
+  )
+  or
+  exists(ReturnStmt rs | rs.getEnclosingFunction() = d and carriesExternalValue(rs.getExpr()))
+  or
+  exists(MacroInvocation mi, Variable v |
+    v = d and
+    not exists(mi.getMacro().getFile().getRelativePath()) and
+    mi.getExpr() = v.getInitializer().getExpr()
+  )
+  or
+  exists(Variable v, Variable v2 | v = d and externalApiDeclaration(v2) |
+    getAnAssignedExpr(v2) = v.getAnAccess()
+  )
+  or
+  exists(Variable v, ComparisonOperation cmp | v = d and cmp.getAnOperand() = v.getAnAccess() |
+    carriesExternalValue(cmp.getAnOperand())
+    or
+    exists(Variable v2 | externalApiDeclaration(v2) and cmp.getAnOperand() = v2.getAnAccess() and v2 != v)
+  )
+  or
+  exists(FunctionCall c, int i, Variable v |
+    v = d and externalApiDeclaration(c.getTarget().getParameter(i))
+  |
+    c.getArgument(i) = v.getAnAccess() or
+    c.getArgument(i).(AddressOfExpr).getOperand() = v.getAnAccess()
+  )
+}
+
+/**
+ * Holds if `d` is the loop variable of a range-based `for` iterating a
+ * `std::initializer_list`. The autocoder emits `for (const auto& e : il)` in
+ * generated array classes; like a template instantiation, `auto` deduction
+ * records the builtin element type (e.g. `unsigned int`) rather than the F Prime
+ * typedef the element was declared with (e.g. `U32`), so the size/signedness
+ * typedef is not observable at this declaration and the report is spurious.
+ */
+predicate autoInitializerListLoopVar(Declaration d) {
+  exists(RangeBasedForStmt f, Class ilist |
+    f.getVariable() = d and
+    ilist.getSimpleName() = "initializer_list" and
+    f.getRange().getType().refersTo(ilist)
   )
 }
 
@@ -94,7 +234,28 @@ where
   not (
     usedType instanceof PlainCharType and
     isPlainCharIndirection(getAnImmediateUsedType(d))
-  )
+  ) and
+  // F Prime: allow declarations whose basic integral type is dictated by an
+  // external (system/libc) API. This covers local variables, parameters and
+  // members that receive values from, are passed to, or (for parameters/return
+  // types) mirror an external call, as well as values fixed by a system macro.
+  // Repository-internal declarations that do not cross a system boundary are
+  // still flagged.
+  not externalApiDeclaration(d) and
+  // F Prime: the autocoder's generated array classes iterate a
+  // `std::initializer_list` with `for (const auto& e : il)`; `auto` erases the
+  // element's F Prime typedef (as a template instantiation would), so the loop
+  // variable is not actionable.
+  not autoInitializerListLoopVar(d) and
+  // F Prime: the language mandates a plain `int` dummy parameter to
+  // distinguish the postfix increment/decrement operators.
+  not exists(Operator op |
+    op.getName() = ["operator++", "operator--"] and d = op.getAParameter()
+  ) and
+  // F Prime: exclude vendored third-party code, which is not maintained to the
+  // F Prime coding standard, and the Python virtual environment (toolchain
+  // files such as CMake's compiler ABI probes live inside it).
+  not d.getFile().getRelativePath().matches(["Utils/Hash/libcrc/%", "%fprime-venv/%"])
 select d,
   d.getName() + " uses the basic integral type " + usedType.getName() +
     " rather than a typedef with size and signedness."

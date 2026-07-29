@@ -21,7 +21,7 @@ fprime-fpl-layout==1.0.4
 fprime-fpl-write-pic==1.0.4
 fprime-fpp==3.3.0a12-60-g5f26838e1
 fprime-fpy==0.4.0
-fprime-gds==4.2.2a2
+fprime-gds==4.2.2a4
 fprime-tools==4.3.0a5
 fprime-visual==1.0.2
 gcovr==8.2
@@ -54,7 +54,7 @@ PyYAML==6.0.3
 pyzmq==27.1.0
 requests==2.33.0
 rich==13.9.2
-setuptools==78.1.1
+setuptools==83.0.0
 six==1.16.0
 text-unidecode==1.3
 tomli==2.0.1

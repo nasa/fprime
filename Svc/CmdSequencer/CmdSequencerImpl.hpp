@@ -705,6 +705,9 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     FwOpcodeType m_opCode;
     U32 m_cmdSeq;
     bool m_join_waiting;
+
+    //! Telemetry to update sequence not running
+    const Fw::String NO_SEQ{"<no seq>"};
 };
 
 }  // namespace Svc

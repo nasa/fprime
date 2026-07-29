@@ -28,3 +28,6 @@ paths-ignore:
   - "**/CMakeFiles/**"
   # Third-party dependencies fetched by CMake (e.g. googletest via FetchContent)
   - "**/_deps/**"
+  # Vendored third-party code is not maintained to the JPL standard
+  - "Utils/Hash/libcrc/**"
+  - "fprime-venv/**"

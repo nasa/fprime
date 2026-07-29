@@ -1,0 +1,3 @@
+| test.cpp:8:5:10:5 | while (...) ... | This loop does not have a fixed bound. |
+| test.cpp:15:5:17:5 | for(...;...;...) ... | The loop counter i is not always incremented in the loop body. |
+| test.cpp:15:5:17:5 | for(...;...;...) ... | The loop counter n is not always decremented in the loop body. |

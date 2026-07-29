@@ -60,16 +60,18 @@ def test_telemetry_update(fprime_test_api: IntegrationTestAPI):
     """Test that we can receive telemetry updates with expected values"""
 
     cmd_dispatched_channel = fprime_test_api.get_telemetry_pred("CommandsDispatched")
+    fprime_test_api.set_tlm_packet_level(3)
+    # Clear stale telemetry, then wait for fresh telemetry after command completes
+    fprime_test_api.clear_histories()
 
-    # Wait for telemetry update with expected values
     begin_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
     begin_tlm_val = begin_result.val_obj.val
 
-    # Send no op to increase the count of commands dispatched
-    end_result = fprime_test_api.send_and_await_telemetry(
-        f"{fprime_test_api.get_mnemonic('Svc.CommandDispatcher')}.CMD_NO_OP",
-        channels=cmd_dispatched_channel,
-        timeout=3,
+    # Send command and wait for completion with assert
+    fprime_test_api.send_and_assert_command(
+        f"{fprime_test_api.get_mnemonic('Svc.CommandDispatcher')}.CMD_NO_OP"
     )
-    # Assert that the telemetry value has increased by 1 after sending the command
+    # Clear stale telemetry, then wait for fresh telemetry after command completes
+    fprime_test_api.clear_histories()
+    end_result = fprime_test_api.await_telemetry(cmd_dispatched_channel, timeout=3)
     assert end_result.val_obj.val == begin_tlm_val + 1

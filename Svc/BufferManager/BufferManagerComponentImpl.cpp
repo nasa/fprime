@@ -133,7 +133,7 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
     this->m_memId = memId;
     this->m_allocator = &allocator;
     // clear bins
-    memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
+    (void)memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
 
     this->m_bufferBins = bins;
 

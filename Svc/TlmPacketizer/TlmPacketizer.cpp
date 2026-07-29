@@ -108,7 +108,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen),
                   static_cast<FwAssertArgType>(pktEntry));
         // clear contents
-        memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
+        (void)memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
         Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
             static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
@@ -266,7 +266,8 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
             (void)memcpy(val.getBuffAddr(), ptr, static_cast<size_t>(entry.channelSize));
             // set buf len to the channelSize. keep in mind, this is the MAX serialized size of the channel.
             // so we may actually be filling val with some junk after the value of the channel.
-            FW_ASSERT(val.setBuffLen(entry.channelSize) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            const Fw::SerializeStatus setStatus = val.setBuffLen(entry.channelSize);
+            FW_ASSERT(setStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
             this->m_lock.unLock();
             return Fw::TlmValid::VALID;
         }

@@ -41,6 +41,11 @@ TEST(Nominal, testWritingOffset) {
     tester.testWritingOffset();
 }
 
+TEST(Nominal, testWriteZeroLength) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteZeroLength();
+}
+
 TEST(Nominal, testAppending) {
     Svc::FileWorkerTester tester;
     tester.testAppending();

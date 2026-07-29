@@ -185,7 +185,8 @@ Fw::Success FpySequencer::readBody() {
     }
 
     // deser statements
-    for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
+    const U16 statementCount = this->m_sequenceObj.get_header().get_statementCount();
+    for (U16 statementIdx = 0; statementIdx < statementCount; statementIdx++) {
         // deser statement
         deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {

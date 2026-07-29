@@ -42,6 +42,7 @@ class TokenBucketTester {
     void testTriggering();
     void testReconfiguring();
     void testInitialSettings();
+    void testReplenishAndEdgeCases();
 
   private:
     // ----------------------------------------------------------------------

@@ -1,0 +1,2 @@
+| test.cpp:10:5:10:17 | call to computeStatus | The return value of non-void function $@ is not checked. | test.cpp:3:5:3:17 | computeStatus | computeStatus |
+| test.cpp:16:14:16:26 | call to computeStatus | $@'s return value is stored but not checked. | test.cpp:3:5:3:17 | computeStatus | computeStatus |

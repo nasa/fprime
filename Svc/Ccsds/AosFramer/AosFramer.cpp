@@ -220,7 +220,7 @@ void AosFramer ::setup_m_pdu_header(const ComCfg::FrameContext& context, bool no
     Fw::SerializeStatus status = frameSerializer.moveSerToOffset(AOSHeader::SERIALIZED_SIZE);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    frameSerializer.serializeFrom(muxedPdu);
+    status = frameSerializer.serializeFrom(muxedPdu);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 }
 
@@ -228,7 +228,7 @@ FwSizeType AosFramer::get_min_size() {
     return AOSHeader::SERIALIZED_SIZE + M_PDUHeader::SERIALIZED_SIZE + (this->m_fecf ? AOSTrailer::SERIALIZED_SIZE : 0);
 }
 
-bool AosFramer::buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
+bool AosFramer::buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size) {
     return (buffer.getData() >= start && buffer.getData() < start + size);
 }
 
@@ -280,6 +280,9 @@ void AosFramer ::pack_pad_send(Fw::Buffer& data, const ComCfg::FrameContext& con
     if (context.get_sendNow()) {
         // Compute some sizes to check if we've got space left to pad
         const FwSizeType min_size = get_min_size();
+        FW_ASSERT(currentVc.frame.buffer.getSize() >= min_size,
+                  static_cast<FwAssertArgType>(currentVc.frame.buffer.getSize()),
+                  static_cast<FwAssertArgType>(min_size));
         const FwSizeType maxPayload = currentVc.frame.buffer.getSize() - min_size;
 
         if (currentVc.current_payload_offset < maxPayload) {
@@ -342,7 +345,8 @@ void AosFramer ::pack_packet(Fw::Buffer& data, const ComCfg::FrameContext& conte
     // Return the buffer if no bytes are outstanding
     if (currentVc.outstanding.offset == 0) {
         // Return the buffer if this isn't the SPP Idle buff
-        if (!buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer))) {
+        const bool isSppIdleBuffer = buffer_belongs(data, currentVc.spp_idle.backer, sizeof(currentVc.spp_idle.backer));
+        if (!isSppIdleBuffer) {
             this->dataReturnOut_out(0, data,
                                     context);  // return ownership of the original data buffer
         }
@@ -406,7 +410,6 @@ void AosFramer ::fill_with_idle_packet(AosVc& vc, const ComCfg::FrameContext& co
     // Use EPP if we can (solves for all sizes)
     if (vc.idle_packet_types & PvnBitfield::EPP_MASK) {
         // TODO: Serialize an EPP of the right size
-        FW_ASSERT(true);
     }
     // While we are using only SPP, we have to comply w/ the min SPP packet size
     // We'll stripe this packet onto the next frame of this VC if we have to

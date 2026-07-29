@@ -270,6 +270,8 @@ Fw::CmdResponse FileDownlink ::statusToCmdResp(SendFileStatus status) {
 }
 
 void FileDownlink ::sendResponse(SendFileStatus resp) {
+    FW_ASSERT(this->m_curEntry.source == FileDownlink::COMMAND || this->m_curEntry.source == FileDownlink::PORT,
+              static_cast<FwAssertArgType>(this->m_curEntry.source));
     if (this->m_curEntry.source == FileDownlink::COMMAND) {
         this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
     } else {
