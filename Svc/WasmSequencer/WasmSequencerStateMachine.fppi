@@ -189,7 +189,7 @@ state machine SequencerStateMachine {
         on entered do { invokeStartOfLastModule }
 
         # Start finished might be either start=host function or start=None
-        on startFinished enter RUN_CHECK
+        on startFinished do { sendLoadCmdResponse_OK } enter RUN_CHECK
         on startInvoked enter RUNNING
         on startError do {
             reportInvokeFailure,
@@ -201,11 +201,7 @@ state machine SequencerStateMachine {
     @ A module finished loading; decide whether to invoke a pending function or wait
     choice RUN_CHECK {
         if pendingRun do { invokeMainOfLastModule } enter INVOKE_CHECK \
-        else do {
-            # We are not pending an invoke/run meaning we are running a LOAD/LOAD_NAME
-            # Reply to that command
-            sendLoadCmdResponse_OK
-        } enter READY
+        else enter READY
     }
 
     choice INVOKE_CHECK {
@@ -355,7 +351,7 @@ state machine SequencerStateMachine {
         ####################
         # commands         #
         ####################
-        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+        on cmd_CANCEL do { clearPause, clearPendingHostFunction, report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
         on cmd_PAUSE do { pendPause }
     }
 }
