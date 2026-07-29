@@ -214,7 +214,7 @@ void SeqDispatcher::CANCEL_NAME_cmdHandler(
     }
 }
 
-//! Broadcast a cancel to every running sequencer. 
+//! Broadcast a cancel to every running sequencer.
 //! This does not exclude the caller!
 //! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
 void SeqDispatcher::CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
