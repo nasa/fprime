@@ -22,8 +22,8 @@ Dispatches command sequences to available command sequencers, allowing the space
 | Name | Description |
 |RUN|Dispatches a sequence to the first available sequencer|
 |LOG_STATUS|Logs via Events the state of each connected command sequencer|
-|CANCEL_NAME|Cancels any running sequence matching the given file name. Cancels the sequencer(s) running that file; the resulting seqDoneIn clears the dispatcher's state|
-|CANCEL_ALL|Cancels every currently running sequence on all connected sequencers. This is a broadcast and does not exclude the caller: a sequence that issues CANCEL_ALL is itself canceled. The resulting seqDoneIn calls clear the dispatcher's state|
+|CANCEL_NAME|Cancels any running sequence matching the given file name.|
+|CANCEL_ALL|Cancels every currently running sequence on all connected sequencers. This is a broadcast and does not exclude the caller: a sequence that issues CANCEL_ALL is itself canceled.|
 
 ## Events
 | Name | Description |
