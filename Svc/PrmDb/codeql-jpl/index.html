@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>CodeQL — Svc/PrmDb</title><style>* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0; padding: 1.5rem; color: #1f2328; background: #ffffff;
+}
+h1 { margin: 0 0 0.25rem 0; font-size: 1.2rem; }
+.meta { color: #57606a; font-size: 0.9rem; margin-bottom: 1rem; }
+table { width: 100%; border-collapse: collapse; }
+table th, table td { padding: 0.35rem 0.6rem; text-align: left; vertical-align: top; }
+table th { font-weight: 500; color: #57606a; font-size: 0.85rem; border-bottom: 1px solid #eaeef2; }
+table tr { border-top: 1px solid #eaeef2; }
+table tr:hover { background: #f6f8fa; }
+table a { color: #0969da; text-decoration: none; }
+table a:hover { text-decoration: underline; }
+.sev-error  { color: #cf222e; font-weight: 600; }
+.sev-medium { color: #9a6700; font-weight: 600; }
+.sev-low    { color: #57606a; }
+.clean { padding: 0.75rem 1rem; background: #dafbe1; border: 1px solid #aceebb;
+         border-radius: 6px; color: #1a7f37; }
+h2 { margin: 1.5rem 0 0.5rem 0; font-size: 1.05rem; }
+.dismissed td { color: #57606a; }
+</style></head><body><h1>CodeQL findings — <code>Svc/PrmDb</code></h1><div class="meta"><code>devel</code> @ <code>17da09d6bf83</code> &middot; generated 2026-07-29T19:10:09Z</div><table><thead><tr><th>File</th><th>Line</th><th>Rule</th><th>Severity</th><th>Message</th></tr></thead><tbody><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L166">Svc/PrmDb/PrmDbImpl.cpp:166</a></td><td>166</td><td><code>cpp/fprime/no-file-access-in-critical</code></td><td class="sev-medium">medium</td><td>Synchronous file access write performed in a critical region (lock held).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L195">Svc/PrmDb/PrmDbImpl.cpp:195</a></td><td>195</td><td><code>cpp/fprime/no-file-access-in-critical</code></td><td class="sev-medium">medium</td><td>Synchronous file access write performed in a critical region (lock held).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L226">Svc/PrmDb/PrmDbImpl.cpp:226</a></td><td>226</td><td><code>cpp/fprime/no-file-access-in-critical</code></td><td class="sev-medium">medium</td><td>Synchronous file access write performed in a critical region (lock held).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L249">Svc/PrmDb/PrmDbImpl.cpp:249</a></td><td>249</td><td><code>cpp/fprime/no-file-access-in-critical</code></td><td class="sev-medium">medium</td><td>Synchronous file access write performed in a critical region (lock held).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L119">Svc/PrmDb/PrmDbImpl.cpp:119</a></td><td>119</td><td><code>cpp/jpl-c/function-size-limits</code></td><td class="sev-low">low</td><td>PRM_SAVE_FILE_cmdHandler has too many lines (199, while 60 are allowed).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L388">Svc/PrmDb/PrmDbImpl.cpp:388</a></td><td>388</td><td><code>cpp/jpl-c/function-size-limits</code></td><td class="sev-low">low</td><td>readParamFileImpl has too many lines (187, while 60 are allowed).</td></tr><tr><td><a href="https://github.com/nasa/fprime/blob/17da09d6bf83547bd677b7fe78b3cb4b6c90ff04/Svc/PrmDb/PrmDbImpl.cpp#L394">Svc/PrmDb/PrmDbImpl.cpp:394</a></td><td>394</td><td><code>cpp/fprime/incomplete-code</code></td><td class="sev-low">low</td><td>Comment contains the incomplete-code marker FIXME.</td></tr></tbody></table></body></html>
