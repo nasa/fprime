@@ -104,7 +104,8 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     const Fw::CmdStringArg& fileName,
                                     const Svc::BlockState& block) {
     // RUN is only valid from IDLE
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE) {
+    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
+        this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -136,10 +137,19 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
 }
 
 void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    auto status = this->m_pendingFinishCmds.enqueue(PendingCmd(opCode, cmdSeq));
-    if (status != Fw::Success::SUCCESS) {
-        this->log_WARNING_HI_TooManyBlockingCommands();
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    switch (this->sequencer_getState()) {
+        case WasmSequencer_SequencerStateMachine_State::IDLE:
+        case WasmSequencer_SequencerStateMachine_State::READY:
+            // Nothing is executing, respond immediately
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+            break;
+        default: {
+            const auto status = this->m_pendingFinishCmds.enqueue(PendingCmd(opCode, cmdSeq));
+            if (status != Fw::Success::SUCCESS) {
+                this->log_WARNING_HI_TooManyBlockingCommands();
+                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            }
+        }
     }
 }
 
@@ -153,7 +163,8 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
                                           const Fw::CmdStringArg& fileName,
                                           const Fw::CmdStringArg& name) {
     // Loading is only valid from IDLE.
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE) {
+    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
+        this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -170,7 +181,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        const Fw::CmdStringArg& module,
                                        const Svc::BlockState& block) {
     // INVOKE is only valid from IDLE.
-    if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::IDLE) {
+    if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -660,12 +671,14 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             break;
         }
         case WasmSequencer_HostFunction::EVENT: {
-            U8 stringStorage[FW_LOG_STRING_MAX_SIZE];
+            U8 stringStorage[FW_LOG_STRING_MAX_SIZE + 1];
             FW_ASSERT(this->m_pendingHostFunction.len1 <= FW_LOG_STRING_MAX_SIZE,
                       static_cast<FwAssertArgType>(this->m_pendingHostFunction.len1), FW_LOG_STRING_MAX_SIZE);
+            const Fw::ExternalString msg(reinterpret_cast<char*>(stringStorage), FW_LOG_STRING_MAX_SIZE + 1);
 
             auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
                                              stringStorage, this->m_pendingHostFunction.len1);
+            stringStorage[this->m_pendingHostFunction.len1] = 0;
             if (status != SPACEWASM_OK) {
                 // TODO(tumbar) Validate pointer region synchronously and assert here
                 this->log_WARNING_HI_HostFunctionInvalidPointer(
@@ -674,28 +687,27 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                 this->sequencer_sendSignal_stmtResponse_failure();
             } else {
                 // Emit the event
-                const Fw::ExternalString msg(reinterpret_cast<char*>(stringStorage), this->m_pendingHostFunction.len1);
                 switch (this->m_pendingHostFunction.severity) {
                     case Fw::LogSeverity::FATAL:
-                        this->log_FATAL_GuestFatal(msg);
+                        this->log_FATAL_LogFatal(msg);
                         break;
                     case Fw::LogSeverity::WARNING_HI:
-                        this->log_WARNING_HI_GuestWarningHi(msg);
+                        this->log_WARNING_HI_LogWarningHi(msg);
                         break;
                     case Fw::LogSeverity::WARNING_LO:
-                        this->log_WARNING_LO_GuestWarningLo(msg);
+                        this->log_WARNING_LO_LogWarningLo(msg);
                         break;
                     case Fw::LogSeverity::COMMAND:
-                        this->log_COMMAND_GuestCommand(msg);
+                        this->log_COMMAND_LogCommand(msg);
                         break;
                     case Fw::LogSeverity::ACTIVITY_HI:
-                        this->log_ACTIVITY_HI_GuestActivityHi(msg);
+                        this->log_ACTIVITY_HI_LogActivityHi(msg);
                         break;
                     case Fw::LogSeverity::ACTIVITY_LO:
-                        this->log_ACTIVITY_LO_GuestActivityLo(msg);
+                        this->log_ACTIVITY_LO_LogActivityLo(msg);
                         break;
                     case Fw::LogSeverity::DIAGNOSTIC:
-                        this->log_DIAGNOSTIC_GuestDiagnostic(msg);
+                        this->log_DIAGNOSTIC_LogDiagnostic(msg);
                         break;
                 }
 

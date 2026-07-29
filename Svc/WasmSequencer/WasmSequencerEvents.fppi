@@ -94,36 +94,36 @@ event GuestMemoryError(status: Status) \
 # ----------------------------------------------------------------------
 
 @ A FATAL event emitted by the guest program
-event GuestFatal(msg: string size 128) \
+event LogFatal(msg: string size 128) \
     severity fatal \
-    format "Guest: {}"
+    format "{}"
 
 @ A WARNING_HI event emitted by the guest program
-event GuestWarningHi(msg: string size 128) \
+event LogWarningHi(msg: string size 128) \
     severity warning high \
-    format "Guest: {}"
+    format "{}"
 
 @ A WARNING_LO event emitted by the guest program
-event GuestWarningLo(msg: string size 128) \
+event LogWarningLo(msg: string size 128) \
     severity warning low \
-    format "Guest: {}"
+    format "{}"
 
 @ A COMMAND event emitted by the guest program
-event GuestCommand(msg: string size 128) \
+event LogCommand(msg: string size 128) \
     severity command \
-    format "Guest: {}"
+    format "{}"
 
 @ An ACTIVITY_HI event emitted by the guest program
-event GuestActivityHi(msg: string size 128) \
+event LogActivityHi(msg: string size 128) \
     severity activity high \
-    format "Guest: {}"
+    format "{}"
 
 @ An ACTIVITY_LO event emitted by the guest program
-event GuestActivityLo(msg: string size 128) \
+event LogActivityLo(msg: string size 128) \
     severity activity low \
-    format "Guest: {}"
+    format "{}"
 
 @ A DIAGNOSTIC event emitted by the guest program
-event GuestDiagnostic(msg: string size 128) \
+event LogDiagnostic(msg: string size 128) \
     severity diagnostic \
-    format "Guest: {}"
+    format "{}"

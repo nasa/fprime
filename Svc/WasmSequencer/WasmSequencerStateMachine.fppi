@@ -55,7 +55,7 @@ enum AllocError : U8 {
 type ModuleIdx = U8
 
 state machine SequencerStateMachine {
-    initial enter RESET
+    initial enter IDLE
 
     ###############
     # Commands    #
@@ -151,14 +151,18 @@ state machine SequencerStateMachine {
     @ Generic entry of a state
     signal entered
 
-    choice RESET {
-        if alwaysTrue do { resetStore } enter IDLE \
-        else enter IDLE
-    }
-
     @ Interpreter does not have any modules loaded or a store initialized
     state IDLE {
-        on cmd_CANCEL enter RESET
+        entry do { resetStore }
+
+        on cmd_CANCEL enter IDLE
+        on cmd_RUN do { pendRun } enter LOADING
+        on cmd_LOAD do { pendLoad } enter LOADING
+    }
+
+    @ Interpreter has modules loaded into the store and is ready to execute
+    state READY {
+        on cmd_CANCEL enter IDLE
         on cmd_RUN do { resetStore, pendRun } enter LOADING
         on cmd_LOAD do { pendLoad } enter LOADING
         on cmd_INVOKE do { invokeMain } enter INVOKE_CHECK
@@ -177,7 +181,7 @@ state machine SequencerStateMachine {
                 sendRunCmdResponse_EXECUTION_ERROR
                 # A failing module load must reset because there could be lingering allocations
                 # and we explicitely do not allow fragmentation.
-            } enter RESET
+            } enter IDLE
         }
     }
 
@@ -193,7 +197,7 @@ state machine SequencerStateMachine {
             reportInvokeFailure,
             sendLoadCmdResponse_EXECUTION_ERROR,
             sendRunCmdResponse_EXECUTION_ERROR
-        } enter RESET
+        } enter IDLE
     }
 
     @ A module finished loading; decide whether to invoke a pending function or wait
@@ -203,14 +207,14 @@ state machine SequencerStateMachine {
             # We are not pending an invoke/run meaning we are running a LOAD/LOAD_NAME
             # Reply to that command
             sendLoadCmdResponse_OK
-        } enter IDLE
+        } enter READY
     }
 
     choice INVOKE_CHECK {
         if invokeFailed do {
             reportInvokeFailure,
             sendLoadCmdResponse_EXECUTION_ERROR
-        } enter IDLE \
+        } enter READY \
         else enter RUNNING
     }
 
@@ -308,7 +312,7 @@ state machine SequencerStateMachine {
                     report_seqSucceeded,
                     clearPause,
                     sendRunCmdResponse_OK
-                } enter IDLE
+                } enter READY
             }
 
         }
@@ -353,7 +357,7 @@ state machine SequencerStateMachine {
         ####################
         # commands         #
         ####################
-        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter RESET
+        on cmd_CANCEL do { report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
         on cmd_PAUSE do { pendPause }
     }
 }
