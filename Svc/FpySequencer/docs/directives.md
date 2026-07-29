@@ -1151,8 +1151,21 @@ Pops serialized data from the stack and sends it to an external component via a 
 3. Pop `size` bytes from the stack.
 4. Send the popped bytes to the target component via `serialOut[port_index]`.
 
+**Error Conditions:**
+- If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
+- If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
+- If `len(stack) < size`: `STACK_UNDERFLOW`
+
+| Arg Name     | Arg Type       | Source     | Description |
+|--------------|----------------|------------|-------------|
+| port_index   | FwIndexType    | hardcoded  | Index of the serialOut port array to use. |
+| size         | StackSizeType  | hardcoded  | Number of bytes to pop and send. |
+| value        | bytes          | stack      | Serialized data to send (popped from stack). |
+
+**Requirement:** FPY-SEQ-019
+
 ## FFLOOR (79)
-Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNegative` operation), pushes result to stack. A zero, infinite, or NaN value passes through unchanged; the sign of a zero is preserved (`-0.0` floors to `-0.0`). The bit pattern of a NaN result is unspecified. A value in `(0, 1)` floors to `0.0`; a value in `(-1, 0)` floors to `-1.0`. Never raises an error. Used to lower float floor division (`//`).
+Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNegative` operation), pushes result to stack. A zero, infinite, or NaN value passes through unchanged; the sign of a zero is preserved (`-0.0` floors to `-0.0`). A NaN result is a quiet NaN; its sign and payload are unspecified. A value in `(0, 1)` floors to `0.0`; a value in `(-1, 0)` floors to `-1.0`. Never raises an error. Used to lower float floor division (`//`).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Value to floor |
@@ -1164,7 +1177,7 @@ Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNeg
 **Requirement:**  FPY-SEQ-002
 
 ## IABS (80)
-Pops a signed `I64`, pushes its absolute value to the stack: the value itself if non-negative, its two's-complement negation otherwise. The absolute value of `I64` min (`-2**63`) is not representable, so it wraps back to `I64` min rather than trapping (matching `llvm.abs` with `is_int_min_poison=0`). Never raises an error.
+Pops a signed `I64`, pushes its absolute value to the stack: the value itself if non-negative, its negation otherwise. The absolute value of `I64` min (`-2**63`) is not representable in `I64` and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | I64      | stack  | Value to take the absolute value of |
@@ -1186,16 +1199,3 @@ Pops an `F64`, clears its sign bit, and pushes the result to the stack (the IEEE
 | F64 | The absolute value |
 
 **Requirement:**  FPY-SEQ-002
-
-**Error Conditions:**
-- If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
-- If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
-- If `len(stack) < size`: `STACK_UNDERFLOW`
-
-| Arg Name     | Arg Type       | Source     | Description |
-|--------------|----------------|------------|-------------|
-| port_index   | FwIndexType    | hardcoded  | Index of the serialOut port array to use. |
-| size         | StackSizeType  | hardcoded  | Number of bytes to pop and send. |
-| value        | bytes          | stack      | Serialized data to send (popped from stack). |
-
-**Requirement:** FPY-SEQ-019
