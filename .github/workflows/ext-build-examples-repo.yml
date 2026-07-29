@@ -102,8 +102,15 @@ jobs:
           echo "=== Debug: Check if binary exists ==="
           ls -la ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT} || echo "Binary not found!"
 
-          echo "=== Debug: Check dictionary contents ==="
-          grep -i "ManagerWorker" ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.xml | head -20 || echo "No ManagerWorker found in dictionary"
+          echo "=== Debug: Check what dictionary files exist ==="
+          ls -la ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ || echo "No dict directory!"
+
+          echo "=== Debug: Check JSON dictionary for ManagerWorker components ==="
+          if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
+            python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=[c for c in d.get('component_list', []) if 'ManagerWorker' in c.get('comp_name', '')]; print('ManagerWorker components found:', len(comps)); [print('  -', c['comp_name']) for c in comps[:10]]"
+          else
+            echo "JSON dictionary not found!"
+          fi
 
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs
