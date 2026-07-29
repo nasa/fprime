@@ -110,7 +110,7 @@ Fw::Success WasmSequencer ::createStore() {
     }
 
     U32 module_idx;
-    status = spacewasm_add_host_module(&host, "fprime", 8, 0, &module_idx);
+    status = spacewasm_add_host_module(&host, "fprime_v1", 8, 0, &module_idx);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     status = spacewasm_add_host_function(&host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
