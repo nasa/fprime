@@ -113,12 +113,6 @@ jobs:
           if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
             MANAGER_WORKER_COUNT=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=[c for c in d.get('component_list', []) if 'ManagerWorker' in c.get('comp_name', '')]; print(len(comps)); [print('  -', c['comp_name']) for c in comps[:10]]")
             echo "ManagerWorker components found: ${MANAGER_WORKER_COUNT}"
-
-            if [ "${MANAGER_WORKER_COUNT}" -eq 0 ]; then
-              echo "WARNING: ManagerWorker components not found in ExamplesDeployment topology."
-              echo "Skipping ManagerWorker integration tests. The fprime-examples branch needs to include ManagerWorker in the topology."
-              exit 0
-            fi
           else
             echo "JSON dictionary not found!"
             exit 1
