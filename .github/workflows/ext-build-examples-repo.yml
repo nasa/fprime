@@ -98,13 +98,37 @@ jobs:
         run: |
           DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
+
+          echo "=== Debug: Check if binary exists ==="
+          ls -la ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT} || echo "Binary not found!"
+
+          echo "=== Debug: Check dictionary contents ==="
+          grep -i "ManagerWorker" ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.xml | head -20 || echo "No ManagerWorker found in dictionary"
+
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs
           cd FlightExamples/${DEPLOYMENT}
+
+          echo "=== Debug: Starting fprime-gds ==="
           fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection fprime &
+          GDS_PID=$!
           sleep 15
+
+          echo "=== Debug: Check if GDS process is running ==="
+          ps aux | grep fprime-gds | grep -v grep || echo "GDS not running!"
+
+          echo "=== Debug: Check if app process is running ==="
+          ps aux | grep ${DEPLOYMENT} | grep -v grep || echo "App not running!"
+
+          echo "=== Debug: Check log files ==="
+          ls -la ../../ci-logs/ || echo "No logs yet"
+
           cd ../..
           pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
             --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
             -v \
-            FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py
+            FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py || {
+            echo "=== Debug: Tests failed, checking logs ==="
+            cat ../../ci-logs/*.log 2>/dev/null || echo "No log files found"
+            exit 1
+          }
