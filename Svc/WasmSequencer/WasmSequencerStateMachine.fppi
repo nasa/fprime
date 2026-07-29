@@ -234,7 +234,7 @@ state machine SequencerStateMachine {
     @ reports that the sequence failed to execute successfully
     action report_seqFailed
     @ reports that the interpreter trapped, with the trap reason
-    action report_seqTrap
+    action report_seqTrap: TrapReason
     @ reports that execution was paused at a breakpoint
     action report_seqPaused
     @ checks if the current statement has timed out

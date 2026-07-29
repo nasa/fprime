@@ -12,6 +12,7 @@
 #include "Os/File.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 #include "spacewasm.h"
@@ -287,9 +288,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! reports that the interpreter trapped, with the trap reason
     void Svc_WasmSequencer_SequencerStateMachine_action_report_seqTrap(
-        SmId smId,                                              //!< The state machine id
-        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
-        ) override;
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal,  //!< The signal
+        const WasmSequencer_TrapReason& trapReason) override;
 
     //! Implementation for action report_seqPaused of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
@@ -495,10 +496,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Currently loading file handle
     Os::File* m_loadFile;
-
-    //! Most recent trap reason, stashed so the payload-less report_seqTrap
-    //! action can render it.
-    spacewasm_trap_t m_lastTrap;
 
     struct PendingHostFunction {
         PendingHostFunction() = default;

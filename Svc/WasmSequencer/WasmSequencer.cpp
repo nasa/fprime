@@ -36,8 +36,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_breakBeforeNextLine(false),
-      m_loadFile(nullptr),
-      m_lastTrap(SPACEWASM_TRAP_NONE) {
+      m_loadFile(nullptr) {
     // Install the process-wide global page allocator, backed by this instance's
     // page pool. The store/bytecode live entirely within m_memory_pool.
     // TODO(tumbar) We need to figure out a thread-local or context sensitive way to allow multiple sequencers...
@@ -419,8 +418,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
     spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
     const spacewasm_run_status_t runStatus = spacewasm_run(this->m_wasm, fuel, &trap);
 
-    this->m_lastTrap = trap;
-
     switch (runStatus) {
         case SPACEWASM_RUN_FINISHED:
             this->sequencer_sendSignal_interpreterFinished();
@@ -460,8 +457,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqFa
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTrap(
     SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->log_WARNING_HI_SequenceTrap(WasmSequencer::mapTrapReason(this->m_lastTrap));
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal,
+    const WasmSequencer_TrapReason& trapReason) {
+    this->log_WARNING_HI_SequenceTrap(trapReason);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqPaused(
