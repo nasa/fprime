@@ -45,7 +45,7 @@ jobs:
       fprime_location: ./FlightExamples/lib/fprime
 
   integration-tests:
-    needs: run
+    needs: [run, get-branch]
     name: "Run Integration Tests"
     runs-on: ubuntu-22.04
     steps:
@@ -54,7 +54,7 @@ jobs:
         with:
           submodules: recursive
           repository: Specky26846/fprime-examples
-          ref: devel
+          ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4
         with:
