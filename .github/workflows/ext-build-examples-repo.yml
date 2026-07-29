@@ -86,6 +86,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y zlib1g-dev
+      - name: "Install decaf framing GDS plugin"
+        run: |
+          . venv/bin/activate
+          pip install -e ./GdsExamples/gds-plugins
       - name: "Build native x86_64 binary for integration tests"
         working-directory: FlightExamples/ExamplesDeployment
         run: |
