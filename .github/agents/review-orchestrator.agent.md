@@ -291,14 +291,16 @@ errors, inverted predicates, state-machine and sequence defects,
 unhandled enum values, integer arithmetic defects, ignored status
 returns, resource leaks, initialization defects, copy-paste
 substitution errors, non-terminating loops, data races, and
-framework-contract violations. This is defensive defect-finding:
-expose correctness problems so they can be fixed; do not construct
-or describe exploits, and leave untrusted-input threat modeling to
-the security reviewer. Read every touched file in full and check the
-callers before filing; apply the confirmation discipline in your
-agent file. Post inline review comments per the contract. Your
-review body contains only the hidden metadata block (§2); no visible
-summary table.
+framework-contract violations. Those named categories are a memory
+aid, not the limit of your scope: file anything else you confirm the
+code gets wrong under `correctness-other`. This is defensive
+defect-finding: expose correctness problems so they can be fixed; do
+not construct or describe exploits, and leave untrusted-input threat
+modeling to the security reviewer. Read every touched file in full
+and check the callers before filing; apply the confirmation
+discipline in your agent file. Post inline review comments per the
+contract. Your review body contains only the hidden metadata block
+(§2); no visible summary table.
 
 Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.

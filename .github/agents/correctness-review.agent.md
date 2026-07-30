@@ -1,5 +1,5 @@
 ---
-description: "Use when reviewing F Prime PRs for general functional-correctness defects: logic that does not do what it is plainly meant to do. Covers off-by-one and boundary errors, inverted or short-circuited conditions, incorrect or unreachable state-machine transitions, unhandled enum cases and missing switch defaults, integer arithmetic errors (overflow, truncation, signed/unsigned mixing, division by zero), dropped status returns, resource and handle leaks, initialization-order and uninitialized-read defects, copy-paste substitution errors, loop-termination defects, and concurrency defects that are not port-kind violations. Defensive review only: the goal is to expose latent bugs so they can be fixed, never to develop or demonstrate an exploit. Keywords: correctness, logic bug, off-by-one, boundary, inverted condition, state machine, unhandled enum, integer overflow, truncation, ignored return, resource leak, uninitialized, copy-paste error, loop termination, race condition."
+description: "Use when reviewing F Prime PRs for general functional-correctness defects: logic that does not do what it is plainly meant to do. Covers off-by-one and boundary errors, inverted or short-circuited conditions, incorrect or unreachable state-machine transitions, unhandled enum cases and missing switch defaults, integer arithmetic errors (overflow, truncation, signed/unsigned mixing, division by zero), dropped status returns, resource and handle leaks, initialization-order and uninitialized-read defects, copy-paste substitution errors, loop-termination defects, and concurrency defects that are not port-kind violations — plus a catch-all class for any other confirmed way the code fails to do what it evidently intends. Defensive review only: the goal is to expose latent bugs so they can be fixed, never to develop or demonstrate an exploit. Keywords: correctness, logic bug, off-by-one, boundary, inverted condition, state machine, unhandled enum, integer overflow, truncation, ignored return, resource leak, uninitialized, copy-paste error, loop termination, race condition, anything else wrong."
 name: "F Prime Correctness Reviewer"
 tools: [read, search]
 user-invocable: true
@@ -113,10 +113,17 @@ matching — most real logic defects do not match a grep pattern.
 
 ---
 
-## Scope — twelve categories
+## Scope — twelve named categories plus a catch-all
+
+The twelve named categories below are the defect shapes seen often
+enough in flight software to be worth naming. They are **not** a
+closed list, and a defect is never out of scope merely because it
+fits none of them — category 13 exists precisely for that case. Name
+the category if one fits, because it makes the finding easier to
+triage; reach for category 13 rather than forcing a poor fit.
 
 The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies to all twelve
+(`_shared/skills/pr-diff-scoping.skill.md`) applies to all thirteen
 categories; preexisting defects outside the diff become
 `**future work**` — but report them, because a correctness defect
 does not become acceptable by being old.
@@ -269,6 +276,38 @@ to an event.
 
 **Finding-class:** `correctness-contract-violation`.
 
+### 13. Anything else the code gets wrong
+
+A catch-all, and a deliberate one. Use it for any defect you have
+confirmed to the standard below that does not fit categories 1–12.
+The categories are a memory aid, not the definition of your scope;
+the definition of your scope is the single question at the top of
+this file. If the code demonstrably does not do what it is evidently
+intended to do, and you can name the trigger and the consequence,
+report it here and describe the defect in your own words.
+
+Examples of the kind of thing that lands here: a formula that
+implements the wrong algorithm; a unit mismatch (milliseconds
+supplied where microseconds are expected); an endianness or sign
+convention applied inconsistently between a writer and its reader; a
+configuration parameter accepted and then never read; a comparison
+that is correct in isolation but inconsistent with the ordering used
+elsewhere on the same data; an FPP model and its C++ implementation
+that disagree about the meaning rather than the declaration of a
+value; a default value that is wrong for its documented purpose.
+
+Two cautions, so the catch-all does not become a channel for
+speculation:
+
+- The confirmation discipline below applies **in full and without
+  exception**. An unnamed category is not a lower standard of proof;
+  it is the same standard for a defect whose shape has no name.
+- If the finding belongs to another reviewer's scope (style, doc
+  currency, test coverage, exploitability), it does not become yours
+  by being placed here. Check "Out of scope" first.
+
+**Finding-class:** `correctness-other`.
+
 ---
 
 ## Confirmation discipline — do not guess
@@ -358,6 +397,11 @@ Append a maintainer ping per
 - **`correctness-contract-violation`**: `**must fix**` when the
   violated contract's failure mode produces a wrong result;
   `**suggestion**` otherwise.
+- **`correctness-other`**: triage on consequence, exactly as you
+  would a named class — `**must fix**` when the wrong behavior is
+  reachable and consequential, `**suggestion**` or `**could fix**`
+  when it is latent or guarded. State which, and why, since there is
+  no category convention to fall back on.
 
 ---
 
