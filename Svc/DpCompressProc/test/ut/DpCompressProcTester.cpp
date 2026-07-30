@@ -222,6 +222,62 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
     abstractState.success_ = true;
 }
 
+void DpCompressProcTester::test_undersized_buffer() {
+    // Every other test here builds a well-formed container via
+    // AbstractState::build_compress_buffer, so none of them reach the
+    // short-buffer branch in procRequest_handler. This drives it.
+    //
+    // Construction: allocate a MIN_PACKET_SIZE + 1 backing array — large
+    // enough that Fw::DpContainer accepts it and can write a well-formed
+    // header with dataSize = 1 — then hand procRequest a *view* of that
+    // same memory whose length is MIN_PACKET_SIZE - 1. Header::SIZE is
+    // well below MIN_PACKET_SIZE, so every header byte is still present
+    // and deserializeHeader() would succeed; the only thing wrong with
+    // the buffer is its length.
+    //
+    // Without the guard, the subsequent
+    //     fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE
+    // is an unsigned subtraction that underflows to ~SIZE_MAX and the
+    // chunking loop walks off the end of the allocation. In a
+    // FW_NO_ASSERT build that manifests as a hang in the oversized
+    // deserializer loop; in an assert-enabled build the DpContainer
+    // constructor's own FW_ASSERT aborts the run. With the guard the
+    // handler returns immediately in both configurations.
+    this->clearHistory();
+    this->component.log_WARNING_HI_InvalidHeader_ThrottleClear();
+
+    paramSet_CHUNK_SIZE(4096, Fw::ParamValid::VALID);
+    paramSet_ENABLE(Fw::Enabled::ENABLED, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const FwSizeType backing_size = Fw::DpContainer::MIN_PACKET_SIZE + 1;
+    U8* mem = new U8[backing_size]();
+
+    Fw::Buffer backing_buf(mem, backing_size);
+    Fw::DpContainer container(0, backing_buf);
+    container.setDataSize(1);
+    container.serializeHeader();
+
+    // One byte short of the minimum — the case the guard rejects.
+    const FwSizeType short_size = Fw::DpContainer::MIN_PACKET_SIZE - 1;
+    Fw::Buffer short_buf(mem, short_size);
+
+    this->invoke_to_procRequest(0, short_buf);
+
+    // Rejected on size, reporting the size we were handed.
+    ASSERT_EVENTS_InvalidHeader_SIZE(1);
+    ASSERT_EVENTS_InvalidHeader(0, short_size, static_cast<U32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH));
+
+    // Nothing forwarded downstream, no completion claimed.
+    ASSERT_from_compressChunk_SIZE(0);
+    ASSERT_EVENTS_CompressionComplete_SIZE(0);
+
+    // Buffer left untouched.
+    ASSERT_EQ(short_buf.getSize(), short_size);
+
+    delete[] mem;
+}
+
 void DpCompressProcTester::test_chunks_disabled(const FwSizeStoreType chunk_size,
                                                 std::vector<AbstractState::Chunk> chunks) {
     Fw::Buffer container_buf = this->abstractState.build_compress_buffer(chunk_size, chunks);
