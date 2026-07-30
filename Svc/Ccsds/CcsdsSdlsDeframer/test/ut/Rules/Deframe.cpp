@@ -10,6 +10,7 @@
 
 #include <cstring>
 
+#include "Fw/Types/Serializable.hpp"
 #include "STest/Pick/Pick.hpp"
 #include "Svc/Ccsds/CcsdsSdlsDeframer/test/ut/CcsdsSdlsDeframerTester.hpp"
 
@@ -32,8 +33,8 @@ void CcsdsSdlsDeframerTester::Deframe__Nominal__action() {
     const U16 sa = static_cast<U16>(STest::Pick::lowerUpper(0, 0xFFFF));
     const FwSizeType payloadSize = STest::Pick::lowerUpper(0, TEST_BUFFER_SIZE - sizeof(U16));
     U8 storage[TEST_BUFFER_SIZE];
-    storage[0] = static_cast<U8>(sa >> 8);
-    storage[1] = static_cast<U8>(sa & 0xFF);
+    Fw::ExternalSerializeBuffer saWriter(storage, sizeof(U16));
+    ASSERT_EQ(saWriter.serializeFrom(sa), Fw::FW_SERIALIZE_OK);
     U8 payload[TEST_BUFFER_SIZE];
     for (FwSizeType i = 0; i < payloadSize; i++) {
         payload[i] = static_cast<U8>(STest::Pick::lowerUpper(0, 0xFF));

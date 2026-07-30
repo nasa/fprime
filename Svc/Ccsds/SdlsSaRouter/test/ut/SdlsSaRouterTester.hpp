@@ -54,15 +54,15 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     // ----------------------------------------------------------------------
 
     //! Override recording the invoked port number
-    void from_saDecryptOut_handler(FwIndexType portNum,
-                                   U16 securityAssociationIndex,
-                                   Fw::Buffer& data,
-                                   const ComCfg::FrameContext& context) override;
+    void from_saDataOut_handler(FwIndexType portNum,
+                                U16 securityAssociationIndex,
+                                Fw::Buffer& data,
+                                const ComCfg::FrameContext& context) override;
 
     //! Override recording the invoked port number
-    void from_saDecryptReturnOut_handler(FwIndexType portNum,
-                                         Fw::Buffer& data,
-                                         const ComCfg::FrameContext& context) override;
+    void from_saDataReturnOut_handler(FwIndexType portNum,
+                                      Fw::Buffer& data,
+                                      const ComCfg::FrameContext& context) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -72,7 +72,7 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     //! Connect ports (auto-generated; unused in favor of connectPortsCustom)
     void connectPorts();
 
-    //! Connect ports, leaving saDecryptOut[UNCONNECTED_PORT] unconnected
+    //! Connect ports, leaving saDataOut[UNCONNECTED_PORT] unconnected
     void connectPortsCustom();
 
     //! Initialize components
@@ -102,14 +102,14 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     //! Shadow state for rule-based testing
     SdlsSaRouterTestState shadow;
 
-    //! Port number of the last from_saDecryptOut invocation
-    FwIndexType m_lastSaDecryptOutPort = -1;
+    //! Port number of the last from_saDataOut invocation
+    FwIndexType m_lastSaDataOutPort = -1;
 
-    //! Port number of the last from_saDecryptReturnOut invocation
-    FwIndexType m_lastSaDecryptReturnOutPort = -1;
+    //! Port number of the last from_saDataReturnOut invocation
+    FwIndexType m_lastSaDataReturnOutPort = -1;
 
-    //! Pool of buffers used as outstanding decrypted data
-    U8 m_pool[SdlsCfg::SaRouterMaxOutstandingBuffers][TEST_BUFFER_SIZE];
+    //! Pool of buffers used as outstanding processed data
+    U8 m_pool[SdlsCfg::SaRouterMaxOutstandingBuffers][TEST_BUFFER_SIZE] = {};
 
     //! SAs from the compile-time routing map (SdlsCfg::SaMap defaults)
     U16 m_mapSas[SdlsCfg::SaRouterMapEntryCount];
@@ -122,14 +122,14 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     // Rule Based Testing
     // ----------------------------------------------------------------------
 
-    //! Rules for the decryptIn port (SA routing)
+    //! Rules for the dataIn port (SA routing)
     FW_RBT_DEFINE_RULE(SdlsSaRouterTester, Route, KnownSa);
     FW_RBT_DEFINE_RULE(SdlsSaRouterTester, Route, UnknownSa);
     FW_RBT_DEFINE_RULE(SdlsSaRouterTester, Route, UnknownPort);
 
-    //! Rules for the decrypted data and buffer return paths
-    FW_RBT_DEFINE_RULE(SdlsSaRouterTester, DataFlow, DecryptData);
-    FW_RBT_DEFINE_RULE(SdlsSaRouterTester, DataFlow, DecryptReturn);
+    //! Rules for the processed data and buffer return paths
+    FW_RBT_DEFINE_RULE(SdlsSaRouterTester, DataFlow, ProcessedData);
+    FW_RBT_DEFINE_RULE(SdlsSaRouterTester, DataFlow, ProcessedDataReturn);
     FW_RBT_DEFINE_RULE(SdlsSaRouterTester, DataFlow, BufferReturn);
 };
 

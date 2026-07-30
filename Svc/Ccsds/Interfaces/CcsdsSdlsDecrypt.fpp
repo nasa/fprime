@@ -14,7 +14,7 @@ module Ccsds {
         output port decryptOut: Svc.Ccsds.CcsdsSdlsData
 
         @ Port for receiving back ownership of buffers sent on decryptOut
-        sync input port decryptReturnIn: Svc.ComDataWithContext
+        guarded input port decryptReturnIn: Svc.ComDataWithContext
 
         @ Port for returning the incoming iv/data buffer for deallocation
         output port bufferReturnOut: Svc.ComDataWithContext

@@ -65,6 +65,13 @@ class CcsdsSdlsFramer final : public CcsdsSdlsFramerComponentBase {
                            const Svc::Ccsds::SdlsStatus& status,
                            Fw::Buffer& data,
                            const ComCfg::FrameContext& context) override;
+
+    // ----------------------------------------------------------------------
+    // Private helpers
+    // ----------------------------------------------------------------------
+
+    //! Send a ready-for-more com status when a frame is dropped
+    void sendComStatusOnDrop();
 };
 
 }  // namespace Ccsds

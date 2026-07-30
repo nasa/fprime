@@ -43,14 +43,7 @@ module Ccsds {
         @ Port for requesting the current time
         time get port timeCaller
 
-        @ Port for sending command registrations
-        command reg port cmdRegOut
-
-        @ Port for receiving commands
-        command recv port cmdIn
-
-        @ Port for sending command responses
-        command resp port cmdResponseOut
+        import Fw.Command
 
         @ Port to return the value of a parameter
         param get port prmGetOut

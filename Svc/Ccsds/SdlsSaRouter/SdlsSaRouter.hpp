@@ -34,36 +34,36 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for decryptIn
+    //! Handler implementation for dataIn
     //!
-    //! Port to receive the security association index and iv/data buffer to decrypt
-    void decryptIn_handler(FwIndexType portNum,  //!< The port number
-                           U16 securityAssociationIndex,
-                           Fw::Buffer& data,
-                           const ComCfg::FrameContext& context) override;
+    //! Port to receive the security association index and iv/data buffer to route
+    void dataIn_handler(FwIndexType portNum,  //!< The port number
+                        U16 securityAssociationIndex,
+                        Fw::Buffer& data,
+                        const ComCfg::FrameContext& context) override;
 
-    //! Handler implementation for decryptReturnIn
+    //! Handler implementation for dataReturnIn
     //!
-    //! Port for receiving back ownership of buffers sent on decryptOut
-    void decryptReturnIn_handler(FwIndexType portNum,  //!< The port number
-                                 Fw::Buffer& data,
-                                 const ComCfg::FrameContext& context) override;
+    //! Port for receiving back ownership of buffers sent on dataOut
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                              Fw::Buffer& data,
+                              const ComCfg::FrameContext& context) override;
 
     //! Handler implementation for saBufferReturnIn
     //!
-    //! Ports for receiving back iv/data buffers from downstream decryptors for deallocation
+    //! Ports for receiving back iv/data buffers from downstream crypto components for deallocation
     void saBufferReturnIn_handler(FwIndexType portNum,  //!< The port number
                                   Fw::Buffer& data,
                                   const ComCfg::FrameContext& context) override;
 
-    //! Handler implementation for saDecryptIn
+    //! Handler implementation for saDataIn
     //!
-    //! Ports for receiving the operation status and decrypted data (possibly newly allocated) from downstream
-    //! decryptors
-    void saDecryptIn_handler(FwIndexType portNum,  //!< The port number
-                             const Svc::Ccsds::SdlsStatus& status,
-                             Fw::Buffer& data,
-                             const ComCfg::FrameContext& context) override;
+    //! Ports for receiving the operation status and processed data (possibly newly allocated) from downstream
+    //! crypto components
+    void saDataIn_handler(FwIndexType portNum,  //!< The port number
+                          const Svc::Ccsds::SdlsStatus& status,
+                          Fw::Buffer& data,
+                          const ComCfg::FrameContext& context) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -80,7 +80,7 @@ class SdlsSaRouter final : public SdlsSaRouterComponentBase {
     //! Sentinel port index marking buffers forwarded by the router itself on routing errors
     static constexpr FwIndexType ROUTER_ERROR_PORT = -1;
 
-    //! Table of outstanding decrypted data buffers (keyed by allocation context, which is
+    //! Table of outstanding processed data buffers (keyed by allocation context, which is
     //! stable across in-place pointer/size adjustments made downstream) to their originating
     //! port index
     //! TODO: key on the original allocation pointer once Fw::Buffer stores original pointer + offset

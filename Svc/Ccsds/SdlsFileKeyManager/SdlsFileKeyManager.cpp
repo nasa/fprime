@@ -5,7 +5,9 @@
 // ======================================================================
 
 #include "Svc/Ccsds/SdlsFileKeyManager/SdlsFileKeyManager.hpp"
+#include <cstring>
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 
 namespace Svc {
@@ -25,6 +27,8 @@ void SdlsFileKeyManager ::configure(const char* path, FwSizeType keySize) {
     FW_ASSERT(path != nullptr);
     FW_ASSERT(keySize > 0, static_cast<FwAssertArgType>(keySize));
     FW_ASSERT(keySize <= SdlsCfg::MAX_SDLS_KEY_SIZE, static_cast<FwAssertArgType>(keySize));
+    // Reject paths that would be silently truncated by the string assignment
+    FW_ASSERT(Fw::StringUtils::string_length(path, this->m_path.getCapacity()) < this->m_path.getCapacity());
     this->m_path = path;
     this->m_keySize = keySize;
     this->m_configured = true;
@@ -46,6 +50,8 @@ Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum, 
     const Os::File::Status readStatus = file.read(key.getBuffAddr(), readSize);
     if ((readStatus != Os::File::OP_OK) || (readSize != this->m_keySize)) {
         this->log_WARNING_HI_KeyReadFailed(static_cast<I32>(readStatus), readSize, this->m_keySize);
+        // Zeroize any partially-read key bytes so they cannot leak to the caller
+        (void)::memset(key.getBuffAddr(), 0, static_cast<size_t>(key.getCapacity()));
         const Fw::SerializeStatus resetStatus = key.setBuffLen(0);
         FW_ASSERT(resetStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(resetStatus));
         return SdlsStatus::KEY_ERROR;

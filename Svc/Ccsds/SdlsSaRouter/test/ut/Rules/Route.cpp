@@ -3,8 +3,8 @@
 // \author lestarch-autobot
 // \brief  Rule implementations for the Route rule group
 //
-// These rules exercise the decryptIn port: SA-to-port routing and the
-// UNKNOWN_SA / UNKNOWN_PORT error statuses passed forward on decryptOut.
+// These rules exercise the dataIn port: SA-to-port routing and the
+// UNKNOWN_SA / UNKNOWN_PORT error statuses passed forward on dataOut.
 // ======================================================================
 
 #include "STest/Pick/Pick.hpp"
@@ -33,12 +33,12 @@ void SdlsSaRouterTester::Route__KnownSa__action() {
     Fw::Buffer buffer(storage, sizeof storage);
     ComCfg::FrameContext context;
 
-    this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_dataIn(0, sa, buffer, context);
 
-    ASSERT_from_saDecryptOut_SIZE(1);
-    ASSERT_from_saDecryptOut(0, sa, buffer, context);
-    ASSERT_EQ(this->m_lastSaDecryptOutPort, expectedPort);
-    ASSERT_from_decryptOut_SIZE(0);
+    ASSERT_from_saDataOut_SIZE(1);
+    ASSERT_from_saDataOut(0, sa, buffer, context);
+    ASSERT_EQ(this->m_lastSaDataOutPort, expectedPort);
+    ASSERT_from_dataOut_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -62,12 +62,12 @@ void SdlsSaRouterTester::Route__UnknownSa__action() {
     Fw::Buffer buffer = this->makePoolBuffer(storage);
     ComCfg::FrameContext context;
 
-    this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_dataIn(0, sa, buffer, context);
 
-    // The error status is passed forward on decryptOut with the untouched buffer
-    ASSERT_from_saDecryptOut_SIZE(0);
-    ASSERT_from_decryptOut_SIZE(1);
-    ASSERT_from_decryptOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_SA, buffer, context);
+    // The error status is passed forward on dataOut with the untouched buffer
+    ASSERT_from_saDataOut_SIZE(0);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_SA, buffer, context);
     this->shadow.shadow_outstanding[storage] = ROUTER_ERROR_PORT;
 }
 
@@ -98,12 +98,12 @@ void SdlsSaRouterTester::Route__UnknownPort__action() {
     Fw::Buffer buffer = this->makePoolBuffer(storage);
     ComCfg::FrameContext context;
 
-    this->invoke_to_decryptIn(0, sa, buffer, context);
+    this->invoke_to_dataIn(0, sa, buffer, context);
 
-    // The error status is passed forward on decryptOut with the untouched buffer
-    ASSERT_from_saDecryptOut_SIZE(0);
-    ASSERT_from_decryptOut_SIZE(1);
-    ASSERT_from_decryptOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_PORT, buffer, context);
+    // The error status is passed forward on dataOut with the untouched buffer
+    ASSERT_from_saDataOut_SIZE(0);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, Svc::Ccsds::SdlsStatus::UNKNOWN_PORT, buffer, context);
     this->shadow.shadow_outstanding[storage] = ROUTER_ERROR_PORT;
 }
 

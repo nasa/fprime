@@ -72,7 +72,7 @@ class CcsdsSdlsDeframerTester : public CcsdsSdlsDeframerGTestBase {
     CcsdsSdlsDeframer component;
 
     //! Copy of the data forwarded on the last from_decryptOut invocation
-    U8 m_lastDecryptData[TEST_BUFFER_SIZE];
+    U8 m_lastDecryptData[TEST_BUFFER_SIZE] = {};
 
     //! Size of the data forwarded on the last from_decryptOut invocation
     FwSizeType m_lastDecryptSize = 0;

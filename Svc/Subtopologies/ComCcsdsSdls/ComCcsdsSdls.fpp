@@ -6,13 +6,15 @@ module ComCcsdsSdls {
 
     instance sdlsDeframer: Svc.Ccsds.CcsdsSdlsDeframer base id ComCcsdsSdlsConfig.BASE_ID + 0x00000
 
-    instance saRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x01000
+    instance decryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x01000
 
     # ----------------------------------------------------------------------
     # SDLS encryption instances
     # ----------------------------------------------------------------------
 
     instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
+
+    instance encryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x05000
 
     # NOTE: the 'decryptor' and 'encryptor' instances are defined in the ComCcsdsSdlsConfig
     # configuration module, allowing projects to override the configuration and select
@@ -35,21 +37,21 @@ module ComCcsdsSdls {
         #     - [downstream].dataReturnOut               -> ComCcsdsSdls.SdlsDecryption.dataReturnIn
 
         instance sdlsDeframer
-        instance saRouter
+        instance decryptionSaRouter
         instance decryptor
 
         connections Decryption {
             # CcsdsSdlsDeframer <-> SdlsSaRouter (decryption requests and returns)
-            sdlsDeframer.decryptOut       -> saRouter.decryptIn
-            saRouter.decryptOut           -> sdlsDeframer.decryptIn
-            sdlsDeframer.decryptReturnOut -> saRouter.decryptReturnIn
-            saRouter.bufferReturnOut      -> sdlsDeframer.bufferReturnIn
+            sdlsDeframer.decryptOut       -> decryptionSaRouter.dataIn
+            decryptionSaRouter.dataOut    -> sdlsDeframer.decryptIn
+            sdlsDeframer.decryptReturnOut -> decryptionSaRouter.dataReturnIn
+            decryptionSaRouter.bufferReturnOut -> sdlsDeframer.bufferReturnIn
 
             # SdlsSaRouter <-> default decryptor
-            saRouter.saDecryptOut[SdlsCfg.SaRouterPorts.PLAINTEXT_DECRYPTION]       -> decryptor.decryptIn
-            decryptor.decryptOut           -> saRouter.saDecryptIn[SdlsCfg.SaRouterPorts.PLAINTEXT_DECRYPTION]
-            saRouter.saDecryptReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT_DECRYPTION] -> decryptor.decryptReturnIn
-            decryptor.bufferReturnOut      -> saRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT_DECRYPTION]
+            decryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> decryptor.decryptIn
+            decryptor.decryptOut          -> decryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            decryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> decryptor.decryptReturnIn
+            decryptor.bufferReturnOut     -> decryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
         }
 
         # ----------------------------------------------------------------------
@@ -71,9 +73,9 @@ module ComCcsdsSdls {
         port dataReturnIn  = sdlsDeframer.dataReturnIn
     } # end SdlsDecryption
 
-    # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend)
-    # and the default encryptor. It sits between the packet layer and the transfer
-    # frame layer in the downlink path.
+    # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend),
+    # the SA router, and the default encryptor. It sits between the packet layer and
+    # the transfer frame layer in the downlink path.
     topology SdlsEncryption {
         # Usage Note:
         #
@@ -92,14 +94,21 @@ module ComCcsdsSdls {
         #     - ComCcsdsSdls.SdlsEncryption.bufferDeallocate -> [BufferManager].bufferSendIn
 
         instance sdlsFramer
+        instance encryptionSaRouter
         instance encryptor
 
         connections Encryption {
-            # CcsdsSdlsFramer <-> default encryptor
-            sdlsFramer.encryptOut       -> encryptor.encryptIn
-            encryptor.encryptOut        -> sdlsFramer.encryptIn
-            sdlsFramer.encryptReturnOut -> encryptor.encryptReturnIn
-            encryptor.bufferReturnOut   -> sdlsFramer.bufferReturnIn
+            # CcsdsSdlsFramer <-> SdlsSaRouter (encryption requests and returns)
+            sdlsFramer.encryptOut       -> encryptionSaRouter.dataIn
+            encryptionSaRouter.dataOut  -> sdlsFramer.encryptIn
+            sdlsFramer.encryptReturnOut -> encryptionSaRouter.dataReturnIn
+            encryptionSaRouter.bufferReturnOut -> sdlsFramer.bufferReturnIn
+
+            # SdlsSaRouter <-> default encryptor
+            encryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> encryptor.encryptIn
+            encryptor.encryptOut        -> encryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+            encryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> encryptor.encryptReturnIn
+            encryptor.bufferReturnOut   -> encryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
         }
 
         # ----------------------------------------------------------------------
@@ -161,7 +170,7 @@ module ComCcsdsSdls {
         # SDLS decryption layer (SDLS deframer, SA router, decryptor)
         import SdlsDecryption
 
-        # SDLS encryption layer (SDLS framer, encryptor)
+        # SDLS encryption layer (SDLS framer, SA router, encryptor)
         import SdlsEncryption
 
         connections Downlink {

@@ -87,6 +87,7 @@ void CcsdsSdlsFramerTester::DataFlow__AllocationFailure__action() {
 
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_BufferAllocationFailed_SIZE(1);
+    ASSERT_EVENTS_BufferAllocationFailed(0, static_cast<FwSizeType>(sizeof storage + sizeof(U16)));
 
     // The frame must be dropped: undersized allocation deallocated (invalid buffers are not
     // deallocated), encrypted buffer returned

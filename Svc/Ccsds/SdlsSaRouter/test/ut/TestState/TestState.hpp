@@ -3,7 +3,7 @@
 // \author lestarch-autobot
 // \brief  Shadow state model for SdlsSaRouter rule-based testing
 //
-// The shadow mirrors the component's table of outstanding decrypted data
+// The shadow mirrors the component's table of outstanding processed data
 // buffers (data pointer -> originating downstream port index).  Rule
 // preconditions read from it; rule actions update it in lockstep with the
 // component.
@@ -26,7 +26,7 @@ class SdlsSaRouterTestState {
     // Component "shadow" test state
     // ----------------------------------------------------------------------
 
-    //! Outstanding decrypted data buffers to their originating port index.
+    //! Outstanding processed data buffers to their originating port index.
     //! Mirrors the component's m_outstanding map.
     std::map<const U8*, FwIndexType> shadow_outstanding;
 

@@ -66,6 +66,7 @@ void SdlsFileKeyManagerTester ::testMissingFile() {
     ASSERT_EQ(key.getSize(), 0);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_KeyReadFailed_SIZE(1);
+    ASSERT_EVENTS_KeyReadFailed(0, static_cast<I32>(Os::File::DOESNT_EXIST), 0, keySize);
 }
 
 void SdlsFileKeyManagerTester ::testShortFile() {

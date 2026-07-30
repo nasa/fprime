@@ -16,7 +16,7 @@ using Svc::Ccsds::SdlsSaRouterTester;
 // Tests
 // ----------------------------------------------------------------------
 
-// Verify decryptIn routes known SAs to the mapped port and passes the
+// Verify dataIn routes known SAs to the mapped port and passes the
 // downstream status through to the caller.
 TEST(SdlsSaRouter, RouteKnownSa) {
     COMMENT("Route a known SA to the mapped downstream port and pass the status through.");
@@ -28,7 +28,7 @@ TEST(SdlsSaRouter, RouteKnownSa) {
     rule.apply(tester);
 }
 
-// Verify decryptIn returns UNKNOWN_SA for an unmapped SA and UNKNOWN_PORT
+// Verify dataIn returns UNKNOWN_SA for an unmapped SA and UNKNOWN_PORT
 // for an SA mapped to an out-of-range port, without forwarding.
 TEST(SdlsSaRouter, RouteErrors) {
     COMMENT("Return UNKNOWN_SA for unmapped SAs and UNKNOWN_PORT for unconnected ports.");
@@ -41,15 +41,15 @@ TEST(SdlsSaRouter, RouteErrors) {
     ruleUnknownPort.apply(tester);
 }
 
-// Verify decrypted data flows upstream (saDecryptIn -> decryptOut) and its
+// Verify processed data flows upstream (saDataIn -> dataOut) and its
 // ownership return is routed back to the originating port
-// (decryptReturnIn -> saDecryptReturnOut).
-TEST(SdlsSaRouter, DecryptDataAndReturn) {
-    COMMENT("Forward decrypted data upstream and route its ownership return to the originating port.");
+// (dataReturnIn -> saDataReturnOut).
+TEST(SdlsSaRouter, ProcessedDataAndReturn) {
+    COMMENT("Forward processed data upstream and route its ownership return to the originating port.");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::DataFlow__DecryptData ruleData;
-    SdlsSaRouterTester::DataFlow__DecryptReturn ruleReturn;
+    SdlsSaRouterTester::DataFlow__ProcessedData ruleData;
+    SdlsSaRouterTester::DataFlow__ProcessedDataReturn ruleReturn;
     ruleData.apply(tester);
     ruleReturn.apply(tester);
 }
@@ -57,7 +57,7 @@ TEST(SdlsSaRouter, DecryptDataAndReturn) {
 // Verify incoming iv/data buffers are passed upstream for deallocation
 // (saBufferReturnIn -> bufferReturnOut).
 TEST(SdlsSaRouter, BufferReturn) {
-    COMMENT("Pass iv/data buffers from downstream decryptors upstream for deallocation.");
+    COMMENT("Pass iv/data buffers from downstream crypto components upstream for deallocation.");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
     SdlsSaRouterTester tester;
     SdlsSaRouterTester::DataFlow__BufferReturn rule;
@@ -78,8 +78,8 @@ TEST(SdlsSaRouter, RandomizedTesting) {
     SdlsSaRouterTester::Route__KnownSa ruleKnownSa;
     SdlsSaRouterTester::Route__UnknownSa ruleUnknownSa;
     SdlsSaRouterTester::Route__UnknownPort ruleUnknownPort;
-    SdlsSaRouterTester::DataFlow__DecryptData ruleData;
-    SdlsSaRouterTester::DataFlow__DecryptReturn ruleReturn;
+    SdlsSaRouterTester::DataFlow__ProcessedData ruleData;
+    SdlsSaRouterTester::DataFlow__ProcessedDataReturn ruleReturn;
     SdlsSaRouterTester::DataFlow__BufferReturn ruleBufferReturn;
 
     STest::Rule<SdlsSaRouterTester>* rules[] = {
@@ -89,7 +89,7 @@ TEST(SdlsSaRouter, RandomizedTesting) {
     STest::RandomScenario<SdlsSaRouterTester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
     STest::BoundedScenario<SdlsSaRouterTester> bounded("Bounded Random Rules Scenario", random, numRulesToApply);
     const U32 numSteps = bounded.run(tester);
-    printf("Ran %u steps.\n", numSteps);
+    ASSERT_EQ(numSteps, numRulesToApply);
 }
 
 int main(int argc, char** argv) {

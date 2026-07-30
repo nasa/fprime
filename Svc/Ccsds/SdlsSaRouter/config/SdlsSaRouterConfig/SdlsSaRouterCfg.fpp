@@ -5,18 +5,18 @@
 
 module SdlsCfg {
 
-    @ Number of downstream decryptor ports on the SdlsSaRouter
+    @ Number of downstream crypto component ports on the SdlsSaRouter
     constant SaRouterPortCount = 2
 
     @ Number of entries in the SA-to-port routing map
     constant SaRouterMapEntryCount = 2
 
-    @ Maximum number of decrypted data buffers outstanding (sent downstream, not yet returned)
+    @ Maximum number of processed data buffers outstanding (sent downstream, not yet returned)
     constant SaRouterMaxOutstandingBuffers = 4
 
-    @ Enumeration of the downstream decryptor ports on the SdlsSaRouter
+    @ Enumeration of the downstream crypto component ports on the SdlsSaRouter
     enum SaRouterPorts : FwIndexType {
-        PLAINTEXT_DECRYPTION = 0
+        PLAINTEXT = 0
         UNCONNECTED = 1
     }
 
@@ -24,10 +24,10 @@ module SdlsCfg {
     @ may define sparse or non-linear SA ranges that map down to a compact, linear port
     @ array. Port indices must be in [0, SaRouterPortCount).
     @
-    @ This default configuration maps SA 0 to the plain-text decryption port; the second
+    @ This default configuration maps SA 0 to the plain-text (no security) port; the second
     @ entry maps SA 1 to a port that standard topologies may leave unconnected.
     array SaMap = [SaRouterMapEntryCount] Svc.Ccsds.SaMapEntry default [
-        { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT_DECRYPTION },
+        { securityAssociationIndex = 0, portIndex = SaRouterPorts.PLAINTEXT },
         { securityAssociationIndex = 1, portIndex = SaRouterPorts.UNCONNECTED }
     ]
 

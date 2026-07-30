@@ -3,8 +3,8 @@
 // \author lestarch-autobot
 // \brief  Rule implementations for the DataFlow rule group
 //
-// These rules exercise the decrypted data path (saDecryptIn -> decryptOut),
-// the ownership return path (decryptReturnIn -> saDecryptReturnOut), and the
+// These rules exercise the processed data path (saDataIn -> dataOut),
+// the ownership return path (dataReturnIn -> saDataReturnOut), and the
 // deallocation path (saBufferReturnIn -> bufferReturnOut).
 // ======================================================================
 
@@ -16,14 +16,14 @@ namespace Svc {
 namespace Ccsds {
 
 // ----------------------------------------------------------------------
-// DataFlow.DecryptData
+// DataFlow.ProcessedData
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::DataFlow__DecryptData__precondition() const {
+bool SdlsSaRouterTester::DataFlow__ProcessedData__precondition() const {
     return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
-void SdlsSaRouterTester::DataFlow__DecryptData__action() {
+void SdlsSaRouterTester::DataFlow__ProcessedData__action() {
     this->clearHistory();
 
     U8* const storage = this->getFreePoolBuffer();
@@ -37,22 +37,22 @@ void SdlsSaRouterTester::DataFlow__DecryptData__action() {
                                               ? Svc::Ccsds::SdlsStatus::SUCCESS
                                               : Svc::Ccsds::SdlsStatus::DECRYPTION_FAILURE;
 
-    this->invoke_to_saDecryptIn(portNum, status, buffer, context);
+    this->invoke_to_saDataIn(portNum, status, buffer, context);
 
-    ASSERT_from_decryptOut_SIZE(1);
-    ASSERT_from_decryptOut(0, status, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, status, buffer, context);
     this->shadow.shadow_outstanding[storage] = portNum;
 }
 
 // ----------------------------------------------------------------------
-// DataFlow.DecryptReturn
+// DataFlow.ProcessedDataReturn
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::DataFlow__DecryptReturn__precondition() const {
+bool SdlsSaRouterTester::DataFlow__ProcessedDataReturn__precondition() const {
     return !this->shadow.shadow_outstanding.empty();
 }
 
-void SdlsSaRouterTester::DataFlow__DecryptReturn__action() {
+void SdlsSaRouterTester::DataFlow__ProcessedDataReturn__action() {
     this->clearHistory();
 
     const U8* const storage = this->shadow.shadow_getRandomOutstanding();
@@ -65,17 +65,17 @@ void SdlsSaRouterTester::DataFlow__DecryptReturn__action() {
     buffer.setSize(buffer.getSize() - shift);
     ComCfg::FrameContext context;
 
-    this->invoke_to_decryptReturnIn(0, buffer, context);
+    this->invoke_to_dataReturnIn(0, buffer, context);
 
     if (expectedPort == ROUTER_ERROR_PORT) {
         // Buffer was forwarded by the router itself on a routing error: returned upstream
-        ASSERT_from_saDecryptReturnOut_SIZE(0);
+        ASSERT_from_saDataReturnOut_SIZE(0);
         ASSERT_from_bufferReturnOut_SIZE(1);
         ASSERT_from_bufferReturnOut(0, buffer, context);
     } else {
-        ASSERT_from_saDecryptReturnOut_SIZE(1);
-        ASSERT_from_saDecryptReturnOut(0, buffer, context);
-        ASSERT_EQ(this->m_lastSaDecryptReturnOutPort, expectedPort);
+        ASSERT_from_saDataReturnOut_SIZE(1);
+        ASSERT_from_saDataReturnOut(0, buffer, context);
+        ASSERT_EQ(this->m_lastSaDataReturnOutPort, expectedPort);
     }
     this->shadow.shadow_outstanding.erase(storage);
 }

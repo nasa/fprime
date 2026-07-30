@@ -20,7 +20,7 @@ Both variants are **composed from the `ComCcsds` layer topologies**: the `ComCcs
 | SVC-COMCCSDSSDLS-002 | The uplink path shall pass TC-deframed data through a `Svc.Ccsds.CcsdsSdlsDeframer`, which extracts the SA index and delegates decryption before Space Packet deframing. | Inspection |
 | SVC-COMCCSDSSDLS-003 | Decryption requests shall be routed by SA index through a `Svc.Ccsds.SdlsSaRouter` to downstream decryptor instances.                                    | Inspection |
 | SVC-COMCCSDSSDLS-004 | The decryptor choice shall be configurable via the subtopology configuration module, defaulting to `Svc.Ccsds.ClearTextDecryptor`.                       | Inspection |
-| SVC-COMCCSDSSDLS-005 | The default SA map shall route SA 0 to the `PLAINTEXT_DECRYPTION` port (the default decryptor); remaining default entries route to ports left unconnected. | Inspection |
+| SVC-COMCCSDSSDLS-005 | The default SA map shall route SA 0 to the `PLAINTEXT` port (the default decryptor/encryptor); remaining default entries route to ports left unconnected. | Inspection |
 | SVC-COMCCSDSSDLS-006 | The module shall provide a `FramingSubtopology` (external `Svc.ComInterface`) and a `Subtopology` (supplies `Svc::ComStub`) variant, mirroring ComCcsds. | Inspection |
 | SVC-COMCCSDSSDLS-007 | The SDLS instance properties (base ID, decryptor selection) shall be configurable via a `ComCcsdsSdlsConfig` module; the reused packet and frame layer instances remain configurable via `ComCcsdsConfig`. | Inspection |
 
@@ -35,7 +35,8 @@ The module defines one new layer topology and reuses two from `ComCcsds`:
 | Layer topology                | Source        | Contents                                                                                       |
 | ----------------------------- | ------------- | ----------------------------------------------------------------------------------------------- |
 | `ComCcsds.SpacePacketFraming` | reused        | Router, ComQueue, aggregator, space packet framer/deframer, APID manager, comms buffer manager.  |
-| `SdlsDecryption`              | this module   | `sdlsDeframer`, `saRouter`, `decryptor` — the boxed SDLS decryption layer (see 2.2).             |
+| `SdlsDecryption`              | this module   | `sdlsDeframer`, `decryptionSaRouter`, `decryptor` — the boxed SDLS decryption layer (see 2.2).   |
+| `SdlsEncryption`              | this module   | `sdlsFramer`, `encryptionSaRouter`, `encryptor` — the boxed SDLS encryption layer.               |
 | `ComCcsds.TmTcFraming`        | reused        | TM framer (downlink), frame accumulator + TC deframer (uplink).                                  |
 
 Instances defined in this module:
@@ -43,7 +44,9 @@ Instances defined in this module:
 | Instance name  | Type (Svc)                      | Kind    | Purpose (core function)                                                                     |
 | -------------- | ------------------------------- | ------- | -------------------------------------------------------------------------------------------- |
 | `sdlsDeframer` | `Svc.Ccsds.CcsdsSdlsDeframer`   | Passive | Extracts the SA index from the SDLS frame and delegates decryption.                           |
-| `saRouter`     | `Svc.Ccsds.SdlsSaRouter`        | Passive | Routes decryption requests by SA index to the mapped downstream decryptor.                    |
+| `decryptionSaRouter` | `Svc.Ccsds.SdlsSaRouter`  | Passive | Routes decryption requests by SA index to the mapped downstream decryptor.                    |
+| `sdlsFramer`   | `Svc.Ccsds.CcsdsSdlsFramer`     | Passive | Delegates encryption and prepends the SA index to build the SDLS frame.                       |
+| `encryptionSaRouter` | `Svc.Ccsds.SdlsSaRouter`  | Passive | Routes encryption requests by SA index to the mapped downstream encryptor.                    |
 | `decryptor`    | `Svc.Ccsds.ClearTextDecryptor`* | Passive | Default decryptor for the base SA (**pass-through, NO security**). *Configurable — see 2.3.   |
 
 The layers are wired together exclusively through their **topology ports** (e.g. `ComCcsds.TmTcFraming.dataOut -> SdlsDecryption.dataIn`, `SdlsDecryption.dataOut -> ComCcsds.SpacePacketFraming.dataIn`); the `Subtopology` variant additionally instantiates `ComCcsds.comStub`.
@@ -59,15 +62,15 @@ The layers are wired together exclusively through their **topology ports** (e.g.
 frameAccumulator -> tcDeframer -> sdlsDeframer -> spacePacketDeframer -> fprimeRouter
                                        |  ^
                             decryptOut v  | decryptIn (decrypted data)
-                                    saRouter
+                            decryptionSaRouter
                                        |  ^
-                       saDecryptOut[0] v  | saDecryptIn[0]
+                          saDataOut[0] v  | saDataIn[0]
                                     decryptor
 ```
 
-The downlink path is unchanged from `ComCcsds` (no encryption step yet): `SpacePacketFraming.dataOut -> TmTcFraming.dataIn`.
+The downlink path inserts the mirrored `SdlsEncryption` layer (`sdlsFramer` → `encryptionSaRouter` → `encryptor`) between `SpacePacketFraming.dataOut` and `TmTcFraming.dataIn`.
 
-The `sdlsDeframer` extracts the leading 16-bit SA index, records it in the frame context, and sends the remaining iv/data to the `saRouter`, which maps the SA to the decryptor on the mapped port. Decrypted data flows back through the router and deframer to the `spacePacketDeframer`. Buffer ownership returns flow the reverse paths (`dataReturnIn` → `decryptReturnOut` → decryptor; decryptor `bufferReturnOut` → router `bufferReturnOut` → deframer `dataReturnOut`).
+The `sdlsDeframer` extracts the leading 16-bit SA index, records it in the frame context, and sends the remaining iv/data to the `decryptionSaRouter`, which maps the SA to the decryptor on the mapped port. Decrypted data flows back through the router and deframer to the `spacePacketDeframer`. Buffer ownership returns flow the reverse paths (`dataReturnIn` → `decryptReturnOut` → decryptor; decryptor `bufferReturnOut` → router `bufferReturnOut` → deframer `dataReturnOut`).
 
 ### 2.3 Selecting a Different Decryptor
 
@@ -75,7 +78,7 @@ The `decryptor` instance is defined in the configuration module (`ComCcsdsSdlsCo
 
 ### 2.4 Default SA Map
 
-The `SdlsSaRouter` default configuration is two deep: `{ SA 0 -> SaRouterPorts.PLAINTEXT_DECRYPTION, SA 1 -> SaRouterPorts.UNCONNECTED }`. The subtopology connects only the `PLAINTEXT_DECRYPTION` port (the default decryptor); the `UNCONNECTED` port is left unconnected, so its SA returns `UNKNOWN_PORT` unless a deployment connects an additional decryptor. The SA mapping is configurable by overriding the `SdlsSaRouter` configuration module.
+The `SdlsSaRouter` default configuration is two deep: `{ SA 0 -> SaRouterPorts.PLAINTEXT, SA 1 -> SaRouterPorts.UNCONNECTED }`. Each subtopology connects only the `PLAINTEXT` port (the default decryptor/encryptor); the `UNCONNECTED` port is left unconnected, so its SA returns `UNKNOWN_PORT` unless a deployment connects an additional crypto component. The SA mapping is configurable by overriding the `SdlsSaRouter` configuration module.
 
 ### 2.5 Required Inputs for Operation
 

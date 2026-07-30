@@ -9,6 +9,10 @@
 - [F Prime TmFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/TmFramer/docs/sdd.md)
 - [F Prime TcDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/TcDeframer/docs/sdd.md)
 - [F Prime AosFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/AosFramer/docs/sdd.md)
+- [F Prime CcsdsSdlsFramer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsFramer/docs/sdd.md)
+- [F Prime CcsdsSdlsDeframer SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/CcsdsSdlsDeframer/docs/sdd.md)
+- [F Prime SdlsSaRouter SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsSaRouter/docs/sdd.md)
+- [F Prime SdlsFileKeyManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/Ccsds/SdlsFileKeyManager/docs/sdd.md)
 - [CCSDS Space Packet Protocol (133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)
 - [CCSDS TM Space Data Link Protocol (132.0-B-3)](https://ccsds.org/Pubs/132x0b3.pdf)
 - [CCSDS TC Space Data Link Protocol (232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf)
@@ -43,9 +47,19 @@ The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (
 
 The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data Link Protocol (732.0-B-5). AOS provides an alternative to TM for missions requiring more flexible virtual channel management.
 
+### Space Data Link Security (SDLS)
+
+An optional SDLS layer provides per-frame encryption and decryption keyed by a 16-bit security association (SA) index:
+
+- **CcsdsSdlsFramer** — Delegates encryption of outgoing data and prepends the SA index to build the SDLS frame (downlink).
+- **CcsdsSdlsDeframer** — Extracts the SA index from incoming frames and delegates decryption (uplink).
+- **SdlsSaRouter** — Routes encryption/decryption requests to downstream crypto components based on the SA index.
+- **SdlsFileKeyManager** — Supplies encryption keys read from a configured file.
+- **ClearTextEncryptor / ClearTextDecryptor** — Pass-through default crypto components (**no security**), for use until a real algorithm is integrated.
+
 ### Protocol Layering
 
-The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → TM Framer → byte stream driver. A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The modular design allows missions to select the specific protocol layers they require.
+The CCSDS components can be stacked to provide multiple protocol layers. A typical downlink path might be: data source → Space Packet Framer → TM Framer → byte stream driver. A typical uplink path: byte stream driver → Frame Accumulator → TC Deframer → Space Packet Deframer → Router. The optional SDLS layer sits between the Space Packet layer and the transfer frame layer in both directions (see the `Svc.ComCcsdsSdls` subtopology). The modular design allows missions to select the specific protocol layers they require.
 
 ### Unsupported Features
 

@@ -87,7 +87,7 @@ class CcsdsSdlsFramerTester : public CcsdsSdlsFramerGTestBase {
     bool m_allocateInvalid = false;
 
     //! Storage backing the allocation stub
-    U8 m_allocationStorage[TEST_ALLOCATION_SIZE];
+    U8 m_allocationStorage[TEST_ALLOCATION_SIZE] = {};
 
   public:
     // ----------------------------------------------------------------------

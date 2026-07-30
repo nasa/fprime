@@ -36,19 +36,19 @@ SdlsSaRouterTester ::~SdlsSaRouterTester() {
 // Handler overrides for typed from ports
 // ----------------------------------------------------------------------
 
-void SdlsSaRouterTester ::from_saDecryptOut_handler(FwIndexType portNum,
-                                                    U16 securityAssociationIndex,
-                                                    Fw::Buffer& data,
-                                                    const ComCfg::FrameContext& context) {
-    this->m_lastSaDecryptOutPort = portNum;
-    this->pushFromPortEntry_saDecryptOut(securityAssociationIndex, data, context);
+void SdlsSaRouterTester ::from_saDataOut_handler(FwIndexType portNum,
+                                                 U16 securityAssociationIndex,
+                                                 Fw::Buffer& data,
+                                                 const ComCfg::FrameContext& context) {
+    this->m_lastSaDataOutPort = portNum;
+    this->pushFromPortEntry_saDataOut(securityAssociationIndex, data, context);
 }
 
-void SdlsSaRouterTester ::from_saDecryptReturnOut_handler(FwIndexType portNum,
-                                                          Fw::Buffer& data,
-                                                          const ComCfg::FrameContext& context) {
-    this->m_lastSaDecryptReturnOutPort = portNum;
-    this->pushFromPortEntry_saDecryptReturnOut(data, context);
+void SdlsSaRouterTester ::from_saDataReturnOut_handler(FwIndexType portNum,
+                                                       Fw::Buffer& data,
+                                                       const ComCfg::FrameContext& context) {
+    this->m_lastSaDataReturnOutPort = portNum;
+    this->pushFromPortEntry_saDataReturnOut(data, context);
 }
 
 // ----------------------------------------------------------------------
@@ -57,21 +57,21 @@ void SdlsSaRouterTester ::from_saDecryptReturnOut_handler(FwIndexType portNum,
 
 void SdlsSaRouterTester ::connectPortsCustom() {
     // Connect typed input ports
-    this->connect_to_decryptIn(0, this->component.get_decryptIn_InputPort(0));
-    this->connect_to_decryptReturnIn(0, this->component.get_decryptReturnIn_InputPort(0));
+    this->connect_to_dataIn(0, this->component.get_dataIn_InputPort(0));
+    this->connect_to_dataReturnIn(0, this->component.get_dataReturnIn_InputPort(0));
     for (FwIndexType i = 0; i < SdlsCfg::SaRouterPortCount; i++) {
         this->connect_to_saBufferReturnIn(i, this->component.get_saBufferReturnIn_InputPort(i));
-        this->connect_to_saDecryptIn(i, this->component.get_saDecryptIn_InputPort(i));
+        this->connect_to_saDataIn(i, this->component.get_saDataIn_InputPort(i));
     }
 
-    // Connect typed output ports, leaving saDecryptOut[UNCONNECTED_PORT] unconnected
+    // Connect typed output ports, leaving saDataOut[UNCONNECTED_PORT] unconnected
     this->component.set_bufferReturnOut_OutputPort(0, this->get_from_bufferReturnOut(0));
-    this->component.set_decryptOut_OutputPort(0, this->get_from_decryptOut(0));
+    this->component.set_dataOut_OutputPort(0, this->get_from_dataOut(0));
     for (FwIndexType i = 0; i < SdlsCfg::SaRouterPortCount; i++) {
         if (i != UNCONNECTED_PORT) {
-            this->component.set_saDecryptOut_OutputPort(i, this->get_from_saDecryptOut(i));
+            this->component.set_saDataOut_OutputPort(i, this->get_from_saDataOut(i));
         }
-        this->component.set_saDecryptReturnOut_OutputPort(i, this->get_from_saDecryptReturnOut(i));
+        this->component.set_saDataReturnOut_OutputPort(i, this->get_from_saDataReturnOut(i));
     }
 }
 

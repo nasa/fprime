@@ -37,7 +37,7 @@ void CcsdsSdlsFramer ::comStatusIn_handler(FwIndexType portNum, Fw::Success& con
 
 void CcsdsSdlsFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // Determine the security association index: use the context's value when set, otherwise the SA_INDEX parameter
-    const U16 unsetSaIndex = ComCfg::FrameContext().get_saIndex();
+    const U16 unsetSaIndex = static_cast<U16>(ComCfg::SaIndexUnset);
     U16 saIndex = context.get_saIndex();
     if (saIndex == unsetSaIndex) {
         Fw::ParamValid valid = Fw::ParamValid::INVALID;
@@ -68,6 +68,7 @@ void CcsdsSdlsFramer ::encryptIn_handler(FwIndexType portNum,
         this->log_WARNING_HI_EncryptionFailed(status);
         // Drop the frame: return ownership of the buffer to the encryption subsystem
         this->encryptReturnOut_out(0, data, context);
+        this->sendComStatusOnDrop();
         return;
     }
 
@@ -84,6 +85,7 @@ void CcsdsSdlsFramer ::encryptIn_handler(FwIndexType portNum,
             this->bufferDeallocate_out(0, frameBuffer);
         }
         this->encryptReturnOut_out(0, data, context);
+        this->sendComStatusOnDrop();
         return;
     }
 
@@ -99,6 +101,18 @@ void CcsdsSdlsFramer ::encryptIn_handler(FwIndexType portNum,
     // Return ownership of the encrypted data buffer to the encryption helper, then send the frame
     this->encryptReturnOut_out(0, data, context);
     this->dataOut_out(0, frameBuffer, context);
+}
+
+// ----------------------------------------------------------------------
+// Private helper implementations
+// ----------------------------------------------------------------------
+
+void CcsdsSdlsFramer ::sendComStatusOnDrop() {
+    // Report ready-for-more on a dropped frame so a ComQueue-driven downlink does not stall
+    if (this->isConnected_comStatusOut_OutputPort(0)) {
+        Fw::Success status = Fw::Success::SUCCESS;
+        this->comStatusOut_out(0, status);
+    }
 }
 
 }  // namespace Ccsds

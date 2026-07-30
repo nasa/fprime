@@ -1,30 +1,43 @@
 module Svc {
 module Ccsds {
-    @ Routes SDLS decryption requests to downstream decryptor components by mapping
-    @ the incoming security association (SA) index to a downstream port index using
-    @ a compile-time SA-to-port map (SdlsCfg.SaMap)
+    @ Routes SDLS encryption and decryption requests to downstream crypto components
+    @ by mapping the incoming security association (SA) index to a downstream port
+    @ index using a compile-time SA-to-port map (SdlsCfg.SaMap). Separate instances
+    @ may serve the uplink (decryption) and downlink (encryption) paths.
     passive component SdlsSaRouter {
 
         # ----------------------------------------------------------------------
-        # Upstream side: implements the CcsdsSdlsDecrypt interface
+        # Upstream side: raw ports mirroring the CcsdsSdlsEncrypt/CcsdsSdlsDecrypt
+        # interfaces, which share the same port types. Inlined (rather than
+        # importing one of them) so the names apply to both operations.
         # ----------------------------------------------------------------------
-        import Svc.Ccsds.CcsdsSdlsDecrypt
+        @ Port to receive the SA index and iv/data buffer to route for encryption/decryption
+        guarded input port dataIn: Svc.Ccsds.CcsdsSdlsEncryption
+
+        @ Port for sending the operation status and processed data (possibly newly allocated) upstream
+        output port dataOut: Svc.Ccsds.CcsdsSdlsData
+
+        @ Port for receiving back ownership of buffers sent on dataOut
+        guarded input port dataReturnIn: Svc.ComDataWithContext
+
+        @ Port for returning the incoming iv/data buffer for deallocation
+        output port bufferReturnOut: Svc.ComDataWithContext
 
         # ----------------------------------------------------------------------
-        # Downstream side: inlined arrays of CcsdsSdlsDecryptClient ports
+        # Downstream side: inlined arrays of client-side ports
         # (FPP interfaces are not array-able at this time)
         # ----------------------------------------------------------------------
-        @ Ports for sending the SA index and iv/data buffer to the mapped downstream decryptor
-        output port saDecryptOut: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption
+        @ Ports for sending the SA index and iv/data buffer to the mapped downstream crypto component
+        output port saDataOut: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption
 
-        @ Ports for receiving the operation status and decrypted data (possibly newly allocated) from downstream decryptors
-        sync input port saDecryptIn: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData
+        @ Ports for receiving the operation status and processed data (possibly newly allocated) from downstream crypto components
+        guarded input port saDataIn: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData
 
-        @ Ports for returning ownership of decrypted data buffers to downstream decryptors
-        output port saDecryptReturnOut: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
+        @ Ports for returning ownership of processed data buffers to downstream crypto components
+        output port saDataReturnOut: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
 
-        @ Ports for receiving back iv/data buffers from downstream decryptors for deallocation
-        sync input port saBufferReturnIn: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
+        @ Ports for receiving back iv/data buffers from downstream crypto components for deallocation
+        guarded input port saBufferReturnIn: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
     }
 }
 }
