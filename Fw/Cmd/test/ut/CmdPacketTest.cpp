@@ -150,6 +150,32 @@ TEST(FwCmdPacketTest, DeserializeArgsExceedMax) {
     ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, pkt.deserializeFrom(buff));
 }
 
+// 7. A packet object reused across commands must not carry arguments forward.
+//    copyRaw overwrites the argument buffer, so an argument-bearing command
+//    replaces the previous one correctly; a command with no arguments skips
+//    copyRaw entirely, which is the case that needs the buffer cleared.
+TEST(FwCmdPacketTest, ReuseClearsPreviousArgs) {
+    const U8 args[] = {0xDE, 0xAD, 0xBE, 0xEF};
+
+    Fw::ComBuffer withArgs;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, putDescriptor(withArgs, Fw::ComPacketType::FW_PACKET_COMMAND));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, withArgs.serializeFrom(static_cast<FwOpcodeType>(0x11)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              withArgs.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
+
+    Fw::ComBuffer noArgs;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, putDescriptor(noArgs, Fw::ComPacketType::FW_PACKET_COMMAND));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, noArgs.serializeFrom(static_cast<FwOpcodeType>(0x22)));
+
+    Fw::CmdPacket pkt;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pkt.deserializeFrom(withArgs));
+    ASSERT_EQ(static_cast<FwSizeType>(sizeof(args)), pkt.getArgBuffer().getSize());
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pkt.deserializeFrom(noArgs));
+    ASSERT_EQ(static_cast<FwOpcodeType>(0x22), pkt.getOpCode());
+    ASSERT_EQ(static_cast<FwSizeType>(0), pkt.getArgBuffer().getSize());
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
