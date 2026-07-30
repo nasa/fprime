@@ -41,7 +41,7 @@ FpySequencer ::~FpySequencer() {}
 void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                   U32 cmdSeq,                        //!< The command sequence number
                                   const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                  BlockState block                   //!< Return command status when complete or not
+                                  const BlockState& block            //!< Return command status when complete or not
 ) {
     // Empty args and delegate to RUN_ARGS handler
     this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, Svc::SeqArgs{0, 0});
@@ -50,8 +50,8 @@ void FpySequencer::RUN_cmdHandler(FwOpcodeType opCode,               //!< The op
 void FpySequencer ::RUN_ARGS_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                                         U32 cmdSeq,                        //!< The command sequence number
                                         const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                                        Svc::BlockState block,  //!< Return command status when complete or not
-                                        Svc::SeqArgs args       //!< Arguments to pass to the sequencer
+                                        const Svc::BlockState& block,  //!< Return command status when complete or not
+                                        const Svc::SeqArgs& args       //!< Arguments to pass to the sequencer
 ) {
     // can only run a seq while in idle
     if (sequencer_getState() != State::IDLE) {
@@ -91,7 +91,7 @@ void FpySequencer::VALIDATE_cmdHandler(FwOpcodeType opCode,              //!< Th
 void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
                                              const Fw::CmdStringArg& fileName,
-                                             Svc::SeqArgs buffer) {
+                                             const Svc::SeqArgs& buffer) {
     // can only validate a seq while in idle
     if (sequencer_getState() != State::IDLE) {
         this->log_WARNING_HI_InvalidCommand(static_cast<I32>(sequencer_getState()));
@@ -109,9 +109,9 @@ void FpySequencer ::VALIDATE_ARGS_cmdHandler(FwOpcodeType opCode,
     this->sequencer_sendSignal_cmd_VALIDATE(FpySequencer_SequenceExecutionArgs(fileName, BlockState::BLOCK, buffer));
 }
 
-void FpySequencer::RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                                            U32 cmdSeq,           //!< The command sequence number
-                                            BlockState block      //!< Return command status when complete or not
+void FpySequencer::RUN_VALIDATED_cmdHandler(FwOpcodeType opCode,     //!< The opcode
+                                            U32 cmdSeq,              //!< The command sequence number
+                                            const BlockState& block  //!< Return command status when complete or not
 ) {
     // can only RUN_VALIDATED if we have validated and are awaiting this exact cmd
     if (sequencer_getState() != State::AWAITING_CMD_RUN_VALIDATED) {
@@ -376,7 +376,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     this->sequencer_sendSignal_stmtResponse_success();
 
     // push the cmd response to the stack so we can branch off of it
-    this->m_runtime.stack.push(static_cast<I32>(response.e));
+    // the constCmd/stackCmd directive handlers guarantee there is room for this push
+    this->m_runtime.stack.push(static_cast<Fw::CmdResponse::SerialType>(response.e));
 }
 
 void FpySequencer ::seqCancelIn_handler(FwIndexType portNum) {
@@ -444,6 +445,8 @@ void FpySequencer::updateDebugTelemetryStruct() {
             return;
         }
 
+        FW_ASSERT(this->m_runtime.nextStatementIndex < Fpy::MAX_SEQUENCE_STATEMENT_COUNT,
+                  static_cast<FwAssertArgType>(this->m_runtime.nextStatementIndex));
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
@@ -503,7 +506,7 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
+            FW_ASSERT(false, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
         }
     }
 

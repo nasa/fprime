@@ -69,7 +69,7 @@ jobs:
           cp -r ./build-artifacts rpi-artifacts
           cp -r LedBlinker/Components/Led/test/int rpi-artifacts
       - name: "Archive Build Artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rpi-artifacts
           path: rpi-artifacts
@@ -91,8 +91,16 @@ jobs:
           . venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
       - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: rpi-artifacts
       - name: Run Integration Tests
@@ -105,7 +113,7 @@ jobs:
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/${DEPLOYMENT}/dict/LedBlinkerDeploymentTopologyDictionary.json ./int/led_integration_tests.py
       - name: "Archive logs"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rpi-logs

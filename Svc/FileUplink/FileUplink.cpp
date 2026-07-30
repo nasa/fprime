@@ -32,6 +32,10 @@ FileUplink::FileUplink(const char* const name)
 
 FileUplink::~FileUplink() {}
 
+void FileUplink::configure(const char* directory) {
+    this->m_file.osFile.configure(directory);
+}
+
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
 // ----------------------------------------------------------------------
@@ -79,7 +83,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
                 this->handleCancelPacket();
                 break;
             default:
-                FW_ASSERT(0);
+                FW_ASSERT(false);
                 break;
         }
     }
@@ -136,6 +140,7 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
+    FW_ASSERT(dataPacket.getData() != nullptr);
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);
@@ -184,7 +189,8 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
 }
 
 void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
-    CFDP::Checksum computed, stored;
+    CFDP::Checksum computed;
+    CFDP::Checksum stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
     if (computed != stored) {

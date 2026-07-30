@@ -9,8 +9,6 @@
 register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Prm.fpp"
-  SOURCES
-    "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ParamBuffer.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.hpp"

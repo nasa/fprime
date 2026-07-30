@@ -22,13 +22,13 @@ void OutputPortBase::init() {
 }
 #if FW_PORT_SERIALIZATION == 1
 void OutputPortBase::registerSerialPort(InputPortBase* port) {
-    FW_ASSERT(port);
+    FW_ASSERT(port != nullptr);
     this->m_connObj = port;
     this->m_serPort = port;
 }
 
 SerializeStatus OutputPortBase::invokeSerial(LinearBufferBase& buffer) {
-    FW_ASSERT(this->m_serPort);
+    FW_ASSERT(this->m_serPort != nullptr);
     return this->m_serPort->invokeSerial(buffer);
 }
 #endif

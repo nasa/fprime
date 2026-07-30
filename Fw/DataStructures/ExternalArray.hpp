@@ -112,6 +112,8 @@ class ExternalArray final {
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
+        // Check that elements is not null if the array is nonempty
+        FW_ASSERT((elements != nullptr) || (size == 0), static_cast<FwAssertArgType>(size));
         this->releaseStorage();
         this->m_elements = elements;
         this->m_size = size;

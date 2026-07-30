@@ -129,12 +129,8 @@ def test_send_systemResources_command(fprime_test_api):
     time.sleep(5)
 
     # Expect number still changing after clear_history
-    CPU_resources1A = fprime_test_api.await_telemetry(
+    fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU", start="NOW"
-    )
-    CPU_percent1A = fprime_test_api.get_telemetry_pred(
-        fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU",
-        CPU_resources1A,
     )
 
     ##### Command Disabled SystemResources.ENABLE command (DISABLED)
@@ -145,21 +141,13 @@ def test_send_systemResources_command(fprime_test_api):
 
     time.sleep(3)
     # Expect number no change (stale or stop) after Disable
-    CPU_resources2 = fprime_test_api.await_telemetry(
+    fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU", start="NOW"
-    )
-    CPU_percent2 = fprime_test_api.get_telemetry_pred(
-        fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU",
-        CPU_resources2,
     )
     time.sleep(5)
 
-    CPU_resources2B = fprime_test_api.await_telemetry(
+    fprime_test_api.await_telemetry(
         fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU", start="NOW"
-    )
-    CPU_percent2B = fprime_test_api.get_telemetry_pred(
-        fprime_test_api.get_mnemonic("Svc.SystemResources") + "." + "CPU",
-        CPU_resources2B,
     )
 
     ##### Command Disabled SystemResources.ENABLE command (ENABLED)

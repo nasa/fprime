@@ -54,7 +54,7 @@ void ComQueue ::cleanup() {
     }
 }
 
-void ComQueue::configure(QueueConfigurationTable queueConfig,
+void ComQueue::configure(const QueueConfigurationTable& queueConfig,
                          FwEnumStoreType allocationId,
                          Fw::MemAllocator& allocator) {
     FwIndexType currentPriorityIndex = 0;
@@ -139,7 +139,10 @@ void ComQueue::configure(QueueConfigurationTable queueConfig,
 // Handler implementations for commands
 // ----------------------------------------------------------------------
 
-void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::QueueType queueType, FwIndexType index) {
+void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,
+                                       U32 cmdSeq,
+                                       const Svc::QueueType& queueType,
+                                       FwIndexType index) {
     // Acquire the queue that we need to drain
     FwIndexType queueIndex = this->getQueueNum(queueType, index);
 
@@ -148,6 +151,7 @@ void ComQueue ::FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Svc::Que
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
         return;
     }
+    FW_ASSERT(queueIndex >= 0 && queueIndex < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueIndex));
 
     this->drainQueue(queueIndex);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -162,7 +166,7 @@ void ComQueue ::FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
 void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
                                              U32 cmdSeq,
-                                             Svc::QueueType queueType,
+                                             const Svc::QueueType& queueType,
                                              FwIndexType index,
                                              FwIndexType newPriority) {
     // Acquire the queue we are to reprioritize
@@ -182,6 +186,9 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
 
     // Find our queue in the prioritized list & update the priority
     for (FwIndexType prioIndex = 0; prioIndex < TOTAL_PORT_COUNT; prioIndex++) {
+        // Each entry must reference a valid queue index
+        FW_ASSERT(m_prioritizedList[prioIndex].index >= 0 && m_prioritizedList[prioIndex].index < TOTAL_PORT_COUNT,
+                  static_cast<FwAssertArgType>(m_prioritizedList[prioIndex].index));
         // If the port based index matches, then update
         if (m_prioritizedList[prioIndex].index == queueIndex) {
             m_prioritizedList[prioIndex].priority = newPriority;
@@ -249,7 +256,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
         // Both READY and unknown states should not be possible at this point. To receive a status message we must be
         // one of the WAITING or RETRY states.
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(this->m_state));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_state));
             break;
     }
 }
@@ -257,6 +264,7 @@ void ComQueue::comStatusIn_handler(const FwIndexType portNum, Fw::Success& condi
 void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
     // Downlink the high-water marks for the Fw::ComBuffer array types
     ComQueueDepth comQueueDepth;
+    FW_ASSERT(comQueueDepth.SIZE <= COM_PORT_COUNT, static_cast<FwAssertArgType>(comQueueDepth.SIZE));
     for (U32 i = 0; i < comQueueDepth.SIZE; i++) {
         comQueueDepth[i] = static_cast<U32>(this->m_queues[i].get_high_water_mark());
         this->m_queues[i].clear_high_water_mark();
@@ -265,6 +273,8 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 
     // Downlink the high-water marks for the Fw::Buffer array types
     BuffQueueDepth buffQueueDepth;
+    FW_ASSERT((buffQueueDepth.SIZE + COM_PORT_COUNT) <= TOTAL_PORT_COUNT,
+              static_cast<FwAssertArgType>(buffQueueDepth.SIZE));
     for (U32 i = 0; i < buffQueueDepth.SIZE; i++) {
         buffQueueDepth[i] = static_cast<U32>(this->m_queues[i + COM_PORT_COUNT].get_high_water_mark());
         this->m_queues[i + COM_PORT_COUNT].clear_high_water_mark();
@@ -315,6 +325,7 @@ bool ComQueue::enqueue(const FwIndexType queueNum, QueueType queueType, const U8
         static_cast<FwIndexType>(queueNum - ((queueType == QueueType::COM_QUEUE) ? 0 : COM_PORT_COUNT));
     FW_ASSERT(expectedSize == size, static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(expectedSize));
     FW_ASSERT(portNum >= 0, static_cast<FwAssertArgType>(portNum));
+    FW_ASSERT(queueNum < TOTAL_PORT_COUNT, static_cast<FwAssertArgType>(queueNum));
 
     // For buffer queues with DROP_OLDEST, check if the queue is full before enqueuing.
     // If full, dequeue the oldest entry first so we can return buffer ownership before

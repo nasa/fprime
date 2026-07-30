@@ -21,7 +21,7 @@ AMPCSSequence ::AMPCSSequence(CmdSequencerComponentImpl& component) : CmdSequenc
 
 bool AMPCSSequence ::loadFile(const Fw::ConstStringBase& fileName) {
     // Make sure there is a buffer allocated
-    FW_ASSERT(this->m_buffer.getBuffAddr());
+    FW_ASSERT(this->m_buffer.getBuffAddr() != nullptr);
 
     Fw::CmdStringArg crcFileName(fileName);
     crcFileName += ".CRC32";
@@ -316,7 +316,7 @@ Fw::SerializeStatus AMPCSSequence ::translateCommand(Fw::ComBuffer& comBuffer, c
     Fw::SerializeStatus status = comBuffer.serializeFrom(cmdDescriptor);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     // Zero-extend the two-byte AMPCS opcode by (sizeof(FwOpcodeType) - 2) bytes
-    FW_ASSERT(sizeof(FwOpcodeType) >= 2);
+    static_assert(sizeof(FwOpcodeType) >= 2, "FwOpcodeType must be at least two bytes wide");
     U32 sizeOfZeros = 0;
     const FwIndexType bytesToExtend = sizeof(FwOpcodeType) - 2;
     const U8 zeros = 0;

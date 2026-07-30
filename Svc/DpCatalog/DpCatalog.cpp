@@ -26,11 +26,11 @@ DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compN
     // Members are default-initialized via in-class initializers in the header.
 }
 
-void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
-                          FwSizeType numDirs,
+void DpCatalog::configure(const Fw::ExternalArray<Fw::FileNameString>& directories,
                           Fw::FileNameString& stateFile,
                           FwEnumStoreType memId,
                           Fw::MemAllocator& allocator) {
+    const FwSizeType numDirs = directories.getSize();
     // Do some assertion checks
     FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
@@ -71,6 +71,16 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
     this->m_initialized = true;
 }
 
+void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+                          FwSizeType numDirs,
+                          Fw::FileNameString& stateFile,
+                          FwEnumStoreType memId,
+                          Fw::MemAllocator& allocator) {
+    FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
+    const Fw::ExternalArray<Fw::FileNameString> directoryArray(directories, numDirs);
+    this->configure(directoryArray, stateFile, memId, allocator);
+}
+
 void DpCatalog::resetCatalog() {
     // Clear the catalog
     this->m_dpCatalog.clear();
@@ -94,7 +104,7 @@ void DpCatalog::resetStateFileData() {
 }
 
 Fw::CmdResponse DpCatalog::loadStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // Make sure that a file was specified
     if (this->m_stateFile.length() == 0) {
@@ -179,7 +189,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
 }
 
 void DpCatalog::getFileState(DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     // search the file state data for the entry
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
         // check for a match (compare dir, then id, priority, & time)
@@ -195,7 +205,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
 }
 
 void DpCatalog::pruneAndWriteStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // There is a chance that a data product file can disappear after
     // the state file is written from the last catalog build and transmit.
@@ -248,7 +258,7 @@ void DpCatalog::pruneAndWriteStateFile() {
 }
 
 void DpCatalog::appendFileState(const DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories), static_cast<FwAssertArgType>(entry.dir),
               static_cast<FwAssertArgType>(this->m_numDirectories));
 
@@ -355,7 +365,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
-        status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+        Fw::ExternalArray<Fw::String> fileList(this->m_fileList, this->m_numDpSlots - totalFiles);
+        status = dpDir.readDirectory(fileList, filesRead);
 
         if (status != Os::Directory::OP_OK) {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
@@ -381,14 +392,22 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             }
 
             Fw::String fullFile;
-            fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+            Fw::FormatStatus formatStatus =
+                fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+            if (formatStatus != Fw::FormatStatus::SUCCESS) {
+                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
+                                                         static_cast<Fw::StringFormatStatus::T>(formatStatus));
+                continue;
+            }
 
-            int ret = processFile(fullFile, dir);
-            if (ret < 0) {
+            const ProcessFileStatus ret = processFile(fullFile, dir);
+            if (ret == ProcessFileStatus::QUIT) {
                 break;
             }
 
-            filesProcessed += static_cast<U32>(ret);
+            if (ret == ProcessFileStatus::SUCCESS) {
+                filesProcessed++;
+            }
 
         }  // end for each file in a directory
 
@@ -409,7 +428,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
 }  // end fillBinaryTree()
 
-FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
+FwSizeType DpCatalog::determineDirectory(const Fw::String& fullFile) {
+    FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(this->m_numDirectories));
     // Grab the directory string (up until the final slash)
     // Could be found directly w/ a dirname func or regex
     FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
@@ -441,7 +461,7 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, FwSizeType dir) {
     FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
@@ -458,18 +478,18 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fullFile.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     if (fileSize < Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileOpenError(fullFile, stat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // Read DP header and header hash
@@ -479,14 +499,14 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(fullFile, stat);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // if full header and hashes aren't read, something's wrong with the file, so skip
     if (size != Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // if all is well, don't need the file any more
@@ -502,35 +522,41 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (hashStatus != Fw::Success::SUCCESS) {
         this->log_WARNING_HI_FileHdrError(fullFile, DpHdrField::CRC, computedHash.asBigEndianU32(),
                                           storedHash.asBigEndianU32());
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // reset header deserialization in the container
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     const FwSizeType dataSize = container.getDataSize();
     const FwSizeType expectedDataSize = fileSize - Fw::DpContainer::MIN_PACKET_SIZE;
     if (dataSize != expectedDataSize) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     Fw::FileNameString canonicalFileName;
-    canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
-                             container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
+    Fw::FormatStatus canonicalFormatStatus =
+        canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
+                                 container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
+    if (canonicalFormatStatus != Fw::FormatStatus::SUCCESS) {
+        this->log_WARNING_HI_FileNameFormatError(fullFile,
+                                                 static_cast<Fw::StringFormatStatus::T>(canonicalFormatStatus));
+        return ProcessFileStatus::FAILED;
+    }
     if (canonicalFileName != fullFile) {
         this->log_WARNING_HI_InvalidFileName(fullFile, canonicalFileName);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // skip adding an already transmitted file
     if (container.getState() == Fw::DpState::TRANSMITTED) {
         this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // add entry to catalog.
@@ -551,7 +577,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     if (!inserted) {
         this->log_WARNING_HI_DpInsertError(entry.record);
         // return and hope new slots open up later
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
     // increment our counters
@@ -561,7 +587,7 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // make sure we haven't exceeded the limit
     if (this->m_pendingFiles > this->m_numDpSlots) {
         this->log_WARNING_HI_DpCatalogFull(entry.record);
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
     this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
@@ -569,13 +595,13 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // No need to track iterator state - begin() always gives us the highest priority entry
     // and we remove entries as we transmit them
 
-    return 1;
+    return ProcessFileStatus::SUCCESS;
 }
 
 // ----------------------------------------------------------------------
 // DpStateEntry Comparison Ops
 // ----------------------------------------------------------------------
-int DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
     if (left.record.get_priority() < right.record.get_priority()) {
         return -1;
@@ -652,8 +678,14 @@ void DpCatalog::sendNextEntry() {
     this->m_hasCurrentXmit = true;
 
     // Build file name based on the found entry
-    this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(), entry.record.get_id(),
-                                    entry.record.get_tSec(), entry.record.get_tSub());
+    Fw::FormatStatus formatStatus =
+        this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(),
+                                        entry.record.get_id(), entry.record.get_tSec(), entry.record.get_tSub());
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName,
+                                                 static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        return;
+    }
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
                                          entry.record.get_priority());
     Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
@@ -790,10 +822,9 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // ret > 0 := success
-    int ret = processFile(fileName, dir);
+    const ProcessFileStatus ret = processFile(fileName, dir);
 
-    if (ret > 0) {
+    if (ret == ProcessFileStatus::SUCCESS) {
         // If we already finished, sendNext only if remainingActive
         if (!this->m_xmitInProgress && this->m_remainActive) {
             this->m_xmitInProgress = true;
@@ -816,8 +847,12 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
 }
 
-void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fw::Wait wait, bool remainActive) {
+void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::Wait& wait,
+                                               bool remainActive) {
     Fw::CmdResponse resp = this->doCatalogXmit();
+    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
     this->m_remainActive = remainActive;
 
     if (resp != Fw::CmdResponse::OK) {

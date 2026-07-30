@@ -57,6 +57,8 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     U32 m_errorCount = 0;
     // number of sequencers in state AVAILABLE
     U32 m_sequencersAvailable = SeqDispatcherSequencerPorts;
+    // number of sequences canceled via the CANCEL_NAME command
+    U32 m_canceledCount = 0;
 
     struct DispatchEntry {
         FwOpcodeType opCode;  //!< opcode of entry
@@ -84,18 +86,24 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     void RUN_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
                         const U32 cmdSeq,                 /*!< The command sequence number*/
                         const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
-                        BlockState block);
+                        const BlockState& block);
 
     //! Implementation for RUN_ARGS command handler
     //!
     void RUN_ARGS_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
                              const U32 cmdSeq,                 /*!< The command sequence number*/
                              const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
-                             BlockState block,                 /*!< Return command status when complete or not*/
-                             Svc::SeqArgs buffer);             /*!< Arguments to pass to a sequencer*/
+                             const BlockState& block,          /*!< Return command status when complete or not*/
+                             const Svc::SeqArgs& buffer);      /*!< Arguments to pass to a sequencer*/
 
     void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                const U32 cmdSeq);         /*!< The command sequence number*/
+
+    //! Implementation for CANCEL_NAME command handler
+    //!
+    void CANCEL_NAME_cmdHandler(const FwOpcodeType opCode,         /*!< The opcode*/
+                                const U32 cmdSeq,                  /*!< The command sequence number*/
+                                const Fw::CmdStringArg& fileName); /*!< The name of the sequence file to cancel*/
 };
 
 }  // namespace Svc

@@ -1,43 +1,17 @@
-/*
- * FwComBuffer.hpp
- *
- *  Created on: May 24, 2014
- *      Author: tcanham
- */
+// ======================================================================
+// @file   ComBuffer.hpp
+// @author F Prime
+// @brief  A buffer sized for communication packets
+// ======================================================================
 
-/*
- * Description:
- * This object contains the ComBuffer type, used for sending and receiving packets from the ground
- */
 #ifndef FW_COM_BUFFER_HPP
 #define FW_COM_BUFFER_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/Serializable.hpp>
+#include "Fw/Types/LinearBufferTemplate.hpp"
 
 namespace Fw {
 
-class ComBuffer final : public LinearBufferBase {
-  public:
-    enum {
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_COM_BUFFER_MAX_SIZE)  // size of buffer + storage of size word
-    };
-
-    ComBuffer(const U8* args, FwSizeType size);
-    ComBuffer();
-    ComBuffer(const ComBuffer& other);
-    virtual ~ComBuffer();
-    ComBuffer& operator=(const ComBuffer& other);
-
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
-
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
-
-  private:
-    U8 m_bufferData[FW_COM_BUFFER_MAX_SIZE];  // packet data buffer
-};
+using ComBuffer = LinearBufferTemplate<FW_COM_BUFFER_MAX_SIZE>;
 
 }  // namespace Fw
 

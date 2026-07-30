@@ -98,8 +98,15 @@ void UdpTester::test_with_loop(U32 iterations, bool recv_thread, bool send_only)
             // If receive thread is live, try the other way
             if (recv_thread and not send_only) {
                 m_spinner = false;
-                m_data_buffer.setSize(sizeof(m_data_storage));
-                udp2.send(udp2_fd, m_data_buffer.getData(), m_data_buffer.getSize());
+                U8* send_data = nullptr;
+                FwSizeType send_size = 0;
+                {
+                    Os::ScopeLock lock(m_buffer_lock);
+                    m_data_buffer.setSize(sizeof(m_data_storage));
+                    send_data = m_data_buffer.getData();
+                    send_size = m_data_buffer.getSize();
+                }
+                udp2.send(udp2_fd, send_data, send_size);
                 while (not m_spinner) {
                 }
             }
@@ -182,6 +189,7 @@ void UdpTester ::from_recv_handler(const FwIndexType portNum,
     this->pushFromPortEntry_recv(recvBuffer, recvStatus);
     // Make sure we can get to unblocking the spinner
     if (recvStatus == ByteStreamStatus::OP_OK) {
+        Os::ScopeLock lock(m_buffer_lock);
         EXPECT_EQ(m_data_buffer.getSize(), recvBuffer.getSize()) << "Invalid transmission size";
         Drv::Test::validate_random_buffer(m_data_buffer, recvBuffer.getData());
         m_spinner = true;

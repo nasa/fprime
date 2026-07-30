@@ -13,7 +13,8 @@ module DataProducts{
             Fw::FileNameString dpDir(DataProductsConfig::Paths::dpDir);
             Fw::FileNameString dpState(DataProductsConfig::Paths::dpState);
             Os::FileSystem::createDirectory(dpDir.toChar());
-            DataProducts::dpCat.configure(&dpDir,1,dpState,0, DataProducts::Allocation::memAllocator);
+            Fw::ExternalArray<Fw::FileNameString> dpDirs(&dpDir, 1);
+            DataProducts::dpCat.configure(dpDirs, dpState, 0, DataProducts::Allocation::memAllocator);
         """
     }
 
@@ -29,6 +30,24 @@ module DataProducts{
     {
         phase Fpp.ToCpp.Phases.configComponents """
             DataProducts::dpWriter.configure(dpDir);
+        """
+    }
+
+    instance dpBufferAccumulator: Svc.BufferAccumulator base id DataProductsConfig.BASE_ID + 0x04000 \
+        queue size DataProductsConfig.QueueSizes.dpBufferAccumulator \
+        stack size DataProductsConfig.StackSizes.dpBufferAccumulator \
+        priority DataProductsConfig.Priorities.dpBufferAccumulator \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+            DataProducts::dpBufferAccumulator.allocateQueue(
+                DataProductsConfig::BufferAccumulator::allocatorId,
+                DataProducts::Allocation::memAllocator,
+                DataProductsConfig::BufferAccumulator::maxNumBuffers,
+                Svc::BufferAccumulator_OpState::DRAIN
+            );
+        """
+        phase Fpp.ToCpp.Phases.tearDownComponents """
+            DataProducts::dpBufferAccumulator.deallocateQueue(DataProducts::Allocation::memAllocator);
         """
     }
     
@@ -62,15 +81,18 @@ module DataProducts{
         instance dpCat
         instance dpMgr
         instance dpWriter
+        instance dpBufferAccumulator
 
         #Passive Components
         instance dpBufferManager
 
         connections DataProducts {
-            # DpMgr and DpWriter connections. Have explicit port indexes for demo
+            # DpMgr, BufferAccumulator, and DpWriter connections. Have explicit port indexes for demo
             dpMgr.bufferGetOut[0] -> dpBufferManager.bufferGetCallee
-            dpMgr.productSendOut[0] -> dpWriter.bufferSendIn
-            dpWriter.deallocBufferSendOut -> dpBufferManager.bufferSendIn
+            dpMgr.productSendOut[0] -> dpBufferAccumulator.bufferSendInFill
+            dpBufferAccumulator.bufferSendOutDrain -> dpWriter.bufferSendIn
+            dpWriter.deallocBufferSendOut -> dpBufferAccumulator.bufferSendInReturn
+            dpBufferAccumulator.bufferSendOutReturn -> dpBufferManager.bufferSendIn
 
             dpWriter.dpWrittenOut -> dpCat.addToCat
         }
@@ -102,6 +124,9 @@ module DataProducts{
 
         @ Input port for scheduling dpWriter telemetry output
         port dpWriterSchedIn        = dpWriter.schedIn
+
+        @ Output port for processing data products
+        port dpWriterProcOut        = dpWriter.procBufferSendOut
 
         @ Input port for scheduling dpMgr telemetry output
         port dpMgrSchedIn           = dpMgr.schedIn

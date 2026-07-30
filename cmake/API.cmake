@@ -17,14 +17,11 @@ include(module)
 include(config_assembler)
 include(sub-build/sub-build)
 include(fprime-util)
+include(global_interface)
+
 set(FPRIME_TARGET_LIST "" CACHE INTERNAL "FPRIME_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_UT_TARGET_LIST "" CACHE INTERNAL "FPRIME_UT_TARGET_LIST: custom fprime targets" FORCE)
 set(FPRIME_AUTOCODER_TARGET_LIST "" CACHE INTERNAL "FPRIME_AUTOCODER_TARGET_LIST: custom fprime targets" FORCE)
-set(FPRIME_GLOBAL_INTERFACE_TARGET "_fprime_global_interface_target" CACHE INTERNAL "FPRIME_GLOBAL_INTERFACE_TARGETS: global interface targets" FORCE)
-# Create a singleton global interface target
-if (NOT TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}")
-    add_library("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE)
-endif()
 
 ####
 # Macro `skip_on_sub_build`:
@@ -106,8 +103,8 @@ endmacro()
 # directories. This creates a directed acyclic graph of modules, one subgraph of which will be built
 # for each executable/module/library defined in the system.  The subgraph should also be a DAG.
 #
-# This directory is computed based off the closest path in `FPRIME_BUILD_LOCATIONS`. It must be set to
-# be used. Otherwise, an error will occur. `EXCLUDE_FROM_ALL` can also be supplied.
+# This directory is computed based off the closest path in `FPRIME_LOCATIONS` of the global interface.
+#
 # See: https://cmake.org/cmake/help/latest/command/add_fprime_subdirectory.html
 #
 # **Note:** Replaces CMake `add_subdirectory` call in order to automate the [binary_dir] argument.
@@ -164,6 +161,9 @@ endfunction(add_fprime_subdirectory)
 ####
 function(fprime_attach_custom_targets BUILD_TARGET_NAME)
     setup_module_targets("${BUILD_TARGET_NAME}")
+    # After all targets (build + custom) have run their autocoders, validate that every
+    # user-supplied AUTOCODER_INPUT was picked up by at least one autocoder.
+    _validate_all_autocoder_inputs_handled("${BUILD_TARGET_NAME}")
 endfunction()
 
 ####
@@ -189,11 +189,15 @@ endfunction()
 #         -lm
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/extra_file.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_library` call. The library argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -266,11 +270,15 @@ endfunction()
 #         -lm
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/linker_script.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -330,11 +338,15 @@ endfunction()
 #         MyFprimeDeployment_Top
 #     HEADERS
 #         module.h
+#     LINK_DEPENDS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/linker_script.ld
 # )
 # ```
 #
 # > [!NOTE]
 # > This delegates to CMake's `add_executable` call. The argument EXCLUDE_FROM_ALL is supported.
+# > The LINK_DEPENDS directive accepts a list of extra files (e.g. linker scripts) that should trigger
+# > a rebuild when they change.
 #
 # **MODULE_NAME**: (optional) module name. Default: ${FPRIME_CURRENT_MODULE}
 # **ARGN**: sources, autocoder inputs, etc preceded by a directive (i.e. SOURCES or DEPENDS)
@@ -465,20 +477,24 @@ function(fprime_add_config_build_target)
     fprime__internal_add_build_target_helper("${INTERNAL_MODULE_NAME}" "Library" "${INTERNAL_SOURCES}"
                                              "${INTERNAL_AUTOCODER_INPUTS}" "${INTERNAL_HEADERS}" "${INTERNAL_DEPENDS}"
                                              "${INTERNAL_REQUIRES_IMPLEMENTATIONS}"
-                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}")
+                                             "${INTERNAL_CHOOSES_IMPLEMENTATIONS}" "${INTERNAL_CMAKE_ADD_OPTIONS}"
+                                             "${INTERNAL_LINK_DEPENDS}")
 
     # The new module should include the root configuration directory
     fprime_target_include_directories("${INTERNAL_MODULE_NAME}" PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/..")
-    # The configuration target should depend on the new module
+    # When the configuration is marked as BASE_CONFIG, this implies that the entire build system should have access to
+    # the configuration. Thus, we link the configuration module into the global interface target allowing any module
+    # to pull in the dependency.
     if (INTERNAL_BASE_CONFIG)
-        target_link_libraries("${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" INTERFACE "${INTERNAL_MODULE_NAME}")
+        target_link_libraries("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${INTERNAL_MODULE_NAME}")
     endif()
     # Set up the new module to be marked as FPRIME_CONFIGURATION
     append_list_property("${INTERNAL_MODULE_NAME}" GLOBAL PROPERTY "FPRIME_CONFIG_MODULES")
     set_property(TARGET "${INTERNAL_MODULE_NAME}" PROPERTY FPRIME_CONFIGURATION TRUE)
     # Targets likely do not exist yet, so just aggregate the complete list of chosen implementations
     # for processing later
-    append_list_property("${INTERNAL_CHOOSES_IMPLEMENTATIONS}" TARGET "${FPRIME__INTERNAL_CONFIG_TARGET_NAME}" PROPERTY FPRIME_CHOSEN_IMPLEMENTATIONS)
+    append_list_property("${INTERNAL_CHOOSES_IMPLEMENTATIONS}" TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY
+                         FPRIME_CHOSEN_IMPLEMENTATIONS)
 
     # Static libraries must be position independent when building shared libraries
     get_target_property(CONFIG_LIBRARY_TYPE "${INTERNAL_MODULE_NAME}" TYPE)
@@ -734,12 +750,13 @@ endfunction()
 # Macro `register_fprime_project`:
 #
 # Used to register an F Prime project. This will do the following:
-#   1. Add the current source directory to the FPRIME_BUILD_LOCATIONS property
-#   2. Add the current source directory to the global include directories
-#   3. Add the current binary directory to the global include directories
-#   4. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
+#   1. Add the current source directory to the FPRIME_LOCATIONS property of the global interface
+#   2. Add the current binary directory to the FPRIME_LOCATIONS property of the global interface
+#   3. Add the current source directory to the global include directories
+#   4. Add the current binary directory to the global include directories
+#   5. Add the current source directory to the CMAKE_PATH_PREFIX variable for this module
 # This allows it to be found and used by other modules in the build system.  It ensures that the components are properly
-# slotted underneath this library for the purposed of include path and target names.
+# slotted underneath this library for the purpose of include path and target names.
 # Args: none
 #####
 macro(register_fprime_project)
@@ -750,19 +767,15 @@ macro(register_fprime_project)
     endif()
 
     # Add to the build locations property
-    append_list_property("${CMAKE_CURRENT_SOURCE_DIR}" GLOBAL PROPERTY FPRIME_PROJECT_LOCATIONS)
-    # Add source and binaries to the interface includes of our singular global interface target
-    target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
-    target_include_directories("${FPRIME_GLOBAL_INTERFACE_TARGET}" INTERFACE "${CMAKE_CURRENT_BINARY_DIR}")
+    fprime_add_location_pair("${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 
-    # Backwards compatibility: update the build locations variable as well
-    set(FPRIME_BUILD_LOCATIONS "${CMAKE_CURRENT_SOURCE_DIR};${FPRIME_BUILD_LOCATIONS}" CACHE INTERNAL "FPRIME_BUILD_LOCATIONS: list of source directories containing fprime modules" FORCE)
     # Backwards compatibility: bridge the interface target include directories back into the include_directories directive
     include_directories("$<TARGET_PROPERTY:${FPRIME_GLOBAL_INTERFACE_TARGET},INTERFACE_INCLUDE_DIRECTORIES>")
 
-    # Update the CMAKE_MODULE_PATH for this particular project
-    get_property(FPRIME_PROJECT_LOCATIONS GLOBAL PROPERTY FPRIME_PROJECT_LOCATIONS)
-    foreach (PROJECT_LOCATION IN LISTS FPRIME_PROJECT_LOCATIONS)
+    # Update the CMAKE_MODULE_PATH for this particular project. This has to be done for each project because
+    # CMAKE_MODULE_PATH is not a cache variable.
+    get_property(FPRIME_LOCATIONS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_LOCATIONS)
+    foreach (PROJECT_LOCATION IN LISTS FPRIME_LOCATIONS)
         list(APPEND CMAKE_MODULE_PATH "${PROJECT_LOCATION}/cmake")
     endforeach()
     set(FPRIME_CURRENT_PROJECT_PATH "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -29,6 +29,7 @@ telemetry packets RefPackets {
   packet CDHErrors id 2 group 1 {
     CdhCore.$health.PingLateWarnings
     CdhCore.cmdDisp.CommandsDropped
+    CdhCore.events.EventsDropped
 
     FileHandling.fileUplink.Warnings
     FileHandling.fileDownlink.Warnings
@@ -196,6 +197,8 @@ telemetry packets RefPackets {
     DataProducts.dpWriter.NumFailedWrites
     DataProducts.dpWriter.NumErrors
 
+    DataProducts.dpBufferAccumulator.BA_NumQueuedBuffers
+
     DataProducts.dpBufferManager.TotalBuffs
     DataProducts.dpBufferManager.CurrBuffs
     DataProducts.dpBufferManager.HiBuffs
@@ -273,6 +276,16 @@ telemetry packets RefPackets {
     CdhCore.version.CustomVersion10
   }
 
+  # Uncomment to enable DpCompression subtopology
+  #packet DpCompression id 38 group 3 {
+    #DpCompression.dpZLibCompressorBufferManager.TotalBuffs
+    #DpCompression.dpZLibCompressorBufferManager.CurrBuffs
+    #DpCompression.dpZLibCompressorBufferManager.HiBuffs
+    #DpCompression.dpZLibCompressorBufferManager.NoBuffs
+    #DpCompression.dpZLibCompressorBufferManager.EmptyBuffs
+  #}
+
 } omit {
   CdhCore.cmdDisp.CommandErrors
+  cmdSeq.CS_CurrentSequence
 }

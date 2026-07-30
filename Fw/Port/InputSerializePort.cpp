@@ -15,8 +15,8 @@ void InputSerializePort::init() {
 }
 
 SerializeStatus InputSerializePort::invokeSerial(LinearBufferBase& buffer) {
-    FW_ASSERT(this->m_comp);
-    FW_ASSERT(this->m_func);
+    FW_ASSERT(this->m_comp != nullptr);
+    FW_ASSERT(this->m_func != nullptr);
 
     this->m_func(this->m_comp, this->m_portNum, buffer);
 
@@ -27,8 +27,8 @@ SerializeStatus InputSerializePort::invokeSerial(LinearBufferBase& buffer) {
 }
 
 void InputSerializePort::addCallComp(Fw::PassiveComponentBase* callComp, CompFuncPtr funcPtr) {
-    FW_ASSERT(callComp);
-    FW_ASSERT(funcPtr);
+    FW_ASSERT(callComp != nullptr);
+    FW_ASSERT(funcPtr != nullptr);
     this->m_comp = callComp;
     this->m_func = funcPtr;
 }

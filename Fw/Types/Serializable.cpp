@@ -255,7 +255,7 @@ ALWAYS_INLINE SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
     }
 
     if (length > 0) {
-        FW_ASSERT(buff);
+        FW_ASSERT(buff != nullptr);
     }
     U8* buffAddr = this->getBuffAddr();
     FW_ASSERT(buffAddr != nullptr);
@@ -566,7 +566,7 @@ ALWAYS_INLINE SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         }
 
         if (storedLength > 0) {
-            FW_ASSERT(buff);
+            FW_ASSERT(buff != nullptr);
         }
         (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(storedLength));
 
@@ -579,7 +579,7 @@ ALWAYS_INLINE SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
         }
 
         if (length > 0) {
-            FW_ASSERT(buff);
+            FW_ASSERT(buff != nullptr);
         }
         (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(length));
     }

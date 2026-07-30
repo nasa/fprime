@@ -570,7 +570,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
-                           Svc::BlockState block              /*!< Return command status when complete or not*/
+                           const Svc::BlockState& block       /*!< Return command status when complete or not*/
                            ) override;
 
     //! Handler for command CS_START
@@ -705,6 +705,9 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     FwOpcodeType m_opCode;
     U32 m_cmdSeq;
     bool m_join_waiting;
+
+    //! Telemetry to update sequence not running
+    const Fw::String NO_SEQ{"<no seq>"};
 };
 
 }  // namespace Svc

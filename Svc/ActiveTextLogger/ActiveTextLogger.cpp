@@ -22,6 +22,7 @@ ActiveTextLogger::ActiveTextLogger(const char* name)
 ActiveTextLogger::~ActiveTextLogger() {}
 
 void ActiveTextLogger::configure(const FwEventIdType* filteredIds, FwSizeType count) {
+    FW_ASSERT(filteredIds != nullptr || count == 0);
     FW_ASSERT(count < ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE, static_cast<FwAssertArgType>(count),
               ACTIVE_TEXT_LOGGER_ID_FILTER_SIZE);
 
@@ -81,6 +82,7 @@ void ActiveTextLogger::TextLogger_handler(FwIndexType portNum,
             severityString = "SEVERITY ERROR";
             break;
     }
+    FW_ASSERT(severityString != nullptr);
     // Overflow is allowed and truncation accepted
     Fw::InternalInterfaceString intText;
     (void)intText.format("EVENT: (%" PRI_FwEventIdType ") (%" PRI_FwTimeBaseStoreType ":%" PRIu32 ",%" PRIu32

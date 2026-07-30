@@ -6,6 +6,8 @@
 
 #include "SpacePacketFramerTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -59,10 +61,18 @@ void SpacePacketFramerTester::testNominalFraming() {
         payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
     }
     Fw::Buffer data(payload, sizeof(payload));
-    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    const auto apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.has_value()) {
+        GTEST_SKIP() << "Could not find a valid APID\n";
+    }
+    const auto apid = apidOption.value();
+    // Choose a random 14-bit sequence count
+    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
+    // Choose a random secondary header flag
+    bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));
     ComCfg::FrameContext context;
     context.set_apid(apid);
+    context.set_hasSecHdr(hasSecHdr);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);
@@ -71,6 +81,24 @@ void SpacePacketFramerTester::testNominalFraming() {
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ASSERT_EQ(outBuffer.getSize(), sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE);
+
+    // Deserialize and verify the SpacePacket header
+    SpacePacketHeader header;
+    ASSERT_EQ(outBuffer.getDeserializer().deserializeTo(header), Fw::FW_SERIALIZE_OK);
+
+    // Verify APID in packetIdentification
+    U16 extractedApid = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
+    ASSERT_EQ(extractedApid, apid);
+
+    // Verify secondary header flag in packetIdentification
+    U16 extractedSecHdr = static_cast<U16>((header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) >>
+                                           SpacePacketSubfields::SecHdrOffset);
+    ASSERT_EQ(extractedSecHdr, hasSecHdr ? 1 : 0);
+
+    // Verify sequence count in packetSequenceControl
+    U16 extractedSeqCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
+    ASSERT_EQ(extractedSeqCount, seqCount);
+
     // Check that the payload is present at the correct offset
     for (U32 i = 0; i < sizeof(payload); ++i) {
         ASSERT_EQ(outBuffer.getData()[SpacePacketHeader::SERIALIZED_SIZE + i], payload[i]);

@@ -76,7 +76,10 @@ class FileWorker : public FileWorkerComponentBase {
     // ----------------------------------------------------------------------
 
     Svc::FileWorkerStatus readBufferFromFile(Fw::Buffer& buffer, const char* const fileName);
-    void readFile(Fw::Buffer& buffer, FwSizeType size, Os::File& file, const Fw::LogStringArg& fileNameStr);
+    Svc::FileWorkerReadStatus readFile(Fw::Buffer& buffer,
+                                       FwSizeType size,
+                                       Os::File& file,
+                                       const Fw::LogStringArg& fileNameStr);
     Svc::FileWorkerReadStatus readFileBytes(Fw::Buffer& buffer, FwSizeType size, Os::File& file, FwSizeType& bytesRead);
 
     bool getHash(const char* const hashFileName,

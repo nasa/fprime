@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "DpCatalogTester.hpp"
-#include <algorithm>
 #include <cstdlib>
 #include <set>
 #include <vector>
@@ -48,15 +47,13 @@ void DpCatalogTester ::doInit() {
     dirs[0] = "dir0";
     dirs[1] = "dir1";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
-    this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, FW_NUM_ARRAY_ELEMENTS(dirs)), stateFile, 100,
+                              alloc);
     this->component.shutdown();
 }
 
-void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
-                               DpCatalog::DpStateEntry* output,
-                               FwIndexType numEntries) {
+void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input, FwIndexType numEntries) {
     ASSERT_TRUE(input != nullptr);
-    ASSERT_TRUE(output != nullptr);
     ASSERT_TRUE(numEntries > 0);
 
     Fw::MallocAllocator alloc;
@@ -64,7 +61,8 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     Fw::FileNameString dirs[1];
     dirs[0] = "dir0";
     Fw::FileNameString stateFile("./DpTest/dpState.dat");
-    this->component.configure(dirs, FW_NUM_ARRAY_ELEMENTS(dirs), stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, FW_NUM_ARRAY_ELEMENTS(dirs)), stateFile, 100,
+                              alloc);
 
     // reset catalog
     this->component.resetCatalog();
@@ -77,11 +75,14 @@ void DpCatalogTester::testTree(DpCatalog::DpStateEntry* input,
     // hot wire in progress
     this->component.m_xmitInProgress = true;
 
-    // Collect expected entries (non-transmitted)
+    // Collect expected entries (non-transmitted) using input order so that
+    // duplicate handling in std::set matches RedBlackTreeSet (first insert wins).
+    // std::set sorts via operator< on insertion, so priority ordering is maintained
+    // without a separate sort step.
     std::set<DpCatalog::DpStateEntry> expectedEntries;
     for (FwIndexType entry = 0; entry < numEntries; entry++) {
-        if (output[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
-            expectedEntries.insert(output[entry]);
+        if (input[entry].record.get_state() != Fw::DpState::TRANSMITTED) {
+            expectedEntries.insert(input[entry]);
         }
     }
 
@@ -144,7 +145,7 @@ void DpCatalogTester::readDps(Fw::FileNameString* dpDirs,
 
     ASSERT_EVENTS_DpFileAdded_SIZE(0);
 
-    this->component.configure(dpDirs, numDirs, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dpDirs, numDirs), stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -347,7 +348,6 @@ void DpCatalogTester ::test_TreeTestRandomTransmitted() {
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
-        Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
@@ -372,9 +372,7 @@ void DpCatalogTester ::test_TreeTestRandomTransmitted() {
             }
         }
 
-        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
-
-        this->testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+        this->testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
 }
 
@@ -382,7 +380,6 @@ void DpCatalogTester ::test_TreeTestManual1() {
     Fw::FileNameString dir;
 
     Svc::DpCatalog::DpStateEntry inputs[1];
-    Svc::DpCatalog::DpStateEntry outputs[1];
 
     inputs[0].record.set_id(1);
     inputs[0].record.set_priority(2);
@@ -391,21 +388,13 @@ void DpCatalogTester ::test_TreeTestManual1() {
     inputs[0].record.set_tSub(1500);
     inputs[0].record.set_size(100);
 
-    outputs[0].record.set_id(1);
-    outputs[0].record.set_priority(2);
-    outputs[0].record.set_state(Fw::DpState::UNTRANSMITTED);
-    outputs[0].record.set_tSec(1000);
-    outputs[0].record.set_tSub(1500);
-    outputs[0].record.set_size(100);
-
-    testTree(inputs, outputs, 1);
+    testTree(inputs, 1);
 }
 
 void DpCatalogTester ::test_TreeTestManual2() {
     Fw::FileNameString dir;
 
     Svc::DpCatalog::DpStateEntry inputs[2];
-    Svc::DpCatalog::DpStateEntry outputs[2];
 
     inputs[0].record.set_id(1);
     inputs[0].record.set_priority(2);
@@ -421,10 +410,7 @@ void DpCatalogTester ::test_TreeTestManual2() {
     inputs[1].record.set_tSub(1500);
     inputs[1].record.set_size(100);
 
-    outputs[0].record = inputs[1].record;
-    outputs[1].record = inputs[0].record;
-
-    testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+    testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
 }
 
 void DpCatalogTester ::test_TreeTestManual3() {
@@ -432,7 +418,6 @@ void DpCatalogTester ::test_TreeTestManual3() {
     Fw::FileNameString dir;
 
     Svc::DpCatalog::DpStateEntry inputs[3];
-    Svc::DpCatalog::DpStateEntry outputs[3];
 
     inputs[0].record.set_id(1);
     inputs[0].record.set_priority(2);
@@ -455,16 +440,11 @@ void DpCatalogTester ::test_TreeTestManual3() {
     inputs[2].record.set_tSub(1500);
     inputs[2].record.set_size(100);
 
-    outputs[0].record = inputs[1].record;
-    outputs[1].record = inputs[0].record;
-    outputs[2].record = inputs[2].record;
-
-    testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+    testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
 }
 
 void DpCatalogTester ::test_TreeTestManual5() {
     Svc::DpCatalog::DpStateEntry inputs[5];
-    Svc::DpCatalog::DpStateEntry outputs[5];
 
     inputs[0].record.set_id(1);
     inputs[0].record.set_priority(2);
@@ -501,13 +481,7 @@ void DpCatalogTester ::test_TreeTestManual5() {
     inputs[4].record.set_tSub(1500);
     inputs[4].record.set_size(100);
 
-    outputs[0].record = inputs[1].record;
-    outputs[1].record = inputs[0].record;
-    outputs[2].record = inputs[2].record;
-    outputs[3].record = inputs[4].record;
-    outputs[4].record = inputs[3].record;
-
-    testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+    testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
 }
 
 void DpCatalogTester ::test_TreeTestRandomPriority() {
@@ -516,7 +490,6 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
-        Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
@@ -532,9 +505,7 @@ void DpCatalogTester ::test_TreeTestRandomPriority() {
             inputs[entry].record.set_size(100);
         }
 
-        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
-
-        tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+        tester.testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
 }
 
@@ -544,7 +515,6 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
-        Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
@@ -560,9 +530,7 @@ void DpCatalogTester ::test_TreeTestRandomTime() {
             inputs[entry].record.set_size(100);
         }
 
-        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
-
-        testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+        testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
 }
 
@@ -572,7 +540,6 @@ void DpCatalogTester ::test_TreeTestRandomId() {
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
-        Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
@@ -588,9 +555,7 @@ void DpCatalogTester ::test_TreeTestRandomId() {
             inputs[entry].record.set_size(100);
         }
 
-        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
-
-        testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+        testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
 }
 
@@ -600,7 +565,6 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
 
     for (FwIndexType iter = 0; iter < NUM_ITERS; iter++) {
         Svc::DpCatalog::DpStateEntry inputs[NUM_ENTRIES];
-        Svc::DpCatalog::DpStateEntry outputs[NUM_ENTRIES];
 
         Svc::DpCatalogTester tester;
         Fw::FileNameString dir;
@@ -618,9 +582,7 @@ void DpCatalogTester ::test_TreeTestRandomPrioIdTime() {
             inputs[entry].record.set_size(100);
         }
 
-        std::partial_sort_copy(std::begin(inputs), std::end(inputs), std::begin(outputs), std::end(outputs));
-
-        tester.testTree(inputs, outputs, FW_NUM_ARRAY_ELEMENTS(inputs));
+        tester.testTree(inputs, FW_NUM_ARRAY_ELEMENTS(inputs));
     }
 }
 
@@ -721,7 +683,7 @@ void DpCatalogTester ::test_BadFileDone() {
     Fw::MallocAllocator alloc;
 
     Fw::FileNameString dirs[1];
-    this->component.configure(dirs, 0, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 0), stateFile, 100, alloc);
 
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
@@ -759,7 +721,7 @@ void DpCatalogTester::test_ProcessFileInvalidDir() {
     Fw::FileNameString dirs[1];
     dirs[0] = "./DpTest_InvalidDir";
     Fw::FileNameString stateFile("");
-    this->component.configure(dirs, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 1), stateFile, 100, alloc);
 
     ASSERT_DEATH_IF_SUPPORTED(this->component.processFile("somefile.dp", DP_MAX_DIRECTORIES), "Assert");
 
@@ -784,7 +746,7 @@ void DpCatalogTester::test_MalformedFile() {
     // 3. Configure the Component
     Fw::MallocAllocator mockAllocator;
     Fw::FileNameString dirs[DP_MAX_DIRECTORIES];
-    this->component.configure(dirs, 0, stateFile, 0, mockAllocator);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(dirs, 0), stateFile, 0, mockAllocator);
 
     // 4. Dispatch the BUILD_CATALOG command
     this->sendCmd_BUILD_CATALOG(0, 0);
@@ -835,7 +797,7 @@ void DpCatalogTester::test_TruncatedDpRejected() {
     ASSERT_EQ(size, headerSize);
     dpFile.close();
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -866,7 +828,7 @@ void DpCatalogTester::test_NonCanonicalDpRejected() {
     rogueFile.format("%s/rogue.fdp", dir.toChar());
     ASSERT_EQ(Os::FileSystem::moveFile(canonicalFile.toChar(), rogueFile.toChar()), Os::FileSystem::OP_OK);
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -893,7 +855,7 @@ void DpCatalogTester::test_BadHeaderHashRejected() {
     Fw::String fileName = this->genDP(0x123, 10, time, 16, Fw::DpState::UNTRANSMITTED, true, dir.toChar());
     ASSERT_STRNE(fileName.toChar(), "");
 
-    this->component.configure(&dir, 1, stateFile, 100, alloc);
+    this->component.configure(Fw::ExternalArray<Fw::FileNameString>(&dir, 1), stateFile, 100, alloc);
     this->sendCmd_BUILD_CATALOG(0, 10);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(1);

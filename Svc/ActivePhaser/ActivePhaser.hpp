@@ -75,7 +75,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
 
     //! Register a phased port call
     //!
-    void register_phased(FwIndexType port, U32 length, U32 start = DONT_CARE, U32 context = DONT_CARE);
+    void register_phased(FwIndexType port, U32 length, U32 start = DONT_CARE, U32 userContext = DONT_CARE);
 
     //! Destroy ActivePhaser object
     ~ActivePhaser();

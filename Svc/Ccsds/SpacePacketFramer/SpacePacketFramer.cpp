@@ -41,13 +41,14 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
     // -----------------------------------------------
     // Header
     // -----------------------------------------------
-    // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink) - SecHdr flag is 0 for no secondary
-    // header
-    U16 packetIdentification = 0;
     ComCfg::Apid::T apid = context.get_apid();
     FW_ASSERT((apid >> SpacePacketSubfields::ApidWidth) == 0,
               static_cast<FwAssertArgType>(apid));  // apid must fit in 11 bits
-    packetIdentification |= static_cast<U16>(apid) & static_cast<U16>(SpacePacketSubfields::ApidMask);  // 11 bit APID
+    const U16 secHdrFlag = context.get_hasSecHdr() ? 1 : 0;
+    // PVN is always 0 per Standard - Packet Type is 0 for Telemetry (downlink)
+    // 11 bit APID, 1 bit SecHdr flag
+    const U16 packetIdentification = static_cast<U16>((static_cast<U16>(apid) & SpacePacketSubfields::ApidMask) |
+                                                      (secHdrFlag << SpacePacketSubfields::SecHdrOffset));
 
     U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0);  // retrieve the sequence count for this APID
     U16 packetSequenceControl = 0;

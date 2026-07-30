@@ -1,0 +1,61 @@
+name: "CodeQL JPL Coding Standard - Known Auto-Code Issues"
+
+# Rules in this run are known to be violated by auto-generated code in the build
+# directories, so they run here with build paths excluded instead of in the
+# standard packs. As auto-code issues are found, move the offending rule from
+# its standard pack into this run; once the autocoder is fixed, move it back.
+
+disable-default-queries: true
+
+# Autocoded C++ in build caches is not hand-maintained, so alerts there are
+# not actionable in this repository. NOTE: for compiled languages this
+# paths-ignore does not filter results by itself; the actual exclusion is the
+# filter-sarif step in codeql-jpl-standard.yml. Kept here for documentation
+# and for file-coverage accounting.
+paths-ignore:
+  - "**/build-fprime-*/**"
+  # Vendored third-party code is not maintained to the JPL standard
+  - "Utils/Hash/libcrc/**"
+  - "fprime-venv/**"
+
+packs:
+  # Source of the query pack is https://github.com/github/codeql/tree/main/cpp/ql/src/JPL_C
+  - codeql/cpp-queries:JPL_C
+
+queries:
+  - uses: ./.github/codeql/fprime-queries
+
+query-filters:
+  # This run includes ONLY the rules listed here
+  - include:
+      id:
+        # The autocoder emits non-boolean FW_ASSERT expressions,
+        # see https://github.com/nasa/fpp/issues/1030
+        - cpp/fprime/jpl-c/use-of-assertions-non-boolean
+        # The autocoder ignores the Fw::FormatStatus returned by
+        # Fw::StringBase::format(). This F Prime refinement whitelists the
+        # assignment/increment operators, so only the genuine format() findings
+        # remain. See https://github.com/nasa/fpp/issues/1031
+        - cpp/fprime/jpl-c/checking-return-values
+        # The autocoder emits conditional-compilation directives (include
+        # guards, #ifdef) in generated headers, which trip the Rule 20
+        # "Conditional compilation" check. It runs here (build paths excluded)
+        # so it guards only hand-written sources. The F Prime refinement
+        # permits external-macro feature detection in the OS platform layers
+        # (Os/Posix, Os/Linux, Os/Darwin).
+        - cpp/fprime/jpl-c/preprocessor-use-ifdef
+        # The autocoder emits long generated functions, which trip the Rule 25
+        # "Function too long" check. It runs here (build paths excluded) so it
+        # guards only hand-written sources.
+        - cpp/jpl-c/function-size-limits
+        # The autocoder emits large amounts of assertion-free code, which trips
+        # the Rule 16 assertion-density check. The FW_ASSERT-aware refinement
+        # runs here (build paths excluded) so it guards only hand-written
+        # sources.
+        - cpp/fprime/jpl-c/use-of-assertions-density
+        # These recommendation-severity queries fire heavily on autocoded
+        # sources (e.g. generated Serializable classes, opcode literals), so
+        # they run here to guard only hand-written code
+        - cpp/fprime/magic-numbers
+        - cpp/fprime/public-data-member
+        - cpp/fprime/incomplete-code
