@@ -42,6 +42,10 @@ void SdlsSaRouterTester ::from_saDataOut_handler(FwIndexType portNum,
                                                  const ComCfg::FrameContext& context) {
     this->m_lastSaDataOutPort = portNum;
     this->pushFromPortEntry_saDataOut(securityAssociationIndex, data, context);
+    if (this->m_synchronousLoopback) {
+        // Mirror a passive crypto component: call back into the router on this thread
+        this->invoke_to_saDataIn(portNum, Svc::Ccsds::SdlsStatus::SUCCESS, data, context);
+    }
 }
 
 void SdlsSaRouterTester ::from_saDataReturnOut_handler(FwIndexType portNum,
@@ -49,6 +53,10 @@ void SdlsSaRouterTester ::from_saDataReturnOut_handler(FwIndexType portNum,
                                                        const ComCfg::FrameContext& context) {
     this->m_lastSaDataReturnOutPort = portNum;
     this->pushFromPortEntry_saDataReturnOut(data, context);
+    if (this->m_synchronousLoopback) {
+        // Mirror a passive crypto component: return the buffer on this thread
+        this->invoke_to_saBufferReturnIn(portNum, data, context);
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -193,6 +201,35 @@ void SdlsSaRouterTester ::testTableFullSaDataIn() {
     ASSERT_EQ(this->m_lastSaDataReturnOutPort, portNum);
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_TrackingTableFull_SIZE(1);
+}
+
+void SdlsSaRouterTester ::testSynchronousCryptoLoopback() {
+    this->m_synchronousLoopback = true;
+
+    // Route a mapped SA: the loopback re-enters saDataIn while dataIn holds the guard
+    const FwSizeType entry = this->pickConnectedEntry();
+    U8* const storage = this->getFreePoolBuffer();
+    ASSERT_NE(storage, nullptr);
+    Fw::Buffer buffer = this->makePoolBuffer(storage);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, this->m_mapSas[entry], buffer, context);
+
+    ASSERT_from_saDataOut_SIZE(1);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataOut(0, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
+
+    // Return the processed buffer: the loopback re-enters saBufferReturnIn while
+    // dataReturnIn holds the guard
+    this->clearHistory();
+    this->invoke_to_dataReturnIn(0, buffer, context);
+
+    ASSERT_from_saDataReturnOut_SIZE(1);
+    ASSERT_EQ(this->m_lastSaDataReturnOutPort, this->m_mapPorts[entry]);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer, context);
+
+    this->m_synchronousLoopback = false;
 }
 
 }  // namespace Ccsds

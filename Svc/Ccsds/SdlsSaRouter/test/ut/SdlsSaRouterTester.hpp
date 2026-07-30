@@ -108,6 +108,11 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
     //! Saturate the outstanding table via saDataIn using every pool buffer
     void fillOutstandingTable();
 
+    //! Route a mapped SA with the tester looping saDataOut back into saDataIn
+    //! synchronously, mirroring a passive crypto component (deadlocks if the
+    //! downstream inputs regress to guarded)
+    void testSynchronousCryptoLoopback();
+
   public:
     // ----------------------------------------------------------------------
     // Member variables
@@ -124,6 +129,9 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
 
     //! Port number of the last from_saDataReturnOut invocation
     FwIndexType m_lastSaDataReturnOutPort = -1;
+
+    //! When true, from_saDataOut_handler loops the data back into saDataIn synchronously
+    bool m_synchronousLoopback = false;
 
     //! Pool of buffers used as outstanding processed data
     U8 m_pool[SdlsCfg::SaRouterMaxOutstandingBuffers][TEST_BUFFER_SIZE] = {};

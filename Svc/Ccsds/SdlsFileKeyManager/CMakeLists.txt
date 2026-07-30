@@ -11,6 +11,7 @@
 ####
 
 register_fprime_library(
+  EXCLUDE_FROM_ALL
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/SdlsFileKeyManager.cpp"
   AUTOCODER_INPUTS

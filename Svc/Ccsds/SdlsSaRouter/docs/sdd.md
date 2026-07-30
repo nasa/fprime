@@ -26,7 +26,7 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 | output        | saDataReturnOut | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Returns ownership of processed data buffers to downstream crypto components. |
 | sync input    | saBufferReturnIn   | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives back iv/data buffers from downstream crypto components for deallocation. |
 
-The downstream-facing inputs (`saDataIn`, `saBufferReturnIn`) are `sync` rather than `guarded`: downstream crypto components call back synchronously on the caller's thread, which already holds the component guard.
+The downstream-facing inputs (`saDataIn`, `saBufferReturnIn`) are `sync` rather than `guarded`: downstream crypto components call back synchronously on the caller's thread, which already holds the component guard (guarding them would re-enter the mutex and deadlock). This is a topology constraint, not a convention: connected crypto components must be passive with synchronous handlers (see SVC-CCSDS-SDLS-SA-ROUTER-008).
 
 ## Events
 
@@ -58,6 +58,7 @@ All of the above are defined in the component-local configuration module `Svc/Cc
 | SVC-CCSDS-SDLS-SA-ROUTER-005 | Upon receiving an SA index with no map entry, the SdlsSaRouter shall pass an `UNKNOWN_SA` status forward on `dataOut` with the untouched buffer, without forwarding it downstream. | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-006 | Upon a map entry referencing an out-of-range or unconnected port index, the SdlsSaRouter shall pass an `UNKNOWN_PORT` status forward on `dataOut` with the untouched buffer, without forwarding it downstream. | Unit Test |
 | SVC-CCSDS-SDLS-SA-ROUTER-007 | The downstream port arrays shall share a single dimension set by a constant in the component configuration module; the SA-map array dimension shall be an independent config constant. | Inspection |
+| SVC-CCSDS-SDLS-SA-ROUTER-008 | Downstream crypto components connected to `saDataOut`/`saDataReturnOut` shall invoke `saDataIn`/`saBufferReturnIn` synchronously on the caller's thread (i.e. be passive with synchronous handlers). Asynchronous (queued or hardware-backed) crypto components must not be connected to these ports without adding external synchronization. | Unit Test / Inspection |
 
 ## See Also
 

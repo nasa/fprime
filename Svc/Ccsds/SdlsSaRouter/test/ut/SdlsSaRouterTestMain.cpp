@@ -88,6 +88,14 @@ TEST(SdlsSaRouter, TableFullSaDataIn) {
     tester.testTableFullSaDataIn();
 }
 
+// Verify the downstream inputs accept synchronous callbacks made while the component guard is held.
+TEST(SdlsSaRouter, SynchronousCryptoLoopback) {
+    COMMENT("Loop saDataOut/saDataReturnOut back into saDataIn/saBufferReturnIn on the calling thread.");
+    REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-008");
+    SdlsSaRouterTester tester;
+    tester.testSynchronousCryptoLoopback();
+}
+
 // Randomized test: apply rules in a random sequence for a large number of iterations
 TEST(SdlsSaRouter, RandomizedTesting) {
     COMMENT("Apply all rules in a randomized order to exercise interleaved routing and data flow.");

@@ -13,6 +13,7 @@
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/config/SdlsSaRouterConfig")
 
 register_fprime_library(
+  EXCLUDE_FROM_ALL
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/SdlsSaRouter.cpp"
   AUTOCODER_INPUTS
