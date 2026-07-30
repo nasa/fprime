@@ -61,18 +61,17 @@ void VersionTester ::test_startup() {
     this->component.config(true);
     ASSERT_TLM_FrameworkVersion_SIZE(0);
     this->component.start();
-    
+
     ASSERT_TLM_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_TLM_ProjectVersion(0, Project::Version::PROJECT_VERSION);
     ASSERT_EVENTS_FrameworkVersion_SIZE(1);
     ASSERT_EVENTS_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
-    ASSERT_EVENTS_ProjectVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_ProjectVersion(0, Project::Version::PROJECT_VERSION);
     // Library versions currently set to a null pointer
     // TODO: Need to figure out how to put in artificial sets to test them
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
     ASSERT_EVENTS_LibraryVersions(0, "blah0 @ blah0");
-    
 }
 
 // ----------------------------------------------------------------------
@@ -129,9 +128,9 @@ void VersionTester ::test_versions() {
     this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::PROJECT);
     ASSERT_CMD_RESPONSE(0, 1, 9, Fw::CmdResponse::OK);
     ASSERT_TLM_ProjectVersion_SIZE(1);
-    ASSERT_TLM_ProjectVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_TLM_ProjectVersion(0, Project::Version::PROJECT_VERSION);
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
-    ASSERT_EVENTS_ProjectVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_ProjectVersion(0, Project::Version::PROJECT_VERSION);
 
     this->clear_all();
     this->sendCmd_VERSION(0, cmd_seq, Svc::VersionType::LIBRARY);
@@ -224,7 +223,7 @@ void VersionTester ::test_versions() {
     ASSERT_EVENTS_FrameworkVersion_SIZE(1);
     ASSERT_EVENTS_FrameworkVersion(0, Project::Version::FRAMEWORK_VERSION);
     ASSERT_EVENTS_ProjectVersion_SIZE(1);
-    ASSERT_EVENTS_ProjectVersion(0, Project::Version::FRAMEWORK_VERSION);
+    ASSERT_EVENTS_ProjectVersion(0, Project::Version::PROJECT_VERSION);
     ASSERT_EVENTS_CustomVersions_SIZE(10);
     ASSERT_EVENTS_LibraryVersions_SIZE(12);
 }
