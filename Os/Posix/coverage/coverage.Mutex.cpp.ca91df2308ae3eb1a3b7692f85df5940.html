@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-07-30 20:51:24</td>
+      <td>2026-07-30 23:30:59</td>
     </tr>
   </table>
 </div>
@@ -70,11 +70,11 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l13">Os::Posix::Mutex::PosixMutex::PosixMutex() (line 13)</a></td><td>called 1351 times</td><td>67.0%</td></tr>
-    <tr><td><a href="#l46">Os::Posix::Mutex::PosixMutex::getHandle() (line 46)</a></td><td>called 9 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l41">Os::Posix::Mutex::PosixMutex::release() (line 41)</a></td><td>called 6686137 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l36">Os::Posix::Mutex::PosixMutex::take() (line 36)</a></td><td>called 6543912 times</td><td>88.0%</td></tr>
-    <tr><td><a href="#l31">Os::Posix::Mutex::PosixMutex::~PosixMutex() (line 31)</a></td><td>called 1351 times</td><td>87.0%</td></tr>
+    <tr><td><a href="#l13">Os::Posix::Mutex::PosixMutex::PosixMutex() (line 13)</a></td><td>called 1371 times</td><td>67.0%</td></tr>
+    <tr><td><a href="#l46">Os::Posix::Mutex::PosixMutex::getHandle() (line 46)</a></td><td>called 11 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l41">Os::Posix::Mutex::PosixMutex::release() (line 41)</a></td><td>called 3598332 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l36">Os::Posix::Mutex::PosixMutex::take() (line 36)</a></td><td>called 3604540 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l31">Os::Posix::Mutex::PosixMutex::~PosixMutex() (line 31)</a></td><td>called 1371 times</td><td>87.0%</td></tr>
   </table>
 </details>
 
@@ -176,7 +176,7 @@
       <td class="lineno"><a id="l13" href="#l13">13</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::</span><span class="n">PosixMutex</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">MutexInterface</span><span class="p">(),</span><span class="w"> </span><span class="n">m_handle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -190,7 +190,7 @@
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">pthread_mutexattr_t</span><span class="w"> </span><span class="n">attribute</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -200,18 +200,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1351 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1371 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1351</td>
+      <td class="linecount partialCoveredLine">1371</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutexattr_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attribute</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -235,18 +235,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1351 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1371 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1351</td>
+      <td class="linecount partialCoveredLine">1371</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutexattr_settype</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attribute</span><span class="p">,</span><span class="w"> </span><span class="n">PTHREAD_MUTEX_ERRORCHECK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -270,18 +270,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1351 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1371 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1351</td>
+      <td class="linecount partialCoveredLine">1371</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutexattr_setprotocol</span><span class="p">(</span><span class="o">&amp;</span><span class="n">attribute</span><span class="p">,</span><span class="w"> </span><span class="n">PTHREAD_PRIO_INHERIT</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l25" href="#l25">25</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -298,25 +298,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 1351 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1371 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1351</td>
+      <td class="linecount partialCoveredLine">1371</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">attribute</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1351</td>
+      <td class="linecount coveredLine">1371</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -330,7 +330,7 @@
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2702</td>
+      <td class="linecount coveredLine">2742</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::~</span><span class="n">PosixMutex</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -340,25 +340,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 1351 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 1371 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2702</td>
+      <td class="linecount partialCoveredLine">2742</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2702</td>
+      <td class="linecount coveredLine">2742</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2702</td>
+      <td class="linecount coveredLine">2742</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -372,7 +372,7 @@
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6543912</td>
+      <td class="linecount coveredLine">3604540</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixMutex</span><span class="o">::</span><span class="n">take</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -382,18 +382,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 7381374 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 4059581 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6543912</td>
+      <td class="linecount partialCoveredLine">3604540</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_lock</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7170017</td>
+      <td class="linecount coveredLine">3990209</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">posix_status_to_mutex_status</span><span class="p">(</span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -414,7 +414,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6686137</td>
+      <td class="linecount coveredLine">3598332</td>
       <td class="src coveredLine"><span class="n">PosixMutex</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixMutex</span><span class="o">::</span><span class="n">release</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -424,18 +424,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 7277179 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 3979389 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6686137</td>
+      <td class="linecount partialCoveredLine">3598332</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pthread_mutex_unlock</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_mutex_descriptor</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6744325</td>
+      <td class="linecount coveredLine">3677885</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">Posix</span><span class="o">::</span><span class="n">posix_status_to_mutex_status</span><span class="p">(</span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -456,14 +456,14 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="n">MutexHandle</span><span class="o">*</span><span class="w"> </span><span class="n">PosixMutex</span><span class="o">::</span><span class="n">getHandle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">9</td>
+      <td class="linecount coveredLine">11</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
