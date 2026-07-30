@@ -128,6 +128,26 @@ agents:
       on the proposal at nasa/fprime#5160. Does not contribute to
       CI safety.
 
+  - name: F Prime Correctness Reviewer
+    short_name: correctness-review
+    review_label: Correctness
+    role: reviewer
+    path: .github/agents/correctness-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Twelve general functional-correctness categories — boundary /
+      off-by-one, inverted or incomplete predicates, state-machine and
+      protocol-sequence defects, unhandled enum values, integer
+      arithmetic (wrap, truncation, signed/unsigned, divide-by-zero),
+      ignored status returns, resource / buffer / handle leaks,
+      initialization and lifetime defects, copy-paste substitution
+      errors, loop non-termination, concurrency defects outside the
+      port-kind rules, and violations of framework facility contracts.
+      Asks only "does this code do what it is evidently intended to
+      do, for every reachable input" — defensive defect-finding, not
+      exploitability analysis (that is security-review's scope). Does
+      not contribute to CI safety.
+
   - name: F Prime PR Review Summary Aggregator
     short_name: review-summary
     role: aggregator

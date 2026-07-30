@@ -41,11 +41,12 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    - `design-review` (`design-review.agent.md`)
    - `architecture-review` (`architecture-review.agent.md`)
    - `test-quality-review` (`test-quality-review.agent.md`)
+   - `correctness-review` (`correctness-review.agent.md`)
 
    Invoke them in the order listed above. Security and supply-chain
    come first because they are the two CI-safety contributors
    (`contributes_to_ci_safety: true` in the registry); the remaining
-   five are merge-readiness contributors only and run after.
+   reviewers are merge-readiness contributors only and run after.
 2. Compute the run ordinal for each reviewer by counting prior
    summary reviews on PR `#N` whose HTML marker matches that
    reviewer's name. The orchestrator's count is independent per
@@ -274,6 +275,35 @@ Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
 ```
 
+### Template — correctness reviewer
+
+```
+Thanks for taking this on. You're the F Prime Correctness Reviewer.
+Please run a full functional-correctness review of PR #<N> in
+<owner>/<repo> at head <sha>. This is run
+<correctness-review-run-ordinal> of your reviews on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from `correctness-review.agent.md`.
+Your question is only whether the code does what it is evidently
+intended to do for every reachable input — boundary and off-by-one
+errors, inverted predicates, state-machine and sequence defects,
+unhandled enum values, integer arithmetic defects, ignored status
+returns, resource leaks, initialization defects, copy-paste
+substitution errors, non-terminating loops, data races, and
+framework-contract violations. This is defensive defect-finding:
+expose correctness problems so they can be fixed; do not construct
+or describe exploits, and leave untrusted-input threat modeling to
+the security reviewer. Read every touched file in full and check the
+callers before filing; apply the confirmation discipline in your
+agent file. Post inline review comments per the contract. Your
+review body contains only the hidden metadata block (§2); no visible
+summary table.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
 ### Template — aggregator
 
 ```
@@ -291,6 +321,7 @@ Per-reviewer status from this run:
 - design-review: <completed | FAILED: <reason>>
 - architecture-review: <completed | FAILED: <reason>>
 - test-quality-review: <completed | FAILED: <reason>>
+- correctness-review: <completed | FAILED: <reason>>
 
 This is run <aggregator-run-ordinal> of your aggregations on this
 PR.
