@@ -51,6 +51,7 @@ void SdlsSaRouter ::dataIn_handler(FwIndexType portNum,
         this->m_outstanding.insert(data.getContext(), static_cast<FwIndexType>(ROUTER_ERROR_PORT));
     if (inserted != Fw::Success::SUCCESS) {
         // Tracking table full: drop the request and return the buffer upstream immediately
+        this->log_WARNING_HI_TrackingTableFull();
         this->bufferReturnOut_out(0, data, context);
         return;
     }
@@ -62,6 +63,7 @@ void SdlsSaRouter ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, 
     const Fw::Success found = this->m_outstanding.find(data.getContext(), outputPort);
     if (found != Fw::Success::SUCCESS) {
         // Untracked buffer (e.g. lost to a context-key collision): return it upstream
+        this->log_WARNING_HI_UntrackedBufferReturned();
         this->bufferReturnOut_out(0, data, context);
         return;
     }
@@ -87,6 +89,7 @@ void SdlsSaRouter ::saDataIn_handler(FwIndexType portNum,
     const Fw::Success inserted = this->m_outstanding.insert(data.getContext(), portNum);
     if (inserted != Fw::Success::SUCCESS) {
         // Tracking table full: drop the data and return ownership to the downstream component
+        this->log_WARNING_HI_TrackingTableFull();
         this->saDataReturnOut_out(portNum, data, context);
         return;
     }

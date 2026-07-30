@@ -22,9 +22,18 @@ The SA-to-port mapping is a compile-time FPP array of {`U16` SA, `FwIndexType` p
 | guarded input | dataReturnIn    | Svc.ComDataWithContext          | Receives back ownership of buffers sent on `dataOut`. |
 | output        | bufferReturnOut    | Svc.ComDataWithContext          | Returns incoming iv/data buffers for deallocation. |
 | output        | saDataOut       | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption | Sends the SA index and iv/data buffer to the mapped downstream crypto component. |
-| guarded input | saDataIn        | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData | Receives the operation status and processed data from downstream crypto components. |
+| sync input    | saDataIn        | [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData | Receives the operation status and processed data from downstream crypto components. |
 | output        | saDataReturnOut | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Returns ownership of processed data buffers to downstream crypto components. |
-| guarded input | saBufferReturnIn   | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives back iv/data buffers from downstream crypto components for deallocation. |
+| sync input    | saBufferReturnIn   | [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext | Receives back iv/data buffers from downstream crypto components for deallocation. |
+
+The downstream-facing inputs (`saDataIn`, `saBufferReturnIn`) are `sync` rather than `guarded`: downstream crypto components call back synchronously on the caller's thread, which already holds the component guard.
+
+## Events
+
+| Name | Severity | Description |
+|------|----------|-------------|
+| TrackingTableFull | WARNING_HI | The outstanding-buffer tracking table is full; the data was dropped and its buffer returned. |
+| UntrackedBufferReturned | WARNING_HI | A returned buffer was not found in the tracking table; it was returned upstream. |
 
 ## Configuration
 

@@ -64,6 +64,11 @@ void SdlsSaRouterTester ::connectPortsCustom() {
         this->connect_to_saDataIn(i, this->component.get_saDataIn_InputPort(i));
     }
 
+    // Connect special ports
+    this->component.set_logOut_OutputPort(0, this->get_from_logOut(0));
+    this->component.set_logTextOut_OutputPort(0, this->get_from_logTextOut(0));
+    this->component.set_timeCaller_OutputPort(0, this->get_from_timeCaller(0));
+
     // Connect typed output ports, leaving saDataOut[UNCONNECTED_PORT] unconnected
     this->component.set_bufferReturnOut_OutputPort(0, this->get_from_bufferReturnOut(0));
     this->component.set_dataOut_OutputPort(0, this->get_from_dataOut(0));
@@ -113,6 +118,81 @@ U8* SdlsSaRouterTester ::getFreePoolBuffer() {
         }
     }
     return nullptr;
+}
+
+// ----------------------------------------------------------------------
+// Directed test scenarios
+// ----------------------------------------------------------------------
+
+void SdlsSaRouterTester ::fillOutstandingTable() {
+    for (FwSizeType i = 0; i < SdlsCfg::SaRouterMaxOutstandingBuffers; i++) {
+        U8* const storage = this->getFreePoolBuffer();
+        ASSERT_NE(storage, nullptr);
+        Fw::Buffer buffer = this->makePoolBuffer(storage);
+        ComCfg::FrameContext context;
+        this->invoke_to_saDataIn(0, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
+        this->shadow.shadow_outstanding[storage] = 0;
+    }
+}
+
+void SdlsSaRouterTester ::testTableFullDataIn() {
+    this->fillOutstandingTable();
+    this->clearHistory();
+
+    // Pick an SA outside the configured map so routing fails and tracking is attempted
+    U16 unmappedSa = 100;
+    while (this->isMappedSa(unmappedSa)) {
+        unmappedSa++;
+    }
+    U8 storage[TEST_BUFFER_SIZE] = {};
+    Fw::Buffer buffer(storage, sizeof storage);
+    buffer.setContext(static_cast<U32>(SdlsCfg::SaRouterMaxOutstandingBuffers) + 1);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, unmappedSa, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer, context);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TrackingTableFull_SIZE(1);
+}
+
+void SdlsSaRouterTester ::testUntrackedDataReturn() {
+    this->clearHistory();
+
+    U8 storage[TEST_BUFFER_SIZE] = {};
+    Fw::Buffer buffer(storage, sizeof storage);
+    buffer.setContext(static_cast<U32>(SdlsCfg::SaRouterMaxOutstandingBuffers) + 1);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataReturnIn(0, buffer, context);
+
+    ASSERT_from_saDataReturnOut_SIZE(0);
+    ASSERT_from_bufferReturnOut_SIZE(1);
+    ASSERT_from_bufferReturnOut(0, buffer, context);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_UntrackedBufferReturned_SIZE(1);
+}
+
+void SdlsSaRouterTester ::testTableFullSaDataIn() {
+    this->fillOutstandingTable();
+    this->clearHistory();
+
+    const FwIndexType portNum = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, SdlsCfg::SaRouterPortCount - 1));
+    U8 storage[TEST_BUFFER_SIZE] = {};
+    Fw::Buffer buffer(storage, sizeof storage);
+    buffer.setContext(static_cast<U32>(SdlsCfg::SaRouterMaxOutstandingBuffers) + 1);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_saDataIn(portNum, Svc::Ccsds::SdlsStatus::SUCCESS, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(0);
+    ASSERT_from_saDataReturnOut_SIZE(1);
+    ASSERT_from_saDataReturnOut(0, buffer, context);
+    ASSERT_EQ(this->m_lastSaDataReturnOutPort, portNum);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_TrackingTableFull_SIZE(1);
 }
 
 }  // namespace Ccsds

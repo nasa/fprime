@@ -95,6 +95,8 @@ void CcsdsSdlsFramerTester::DataFlow__AllocationFailure__action() {
     ASSERT_from_bufferDeallocate_SIZE(invalid ? 0 : 1);
     ASSERT_from_encryptReturnOut_SIZE(1);
     ASSERT_from_encryptReturnOut(0, buffer, context);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
 }
 
 // ----------------------------------------------------------------------

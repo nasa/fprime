@@ -26,18 +26,36 @@ module Ccsds {
         # ----------------------------------------------------------------------
         # Downstream side: inlined arrays of client-side ports
         # (FPP interfaces are not array-able at this time)
+        # These inputs are sync (not guarded): downstream crypto components call
+        # back synchronously on the caller's thread, which already holds the
+        # component guard, so guarding them would re-enter the mutex.
         # ----------------------------------------------------------------------
         @ Ports for sending the SA index and iv/data buffer to the mapped downstream crypto component
         output port saDataOut: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsEncryption
 
         @ Ports for receiving the operation status and processed data (possibly newly allocated) from downstream crypto components
-        guarded input port saDataIn: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData
+        sync input port saDataIn: [SdlsCfg.SaRouterPortCount] Svc.Ccsds.CcsdsSdlsData
 
         @ Ports for returning ownership of processed data buffers to downstream crypto components
         output port saDataReturnOut: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
 
         @ Ports for receiving back iv/data buffers from downstream crypto components for deallocation
-        guarded input port saBufferReturnIn: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
+        sync input port saBufferReturnIn: [SdlsCfg.SaRouterPortCount] Svc.ComDataWithContext
+
+        ###############################################################################
+        # Standard AC Ports: Required for Events                                      #
+        ###############################################################################
+
+        import Fw.Event
+
+        @ Port for requesting the current time
+        time get port timeCaller
+
+        @ The outstanding-buffer tracking table is full; the data was dropped and its buffer returned
+        event TrackingTableFull() severity warning high format "SA router tracking table full: data dropped and buffer returned"
+
+        @ A returned buffer was not found in the tracking table; it was returned upstream
+        event UntrackedBufferReturned() severity warning high format "SA router received an untracked buffer return"
     }
 }
 }

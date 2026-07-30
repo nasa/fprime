@@ -93,6 +93,23 @@ class SdlsSaRouterTester : public SdlsSaRouterGTestBase {
 
   public:
     // ----------------------------------------------------------------------
+    // Directed test scenarios
+    // ----------------------------------------------------------------------
+
+    //! Fill the outstanding table, then verify a routing-error drop on dataIn
+    void testTableFullDataIn();
+
+    //! Verify an untracked buffer on dataReturnIn is returned upstream
+    void testUntrackedDataReturn();
+
+    //! Fill the outstanding table, then verify a drop on saDataIn returns downstream
+    void testTableFullSaDataIn();
+
+    //! Saturate the outstanding table via saDataIn using every pool buffer
+    void fillOutstandingTable();
+
+  public:
+    // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
 

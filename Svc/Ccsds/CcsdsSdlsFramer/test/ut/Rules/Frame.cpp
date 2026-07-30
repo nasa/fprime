@@ -109,6 +109,8 @@ void CcsdsSdlsFramerTester::Frame__EncryptFailure__action() {
     ASSERT_from_encryptReturnOut_SIZE(1);
     ASSERT_from_encryptReturnOut(0, buffer, context);
     ASSERT_from_dataReturnOut_SIZE(0);
+    ASSERT_from_comStatusOut_SIZE(1);
+    ASSERT_from_comStatusOut(0, Fw::Success(Fw::Success::SUCCESS));
 }
 
 }  // namespace Ccsds

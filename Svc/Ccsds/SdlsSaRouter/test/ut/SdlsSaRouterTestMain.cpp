@@ -64,6 +64,30 @@ TEST(SdlsSaRouter, BufferReturn) {
     rule.apply(tester);
 }
 
+// Verify a routing-error request is dropped and returned when the tracking table is full.
+TEST(SdlsSaRouter, TableFullDataIn) {
+    COMMENT("Drop a routing-error request and return its buffer when the tracking table is full.");
+    REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-005");
+    SdlsSaRouterTester tester;
+    tester.testTableFullDataIn();
+}
+
+// Verify an untracked buffer return is passed upstream rather than asserting.
+TEST(SdlsSaRouter, UntrackedDataReturn) {
+    COMMENT("Return an untracked buffer upstream on dataReturnIn.");
+    REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
+    SdlsSaRouterTester tester;
+    tester.testUntrackedDataReturn();
+}
+
+// Verify processed data is dropped and returned downstream when the tracking table is full.
+TEST(SdlsSaRouter, TableFullSaDataIn) {
+    COMMENT("Drop processed data and return it to the originating port when the tracking table is full.");
+    REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
+    SdlsSaRouterTester tester;
+    tester.testTableFullSaDataIn();
+}
+
 // Randomized test: apply rules in a random sequence for a large number of iterations
 TEST(SdlsSaRouter, RandomizedTesting) {
     COMMENT("Apply all rules in a randomized order to exercise interleaved routing and data flow.");
