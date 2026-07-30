@@ -51,13 +51,18 @@ TestFileSystem::Status TestFileSystem::_getFreeSpace(const char* path, FwSizeTyp
     return Status::OP_OK;
 }
 
-Os::FileSystemHandle *TestFileSystem::getHandle() {
+Os::FileSystemHandle* TestFileSystem::getHandle() {
     StaticData::data.lastCalled = StaticData::LastFn::GET_HANDLE_FN;
-    return nullptr;
+    return &this->m_handle;
 }
 
+TestFileSystem::Status TestFileSystem::_getPathType(const char* path, PathType& pathType) {
+    StaticData::data.lastCalled = StaticData::GET_PATH_TYPE_FN;
+    pathType = PathType::NOT_EXIST;
+    return StaticData::data.lastStatus;
+}
 
-}
-}
-}
-}
+}  // namespace Test
+}  // namespace FileSystem
+}  // namespace Stub
+}  // namespace Os

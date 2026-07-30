@@ -44,6 +44,7 @@ class FileSystemInterface {
     enum PathType {
         FILE,      //!< Path is a file
         DIRECTORY, //!< Path is a directory
+        OTHER,     //!< Path is not a file or directory, e.g. a socket
         NOT_EXIST, //!< Path does not exist
     };
 
@@ -95,6 +96,15 @@ class FileSystemInterface {
     //! \param freeBytes Reference to store the free bytes on the filesystem
     //! \return Status of the operation
     virtual Status _getFreeSpace(const char* path, FwSizeType& totalBytes, FwSizeType& freeBytes) = 0;
+
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    virtual Status _getPathType(const char* path, PathType& pathType) = 0;
 
     //! \brief Get the current working directory
     //! \param path Buffer to store the current working directory path
@@ -187,6 +197,15 @@ class FileSystem final : public FileSystemInterface {
     //! \param path The path of the new working directory
     //! \return Status of the operation
     Status _changeWorkingDirectory(const char* path) override;
+
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    Status _getPathType(const char* path, PathType& pathType) override;
 
 
     // ------------------------------------------------------------

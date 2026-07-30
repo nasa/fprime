@@ -100,8 +100,16 @@ class StubFileSystem : public FileSystemInterface {
     //!
     FileSystemHandle *getHandle() override;
 
+    //! \brief Get the type of the path (file, directory, etc.)
+    //!
+    //! It is invalid to pass `nullptr` as the path.
+    //!
+    //! \param path The path to check
+    //! \param pathType Reference to store the path type
+    //! \return Status of the operation
+    Status _getPathType(const char* path, PathType& pathType) override;
 
-private:
+  private:
     //! FileSystem handle for PosixFileSystem
     StubFileSystemHandle m_handle;
 };
