@@ -27,9 +27,9 @@ ApidOption getRandomApid() {
     // selected index, or we run out of numbers
     SerialType idx = 0;
     SerialType apid = 0;
-    // If bound is the type max then text candidate <= bound causes a type-limits warning
-    // So bound is checked within in the loop
-    for (SerialType candidateApid = 0; bound > 0; candidateApid++) {
+    // Break the loop checking into two operations so that g++ can't report a Wtype-limits warning
+    // when bound is the type max (since neither individual check is always true, but <= would be)
+    for (SerialType candidateApid = 0; candidateApid < bound || candidateApid == bound; candidateApid++) {
         if (ComCfg::Apid::isValid(candidateApid)) {
             // Found a valid APID: store it
             apid = candidateApid;
@@ -42,11 +42,6 @@ ApidOption getRandomApid() {
             // if we run off the end of the 11-bit range
             idx++;
         }
-        // If bound is the type max, its value must be checked before incrementing
-        if (candidateApid == bound) {
-            break;
-        }
-        FW_ASSERT(candidateApid < bound, bound, candidateApid);
     }
     // If the APID we found is not valid, then return NONE
     // This can happen if all of the configured APIDs are out of the 11-bit range
