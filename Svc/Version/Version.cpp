@@ -34,7 +34,7 @@ void Version::config(bool enable) {
 }
 
 void Version::start() {
-    // Semd startup TLM and EVENTS
+    // Send startup TLM and EVENTS
     this->fwVersion_tlm();
     this->projectVersion_tlm();
     this->libraryVersion_tlm();
