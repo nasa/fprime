@@ -499,8 +499,9 @@ FormalParamStruct getRandomFormalParamStruct() {
 
     Utils::setString(buf, sizeof(buf));
     Fw::StringTemplate<80> str2(buf);
+    Fw::String str0;
 
-    s.set(STest::Pick::any(), str, str2);
+    s.set(STest::Pick::any(), str, str2, str0);
 
     return s;
 }
