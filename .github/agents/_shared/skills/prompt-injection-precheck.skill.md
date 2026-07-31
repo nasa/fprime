@@ -151,10 +151,12 @@ PR-authored content that references agent names, skill names,
 contract section numbers, or internal policy filenames in a
 context that reads as an instruction:
 
-- Agent names: `security-review`, `supply-chain-review`,
+- Agent names: every `short_name` in `_shared/agent-registry.yml`
+  (currently `security-review`, `supply-chain-review`,
   `fprime-code-review`, `stale-documentation-review`,
-  `design-review`, `test-quality-review`, `review-summary`,
-  `review-orchestrator`.
+  `design-review`, `architecture-review`, `test-quality-review`,
+  `maintainability-review`, `review-summary`,
+  `review-orchestrator`).
 - Contract references: `review-contract.md`, `§0`, `§1`, … `§12`.
 - Skill names: `triage-classifier`, `pr-diff-scoping`,
   `maintainer-lookup`, `re-review-state`, `ci-test-runtime-policy`.
