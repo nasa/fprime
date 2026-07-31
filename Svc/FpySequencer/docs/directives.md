@@ -460,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division floored toward negative infinity (Python `//` semantics: `-7 // 2` is `-4`), pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and results in ARITHMETIC_OVERFLOW.
+Performs signed integer division floored toward negative infinity, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing `I64` min by -1 overflows the result type (the true quotient `2**63` is not representable) and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -486,7 +486,7 @@ Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will
 **Requirement:**  FPY-SEQ-002
 
 ## SMOD (38)
-Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 overflows the intermediate division and also yields a DOMAIN_ERROR.
+Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 yields 0, the mathematical remainder (matching wasm `i64.rem_s`).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -1138,15 +1138,15 @@ If this is called without the seed being manually set beforehand, then the seed 
 | U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
 
 ## POP_SERIALIZABLE (78)
-Pops serialized data from the stack and sends it to an external component via a serial output port.
+Pops `size` bytes of serialized data from the stack and sends them to an external component via the sequencer's `serialOut` output port array.
 
 **Preconditions:**
-- `port_index < MAX_SERIAL_PORTS` (from `FpySequencerCfg.SerialPortIndex` enum)
+- `port_index < MAX_SERIAL_PORTS` (from the `Svc.Fpy.SerialPortIndex` enum in `FpySequencerCfg`)
 - `serialOut[port_index]` is connected to a target component
 - `len(stack) >= size`
 
 **Semantics:**
-1. Validate port index is within bounds.
+1. Validate the port index is within bounds.
 2. Check that the specified port is connected.
 3. Pop `size` bytes from the stack.
 4. Send the popped bytes to the target component via `serialOut[port_index]`.

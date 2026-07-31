@@ -1449,11 +1449,13 @@ TEST_F(FpySequencerTester, smod_domain_error) {
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
 }
-TEST_F(FpySequencerTester, smod_overflow_domain_error) {
-    // INT64_MIN % -1 is UB (SIGFPE on x86) even though the mathematical result is 0
+TEST_F(FpySequencerTester, smod_int_min_by_minus_one_is_zero) {
+    // I64 min % -1 is 0, the mathematical remainder (matching wasm i64.rem_s);
+    // the C++ expression is UB (SIGFPE on x86) and must be special-cased
     tester_push<I64>(std::numeric_limits<I64>::min());
     tester_push<I64>(-1);
-    ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
+    ASSERT_EQ(tester_op_smod(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 0);
 }
 TEST_F(FpySequencerTester, flog_domain_error) {
     // log(0) is undefined

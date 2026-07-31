@@ -857,9 +857,11 @@ DirectiveError FpySequencer::op_smod() {
         return DirectiveError::DOMAIN_ERROR;
     }
     I64 lhs = this->m_runtime.stack.pop<I64>();
-    // Prevent signed overflow: INT64_MIN % -1 is undefined behavior (SIGFPE on x86)
+    // I64 min % -1 is 0, the mathematical remainder (matching wasm i64.rem_s),
+    // but the C++ expression is UB (SIGFPE on x86) so it must be special-cased
     if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
-        return DirectiveError::DOMAIN_ERROR;
+        this->m_runtime.stack.push(static_cast<I64>(0));
+        return DirectiveError::NO_ERROR;
     }
     I64 res = static_cast<I64>(lhs % rhs);
     // in order to match Python's behavior,
