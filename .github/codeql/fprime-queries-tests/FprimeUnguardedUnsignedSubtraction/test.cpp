@@ -1,0 +1,109 @@
+namespace Fw {
+void SwAssert(int line);
+}
+#define FW_ASSERT(cond) ((cond) ? static_cast<void>(0) : Fw::SwAssert(__LINE__))
+
+typedef unsigned long FwSizeType;
+typedef unsigned char U8;
+
+// Minimal stand-ins for the F Prime buffer/container shapes.
+class Buffer {
+  public:
+    FwSizeType getSize() const;
+    U8* getData() const;
+};
+
+class Container {
+  public:
+    static const FwSizeType MIN_PACKET_SIZE = 40;
+    static const FwSizeType DATA_OFFSET = 24;
+    FwSizeType getDataSize() const;
+};
+
+void consume(U8* data, FwSizeType size);
+
+// Violation of cpp/fprime/unguarded-unsigned-subtraction (CWE-191):
+// the buffer size comes from the caller and is never checked against
+// MIN_PACKET_SIZE, so a short buffer underflows to near SIZE_MAX.
+// This is the shape fixed in nasa/fprime#5518.
+void unguarded(const Buffer& buf) {
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Violation: the only check is inside an FW_ASSERT. Assertions may be
+// compiled out at lower FW_ASSERT_LEVEL settings, so this does not
+// protect the subtraction in a release build.
+void guardedOnlyByAssert(const Buffer& buf) {
+    FW_ASSERT(buf.getSize() >= Container::MIN_PACKET_SIZE);
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Compliant: an explicit run-time check that survives with assertions
+// disabled.
+void guardedByEarlyReturn(const Buffer& buf) {
+    if (buf.getSize() < Container::MIN_PACKET_SIZE) {
+        return;
+    }
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Compliant: the same check written the other way round.
+void guardedByIf(const Buffer& buf) {
+    if (buf.getSize() >= Container::MIN_PACKET_SIZE) {
+        consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+    }
+}
+
+// Compliant: an FW_ASSERT is present, but a real run-time check is too.
+// Belt-and-braces code should not be reported.
+void assertAndRuntimeCheck(const Buffer& buf) {
+    FW_ASSERT(buf.getSize() >= Container::MIN_PACKET_SIZE);
+    if (buf.getSize() < Container::MIN_PACKET_SIZE) {
+        return;
+    }
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Compliant: `> 0` is the idiomatic guard for a `- 1` subtraction. The
+// guard constant (0) is one less than the subtrahend (1), which is
+// exactly strong enough. An earlier version of this query compared the
+// two constants for equality and reported this, which was a false
+// positive -- this case pins the fix.
+void guardedByGreaterThanZero(const Buffer& buf) {
+    if (buf.getSize() > 0) {
+        consume(buf.getData(), buf.getSize() - 1);
+    }
+}
+
+// Compliant: a guard stronger than required is still a guard.
+void guardedByStrongerBound(const Buffer& buf) {
+    if (buf.getSize() < Container::MIN_PACKET_SIZE + 8) {
+        return;
+    }
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Violation: a guard that is too weak to cover the subtraction. Checking
+// against 2 says nothing about whether the size reaches MIN_PACKET_SIZE.
+void guardedTooWeakly(const Buffer& buf) {
+    if (buf.getSize() > 2) {
+        consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+    }
+}
+
+// Compliant: subtracting a variable rather than a compile-time constant
+// is out of scope -- too common and too often intentional.
+void variableSubtrahend(const Buffer& buf, FwSizeType n) {
+    consume(buf.getData(), buf.getSize() - n);
+}
+
+// Compliant: not a size accessor, so the query says nothing about intent.
+FwSizeType plainArithmetic(FwSizeType value) {
+    return value - Container::MIN_PACKET_SIZE;
+}
+
+// Violation: the accessor is a different one from the guarded family,
+// and it is unchecked here.
+void unguardedDataSize(const Container& c) {
+    consume(nullptr, c.getDataSize() - Container::DATA_OFFSET);
+}

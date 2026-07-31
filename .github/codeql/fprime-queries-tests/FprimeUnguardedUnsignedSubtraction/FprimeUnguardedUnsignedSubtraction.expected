@@ -1,0 +1,4 @@
+| test.cpp:30:28:30:69 | ... - ... | Unsigned subtraction from getSize() with no run-time check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small. |
+| test.cpp:38:28:38:69 | ... - ... | Unsigned subtraction from getSize() with no run-time check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small. |
+| test.cpp:90:32:90:73 | ... - ... | Unsigned subtraction from getSize() with no run-time check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small. |
+| test.cpp:108:22:108:61 | ... - ... | Unsigned subtraction from getDataSize() with no run-time check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small. |
