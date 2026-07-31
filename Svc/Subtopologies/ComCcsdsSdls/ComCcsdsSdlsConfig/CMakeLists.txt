@@ -6,4 +6,8 @@ register_fprime_config(
         Fw_Types
         Svc_Ccsds_ClearTextDecryptor
         Svc_Ccsds_ClearTextEncryptor
+        Svc_Ccsds_CcsdsSdlsDeframer
+        Svc_Ccsds_CcsdsSdlsFramer
+        Svc_Ccsds_SdlsSaRouter
+        Svc_Ccsds_SdlsFileKeyManager
 )
