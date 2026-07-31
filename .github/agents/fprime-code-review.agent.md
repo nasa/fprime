@@ -193,7 +193,7 @@ per the review contract §9.
   flags only the codified rules (e.g., CPP-30 magic numbers,
   CPP-33 inlined utilities, CPP-26 style guide).
 
-The eight reviewer agents are designed to partition the review
+The nine reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 

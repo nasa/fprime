@@ -275,6 +275,12 @@ have written it differently" is not a finding.
   `test-quality-review.agent.md`.
 - Design fit and architecture — handled by
   `design-review.agent.md` and `architecture-review.agent.md`.
+- Confirmed functional defects (off-by-one, inverted predicates,
+  leaks, ignored status returns) — handled by
+  `correctness-review.agent.md`. This agent flags code whose
+  *shape* invites a future bug (category 11); the correctness
+  reviewer flags code that is wrong today. The same construct may
+  legitimately draw both.
 - Autocoded / generated files.
 - Formatting that `clang-format` governs (whitespace, brace
   placement, line wrapping) — enforced mechanically by CI, not by

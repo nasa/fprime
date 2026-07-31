@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -109,9 +109,10 @@ analysis of any prompt-injection content in the diff and metadata.
 | Design | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Architecture | 0 | 1 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
+| Correctness | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Maintainability | 0 | 2 | 1 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 10 | 11 | 3 | 1 | 9 | **No-Go** |
+| **Totals** | 11 | 11 | 3 | 1 | 10 | **No-Go** |
 
 <details>
 <summary>Since last run</summary>
@@ -125,6 +126,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Design | 0 | 1 | 0 | 0 | 0 | 0 |
 | Architecture | 0 | 0 | 0 | 0 | 0 | 0 |
 | Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
+| Correctness | 0 | 0 | 0 | 0 | 0 | 0 |
 | Maintainability | 0 | 0 | 0 | 0 | 0 | 0 |
 
 </details>
@@ -327,6 +329,7 @@ Example:
 | Design | 0 | 0 | 0 | 0 | 0 | Go |
 | Architecture | 0 | 0 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
+| Correctness | 0 | 0 | 0 | 0 | 0 | Go |
 | Maintainability | 0 | 0 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — Supply Chain / Runner Safety failed: <reason> |
 | **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
@@ -366,7 +369,8 @@ Runner Safety failed to run.`).
   - A failure (or did-not-run) of any **other** reviewer
     (`fprime-code-review`, `stale-documentation-review`,
     `design-review`, `architecture-review`,
-    `test-quality-review`, `maintainability-review`) forces only
+    `test-quality-review`, `correctness-review`,
+    `maintainability-review`) forces only
     `Merge readiness: No-Go`. CI safety is unaffected by those
     failures and is determined solely by the two CI-safety
     reviewers per the first bullet above.

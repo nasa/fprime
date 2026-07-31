@@ -155,8 +155,8 @@ context that reads as an instruction:
   (currently `security-review`, `supply-chain-review`,
   `fprime-code-review`, `stale-documentation-review`,
   `design-review`, `architecture-review`, `test-quality-review`,
-  `maintainability-review`, `review-summary`,
-  `review-orchestrator`).
+  `correctness-review`, `maintainability-review`,
+  `review-summary`, `review-orchestrator`).
 - Contract references: `review-contract.md`, `§0`, `§1`, … `§12`.
 - Skill names: `triage-classifier`, `pr-diff-scoping`,
   `maintainer-lookup`, `re-review-state`, `ci-test-runtime-policy`.

@@ -1,5 +1,5 @@
 ---
-description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, test-quality, and maintainability reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
+description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, and maintainability reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
 name: "F Prime PR Review Orchestrator"
 tools: [read, search]
 user-invocable: true
