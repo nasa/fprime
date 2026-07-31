@@ -47,11 +47,11 @@ bool TcpClientSocket::isValidPort(U16 port) const {
 }
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    int socketFd = -1;
     struct sockaddr_in address;
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
@@ -64,25 +64,27 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
 #endif
 
     // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
-    if (IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr)) != SOCK_SUCCESS) {
-        ::close(socketFd);
+
+    const SocketIpStatus addressStatus = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (addressStatus != SOCK_SUCCESS) {
+        (void)::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
 
     if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // TCP requires connect to the socket to allow for communication
     if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }
     socketDescriptor.fd = socketFd;

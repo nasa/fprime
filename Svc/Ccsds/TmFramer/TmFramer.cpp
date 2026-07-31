@@ -81,7 +81,8 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     // Set the Frame Error Control Field (FECF)
     trailer.set_fecf(crc);
     // Move the serializer pointer to the end of the location where the trailer will be serialized
-    frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
+    status = frameSerializer.moveSerToOffset(ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     status = frameSerializer.serializeFrom(trailer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -122,9 +123,11 @@ void TmFramer ::fill_with_idle_packet(Fw::SerialBufferBase& serializer) {
         0x3 << SpacePacketSubfields::SeqFlagsOffset);  // Sequence Flags = 0b11 (unsegmented) & unused Seq count
     header.set_packetDataLength(lengthToken);
     // Serialize header and idle data into the frame
-    serializer.serializeFrom(header);
+    Fw::SerializeStatus status = serializer.serializeFrom(header);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     for (U16 i = static_cast<U16>(startIndex + SpacePacketHeader::SERIALIZED_SIZE); i < endIndex; i++) {
-        serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
+        status = serializer.serializeFrom(IDLE_DATA_PATTERN);  // Idle data
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
     }
 }
 }  // namespace Ccsds

@@ -56,7 +56,7 @@ SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType po
 
     spi_ioc_transfer tr;
     // Zero for unused fields:
-    memset(&tr, 0, sizeof(tr));
+    (void)memset(&tr, 0, sizeof(tr));
     tr.tx_buf = reinterpret_cast<__u64>(writeBuffer.getData());
     tr.rx_buf = reinterpret_cast<__u64>(readBuffer.getData());
     FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), __u32);
@@ -127,7 +127,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
             break;
         default:
             // Assert if the device SPI Mode is not in the correct range
-            FW_ASSERT(0, spiMode);
+            FW_ASSERT(false, spiMode);
             break;
     }
 

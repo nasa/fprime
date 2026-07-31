@@ -11,6 +11,11 @@ TEST(Nominal, testReadErr) {
     tester.testReadErr();
 }
 
+TEST(Nominal, testReadErrStatusReported) {
+    Svc::FileWorkerTester tester;
+    tester.testReadErrStatusReported();
+}
+
 TEST(Nominal, testVerifyErr) {
     Svc::FileWorkerTester tester;
     tester.testVerifyErr();
@@ -19,6 +24,11 @@ TEST(Nominal, testVerifyErr) {
 TEST(Nominal, testWriteErr) {
     Svc::FileWorkerTester tester;
     tester.testWriteErr();
+}
+
+TEST(Nominal, testWriteErrStatusReported) {
+    Svc::FileWorkerTester tester;
+    tester.testWriteErrStatusReported();
 }
 
 TEST(Nominal, testWriteHashErr) {

@@ -13,6 +13,8 @@ StatementArgBuffer::StatementArgBuffer() {}
 
 StatementArgBuffer::~StatementArgBuffer() {}
 
+// m_bufferData contents are copied via setBuff below
+// cppcheck-suppress missingMemberCopy
 StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other) : Fw::LinearBufferBase() {
     SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
@@ -52,10 +54,11 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
     const U8* us = this->getBuffAddr();
     const U8* them = other.getBuffAddr();
 
-    FW_ASSERT(us);
-    FW_ASSERT(them);
+    FW_ASSERT(us != nullptr);
+    FW_ASSERT(them != nullptr);
 
-    for (Serializable::SizeType byte = 0; byte < this->getSize(); byte++) {
+    const Serializable::SizeType size = this->getSize();
+    for (Serializable::SizeType byte = 0; byte < size; byte++) {
         if (us[byte] != them[byte]) {
             return false;
         }
@@ -67,7 +70,7 @@ bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
 #if FW_SERIALIZABLE_TO_STRING
 void StatementArgBuffer::toString(Fw::StringBase& text) const {
     static const char* formatString = "(data = %p, size = %" PRI_FwSizeType ")";
-    text.format(formatString, &this->m_bufferData, this->getSize());
+    (void)text.format(formatString, &this->m_bufferData, this->getSize());  // display string may safely truncate
 }
 #endif
 }  // namespace Fw

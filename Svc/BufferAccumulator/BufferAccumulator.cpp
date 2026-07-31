@@ -12,8 +12,6 @@
 
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 
-#include <sys/time.h>
-
 #include <limits>
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -181,7 +179,7 @@ void BufferAccumulator ::BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode,
     // We are still waiting for a buffer from last time
     if (!this->m_waitForBuffer) {
         this->m_send = true;
-        this->sendStoredBuffer();  // kick off the draining;
+        this->sendStoredBuffer();  // kick off the draining
     }
 }
 

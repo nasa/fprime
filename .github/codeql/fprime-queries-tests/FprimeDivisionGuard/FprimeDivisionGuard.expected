@@ -1,0 +1,1 @@
+| test.cpp:8:12:8:24 | ... / ... | The divisor count is not checked against zero before this / operation. |

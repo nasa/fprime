@@ -48,7 +48,6 @@ TlmPacketizer ::~TlmPacketizer() {}
 void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
                                   const Svc::TlmPacketizerPacket& ignoreList,
                                   const FwChanIdType startLevel) {
-    FW_ASSERT(packetList.list);
     // Ignore list may be nullptr as long as numEntries is 0. Providing an ignore list with numEntries 0 disables
     // functionality for two reasons:
     //     1. There are no ignored channels as configured by FPP.
@@ -68,26 +67,35 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         // Initial size is packetized telemetry descriptor + size of time tag + sizeof packet ID
         FwSizeType packetLen =
             sizeof(FwPacketDescriptorType) + Fw::Time::SERIALIZED_SIZE + sizeof(FwTlmPacketizeIdType);
-        FW_ASSERT(packetList.list[pktEntry]->list, static_cast<FwAssertArgType>(pktEntry));
+        FW_ASSERT(packetList.list[pktEntry]->list != nullptr, static_cast<FwAssertArgType>(pktEntry));
         // add up entries for each defined packet
         for (FwChanIdType tlmEntry = 0; tlmEntry < packetList.list[pktEntry]->numEntries; tlmEntry++) {
             FwChanIdType id = packetList.list[pktEntry]->list[tlmEntry].id;
+            const FwSizeType channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
             FwSizeType entryIndex = 0;
             if (this->m_channelIndices.find(id, entryIndex) != Fw::Success::SUCCESS) {
                 // New channel - allocate a slot and initialize offsets to -1 (not in any packet)
                 entryIndex = this->m_numChannels++;
                 this->m_channels[entryIndex].id = id;
                 this->m_channels[entryIndex].hasValue = false;
+                this->m_channels[entryIndex].channelSize = channelSize;
                 for (FwChanIdType pktOffsetEntry = 0; pktOffsetEntry < MAX_PACKETIZER_PACKETS; pktOffsetEntry++) {
                     this->m_channels[entryIndex].packetOffset[pktOffsetEntry] = -1;
                 }
                 const Fw::Success insertStatus = this->m_channelIndices.insert(id, entryIndex);
                 FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(insertStatus));
+            } else {
+                // Existing channel - a channel ID may repeat across packets, but its definition (size) must match.
+                // A conflicting size would corrupt the packet offsets computed from the earlier definition and
+                // overflow the fill buffer during TlmRecv/TlmGet copies, so reject the misconfiguration here.
+                FW_ASSERT(this->m_channels[entryIndex].channelSize == channelSize, static_cast<FwAssertArgType>(id),
+                          static_cast<FwAssertArgType>(channelSize),
+                          static_cast<FwAssertArgType>(this->m_channels[entryIndex].channelSize));
             }
             // not ignored channel - update entry in place via reference
             TlmEntry& entry = this->m_channels[entryIndex];
             entry.ignored = false;
-            entry.channelSize = packetList.list[pktEntry]->list[tlmEntry].size;
+            entry.channelSize = channelSize;
             // the offset into the buffer will be the current packet length
             // the offset must fit within FwSignedSizeType to allow for negative values
             FW_ASSERT(packetLen <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()),
@@ -100,7 +108,7 @@ void TlmPacketizer::setPacketList(const TlmPacketizerPacketList& packetList,
         FW_ASSERT(packetLen <= FW_COM_BUFFER_MAX_SIZE, static_cast<FwAssertArgType>(packetLen),
                   static_cast<FwAssertArgType>(pktEntry));
         // clear contents
-        memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
+        (void)memset(this->m_fillBuffers[pktEntry].buffer.getBuffAddr(), 0, static_cast<size_t>(packetLen));
         // serialize packet descriptor and packet ID now since it will always be the same
         Fw::SerializeStatus stat = this->m_fillBuffers[pktEntry].buffer.serializeFrom(
             static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM));
@@ -258,7 +266,8 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
             (void)memcpy(val.getBuffAddr(), ptr, static_cast<size_t>(entry.channelSize));
             // set buf len to the channelSize. keep in mind, this is the MAX serialized size of the channel.
             // so we may actually be filling val with some junk after the value of the channel.
-            FW_ASSERT(val.setBuffLen(entry.channelSize) == Fw::SerializeStatus::FW_SERIALIZE_OK);
+            const Fw::SerializeStatus setStatus = val.setBuffLen(entry.channelSize);
+            FW_ASSERT(setStatus == Fw::SerializeStatus::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
             this->m_lock.unLock();
             return Fw::TlmValid::VALID;
         }
@@ -266,7 +275,7 @@ Fw::TlmValid TlmPacketizer ::TlmGet_handler(FwIndexType portNum,  //!< The port 
 
     // did not find a packet which stores this channel.
     // coding error, this was not an ignored channel so it must be in a packet somewhere
-    FW_ASSERT(0, static_cast<FwAssertArgType>(entry.id));
+    FW_ASSERT(false, static_cast<FwAssertArgType>(entry.id));
     // TPP (tim paranoia principle)
     val.resetSer();
     return Fw::TlmValid::INVALID;
@@ -577,7 +586,7 @@ Fw::SerializeStatus TlmPacketizer::deserializeParam(const FwPrmIdType base_id,
             case PARAMID_SECTION_CONFIGS:
                 return buff.deserializeTo(this->m_groupConfigs);
             default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
         }
     }
     return Fw::SerializeStatus::FW_DESERIALIZE_TYPE_MISMATCH;
@@ -592,7 +601,7 @@ Fw::SerializeStatus TlmPacketizer::serializeParam(const FwPrmIdType base_id,
         case PARAMID_SECTION_CONFIGS:
             return buff.serializeFrom(this->m_groupConfigs);
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(local_id));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(local_id));
     }
     return Fw::SerializeStatus::FW_SERIALIZE_FORMAT_ERROR;
 }

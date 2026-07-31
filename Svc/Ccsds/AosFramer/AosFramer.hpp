@@ -160,7 +160,7 @@ class AosFramer final : public AosFramerComponentBase {
     void compute_and_inject_fecf(AosVc& currentVc);
 
     //! Determine if the Fw::Buffer is within the backing character buffer
-    static bool buffer_belongs(Fw::Buffer& buffer, U8 const* start, FwSizeType size);
+    static bool buffer_belongs(const Fw::Buffer& buffer, U8 const* start, FwSizeType size);
 
     //! TODO: Implement multiple VCs
     //! Map frame context onto index into array of Virtual Channel structs

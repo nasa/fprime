@@ -121,7 +121,8 @@ void RateLimiter ::updateCounter(bool triggered) {
 
     } else {
         // otherwise, just increment and maybe wrap
-        if (++this->m_counter >= this->m_counterCycle) {
+        this->m_counter++;
+        if (this->m_counter >= this->m_counterCycle) {
             this->m_counter = 0;
         }
     }

@@ -1,0 +1,28 @@
+# Scheduled soak test for the Zephyr Reference deployment on Raspberry Pi Pico 2.
+#
+# Analyzes captured ComLogger telemetry for FATALs and degradation trends, then runs the integration tests.
+
+name: "Soak Test: Pico 2 Zephyr Reference"
+
+on:
+  schedule:
+    # Staggered against the AArch64 Linux LedBlinker soak 
+    - cron: "15,45 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Shared with the soak-setup workflow so a test queues behind any setup.
+concurrency:
+  group: soak-zephyr-reference
+  cancel-in-progress: false
+
+jobs:
+  soak-test:
+    name: "Soak Test"
+    runs-on: [self-hosted, ARM64, soak-test]
+    steps:
+      - uses: nasa/fprime-actions/soak-test@devel
+        with:
+          deployment-name: zephyr-reference

@@ -34,6 +34,16 @@ TEST(RunArgs, testRunArgsBlockingVsNonBlocking) {
     tester.testRunArgsBlockingVsNonBlocking();
 }
 
+TEST(CancelName, testCancelName) {
+    Svc::SeqDispatcherTester tester;
+    tester.testCancelName();
+}
+
+TEST(CancelName, testCancelNameNotFound) {
+    Svc::SeqDispatcherTester tester;
+    tester.testCancelNameNotFound();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

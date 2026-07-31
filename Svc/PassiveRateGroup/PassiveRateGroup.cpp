@@ -24,24 +24,32 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
-void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
-    FW_ASSERT(contexts);
-    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
-    FW_ASSERT(FW_NUM_ARRAY_ELEMENTS(this->m_contexts) == this->getNum_RateGroupMemberOut_OutputPorts(),
-              static_cast<FwAssertArgType>(FW_NUM_ARRAY_ELEMENTS(this->m_contexts)),
-              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+void PassiveRateGroup::configure(const ContextArray& contexts) {
+    static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
+                  "Context table size must match the number of rate group member output ports");
 
-    this->m_numContexts = numContexts;
+    this->m_numContexts = CONNECTION_COUNT_MAX;
     // copy context values
     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
-        this->m_contexts[entry] = static_cast<U32>(contexts[entry]);
+        this->m_contexts[entry] = contexts[static_cast<FwSizeType>(entry)];
     }
+}
+
+void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
+    FW_ASSERT(contexts != nullptr);
+    FW_ASSERT(numContexts == this->getNum_RateGroupMemberOut_OutputPorts(), static_cast<FwAssertArgType>(numContexts),
+              static_cast<FwAssertArgType>(this->getNum_RateGroupMemberOut_OutputPorts()));
+
+    ContextArray contextArray;
+    for (FwIndexType entry = 0; entry < numContexts; entry++) {
+        contextArray[static_cast<FwSizeType>(entry)] = static_cast<U32>(contexts[entry]);
+    }
+    this->configure(contextArray);
 }
 
 void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
     Os::RawTime endTime;
-    FW_ASSERT(this->m_numContexts);
+    FW_ASSERT(this->m_numContexts != 0);
 
     PassiveRateGroup_CycleTime portTimes;
 
@@ -57,7 +65,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
             this->RateGroupMemberOut_out(port, this->m_contexts[port]);
 
             if (Svc::PassiveRateGroupCfg::PortCycleTime) {
-                portEnd.now();
+                (void)portEnd.now();
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
                 portTimes[static_cast<FwSizeType>(port)] = cycleTime;
@@ -66,7 +74,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     }
 
     // grab timer for endTime of cycle
-    endTime.now();
+    (void)endTime.now();
 
     // get rate group execution time
     U32 cycleTime;

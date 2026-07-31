@@ -376,7 +376,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     this->sequencer_sendSignal_stmtResponse_success();
 
     // push the cmd response to the stack so we can branch off of it
-    this->m_runtime.stack.push(static_cast<I32>(response.e));
+    // the constCmd/stackCmd directive handlers guarantee there is room for this push
+    this->m_runtime.stack.push(static_cast<Fw::CmdResponse::SerialType>(response.e));
 }
 
 void FpySequencer ::seqCancelIn_handler(FwIndexType portNum) {
@@ -444,6 +445,8 @@ void FpySequencer::updateDebugTelemetryStruct() {
             return;
         }
 
+        FW_ASSERT(this->m_runtime.nextStatementIndex < Fpy::MAX_SEQUENCE_STATEMENT_COUNT,
+                  static_cast<FwAssertArgType>(this->m_runtime.nextStatementIndex));
         const Fpy::Statement& nextStmt = this->m_sequenceObj.get_statements()[this->m_runtime.nextStatementIndex];
         DirectiveUnion directiveUnion;
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
@@ -503,7 +506,7 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
             break;
         }
         default: {
-            FW_ASSERT(0, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
+            FW_ASSERT(false, static_cast<FwAssertArgType>(id));  // coding error, forgot to include in switch statement
         }
     }
 
