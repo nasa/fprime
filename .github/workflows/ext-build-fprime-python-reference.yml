@@ -1,0 +1,72 @@
+# Builds and runs integration tests on https://github.com/fprime-community/fprime-python-reference
+
+name: "External Repo: fprime-python-reference"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+# Cancel in-progress runs if a newer run is started on a given PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
+
+jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-python-reference
+      default_target_ref: main
+
+  build-and-test:
+    name: "Build and Integration Tests"
+    # ubuntu-24.04 provides Python 3.12, required by fprime-python-reference
+    runs-on: ubuntu-24.04
+    needs: get-branch
+    steps:
+      - name: "Set up target repository"
+        uses: nasa/fprime-actions/external-repository-setup@devel
+        with:
+          target_repository: fprime-community/fprime-python-reference
+          fprime_location: ./lib/fprime
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Build"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          jobs: "8"
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "."
+          test-working-directory: "."
+          binary: "python3"
+          binary-args: "build-artifacts/python/fsw_main.py"
+          gds-args: "--ip-client --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json"
+          pytest-args: "test/int --dictionary build-artifacts/*/*/dict/ReferenceDeploymentTopologyDictionary.json --logs gds-logs"
+      # Tar the logs first: GDS log filenames contain colons, which upload-artifact rejects
+      - name: "Bundle logs"
+        if: always()
+        run: |
+          if [ -d gds-logs ]; then
+            tar -czf gds-logs.tar.gz gds-logs
+          fi
+        shell: bash
+      - name: "Archive logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: fprime-python-reference-logs
+          path: gds-logs.tar.gz
+          retention-days: 5

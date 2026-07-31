@@ -53,3 +53,9 @@ query-filters:
         # runs here (build paths excluded) so it guards only hand-written
         # sources.
         - cpp/fprime/jpl-c/use-of-assertions-density
+        # These recommendation-severity queries fire heavily on autocoded
+        # sources (e.g. generated Serializable classes, opcode literals), so
+        # they run here to guard only hand-written code
+        - cpp/fprime/magic-numbers
+        - cpp/fprime/public-data-member
+        - cpp/fprime/incomplete-code

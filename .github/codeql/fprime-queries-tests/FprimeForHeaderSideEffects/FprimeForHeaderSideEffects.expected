@@ -1,0 +1,2 @@
+| test.cpp:7:33:7:42 | ... += ... | This for-statement header expression modifies the non-loop-control variable total. |
+| test.cpp:11:28:11:33 | call to doWork | This for-statement header expression calls the function doWork. |
