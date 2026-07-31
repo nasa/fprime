@@ -13,11 +13,13 @@
 #include "Fw/Types/Serializable.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Os/Mutex.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_SequencerStateMachine_StateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
+#include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
+#include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
-#include "spacewasm.h"
 
 namespace Svc {
 
@@ -37,10 +39,9 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingTimer(false),
       m_breakBeforeNextLine(false),
       m_loadFile(nullptr) {
-    // Install the process-wide global page allocator, backed by this instance's
-    // page pool. The store/bytecode live entirely within m_memory_pool.
-    // TODO(tumbar) We need to figure out a thread-local or context sensitive way to allow multiple sequencers...
-    const I32 status = spacewasm_set_global_allocator(
+
+    getGlobalAllocatorLock()->lock();
+    const auto status = spacewasm_fprime_register_global_allocator(
         [](void* userdata, std::size_t size, std::size_t align) -> U8* {
             if (userdata == nullptr) {
                 return nullptr;
@@ -55,7 +56,9 @@ WasmSequencer ::WasmSequencer(const char* const compName)
             }
         },
         this);
-    FW_ASSERT(status == 0, status);
+    getGlobalAllocatorLock()->unlock();
+
+    FW_ASSERT(status == SPACEWASM_OK, status);
 }
 
 WasmSequencer ::~WasmSequencer() {
@@ -93,6 +96,8 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
         this->sequencer_sendSignal_stmtResponse_success();
     }
 }
+
+void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {}
 
 // ----------------------------------------------------------------------
 // Handler implementations for commands
@@ -366,6 +371,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     // this decode.
     this->m_loadFile = &file;
 
+    this->takeAllocatorLock();
+
     // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
     // immediately after load (the module retains its own reference).
     spacewasm_allocator_t* alloc = spacewasm_allocator_new(
@@ -403,6 +410,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
         this, alloc, &this->m_moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
+
+    this->releaseAllocatorLock();
+
     this->m_loadFile = nullptr;
     file.close();
 }
@@ -788,6 +798,20 @@ bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSuc
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
     return this->m_loadStatus == SPACEWASM_OK;
+}
+
+void WasmSequencer ::takeAllocatorLock() {
+    getGlobalAllocatorLock()->lock();
+
+    auto status = spacewasm_fprime_acquire_global_allocator(this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+}
+
+void WasmSequencer ::releaseAllocatorLock() {
+    auto status = spacewasm_fprime_release_global_allocator(this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    getGlobalAllocatorLock()->unlock();
 }
 
 }  // namespace Svc

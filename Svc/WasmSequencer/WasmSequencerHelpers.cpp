@@ -98,54 +98,23 @@ Fw::Success WasmSequencer ::createStore() {
     static_assert(WasmSequencerConfig::MAX_GUEST_MODULES <= 255,
                   "SpaceWasm does not support more than 255 WebAssembly guest modules");
 
+    this->takeAllocatorLock();
+
     spacewasm_host_t host;
     spacewasm_status_t status = spacewasm_host_new(1, &host);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-#define HOST_FN(member_fn)                                                                                         \
-    [](struct spacewasm_caller_t* caller, void* userdata, const struct spacewasm_value_t* params, size_t n_params, \
-       struct spacewasm_value_t* out_result) {                                                                     \
-        FW_ASSERT(userdata);                                                                                       \
-        return static_cast<WasmSequencer*>(userdata)->member_fn(caller, params, n_params, out_result);             \
-    }
-
-    U32 module_idx;
-    status = spacewasm_add_host_module(&host, "fprime_v1", 8, 0, &module_idx);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "panic", "i", "", HOST_FN(wasmPanic), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "tlm", "Iiiii", "i", HOST_FN(wasmReadTelemetry), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "prm", "Iii", "i", HOST_FN(wasmReadParameter), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "cmd", "ii", "i", HOST_FN(wasmCommand), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "event", "iii", "", HOST_FN(wasmEvent), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    status = spacewasm_add_host_function(&host, module_idx, "rsleep", "I", "", HOST_FN(wasmRsleep), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
+    this->hostFprimeV1(&host);
 
     spacewasm_compiler_options_t options;
-    status = spacewasm_add_host_function(&host, module_idx, "asleep", "I", "", HOST_FN(wasmAsleep), this);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-#undef HOST_FN
-
     options.allow_memory_grow = false;
     options.max_backpatch_iterations = 0;
     options.max_code_pages = Svc::WasmSequencerConfig::MAX_CODE_PAGES;
 
     status = spacewasm_new(&host, Svc::WasmSequencerConfig::GUEST_STACK_SIZE, WasmSequencerConfig::MAX_GUEST_MODULES,
                            options, &this->m_wasm);
+
+    this->releaseAllocatorLock();
 
     // If the store allocation fails, this means the dynamic memory is too small to host this number of modules...
     FW_ASSERT(status == SPACEWASM_OK, status);
@@ -156,7 +125,9 @@ Fw::Success WasmSequencer ::createStore() {
 
 void WasmSequencer ::destroyStore() {
     if (this->m_wasm != nullptr) {
+        this->takeAllocatorLock();
         spacewasm_destroy(this->m_wasm);
+        this->releaseAllocatorLock();
         this->m_wasm = nullptr;
     }
 

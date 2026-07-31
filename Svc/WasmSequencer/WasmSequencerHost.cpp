@@ -15,6 +15,46 @@
 
 namespace Svc {
 
+void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
+#define HOST_FN(member_fn)                                                                                         \
+    [](struct spacewasm_caller_t* caller, void* userdata, const struct spacewasm_value_t* params, size_t n_params, \
+       struct spacewasm_value_t* out_result) {                                                                     \
+        FW_ASSERT(userdata != nullptr);                                                                            \
+        return static_cast<WasmSequencer*>(userdata)->member_fn(caller, params, n_params, out_result);             \
+    }
+
+    spacewasm_status_t status;
+    U32 module_idx;
+    status = spacewasm_add_host_module(host, "fprime_v1", 8, 0, &module_idx);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "panic", "i", "", HOST_FN(wasmPanic), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "tlm", "Iiiii", "i", HOST_FN(wasmReadTelemetry), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "prm", "Iii", "i", HOST_FN(wasmReadParameter), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "cmd", "ii", "i", HOST_FN(wasmCommand), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "event", "iii", "", HOST_FN(wasmEvent), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "rsleep", "I", "", HOST_FN(wasmRsleep), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "asleep", "I", "", HOST_FN(wasmAsleep), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+#undef HOST_FN
+}
+
 spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t*,
                                                     const spacewasm_value_t*,
                                                     size_t,
@@ -213,6 +253,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
     this->m_pendingHostFunction.time_us = us;
 
     return SPACEWASM_PAUSE;
+}
+
+Os::Mutex* WasmSequencer::getGlobalAllocatorLock() {
+    static Os::Mutex globalAllocatorLock;
+    return &globalAllocatorLock;
 }
 
 }  // namespace Svc

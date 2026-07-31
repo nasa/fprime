@@ -53,6 +53,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                const Fw::CmdResponse& response  //!< The command response argument
                                ) override;
 
+    //! Handler for input port writeTelemetry
+    void writeTelemetry_handler(FwIndexType portNum,  //!< The port number
+                                U32 context           //!< The call order
+                                ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for commands
@@ -420,6 +425,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Destroy the current interpreter store, if any, releasing its memory.
     void destroyStore();
 
+    //! Take control of the spacewasm global allocator on this WasmSequence
+    void takeAllocatorLock();
+
+    //! Release control of the spacewasm global allocator on this WasmSequence
+    void releaseAllocatorLock();
+
     //! Map a spacewasm store-allocation status onto the AllocError event enum.
     static Svc::WasmSequencer_AllocError::T mapAllocError(spacewasm_status_t status);
 
@@ -525,6 +536,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     PendingHostFunction m_pendingHostFunction;
 
+    void hostFprimeV1(spacewasm_host_t*);
+
     /// FPrime Wasm Interface Host Functions
     spacewasm_hostcall_result_t wasmExit(struct spacewasm_caller_t* caller,
                                          const struct spacewasm_value_t* params,
@@ -565,6 +578,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                            const struct spacewasm_value_t* params,
                                            size_t n_params,
                                            struct spacewasm_value_t* out_result);
+
+    // A global static lock. This is needed to allow the global allocator in spacewasm
+    // to not require to pass context to fine grained context to allocations.
+    // Read more about this in the SDD.
+    static Os::Mutex* getGlobalAllocatorLock();
 };
 
 }  // namespace Svc

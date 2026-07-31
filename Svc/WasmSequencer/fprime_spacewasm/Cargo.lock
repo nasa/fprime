@@ -6,6 +6,7 @@ version = 4
 name = "fprime_spacewasm"
 version = "0.0.0"
 dependencies = [
+ "spacewasm",
  "spacewasm_c_api",
 ]
 
@@ -17,18 +18,18 @@ checksum = "b6d2cec3eae94f9f509c767b45932f1ada8350c4bdb85af2fcab4a3c14807981"
 
 [[package]]
 name = "spacewasm"
-version = "0.4.5"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e4e81969ebed1caeece67b6f1a9d1e0b5dd07e5fd52d987158dab04bc50d107a"
+checksum = "d725ec7fb3fa361efad4b7c31ddb162bb138f89a3ffd6b8181cfb791843f0241"
 dependencies = [
  "libm",
 ]
 
 [[package]]
 name = "spacewasm_c_api"
-version = "0.4.5"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "477d5baeebbc79822c9f94df7a85c548f0dd389149f195a659cffa8b56bd31ce"
+checksum = "a2b2eec82c8cfd9879562c07fe0454a103c02005afb4a8bf851ffd42ab73d23c"
 dependencies = [
  "spacewasm",
 ]

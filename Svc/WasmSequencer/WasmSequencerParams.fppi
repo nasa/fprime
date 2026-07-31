@@ -11,3 +11,9 @@ param STATEMENT_TIMEOUT_SECS: F32 default 0
 @ Larger numbers make the interpreter faster because the engine doesn't
 @ need to feed itself through a queue to fuel more cycles.
 param INSTRUCTION_FUEL: FwSizeType default 1000
+
+@ the base directory relative to which sequence file paths are resolved.
+@ a '/' separator is always inserted between this base dir and the input
+@ sequence file path before resolution occurs following the rules of
+@ Os::File::open.
+param SEQ_BASE_DIR: string size FileNameStringSize default Fpy.DEFAULT_SEQ_BASE_DIR

@@ -7,15 +7,16 @@ module Svc {
         include "WasmSequencerStateMachine.fppi"
         include "WasmSequencerParams.fppi"
         include "WasmSequencerEvents.fppi"
+        # include "WasmSequencerTelemetry.fppi"
 
         # sm signals have highest priority besides ping
-        state machine instance sequencer: SequencerStateMachine priority 9 assert
+        state machine instance sequencer: SequencerStateMachine priority 3 assert
 
         @ Port for dispatching commands
         output port cmdOut: Fw.Com
 
         @ Response
-        async input port cmdResponseIn: Fw.CmdResponse priority 5 assert
+        async input port cmdResponseIn: Fw.CmdResponse priority 2 assert
 
         @ Port for getting telemetry channel values (backs the guest `tlm` host function)
         output port getTlmChan: Fw.TlmGet
@@ -25,6 +26,9 @@ module Svc {
 
         @ Port to periodically drive sleep-wake and statement-timeout checks
         async input port checkTimers: Svc.Sched priority 4 assert
+
+        @ Port to periodically write telemetry channels (optional)
+        async input port writeTelemetry: Svc.Sched priority 6 drop
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
