@@ -91,7 +91,7 @@ void SdlsSaRouterTester ::connectPortsCustom() {
 Fw::Buffer SdlsSaRouterTester ::makePoolBuffer(U8* storage) {
     // Buffers carry a unique allocation context (as assigned by a buffer manager); the
     // router tracks outstanding buffers by this context
-    const U32 poolIndex = static_cast<U32>((storage - &this->m_pool[0][0]) / TEST_BUFFER_SIZE);
+    const U32 poolIndex = static_cast<U32>(static_cast<FwSizeType>(storage - &this->m_pool[0][0]) / TEST_BUFFER_SIZE);
     Fw::Buffer buffer(storage, TEST_BUFFER_SIZE);
     buffer.setContext(poolIndex);
     return buffer;
