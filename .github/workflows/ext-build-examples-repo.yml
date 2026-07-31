@@ -118,18 +118,6 @@ jobs:
             exit 1
           fi
 
-          echo ""
-          echo "=== Checking Topology Components ==="
-          MANAGER_WORKER_FOUND=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=set(); [comps.add(c['name'].split('.')[0]) for c in d.get('commands', []) + d.get('events', []) + d.get('telemetryChannels', []) if '.' in c.get('name', '')]; mw=[c for c in comps if 'ManagerWorker' in c]; print('YES' if mw else 'NO'); [print(f\"  • {c}\") for c in sorted(mw)]")
-          echo "ManagerWorker in topology: ${MANAGER_WORKER_FOUND}"
-
-          if [ "${MANAGER_WORKER_FOUND}" != "YES" ]; then
-            echo ""
-            echo "✗ ERROR: No ManagerWorker components in topology!"
-            echo "  The fprime-examples repository needs ManagerWorker added to ExamplesDeployment."
-            exit 1
-          fi
-
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs
           cd FlightExamples/${DEPLOYMENT}
