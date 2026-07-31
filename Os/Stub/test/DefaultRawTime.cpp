@@ -3,6 +3,7 @@
 // \brief sets default Os::RawTime to test stub implementation via linker
 // ======================================================================
 #include "Os/Delegate.hpp"
+#include "Os/RawTimeSource.hpp"
 #include "Os/Stub/test/RawTime.hpp"
 
 namespace Os {
@@ -10,9 +11,12 @@ namespace Os {
 //! \brief get a delegate for RawTimeInterface that intercepts calls for  for stub test file usage
 //! \param aligned_new_memory: aligned memory to fill
 //! \param to_copy: pointer to copy-constructor input
+//! \param source: timer source selection (unused in test stub implementation)
 //! \return: pointer to delegate
 RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_placement_new_memory,
-                                                const RawTimeInterface* to_copy) {
+                                                const RawTimeInterface* to_copy,
+                                                RawTimeSource source) {
+    (void)source;  // Test stub implementation ignores timer source
     return Os::Delegate::makeDelegate<RawTimeInterface, Os::Stub::RawTime::Test::TestRawTime, RawTimeHandleStorage>(
         aligned_placement_new_memory, to_copy);
 }

@@ -9,6 +9,7 @@
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
+#include <Os/RawTimeSource.hpp>
 
 namespace Os {
 
@@ -41,7 +42,8 @@ class RawTimeInterface : public Fw::Serializable {
 
     //! \brief provide a pointer to a RawTime delegate object
     static RawTimeInterface* getDelegate(RawTimeHandleStorage& aligned_new_memory,
-                                         const RawTimeInterface* to_copy = nullptr);
+                                         const RawTimeInterface* to_copy = nullptr,
+                                         RawTimeSource source = RAWTIME_DEFAULT);
 
     // ------------------------------------------------------------------
     // RawTime operations to be implemented by an OSAL implementation
@@ -118,7 +120,10 @@ class RawTimeInterface : public Fw::Serializable {
 
 class RawTime final : public RawTimeInterface {
   public:
-    RawTime();         //!<  Constructor
+    //! \brief Constructor with optional timer source selection
+    //! \param source Timer source to use (defaults to RAWTIME_DEFAULT)
+    explicit RawTime(RawTimeSource source = RAWTIME_DEFAULT);
+
     ~RawTime() final;  //!<  Destructor
 
     //! \brief copy constructor that copies the internal representation
