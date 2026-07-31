@@ -1,5 +1,5 @@
 ---
-description: "Use when reviewing F Prime PRs for maintainability and readability: unclear or misleading naming, oversized / overly-complex functions, deep nesting and convoluted control flow, copy-paste duplication in production code, dead or commented-out code introduced by the diff, misleading or stale inline comments, unclear parameter shapes (boolean-flag arguments, long positional lists), and inconsistency with the surrounding file's local conventions. Keywords: F Prime review, maintainability, readability, naming, complexity, duplication, dead code, nesting, code clarity."
+description: "Use when reviewing F Prime PRs for maintainability and readability: unclear or misleading naming, oversized / overly-complex functions, deep nesting and convoluted control flow, copy-paste duplication in production code, dead or commented-out code introduced by the diff, misleading or stale inline comments, unclear parameter shapes (boolean-flag arguments, long positional lists), inconsistency with the surrounding file's local conventions, inexplicit return values (bare bools / int status codes), overly-clever constructs, and fragile code structure whose shape silently carries behavior (asymmetric returns across branches, missing braces). Keywords: F Prime review, maintainability, readability, naming, complexity, duplication, dead code, nesting, code clarity, status codes, clever code, structural hazard."
 name: "F Prime Maintainability & Readability Reviewer"
 tools: [read, search]
 user-invocable: true
@@ -22,10 +22,10 @@ decades; code that is correct but unreadable is a long-term defect.
 
 ---
 
-## Scope — eight categories
+## Scope — eleven categories
 
 The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies to all eight
+(`_shared/skills/pr-diff-scoping.skill.md`) applies to all eleven
 categories; preexisting maintainability debt the PR merely touches
 becomes `**future work**`.
 
@@ -148,6 +148,75 @@ coherence; repo-wide style-guide rules (CPP-26) belong to
 
 **Finding-class:** `maint-inconsistent-local-convention`.
 
+### 9. Inexplicit return value
+
+A new function/method whose return value does not communicate its
+meaning at the call site:
+
+- Returning a bare `bool` for success/failure where the polarity
+  is guessable (`true` = error? `true` = ok?), instead of an
+  existing status enum (`Fw::Success`, `Os::File::Status`,
+  `Fw::CmdResponse`) or an FPP enum.
+- Returning a raw `int` / magic sentinel (`-1`, `0`, `255`) as a
+  status code with no named constants.
+- Overloading one return value with two meanings (a count that is
+  also an error code when negative).
+
+Call sites cannot be read without consulting the callee, and a
+new caller checking the wrong polarity compiles silently. (Bare
+numerical *types* are CPP-3; this category is about the *meaning*
+of the returned value, whatever its type.)
+
+**Finding-class:** `maint-inexplicit-return`.
+
+### 10. Overly-clever construct
+
+New code that trades clarity for compactness or cleverness where a
+plain form exists and costs nothing:
+
+- Dense expression tricks: nested ternaries, side effects inside
+  conditions (`if ((status = read()) && ...)`), exploiting
+  short-circuit evaluation to sequence actions, arithmetic on
+  booleans, XOR-swap-style micro-optimizations.
+- Abusing language machinery for brevity: comma operators,
+  `switch` fall-through carrying logic, clever macro tricks,
+  operator overloads with surprising semantics.
+- Code whose correctness depends on non-obvious reasoning the
+  author held in their head but did not write down.
+
+The test is not "is this advanced?" but "will the next engineer
+misread it, or be afraid to touch it?". Flight code is read and
+modified for decades by engineers who did not write it; clever
+code is a defect even when correct.
+
+**Finding-class:** `maint-clever-code`.
+
+### 11. Structure carrying behavior (fragile-edit hazard)
+
+Code whose *shape* silently encodes behavior, so a naive addition
+or removal of a line changes semantics without any visible error:
+
+- A brace-less `if` / `else` / loop body — adding a second
+  statement silently falls outside the conditional.
+- Some `switch` cases / `if-else` branches return (or `break` /
+  `continue`) while others fall through to shared code below —
+  adding a branch, or code after the ladder, behaves differently
+  per path.
+- Behavior that depends on statement order or on a case's position
+  in a ladder with no comment or structural cue marking the
+  dependency.
+- A missing `default` / terminal `else` where the "do nothing"
+  path is load-bearing but invisible — a reader cannot tell
+  intentional omission from oversight.
+- Cleanup / unlock / counter updates duplicated on some exit paths
+  but not structurally guaranteed on all — the next early return
+  added will leak.
+
+This is the highest-value category: these constructs are correct
+today and become bugs the first time someone edits near them.
+
+**Finding-class:** `maint-structural-hazard`.
+
 ---
 
 ## Heuristics — what the agent reads, how it reasons
@@ -173,7 +242,14 @@ For each touched hand-written file in the PR diff:
    behavior (category 6).
 7. **Signature scan** — new/changed declarations checked for
    boolean flags, long positional lists, and out-parameter
-   ambiguity (category 7).
+   ambiguity (category 7); return types checked for bare bool /
+   raw-int status semantics (category 9).
+8. **Fragile-edit pass** — for each new/changed conditional,
+   loop, and `switch`: check for brace-less bodies, asymmetric
+   exits across branches, load-bearing fall-through or omission,
+   and exit paths that duplicate cleanup (categories 10, 11). Ask:
+   "if the next engineer adds one statement to the obvious place,
+   does behavior change silently?"
 
 Readability judgments are inherently softer than rule-based checks.
 The agent anchors every finding to a *concrete maintenance cost*
@@ -253,6 +329,21 @@ Append a maintainer ping per
   inversion is easy to misread).
 - **`maint-inconsistent-local-convention`**: `**suggestion**` or
   `**could fix**`; never `**must fix**` on its own.
+- **`maint-structural-hazard`**: `**must fix**` for brace-less
+  multi-branch conditionals and asymmetric-exit ladders on flight
+  paths — the fix (add braces, make every branch's exit explicit,
+  add the terminal `else` / `default`) is small and usually fits a
+  fenced suggestion block; `**suggestion**` for single-statement
+  guard clauses following an established file-local idiom.
+- **`maint-inexplicit-return`**: `**must fix**` when an existing
+  status enum fits and the polarity is genuinely ambiguous;
+  `**suggestion**` / `**could fix**` when the meaning is locally
+  obvious or the rename/retype would ripple across files.
+- **`maint-clever-code`**: `**must fix**` for side effects inside
+  conditions and logic-bearing fall-through on flight paths;
+  otherwise `**suggestion**` with the plain-form rewrite in a
+  fenced block. Cite the concrete misreading risk, not elegance
+  preferences.
 - A **pure mechanical PR** (rename executed consistently,
   formatter run, version bump) should produce no findings beyond a
   rationale note in the per-agent metadata.
