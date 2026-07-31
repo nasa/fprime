@@ -666,7 +666,23 @@ DirectiveError FpySequencer::op_fptosi() {
     if (this->m_runtime.stack.size < sizeof(F64)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<I64>(this->m_runtime.stack.pop<F64>()));
+    F64 val = this->m_runtime.stack.pop<F64>();
+    // NaN -> 0, out-of-range clamps, in-range truncates toward
+    // zero. The raw static_cast is UB for NaN and out-of-range values.
+    // 2^63 is exactly representable as F64 and is one past I64 max; -2^63
+    // is exactly I64 min and in range.
+    const F64 bound = std::ldexp(1.0, 63);
+    I64 result;
+    if (std::isnan(val)) {
+        result = 0;
+    } else if (val >= bound) {
+        result = std::numeric_limits<I64>::max();
+    } else if (val < -bound) {
+        result = std::numeric_limits<I64>::min();
+    } else {
+        result = static_cast<I64>(val);
+    }
+    this->m_runtime.stack.push(result);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_sitofp() {
@@ -680,7 +696,20 @@ DirectiveError FpySequencer::op_fptoui() {
     if (this->m_runtime.stack.size < sizeof(F64)) {
         return DirectiveError::STACK_UNDERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<U64>(this->m_runtime.stack.pop<F64>()));
+    F64 val = this->m_runtime.stack.pop<F64>();
+    // NaN -> 0, negatives truncate to at most 0 and clamp there,
+    // 2^64 (one past U64 max) and above clamp to U64 max. The raw
+    // static_cast is UB for NaN and out-of-range values.
+    const F64 bound = std::ldexp(1.0, 64);
+    U64 result;
+    if (std::isnan(val) || val < 0.0) {
+        result = 0;
+    } else if (val >= bound) {
+        result = std::numeric_limits<U64>::max();
+    } else {
+        result = static_cast<U64>(val);
+    }
+    this->m_runtime.stack.push(result);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_uitofp() {
@@ -786,9 +815,10 @@ DirectiveError FpySequencer::op_sdiv() {
     if (rhs == 0) {
         return DirectiveError::DOMAIN_ERROR;
     }
-    // Prevent signed overflow: INT64_MIN / -1 is undefined behavior (SIGFPE on x86)
+    // The one signed division that can overflow: |I64 min / -1| = 2^63 is not
+    // representable (and the C++ expression is UB, SIGFPE on x86)
     if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
-        return DirectiveError::DOMAIN_ERROR;
+        return DirectiveError::ARITHMETIC_OVERFLOW;
     }
     this->m_runtime.stack.push(static_cast<I64>(lhs / rhs));
     return DirectiveError::NO_ERROR;
@@ -899,6 +929,10 @@ DirectiveError FpySequencer::op_fmod() {
     // and is the exact frem + fadd the VM model computes (at most one rounded add).
     if ((res > 0 && rhs < 0) || (res < 0 && rhs > 0)) {
         res += rhs;
+    } else if (res == 0) {
+        // Python normalizes an exact-multiple result so the zero carries the
+        // divisor's sign (CPython float_rem); fmod leaves the dividend's.
+        res = std::copysign(0.0, rhs);
     }
     this->m_runtime.stack.push(res);
     return DirectiveError::NO_ERROR;
