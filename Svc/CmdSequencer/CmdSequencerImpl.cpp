@@ -97,6 +97,7 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
             // Create empty SeqArgs as placeholder
             // Use parameterized constructor to ensure m_size is initialized to 0
@@ -163,6 +164,7 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
             // Create empty SeqArgs as placeholder
             // Use parameterized constructor to ensure m_size is initialized to 0
@@ -338,8 +340,9 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
 
     this->m_blockState = Svc::BlockState::NO_BLOCK;
     this->m_runMode = RUNNING;
-    this->performCmd_Step();
+    this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
+    this->performCmd_Step();
     if (this->isConnected_seqStartOut_OutputPort(0)) {
         // Create empty SeqArgs as placeholder
         Svc::SeqArgs emptyArgs{0, 0};
@@ -443,6 +446,7 @@ void CmdSequencerComponentImpl::sequenceComplete() {
 
     m_join_waiting = false;
     this->m_blockState = Svc::BlockState::NO_BLOCK;
+    this->tlmWrite_CS_CurrentSequence(NO_SEQ);
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {

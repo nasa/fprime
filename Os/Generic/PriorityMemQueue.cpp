@@ -211,7 +211,8 @@ static inline I32 findMSB(U32 value) {
 
 FwQueuePriorityType PriorityMemQueue::findHighestPriority(U32 priorities) {
     // The priority bit mask is a U32, so priorities must fit in 32 bits
-    FW_ASSERT(static_cast<FwSizeType>(Os::Generic::Queue::MAX_PRIORITIES) <= 32);
+    static_assert(static_cast<FwSizeType>(Os::Generic::Queue::MAX_PRIORITIES) <= 32,
+                  "MAX_PRIORITIES must fit in a U32 priority bit mask");
     // MEMORY ORDERING: Use acquire to synchronize with priority enable/disable operations
     // Get enabled priorities
     if (priorities == 0) {

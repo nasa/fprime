@@ -150,25 +150,36 @@ bool LinuxUartDriver::open(const char* const device,
         case BAUD_230K:
             relayRate = B230400;
             break;
-#if defined TGT_OS_TYPE_LINUX
+#ifdef B460800
         case BAUD_460K:
             relayRate = B460800;
             break;
+#endif
+#ifdef B921600
         case BAUD_921K:
             relayRate = B921600;
             break;
+#endif
+#ifdef B1000000
         case BAUD_1000K:
             relayRate = B1000000;
             break;
+#endif
+#ifdef B1152000
         case BAUD_1152K:
             relayRate = B1152000;
             break;
+#endif
+#ifdef B1500000
         case BAUD_1500K:
             relayRate = B1500000;
             break;
+#endif
+#ifdef B2000000
         case BAUD_2000K:
             relayRate = B2000000;
             break;
+#endif
 #ifdef B2500000
         case BAUD_2500K:
             relayRate = B2500000;
@@ -188,7 +199,6 @@ bool LinuxUartDriver::open(const char* const device,
         case BAUD_4000K:
             relayRate = B4000000;
             break;
-#endif
 #endif
         default:
             FW_ASSERT(false, static_cast<FwAssertArgType>(baud));

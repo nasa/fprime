@@ -6,6 +6,10 @@ queries:
 query-filters:
   - include: 
       id: cpp/incorrect-not-operator-usage
+  # Read-before-initialize check (tagged security only, so it would otherwise
+  # be dropped by the tag filters below)
+  - include:
+      id: cpp/uninitialized-local
   - include: 
       tags contain: correctness
   - include: 
