@@ -103,18 +103,30 @@ jobs:
           DEPLOYMENT=ExamplesDeployment
           . venv/bin/activate
 
-          echo "=== Debug: Check if binary exists ==="
-          ls -la ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT} || echo "Binary not found!"
-
-          echo "=== Debug: Check what dictionary files exist ==="
-          ls -la ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ || echo "No dict directory!"
-
-          echo "=== Debug: Check JSON dictionary for ManagerWorker components ==="
-          if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
-            MANAGER_WORKER_COUNT=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=[c for c in d.get('component_list', []) if 'ManagerWorker' in c.get('comp_name', '')]; print(len(comps)); [print('  -', c['comp_name']) for c in comps[:10]]")
-            echo "ManagerWorker components found: ${MANAGER_WORKER_COUNT}"
+          echo "=== Checking Build Artifacts ==="
+          if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}" ]; then
+            echo "✓ Binary exists: ${DEPLOYMENT}"
           else
-            echo "JSON dictionary not found!"
+            echo "✗ Binary not found!"
+            exit 1
+          fi
+
+          if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
+            echo "✓ Dictionary exists: ExamplesDeploymentTopologyDictionary.json"
+          else
+            echo "✗ Dictionary not found!"
+            exit 1
+          fi
+
+          echo ""
+          echo "=== Checking Topology Components ==="
+          MANAGER_WORKER_COUNT=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=[c for c in d.get('component_list', []) if 'ManagerWorker' in c.get('comp_name', '')]; print(len(comps)); [print(f\"  • {c['comp_name']}\") for c in comps[:10]]")
+          echo "ManagerWorker components found: ${MANAGER_WORKER_COUNT}"
+
+          if [ "${MANAGER_WORKER_COUNT}" -eq 0 ]; then
+            echo ""
+            echo "✗ ERROR: No ManagerWorker components in topology!"
+            echo "  The fprime-examples repository needs ManagerWorker added to ExamplesDeployment."
             exit 1
           fi
 
@@ -122,26 +134,37 @@ jobs:
           mkdir -p ci-logs
           cd FlightExamples/${DEPLOYMENT}
 
-          echo "=== Debug: Starting fprime-gds ==="
+          echo ""
+          echo "=== Starting GDS ==="
           fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
           GDS_PID=$!
           sleep 15
 
-          echo "=== Debug: Check if GDS process is running ==="
-          ps aux | grep fprime-gds | grep -v grep || echo "GDS not running!"
+          if ps aux | grep fprime-gds | grep -v grep > /dev/null; then
+            echo "✓ GDS is running"
+          else
+            echo "✗ GDS failed to start!"
+            exit 1
+          fi
 
-          echo "=== Debug: Check if app process is running ==="
-          ps aux | grep ${DEPLOYMENT} | grep -v grep || echo "App not running!"
+          if ps aux | grep ${DEPLOYMENT} | grep -v grep > /dev/null; then
+            echo "✓ ${DEPLOYMENT} app is running"
+          else
+            echo "✗ ${DEPLOYMENT} app failed to start!"
+            exit 1
+          fi
 
-          echo "=== Debug: Check log files ==="
-          ls -la ../../ci-logs/ || echo "No logs yet"
-
+          echo ""
+          echo "=== Running Integration Tests ==="
           cd ../..
           pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
             --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
             -v \
             FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py || {
-            echo "=== Debug: Tests failed, checking logs ==="
-            cat ../../ci-logs/*.log 2>/dev/null || echo "No log files found"
+            echo ""
+            echo "✗ Integration tests failed!"
+            echo ""
+            echo "=== GDS Logs ==="
+            cat ci-logs/*.log 2>/dev/null || echo "No log files found"
             exit 1
           }
