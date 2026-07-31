@@ -1,5 +1,5 @@
 ---
-description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, and test-quality reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
+description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, and maintainability reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
 name: "F Prime PR Review Orchestrator"
 tools: [read, search]
 user-invocable: true
@@ -42,6 +42,7 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    - `architecture-review` (`architecture-review.agent.md`)
    - `test-quality-review` (`test-quality-review.agent.md`)
    - `correctness-review` (`correctness-review.agent.md`)
+   - `maintainability-review` (`maintainability-review.agent.md`)
 
    Invoke them in the order listed above. Security and supply-chain
    come first because they are the two CI-safety contributors
@@ -306,6 +307,30 @@ Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
 ```
 
+### Template — maintainability reviewer
+
+```
+Thanks for taking this on. You're the F Prime Maintainability &
+Readability Reviewer. Please run a full maintainability and
+readability review of PR #<N> in <owner>/<repo> at head <sha>.
+This is run <maintainability-review-run-ordinal> of your reviews
+on this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from
+`maintainability-review.agent.md`. Assess whether the next
+engineer who reads or modifies this code will understand it and
+change it safely — naming, function size and complexity, nesting,
+duplication, dead code, inline-comment accuracy, parameter shapes,
+and local-convention coherence. Anchor every finding to a concrete
+maintenance cost, never taste alone. Post inline review comments
+per the contract. Your review body contains only the hidden
+metadata block (§2); no visible summary table.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
 ### Template — aggregator
 
 ```
@@ -324,6 +349,7 @@ Per-reviewer status from this run:
 - architecture-review: <completed | FAILED: <reason>>
 - test-quality-review: <completed | FAILED: <reason>>
 - correctness-review: <completed | FAILED: <reason>>
+- maintainability-review: <completed | FAILED: <reason>>
 
 This is run <aggregator-run-ordinal> of your aggregations on this
 PR.
