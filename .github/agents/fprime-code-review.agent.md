@@ -187,8 +187,13 @@ per the review contract §9.
   code where it's built with the flight toolchain config.
 - Design fit (does the FPP / topology / pattern make sense given
   intent) — handled by `design-review.agent.md`.
+- Maintainability / readability (naming clarity, function size,
+  nesting, duplication, dead code, inline-comment accuracy) —
+  handled by `maintainability-review.agent.md`. The C/C++ agent
+  flags only the codified rules (e.g., CPP-30 magic numbers,
+  CPP-33 inlined utilities, CPP-26 style guide).
 
-The seven reviewer agents are designed to partition the review
+The eight reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 

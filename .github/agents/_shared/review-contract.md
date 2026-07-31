@@ -406,7 +406,8 @@ cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
 
 `<review_label>` is the agent's `review_label` from
 `agent-registry.yml` (e.g., `Security`, `Supply Chain`,
-`C++ Design`, `Documentation`, `Design`, `Test Quality`).
+`C++ Design`, `Documentation`, `Design`, `Test Quality`,
+`Maintainability`).
 
 Total prose ≤ 6 lines. The reviewer-label prefix, suggestion block,
 maintainer-ping line, and HTML footer don't count toward the line

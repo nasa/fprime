@@ -342,7 +342,7 @@ from the review contract applies, with no special always-on behavior.
   would have to lie to remain compatible — that is a design
   finding.
 
-The seven reviewer agents are designed to partition the review
+The eight reviewer agents are designed to partition the review
 surface without overlap. Overlap is acceptable in the rare case
 where the same line of code is a vulnerability AND an F Prime
 anti-pattern (security + design); each agent files independently.
