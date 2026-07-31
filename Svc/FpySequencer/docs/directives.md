@@ -460,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and results in ARITHMETIC_OVERFLOW.
+Performs signed integer division floored toward negative infinity (Python `//` semantics: `-7 // 2` is `-4`), pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |

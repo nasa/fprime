@@ -820,7 +820,14 @@ DirectiveError FpySequencer::op_sdiv() {
     if ((lhs == std::numeric_limits<I64>::min()) && (rhs == -1)) {
         return DirectiveError::ARITHMETIC_OVERFLOW;
     }
-    this->m_runtime.stack.push(static_cast<I64>(lhs / rhs));
+    // C++ / truncates toward zero; adjust to match Python's floored division:
+    // an inexact quotient with differing operand signs floors one below the
+    // truncated result. This mirrors op_smod.
+    I64 quotient = lhs / rhs;
+    if (((lhs % rhs) != 0) && ((lhs < 0) != (rhs < 0))) {
+        quotient -= 1;
+    }
+    this->m_runtime.stack.push(quotient);
     return DirectiveError::NO_ERROR;
 }
 DirectiveError FpySequencer::op_umod() {

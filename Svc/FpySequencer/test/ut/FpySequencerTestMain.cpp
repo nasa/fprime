@@ -905,6 +905,31 @@ TEST_F(FpySequencerTester, sdiv) {
     ASSERT_EQ(tester_pop<I64>(), 123);
 }
 
+TEST_F(FpySequencerTester, sdiv_floors_toward_negative_infinity) {
+    // Fpy // floors (Python semantics); C++ / truncates toward zero and
+    // rounds negative inexact quotients the wrong way
+    tester_push<I64>(-7);
+    tester_push<I64>(2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -4);
+
+    tester_push<I64>(7);
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -4);
+
+    tester_push<I64>(-7);
+    tester_push<I64>(-2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 3);
+
+    // exact quotients need no adjustment
+    tester_push<I64>(-6);
+    tester_push<I64>(2);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -3);
+}
+
 TEST_F(FpySequencerTester, sdiv_int_min_by_minus_one_overflows) {
     // the one signed division that can overflow: |I64 min / -1| = 2^63
     tester_push<I64>(std::numeric_limits<I64>::min());
