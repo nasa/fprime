@@ -76,7 +76,7 @@ class FprimeRouter final : public FprimeRouterComponentBase {
     Fw::Success takeContext(const Fw::Buffer& buffer, ComCfg::FrameContext& context);
 
     //! Fixed-size buffer-to-context table (all entries initialized unused)
-    BufferContextEntry m_bufferContextTable[ComCfg::RouterBufferContextTableSize];
+    BufferContextEntry m_bufferContextTable[FprimeRouterCfg::BufferContextTableSize];
 };
 }  // namespace Svc
 

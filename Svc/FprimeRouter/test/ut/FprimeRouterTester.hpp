@@ -21,9 +21,9 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     // ----------------------------------------------------------------------
 
     // Maximum size of histories storing events, telemetry, and port outputs.
-    // Must exceed ComCfg::RouterBufferContextTableSize so the table-full test can
+    // Must exceed FprimeRouterCfg::BufferContextTableSize so the table-full test can
     // send more buffers than the table holds without overflowing port history.
-    static const FwSizeType MAX_HISTORY_SIZE = ComCfg::RouterBufferContextTableSize + 5;
+    static const FwSizeType MAX_HISTORY_SIZE = FprimeRouterCfg::BufferContextTableSize + 5;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;

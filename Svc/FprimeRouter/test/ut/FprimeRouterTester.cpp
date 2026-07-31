@@ -130,7 +130,7 @@ void FprimeRouterTester ::testContextTableFull(Fw::ComPacketType packetType) {
     // more. The overflow send must emit the table-full event for the port the packet
     // routes to (fileOut for FILE, unknownDataOut for UNKNOWN), and the overflow
     // buffer's context degrades to empty (default vcId) on return.
-    const FwSizeType tableSize = ComCfg::RouterBufferContextTableSize;
+    const FwSizeType tableSize = FprimeRouterCfg::BufferContextTableSize;
 
     // Use a heap array of buffers so their data pointers stay distinct and alive
     U8* blocks = new U8[(tableSize + 1) * sizeof(FwPacketDescriptorType)];
