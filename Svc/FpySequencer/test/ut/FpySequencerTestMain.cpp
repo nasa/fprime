@@ -811,6 +811,34 @@ TEST_F(FpySequencerTester, fptosi) {
     ASSERT_EQ(expected, tester_pop<I64>());
 }
 
+TEST_F(FpySequencerTester, fptosi_saturates) {
+    // saturating conversion: NaN -> 0, out-of-range clamps to I64 min/max
+    tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), 0);
+
+    tester_push<F64>(std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::max());
+
+    tester_push<F64>(-std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::min());
+
+    tester_push<F64>(1e300);
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::max());
+
+    tester_push<F64>(-1e300);
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), std::numeric_limits<I64>::min());
+
+    // truncation toward zero for in-range values
+    tester_push<F64>(-3.7);
+    ASSERT_EQ(tester_op_fptosi(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<I64>(), -3);
+}
+
 TEST_F(FpySequencerTester, sitofp) {
     I64 src = 123;
     F64 expected = static_cast<F64>(src);
@@ -827,6 +855,30 @@ TEST_F(FpySequencerTester, fptoui) {
     tester_push<F64>(src);
     ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
     ASSERT_EQ(expected, tester_pop<U64>());
+}
+
+TEST_F(FpySequencerTester, fptoui_saturates) {
+    // saturating conversion: NaN -> 0, negatives clamp to 0, out-of-range
+    // clamps to U64 max
+    tester_push<F64>(std::numeric_limits<F64>::quiet_NaN());
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 0U);
+
+    tester_push<F64>(-5.5);
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 0U);
+
+    tester_push<F64>(-std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), 0U);
+
+    tester_push<F64>(std::numeric_limits<F64>::infinity());
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), std::numeric_limits<U64>::max());
+
+    tester_push<F64>(1e300);
+    ASSERT_EQ(tester_op_fptoui(), DirectiveError::NO_ERROR);
+    ASSERT_EQ(tester_pop<U64>(), std::numeric_limits<U64>::max());
 }
 
 TEST_F(FpySequencerTester, uitofp) {
@@ -871,6 +923,13 @@ TEST_F(FpySequencerTester, sdiv) {
     tester_push<I64>(-2);
     ASSERT_EQ(tester_op_sdiv(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<I64>(), 123);
+}
+
+TEST_F(FpySequencerTester, sdiv_int_min_by_minus_one_overflows) {
+    // the one signed division that can overflow: |I64 min / -1| = 2^63
+    tester_push<I64>(std::numeric_limits<I64>::min());
+    tester_push<I64>(-1);
+    ASSERT_EQ(tester_op_sdiv(), DirectiveError::ARITHMETIC_OVERFLOW);
 }
 
 TEST_F(FpySequencerTester, umod) {
@@ -932,6 +991,23 @@ TEST_F(FpySequencerTester, fmod) {
     tester_push<F64>(-2.5);
     ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
     ASSERT_EQ(tester_pop<F64>(), -1.0);
+}
+
+TEST_F(FpySequencerTester, fmod_exact_multiple_zero_sign) {
+    // Python float %: a zero result takes the divisor's sign
+    tester_push<F64>(2.0);
+    tester_push<F64>(-1.0);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    F64 res = tester_pop<F64>();
+    ASSERT_EQ(res, 0.0);
+    ASSERT_TRUE(std::signbit(res));
+
+    tester_push<F64>(-1.5);
+    tester_push<F64>(0.5);
+    ASSERT_EQ(tester_op_fmod(), DirectiveError::NO_ERROR);
+    res = tester_pop<F64>();
+    ASSERT_EQ(res, 0.0);
+    ASSERT_FALSE(std::signbit(res));
 }
 
 TEST_F(FpySequencerTester, ffloor) {
@@ -1347,12 +1423,6 @@ TEST_F(FpySequencerTester, smod_domain_error) {
     tester_push<I64>(42);
     tester_push<I64>(0);
     ASSERT_EQ(tester_op_smod(), DirectiveError::DOMAIN_ERROR);
-}
-TEST_F(FpySequencerTester, sdiv_overflow_domain_error) {
-    // INT64_MIN / -1 overflows I64 (would be INT64_MAX + 1); it is UB (SIGFPE on x86)
-    tester_push<I64>(std::numeric_limits<I64>::min());
-    tester_push<I64>(-1);
-    ASSERT_EQ(tester_op_sdiv(), DirectiveError::DOMAIN_ERROR);
 }
 TEST_F(FpySequencerTester, smod_overflow_domain_error) {
     // INT64_MIN % -1 is UB (SIGFPE on x86) even though the mathematical result is 0

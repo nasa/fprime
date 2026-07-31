@@ -358,7 +358,7 @@ Performs a boolean not operation on a boolean. If the operand is `FW_SERIALIZE_F
 **Requirement:**  FPY-SEQ-002
 
 ## FPTOSI (28)
-Converts a float to a signed integer, pushes result to stack.
+Converts an `F64` to a signed `I64` with saturating semantics (`llvm.fptosi.sat`, wasm `i64.trunc_sat_f64_s`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; values above `I64` max clamp to `I64` max and values below `I64` min clamp to `I64` min. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -370,7 +370,7 @@ Converts a float to a signed integer, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## FPTOUI (29)
-Converts a float to an unsigned integer, pushes result to stack.
+Converts an `F64` to an unsigned `U64` with saturating semantics (`llvm.fptoui.sat`, wasm `i64.trunc_sat_f64_u`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; negative values clamp to 0 and values at or above `2**64` clamp to `U64` max. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -460,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and also yields a DOMAIN_ERROR.
+Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -538,7 +538,7 @@ Performs float multiplication, pushes result to stack. NaN, and infinity are han
 **Requirement:**  FPY-SEQ-002
 
 ## FDIV (42)
-Performs float division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division.
+Performs IEEE 754 float division, pushes result to stack. Division by zero produces an infinity whose sign is the XOR of the operand signs, except that a zero or NaN dividend produces NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -551,7 +551,7 @@ Performs float division, pushes result to stack. Zero divisors, NaN, and infinit
 **Requirement:**  FPY-SEQ-002
 
 ## FPOW (43)
-Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
+Performs float exponentiation (C `pow` semantics), pushes result to stack. A domain error (negative base with a non-integer exponent) yields NaN; overflow of the `F64` range yields an infinity with the sign of the true result; a zero base with a negative exponent yields an infinity (pole).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | exp      | F64      | stack  | Exponent value |
@@ -576,7 +576,7 @@ Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR
 **Requirement:**  FPY-SEQ-002
 
 ## FMOD (45)
-Performs float modulo, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs. A 0 divisor (rhs) yields a NaN result, not an error. A NaN will produce a NaN result or infinity as either argument yields NaN.
+Performs float modulo with Python's floored semantics, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs; an exact-multiple result is a zero carrying the divisor's sign. A 0 divisor (rhs) yields a NaN result, not an error. A NaN operand or an infinite dividend yields NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -589,7 +589,7 @@ Performs float modulo, pushes result to stack. Computed as the exact truncated r
 **Requirement:**  FPY-SEQ-002
 
 ## FPTRUNC (47)
-Truncates a 64-bit float to a 32-bit float, pushes result to stack.
+Truncates a 64-bit float to a 32-bit float (IEEE round-to-nearest demote), pushes result to stack. A finite value beyond the `F32` range rounds to +-inf.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Value to truncate |
