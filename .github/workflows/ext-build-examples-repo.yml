@@ -120,10 +120,10 @@ jobs:
 
           echo ""
           echo "=== Checking Topology Components ==="
-          MANAGER_WORKER_COUNT=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=[c for c in d.get('component_list', []) if 'ManagerWorker' in c.get('comp_name', '')]; print(len(comps)); [print(f\"  • {c['comp_name']}\") for c in comps[:10]]")
-          echo "ManagerWorker components found: ${MANAGER_WORKER_COUNT}"
+          MANAGER_WORKER_FOUND=$(python3 -c "import json; d=json.load(open('./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json')); comps=set(); [comps.add(c['name'].split('.')[0]) for c in d.get('commands', []) + d.get('events', []) + d.get('telemetryChannels', []) if '.' in c.get('name', '')]; mw=[c for c in comps if 'ManagerWorker' in c]; print('YES' if mw else 'NO'); [print(f\"  • {c}\") for c in sorted(mw)]")
+          echo "ManagerWorker in topology: ${MANAGER_WORKER_FOUND}"
 
-          if [ "${MANAGER_WORKER_COUNT}" -eq 0 ]; then
+          if [ "${MANAGER_WORKER_FOUND}" != "YES" ]; then
             echo ""
             echo "✗ ERROR: No ManagerWorker components in topology!"
             echo "  The fprime-examples repository needs ManagerWorker added to ExamplesDeployment."
@@ -136,8 +136,7 @@ jobs:
 
           echo ""
           echo "=== Starting GDS ==="
-          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
-          GDS_PID=$!
+          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf 
           sleep 15
 
           if ps aux | grep fprime-gds | grep -v grep > /dev/null; then
