@@ -124,7 +124,7 @@ jobs:
 
           echo ""
           echo "=== Starting GDS ==="
-          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf 
+          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
           sleep 15
 
           if ps aux | grep fprime-gds | grep -v grep > /dev/null; then
