@@ -96,50 +96,50 @@
 // Invoke typed input ports
 // ----------------------------------------------------------------------
 
-#define PORT_TEST_INVOKE_DEFS(PORT_KIND)                                                                              \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParams& port) {                  \
-        ASSERT_TRUE(component.isConnected_noArgsOut_OutputPort(portNum));                                             \
-        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                                 \
-                                                                                                                      \
-        this->invoke_to_noArgs##PORT_KIND(portNum);                                                                   \
-    }                                                                                                                 \
-                                                                                                                      \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {           \
-        ASSERT_TRUE(component.isConnected_primitiveArgsOut_OutputPort(portNum));                                      \
-        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                          \
-                                                                                                                      \
-        this->invoke_to_primitiveArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,             \
-                                                 port.args.val4, port.args.val5, port.args.val6);                     \
-    }                                                                                                                 \
-                                                                                                                      \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PortStringParams& port) {          \
-        ASSERT_TRUE(component.isConnected_stringArgsOut_OutputPort(portNum));                                         \
-        ASSERT_TRUE(this->isConnected_to_stringArgs##PORT_KIND(portNum));                                             \
-                                                                                                                      \
-        this->invoke_to_stringArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,                \
-                                              port.args.val4, port.args.val5, port.args.val6);                         \
-    }                                                                                                                 \
-                                                                                                                      \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumParams& port) {                \
-        ASSERT_TRUE(component.isConnected_enumArgsOut_OutputPort(portNum));                                           \
-        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                               \
-                                                                                                                      \
-        this->invoke_to_enumArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4); \
-    }                                                                                                                 \
-                                                                                                                      \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayParams& port) {               \
-        ASSERT_TRUE(component.isConnected_arrayArgsOut_OutputPort(portNum));                                          \
-        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                              \
-                                                                                                                      \
-        this->invoke_to_arrayArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4, \
-                                             port.args.val5, port.args.val6);                                         \
-    }                                                                                                                 \
-                                                                                                                      \
-    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructParams& port) {              \
-        ASSERT_TRUE(component.isConnected_structArgsOut_OutputPort(portNum));                                         \
-        ASSERT_TRUE(this->isConnected_to_structArgs##PORT_KIND(portNum));                                             \
-                                                                                                                      \
-        this->invoke_to_structArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                               \
+#define PORT_TEST_INVOKE_DEFS(PORT_KIND)                                                                               \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::NoParams& port) {                   \
+        ASSERT_TRUE(component.isConnected_noArgsOut_OutputPort(portNum));                                              \
+        ASSERT_TRUE(this->isConnected_to_noArgs##PORT_KIND(portNum));                                                  \
+                                                                                                                       \
+        this->invoke_to_noArgs##PORT_KIND(portNum);                                                                    \
+    }                                                                                                                  \
+                                                                                                                       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PrimitiveParams& port) {            \
+        ASSERT_TRUE(component.isConnected_primitiveArgsOut_OutputPort(portNum));                                       \
+        ASSERT_TRUE(this->isConnected_to_primitiveArgs##PORT_KIND(portNum));                                           \
+                                                                                                                       \
+        this->invoke_to_primitiveArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3,              \
+                                                 port.args.val4, port.args.val5, port.args.val6);                      \
+    }                                                                                                                  \
+                                                                                                                       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::PortStringParams& port) {           \
+        ASSERT_TRUE(component.isConnected_stringArgsOut_OutputPort(portNum));                                          \
+        ASSERT_TRUE(this->isConnected_to_stringArgs##PORT_KIND(portNum));                                              \
+                                                                                                                       \
+        this->invoke_to_stringArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4, \
+                                              port.args.val5, port.args.val6);                                         \
+    }                                                                                                                  \
+                                                                                                                       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::EnumParams& port) {                 \
+        ASSERT_TRUE(component.isConnected_enumArgsOut_OutputPort(portNum));                                            \
+        ASSERT_TRUE(this->isConnected_to_enumArgs##PORT_KIND(portNum));                                                \
+                                                                                                                       \
+        this->invoke_to_enumArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4);  \
+    }                                                                                                                  \
+                                                                                                                       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayParams& port) {                \
+        ASSERT_TRUE(component.isConnected_arrayArgsOut_OutputPort(portNum));                                           \
+        ASSERT_TRUE(this->isConnected_to_arrayArgs##PORT_KIND(portNum));                                               \
+                                                                                                                       \
+        this->invoke_to_arrayArgs##PORT_KIND(portNum, port.args.val1, port.args.val2, port.args.val3, port.args.val4,  \
+                                             port.args.val5, port.args.val6);                                          \
+    }                                                                                                                  \
+                                                                                                                       \
+    void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::StructParams& port) {               \
+        ASSERT_TRUE(component.isConnected_structArgsOut_OutputPort(portNum));                                          \
+        ASSERT_TRUE(this->isConnected_to_structArgs##PORT_KIND(portNum));                                              \
+                                                                                                                       \
+        this->invoke_to_structArgs##PORT_KIND(portNum, port.args.val1, port.args.val2);                                \
     }
 
 #define PORT_TEST_INVOKE_RETURN_DEFS(PORT_KIND)                                                                       \
@@ -615,43 +615,43 @@
 // Check history of typed output ports
 // ----------------------------------------------------------------------
 
-#define PORT_TEST_CHECK_DEFS(PORT_KIND)                                                                             \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::NoParams& port) {                                      \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_noArgsOut_SIZE(1);                                                                              \
-    }                                                                                                               \
-                                                                                                                    \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PrimitiveParams& port) {                               \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_primitiveArgsOut_SIZE(1);                                                                       \
-        ASSERT_from_primitiveArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,             \
-                                     port.args.val5, port.args.val6);                                               \
-    }                                                                                                               \
-                                                                                                                    \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PortStringParams& port) {                              \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_stringArgsOut_SIZE(1);                                                                          \
-        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,                 \
-                                  port.args.val5, port.args.val6);                                                   \
-    }                                                                                                               \
-                                                                                                                    \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::EnumParams& port) {                                    \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_enumArgsOut_SIZE(1);                                                                            \
-        ASSERT_from_enumArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);                 \
-    }                                                                                                               \
-                                                                                                                    \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::ArrayParams& port) {                                   \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_arrayArgsOut_SIZE(1);                                                                           \
-        ASSERT_from_arrayArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4, port.args.val5, \
-                                 port.args.val6);                                                                   \
-    }                                                                                                               \
-                                                                                                                    \
-    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::StructParams& port) {                                  \
-        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                           \
-        ASSERT_from_structArgsOut_SIZE(1);                                                                          \
-        ASSERT_from_structArgsOut(0, port.args.val1, port.args.val2);                                               \
+#define PORT_TEST_CHECK_DEFS(PORT_KIND)                                                                              \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::NoParams& port) {                                       \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_noArgsOut_SIZE(1);                                                                               \
+    }                                                                                                                \
+                                                                                                                     \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PrimitiveParams& port) {                                \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_primitiveArgsOut_SIZE(1);                                                                        \
+        ASSERT_from_primitiveArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4,              \
+                                     port.args.val5, port.args.val6);                                                \
+    }                                                                                                                \
+                                                                                                                     \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::PortStringParams& port) {                               \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_stringArgsOut_SIZE(1);                                                                           \
+        ASSERT_from_stringArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4, port.args.val5, \
+                                  port.args.val6);                                                                   \
+    }                                                                                                                \
+                                                                                                                     \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::EnumParams& port) {                                     \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_enumArgsOut_SIZE(1);                                                                             \
+        ASSERT_from_enumArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4);                  \
+    }                                                                                                                \
+                                                                                                                     \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::ArrayParams& port) {                                    \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_arrayArgsOut_SIZE(1);                                                                            \
+        ASSERT_from_arrayArgsOut(0, port.args.val1, port.args.val2, port.args.val3, port.args.val4, port.args.val5,  \
+                                 port.args.val6);                                                                    \
+    }                                                                                                                \
+                                                                                                                     \
+    void Tester ::test##PORT_KIND##PortCheck(FppTest::Types::StructParams& port) {                                   \
+        ASSERT_FROM_PORT_HISTORY_SIZE(1);                                                                            \
+        ASSERT_from_structArgsOut_SIZE(1);                                                                           \
+        ASSERT_from_structArgsOut(0, port.args.val1, port.args.val2);                                                \
     }
 
 #define PORT_TEST_CHECK_RETURN_DEFS(PORT_KIND)                                                            \
@@ -754,10 +754,10 @@
                                                                                              \
         status = this->stringBuf.deserializeTo(str0);                                        \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
-                                                                                              \
+                                                                                             \
         status = this->stringBuf.deserializeTo(str0Ref);                                     \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
-                                                                                              \
+                                                                                             \
         status = this->stringBuf.deserializeTo(str100);                                      \
         ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);                                              \
                                                                                              \
