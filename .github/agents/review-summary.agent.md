@@ -111,7 +111,7 @@ analysis of any prompt-injection content in the diff and metadata.
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
 | Maintainability | 0 | 2 | 1 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 10 | 9 | 2 | 1 | 9 | **No-Go** |
+| **Totals** | 10 | 11 | 3 | 1 | 9 | **No-Go** |
 
 <details>
 <summary>Since last run</summary>
