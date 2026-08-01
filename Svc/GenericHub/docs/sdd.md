@@ -1,96 +1,297 @@
 # Svc::GenericHub Generic Hub Component
 
-The Generic Hub component is an implementation of the F´ [hub pattern](../../../docs/user-manual/design-patterns/hub-pattern.md).
-This pattern (and component) is used to bridge across an address space barrier between F´ deployments and route F´ port
-calls to the remote deployment. It also receives incoming port calls from the remote component. Essentially, it is a
-port multiplexer/demultiplexer that serializes the port calls to an `Fw::Buffer` object and outputs this data to an 
-implementation of the `Drv::ByteStreamDriverModel` for transport out of the current deployment's address space.
+The [`Svc::GenericHub`](../GenericHub.fpp) component implements the F´ hub
+pattern. A hub makes logical F´ port connections span two deployments, address
+spaces, processors, or other transport boundaries. A pair of hubs multiplexes
+many logical connections through a buffer-based transport:
 
-**Note:** At this time, the hub drops send/receive errors.
-Individual projects that need to monitor send/receive errors may need to add this functionality to the GenericHub [see idiosyncrasies](#idiosyncrasies)
+```text
+    FSW --> GenericHub --> Driver ~~> Driver --> GenericHub --> FSW
+```
+
+The `~~>` represents the deployment-to-deployment transport. It may be shared
+memory, an inter-process channel, a network connection, or another mechanism.
+The GenericHub is transport-independent; its driver interface operates on
+`Fw::Buffer` objects.
+
+For example, logical connections between components in deployments A and B:
+
+```text
+    A1 -->--+       +-->-- B1
+            |       |
+            HA ~~> HB
+            |       |
+    A2 -->--+       +-->-- B2
+```
+
+The driver paired with each hub must be a **buffer driver**: a combination of
+components that sends and receives `Fw::Buffer` objects across the transport.
+The reference implementation uses a `Drv::ByteStreamDriver` together with a
+`Drv::ByteStreamBufferAdapter`. Other transport-specific drivers may be used
+provided that they implement the buffer-driver interfaces described below.
 
 ## Design
 
-The generic hub accepts incoming port calls using an array of Serial input ports. This allows any port call to be
-bridged across the connection. There is also an incoming set of ports supporting `Fw::Buffer` type allowing the generic
-hub to send generic byte data across (e.g. file packets) the connection. These connections are serialized into the outgoing 
-connections to the driver. On the far side of the byte driver, another generic hub deserializes these port calls and buffer 
-calls into normal F´ port calls on the new deployment as if they were made locally. 
+The GenericHub has four interfaces:
 
-Generic hub inputs on one hub should be parallel to the outputs on the other hub and vise-versa. 
-It is also essential that users never pass a **pointer** into the generic hub, as pointer data will become invalid when it 
-leaves the current address space. A sample configuration is shown below. Finally, the generic hub is bidirectional, so it
-can operate on inputs and produce outputs as long as its remote counterpart is hooked up in parallel.
+1. ports from FSW into the hub for data that the hub sends;
+2. ports from the hub into the buffer driver;
+3. ports from the buffer driver into the hub; and
+4. ports from the hub into FSW for received data.
 
-The hub also provides specific handlers for events and telemetry such that it can be used with telemetry and event
-pattern specifiers in the topology.
+The hub is bidirectional. The input configuration on one hub must be parallel
+with the output configuration on its peer, and vice versa. A serial port call
+is serialized by value; an `Fw::Buffer` is copied or transferred according to
+the buffer lifecycle described later. A pointer must never be passed through
+the hub: a pointer is meaningful only in the address space that allocated the
+pointed-to object.
 
-### Example Formations
+## Port catalog
 
-This section shows how to set up the generic hub component. It is broken into several separate views. This first shows
-the top level of the formation. Here we connect a component on the left (command dispatcher) to several components on
-the right (two signal generators). Both forward and reverse connections are shown. Notice the parallelism from the left
-port calls from the command dispatcher to the port outputs to the components being commanded.
+### 1. FSW to hub: send interface
 
-![Top Level Generic Hub](./img/gh-top.png)
+These ports accept data from the local deployment and serialize it for the
+remote hub.
 
-The next diagram show a similar setup to the first, except here we are using buffer transmission to support a file
-downlink and uplink pair to show how the left deployment may "downlink" files to the right deployment. Both this and the
-first diagram can be connected at the same time, and are split only to keep the diagrams less complex. Here the reverse
-connections are omitted for simplicity.
+| Port | Type | Purpose |
+|---|---|---|
+| `eventIn` | `Fw.Log` | Sends an event to the remote deployment. |
+| `tlmIn` | `Fw.Tlm` | Sends a telemetry value to the remote deployment. |
+| `serialIn` | `[GenericHubCfg.NumSerialInputPorts] serial` | Sends typed, by-value serialized port calls. Do not connect ports that emit `Fw.Buffer`; use `bufferIn` for those. |
+| `bufferIn` | `[GenericHubCfg.NumBufferInputPorts] Fw.BufferSend` | Sends buffer data to the remote deployment. The hub copies the data and returns the incoming buffer. |
+| `bufferInReturn` | `[GenericHubCfg.NumBufferInputPorts] Fw.BufferSend` | Returns buffers received on `bufferIn` to their senders. It must match `bufferIn`. |
+| `cmdDispIn` | `[CmdDispatcherSequencePorts] Fw.Com` | Accepts a command forwarded by a command splitter. |
+| `cmdRespOut` | `[CmdDispatcherSequencePorts] Fw.CmdResponse` | Emits a command response received from the remote hub. |
 
-![Top Level Generic Hub](./img/gh-top-buff.png)
+Typical connections include:
 
-The following diagram dives into the specific connections on the left side. Here incoming connection reach the hub and
-the hub is connected to a driver. This driver carries the port calls to the other address space.
+```text
+eventProducer.eventOut       -> genericHub.eventIn
+telemetryProducer.tlmOut     -> genericHub.tlmIn
+valueProducer.valueOut[0]    -> genericHub.serialIn[0]
+bufferProducer.bufferOut      -> genericHub.bufferIn[0]
+genericHub.bufferInReturn[0]  -> bufferProducer.bufferIn
+commandSplitter.RemoteCmd[0] -> genericHub.cmdDispIn[0]
+genericHub.cmdRespOut[0]      -> commandSplitter.seqCmdStatus[0]
+```
 
-![Top Level Generic Hub](./img/gh-left.png)
+### 2. Hub to buffer driver: send interface
 
-Finally, the following diagram shows the right side where the connections come out of the right side's driver and goes
-into the hub which expands the port to the various right-side components.
+The hub sends serialized messages through the buffer driver using imported
+interfaces:
 
-![Top Level Generic Hub](./img/gh-right.png)
+| Port | Type | Purpose |
+|---|---|---|
+| `allocate` | `Fw.BufferGet` | Requests an output buffer from the buffer manager. |
+| `deallocate` | `Fw.BufferSend` | Returns an output buffer to the buffer manager. |
+| `toBufferDriver` | `Fw.BufferSend` | Sends a serialized message buffer to the driver. |
+| `toBufferDriverReturn` | `Fw.BufferSend` | Receives ownership back when the driver returns a sent buffer. |
+
+The usual connections are:
+
+```text
+genericHub.allocate          -> bufferManager.bufferGetCallee
+genericHub.toBufferDriver    -> bufferDriver.bufferIn
+bufferDriver.bufferInReturn  -> genericHub.toBufferDriverReturn
+genericHub.deallocate        -> bufferManager.bufferSendIn
+```
+
+`allocate` and `deallocate` come from `Svc.BufferAllocation`.
+`toBufferDriver` and `toBufferDriverReturn` come from
+`Drv.PassiveBufferDriverClientSend`.
+
+### 3. Buffer driver to hub: receive interface
+
+| Port | Type | Purpose |
+|---|---|---|
+| `fromBufferDriver` | `Fw.BufferSend` | Receives a serialized message buffer from the driver. |
+| `fromBufferDriverReturn` | `Fw.BufferSend` | Returns a received buffer to the driver after the hub and its receiver are done with it. |
+
+These ports come from `Drv.PassiveBufferDriverClientRecv`:
+
+```text
+bufferDriver.bufferOut             -> genericHub.fromBufferDriver
+genericHub.fromBufferDriverReturn -> bufferDriver.bufferOutReturn
+```
+
+### 4. Hub to FSW: receive interface
+
+These ports deserialize a message received from the remote hub and invoke the
+corresponding local FSW port.
+
+| Port | Type | Purpose |
+|---|---|---|
+| `eventOut` | `Fw.Log` | Emits a received event. |
+| `tlmOut` | `Fw.Tlm` | Emits a received telemetry value. |
+| `serialOut` | `[GenericHubCfg.NumSerialOutputPorts] serial` | Emits a received typed, by-value port call. |
+| `bufferOut` | `[GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend` | Emits a received buffer with metadata adjusted to the payload. |
+| `bufferOutReturn` | `[GenericHubCfg.NumBufferOutputPorts] Fw.BufferSend` | Returns a buffer emitted on `bufferOut`. It must match `bufferOut`. |
+| `cmdDispOut` | `[CmdDispatcherSequencePorts] Fw.Com` | Forwards a received command to the local command dispatcher. |
+| `cmdRespIn` | `[CmdDispatcherSequencePorts] Fw.CmdResponse` | Accepts a response from the local command dispatcher for transport back to the remote hub. |
+
+Typical connections include:
+
+```text
+genericHub.eventOut                -> eventManager.eventIn
+genericHub.tlmOut                  -> tlmDb.tlmIn
+genericHub.serialOut[0]            -> valueConsumer.valueIn[0]
+genericHub.bufferOut[0]            -> bufferConsumer.bufferIn
+bufferConsumer.bufferInReturn     -> genericHub.bufferOutReturn[0]
+genericHub.cmdDispOut[0]           -> commandDispatcher.seqCmdBuff[0]
+commandDispatcher.seqCmdStatus[0] -> genericHub.cmdRespIn[0]
+```
+
+## Message framing and behavior
+
+Every message sent to the buffer driver has this outer framing:
+
+1. a `U32` message-type discriminator;
+2. a `U32` port index;
+3. an `FwBuffSizeType` payload size; and
+4. the payload bytes.
+
+The hub allocates enough space for these fields and the payload, serializes the
+fields in that order, sets the buffer size to the serialized size, and emits
+the buffer on `toBufferDriver`. On receipt, the hub validates the type,
+deserializes the port and payload size, checks that the payload size matches
+the received buffer, and dispatches according to the message type.
+
+| Message type | Payload and behavior |
+|---|---|
+| Serial (`HUB_TYPE_PORT`) | The payload is the serialized by-value argument list for `serialIn`. The receiver wraps the payload in an `Fw::ExternalSerializeBuffer` and invokes the matching `serialOut` port. |
+| Buffer (`HUB_TYPE_BUFFER`) | The sender copies the incoming buffer data into a newly allocated transport buffer. The receiver adjusts the received buffer metadata to the payload and emits it on the matching `bufferOut` port. |
+| Event (`HUB_TYPE_EVENT`) | The payload contains the event ID, time tag, severity, and `Fw::LogBuffer` arguments. The receiver deserializes these values and invokes `eventOut`. |
+| Telemetry (`HUB_TYPE_CHANNEL`) | The payload contains the channel ID, time tag, and `Fw::TlmBuffer` value. The receiver deserializes these values and invokes `tlmOut`. |
+| Command dispatch (`HUB_TYPE_CMD_DISP`) | The payload contains the serialized `Fw::ComBuffer` command data followed by its `U32` context. The receiver invokes the matching `cmdDispOut` port. |
+| Command response (`HUB_TYPE_CMD_RESP`) | The payload contains the opcode, command sequence, and `Fw::CmdResponse`. The receiver invokes the matching `cmdRespOut` port. |
+
+Malformed or invalid messages are not dispatched, and the received transport
+buffer is returned to the driver. A message whose destination port is invalid
+or disconnected is also not dispatched; buffer messages in that case are
+returned to the driver to avoid a leak.
+
+## Command routing
+
+The command ports allow a command splitter to forward a command from one
+deployment to another:
+
+```text
+command splitter A
+    -> hub A.cmdDispIn
+    -> buffer driver / transport
+    -> hub B.cmdDispOut
+    -> command dispatcher B
+    -> remote component B
+```
+
+The command dispatcher response follows the reverse path:
+
+```text
+command dispatcher B
+    -> hub B.cmdRespIn
+    -> buffer driver / transport
+    -> hub A.cmdRespOut
+    -> command splitter A
+```
+
+The command arrays are sized by the framework constant
+`CmdDispatcherSequencePorts`, which is `5` in the default configuration.
+
+### Known limitation
+
+Although GenericHub serializes and forwards command responses, the standard
+CCSDS routing path currently drops the response at the origin deployment.
+`Svc::FprimeRouter::cmdResponseIn_handler` is a no-op (`// Nothing to do`).
+Consequently, command completion is not observable at the origin deployment's
+GDS through that path today. DeploymentB can still dispatch and complete the
+command locally.
+
+## Buffer lifecycle
+
+For a locally produced message, the hub:
+
+1. requests a transport buffer through `allocate`;
+2. serializes the message type, port index, payload size, and payload;
+3. emits the buffer through `toBufferDriver`;
+4. receives ownership back through `toBufferDriverReturn`; and
+5. returns the buffer to the manager through `deallocate`.
+
+For `bufferIn`, the hub copies the incoming data into the newly allocated
+transport buffer and immediately returns the original buffer through the
+matching `bufferInReturn` port. The hub never sends the original pointer
+through the transport.
+
+For `serialIn`, `eventIn`, and `tlmIn`, the remote hub deserializes the payload
+by value, invokes the matching output port, and returns the received transport
+buffer. For `bufferOut`, the remote hub reuses the received storage by
+adjusting its metadata to the payload. Ownership remains with the receiving
+consumer until it invokes the matching `bufferOutReturn` port; the hub then
+returns the transport buffer through `fromBufferDriverReturn`.
+
+Pointers must never be passed through a GenericHub. An address is valid only
+in the address space that owns it, so a pointer transmitted across the hub
+would refer to invalid or unrelated memory in the receiving deployment.
 
 ## Configuration
 
-Generic hub maximum output and input ports are configured using `AcConstants.fpp` as shown below. Since hubs work in
-tandem with another hub, the input ports on the first must match the output ports on the second. Both the number of port
-and buffer inputs/outputs may be configured.
+The default GenericHub configuration is defined in
+`default/config/GenericHubCfg.fpp`:
 
-```
-@ Hub connections. Connections on all deployments should mirror these settings.
-constant GenericHubInputPorts = 10
-constant GenericHubOutputPorts = 10
-constant GenericHubInputBuffers = 10
-constant GenericHubOutputBuffers = 10
+```text
+Svc.GenericHubCfg.NumSerialInputPorts  = 10
+Svc.GenericHubCfg.NumBufferInputPorts  = 10
+Svc.GenericHubCfg.NumSerialOutputPorts = 10
+Svc.GenericHubCfg.NumBufferOutputPorts = 10
 ```
 
-The above configuration may be used with both deployments hubs as the input/output pairs match.
+The command ports use the framework constant
+`CmdDispatcherSequencePorts`, defined in `default/config/AcConstants.fpp`
+and set to `5` by default.
 
-To use the hub in a pattern specifier, include this in your topology:
+Both deployments must use matching settings. In particular, the inputs on hub
+A must match the outputs on hub B, and the outputs on hub A must match the
+inputs on hub B. The port index is part of the serialized message, so the
+corresponding arrays must be wired in parallel.
 
+To use the event and telemetry pattern connections, include the hub in the
+corresponding topology specifiers:
+
+```text
+event connections instance hub
+telemetry connections instance hub
 ```
-    event connections instance hub
-    telemetry connections instance hub
-```
 
-## Idiosyncrasies 
+## Idiosyncrasies
 
-Currently, the `Drv::ByteStreamDriverModel` can report errors and failures. This generic hub component drops these errors.
-Users who expect the driver to error should adapt this component to handle this issue. Future versions of this component
-may correct this issue by calling to a fault port on error.
+The buffer driver can report send and receive errors, but GenericHub currently
+drops those errors. Projects that need to monitor transport failures must add
+that handling around or within the component.
 
-Connections are still required from the telemetry and event output ports to the system-wide event log and telemetry
-handling components as the hub is not designed to look like a telemetry nor event source.
+The hub is not itself an event source or telemetry database. Its `eventOut`
+and `tlmOut` ports still need to be wired to the deployment's event manager and
+telemetry database, respectively.
 
 ## Requirements
 
 | Name | Description | Validation |
 |---|---|---|
-| GENHUB-001 | The generic hub shall receive incoming port and buffer calls | unit test |
-| GENHUB-002 | The generic hub shall serialize the incoming port and buffer calls to an output port | unit test |
-| GENHUB-003 | The generic hub shall deserialize the incoming serialize calls to output port and buffer calls | unit test |
-| GENHUB-004 | The generic hub shall work with another generic hub to send port and buffer calls | unit test |
+| GENHUB-001 | The GenericHub shall receive incoming port and buffer calls. | Unit test |
+| GENHUB-002 | The GenericHub shall serialize incoming port and buffer calls to an output buffer-driver port. | Unit test |
+| GENHUB-003 | The GenericHub shall deserialize incoming transport buffers to output port and buffer calls. | Unit test |
+| GENHUB-004 | The GenericHub shall work with another GenericHub to send port and buffer calls. | Unit test |
+| GENHUB-005 | The GenericHub shall forward command dispatches and command responses between deployments. | Unit test |
+
+## Example formations
+
+The following diagrams show progressively more detail:
+
+![Top Level Generic Hub](./img/gh-top.png)
+
+![Top Level Generic Hub with buffers](./img/gh-top-buff.png)
+
+![Generic Hub input-side connections](./img/gh-left.png)
+
+![Generic Hub output-side connections](./img/gh-right.png)
 
 ## Change Log
 
@@ -99,3 +300,4 @@ handling components as the hub is not designed to look like a telemetry nor even
 | 2020-12-21 | Initial Draft |
 | 2021-01-29 | Updated |
 | 2023-06-09 | Added telemetry and event helpers |
+| 2026-07-09 | Documented command routing, current configuration constants, buffer-driver interfaces, framing, and buffer lifecycle |

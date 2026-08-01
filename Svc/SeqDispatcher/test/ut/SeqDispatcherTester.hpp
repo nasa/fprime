@@ -44,6 +44,8 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     void testRunArgsWithMaxSizedArguments();
     void testRunArgsNoSequencersAvailable();
     void testRunArgsBlockingVsNonBlocking();
+    void testCancelName();
+    void testCancelNameNotFound();
 
   private:
     // ----------------------------------------------------------------------
@@ -53,6 +55,9 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     void seqRunOut_handler(FwIndexType portNum,             //!< The port number
                            const Fw::StringBase& filename,  //!< The sequence file
                            const Svc::SeqArgs& args         //!< Sequence arguments
+    );
+
+    void seqCancelOut_handler(FwIndexType portNum  //!< The port number
     );
 
   private:

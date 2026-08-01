@@ -26,11 +26,11 @@ DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compN
     // Members are default-initialized via in-class initializers in the header.
 }
 
-void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
-                          FwSizeType numDirs,
+void DpCatalog::configure(const Fw::ExternalArray<Fw::FileNameString>& directories,
                           Fw::FileNameString& stateFile,
                           FwEnumStoreType memId,
                           Fw::MemAllocator& allocator) {
+    const FwSizeType numDirs = directories.getSize();
     // Do some assertion checks
     FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
@@ -69,6 +69,16 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
     this->m_allocator = &allocator;
     this->m_allocatorId = memId;
     this->m_initialized = true;
+}
+
+void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+                          FwSizeType numDirs,
+                          Fw::FileNameString& stateFile,
+                          FwEnumStoreType memId,
+                          Fw::MemAllocator& allocator) {
+    FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
+    const Fw::ExternalArray<Fw::FileNameString> directoryArray(directories, numDirs);
+    this->configure(directoryArray, stateFile, memId, allocator);
 }
 
 void DpCatalog::resetCatalog() {
@@ -355,7 +365,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
-        status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+        Fw::ExternalArray<Fw::String> fileList(this->m_fileList, this->m_numDpSlots - totalFiles);
+        status = dpDir.readDirectory(fileList, filesRead);
 
         if (status != Os::Directory::OP_OK) {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
