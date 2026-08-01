@@ -1,5 +1,8 @@
 # Supported Platforms
 
+This page lists platforms tied to a specific hardware and OS pair. For reference projects
+and CI that aren't tied to a particular platform, see [F´ Reference Projects](./reference-projects.md).
+
 | Hardware         | OS | Architecture   | Reference Project | Build Status |
 | ---------------- | -------------------- | ------------------------------- | ---------------------------------- | ------------ |
 | Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI [macOS]](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml) |
