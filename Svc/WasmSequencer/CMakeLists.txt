@@ -84,13 +84,21 @@ if(TARGET Svc_WasmSequencer)
 endif()
 
 ### Unit Tests ###
-# register_fprime_ut(
-#     AUTOCODER_INPUTS
-#         "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.fpp"
-#     SOURCES
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/WasmSequencerTestMain.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/WasmSequencerTester.cpp"
-#     DEPENDS
-#         STest # For rules-based testing
-#     UT_AUTO_HELPERS
-# )
+register_fprime_ut(
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/WasmSequencer.fpp"
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/WasmSequencerTestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/WasmSequencerTester.cpp"
+    DEPENDS
+        STest # For rules-based testing
+    UT_AUTO_HELPERS
+)
+
+# Point the unit tests at the committed golden WebAssembly modules
+# (Svc/WasmSequencer/test/wasm). Read directly from the source tree at runtime;
+# no build-time copy is needed.
+if(TARGET Svc_WasmSequencer_ut_exe)
+    target_compile_definitions(Svc_WasmSequencer_ut_exe PRIVATE
+        WASM_SEQ_ASSET_DIR="${CMAKE_CURRENT_LIST_DIR}/test/wasm")
+endif()

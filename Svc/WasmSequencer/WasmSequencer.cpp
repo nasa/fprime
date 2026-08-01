@@ -63,6 +63,12 @@ WasmSequencer ::WasmSequencer(const char* const compName)
 
 WasmSequencer ::~WasmSequencer() {
     this->destroyStore();
+
+    // Release our slot in the process-wide global-allocator registry so it can
+    // be reused by a later sequencer instance.
+    getGlobalAllocatorLock()->lock();
+    (void)spacewasm_fprime_deregister_global_allocator(this);
+    getGlobalAllocatorLock()->unlock();
 }
 
 // ----------------------------------------------------------------------

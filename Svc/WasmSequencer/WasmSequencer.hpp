@@ -15,11 +15,13 @@
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
-#include "spacewasm.h"
+#include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 
 namespace Svc {
 
 class WasmSequencer final : public WasmSequencerComponentBase {
+    friend class WasmSequencerTester;
+
   public:
     // ----------------------------------------------------------------------
     // Component construction and destruction
@@ -430,9 +432,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Release control of the spacewasm global allocator on this WasmSequence
     void releaseAllocatorLock();
-
-    //! Map a spacewasm store-allocation status onto the AllocError event enum.
-    static Svc::WasmSequencer_AllocError::T mapAllocError(spacewasm_status_t status);
 
     //! Map a spacewasm_trap_t onto the TrapReason event enum.
     static Svc::WasmSequencer_TrapReason::T mapTrapReason(spacewasm_trap_t trap);

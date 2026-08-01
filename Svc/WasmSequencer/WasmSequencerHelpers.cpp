@@ -140,18 +140,6 @@ void WasmSequencer ::destroyStore() {
     this->m_loadStatus = SPACEWASM_OK;
 }
 
-Svc::WasmSequencer_AllocError::T WasmSequencer ::mapAllocError(spacewasm_status_t status) {
-    switch (status) {
-        case SPACEWASM_ERR_OUT_OF_MEMORY:
-            return Svc::WasmSequencer_AllocError::OUT_OF_MEMORY;
-        case SPACEWASM_ERR_PAGE_TOO_SMALL:
-            return Svc::WasmSequencer_AllocError::PAGE_TOO_SMALL;
-        case SPACEWASM_ERR_ALLOC_FAILED:
-        default:
-            return Svc::WasmSequencer_AllocError::ALLOCATION_FAILED;
-    }
-}
-
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {
     // spacewasm_trap_t values 0..14 map 1:1 onto the TrapReason enum ordinals.
     switch (trap) {

@@ -207,7 +207,10 @@ state machine SequencerStateMachine {
     choice INVOKE_CHECK {
         if invokeFailed do {
             reportInvokeFailure,
-            sendLoadCmdResponse_EXECUTION_ERROR
+            # NO_BLOCK RUN parks its response in the load-cmd slot; BLOCK RUN/INVOKE
+            # park in the finish-cmd queue. Respond to both so no caller hangs.
+            sendLoadCmdResponse_EXECUTION_ERROR,
+            sendRunCmdResponse_EXECUTION_ERROR
         } enter READY \
         else enter RUNNING
     }

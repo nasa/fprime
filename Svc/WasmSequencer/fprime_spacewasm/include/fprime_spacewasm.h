@@ -8,6 +8,8 @@ spacewasm_status_t spacewasm_fprime_register_global_allocator(spacewasm_global_a
                                                               spacewasm_global_dealloc_fn_t dealloc,
                                                               void* userdata);
 
+spacewasm_status_t spacewasm_fprime_deregister_global_allocator(void* userdata);
+
 spacewasm_status_t spacewasm_fprime_acquire_global_allocator(void* userdata);
 spacewasm_status_t spacewasm_fprime_release_global_allocator(void* userdata);
 };

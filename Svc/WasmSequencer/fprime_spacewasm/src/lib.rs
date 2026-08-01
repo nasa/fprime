@@ -145,6 +145,43 @@ pub extern "C" fn spacewasm_fprime_register_global_allocator(
     }
 }
 
+/// Release the slot previously claimed by [spacewasm_fprime_register_global_allocator]
+/// for [userdata]. The slot is returned to the free pool so it can be reused by a
+/// later registration; without this a process that constructs more than
+/// [MAX_SEQUENCERS] sequencers over its lifetime would exhaust the registry.
+///
+/// If this slot is the current active allocator, the active selection is cleared.
+///
+/// Returns NOT_FOUND if no slot is keyed on [userdata].
+#[unsafe(no_mangle)]
+pub extern "C" fn spacewasm_fprime_deregister_global_allocator(
+    userdata: *mut c_void,
+) -> spacewasm_status_t {
+    match ALLOCATORS
+        .iter()
+        .enumerate()
+        .find(|(_, alloc): &(usize, &SequencerPageAllocator)| {
+            alloc.0.with_inner(|a| a.userdata == userdata)
+        }) {
+        Some((i, slot)) => {
+            // If this slot is currently active, relinquish it first.
+            let _ = CURRENT_ALLOCATOR.compare_exchange(
+                i,
+                usize::MAX,
+                Ordering::Relaxed,
+                Ordering::Relaxed,
+            );
+            slot.0.with_inner(|a| {
+                a.alloc = None;
+                a.dealloc = None;
+                a.userdata = null_mut();
+            });
+            spacewasm_status_t::SPACEWASM_OK
+        }
+        None => spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND,
+    }
+}
+
 #[unsafe(no_mangle)]
 pub extern "C" fn spacewasm_fprime_acquire_global_allocator(
     userdata: *mut c_void,
