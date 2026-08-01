@@ -362,6 +362,8 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
     this->sendCmd_WAIT(0, 42);
     this->dispatchAll();
     ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 42, Fw::CmdResponse::OK);
+    // WAIT from READY responds immediately without changing state.
+    ASSERT_EQ(this->getState(), State::READY);
     this->removeFile("empty.wasm");
 }
 
@@ -375,6 +377,8 @@ TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
     ASSERT_EVENTS_InvalidCommand_SIZE(1);
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::IDLE);
     ASSERT_CMD_RESPONSE(0, OPCODE_CONTINUE, 50, Fw::CmdResponse::EXECUTION_ERROR);
+    // The rejected command leaves the component in IDLE.
+    ASSERT_EQ(this->getState(), State::IDLE);
 }
 
 // ----------------------------------------------------------------------
@@ -892,6 +896,7 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
     this->sendCmd_RUN(0, 151, file, NO_BLOCK);
     this->dispatchUntilState(State::READY);
 
+    ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_InvalidCommand_SIZE(1);
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 150, Fw::CmdResponse::OK);
@@ -912,6 +917,7 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
     this->sendCmd_LOAD(0, 153, file);
     this->dispatchUntilState(State::READY);
 
+    ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_InvalidCommand_SIZE(1);
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 152, Fw::CmdResponse::OK);
@@ -933,6 +939,7 @@ TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
 
     // The RUN already responded OK at load (NO_BLOCK); the WAIT responds OK on
     // finish. Both land in the cmd-response history.
+    ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 160, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 161, Fw::CmdResponse::OK);
     this->removeFile("loop.wasm");
@@ -972,6 +979,8 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
     }
     this->dispatchUntilState(State::READY);
 
+    // All queued WAITs are drained on finish and the sequence returns to READY.
+    ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_TooManyBlockingCommands_SIZE(1);
     this->removeFile("loop.wasm");
 }
