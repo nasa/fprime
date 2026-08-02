@@ -17,3 +17,13 @@ register_fprime_module(
   DEPENDS
     Fw_Com
 )
+
+### UTs ###
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CmdPacketTest.cpp"
+  DEPENDS
+    Fw_Cmd
+    Fw_Com
+    Fw_Types
+)
