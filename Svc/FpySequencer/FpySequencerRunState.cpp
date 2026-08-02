@@ -499,6 +499,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             FW_ASSERT(false);
             return;
         }
+        // Sequence control and timing directives
         case Fpy::DirectiveId::WAIT_REL: {
             this->directive_waitRel_internalInterfaceInvoke(directive.waitRel);
             return;
@@ -519,6 +520,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_noOp_internalInterfaceInvoke(directive.noOp);
             return;
         }
+        // Directives that push FSW state (telemetry, parameters) or run commands
         case Fpy::DirectiveId::PUSH_TLM_VAL: {
             this->directive_pushTlmVal_internalInterfaceInvoke(directive.pushTlmVal);
             return;
@@ -536,6 +538,8 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             return;
         }
         // fallthrough on purpose
+        // Stack operations (logical, comparison, arithmetic, conversion),
+        // delegated to stackOp_directiveHandler
         case Fpy::DirectiveId::OR:
         case Fpy::DirectiveId::AND:
         case Fpy::DirectiveId::IEQ:
@@ -587,6 +591,7 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
             this->directive_stackOp_internalInterfaceInvoke(directive.stackOp);
             return;
         }
+        // Remaining directives, each dispatched to its own handler
         case Fpy::DirectiveId::EXIT: {
             this->directive_exit_internalInterfaceInvoke(directive.exit);
             return;

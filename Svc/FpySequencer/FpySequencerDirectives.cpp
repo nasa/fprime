@@ -987,12 +987,14 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
               static_cast<FwAssertArgType>(directive.get__op()));
 
     switch (directive.get__op()) {
+        // Logical operations
         case Fpy::DirectiveId::OR:
             error = this->op_or();
             break;
         case Fpy::DirectiveId::AND:
             error = this->op_and();
             break;
+        // Integer comparisons (equality, unsigned, signed)
         case Fpy::DirectiveId::IEQ:
             error = this->op_ieq();
             break;
@@ -1023,6 +1025,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::SGE:
             error = this->op_sge();
             break;
+        // Floating-point comparisons
         case Fpy::DirectiveId::FEQ:
             error = this->op_feq();
             break;
@@ -1041,9 +1044,11 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::FGE:
             error = this->op_fge();
             break;
+        // Logical negation
         case Fpy::DirectiveId::NOT:
             error = this->op_not();
             break;
+        // Floating-point/integer conversions
         case Fpy::DirectiveId::FPEXT:
             error = this->op_fpext();
             break;
@@ -1062,6 +1067,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::UITOFP:
             error = this->op_uitofp();
             break;
+        // Integer arithmetic
         case Fpy::DirectiveId::ADD:
             error = this->op_add();
             break;
@@ -1083,6 +1089,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::SMOD:
             error = this->op_smod();
             break;
+        // Floating-point arithmetic
         case Fpy::DirectiveId::FADD:
             error = this->op_fadd();
             break;
@@ -1104,6 +1111,7 @@ Signal FpySequencer::stackOp_directiveHandler(const FpySequencer_StackOpDirectiv
         case Fpy::DirectiveId::FMOD:
             error = this->op_fmod();
             break;
+        // Integer width conversions (sign/zero extension, truncation)
         case Fpy::DirectiveId::SIEXT_8_64:
             error = this->op_siext_8_64();
             break;
