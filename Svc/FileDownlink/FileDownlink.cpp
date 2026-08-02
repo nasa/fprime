@@ -396,6 +396,15 @@ void FileDownlink ::sendCancelPacket() {
     // Serialize the filePacket content into the buffer
     status = filePacket.toBuffer(offsetBuffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    // Match sendFilePacket(): expose the exact serialized size on the wire.
+    // getBuffer() leaves size at FILEDOWNLINK_INTERNAL_BUFFER_SIZE; leaving that
+    // full size makes receivers that call filePacket.fromBuffer(fwBuffer) fail with
+    // FW_DESERIALIZE_SIZE_MISMATCH on Cancel (Start/Data/End already set size).
+    // See nasa/fprime#5347.
+    const U32 bufferSize = filePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
+    FW_ASSERT(buffer.getSize() >= bufferSize, static_cast<FwAssertArgType>(buffer.getSize()),
+              static_cast<FwAssertArgType>(bufferSize));
+    buffer.setSize(bufferSize);
     this->bufferSendOut_out(0, buffer);
     this->m_packetsSent.packetSent();
 }

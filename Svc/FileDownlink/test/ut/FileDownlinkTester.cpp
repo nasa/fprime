@@ -540,6 +540,10 @@ void FileDownlinkTester ::validateCancelPacket(const Fw::Buffer& buffer, const U
     const Fw::FilePacket::Header& header = filePacket.asHeader();
     ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
     ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.m_type);
+    // Cancel buffers must advertise exact payload size (same contract as Start/Data/End).
+    // Full-size internal buffers break strict fromBuffer() consumers (#5347).
+    ASSERT_EQ(filePacket.bufferSize() + sizeof(FwPacketDescriptorType),
+              static_cast<U32>(buffer.getSize()));
 }
 
 }  // namespace Svc
