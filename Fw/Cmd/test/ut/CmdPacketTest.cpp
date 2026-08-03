@@ -31,7 +31,8 @@ TEST(FwCmdPacketTest, DeserializeWellFormed) {
     Fw::ComBuffer buff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, putDescriptor(buff, Fw::ComPacketType::FW_PACKET_COMMAND));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(opcode));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
 
     Fw::CmdPacket pkt;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, pkt.deserializeFrom(buff));
@@ -78,7 +79,7 @@ TEST(FwCmdPacketTest, DeserializePartialDescriptor) {
     if (sizeof(FwPacketDescriptorType) == 1) {
         GTEST_SKIP() << "A partially present descriptor requires a multi-byte FwPacketDescriptorType";
     }
-    
+
     U8 partial[sizeof(FwPacketDescriptorType) - 1] = {};
 
     Fw::ComBuffer buff;
@@ -95,7 +96,7 @@ TEST(FwCmdPacketTest, DeserializePartialOpcode) {
     if (sizeof(FwOpcodeType) == 1) {
         GTEST_SKIP() << "A partially present opcode requires a multi-byte FwOpcodeType";
     }
-    
+
     U8 partial[sizeof(FwOpcodeType) - 1] = {};
 
     Fw::ComBuffer buff;
@@ -131,7 +132,8 @@ TEST(FwCmdPacketTest, DeserializeArgsExactlyFill) {
     Fw::ComBuffer buff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, putDescriptor(buff, Fw::ComPacketType::FW_PACKET_COMMAND));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<FwOpcodeType>(0x7)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
 
     Fw::CmdPacket pkt;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, pkt.deserializeFrom(buff));
@@ -149,7 +151,8 @@ TEST(FwCmdPacketTest, DeserializeArgsExceedMax) {
     memset(args, 0xCD, sizeof(args));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, putDescriptor(buff, Fw::ComPacketType::FW_PACKET_COMMAND));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<FwOpcodeType>(0x7)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
+              buff.serializeFrom(args, static_cast<FwSizeType>(sizeof(args)), Fw::Serialization::OMIT_LENGTH));
 
     Fw::CmdPacket pkt;
     ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, pkt.deserializeFrom(buff));
