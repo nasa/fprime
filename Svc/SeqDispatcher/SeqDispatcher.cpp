@@ -213,4 +213,22 @@ void SeqDispatcher::CANCEL_NAME_cmdHandler(
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
+
+//! Broadcast a cancel to every running sequencer.
+//! This does not exclude the caller!
+//! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+void SeqDispatcher::CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                          const U32 cmdSeq) {        /*!< The command sequence number*/
+    for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+        const bool running = this->m_entryTable[idx].state != SeqDispatcher_CmdSequencerState::AVAILABLE;
+        if (running && this->isConnected_seqCancelOut_OutputPort(idx)) {
+            this->seqCancelOut_out(idx);
+            // Entry table is cleared via seqDoneIn_handler
+            this->log_ACTIVITY_HI_SequenceCanceled(static_cast<U16>(idx),
+                                                   Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+            this->tlmWrite_canceledCount(++this->m_canceledCount);
+        }
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
 }  // namespace Svc
