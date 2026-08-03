@@ -9,10 +9,6 @@
 #include "STest/STest/Random/Random.hpp"
 #include "Svc/DpCompressProc/test/ut/Rules/Testers.hpp"
 
-//! Off-nominal: a buffer shorter than MIN_PACKET_SIZE must be rejected
-//! before the container is constructed. See
-//! DpCompressProcTester::test_undersized_buffer for the construction
-//! and the failure mode it guards.
 TEST(OffNominal, BufferSmallerThanMinPacketSize) {
     Svc::Testers::procRequest.testState.test_undersized_buffer();
 }
