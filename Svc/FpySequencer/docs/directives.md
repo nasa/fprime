@@ -358,7 +358,7 @@ Performs a boolean not operation on a boolean. If the operand is `FW_SERIALIZE_F
 **Requirement:**  FPY-SEQ-002
 
 ## FPTOSI (28)
-Converts a float to a signed integer, pushes result to stack.
+Converts an `F64` to a signed `I64` with saturating semantics (`llvm.fptosi.sat`, wasm `i64.trunc_sat_f64_s`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; values above `I64` max clamp to `I64` max and values below `I64` min clamp to `I64` min. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -370,7 +370,7 @@ Converts a float to a signed integer, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## FPTOUI (29)
-Converts a float to an unsigned integer, pushes result to stack.
+Converts an `F64` to an unsigned `U64` with saturating semantics (`llvm.fptoui.sat`, wasm `i64.trunc_sat_f64_u`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; negative values clamp to 0 and values at or above `2**64` clamp to `U64` max. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -460,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing the minimum I64 value by -1 overflows the result type and also yields a DOMAIN_ERROR.
+Performs signed integer division floored toward negative infinity, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing `I64` min by -1 overflows the result type (the true quotient `2**63` is not representable) and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -486,7 +486,7 @@ Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will
 **Requirement:**  FPY-SEQ-002
 
 ## SMOD (38)
-Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 overflows the intermediate division and also yields a DOMAIN_ERROR.
+Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 yields 0, the mathematical remainder (matching wasm `i64.rem_s`).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -538,7 +538,7 @@ Performs float multiplication, pushes result to stack. NaN, and infinity are han
 **Requirement:**  FPY-SEQ-002
 
 ## FDIV (42)
-Performs float division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division.
+Performs IEEE 754 float division, pushes result to stack. Division by zero produces an infinity whose sign is the XOR of the operand signs, except that a zero or NaN dividend produces NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -551,7 +551,7 @@ Performs float division, pushes result to stack. Zero divisors, NaN, and infinit
 **Requirement:**  FPY-SEQ-002
 
 ## FPOW (43)
-Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
+Performs float exponentiation (C `pow` semantics), pushes result to stack. A domain error (negative base with a non-integer exponent) yields NaN; overflow of the `F64` range yields an infinity with the sign of the true result; a zero base with a negative exponent yields an infinity (pole).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | exp      | F64      | stack  | Exponent value |
@@ -576,7 +576,7 @@ Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR
 **Requirement:**  FPY-SEQ-002
 
 ## FMOD (45)
-Performs float modulo, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs. A 0 divisor (rhs) yields a NaN result, not an error. A NaN will produce a NaN result or infinity as either argument yields NaN.
+Performs float modulo with Python's floored semantics, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs; an exact-multiple result is a zero carrying the divisor's sign. A 0 divisor (rhs) yields a NaN result, not an error. A NaN operand or an infinite dividend yields NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -589,7 +589,7 @@ Performs float modulo, pushes result to stack. Computed as the exact truncated r
 **Requirement:**  FPY-SEQ-002
 
 ## FPTRUNC (47)
-Truncates a 64-bit float to a 32-bit float, pushes result to stack.
+Truncates a 64-bit float to a 32-bit float (IEEE round-to-nearest demote), pushes result to stack. A finite value beyond the `F32` range rounds to +-inf.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Value to truncate |
@@ -721,10 +721,10 @@ Truncates a 64-bit integer to a 32-bit integer, pushes result to stack. Integers
 **Requirement:**  FPY-SEQ-015
 
 ## EXIT (57)
-Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code.
+Pops an `I32` exit code off the stack. If the code == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with the error code.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| success    | U8      | stack  | 0 if should exit without error |
+| exit_code    | I32      | stack  | 0 if should exit without error |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -1138,15 +1138,15 @@ If this is called without the seed being manually set beforehand, then the seed 
 | U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
 
 ## POP_SERIALIZABLE (78)
-Pops serialized data from the stack and sends it to an external component via a serial output port.
+Pops `size` bytes of serialized data from the stack and sends them to an external component via the sequencer's `serialOut` output port array.
 
 **Preconditions:**
-- `port_index < MAX_SERIAL_PORTS` (from `FpySequencerCfg.SerialPortIndex` enum)
+- `port_index < MAX_SERIAL_PORTS` (from the `Svc.Fpy.SerialPortIndex` enum in `FpySequencerCfg`)
 - `serialOut[port_index]` is connected to a target component
 - `len(stack) >= size`
 
 **Semantics:**
-1. Validate port index is within bounds.
+1. Validate the port index is within bounds.
 2. Check that the specified port is connected.
 3. Pop `size` bytes from the stack.
 4. Send the popped bytes to the target component via `serialOut[port_index]`.
@@ -1163,3 +1163,39 @@ Pops serialized data from the stack and sends it to an external component via a 
 | value        | bytes          | stack      | Serialized data to send (popped from stack). |
 
 **Requirement:** FPY-SEQ-019
+
+## FFLOOR (79)
+Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNegative` operation), pushes result to stack. A zero, infinite, or NaN value passes through unchanged; the sign of a zero is preserved (`-0.0` floors to `-0.0`). A NaN result is a quiet NaN; its sign and payload are unspecified. A value in `(0, 1)` floors to `0.0`; a value in `(-1, 0)` floors to `-1.0`. Never raises an error. Used to lower float floor division (`//`).
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to floor |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The floored value |
+
+**Requirement:**  FPY-SEQ-002
+
+## IABS (80)
+Pops a signed `I64`, pushes its absolute value to the stack: the value itself if non-negative, its negation otherwise. The absolute value of `I64` min (`-2**63`) is not representable in `I64` and results in ARITHMETIC_OVERFLOW.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | I64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| I64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002
+
+## FABS (81)
+Pops an `F64`, clears its sign bit, and pushes the result to the stack (the IEEE 754 `abs` operation, matching `llvm.fabs` and wasm's `f64.abs`). No bits other than the sign bit change: `-0.0` becomes `0.0`, `-inf` becomes `inf`, and a NaN keeps its payload and signaling bit. Never raises an error or floating-point exception.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002
