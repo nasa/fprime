@@ -6,9 +6,10 @@
 @ 
 @ If $block == Svc.BlockState.BLOCK this command will wait for complemention.
 async command RUN(
-                      fileName: string size FileNameStringSize @< The name of the sequence file
-                      $block: Svc.BlockState @< Return command status when complete or not
-                    ) opcode 0x0
+    fileName: string size FileNameStringSize @< The name of the sequence file
+    $block: Svc.BlockState                   @< Return command status when complete or not
+) \
+    opcode 0x0
 
 @ Wait for the interpreter to finish and return it's result as a CmdResponse
 async command WAIT opcode 0x1
@@ -25,20 +26,23 @@ async command WAIT opcode 0x1
 @ To allow multiple modules, use the `LOAD_NAME` command instead.
 async command LOAD(
     fileName: string size FileNameStringSize @< The name of the sequence file
-) opcode 0x2
+) \
+    opcode 0x2
 
 @ Load and validate a WebAssembly module into the store. This module is given a name so that
 @ it's exports can be referenced by other modules.
 async command LOAD_NAME(
     fileName: string size FileNameStringSize @< The name of the sequence file
-    name: string size 16 @< WebAssembly module name, must not conflict with previously loaded modules
-) opcode 0x3
+    name: string size 16                     @< WebAssembly module name, must not conflict with previously loaded modules
+) \
+    opcode 0x3
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
-    $module: string size 16, @< Name of the module to invoke a function from
+    $module: string size 16 @< Name of the module to invoke a function from
     $block: Svc.BlockState
-) opcode 0x4
+) \
+    opcode 0x4
 
 # @ Loads and validates a sequence with arguments
 # # prio: lower than sm sig and CANCEL

@@ -10,46 +10,46 @@ struct ModuleLoad {
 
 enum TrapReason {
     @ Triggered by unreachable instruction
-    UNREACHABLE,
+    UNREACHABLE
     @ A host function has noted an unrecoverable failure
-    HOST,
+    HOST
     @ Integer or floating point division by zero
-    DIVIDE_BY_ZERO,
+    DIVIDE_BY_ZERO
     @ An indirect call tried to map to a table function out of range
-    INVALID_TABLE_INDEX,
+    INVALID_TABLE_INDEX
     @ The function type in an indirect call does not match the function pointer's type
-    INVALID_TABLE_FUNCTION_TYPE,
+    INVALID_TABLE_FUNCTION_TYPE
     @ An indirect call tried to map to a table function out of range
-    UNINTIIALIZED_TABLE_ELEMENT,
+    UNINTIIALIZED_TABLE_ELEMENT
     @ An imported global could not be read
-    GLOBAL_GET_FAILED,
+    GLOBAL_GET_FAILED
     @ An imported global could not be set
-    GLOBAL_SET_FAILED,
+    GLOBAL_SET_FAILED
     @ A memory operation is out of bounds
-    OUT_OF_MEMORY,
+    OUT_OF_MEMORY
     @ memory.grow failed because a host function has taken ownership of a memory
-    MEMORY_REF_NOT_UNIQUE,
+    MEMORY_REF_NOT_UNIQUE
     @ A memory operation is out of bounds
-    MEMORY_OUT_OF_BOUNDS,
+    MEMORY_OUT_OF_BOUNDS
     @ Ran out of stack space
-    STACK_OVERFLOW,
+    STACK_OVERFLOW
     @ Attempting to convert Inf to integer
-    UNREPRESENTABLE_RESULT,
+    UNREPRESENTABLE_RESULT
     @ Signed division causes integer overflow
-    INTEGER_OVERFLOW,
+    INTEGER_OVERFLOW
     @ Attempting to convert NaN to integer
-    BAD_CONVERSION_TO_INTEGER,
+    BAD_CONVERSION_TO_INTEGER
 }
 
-enum AllocError : U8 {
+enum AllocError: U8 {
     @ Not enough pages could be allocated to accommodate this allocation
-    OUT_OF_MEMORY,
+    OUT_OF_MEMORY
 
     @ Page was too small to fit this allocation
-    PAGE_TOO_SMALL,
+    PAGE_TOO_SMALL
 
     @ A generic allocation failure
-    ALLOCATION_FAILED,
+    ALLOCATION_FAILED
 }
 
 type ModuleIdx = U8
@@ -172,10 +172,9 @@ state machine SequencerStateMachine {
         on entered do { load } enter LOAD_CHECK
 
         choice LOAD_CHECK {
-            if moduleLoadSucceeded enter STARTING \
-            else do {
-                reportLoadFailure,
-                sendLoadCmdResponse_EXECUTION_ERROR,
+            if moduleLoadSucceeded enter STARTING else do {
+                reportLoadFailure
+                sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
                 # A failing module load must reset because there could be lingering allocations
                 # and we explicitely do not allow fragmentation.
@@ -192,27 +191,27 @@ state machine SequencerStateMachine {
         on startFinished do { sendLoadCmdResponse_OK } enter RUN_CHECK
         on startInvoked enter RUNNING
         on startError do {
-            reportInvokeFailure,
-            sendLoadCmdResponse_EXECUTION_ERROR,
+            reportInvokeFailure
+            sendLoadCmdResponse_EXECUTION_ERROR
             sendRunCmdResponse_EXECUTION_ERROR
         } enter IDLE
     }
 
     @ A module finished loading; decide whether to invoke a pending function or wait
     choice RUN_CHECK {
-        if pendingRun do { invokeMainOfLastModule } enter INVOKE_CHECK \
-        else enter READY
+        if pendingRun do {
+            invokeMainOfLastModule
+        } enter INVOKE_CHECK else enter READY
     }
 
     choice INVOKE_CHECK {
         if invokeFailed do {
-            reportInvokeFailure,
+            reportInvokeFailure
             # NO_BLOCK RUN parks its response in the load-cmd slot; BLOCK RUN/INVOKE
             # park in the finish-cmd queue. Respond to both so no caller hangs.
-            sendLoadCmdResponse_EXECUTION_ERROR,
+            sendLoadCmdResponse_EXECUTION_ERROR
             sendRunCmdResponse_EXECUTION_ERROR
-        } enter READY \
-        else enter RUNNING
+        } enter READY else enter RUNNING
     }
 
     ###############
@@ -290,28 +289,31 @@ state machine SequencerStateMachine {
             on entered do { spin }
             # -->
             on interpreterFinished enter FINISHED
-            on interpreterTrap do { report_seqTrap, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
             on interpreterOutOfFuel enter PAUSE_CHECK
             on interpreterPause enter HOST_FUNCTION
 
-            # Check if there is a pending 
+            on interpreterTrap do {
+                report_seqTrap
+                sendRunCmdResponse_EXECUTION_ERROR
+            } enter IDLE
+
+            # Check if there is a pending
             choice HOST_FUNCTION {
-                if pendingPause enter PAUSED \
-                else do { dispatchPendingHostFunction } enter AWAITING_RESPONSE
+                if pendingPause enter PAUSED else do {
+                    dispatchPendingHostFunction
+                } enter AWAITING_RESPONSE
             }
 
             choice FINISHED {
                 # Check if we are running the start function
-                if pendingRun enter RUN_CHECK \
-                else do {
+                if pendingRun enter RUN_CHECK else do {
                     # We are not executing the start function, report success to the command
                     # that requested the interpreter to spin
-                    report_seqSucceeded,
-                    clearPause,
+                    report_seqSucceeded
+                    clearPause
                     sendRunCmdResponse_OK
                 } enter READY
             }
-
         }
 
         @ a host function paused the interpreter to dispatch an F´ command;
@@ -320,17 +322,36 @@ state machine SequencerStateMachine {
             on checkTimersIn enter CHECK_TIMERS
 
             choice CHECK_TIMERS {
-                if pendingTimer do { checkShouldWake, checkStatementTimeout } enter AWAITING_RESPONSE \
-                else do { checkStatementTimeout } enter AWAITING_RESPONSE
+                if pendingTimer do {
+                    checkShouldWake
+                    checkStatementTimeout
+                } enter AWAITING_RESPONSE else do {
+                    checkStatementTimeout
+                } enter AWAITING_RESPONSE
             }
 
             # -->
-            on result_checkStatementTimeout_statementTimeout do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
-            # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            on result_checkStatementTimeout_statementTimeout do {
+                clearPendingHostFunction
+                report_seqFailed
+                sendRunCmdResponse_EXECUTION_ERROR
+            } enter IDLE
 
-            on stmtResponse_success do { clearPendingHostFunction } enter PAUSE_CHECK
-            on stmtResponse_failure do { clearPendingHostFunction, report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+            # this can occur if the time base/ctx changes, or was invalid from the start
+            on result_timeOpFailed do {
+                clearPendingHostFunction
+                report_seqFailed
+                sendRunCmdResponse_EXECUTION_ERROR
+            } enter IDLE
+
+            on stmtResponse_success do {
+                clearPendingHostFunction
+            } enter PAUSE_CHECK
+            on stmtResponse_failure do {
+                clearPendingHostFunction
+                report_seqFailed
+                sendRunCmdResponse_EXECUTION_ERROR
+            } enter IDLE
         }
 
         state PAUSED {
@@ -339,8 +360,9 @@ state machine SequencerStateMachine {
             on cmd_CONTINUE enter RESUME
 
             choice RESUME {
-                if pendingHostFunction do { dispatchPendingHostFunction } enter AWAITING_RESPONSE \
-                else enter SPINNING
+                if pendingHostFunction do {
+                    dispatchPendingHostFunction
+                } enter AWAITING_RESPONSE else enter SPINNING
             }
         }
 
@@ -349,12 +371,21 @@ state machine SequencerStateMachine {
         @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
         @ sometimes, we can produce responses in strange situations nominally by cancelling and
         @ quickly running sequences. this signal does not cover such cases.
-        on stmtResponse_unexpected do { report_seqFailed, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+        on stmtResponse_unexpected do {
+            report_seqFailed
+            sendRunCmdResponse_EXECUTION_ERROR
+        } enter IDLE
 
         ####################
         # commands         #
         ####################
-        on cmd_CANCEL do { clearPause, clearPendingHostFunction, report_seqCancelled, sendRunCmdResponse_EXECUTION_ERROR } enter IDLE
+        on cmd_CANCEL do {
+            clearPause
+            clearPendingHostFunction
+            report_seqCancelled
+            sendRunCmdResponse_EXECUTION_ERROR
+        } enter IDLE
+
         on cmd_PAUSE do { pendPause }
     }
 }

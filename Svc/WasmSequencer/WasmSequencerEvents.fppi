@@ -49,14 +49,10 @@ event HostFunctionInvalidSeverity(raw: I32) \
     format "Invalid event severity '{}'"
 
 @ The sequence was cancelled
-event SequenceCancelled() \
-    severity activity high \
-    format "Wasm program cancelled"
+event SequenceCancelled() severity activity high format "Wasm program cancelled"
 
 @ The sequence failed to execute successfully
-event SequenceFailed() \
-    severity warning high \
-    format "Wasm program failed"
+event SequenceFailed() severity warning high format "Wasm program failed"
 
 @ The interpreter trapped
 event SequenceTrap(reason: TrapReason) \
@@ -90,36 +86,22 @@ event GuestMemoryError(status: Status) \
 # ----------------------------------------------------------------------
 
 @ A FATAL event emitted by the guest program
-event LogFatal(msg: string size 128) \
-    severity fatal \
-    format "{}"
+event LogFatal(msg: string size 128) severity fatal format "{}"
 
 @ A WARNING_HI event emitted by the guest program
-event LogWarningHi(msg: string size 128) \
-    severity warning high \
-    format "{}"
+event LogWarningHi(msg: string size 128) severity warning high format "{}"
 
 @ A WARNING_LO event emitted by the guest program
-event LogWarningLo(msg: string size 128) \
-    severity warning low \
-    format "{}"
+event LogWarningLo(msg: string size 128) severity warning low format "{}"
 
 @ A COMMAND event emitted by the guest program
-event LogCommand(msg: string size 128) \
-    severity command \
-    format "{}"
+event LogCommand(msg: string size 128) severity command format "{}"
 
 @ An ACTIVITY_HI event emitted by the guest program
-event LogActivityHi(msg: string size 128) \
-    severity activity high \
-    format "{}"
+event LogActivityHi(msg: string size 128) severity activity high format "{}"
 
 @ An ACTIVITY_LO event emitted by the guest program
-event LogActivityLo(msg: string size 128) \
-    severity activity low \
-    format "{}"
+event LogActivityLo(msg: string size 128) severity activity low format "{}"
 
 @ A DIAGNOSTIC event emitted by the guest program
-event LogDiagnostic(msg: string size 128) \
-    severity diagnostic \
-    format "{}"
+event LogDiagnostic(msg: string size 128) severity diagnostic format "{}"

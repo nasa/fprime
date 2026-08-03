@@ -1,7 +1,6 @@
 module Svc {
     @ A sequence engine based around a WebAssembly interpreter
     active component WasmSequencer {
-
         include "WasmSequencerTypes.fppi"
         include "WasmSequencerCommands.fppi"
         include "WasmSequencerStateMachine.fppi"
@@ -51,6 +50,5 @@ module Svc {
 
         @Port to set the value of a parameter
         param set port prmSet
-
     }
 }

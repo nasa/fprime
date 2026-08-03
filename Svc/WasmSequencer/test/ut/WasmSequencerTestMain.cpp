@@ -2,12 +2,6 @@
 // \title  WasmSequencerTestMain.cpp
 // \author tumbar
 // \brief  cpp file for WasmSequencer component test main function
-//
-// The tests drive the component through its public command interface and
-// pump its message queue (dispatchAll / dispatchUntilState) exactly as the
-// active task would, then assert on the resulting state, emitted events, and
-// output-port invocations. Guest behavior is supplied by the committed golden
-// WebAssembly modules under test/wasm (see that directory's README).
 // ======================================================================
 
 #include "WasmSequencerGTestBase.hpp"
