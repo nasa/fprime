@@ -26,3 +26,8 @@ U32 conditionGuarded(U32 total, U32 count) {
 U32 constantDivisor(U32 total) {
     return total / 4;
 }
+
+// Compliant: IEEE 754 floating-point division by zero is well-defined.
+double floatingDivision(double total, double count) {
+    return total / count;
+}
