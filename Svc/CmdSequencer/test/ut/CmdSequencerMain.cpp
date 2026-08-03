@@ -400,6 +400,11 @@ TEST(JoinWait, JoinWaitWithBlockingSeq) {
     tester.test_join_wait_with_blocking_seq();
 }
 
+TEST(JoinWait, JoinWaitWithSecondJoinWait) {
+    Svc::JoinWait::CmdSequencerTester tester;
+    tester.test_join_wait_with_second_join_wait();
+}
+
 TEST(InvalidFiles, RunNoRecords) {
     Svc::NoRecords::CmdSequencerTester tester;
     tester.RunNoRecords();

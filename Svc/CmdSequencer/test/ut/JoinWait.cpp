@@ -112,6 +112,46 @@ void CmdSequencerTester ::test_join_wait_with_blocking_seq() {
     ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_RUN, runCmdSeq, Fw::CmdResponse::OK);
 }
 
+void CmdSequencerTester ::test_join_wait_with_second_join_wait() {
+    const U32 numRecords = 1;
+    SequenceFiles::RelativeFile file(numRecords, this->format);
+    // Set the time
+    Fw::Time testTime(TimeBase::TB_WORKSTATION_TIME, 0, 0);
+    this->setTestTime(testTime);
+    // Write the file
+    const char* const fileName = file.getName().toChar();
+    file.write();
+    // Validate the file
+    this->validateFile(0, fileName);
+    // Run the sequence
+    this->runSequence(0, fileName);
+
+    // First JOIN_WAIT succeeds and starts waiting
+    const U32 firstCmdSeq = 45;
+    this->sendCmd_CS_JOIN_WAIT(0, firstCmdSeq);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_EVENTS_CS_JoinWaitingNotComplete_SIZE(0);
+    ASSERT_TRUE(this->component.m_join_waiting);
+
+    // Second JOIN_WAIT must be rejected while the first is still waiting
+    const U32 secondCmdSeq = 67;
+    this->sendCmd_CS_JOIN_WAIT(0, secondCmdSeq);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_JOIN_WAIT, secondCmdSeq,
+                        Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_CS_JoinWaitingNotComplete_SIZE(1);
+    ASSERT_TRUE(this->component.m_join_waiting);
+
+    // Complete the sequence; the first JOIN_WAIT caller receives the completion response
+    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->clearAndDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CmdSequencerComponentImpl::OPCODE_CS_JOIN_WAIT, firstCmdSeq, Fw::CmdResponse::OK);
+    ASSERT_FALSE(this->component.m_join_waiting);
+}
+
 }  // namespace JoinWait
 
 }  // namespace Svc
