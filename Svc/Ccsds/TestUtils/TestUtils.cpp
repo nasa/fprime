@@ -27,7 +27,9 @@ ApidOption getRandomApid() {
     // selected index, or we run out of numbers
     SerialType idx = 0;
     SerialType apid = 0;
-    for (SerialType candidateApid = 0; candidateApid <= bound; candidateApid++) {
+    // Break the loop checking into two operations so that g++ can't report a Wtype-limits warning
+    // when bound is the type max (since neither individual check is always true, but <= would be)
+    for (SerialType candidateApid = 0; candidateApid < bound || candidateApid == bound; candidateApid++) {
         if (ComCfg::Apid::isValid(candidateApid)) {
             // Found a valid APID: store it
             apid = candidateApid;
