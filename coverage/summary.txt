@@ -157,7 +157,7 @@ Os/FileSystem.cpp                            194     163    84%   133,159,163,16
 Os/FileSystem.hpp                              2       2   100%
 Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
-Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,122-123,189-191,195-196,212,218-219,222-223,227-229,231,234-235,237,245,423,433-434,459,484,525-526,595,752
+Os/Generic/PriorityMemQueue.cpp              345     311    90%   79-80,109-110,122-123,189-191,195-196,212,218-219,222-223,227-229,231,234-235,237,245,423,433-434,459,484,525-526,595,751-752
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 161     134    83%   75,77-78,88-89,91-93,103-105,107-110,120-123,125-129,189,254-255
 Os/Generic/PriorityQueue.hpp                   1       1   100%
@@ -197,7 +197,7 @@ Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            141     108    76%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,265-267,271-272,274
+Os/Posix/Task.cpp                            141     109    77%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,266-267,271-272,274
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -246,7 +246,7 @@ Os/ValidateFileCommon.cpp                    141     101    71%   23,38,69,77,80
 Svc/ActivePhaser/ActivePhaser.cpp             93      93   100%
 Svc/ActiveRateGroup/ActiveRateGroup.cpp       55      46    83%   43-45,48-50,52-53,79
 Svc/ActiveTextLogger/ActiveTextLogger.cpp
-                                              55      33    60%   24-26,29-31,33,47,51-52,60-62,69-71,78-83
+                                              65      47    72%   32-34,37-39,41,63-64,81-83,90-95
 Svc/ActiveTextLogger/LogFile.cpp              51      50    98%   115
 Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.cpp
                                               57      54    94%   69-70,120
@@ -298,7 +298,7 @@ Svc/DpZLibCompressor/DpZLibCompressor.cpp
                                               79      74    93%   102-104,125-126
 Svc/DpZLibCompressor/DpZLibCompressor.hpp
                                                2       2   100%
-Svc/EventManager/EventManager.cpp             98      92    93%   74-76,170,172-173
+Svc/EventManager/EventManager.cpp             72      67    93%   91-92,148,150-151
 Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
                                                3       0     0%   22-23,25
 Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
@@ -314,7 +314,7 @@ Svc/FileUplink/FileUplink.cpp                131     118    90%   46-48,58-60,69
 Svc/FileUplink/FileUplink.hpp                 16      16   100%
 Svc/FileUplink/Warnings.cpp                   29      29   100%
 Svc/FileWorker/FileWorker.cpp                318     288    90%   75-78,167-170,260,263-265,267-269,271-273,324,335,429,475,494-497,544-547
-Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
+Svc/FprimeDeframer/FprimeDeframer.cpp         54      53    98%   77
 Svc/FprimeFramer/FprimeFramer.cpp             31      31   100%
 Svc/FprimeRouter/FprimeRouter.cpp             36      32    88%   43,59-61
 Svc/FpySequencer/FpySequencer.cpp            250     201    80%   265-267,336-339,437,439-445,448,450-452,454-461,464,466-472,475-482,492-495,508-509
@@ -341,7 +341,7 @@ Svc/LinuxTimer/LinuxTimerCommon.cpp            7       7   100%
 Svc/LinuxTimer/LinuxTimerFd.cpp               31      28    90%   39,46,62
 Svc/OsTime/OsTime.cpp                         50      35    70%   34-40,42-47,74,80
 Svc/PassiveConsoleTextLogger/ConsoleTextLoggerImplCommon.cpp
-                                              44       0     0%   10-11,13,15-17,20-22,24,26,32-34,38-63,65-68
+                                              56      32    57%   23-25,28-30,32,50-51,66-80
 Svc/PassiveRateGroup/PassiveRateGroup.cpp
                                               35      27    77%   38-40,43-45,47-48
 Svc/PassThroughRouter/PassThroughRouter.cpp
@@ -357,6 +357,8 @@ Svc/StaticMemory/StaticMemoryComponentImpl.cpp
 Svc/SystemResources/SystemResources.cpp       76      75    98%   37
 Svc/TlmChan/TlmChan.cpp                      177     137    77%   100,130,132,134,137-141,143,146,150-151,156,159-160,198-200,206-209,211-213,221-223,281,330-331,337-340,343,347,364-365
 Svc/TlmPacketizer/TlmPacketizer.cpp          297     274    92%   151,278,280-281,319,331,403,439-440,474-475,490-491,506-507,524-525,588-589,592,603-604,606
+Svc/Types/EventSeverityFilter/EventSeverityFilter.cpp
+                                              46      45    97%   41
 Svc/Version/Version.cpp                      155     149    96%   104-106,229,231-232
 TestUtils/OnChangeChannel.hpp                  6       6   100%
 Utils/CRCChecker.cpp                         108      95    88%   46,55-56,67-68,86,93-94,154,163-164,175-176
@@ -370,5 +372,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      19005   15648    82%
+TOTAL                                      19047   15713    82%
 ------------------------------------------------------------------------------
