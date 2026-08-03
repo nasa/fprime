@@ -75,8 +75,10 @@ TEST(FwCmdPacketTest, DeserializeTruncatedBeforeOpcode) {
 //     few. Cases 3 and 4 above cover the absent side of that split; these two
 //     cover the incomplete side, which is what a truncated uplink looks like.
 TEST(FwCmdPacketTest, DeserializePartialDescriptor) {
-    static_assert(sizeof(FwPacketDescriptorType) > 1,
-                  "a partially present descriptor requires a multi-byte FwPacketDescriptorType");
+    if (sizeof(FwPacketDescriptorType) == 1) {
+        GTEST_SKIP() << "A partially present descriptor requires a multi-byte FwPacketDescriptorType";
+    }
+    
     U8 partial[sizeof(FwPacketDescriptorType) - 1] = {};
 
     Fw::ComBuffer buff;
@@ -90,7 +92,10 @@ TEST(FwCmdPacketTest, DeserializePartialDescriptor) {
 // 4b. Same split, one field later: a complete descriptor followed by an opcode
 //     that is short by one byte.
 TEST(FwCmdPacketTest, DeserializePartialOpcode) {
-    static_assert(sizeof(FwOpcodeType) > 1, "a partially present opcode requires a multi-byte FwOpcodeType");
+    if (sizeof(FwOpcodeType) == 1) {
+        GTEST_SKIP() << "A partially present opcode requires a multi-byte FwOpcodeType";
+    }
+    
     U8 partial[sizeof(FwOpcodeType) - 1] = {};
 
     Fw::ComBuffer buff;
