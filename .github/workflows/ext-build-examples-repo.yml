@@ -155,3 +155,11 @@ jobs:
             cat ci-logs/*.log 2>/dev/null || echo "No log files found"
             exit 1
           }
+          # Archive the outputs
+      - name: 'Archive Logs'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ci-int-logs
+          path: ci-logs.tar.gz
+          retention-days: 5
