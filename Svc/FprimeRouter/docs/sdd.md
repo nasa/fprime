@@ -8,11 +8,21 @@ The `Svc::FprimeRouter` component supports `Fw::ComPacketType::FW_PACKET_COMMAND
 
 About memory management, buffers sent by `Svc::FprimeRouter` on the `fileOut` and `unknownDataOut` ports are passed through directly without copying. Receivers of these buffers **must** return them to `Svc::FprimeRouter` through the `fileBufferReturnIn` port when finished processing. The original buffer is not returned to the deframer until this happens.
 
-**Note:** The `FrameContext` received on `dataIn` is not preserved across the buffer return path. When buffers are returned via `fileBufferReturnIn`, `Svc::FprimeRouter` constructs an empty `ComCfg::FrameContext` for the `dataReturnOut` call. This applies to all packet types — the context is always discarded on return.
-
 ## Custom Routing
 
 The `Svc::FprimeRouter` component is designed to be extensible through the use of a project-specific router. The `unknownDataOut` port can be connected to a project-specific component that can receive all unknown packet types. This component can then implement custom handling of these unknown packets. After processing, the project-specific component shall return the received buffer to the `Svc::FprimeRouter` component through the `fileBufferReturnIn` port (named this way as it only receives file packets in the common use-case), which will return the buffer to the deframer.
+
+## Context Preservation
+
+The `FrameContext` received on `dataIn` is restored on the matching `dataReturnOut` when the buffer's ownership is returned, so context (e.g. `vcId`) that arrived with a buffer survives the round-trip. This lets a shared router return buffers to their originating uplink path.
+
+Command packets are returned immediately with their received context. `fileOut` and `unknownDataOut` behave identically: their port type carries only the buffer, so before handing a buffer off the router records the buffer→context association in a fixed-size table keyed by the buffer's data pointer, then restores it when the buffer returns on `fileBufferReturnIn`. Keeping the association in the router avoids forcing downstream consumers to handle a context they do not use.
+
+The table capacity is set by `FprimeRouterCfg.BufferContextTableSize`. It bounds how many buffers can be handed off on `fileOut` and `unknownDataOut` awaiting return at once; size it to the buffer pool that feeds `dataIn`, which is the hard upper bound on outstanding buffers. Because buffers return on a different thread than `dataIn` arrivals, `dataIn` and `fileBufferReturnIn` are `guarded input` ports so table access is serialized.
+
+The lookup keys on the returned buffer's data pointer, which relies on the standard contract that a consumer returns the same `Fw::Buffer` it was given (the buffers are drawn from a single uplink pool, so at most one outstanding buffer holds a given data pointer at a time). If a consumer returned a different or offset buffer, the lookup would miss and degrade as below rather than restore a wrong context.
+
+If the table is full on hand-off, or a returned buffer is not found, the router emits a warning event and returns the buffer with an empty context.
 
 ## Usage Examples
 
@@ -32,7 +42,7 @@ In the canonical uplink communications stack, `Svc::FprimeRouter` is connected t
 | `guarded input` | `dataReturnOut` | `Svc.ComDataWithContext` | Returning ownership of buffer received on `dataIn` 
 | `output` | `commandOut` | `Fw.Com` | Port for sending command packets as Fw::ComBuffers |
 | `output` | `fileOut` | `Fw.BufferSend` | Port for sending file packets as Fw::Buffer (ownership passed to receiver) |
-| `sync input` | `fileBufferReturnIn` | `Fw.BufferSend` | Receiving back ownership of buffer sent on `fileOut` and `unknownDataOut` | 
+| `guarded input` | `fileBufferReturnIn` | `Fw.BufferSend` | Receiving back ownership of buffer sent on `fileOut` and `unknownDataOut` | 
 | `output` | `unknownDataOut` | `Svc.ComDataWithContext` | Port forwarding unknown data (useful for adding custom routing rules with a  project-defined router) |
 
 ## Requirements
@@ -46,3 +56,5 @@ SVC-ROUTER-004 | `Svc::FprimeRouter` shall route data that is neither `Fw::ComPa
 SVC-ROUTER-005 | `Svc::FprimeRouter` shall emit warning events if serialization errors occur during processing of incoming packets | Aid in diagnosing uplink issues | Unit test |
 SVC-ROUTER-006 | `Svc::FprimeRouter` shall pass through buffers for `FW_PACKET_FILE` and unknown packet types without copying, and defer returning them to the deframer until they are returned via `fileBufferReturnIn` | Efficient memory management | Unit test |
 SVC-ROUTER-007 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
+SVC-ROUTER-008 | `Svc::FprimeRouter` shall preserve the `ComCfg::FrameContext` received on `dataIn` and restore it on the corresponding `dataReturnOut`, including across the `fileOut`/`unknownDataOut` → `fileBufferReturnIn` round-trip | Allows a shared router to return buffers to the correct originating uplink path (e.g. by `vcId`) | Unit test |
+SVC-ROUTER-009 | `Svc::FprimeRouter` shall emit a warning event and return the buffer with an empty context when the buffer-to-context table is full on hand-off, or when a returned buffer is not found in the table | Graceful degradation without loss of buffer ownership | Unit test |

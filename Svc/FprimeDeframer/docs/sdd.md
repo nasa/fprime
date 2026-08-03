@@ -6,7 +6,7 @@ Following the [F Prime Protocol frame specification](../../FprimeProtocol/docs/s
 
 ## Internals
 
-The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterface](../../Interfaces/DeframerInterface.fppi) for the F´ communications protocol. It receives an F´ frame (in a [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) object) on its `dataIn` input port, modifies the input buffer to remove the header and trailer, and sends it out through its `dataOut` output port. 
+The `Svc::FprimeDeframer` component is an implementation of the [DeframerInterface](../../Interfaces/docs/sdd.md) for the F´ communications protocol. It receives an F´ frame (in a [Fw::Buffer](../../../Fw/Buffer/docs/sdd.md) object) on its `dataIn` input port, modifies the input buffer to remove the header and trailer, and sends it out through its `dataOut` output port. 
 
 Ownership of the buffer is transferred to the component connected to the `dataOut` output port. The input buffer is modified by subtracting the header and trailer size from the buffer's length, and offsetting the buffer's data pointer to point to the start of the packet data.
 

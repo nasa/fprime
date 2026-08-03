@@ -31,8 +31,10 @@ Version ::~Version() {}
 void Version::config(bool enable) {
     // Set Verbosity for custom versions
     this->m_enable = enable;
+}
 
-    // Setup and send startup TLM
+void Version::start() {
+    // Send startup TLM and EVENTS
     this->fwVersion_tlm();
     this->projectVersion_tlm();
     this->libraryVersion_tlm();
