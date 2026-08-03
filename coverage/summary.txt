@@ -161,7 +161,7 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 161     134    83%   75,77-78,88-89,91-93,103-105,107-110,120-123,125-129,189,254-255
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
+Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               3       3   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -351,7 +351,7 @@ Svc/PosixTime/PosixTime.cpp                    7       7   100%
 Svc/PrmDb/PrmDbImpl.cpp                      345     320    92%   30,88-90,114,116-117,279-281,287-289,302-304,310-312,339,444-445,567,597-598
 Svc/RateGroupDriver/RateGroupDriver.cpp       21      21   100%
 Svc/RateGroupDriver/RateGroupDriver.hpp        1       1   100%
-Svc/SeqDispatcher/SeqDispatcher.cpp           94      73    77%   56,61-63,65,69-71,78,81-84,86,104,129-130,132-134,137
+Svc/SeqDispatcher/SeqDispatcher.cpp          104      83    79%   56,61-63,65,69-71,78,81-84,86,104,129-130,132-134,137
 Svc/StaticMemory/StaticMemoryComponentImpl.cpp
                                               20      20   100%
 Svc/SystemResources/SystemResources.cpp       76      75    98%   37
@@ -372,5 +372,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      19072   15740    82%
+TOTAL                                      19082   15752    82%
 ------------------------------------------------------------------------------

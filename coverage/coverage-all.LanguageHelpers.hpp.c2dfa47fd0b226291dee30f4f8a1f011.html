@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 20:35:11</td>
+      <td>2026-08-03 21:00:42</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,9 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l36">Types::MaxHeap::Node* Fw::arrayPlacementNew&lt;Types::MaxHeap::Node&gt;(Fw::ByteArray, unsigned long) (line 36)</a></td><td>called 1150 times</td><td>83.0%</td></tr>
-    <tr><td><a href="#l36">unsigned long* Fw::arrayPlacementNew&lt;unsigned long&gt;(Fw::ByteArray, unsigned long) (line 36)</a></td><td>called 2286 times</td><td>79.0%</td></tr>
-    <tr><td><a href="#l62">void Fw::arrayPlacementDestruct&lt;Types::MaxHeap::Node&gt;(Types::MaxHeap::Node*, unsigned long) (line 62)</a></td><td>called 1143 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l36">Types::MaxHeap::Node* Fw::arrayPlacementNew&lt;Types::MaxHeap::Node&gt;(Fw::ByteArray, unsigned long) (line 36)</a></td><td>called 1152 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l36">unsigned long* Fw::arrayPlacementNew&lt;unsigned long&gt;(Fw::ByteArray, unsigned long) (line 36)</a></td><td>called 2290 times</td><td>79.0%</td></tr>
+    <tr><td><a href="#l62">void Fw::arrayPlacementDestruct&lt;Types::MaxHeap::Node&gt;(Types::MaxHeap::Node*, unsigned long) (line 62)</a></td><td>called 1145 times</td><td>86.0%</td></tr>
   </table>
 </details>
 
@@ -335,7 +335,7 @@
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">arrayPlacementNew</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">ByteArray</span><span class="w"> </span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">arraySize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -363,35 +363,35 @@
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">base_pointer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">array</span><span class="p">.</span><span class="n">bytes</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">base_pointer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l42" href="#l42">42</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">((</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">PlatformPointerCastType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">base_pointer</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="k">alignof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">array</span><span class="p">.</span><span class="n">size</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">arraySize</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">type_pointer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">T</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">base_pointer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -400,19 +400,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 137941 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 3436 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 137818 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3442 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">141377</td>
+      <td class="linecount coveredLine">141260</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">arraySize</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">137941</td>
+      <td class="linecount coveredLine">137818</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">type_pointer</span><span class="p">[</span><span class="n">index</span><span class="p">])</span><span class="w"> </span><span class="n">T</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -426,7 +426,7 @@
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3436</td>
+      <td class="linecount coveredLine">3442</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">type_pointer</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -524,7 +524,7 @@
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1143</td>
+      <td class="linecount coveredLine">1145</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">arrayPlacementDestruct</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">arrayPointer</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">arraySize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -538,7 +538,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1143</td>
+      <td class="linecount coveredLine">1145</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">arrayPointer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -547,19 +547,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 12640 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1143 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 12599 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1145 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">13783</td>
+      <td class="linecount coveredLine">13744</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">arraySize</span><span class="p">;</span><span class="w"> </span><span class="n">index</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12640</td>
+      <td class="linecount coveredLine">12599</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">arrayPointer</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="o">~</span><span class="n">T</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -573,7 +573,7 @@
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1143</td>
+      <td class="linecount coveredLine">1145</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
