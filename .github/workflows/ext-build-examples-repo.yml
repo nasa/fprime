@@ -161,5 +161,5 @@ jobs:
         if: always()
         with:
           name: ci-int-logs
-          path: ci-logs.tar.gz
+          path: ci-logs/
           retention-days: 5
