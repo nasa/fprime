@@ -112,6 +112,14 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
+    // The argument size arrives separately from the argument buffer, so it can describe more bytes
+    // than that buffer holds. Reject before anything reads the buffer by that size.
+    const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_sequenceArgs.get_buffer()));
+    if (this->m_sequenceArgs.get_size() > argCapacity) {
+        this->log_WARNING_HI_ArgSizeExceedsCapacity(this->m_sequenceArgs.get_size(), argCapacity);
+        return Fw::Success::FAILURE;
+    }
+
     return Fw::Success::SUCCESS;
 }
 

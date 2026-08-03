@@ -304,6 +304,7 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
     const U32 fileSize = this->m_file.getSize();
 
     if (fileSize == 0) {
+        this->m_file.getOsFile().close();
         this->m_mode.set(Mode::IDLE);
         this->m_warnings.zeroSize();
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
@@ -317,7 +318,9 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
                                                             : SendFileStatus::STATUS_INVALID);
         return;
-    } else if (startOffset + length > fileSize) {
+        // startOffset < fileSize here, so the subtraction cannot underflow and, unlike
+        // startOffset + length, cannot wrap
+    } else if (length > fileSize - startOffset) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
         this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, fileSize, this->m_file.getSourceName(),

@@ -1600,14 +1600,9 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
         return Signal::stmtResponse_failure;
     }
 
-    // returnValSize is guaranteed to be less than Fpy::MAX_STACK_SIZE because it's less than the stack.size
-    // thus the memcpy won't fail
-
-    // Save the return value if there is one
-    U8 returnValue[Fpy::MAX_STACK_SIZE] = {};
-    if (returnValSize > 0) {
-        (void)memcpy(returnValue, this->m_runtime.stack.top() - returnValSize, returnValSize);
-    }
+    // Remember where the return value lives; it is moved down the stack below rather than copied
+    // through a local buffer, which at Fpy::MAX_STACK_SIZE would not fit a typical task stack
+    const Fpy::StackSizeType returnValOffset = this->m_runtime.stack.size - returnValSize;
 
     // Truncate the stack to stack_frame_start (discard all local variables)
     if (this->m_runtime.stack.currentFrameStart > this->m_runtime.stack.size) {
@@ -1657,7 +1652,12 @@ Signal FpySequencer::return_directiveHandler(const FpySequencer_ReturnDirective&
         error = DirectiveError::STACK_OVERFLOW;
         return Signal::stmtResponse_failure;
     }
-    this->m_runtime.stack.push(returnValue, returnValSize);
+    if (returnValSize > 0) {
+        // Not Stack::move: the source region sits above the truncated stack size, which
+        // Stack::move rejects. Both regions were bounds-checked above against MAX_STACK_SIZE.
+        (void)memmove(this->m_runtime.stack.top(), &this->m_runtime.stack.bytes[returnValOffset], returnValSize);
+        this->m_runtime.stack.size += returnValSize;
+    }
 
     return Signal::stmtResponse_success;
 }
@@ -1758,7 +1758,8 @@ Signal FpySequencer::popEvent_directiveHandler(const FpySequencer_PopEventDirect
 
 Signal FpySequencer::popSerializable_directiveHandler(const FpySequencer_PopSerializableDirective& directive,
                                                       DirectiveError& error) {
-    FW_ASSERT(directive.get_size() <= Fpy::MAX_STACK_SIZE, static_cast<FwAssertArgType>(directive.get_size()));
+    // No size assertion here: an oversized size is untrusted sequence content and is rejected by
+    // the stack check below, since the stack can never hold more than Fpy::MAX_STACK_SIZE bytes
 
     // Validate port index is in range (using enum constant value)
     constexpr FwIndexType MAX_PORTS = static_cast<FwIndexType>(Svc::Fpy::SerialPortIndex::MAX_SERIAL_PORTS);

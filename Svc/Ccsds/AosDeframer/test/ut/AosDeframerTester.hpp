@@ -95,6 +95,7 @@ class AosDeframerTester final : public AosDeframerGTestBase {
 
     //! Test multiple packets in single frame
     void testMultiplePacketsInFrame();
+    void testMinimumSizeSppPackets();
 
     // ----------------------------------------------------------------------
     // Tests - Spanning Packets

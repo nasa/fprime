@@ -1,4 +1,5 @@
 #include "TimeTester.hpp"
+#include <Fw/Types/SerialBuffer.hpp>
 #include <iostream>
 
 namespace Fw {
@@ -222,6 +223,26 @@ void TimeTester::test_TimeToTimeValue() {
     ASSERT_EQ(time_value.get_timeContext(), context);
     ASSERT_EQ(time_value.get_seconds(), seconds);
     ASSERT_EQ(time_value.get_useconds(), useconds);
+}
+
+void TimeTester::test_InstantiateFromFloatCarry() {
+    // The fraction rounds up to a whole second and must be carried into the seconds count
+    Fw::Time time(static_cast<F64>(1.9999999));
+    ASSERT_EQ(time.getSeconds(), 2);
+    ASSERT_EQ(time.getUSeconds(), 0);
+}
+
+void TimeTester::test_DeserializeRejectsOutOfRangeUSeconds() {
+    U8 data[Fw::Time::SERIALIZED_SIZE];
+    Fw::SerialBuffer buffer(data, sizeof(data));
+    Fw::TimeValue outOfRange(TimeBase::TB_NONE, 0, 1, 1000000);
+    ASSERT_EQ(buffer.serializeFrom(outOfRange), Fw::FW_SERIALIZE_OK);
+
+    Fw::Time time(TimeBase::TB_NONE, 0, 5, 5);
+    ASSERT_EQ(time.deserializeFrom(buffer), Fw::FW_DESERIALIZE_FORMAT_ERROR);
+    // The rejected value must not be stored
+    ASSERT_EQ(time.getSeconds(), 5);
+    ASSERT_EQ(time.getUSeconds(), 5);
 }
 
 }  // namespace Fw

@@ -300,8 +300,13 @@ Fw::SerializeStatus AMPCSSequence ::deserializeCmdLength(Record::CmdLength::t& c
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    if (status == Fw::FW_SERIALIZE_OK and
-        sizeof(FwPacketDescriptorType) + sizeof(U16) + cmdLength > Fw::ComBuffer::SERIALIZED_SIZE) {
+    // The translated record occupies the packet descriptor, the zero-extension bytes prepended to
+    // the two-byte AMPCS opcode, and the record body. It must fit the ComBuffer capacity:
+    // SERIALIZED_SIZE is the capacity plus the stored length, and comparing against it admits
+    // records that setBuffLen then rejects, asserting in translateCommand
+    const FwSizeType translatedSize =
+        sizeof(FwPacketDescriptorType) + (sizeof(FwOpcodeType) - 2) + static_cast<FwSizeType>(cmdLength);
+    if (status == Fw::FW_SERIALIZE_OK and translatedSize > FW_COM_BUFFER_MAX_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }

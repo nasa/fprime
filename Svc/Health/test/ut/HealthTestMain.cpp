@@ -19,6 +19,11 @@ TEST(Test, FaultTlm) {
     tester.faultTlm();
 }
 
+TEST(Test, EqualWarnFatalCycles) {
+    Svc::HealthTester tester;
+    tester.equalWarnFatalCycles();
+}
+
 TEST(Test, DisableAllMonitoring) {
     Svc::HealthTester tester;
     tester.disableAllMonitoring();

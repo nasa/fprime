@@ -109,19 +109,17 @@ void HealthImpl::Run_handler(const FwIndexType portNum, U32 context) {
                     // increment cycles for the entry
                     this->m_pingTrackerEntries[entry].cycleCount++;
                 } else {
-                    // check to see if it is at warning threshold
-                    if (this->m_pingTrackerEntries[entry].cycleCount ==
-                        this->m_pingTrackerEntries[entry].entry.warnCycles) {
+                    // check for FATAL timeout value first: warnCycles == fatalCycles is a legal
+                    // configuration, and the FATAL takes precedence over the warning
+                    if (this->m_pingTrackerEntries[entry].entry.fatalCycles ==
+                        this->m_pingTrackerEntries[entry].cycleCount) {
+                        Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
+                        this->log_FATAL_HLTH_PING_LATE(_arg);
+                    } else if (this->m_pingTrackerEntries[entry].cycleCount ==
+                               this->m_pingTrackerEntries[entry].entry.warnCycles) {
                         Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
                         this->log_WARNING_HI_HLTH_PING_WARN(_arg);
                         this->tlmWrite_PingLateWarnings(++this->m_warnings);
-                    } else {
-                        // check for FATAL timeout value
-                        if (this->m_pingTrackerEntries[entry].entry.fatalCycles ==
-                            this->m_pingTrackerEntries[entry].cycleCount) {
-                            Fw::LogStringArg _arg = this->m_pingTrackerEntries[entry].entry.entryName;
-                            this->log_FATAL_HLTH_PING_LATE(_arg);
-                        }
                     }  // if at warning or fatal threshold
 
                     this->m_pingTrackerEntries[entry].cycleCount++;

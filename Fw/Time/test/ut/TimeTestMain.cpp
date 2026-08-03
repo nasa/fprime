@@ -45,6 +45,16 @@ TEST(TimeTestNominal, TimeToTimeValue) {
     tester.test_TimeToTimeValue();
 }
 
+TEST(TimeTestOffNominal, InstantiateFromFloatCarry) {
+    Fw::TimeTester tester;
+    tester.test_InstantiateFromFloatCarry();
+}
+
+TEST(TimeTestOffNominal, DeserializeRejectsOutOfRangeUSeconds) {
+    Fw::TimeTester tester;
+    tester.test_DeserializeRejectsOutOfRangeUSeconds();
+}
+
 // TimeInterval tests
 TEST(TimeIntervalTestNominal, test_TimeIntervalInstantiateTest) {
     Fw::TimeIntervalTester tester;
