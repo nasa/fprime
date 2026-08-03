@@ -98,10 +98,17 @@ class AtomicQueue {
     //! WARNING: When blockIfFull=true, this function can block and is NOT ISR-safe.
     //! For ISR contexts, always use enqueue() or set blockIfFull=false.
     //!
+    //! Blocking is bounded, not unconditional: each reserved slot may be taken by a
+    //! concurrent producer between the semaphore wait and the enqueue, and the reserve-retry
+    //! cycle is attempted at most MAX_CAS_RETRIES times. Sustained contention that loses every
+    //! attempt therefore returns false even with blockIfFull=true. Callers must handle a false
+    //! return in both modes.
+    //!
     //! \param buffer source buffer to copy from
     //! \param size size of data to copy (must be ≤ bufferSize)
     //! \param blockIfFull if true, blocks when full (caller must ensure not in ISR)
-    //! \return true if successful, false if queue full (non-blocking mode)
+    //! \return true if successful, false if the queue was full (non-blocking mode) or the
+    //!         retry limit was exhausted (blocking mode)
     bool enqueueBlocking(const U8* buffer, FwSizeType size, bool blockIfFull);
 
     //! \brief Dequeue a message (multi-consumer safe, non-blocking, O(1))
