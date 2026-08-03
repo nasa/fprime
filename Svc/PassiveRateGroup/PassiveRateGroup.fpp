@@ -21,12 +21,24 @@ module Svc {
     array CycleTime = [PassiveRateGroupOutputPorts] U32 default 0
     telemetry PortCycleTime: CycleTime
 
+    @ Clear port cycle time high water marks
+    sync command CLEAR_PORT_HWM
+
     # Standard ports
     @ A port for getting the time
     time get port Time
 
     @ A port for emitting telemetry
     telemetry port Tlm
+
+    @ Port for receiving commands
+    command recv port CmdDisp
+
+    @ Port for sending command responses
+    command resp port CmdStatus
+
+    @ Port for sending command registration requests
+    command reg port CmdReg
 
   }
 
