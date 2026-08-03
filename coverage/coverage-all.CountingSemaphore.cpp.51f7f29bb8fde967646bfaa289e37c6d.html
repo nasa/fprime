@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 21:00:42</td>
+      <td>2026-08-03 22:12:06</td>
     </tr>
   </table>
 </div>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l15">Os::Posix::Semaphore::PosixCountingSemaphore::PosixCountingSemaphore(unsigned int) (line 15)</a></td><td>called 2529 times</td><td>71.0%</td></tr>
+    <tr><td><a href="#l15">Os::Posix::Semaphore::PosixCountingSemaphore::PosixCountingSemaphore(unsigned int) (line 15)</a></td><td>called 2549 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l69">Os::Posix::Semaphore::PosixCountingSemaphore::getHandle() (line 69)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l63">Os::Posix::Semaphore::PosixCountingSemaphore::post() (line 63)</a></td><td>called 225487 times</td><td>62.0%</td></tr>
-    <tr><td><a href="#l57">Os::Posix::Semaphore::PosixCountingSemaphore::tryWait() (line 57)</a></td><td>called 136719 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l63">Os::Posix::Semaphore::PosixCountingSemaphore::post() (line 63)</a></td><td>called 225955 times</td><td>62.0%</td></tr>
+    <tr><td><a href="#l57">Os::Posix::Semaphore::PosixCountingSemaphore::tryWait() (line 57)</a></td><td>called 136448 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l25">Os::Posix::Semaphore::PosixCountingSemaphore::wait() (line 25)</a></td><td>called 1034 times</td><td>55.0%</td></tr>
     <tr><td><a href="#l35">Os::Posix::Semaphore::PosixCountingSemaphore::waitTimeout(Fw::TimeInterval const&amp;) (line 35)</a></td><td>called 4 times</td><td>82.0%</td></tr>
-    <tr><td><a href="#l21">Os::Posix::Semaphore::PosixCountingSemaphore::~PosixCountingSemaphore() (line 21)</a></td><td>called 2529 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l21">Os::Posix::Semaphore::PosixCountingSemaphore::~PosixCountingSemaphore() (line 21)</a></td><td>called 2549 times</td><td>92.0%</td></tr>
   </table>
 </details>
 
@@ -192,7 +192,7 @@
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2529</td>
+      <td class="linecount coveredLine">2549</td>
       <td class="src coveredLine"><span class="n">PosixCountingSemaphore</span><span class="o">::</span><span class="n">PosixCountingSemaphore</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">initial_count</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -209,25 +209,25 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2529 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2549 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">2529</td>
+      <td class="linecount partialCoveredLine">2549</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sem_init</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_semaphore</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">initial_count</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2529</td>
+      <td class="linecount coveredLine">2549</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">status</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">2529</td>
+      <td class="linecount coveredLine">2549</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -241,7 +241,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5058</td>
+      <td class="linecount coveredLine">5098</td>
       <td class="src coveredLine"><span class="n">PosixCountingSemaphore</span><span class="o">::~</span><span class="n">PosixCountingSemaphore</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -251,18 +251,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 2529 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 2549 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">5058</td>
+      <td class="linecount partialCoveredLine">5098</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">sem_destroy</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_semaphore</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l23" href="#l23">23</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">5058</td>
+      <td class="linecount coveredLine">5098</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -344,11 +344,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1033 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 1034 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1033</td>
+      <td class="linecount partialCoveredLine">1034</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">posix_status_to_semaphore_status</span><span class="p">(</span><span class="n">errno</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -567,7 +567,7 @@
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">136719</td>
+      <td class="linecount coveredLine">136448</td>
       <td class="src coveredLine"><span class="n">PosixCountingSemaphore</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixCountingSemaphore</span><span class="o">::</span><span class="n">tryWait</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -577,18 +577,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 136769 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 136469 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">136719</td>
+      <td class="linecount partialCoveredLine">136448</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sem_trywait</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_semaphore</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">136839</td>
+      <td class="linecount coveredLine">136706</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">errno</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -597,12 +597,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 136393 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 136244 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">136397</td>
+      <td class="linecount coveredLine">136245</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">posix_status_to_semaphore_status</span><span class="p">(</span><span class="n">errno</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -623,7 +623,7 @@
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">225487</td>
+      <td class="linecount coveredLine">225955</td>
       <td class="src coveredLine"><span class="n">PosixCountingSemaphore</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">PosixCountingSemaphore</span><span class="o">::</span><span class="k">post</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -633,18 +633,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 225936 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 226074 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">225487</td>
+      <td class="linecount partialCoveredLine">225955</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sem_post</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_handle</span><span class="p">.</span><span class="n">m_semaphore</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l65" href="#l65">65</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">225715</td>
+      <td class="linecount coveredLine">224998</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">errno</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -654,11 +654,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 0 not taken.</div>
-            <div class="takenBranch">&check; Branch 1 taken 223940 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 222920 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">223940</td>
+      <td class="linecount partialCoveredLine">222920</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">Status</span><span class="o">::</span><span class="n">OP_OK</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">posix_status_to_semaphore_status</span><span class="p">(</span><span class="n">errno</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
