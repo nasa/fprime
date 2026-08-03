@@ -27,15 +27,22 @@ class LinearBufferTemplate final : public LinearBufferBase {
         SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(MaxSize),  //!< size when serialized: buffer + stored size
     };
 
-    LinearBufferTemplate() = default;
+    LinearBufferTemplate() {
+        this->m_buffAddr = this->m_bufferData;
+        this->m_capacity = MaxSize;
+    }
 
     LinearBufferTemplate(const U8* args, FwSizeType size) {
+        this->m_buffAddr = this->m_bufferData;
+        this->m_capacity = MaxSize;
         const SerializeStatus stat = this->setBuff(args, size);
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
     LinearBufferTemplate(const LinearBufferTemplate& other) : LinearBufferBase() {
-        const SerializeStatus stat = this->setBuff(other.getBuffAddr(), other.getSize());
+        this->m_buffAddr = this->m_bufferData;
+        this->m_capacity = MaxSize;
+        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.m_serLoc);
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
@@ -45,18 +52,14 @@ class LinearBufferTemplate final : public LinearBufferBase {
         if (this == &other) {
             return *this;
         }
-        const SerializeStatus stat = this->setBuff(other.getBuffAddr(), other.getSize());
+        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.m_serLoc);
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
         return *this;
     }
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead") { return this->getCapacity(); }
 
-    FwSizeType getCapacity() const override { return sizeof this->m_bufferData; }
-
-    U8* getBuffAddr() override { return this->m_bufferData; }
-
-    const U8* getBuffAddr() const override { return this->m_bufferData; }
+    FwSizeType getCapacity() const override { return MaxSize; }
 
   private:
     U8 m_bufferData[MaxSize] = {};
