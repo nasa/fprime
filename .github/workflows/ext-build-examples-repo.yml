@@ -105,14 +105,27 @@ jobs:
 
           echo "=== Checking Build Artifacts ==="
           if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}" ]; then
-            echo "✓ Binary exists: ${DEPLOYMENT}"
+            echo "Binary exists: ${DEPLOYMENT}"
           else
-            echo "✗ Binary not found!"
+            echo "Binary not found!"
             exit 1
           fi
 
           if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
             echo "✓ Dictionary exists: ExamplesDeploymentTopologyDictionary.json"
+
+            echo ""
+            echo "=== Checking Dictionary for ManagerWorker ==="
+            DICT_FILE="./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json"
+            MW_CMD_COUNT=$(grep -o '"name"[[:space:]]*:[[:space:]]*"[^"]*ManagerWorker[^"]*"' "$DICT_FILE" | grep -c '"commands"' || echo 0)
+            MW_EVT_COUNT=$(grep -c 'ManagerWorker' "$DICT_FILE" || echo 0)
+            echo "ManagerWorker references in dictionary: $MW_EVT_COUNT"
+            if [ "$MW_EVT_COUNT" -eq 0 ]; then
+              echo "⚠ WARNING: No ManagerWorker components found in dictionary"
+              echo "  Tests may fail if ManagerWorker is required"
+            else
+              echo "✓ ManagerWorker found in dictionary"
+            fi
           else
             echo "✗ Dictionary not found!"
             exit 1
@@ -128,16 +141,16 @@ jobs:
           sleep 15
 
           if ps aux | grep fprime-gds | grep -v grep > /dev/null; then
-            echo "✓ GDS is running"
+            echo "GDS is running"
           else
-            echo "✗ GDS failed to start!"
+            echo "GDS failed to start!"
             exit 1
           fi
 
           if ps aux | grep ${DEPLOYMENT} | grep -v grep > /dev/null; then
-            echo "✓ ${DEPLOYMENT} app is running"
+            echo "${DEPLOYMENT} app is running"
           else
-            echo "✗ ${DEPLOYMENT} app failed to start!"
+            echo "${DEPLOYMENT} app failed to start!"
             exit 1
           fi
 
