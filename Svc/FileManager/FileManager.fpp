@@ -20,6 +20,29 @@ module Svc {
     output port pingOut: Svc.Ping
 
     # ----------------------------------------------------------------------
+    # Data products
+    # ----------------------------------------------------------------------
+
+    @ Data product ports (synchronous get/send)
+    import Fw.DataProductSync
+
+    @ Metadata for one chunk of a file data product
+    struct FileChunkHeader {
+      fileName: string size FileNameStringSize @< The name of the source file
+      offset: U64 @< The offset of this chunk within the source file
+      dataSize: U32 @< The number of data bytes in this chunk
+    }
+
+    @ Chunk metadata record; each instance is followed by a FileChunkDataRecord
+    product record FileChunkHeaderRecord: FileChunkHeader id 0
+
+    @ Chunk data record; carries the actual file bytes for the preceding header
+    product record FileChunkDataRecord: U8 array id 1
+
+    @ Container for file data products
+    product container FileDpContainer id 0 default priority 10
+
+    # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
 

@@ -35,7 +35,15 @@ FileManager ::FileManager(const char* const compName  //!< The component name
       m_totalEntries(0),
       m_currentOpCode(0),
       m_currentCmdSeq(0),
-      m_runQueued(false) {}
+      m_runQueued(false),
+      m_dpState(DP_IDLE),
+      m_dpFileSize(0),
+      m_dpOffset(0),
+      m_dpChunkSize(0),
+      m_dpChunkCount(0),
+      m_dpOpCode(0),
+      m_dpCmdSeq(0),
+      m_dpBuffer{} {}
 
 FileManager ::~FileManager() {}
 
@@ -203,6 +211,141 @@ void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, cons
     file.close();
 }
 
+void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
+                                         U32 cmdSeq,
+                                         const Fw::CmdStringArg& fileName,
+                                         U32 chunkSize) {
+    Fw::LogStringArg logFileName(fileName.toChar());
+
+    // Reject a second request while one is already running
+    if (this->m_dpState != DP_IDLE) {
+        this->log_WARNING_HI_GenerateDpFailed(logFileName, 0);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Data products must be available
+    if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productSendOut_OutputPort(0)) {
+        this->log_WARNING_HI_GenerateDpBufferFailed(logFileName);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Clamp the requested chunk size to the configured read buffer
+    U32 effectiveChunkSize = chunkSize;
+    if ((effectiveChunkSize == 0) || (effectiveChunkSize > FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE)) {
+        effectiveChunkSize = FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE;
+    }
+
+    Os::File::Status status = this->m_dpFile.open(fileName.toChar(), Os::File::OPEN_READ);
+    if (status != Os::File::OP_OK) {
+        this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    FwSizeType fileSize = 0;
+    status = this->m_dpFile.size(fileSize);
+    if (status != Os::File::OP_OK) {
+        this->m_dpFile.close();
+        this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    this->m_dpFileName = Fw::String(fileName.toChar());
+    this->m_dpFileSize = fileSize;
+    this->m_dpOffset = 0;
+    this->m_dpChunkSize = effectiveChunkSize;
+    this->m_dpChunkCount = 0;
+    this->m_dpOpCode = opCode;
+    this->m_dpCmdSeq = cmdSeq;
+    this->m_dpState = DP_IN_PROGRESS;
+
+    this->log_ACTIVITY_HI_GenerateDpStarted(logFileName, static_cast<U64>(fileSize));
+
+    // An empty file produces no chunks, so complete immediately
+    if (fileSize == 0) {
+        this->finishDpGeneration(Fw::CmdResponse::OK);
+    }
+
+    // Otherwise the response is deferred until the last chunk is sent
+}
+
+void FileManager ::processDpChunks() {
+    Fw::LogStringArg logFileName(this->m_dpFileName.toChar());
+
+    for (U32 chunk = 0; chunk < FileManagerConfig::CHUNKS_PER_RATE_TICK; chunk++) {
+        if (this->m_dpState != DP_IN_PROGRESS) {
+            return;
+        }
+
+        // Number of bytes remaining in the file
+        const FwSizeType remaining = this->m_dpFileSize - static_cast<FwSizeType>(this->m_dpOffset);
+        if (remaining == 0) {
+            this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
+            this->finishDpGeneration(Fw::CmdResponse::OK);
+            return;
+        }
+
+        FwSizeType readSize = (remaining < static_cast<FwSizeType>(this->m_dpChunkSize))
+                                  ? remaining
+                                  : static_cast<FwSizeType>(this->m_dpChunkSize);
+
+        Os::File::Status status = this->m_dpFile.read(this->m_dpBuffer, readSize);
+        if ((status != Os::File::OP_OK) || (readSize == 0)) {
+            this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
+            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // Request a container large enough for this chunk's header and data
+        const FwSizeType dpSize = SIZE_OF_FileChunkHeaderRecord_RECORD +
+                                  SIZE_OF_FileChunkDataRecord_RECORD(readSize);
+        DpContainer container;
+        const Fw::Success::T dpStatus = this->dpGet_FileDpContainer(dpSize, container);
+        if (dpStatus != Fw::Success::SUCCESS) {
+            this->log_WARNING_HI_GenerateDpBufferFailed(logFileName);
+            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // Each chunk is a metadata record followed by a data record, so that
+        // ground tools can reassemble the file from any number of containers
+        const FileManager_FileChunkHeader header(this->m_dpFileName, this->m_dpOffset,
+                                                 static_cast<U32>(readSize));
+        Fw::SerializeStatus serializeStatus = container.serializeRecord_FileChunkHeaderRecord(header);
+        if (serializeStatus == Fw::FW_SERIALIZE_OK) {
+            serializeStatus = container.serializeRecord_FileChunkDataRecord(this->m_dpBuffer, readSize);
+        }
+        if (serializeStatus != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(serializeStatus));
+            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        this->dpSend(container);
+
+        this->m_dpOffset += static_cast<U64>(readSize);
+        this->m_dpChunkCount++;
+
+        // Last chunk of the file
+        if (static_cast<FwSizeType>(this->m_dpOffset) >= this->m_dpFileSize) {
+            this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
+            this->finishDpGeneration(Fw::CmdResponse::OK);
+            return;
+        }
+    }
+}
+
+void FileManager ::finishDpGeneration(Fw::CmdResponse::T response) {
+    this->m_dpFile.close();
+    this->m_dpState = DP_IDLE;
+    this->m_dpOffset = 0;
+    this->m_dpFileSize = 0;
+    this->cmdResponse_out(this->m_dpOpCode, this->m_dpCmdSeq, response);
+}
+
 void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {
     // return key
     this->pingOut_out(0, key);
@@ -222,6 +365,11 @@ void FileManager ::schedIn_handler(const FwIndexType portNum, U32 context) {
 void FileManager ::run_internalInterfaceHandler() {
     FW_ASSERT(this->m_runQueued);
     this->m_runQueued = false;  // Run is not queued anymore (we are running)
+    // Data product generation is paced the same way as directory listing
+    if (this->m_dpState == DP_IN_PROGRESS) {
+        this->processDpChunks();
+    }
+
     // Only process if we're in the middle of a directory listing
     if (m_listState == LISTING_IN_PROGRESS) {
         // Process multiple files per rate tick based on configuration

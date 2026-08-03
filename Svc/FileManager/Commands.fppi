@@ -49,3 +49,13 @@ async command CalculateCrc(
                               filename: string size FileNameStringSize @< The file to CRC
                             ) \
   opcode 0x08
+
+@ Generate a data product from a file, split into chunks.
+@ Each chunk is emitted as a FileChunkHeaderRecord (file name, offset, data size)
+@ followed by a FileChunkDataRecord containing the chunk bytes, so ground tools
+@ can reassemble the original file regardless of DP buffer sizing.
+async command GenerateDp(
+                          fileName: string size FileNameStringSize @< The file to package as a data product
+                          chunkSize: U32 @< The maximum number of file bytes per chunk
+                        ) \
+  opcode 0x09

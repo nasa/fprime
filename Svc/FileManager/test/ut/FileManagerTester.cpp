@@ -355,6 +355,132 @@ void FileManagerTester ::calculateCrcSucceed() {
 #endif
 }
 
+void FileManagerTester ::resetDpState() {
+    this->m_dpSendCount = 0;
+    this->m_dpBytesSent = 0;
+    this->m_dpGetShouldFail = false;
+    this->m_dpContainerBuffer.setData(this->m_dpContainerData);
+    this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
+}
+
+Fw::Success::T FileManagerTester ::productGet_handler(FwDpIdType id, FwSizeType size, Fw::Buffer& buffer) {
+    if (this->m_dpGetShouldFail || (size > sizeof this->m_dpContainerData)) {
+        return Fw::Success::FAILURE;
+    }
+    this->m_dpContainerBuffer.setData(this->m_dpContainerData);
+    this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
+    buffer = this->m_dpContainerBuffer;
+    return Fw::Success::SUCCESS;
+}
+
+void FileManagerTester ::productSend_handler(FwDpIdType id, const Fw::Buffer& buffer) {
+    this->m_dpSendCount++;
+    this->m_dpBytesSent += buffer.getSize();
+}
+
+void FileManagerTester ::generateDpSucceed() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_test_file";
+    this->system("rm -f dp_test_file");
+    // 100 bytes of deterministic content
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_test_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // 32 byte chunks over a 100 byte file yields 4 chunks (32 + 32 + 32 + 4)
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->component.doDispatch();
+
+    // Only the start event so far; the response is deferred
+    ASSERT_EVENTS_GenerateDpStarted_SIZE(1);
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // Drive the rate group until the file is fully packaged
+    this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete_SIZE(1);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 4);
+    ASSERT_EQ(4u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_test_file");
+#endif
+}
+
+void FileManagerTester ::generateDpFileNotFound() {
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile("no_such_dp_file");
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+}
+
+void FileManagerTester ::generateDpEmptyFile() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_empty_file";
+    this->system("rm -f dp_empty_file");
+    this->system("touch dp_empty_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->component.doDispatch();
+
+    // An empty file completes immediately with no chunks
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpStarted_SIZE(1);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_empty_file");
+#endif
+}
+
+void FileManagerTester ::generateDpChunkSizeClamped() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_clamp_file";
+    this->system("rm -f dp_clamp_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_clamp_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A chunk size beyond the configured maximum is clamped, so the 50 byte
+    // file still fits in a single chunk
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile,
+                             FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 1);
+    ASSERT_EQ(1u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_clamp_file");
+#endif
+}
+
 void FileManagerTester ::listDirectorySucceed() {
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     // Remove test_dir and create it with some files
@@ -515,7 +641,8 @@ void FileManagerTester ::listDirectory(const char* const dirName) {
 }
 
 void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
-    // Simulate rate group execution for asynchronous directory listing operations.
+    // Simulate rate group execution for asynchronous operations (directory
+    // listing and data product generation).
     // This method mimics the behavior of Rate Group 2 (0.5Hz) by calling the
     // schedule handler repeatedly until the directory listing operation completes.
     // Each cycle processes one directory entry, ensuring bounded execution time.
@@ -524,8 +651,10 @@ void FileManagerTester ::runRateGroupCycles(const U32 cycles) {
         this->invoke_to_schedIn(0, 0);
         this->component.doDispatch();
 
-        // Check if directory listing operation has completed
-        if (this->component.m_listState != FileManager::LISTING_IN_PROGRESS) {
+        // Check if the asynchronous operation has completed
+        const bool listingActive = (this->component.m_listState == FileManager::LISTING_IN_PROGRESS);
+        const bool dpActive = (this->component.m_dpState == FileManager::DP_IN_PROGRESS);
+        if (!listingActive && !dpActive) {
             // Operation finished, no need to continue cycling
             break;
         }

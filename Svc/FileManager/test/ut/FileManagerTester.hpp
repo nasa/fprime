@@ -110,6 +110,18 @@ class FileManagerTester : public FileManagerGTestBase {
     //!
     void listDirectoryWithSubdirs();
 
+    //! Generate a data product from a file and check the emitted chunks
+    void generateDpSucceed();
+
+    //! Generate a data product from a file that does not exist
+    void generateDpFileNotFound();
+
+    //! Generate a data product from an empty file
+    void generateDpEmptyFile();
+
+    //! Generate a data product with a chunk size larger than the read buffer
+    void generateDpChunkSizeClamped();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -161,11 +173,44 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Assert failed command execution
     void assertFailure(const FwOpcodeType opcode) const;
+
+    // ----------------------------------------------------------------------
+    // Data product test support
+    // ----------------------------------------------------------------------
+
+    //! Handler for the data product get port; hands out the local buffer
+    Fw::Success::T productGet_handler(FwDpIdType id,        //!< The container ID
+                                      FwSizeType size,      //!< The requested size
+                                      Fw::Buffer& buffer    //!< The buffer (output)
+                                      ) override;
+
+    //! Handler for the data product send port; records the sent container
+    void productSend_handler(FwDpIdType id,            //!< The container ID
+                             const Fw::Buffer& buffer  //!< The buffer
+                             ) override;
+
+    //! Reset the data product bookkeeping between tests
+    void resetDpState();
+
+    //! Backing store for the data product container handed to the component
+    U8 m_dpContainerData[FW_COM_BUFFER_MAX_SIZE];
+
+    //! Buffer wrapping m_dpContainerData
+    Fw::Buffer m_dpContainerBuffer;
+
+    //! Number of containers sent by the component
+    U32 m_dpSendCount;
+
+    //! Total number of data bytes observed across sent containers
+    FwSizeType m_dpBytesSent;
+
+    //! Whether the get port should fail, for testing the failure path
+    bool m_dpGetShouldFail;
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
                               U32 key                    /*!< Value to return to pinger*/
-    );
+                              ) override;
 
   private:
     // ----------------------------------------------------------------------

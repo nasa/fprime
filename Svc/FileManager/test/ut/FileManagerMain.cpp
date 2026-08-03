@@ -89,6 +89,26 @@ TEST(Test, listDirectoryWithSubdirs) {
     tester.listDirectoryWithSubdirs();
 }
 
+TEST(Test, generateDpSucceed) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSucceed();
+}
+
+TEST(Test, generateDpFileNotFound) {
+    Svc::FileManagerTester tester;
+    tester.generateDpFileNotFound();
+}
+
+TEST(Test, generateDpEmptyFile) {
+    Svc::FileManagerTester tester;
+    tester.generateDpEmptyFile();
+}
+
+TEST(Test, generateDpChunkSizeClamped) {
+    Svc::FileManagerTester tester;
+    tester.generateDpChunkSizeClamped();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
