@@ -1,0 +1,240 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 3,
+  "failed": 8,
+  "skipped": 5,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "pass",
+      "failures": [],
+      "detail": "3 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "pass",
+      "failures": [],
+      "detail": "4 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:26) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:27) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:28) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:29) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-010' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-011' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:38) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "13 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/ExternalArray.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
+        "dependency 'Fw/Dp' (from #include \"Fw/Dp/DpContainer.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Dp)",
+        "dependency 'Fw/Types' (from #include \"Fw/Types/StringUtils.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Os' (from #include \"Os/File.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)",
+        "dependency 'Utils/Hash' (from #include \"Utils/Hash/Hash.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Utils_Hash)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "command 'BUILD_CATALOG' has no requirement referencing it (add a requirement mentioning 'BUILD_CATALOG')",
+        "command 'START_XMIT_CATALOG' has no requirement referencing it (add a requirement mentioning 'START_XMIT_CATALOG')",
+        "command 'STOP_XMIT_CATALOG' has no requirement referencing it (add a requirement mentioning 'STOP_XMIT_CATALOG')",
+        "command 'CLEAR_CATALOG' has no requirement referencing it (add a requirement mentioning 'CLEAR_CATALOG')"
+      ],
+      "detail": "4 command(s) traced against 13 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'CatalogDps' has no requirement referencing it (add a requirement mentioning 'CatalogDps')",
+        "telemetry channel 'DpsSent' has no requirement referencing it (add a requirement mentioning 'DpsSent')"
+      ],
+      "detail": "2 telemetry channel(s) traced against 13 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "event 'DirectoryOpenError' has no requirement referencing it (add a requirement mentioning 'DirectoryOpenError')",
+        "event 'ProcessingDirectory' has no requirement referencing it (add a requirement mentioning 'ProcessingDirectory')",
+        "event 'ProcessingFile' has no requirement referencing it (add a requirement mentioning 'ProcessingFile')",
+        "event 'ProcessingDirectoryComplete' has no requirement referencing it (add a requirement mentioning 'ProcessingDirectoryComplete')",
+        "event 'DirectoryNotManaged' has no requirement referencing it (add a requirement mentioning 'DirectoryNotManaged')",
+        "event 'CatalogXmitStopped' has no requirement referencing it (add a requirement mentioning 'CatalogXmitStopped')",
+        "event 'CatalogXmitCompleted' has no requirement referencing it (add a requirement mentioning 'CatalogXmitCompleted')",
+        "event 'SendingProduct' has no requirement referencing it (add a requirement mentioning 'SendingProduct')",
+        "event 'ProductComplete' has no requirement referencing it (add a requirement mentioning 'ProductComplete')",
+        "event 'CatalogFull' has no requirement referencing it (add a requirement mentioning 'CatalogFull')",
+        "event 'FileOpenError' has no requirement referencing it (add a requirement mentioning 'FileOpenError')",
+        "event 'FileReadError' has no requirement referencing it (add a requirement mentioning 'FileReadError')",
+        "event 'FileHdrError' has no requirement referencing it (add a requirement mentioning 'FileHdrError')",
+        "event 'FileHdrDesError' has no requirement referencing it (add a requirement mentioning 'FileHdrDesError')",
+        "event 'DpInsertError' has no requirement referencing it (add a requirement mentioning 'DpInsertError')",
+        "event 'DpDuplicate' has no requirement referencing it (add a requirement mentioning 'DpDuplicate')",
+        "event 'DpCatalogFull' has no requirement referencing it (add a requirement mentioning 'DpCatalogFull')",
+        "event 'FileSizeError' has no requirement referencing it (add a requirement mentioning 'FileSizeError')",
+        "event 'StateFileOpenError' has no requirement referencing it (add a requirement mentioning 'StateFileOpenError')",
+        "event 'StateFileReadError' has no requirement referencing it (add a requirement mentioning 'StateFileReadError')",
+        "event 'StateFileTruncated' has no requirement referencing it (add a requirement mentioning 'StateFileTruncated')",
+        "event 'StateFileWriteError' has no requirement referencing it (add a requirement mentioning 'StateFileWriteError')",
+        "event 'NoStateFile' has no requirement referencing it (add a requirement mentioning 'NoStateFile')",
+        "event 'DpFileXmitError' has no requirement referencing it (add a requirement mentioning 'DpFileXmitError')",
+        "event 'DpFileSendError' has no requirement referencing it (add a requirement mentioning 'DpFileSendError')",
+        "event 'DpFileAdded' has no requirement referencing it (add a requirement mentioning 'DpFileAdded')",
+        "event 'NotLoaded' has no requirement referencing it (add a requirement mentioning 'NotLoaded')",
+        "event 'DpFileSkipped' has no requirement referencing it (add a requirement mentioning 'DpFileSkipped')",
+        "event 'XmitUnbuiltCatalog' has no requirement referencing it (add a requirement mentioning 'XmitUnbuiltCatalog')",
+        "event 'InvalidFileName' has no requirement referencing it (add a requirement mentioning 'InvalidFileName')",
+        "event 'FileCorruptedDataError' has no requirement referencing it (add a requirement mentioning 'FileCorruptedDataError')",
+        "event 'FileNameFormatError' has no requirement referencing it (add a requirement mentioning 'FileNameFormatError')"
+      ],
+      "detail": "32 event(s) traced against 13 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
+        "port 'fileDone' has no requirement referencing it (add a requirement mentioning 'fileDone')",
+        "port 'addToCat' has no requirement referencing it (add a requirement mentioning 'addToCat')",
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')",
+        "port 'fileOut' has no requirement referencing it (add a requirement mentioning 'fileOut')"
+      ],
+      "detail": "5 port(s) traced against 13 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "requirement 'SVC-DPCAT-001' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:26) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-002' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:27) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-003' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:28) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-004' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:29) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-005' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:30) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-006' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:31) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-007' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:32) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-008' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:33) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-009' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:34) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-010' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:35) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-011' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:36) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-012' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:37) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCAT-013' (/home/runner/work/fprime/fprime/Svc/DpCatalog/docs/sdd.md:38) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "13 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "pass",
+      "failures": [],
+      "detail": "13 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/DpCatalog",
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Dp' (from #include \"Fw/Dp/DpContainer.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Fw/Types' (from #include \"Fw/Types/FileNameString.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/File.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    }
+  ]
+}

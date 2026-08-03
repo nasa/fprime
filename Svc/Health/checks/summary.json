@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 5,
+  "failed": 6,
+  "skipped": 5,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "pass",
+      "failures": [],
+      "detail": "2 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "pass",
+      "failures": [],
+      "detail": "3 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "pass",
+      "failures": [],
+      "detail": "7 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)"
+      ],
+      "detail": "1 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "command 'HLTH_ENABLE' has no requirement referencing it (add a requirement mentioning 'HLTH_ENABLE')",
+        "command 'HLTH_PING_ENABLE' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_ENABLE')",
+        "command 'HLTH_CHNG_PING' has no requirement referencing it (add a requirement mentioning 'HLTH_CHNG_PING')"
+      ],
+      "detail": "3 command(s) traced against 7 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'PingLateWarnings' has no requirement referencing it (add a requirement mentioning 'PingLateWarnings')"
+      ],
+      "detail": "1 telemetry channel(s) traced against 7 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "event 'HLTH_PING_WARN' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_WARN')",
+        "event 'HLTH_PING_LATE' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_LATE')",
+        "event 'HLTH_PING_WRONG_KEY' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_WRONG_KEY')",
+        "event 'HLTH_CHECK_ENABLE' has no requirement referencing it (add a requirement mentioning 'HLTH_CHECK_ENABLE')",
+        "event 'HLTH_CHECK_PING' has no requirement referencing it (add a requirement mentioning 'HLTH_CHECK_PING')",
+        "event 'HLTH_CHECK_LOOKUP_ERROR' has no requirement referencing it (add a requirement mentioning 'HLTH_CHECK_LOOKUP_ERROR')",
+        "event 'HLTH_PING_UPDATED' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_UPDATED')",
+        "event 'HLTH_PING_INVALID_VALUES' has no requirement referencing it (add a requirement mentioning 'HLTH_PING_INVALID_VALUES')"
+      ],
+      "detail": "8 event(s) traced against 7 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "port 'PingReturn' has no requirement referencing it (add a requirement mentioning 'PingReturn')",
+        "port 'Run' has no requirement referencing it (add a requirement mentioning 'Run')",
+        "port 'PingSend' has no requirement referencing it (add a requirement mentioning 'PingSend')",
+        "port 'WdogStroke' has no requirement referencing it (add a requirement mentioning 'WdogStroke')"
+      ],
+      "detail": "4 port(s) traced against 7 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "fail",
+      "failures": [
+        "requirement 'HTH-001' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-002' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-003' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-004' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-005' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-006' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'HTH-007' (/home/runner/work/fprime/fprime/Svc/Health/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "7 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "pass",
+      "failures": [],
+      "detail": "7 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/Health",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    }
+  ]
+}

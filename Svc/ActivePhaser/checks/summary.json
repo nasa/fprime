@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 5,
+  "failed": 3,
+  "skipped": 8,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "fail",
+      "failures": [
+        "requirement 'AP-001' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:24) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'AP-002' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:25) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'AP-003' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:26) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "3 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared in the FPP model"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no telemetry channels declared in the FPP model"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 event(s) traced against 3 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "fail",
+      "failures": [
+        "port 'CycleIn' has no requirement referencing it (add a requirement mentioning 'CycleIn')",
+        "port 'PhaserMemberOut' has no requirement referencing it (add a requirement mentioning 'PhaserMemberOut')"
+      ],
+      "detail": "2 port(s) traced against 3 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "fail",
+      "failures": [
+        "requirement 'AP-001' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:24) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'AP-002' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:25) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'AP-003' (/home/runner/work/fprime/fprime/Svc/ActivePhaser/docs/sdd.md:26) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "3 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "pass",
+      "failures": [],
+      "detail": "3 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/ActivePhaser",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 3,
+  "failed": 5,
+  "skipped": 8,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "pass",
+      "failures": [],
+      "detail": "4 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "fail",
+      "failures": [
+        "requirement 'TLC-001' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TLC-002' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TLC-003' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:18) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TLC-004' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:19) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TLC-005' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:20) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TLC-006' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:21) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Com' (from #include \"Fw/Com/ComBuffer.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
+        "dependency 'Fw/Time' (from #include \"Fw/Time/Time.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Time)",
+        "dependency 'Fw/Tlm' (from #include \"Fw/Tlm/TlmPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Tlm)",
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Os' (from #include \"Os/RawTime.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared in the FPP model"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no telemetry channels declared in the FPP model"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "fail",
+      "failures": [
+        "event 'TlmChanEpochProcessingCapReached' has no requirement referencing it (add a requirement mentioning 'TlmChanEpochProcessingCapReached')"
+      ],
+      "detail": "1 event(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "fail",
+      "failures": [
+        "port 'TlmRecv' has no requirement referencing it (add a requirement mentioning 'TlmRecv')",
+        "port 'TlmGet' has no requirement referencing it (add a requirement mentioning 'TlmGet')",
+        "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
+        "port 'PktSend' has no requirement referencing it (add a requirement mentioning 'PktSend')",
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
+      ],
+      "detail": "6 port(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "fail",
+      "failures": [
+        "requirement 'TLC-001' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TLC-002' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TLC-003' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TLC-004' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TLC-005' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:20) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TLC-006' (/home/runner/work/fprime/fprime/Svc/TlmChan/docs/sdd.md:21) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    }
+  ]
+}

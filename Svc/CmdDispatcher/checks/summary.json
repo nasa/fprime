@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 3,
+  "failed": 8,
+  "skipped": 5,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "pass",
+      "failures": [],
+      "detail": "5 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "pass",
+      "failures": [],
+      "detail": "4 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "requirement 'CD-001' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:13) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CD-002' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:14) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CD-003' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:15) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "5 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Cmd' (from #include \"Fw/Cmd/CmdPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Cmd)",
+        "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/ArrayMap.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Os' (from #include \"Os/Mutex.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)"
+      ],
+      "detail": "4 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "command 'CMD_NO_OP' has no requirement referencing it (add a requirement mentioning 'CMD_NO_OP')",
+        "command 'CMD_NO_OP_STRING' has no requirement referencing it (add a requirement mentioning 'CMD_NO_OP_STRING')",
+        "command 'CMD_TEST_CMD_1' has no requirement referencing it (add a requirement mentioning 'CMD_TEST_CMD_1')",
+        "command 'CMD_CLEAR_TRACKING' has no requirement referencing it (add a requirement mentioning 'CMD_CLEAR_TRACKING')"
+      ],
+      "detail": "4 command(s) traced against 5 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'CommandsDispatched' has no requirement referencing it (add a requirement mentioning 'CommandsDispatched')",
+        "telemetry channel 'CommandErrors' has no requirement referencing it (add a requirement mentioning 'CommandErrors')",
+        "telemetry channel 'CommandsDropped' has no requirement referencing it (add a requirement mentioning 'CommandsDropped')"
+      ],
+      "detail": "3 telemetry channel(s) traced against 5 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "event 'OpCodeRegistered' has no requirement referencing it (add a requirement mentioning 'OpCodeRegistered')",
+        "event 'OpCodeDispatched' has no requirement referencing it (add a requirement mentioning 'OpCodeDispatched')",
+        "event 'OpCodeCompleted' has no requirement referencing it (add a requirement mentioning 'OpCodeCompleted')",
+        "event 'OpCodeError' has no requirement referencing it (add a requirement mentioning 'OpCodeError')",
+        "event 'MalformedCommand' has no requirement referencing it (add a requirement mentioning 'MalformedCommand')",
+        "event 'InvalidCommand' has no requirement referencing it (add a requirement mentioning 'InvalidCommand')",
+        "event 'TooManyCommands' has no requirement referencing it (add a requirement mentioning 'TooManyCommands')",
+        "event 'NoOpStringReceived' has no requirement referencing it (add a requirement mentioning 'NoOpStringReceived')",
+        "event 'TestCmd1Args' has no requirement referencing it (add a requirement mentioning 'TestCmd1Args')",
+        "event 'OpCodeReregistered' has no requirement referencing it (add a requirement mentioning 'OpCodeReregistered')",
+        "event 'CommandDroppedQueueOverflow' has no requirement referencing it (add a requirement mentioning 'CommandDroppedQueueOverflow')"
+      ],
+      "detail": "11 event(s) traced against 5 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "port 'compCmdReg' has no requirement referencing it (add a requirement mentioning 'compCmdReg')",
+        "port 'compCmdStat' has no requirement referencing it (add a requirement mentioning 'compCmdStat')",
+        "port 'seqCmdBuff' has no requirement referencing it (add a requirement mentioning 'seqCmdBuff')",
+        "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
+        "port 'run' has no requirement referencing it (add a requirement mentioning 'run')",
+        "port 'compCmdSend' has no requirement referencing it (add a requirement mentioning 'compCmdSend')",
+        "port 'seqCmdStatus' has no requirement referencing it (add a requirement mentioning 'seqCmdStatus')",
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
+      ],
+      "detail": "8 port(s) traced against 5 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "requirement 'CD-001' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-002' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-003' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-004' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CD-005' (/home/runner/work/fprime/fprime/Svc/CmdDispatcher/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "5 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "pass",
+      "failures": [],
+      "detail": "5 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdDispatcher",
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Com' (from #include \"Fw/Com/ComBuffer.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Fw/Obj' (from #include \"Fw/Obj/SimpleObjRegistry.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/IntervalTimer.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "3 dependency module(s) checked"
+    }
+  ]
+}

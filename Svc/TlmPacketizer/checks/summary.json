@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 3,
+  "failed": 9,
+  "skipped": 4,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "requirement 'TPK-001' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:19) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-002' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:20) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-003' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:21) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-004' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:22) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-005' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:23) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'TPK-006' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:24) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
+        "dependency 'Fw/DataStructures' (from #include \"Fw/DataStructures/Array.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_DataStructures)",
+        "dependency 'Fw/Prm' (from #include \"Fw/Prm/PrmExternalTypes.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Prm)",
+        "dependency 'Os' (from #include \"Os/Mutex.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)",
+        "dependency 'TlmPacketizerConfig' (from #include \"TlmPacketizerConfig/TlmPacketizerCfg.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as TlmPacketizerConfig)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "command 'SET_LEVEL' has no requirement referencing it (add a requirement mentioning 'SET_LEVEL')",
+        "command 'SEND_PKT' has no requirement referencing it (add a requirement mentioning 'SEND_PKT')",
+        "command 'ENABLE_SECTION' has no requirement referencing it (add a requirement mentioning 'ENABLE_SECTION')",
+        "command 'ENABLE_GROUP' has no requirement referencing it (add a requirement mentioning 'ENABLE_GROUP')",
+        "command 'FORCE_GROUP' has no requirement referencing it (add a requirement mentioning 'FORCE_GROUP')",
+        "command 'CONFIGURE_GROUP_RATES' has no requirement referencing it (add a requirement mentioning 'CONFIGURE_GROUP_RATES')"
+      ],
+      "detail": "6 command(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'GroupConfigs' has no requirement referencing it (add a requirement mentioning 'GroupConfigs')",
+        "telemetry channel 'SectionEnabled' has no requirement referencing it (add a requirement mentioning 'SectionEnabled')"
+      ],
+      "detail": "2 telemetry channel(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "event 'NoChan' has no requirement referencing it (add a requirement mentioning 'NoChan')",
+        "event 'LevelSet' has no requirement referencing it (add a requirement mentioning 'LevelSet')",
+        "event 'MaxLevelExceed' has no requirement referencing it (add a requirement mentioning 'MaxLevelExceed')",
+        "event 'PacketSent' has no requirement referencing it (add a requirement mentioning 'PacketSent')",
+        "event 'PacketNotFound' has no requirement referencing it (add a requirement mentioning 'PacketNotFound')",
+        "event 'SectionUnconfigurable' has no requirement referencing it (add a requirement mentioning 'SectionUnconfigurable')"
+      ],
+      "detail": "6 event(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "parameter 'SECTION_ENABLED' has no requirement referencing it (add a requirement mentioning 'SECTION_ENABLED')",
+        "parameter 'SECTION_CONFIGS' has no requirement referencing it (add a requirement mentioning 'SECTION_CONFIGS')"
+      ],
+      "detail": "2 parameter(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "port 'controlIn' has no requirement referencing it (add a requirement mentioning 'controlIn')",
+        "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
+        "port 'Run' has no requirement referencing it (add a requirement mentioning 'Run')",
+        "port 'configureSectionGroupRate' has no requirement referencing it (add a requirement mentioning 'configureSectionGroupRate')",
+        "port 'TlmRecv' has no requirement referencing it (add a requirement mentioning 'TlmRecv')",
+        "port 'TlmGet' has no requirement referencing it (add a requirement mentioning 'TlmGet')",
+        "port 'PktSend' has no requirement referencing it (add a requirement mentioning 'PktSend')",
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')"
+      ],
+      "detail": "8 port(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "requirement 'TPK-001' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-002' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:20) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-003' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:21) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-004' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:22) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-005' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:23) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'TPK-006' (/home/runner/work/fprime/fprime/Svc/TlmPacketizer/docs/sdd.md:24) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/TlmPacketizer",
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "1 dependency module(s) checked"
+    }
+  ]
+}

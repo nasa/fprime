@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 4,
+  "failed": 3,
+  "skipped": 9,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/SystemResources/docs/sdd.md); cannot trace 1 command(s)"
+      ],
+      "detail": "1 command(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/SystemResources/docs/sdd.md); cannot trace 21 telemetry channel(s)"
+      ],
+      "detail": "21 telemetry channel(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no events declared in the FPP model"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "fail",
+      "failures": [
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/SystemResources/docs/sdd.md); cannot trace 1 port(s)"
+      ],
+      "detail": "1 port(s) traced against 0 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "skip",
+      "failures": [],
+      "detail": "no requirements found"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/SystemResources",
+      "status": "pass",
+      "failures": [],
+      "detail": "0 dependency module(s) checked"
+    }
+  ]
+}

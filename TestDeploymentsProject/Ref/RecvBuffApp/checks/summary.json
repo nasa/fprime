@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 2,
+  "failed": 7,
+  "skipped": 7,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "pass",
+      "failures": [],
+      "detail": "1 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "requirement 'ISF-SBF-001' (/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp/docs/sdd.md:13) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-SBF-002' (/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp/docs/sdd.md:14) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "2 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)"
+      ],
+      "detail": "2 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no commands declared in the FPP model"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'PktState' has no requirement referencing it (add a requirement mentioning 'PktState')",
+        "telemetry channel 'Sensor1' has no requirement referencing it (add a requirement mentioning 'Sensor1')",
+        "telemetry channel 'Sensor2' has no requirement referencing it (add a requirement mentioning 'Sensor2')",
+        "telemetry channel 'Parameter1' has no requirement referencing it (add a requirement mentioning 'Parameter1')",
+        "telemetry channel 'Parameter2' has no requirement referencing it (add a requirement mentioning 'Parameter2')"
+      ],
+      "detail": "5 telemetry channel(s) traced against 2 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "event 'FirstPacketReceived' has no requirement referencing it (add a requirement mentioning 'FirstPacketReceived')",
+        "event 'PacketChecksumError' has no requirement referencing it (add a requirement mentioning 'PacketChecksumError')",
+        "event 'BuffRecvParameterUpdated' has no requirement referencing it (add a requirement mentioning 'BuffRecvParameterUpdated')"
+      ],
+      "detail": "3 event(s) traced against 2 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "parameter 'parameter1' has no requirement referencing it (add a requirement mentioning 'parameter1')",
+        "parameter 'parameter2' has no requirement referencing it (add a requirement mentioning 'parameter2')"
+      ],
+      "detail": "2 parameter(s) traced against 2 requirement(s)"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "port 'Data' has no requirement referencing it (add a requirement mentioning 'Data')"
+      ],
+      "detail": "1 port(s) traced against 2 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "fail",
+      "failures": [
+        "requirement 'ISF-SBF-001' (/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-SBF-002' (/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "2 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "pass",
+      "failures": [],
+      "detail": "2 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/TestDeploymentsProject/Ref/RecvBuffApp",
+      "status": "skip",
+      "failures": [],
+      "detail": "no unit-test sources found"
+    }
+  ]
+}

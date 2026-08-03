@@ -1,0 +1,232 @@
+{
+  "schema": 1,
+  "generated_at": "2026-08-03T23:03:16Z",
+  "ref": "devel",
+  "commit": "70d4035c95d41753df593550fd6192175d973c33",
+  "passed": 3,
+  "failed": 8,
+  "skipped": 5,
+  "checks": [
+    {
+      "id": "D1",
+      "name": "Input port handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 input port(s) checked"
+    },
+    {
+      "id": "D2",
+      "name": "Command handlers defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "pass",
+      "failures": [],
+      "detail": "8 command(s) checked"
+    },
+    {
+      "id": "D3",
+      "name": "State machine actions defined",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no state machines declared"
+    },
+    {
+      "id": "D4",
+      "name": "Data product containers have default priority",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "D5",
+      "name": "Requirements mapped to design artifacts",
+      "category": "design",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "requirement 'ISF-CMDS-001' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:13) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-CMDS-002' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:14) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-CMDS-003' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:15) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-CMDS-004' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-CMDS-005' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'ISF-CMDS-006' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:18) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "I1",
+      "name": "Source dependencies listed in CMakeLists",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Com)",
+        "dependency 'Fw/Types' (from #include \"Fw/Types/Assert.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Types)",
+        "dependency 'Os' (from #include \"Os/File.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Os)",
+        "dependency 'Utils/Hash' (from #include \"Utils/Hash/Hash.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Utils_Hash)"
+      ],
+      "detail": "4 dependency module(s) checked"
+    },
+    {
+      "id": "I3",
+      "name": "Data product priorities configurable",
+      "category": "implementation",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data product containers declared"
+    },
+    {
+      "id": "R1",
+      "name": "Requirement per command",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "command 'CS_RUN' has no requirement referencing it (add a requirement mentioning 'CS_RUN')",
+        "command 'CS_VALIDATE' has no requirement referencing it (add a requirement mentioning 'CS_VALIDATE')",
+        "command 'CS_CANCEL' has no requirement referencing it (add a requirement mentioning 'CS_CANCEL')",
+        "command 'CS_START' has no requirement referencing it (add a requirement mentioning 'CS_START')",
+        "command 'CS_STEP' has no requirement referencing it (add a requirement mentioning 'CS_STEP')",
+        "command 'CS_AUTO' has no requirement referencing it (add a requirement mentioning 'CS_AUTO')",
+        "command 'CS_MANUAL' has no requirement referencing it (add a requirement mentioning 'CS_MANUAL')",
+        "command 'CS_JOIN_WAIT' has no requirement referencing it (add a requirement mentioning 'CS_JOIN_WAIT')"
+      ],
+      "detail": "8 command(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R2",
+      "name": "Requirement per telemetry channel",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "telemetry channel 'CS_LoadCommands' has no requirement referencing it (add a requirement mentioning 'CS_LoadCommands')",
+        "telemetry channel 'CS_CancelCommands' has no requirement referencing it (add a requirement mentioning 'CS_CancelCommands')",
+        "telemetry channel 'CS_Errors' has no requirement referencing it (add a requirement mentioning 'CS_Errors')",
+        "telemetry channel 'CS_CommandsExecuted' has no requirement referencing it (add a requirement mentioning 'CS_CommandsExecuted')",
+        "telemetry channel 'CS_SequencesCompleted' has no requirement referencing it (add a requirement mentioning 'CS_SequencesCompleted')",
+        "telemetry channel 'CS_CurrentSequence' has no requirement referencing it (add a requirement mentioning 'CS_CurrentSequence')"
+      ],
+      "detail": "6 telemetry channel(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R3",
+      "name": "Requirement per event",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "event 'CS_SequenceLoaded' has no requirement referencing it (add a requirement mentioning 'CS_SequenceLoaded')",
+        "event 'CS_SequenceCanceled' has no requirement referencing it (add a requirement mentioning 'CS_SequenceCanceled')",
+        "event 'CS_FileReadError' has no requirement referencing it (add a requirement mentioning 'CS_FileReadError')",
+        "event 'CS_FileInvalid' has no requirement referencing it (add a requirement mentioning 'CS_FileInvalid')",
+        "event 'CS_RecordInvalid' has no requirement referencing it (add a requirement mentioning 'CS_RecordInvalid')",
+        "event 'CS_FileSizeError' has no requirement referencing it (add a requirement mentioning 'CS_FileSizeError')",
+        "event 'CS_FileNotFound' has no requirement referencing it (add a requirement mentioning 'CS_FileNotFound')",
+        "event 'CS_FileCrcFailure' has no requirement referencing it (add a requirement mentioning 'CS_FileCrcFailure')",
+        "event 'CS_CommandComplete' has no requirement referencing it (add a requirement mentioning 'CS_CommandComplete')",
+        "event 'CS_SequenceComplete' has no requirement referencing it (add a requirement mentioning 'CS_SequenceComplete')",
+        "event 'CS_CommandError' has no requirement referencing it (add a requirement mentioning 'CS_CommandError')",
+        "event 'CS_RecordMismatch' has no requirement referencing it (add a requirement mentioning 'CS_RecordMismatch')",
+        "event 'CS_TimeBaseMismatch' has no requirement referencing it (add a requirement mentioning 'CS_TimeBaseMismatch')",
+        "event 'CS_TimeContextMismatch' has no requirement referencing it (add a requirement mentioning 'CS_TimeContextMismatch')",
+        "event 'CS_PortSequenceStarted' has no requirement referencing it (add a requirement mentioning 'CS_PortSequenceStarted')",
+        "event 'CS_UnexpectedCompletion' has no requirement referencing it (add a requirement mentioning 'CS_UnexpectedCompletion')",
+        "event 'CS_ModeSwitched' has no requirement referencing it (add a requirement mentioning 'CS_ModeSwitched')",
+        "event 'CS_SequenceValid' has no requirement referencing it (add a requirement mentioning 'CS_SequenceValid')",
+        "event 'CS_SequenceTimeout' has no requirement referencing it (add a requirement mentioning 'CS_SequenceTimeout')",
+        "event 'CS_CmdStepped' has no requirement referencing it (add a requirement mentioning 'CS_CmdStepped')",
+        "event 'CS_CmdStarted' has no requirement referencing it (add a requirement mentioning 'CS_CmdStarted')",
+        "event 'CS_JoinWaiting' has no requirement referencing it (add a requirement mentioning 'CS_JoinWaiting')",
+        "event 'CS_JoinWaitingNotComplete' has no requirement referencing it (add a requirement mentioning 'CS_JoinWaitingNotComplete')",
+        "event 'CS_NoRecords' has no requirement referencing it (add a requirement mentioning 'CS_NoRecords')"
+      ],
+      "detail": "24 event(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R4",
+      "name": "Requirement per parameter",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no parameters declared in the FPP model"
+    },
+    {
+      "id": "R5",
+      "name": "Requirement per data product",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "skip",
+      "failures": [],
+      "detail": "no data products declared in the FPP model"
+    },
+    {
+      "id": "R6",
+      "name": "Requirement per port/interface",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "port 'seqCancelIn' has no requirement referencing it (add a requirement mentioning 'seqCancelIn')",
+        "port 'cmdResponseIn' has no requirement referencing it (add a requirement mentioning 'cmdResponseIn')",
+        "port 'pingIn' has no requirement referencing it (add a requirement mentioning 'pingIn')",
+        "port 'seqRunIn' has no requirement referencing it (add a requirement mentioning 'seqRunIn')",
+        "port 'seqDispatchIn' has no requirement referencing it (add a requirement mentioning 'seqDispatchIn')",
+        "port 'schedIn' has no requirement referencing it (add a requirement mentioning 'schedIn')",
+        "port 'pingOut' has no requirement referencing it (add a requirement mentioning 'pingOut')",
+        "port 'seqDone' has no requirement referencing it (add a requirement mentioning 'seqDone')",
+        "port 'comCmdOut' has no requirement referencing it (add a requirement mentioning 'comCmdOut')",
+        "port 'seqStartOut' has no requirement referencing it (add a requirement mentioning 'seqStartOut')"
+      ],
+      "detail": "10 port(s) traced against 6 requirement(s)"
+    },
+    {
+      "id": "R7",
+      "name": "Requirement parent traceability",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "requirement 'ISF-CMDS-001' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-CMDS-002' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-CMDS-003' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-CMDS-004' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-CMDS-005' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'ISF-CMDS-006' (/home/runner/work/fprime/fprime/Svc/CmdSequencer/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "R8",
+      "name": "Requirement verification method",
+      "category": "requirements",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "pass",
+      "failures": [],
+      "detail": "6 requirement(s) checked"
+    },
+    {
+      "id": "U3",
+      "name": "Unit-test dependencies in CMakeLists",
+      "category": "unit-testing",
+      "module": "/home/runner/work/fprime/fprime/Svc/CmdSequencer",
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Com' (from #include \"Fw/Com/ComPacket.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Fw/Types' (from #include \"Fw/Types/MallocAllocator.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/FileSystem.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os/Posix' (from #include \"Os/Posix/Directory.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os/Stub' (from #include \"Os/Stub/test/File.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "5 dependency module(s) checked"
+    }
+  ]
+}
