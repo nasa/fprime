@@ -261,3 +261,13 @@ event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The fil
   severity warning high \
   id 0x21 \
   format "Failed to allocate data product buffer for file {}"
+
+@ Invalid offset range requested for data product generation
+event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The file being packaged
+                             beginOffset: U64 @< The requested begin offset
+                             endOffset: U64 @< The requested end offset
+                             fileSize: U64 @< The size of the file
+                            ) \
+  severity warning high \
+  id 0x22 \
+  format "Invalid offset range requested for file {}: [{}, {}) with file size {}"

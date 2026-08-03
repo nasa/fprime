@@ -392,7 +392,7 @@ void FileManagerTester ::generateDpSucceed() {
 
     Fw::CmdStringArg cmdStringFile(fileName);
     // 32 byte chunks over a 100 byte file yields 4 chunks (32 + 32 + 32 + 4)
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
     this->component.doDispatch();
 
     // Only the start event so far; the response is deferred
@@ -417,7 +417,7 @@ void FileManagerTester ::generateDpFileNotFound() {
     this->resetDpState();
 
     Fw::CmdStringArg cmdStringFile("no_such_dp_file");
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -438,7 +438,7 @@ void FileManagerTester ::generateDpEmptyFile() {
     this->resetDpState();
 
     Fw::CmdStringArg cmdStringFile(fileName);
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
     this->component.doDispatch();
 
     // An empty file completes immediately with no chunks
@@ -467,7 +467,7 @@ void FileManagerTester ::generateDpChunkSizeClamped() {
     // A chunk size beyond the configured maximum is clamped, so the 50 byte
     // file still fits in a single chunk
     this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile,
-                             FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4);
+                             FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0);
     this->component.doDispatch();
     this->runRateGroupCycles(5);
 
@@ -478,6 +478,60 @@ void FileManagerTester ::generateDpChunkSizeClamped() {
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_clamp_file");
+#endif
+}
+
+void FileManagerTester ::generateDpPartialRange() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_range_file";
+    this->system("rm -f dp_range_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_range_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // Bytes [20, 60) of a 100 byte file with 16 byte chunks yields 3 chunks
+    // (16 + 16 + 8), which lets an operator retransmit part of a file
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 20, 60);
+    this->component.doDispatch();
+    this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 3);
+    ASSERT_EQ(3u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_range_file");
+#endif
+}
+
+void FileManagerTester ::generateDpInvalidRange() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_bad_range_file";
+    this->system("rm -f dp_bad_range_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_bad_range_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A begin offset at or past the end offset has nothing to package
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 60, 20);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_GenerateDpInvalidRange_SIZE(1);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_bad_range_file");
 #endif
 }
 

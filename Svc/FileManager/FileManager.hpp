@@ -105,10 +105,12 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Implementation for GenerateDp command handler
     //! Package a file into a data product, split into chunks
-    void GenerateDp_cmdHandler(FwOpcodeType opCode,                //!< The opcode
-                               U32 cmdSeq,                         //!< The command sequence number
-                               const Fw::CmdStringArg& fileName,   //!< The file to package as a data product
-                               U32 chunkSize                       //!< The maximum number of file bytes per chunk
+    void GenerateDp_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                               U32 cmdSeq,                        //!< The command sequence number
+                               const Fw::CmdStringArg& fileName,  //!< The file to package as a data product
+                               U32 chunkSize,                     //!< The maximum number of file bytes per chunk
+                               U64 beginOffset,                   //!< The offset in the file at which to start
+                               U64 endOffset                      //!< The offset at which to stop, exclusive
                                ) override;
 
     //! Handler implementation for pingIn
@@ -231,6 +233,9 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Number of file bytes to read per chunk
     U32 m_dpChunkSize;
+
+    //! Offset at which packaging stops, exclusive
+    U64 m_dpEndOffset;
 
     //! Number of chunks emitted so far (for the completion event)
     U32 m_dpChunkCount;

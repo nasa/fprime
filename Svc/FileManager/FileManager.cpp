@@ -40,6 +40,7 @@ FileManager ::FileManager(const char* const compName  //!< The component name
       m_dpFileSize(0),
       m_dpOffset(0),
       m_dpChunkSize(0),
+      m_dpEndOffset(0),
       m_dpChunkCount(0),
       m_dpOpCode(0),
       m_dpCmdSeq(0),
@@ -214,7 +215,9 @@ void FileManager ::CalculateCrc_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, cons
 void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
                                          U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         U32 chunkSize) {
+                                         U32 chunkSize,
+                                         U64 beginOffset,
+                                         U64 endOffset) {
     Fw::LogStringArg logFileName(fileName.toChar());
 
     // Reject a second request while one is already running
@@ -253,9 +256,40 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
         return;
     }
 
+    // An end offset of zero, or one past the end of the file, means the end of
+    // the file. Ranges let an operator retransmit part of a file or spread the
+    // downlink over several commands.
+    U64 effectiveEnd = endOffset;
+    if ((effectiveEnd == 0) || (effectiveEnd > static_cast<U64>(fileSize))) {
+        effectiveEnd = static_cast<U64>(fileSize);
+    }
+
+    const bool emptyFile = (fileSize == 0);
+    const bool badRange = (beginOffset > static_cast<U64>(fileSize)) ||
+                          (!emptyFile && (beginOffset >= effectiveEnd));
+    if (badRange) {
+        this->m_dpFile.close();
+        this->log_WARNING_HI_GenerateDpInvalidRange(logFileName, beginOffset, endOffset,
+                                                    static_cast<U64>(fileSize));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
+
+    // Position the file at the start of the requested range
+    if (beginOffset > 0) {
+        status = this->m_dpFile.seek(static_cast<FwSignedSizeType>(beginOffset), Os::File::SeekType::ABSOLUTE);
+        if (status != Os::File::OP_OK) {
+            this->m_dpFile.close();
+            this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+    }
+
     this->m_dpFileName = Fw::String(fileName.toChar());
     this->m_dpFileSize = fileSize;
-    this->m_dpOffset = 0;
+    this->m_dpOffset = beginOffset;
+    this->m_dpEndOffset = effectiveEnd;
     this->m_dpChunkSize = effectiveChunkSize;
     this->m_dpChunkCount = 0;
     this->m_dpOpCode = opCode;
@@ -264,8 +298,9 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
 
     this->log_ACTIVITY_HI_GenerateDpStarted(logFileName, static_cast<U64>(fileSize));
 
-    // An empty file produces no chunks, so complete immediately
-    if (fileSize == 0) {
+    // An empty range produces no chunks, so complete immediately
+    if (this->m_dpOffset >= this->m_dpEndOffset) {
+        this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
         this->finishDpGeneration(Fw::CmdResponse::OK);
     }
 
@@ -280,8 +315,8 @@ void FileManager ::processDpChunks() {
             return;
         }
 
-        // Number of bytes remaining in the file
-        const FwSizeType remaining = this->m_dpFileSize - static_cast<FwSizeType>(this->m_dpOffset);
+        // Number of bytes remaining in the requested range
+        const FwSizeType remaining = static_cast<FwSizeType>(this->m_dpEndOffset - this->m_dpOffset);
         if (remaining == 0) {
             this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
             this->finishDpGeneration(Fw::CmdResponse::OK);
@@ -329,8 +364,8 @@ void FileManager ::processDpChunks() {
         this->m_dpOffset += static_cast<U64>(readSize);
         this->m_dpChunkCount++;
 
-        // Last chunk of the file
-        if (static_cast<FwSizeType>(this->m_dpOffset) >= this->m_dpFileSize) {
+        // Last chunk of the requested range
+        if (this->m_dpOffset >= this->m_dpEndOffset) {
             this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
             this->finishDpGeneration(Fw::CmdResponse::OK);
             return;
@@ -342,6 +377,7 @@ void FileManager ::finishDpGeneration(Fw::CmdResponse::T response) {
     this->m_dpFile.close();
     this->m_dpState = DP_IDLE;
     this->m_dpOffset = 0;
+    this->m_dpEndOffset = 0;
     this->m_dpFileSize = 0;
     this->cmdResponse_out(this->m_dpOpCode, this->m_dpCmdSeq, response);
 }

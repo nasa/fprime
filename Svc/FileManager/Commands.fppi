@@ -57,5 +57,7 @@ async command CalculateCrc(
 async command GenerateDp(
                           fileName: string size FileNameStringSize @< The file to package as a data product
                           chunkSize: U32 @< The maximum number of file bytes per chunk
+                          beginOffset: U64 @< The offset in the file at which to start
+                          endOffset: U64 @< The offset in the file at which to stop, exclusive; 0 means the end of the file
                         ) \
   opcode 0x09

@@ -27,7 +27,11 @@ information for operators.
 ### GenerateDp
 
 `GenerateDp` packages a file into data products. The command takes the file
-name and a chunk size, and the file is emitted one chunk at a time. Each chunk
+name, a chunk size, and a begin and end offset, and the requested range of the
+file is emitted one chunk at a time. An end offset of zero means the end of the
+file, so a begin and end offset of zero packages the whole file. Ranges let an
+operator retransmit part of a file, or spread a downlink over several commands
+when a project cannot fit the whole file into data products at once. Each chunk
 is written as a pair of records: a `FileChunkHeaderRecord` carrying the source
 file name, the offset of the chunk within the file and the number of data
 bytes, followed by a `FileChunkDataRecord` holding the chunk bytes. Ground
@@ -38,7 +42,10 @@ Chunks are paced by the rate group in the same way as directory listing, one
 chunk per tick by default, and the command response is deferred until the last
 chunk has been sent. The requested chunk size is clamped to
 `FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE`, which bounds the read buffer
-held by the component. The data product ports are left for the deployment to
+held by the component. Because each chunk header carries the absolute offset
+within the source file, chunks produced by separate commands reassemble
+correctly on the ground with no extra bookkeeping. The data product ports are
+left for the deployment to
 connect; if they are not connected the command fails with an event rather than
 attempting to allocate a container.
 

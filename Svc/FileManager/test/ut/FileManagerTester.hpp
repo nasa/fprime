@@ -122,6 +122,12 @@ class FileManagerTester : public FileManagerGTestBase {
     //! Generate a data product with a chunk size larger than the read buffer
     void generateDpChunkSizeClamped();
 
+    //! Generate a data product from part of a file using begin and end offsets
+    void generateDpPartialRange();
+
+    //! Reject a data product request with an invalid offset range
+    void generateDpInvalidRange();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods

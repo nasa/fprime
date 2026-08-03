@@ -109,6 +109,16 @@ TEST(Test, generateDpChunkSizeClamped) {
     tester.generateDpChunkSizeClamped();
 }
 
+TEST(Test, generateDpPartialRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpPartialRange();
+}
+
+TEST(Test, generateDpInvalidRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpInvalidRange();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
