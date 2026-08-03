@@ -347,7 +347,9 @@ void TlmChan::Run_handler(FwIndexType portNum, U32 context) {
                 FW_ASSERT(false, static_cast<FwAssertArgType>(stat));
             }
 
+            this->lock();
             p_entry->updated = false;
+            this->unLock();
             entriesProcessed++;
         }
     }

@@ -5,7 +5,10 @@
 // ======================================================================
 
 #include "TlmChanTester.hpp"
+
 #include <Fw/Test/UnitTest.hpp>
+#include <Fw/Time/TimeInterval.hpp>
+#include <Os/Task.hpp>
 #include <config/TlmChanImplCfg.hpp>
 
 #define INSTANCE 0
@@ -32,7 +35,14 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 TlmChanTester ::TlmChanTester()
-    : TlmChanGTestBase("Tester", MAX_HISTORY_SIZE), component("TlmChan"), m_numBuffs(0), m_bufferRecv(false) {
+    : TlmChanGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("TlmChan"),
+      m_numBuffs(0),
+      m_bufferRecv(false),
+      m_packetSendGateArmed(0),
+      m_packetSendEntered(0),
+      m_packetSendReleased(0),
+      m_runComplete(0) {
     this->initComponents();
     this->connectPorts();
 }
@@ -140,6 +150,55 @@ void TlmChanTester::runOffNominal() {
     ASSERT_EQ(valid, Fw::TlmValid::INVALID);
 }
 
+void TlmChanTester::runUpdatedFlagClearGuarded() {
+    const Fw::TimeInterval testTimeout(2, 0);
+    const Fw::TimeInterval guardHeldTimeout(1, 0);
+    const U32 numEntries = static_cast<U32>(CHANS_PER_COMBUFFER) + 1U;
+    if ((CHANS_PER_COMBUFFER == 0) || (numEntries > TLMCHAN_HASH_BUCKETS) ||
+        (numEntries > TLMCHAN_MAX_ENTRIES_PER_RUN)) {
+        printf("SKIP: packet-gate test requires at least %u entries per Run invocation\n",
+               static_cast<unsigned>(numEntries));
+        return;
+    }
+
+    this->clearBuffs();
+    for (U32 entry = 0; entry < numEntries; entry++) {
+        this->sendBuff(static_cast<FwChanIdType>(0x7000U + entry), entry);
+    }
+
+    const Os::CountingSemaphore::Status armStatus = this->m_packetSendGateArmed.post();
+    Os::Task runTask;
+    Os::Task::Arguments arguments(Fw::String("TlmChanRun"), TlmChanTester::runTask, this,
+                                  Os::Task::TASK_PRIORITY_DEFAULT, Os::Task::TASK_DEFAULT);
+    const Os::Task::Status startStatus = runTask.start(arguments);
+    const Os::CountingSemaphore::Status packetEnteredStatus = this->m_packetSendEntered.waitTimeout(testTimeout);
+
+    Os::CountingSemaphore::Status completedWhileGuardHeldStatus = Os::CountingSemaphore::Status::ERROR_OTHER;
+    Os::CountingSemaphore::Status releaseStatus = Os::CountingSemaphore::Status::ERROR_OTHER;
+    if (packetEnteredStatus == Os::CountingSemaphore::Status::OP_OK) {
+        this->component.lock();
+        releaseStatus = this->m_packetSendReleased.post();
+        completedWhileGuardHeldStatus = this->m_runComplete.waitTimeout(guardHeldTimeout);
+        this->component.unLock();
+    } else {
+        // Let the task leave its bounded PktSend wait before joining it.
+        releaseStatus = this->m_packetSendReleased.post();
+    }
+
+    const Os::Task::Status joinStatus = runTask.join();
+
+    const Os::CountingSemaphore::Status completedAfterGuardReleasedStatus =
+        this->m_runComplete.waitTimeout(testTimeout);
+
+    ASSERT_EQ(Os::Task::Status::OP_OK, startStatus);
+    ASSERT_EQ(Os::Task::Status::OP_OK, joinStatus);
+    ASSERT_EQ(Os::CountingSemaphore::Status::OP_OK, armStatus);
+    ASSERT_EQ(Os::CountingSemaphore::Status::OP_OK, packetEnteredStatus);
+    ASSERT_EQ(Os::CountingSemaphore::Status::OP_OK, releaseStatus);
+    ASSERT_EQ(Os::CountingSemaphore::Status::ERROR_TIMEOUT, completedWhileGuardHeldStatus);
+    ASSERT_EQ(Os::CountingSemaphore::Status::OP_OK, completedAfterGuardReleasedStatus);
+}
+
 void TlmChanTester::runProcGuard() {
     // This test only has meaning when the per-run cap is set below the total
     // bucket count.  If TLMCHAN_MAX_ENTRIES_PER_RUN equals TLMCHAN_HASH_BUCKETS
@@ -227,10 +286,21 @@ void TlmChanTester::runProcGuard() {
 // ----------------------------------------------------------------------
 
 void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    if (this->m_packetSendGateArmed.tryWait() == Os::CountingSemaphore::Status::OP_OK) {
+        (void)this->m_packetSendEntered.post();
+        (void)this->m_packetSendReleased.waitTimeout(Fw::TimeInterval(2, 0));
+    }
+
     this->pushFromPortEntry_PktSend(data, context);
     this->m_bufferRecv = true;
     this->m_rcvdBuffer[this->m_numBuffs] = data;
     this->m_numBuffs++;
+}
+
+void TlmChanTester::runTask(void* argument) {
+    TlmChanTester* tester = static_cast<TlmChanTester*>(argument);
+    tester->doRun(false);
+    (void)tester->m_runComplete.post();
 }
 
 void TlmChanTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
