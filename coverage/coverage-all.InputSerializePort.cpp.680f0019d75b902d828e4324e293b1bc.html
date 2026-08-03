@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 18:36:51</td>
+      <td>2026-08-03 19:27:34</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l10">Fw::InputSerializePort::InputSerializePort() (line 10)</a></td><td>called 1565 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l29">Fw::InputSerializePort::addCallComp(Fw::PassiveComponentBase*, void (*)(Fw::PassiveComponentBase*, short, Fw::LinearBufferBase&amp;)) (line 29)</a></td><td>called 1565 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l10">Fw::InputSerializePort::InputSerializePort() (line 10)</a></td><td>called 1605 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l29">Fw::InputSerializePort::addCallComp(Fw::PassiveComponentBase*, void (*)(Fw::PassiveComponentBase*, short, Fw::LinearBufferBase&amp;)) (line 29)</a></td><td>called 1605 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l37">Fw::InputSerializePort::getToStringFormatString() (line 37)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l13">Fw::InputSerializePort::init() (line 13)</a></td><td>called 1565 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l13">Fw::InputSerializePort::init() (line 13)</a></td><td>called 1605 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l17">Fw::InputSerializePort::invokeSerial(Fw::LinearBufferBase&amp;) (line 17)</a></td><td>called 10062 times</td><td>93.0%</td></tr>
-    <tr><td><a href="#l11">Fw::InputSerializePort::~InputSerializePort() (line 11)</a></td><td>called 1565 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l11">Fw::InputSerializePort::~InputSerializePort() (line 11)</a></td><td>called 1605 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -156,14 +156,14 @@
       <td class="lineno"><a id="l10" href="#l10">10</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="n">InputSerializePort</span><span class="o">::</span><span class="n">InputSerializePort</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">InputPortBase</span><span class="p">(),</span><span class="w"> </span><span class="n">m_func</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l11" href="#l11">11</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3130</td>
+      <td class="linecount coveredLine">3210</td>
       <td class="src coveredLine"><span class="n">InputSerializePort</span><span class="o">::~</span><span class="n">InputSerializePort</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -177,21 +177,21 @@
       <td class="lineno"><a id="l13" href="#l13">13</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">InputSerializePort</span><span class="o">::</span><span class="n">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">InputPortBase</span><span class="o">::</span><span class="n">init</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l15" href="#l15">15</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -289,42 +289,42 @@
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">InputSerializePort</span><span class="o">::</span><span class="n">addCallComp</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">PassiveComponentBase</span><span class="o">*</span><span class="w"> </span><span class="n">callComp</span><span class="p">,</span><span class="w"> </span><span class="n">CompFuncPtr</span><span class="w"> </span><span class="n">funcPtr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">callComp</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">funcPtr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_comp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callComp</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_func</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcPtr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1565</td>
+      <td class="linecount coveredLine">1605</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
