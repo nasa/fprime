@@ -112,7 +112,7 @@ jobs:
           fi
 
           if [ -f "./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json" ]; then
-            echo "✓ Dictionary exists: ExamplesDeploymentTopologyDictionary.json"
+            echo "Dictionary exists: ExamplesDeploymentTopologyDictionary.json"
 
             echo ""
             echo "=== Checking Dictionary for ManagerWorker ==="
@@ -121,13 +121,13 @@ jobs:
             MW_EVT_COUNT=$(grep -c 'ManagerWorker' "$DICT_FILE" || echo 0)
             echo "ManagerWorker references in dictionary: $MW_EVT_COUNT"
             if [ "$MW_EVT_COUNT" -eq 0 ]; then
-              echo "⚠ WARNING: No ManagerWorker components found in dictionary"
+              echo "WARNING: No ManagerWorker components found in dictionary"
               echo "  Tests may fail if ManagerWorker is required"
             else
-              echo "✓ ManagerWorker found in dictionary"
+              echo "ManagerWorker found in dictionary"
             fi
           else
-            echo "✗ Dictionary not found!"
+            echo "Dictionary not found!"
             exit 1
           fi
 
@@ -162,7 +162,7 @@ jobs:
             -v \
             FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py || {
             echo ""
-            echo "✗ Integration tests failed!"
+            echo "Integration tests failed!"
             echo ""
             echo "=== GDS Logs ==="
             cat ci-logs/*.log 2>/dev/null || echo "No log files found"
