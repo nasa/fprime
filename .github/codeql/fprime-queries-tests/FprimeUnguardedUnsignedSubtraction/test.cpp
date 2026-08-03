@@ -30,10 +30,9 @@ void unguarded(const Buffer& buf) {
     consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
 }
 
-// Violation: the only check is inside an FW_ASSERT. Assertions may be
-// compiled out at lower FW_ASSERT_LEVEL settings, so this does not
-// protect the subtraction in a release build.
-void guardedOnlyByAssert(const Buffer& buf) {
+// Compliant: FW_ASSERT is a valid check in F Prime. Projects choose their
+// own assert level; a site that asserts the invariant is not unchecked.
+void checkedByAssert(const Buffer& buf) {
     FW_ASSERT(buf.getSize() >= Container::MIN_PACKET_SIZE);
     consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
 }
@@ -54,14 +53,31 @@ void guardedByIf(const Buffer& buf) {
     }
 }
 
-// Compliant: an FW_ASSERT is present, but a real run-time check is too.
-// Belt-and-braces code should not be reported.
-void assertAndRuntimeCheck(const Buffer& buf) {
-    FW_ASSERT(buf.getSize() >= Container::MIN_PACKET_SIZE);
-    if (buf.getSize() < Container::MIN_PACKET_SIZE) {
-        return;
-    }
+// Compliant: the check is written on a local copy of the size. This is the
+// Fw::DpContainer::setBuffer shape.
+void checkedOnLocalCopy(const Buffer& buf) {
+    const FwSizeType size = buf.getSize();
+    FW_ASSERT(size >= Container::MIN_PACKET_SIZE);
     consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+FwSizeType requiredSize();
+
+// Compliant: the bound is computed at run time, so the query cannot show it
+// is too small. This is the Svc::FileDownlink::sendFilePacket shape.
+void checkedAgainstComputedBound(const Buffer& buf) {
+    const FwSizeType needed = requiredSize() + Container::MIN_PACKET_SIZE;
+    FW_ASSERT(buf.getSize() >= needed);
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Violation: the only comparison of the size is unrelated to the subtraction
+// and far too weak to cover it. This is the shape of the FW_ASSERT that
+// follows the subtraction in DpCompressProc; it must keep being reported.
+void unrelatedCheckAfterSubtraction(const Buffer& buf) {
+    const FwSizeType remaining = buf.getSize() - Container::MIN_PACKET_SIZE;
+    FW_ASSERT(buf.getSize() > 0);
+    consume(buf.getData(), remaining);
 }
 
 // Compliant: `> 0` is the idiomatic guard for a `- 1` subtraction. The

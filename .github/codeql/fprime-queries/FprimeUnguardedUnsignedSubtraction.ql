@@ -1,56 +1,30 @@
 /**
  * @name Unguarded unsigned subtraction from a run-time size
- * @description Subtracting a compile-time constant from a size obtained at run time underflows to a very large value, rather than going negative, when the size is smaller than the constant. A comparison that appears only inside an FW_ASSERT does not count as a guard, because assertions may be compiled out.
+ * @description Subtracting a compile-time constant from a size obtained at
+ *              run time underflows to a very large value, rather than going
+ *              negative, when the size is smaller than the constant. A check
+ *              may be a condition or an FW_ASSERT; this reports sites with
+ *              neither.
  * @kind problem
  * @id cpp/fprime/unguarded-unsigned-subtraction
  * @problem.severity warning
  * @tags correctness
- *       security
+ *       reliability
  *       external/cwe/cwe-191
  */
 
 import cpp
-import FprimeAssertions
 
 /*
- * Motivated by the defect fixed in nasa/fprime#5518, where
- * `DpCompressProc::procRequest_handler` computed
+ * Motivated by nasa/fprime#5518, where `DpCompressProc::procRequest_handler`
+ * computed `fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE` on a
+ * port-supplied buffer with no check of any kind in the handler.
  *
- *     fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE
- *
- * on a port-supplied buffer. The invariant `getSize() >= MIN_PACKET_SIZE`
- * was enforced only by an `FW_ASSERT` inside `Fw::DpContainer::setBuffer`,
- * in a different translation unit. With assertions compiled out, a short
- * buffer underflowed the subtraction to a value near `SIZE_MAX` and the
- * downstream chunking loop walked off the allocation.
- *
- * The query is deliberately conservative in three ways, to keep it usable
- * as a CI gate rather than a research tool:
- *
- *   1. The subtrahend must be a compile-time constant. Variable-minus-
- *      variable subtraction is far more common and far more often
- *      intentional, so it is out of scope here.
- *
- *   2. The minuend must come from a known size accessor. A bare integer
- *      subtraction says nothing about intent; `getSize() - K` says the
- *      author is reasoning about a buffer.
- *
- *   3. Guard recognition is direction-agnostic and does no dominance
- *      analysis: any relational comparison in the same function between
- *      the accessor and a sufficiently large constant is accepted,
- *      whether it is written `size < K` (early return) or `size >= K`
- *      (positive form). That admits false negatives -- a check on a path
- *      that does not actually reach the subtraction -- in exchange for a
- *      low false-positive rate.
- *
- * On the guard threshold: a comparison against constant `C` is accepted
- * as guarding `accessor - K` when `C >= K - 1`. The `- 1` matters. It
- * makes `if (size > 0)` count as a guard for `size - 1`, which is the
- * idiomatic way to write that check and would otherwise be reported.
- * Comparing `C` and `K` for exact equality (an earlier version of this
- * query) rejects that guard and produces a false positive. A weaker
- * check such as `if (size > 2)` guarding `size - 8` still fails the
- * threshold and is still reported, which is the desired behaviour.
+ * Deliberately conservative, to be usable as a CI gate: the subtrahend must
+ * be a compile-time constant, the minuend must come from a known size
+ * accessor, and check recognition is direction-agnostic with no dominance
+ * analysis. A bound of `C` is accepted for `accessor - K` when `C >= K - 1`,
+ * so `if (size > 0)` credits `size - 1`; `test.cpp` pins that case.
  */
 
 /**
@@ -65,25 +39,44 @@ predicate isSizeAccessor(Call c) {
     ]
 }
 
-/** Holds if `e` appears inside the condition of an `FW_ASSERT`. */
-predicate inFwAssert(Expr e) { exists(FwAssert a | e.getParent*() = a.getAsserted()) }
+/**
+ * Holds if `e` reads the size accessor `name`: either a direct call, or an
+ * access to a local variable whose initializer is that call. The local-copy
+ * form is idiomatic -- `const FwSizeType n = buf.getSize();` then a check on
+ * `n` -- and a check written that way is still a check.
+ */
+predicate readsSize(Expr e, string name) {
+  isSizeAccessor(e.(Call)) and name = e.(Call).getTarget().getName()
+  or
+  exists(LocalScopeVariable v, Call acc |
+    e = v.getAnAccess() and
+    acc = v.getInitializer().getExpr() and
+    isSizeAccessor(acc) and
+    name = acc.getTarget().getName()
+  )
+}
 
 /**
- * Holds if `f` compares the result of a size accessor named `name`
- * against a constant of at least `k - 1`, outside any `FW_ASSERT` --
- * that is, a guard that still runs when assertions are disabled and
- * that is strong enough to make `accessor - k` safe.
+ * Holds if `f` compares a read of the size accessor `name` against a bound
+ * that is not demonstrably too small for `accessor - k`. An `FW_ASSERT`
+ * condition counts: it is an ordinary comparison in the AST, and F Prime
+ * treats an assertion as a valid check -- projects choose their own assert
+ * level. A bound with no constant value is accepted, since the query cannot
+ * show it is too small.
  */
 bindingset[k]
-predicate hasRuntimeGuard(Function f, string name, float k) {
-  exists(RelationalOperation rop, Call acc, Expr bound |
+predicate hasCheck(Function f, string name, float k) {
+  exists(RelationalOperation rop, Expr sizeSide, Expr bound |
     rop.getEnclosingFunction() = f and
-    not inFwAssert(rop) and
-    acc.getParent*() = rop and
-    isSizeAccessor(acc) and
-    acc.getTarget().getName() = name and
-    bound.getParent*() = rop and
-    bound.getValue().toFloat() >= k - 1.0
+    sizeSide = rop.getAnOperand() and
+    bound = rop.getAnOperand() and
+    bound != sizeSide and
+    exists(Expr read | read = sizeSide.getAChild*() and readsSize(read, name)) and
+    (
+      not exists(bound.getValue())
+      or
+      bound.getValue().toFloat() >= k - 1.0
+    )
   )
 }
 
@@ -94,7 +87,7 @@ where
   isSizeAccessor(minuend) and
   subtrahend = sub.getRightOperand() and
   k = subtrahend.getValue().toFloat() and
-  not hasRuntimeGuard(sub.getEnclosingFunction(), minuend.getTarget().getName(), k)
+  not hasCheck(sub.getEnclosingFunction(), minuend.getTarget().getName(), k)
 select sub,
   "Unsigned subtraction from " + minuend.getTarget().getName() +
-    "() with no run-time check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small."
+    "() with no check that it is at least the subtracted constant; this underflows instead of going negative when the size is too small."
