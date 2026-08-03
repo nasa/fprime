@@ -7,6 +7,10 @@ module FppTest {
     c: string size 10
   }
 
+  struct ZeroSizeData {
+    c: string size 0
+  }
+
   port EmitTelemetry(a: U32)
   port GetParameter() -> U32
 
@@ -48,6 +52,7 @@ module FppTest {
 
     @ A record containing fixed-size data
     product record FixedSizeDataRecord: FixedSizeData id 0x00
+    product record ZeroSizeDataRecord: ZeroSizeData id 0x02
     @ A record containing a variable-size array
     product record F32ArrayRecord: F32 array id 0x01
 
