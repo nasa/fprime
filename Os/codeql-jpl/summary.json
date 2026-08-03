@@ -1,8 +1,8 @@
 {
-  "findings": 8,
+  "findings": 7,
   "by_severity": {
     "error": 0,
-    "medium": 3,
+    "medium": 2,
     "low": 5
   },
   "worst": "medium",

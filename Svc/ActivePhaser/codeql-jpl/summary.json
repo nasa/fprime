@@ -1,12 +1,12 @@
 {
-  "findings": 2,
+  "findings": 0,
   "by_severity": {
     "error": 0,
-    "medium": 2,
+    "medium": 0,
     "low": 0
   },
-  "worst": "medium",
-  "tier": "bronze",
+  "worst": null,
+  "tier": "platinum",
   "dismissed": 0,
   "label": "CodeQL JPL Standard"
 }
