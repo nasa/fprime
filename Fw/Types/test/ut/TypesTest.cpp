@@ -1854,6 +1854,12 @@ TEST(OffNominal, sub_string_substring_zero_size) {
     ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
 }
 
+TEST(OffNominal, sub_string_source_and_substring_zero_size) {
+    const char* source_string = "";
+    const char* sub_string = "";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 0, sub_string, 0), 0);
+}
+
 TEST(OffNominal, sub_string_last_no_match) {
     const char* source_string = "abc123";
     const char* sub_string_last = "456";

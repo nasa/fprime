@@ -11,6 +11,7 @@ This is required to be able to read the version files and pass them to the fpp-t
 import subprocess
 import argparse
 import json
+import sys
 
 
 def main():
@@ -78,4 +79,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

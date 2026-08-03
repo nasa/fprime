@@ -41,10 +41,10 @@ CpuInterface::Status getCpuData(FwSizeType cpu_index, ProcCpuData data) {
         FwSizeType read_size = sizeof proc_stat_line - 1;
         Os::File::Status file_status =
             file.readline(reinterpret_cast<U8*>(proc_stat_line), read_size, Os::File::WaitType::NO_WAIT);
-        proc_stat_line[read_size + 1] = '\0';  // Null terminate
         if (file_status != Os::File::Status::OP_OK) {
             return CpuInterface::Status::ERROR;
         }
+        proc_stat_line[read_size] = '\0';  // Null terminate, read_size is at most LINE_SIZE
         // Make sure we've not strayed passed the cpu section
         if (::strncmp(proc_stat_line, "cpu", 3) != 0) {
             return CpuInterface::Status::ERROR;

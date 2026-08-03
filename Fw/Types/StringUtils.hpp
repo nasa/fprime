@@ -59,7 +59,7 @@ FwSizeType string_length(const CHAR* source, FwSizeType buffer_size);
  * \param source_size: the size of the source string
  * \param substring: string to search for
  * \param sub_size: the size of the string to search for
- * \return index of substring, -1 if not found
+ * \return index of substring, -1 if not found. A zero-size substring always matches at index 0
  */
 FwSignedSizeType substring_find(const CHAR* source_string,
                                 FwSizeType source_size,

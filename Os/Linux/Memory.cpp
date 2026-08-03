@@ -25,7 +25,7 @@ MemoryInterface::Status LinuxMemory::_getUsage(Os::Memory::Usage& memory_usage) 
     }
 
     memory_usage.total = info.totalram * info.mem_unit;
-    memory_usage.used = info.freeram * info.mem_unit;
+    memory_usage.used = (info.totalram - info.freeram) * info.mem_unit;
     return Status::OP_OK;
 }
 

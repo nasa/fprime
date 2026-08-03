@@ -164,9 +164,9 @@ void ActivePhaser ::startChild(U32 full_ticks) {
         return;
     }
     PhaserStateEntry& entry = m_state.entries[(m_state.current % m_state.used)];
-    // If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of
-    // execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a
-    // user-specified time window.
+    // If context type is SEQUENTIAL, entry.context stores the registration index of this port among the entries
+    // registered to the same port, fixed at registration time. If context type is COUNT, entry.context stores the
+    // number of phaser cycles elapsed within a user-specified time window.
     U32 context = entry.context;
     if (entry.contextType != SEQUENTIAL) {
         FW_ASSERT(entry.context != 0, static_cast<FwAssertArgType>(entry.port));

@@ -400,7 +400,7 @@ class RedBlackTreeSetOrMapImpl final {
         // Compute the nearest offset at or after nodesSize that is aligned for FreeNodes
         const auto freeNodesAlignment = FreeNodes::getByteArrayAlignment();
         const U8 modulus = nodesSize % freeNodesAlignment;
-        const FwSizeType freeNodesOffset = (modulus == 0) ? 0 : freeNodesAlignment - modulus;
+        const FwSizeType freeNodesOffset = nodesSize + ((modulus == 0) ? 0 : freeNodesAlignment - modulus);
         FW_ASSERT(freeNodesOffset % freeNodesAlignment == 0, static_cast<FwAssertArgType>(freeNodesOffset),
                   static_cast<FwAssertArgType>(freeNodesAlignment));
         const auto freeNodesSize = FreeNodes::getByteArraySize(capacity);
