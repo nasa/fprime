@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 22:55:11</td>
+      <td>2026-08-03 23:29:56</td>
     </tr>
   </table>
 </div>
@@ -70,11 +70,11 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l8">Fw::InputPortBase::InputPortBase() (line 8)</a></td><td>called 22821 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l8">Fw::InputPortBase::InputPortBase() (line 8)</a></td><td>called 22855 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l22">Fw::InputPortBase::getToStringFormatString() (line 22)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l12">Fw::InputPortBase::init() (line 12)</a></td><td>called 22500 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l16">Fw::InputPortBase::setPortNum(short) (line 16)</a></td><td>called 22500 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l10">Fw::InputPortBase::~InputPortBase() (line 10)</a></td><td>called 22821 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l12">Fw::InputPortBase::init() (line 12)</a></td><td>called 22534 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l16">Fw::InputPortBase::setPortNum(short) (line 16)</a></td><td>called 22534 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l10">Fw::InputPortBase::~InputPortBase() (line 10)</a></td><td>called 22855 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -141,7 +141,7 @@
       <td class="lineno"><a id="l8" href="#l8">8</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22821</td>
+      <td class="linecount coveredLine">22855</td>
       <td class="src coveredLine"><span class="n">InputPortBase</span><span class="o">::</span><span class="n">InputPortBase</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">PortBase</span><span class="p">(),</span><span class="w"> </span><span class="n">m_comp</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">),</span><span class="w"> </span><span class="n">m_portNum</span><span class="p">(</span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -155,7 +155,7 @@
       <td class="lineno"><a id="l10" href="#l10">10</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">45642</td>
+      <td class="linecount coveredLine">45710</td>
       <td class="src coveredLine"><span class="n">InputPortBase</span><span class="o">::~</span><span class="n">InputPortBase</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -169,21 +169,21 @@
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">InputPortBase</span><span class="o">::</span><span class="n">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l13" href="#l13">13</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">PortBase</span><span class="o">::</span><span class="n">init</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -197,28 +197,28 @@
       <td class="lineno"><a id="l16" href="#l16">16</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">InputPortBase</span><span class="o">::</span><span class="n">setPortNum</span><span class="p">(</span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l17" href="#l17">17</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">portNum</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">portNum</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l18" href="#l18">18</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_portNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">portNum</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22500</td>
+      <td class="linecount coveredLine">22534</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

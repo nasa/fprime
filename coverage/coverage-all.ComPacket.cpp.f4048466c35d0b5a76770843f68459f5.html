@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 22:55:11</td>
+      <td>2026-08-03 23:29:56</td>
     </tr>
   </table>
 </div>
@@ -70,10 +70,10 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l12">Fw::ComPacket::ComPacket() (line 12)</a></td><td>called 76 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l20">Fw::ComPacket::deserializeBase(Fw::SerialBufferBase&amp;) (line 20)</a></td><td>called 62 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l12">Fw::ComPacket::ComPacket() (line 12)</a></td><td>called 86 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l20">Fw::ComPacket::deserializeBase(Fw::SerialBufferBase&amp;) (line 20)</a></td><td>called 73 times</td><td>94.0%</td></tr>
     <tr><td><a href="#l16">Fw::ComPacket::serializeBase(Fw::SerialBufferBase&amp;) const (line 16)</a></td><td>called 27 times</td><td>93.0%</td></tr>
-    <tr><td><a href="#l14">Fw::ComPacket::~ComPacket() (line 14)</a></td><td>called 76 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l14">Fw::ComPacket::~ComPacket() (line 14)</a></td><td>called 86 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -168,7 +168,7 @@
       <td class="lineno"><a id="l12" href="#l12">12</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">76</td>
+      <td class="linecount coveredLine">86</td>
       <td class="src coveredLine"><span class="n">ComPacket</span><span class="o">::</span><span class="n">ComPacket</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_type</span><span class="p">(</span><span class="n">ComPacketType</span><span class="o">::</span><span class="n">FW_PACKET_UNKNOWN</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -182,7 +182,7 @@
       <td class="lineno"><a id="l14" href="#l14">14</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">152</td>
+      <td class="linecount coveredLine">172</td>
       <td class="src coveredLine"><span class="n">ComPacket</span><span class="o">::~</span><span class="n">ComPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -231,14 +231,14 @@
       <td class="lineno"><a id="l20" href="#l20">20</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">62</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">ComPacket</span><span class="o">::</span><span class="n">deserializeBase</span><span class="p">(</span><span class="n">SerialBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">62</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwPacketDescriptorType</span><span class="w"> </span><span class="n">serVal</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -247,11 +247,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 7 taken 62 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 73 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">62</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">deserializeTo</span><span class="p">(</span><span class="n">serVal</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -260,19 +260,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 61 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 70 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 3 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">62</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">FW_SERIALIZE_OK</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l24" href="#l24">24</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">61</td>
+      <td class="linecount coveredLine">70</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">ComPacketType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">serVal</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -286,7 +286,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">62</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">stat</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
