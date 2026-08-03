@@ -421,7 +421,7 @@ void FileManagerTester ::generateDpFileNotFound() {
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
     ASSERT_EQ(0u, this->m_dpSendCount);
 }
@@ -526,7 +526,7 @@ void FileManagerTester ::generateDpInvalidRange() {
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
-    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpInvalidRange_SIZE(1);
     ASSERT_EQ(0u, this->m_dpSendCount);
 

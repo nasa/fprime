@@ -223,14 +223,14 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
     // Reject a second request while one is already running
     if (this->m_dpState != DP_IDLE) {
         this->log_WARNING_HI_GenerateDpFailed(logFileName, 0);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
     // Data products must be available
     if (!this->isConnected_productGetOut_OutputPort(0) || !this->isConnected_productSendOut_OutputPort(0)) {
         this->log_WARNING_HI_GenerateDpBufferFailed(logFileName);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
@@ -243,7 +243,7 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
     Os::File::Status status = this->m_dpFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (status != Os::File::OP_OK) {
         this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
@@ -252,7 +252,7 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
     if (status != Os::File::OP_OK) {
         this->m_dpFile.close();
         this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
@@ -271,7 +271,7 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
         this->m_dpFile.close();
         this->log_WARNING_HI_GenerateDpInvalidRange(logFileName, beginOffset, endOffset,
                                                     static_cast<U64>(fileSize));
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
 
@@ -281,7 +281,7 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
         if (status != Os::File::OP_OK) {
             this->m_dpFile.close();
             this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
-            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             return;
         }
     }
@@ -301,7 +301,7 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
     // An empty range produces no chunks, so complete immediately
     if (this->m_dpOffset >= this->m_dpEndOffset) {
         this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
-        this->finishDpGeneration(Fw::CmdResponse::OK);
+        this->finishDpGeneration();
     }
 
     // Otherwise the response is deferred until the last chunk is sent
@@ -319,7 +319,7 @@ void FileManager ::processDpChunks() {
         const FwSizeType remaining = static_cast<FwSizeType>(this->m_dpEndOffset - this->m_dpOffset);
         if (remaining == 0) {
             this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
-            this->finishDpGeneration(Fw::CmdResponse::OK);
+            this->finishDpGeneration();
             return;
         }
 
@@ -330,7 +330,7 @@ void FileManager ::processDpChunks() {
         Os::File::Status status = this->m_dpFile.read(this->m_dpBuffer, readSize);
         if ((status != Os::File::OP_OK) || (readSize == 0)) {
             this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(status));
-            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            this->finishDpGeneration();
             return;
         }
 
@@ -341,7 +341,7 @@ void FileManager ::processDpChunks() {
         const Fw::Success::T dpStatus = this->dpGet_FileDpContainer(dpSize, container);
         if (dpStatus != Fw::Success::SUCCESS) {
             this->log_WARNING_HI_GenerateDpBufferFailed(logFileName);
-            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            this->finishDpGeneration();
             return;
         }
 
@@ -355,7 +355,7 @@ void FileManager ::processDpChunks() {
         }
         if (serializeStatus != Fw::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_GenerateDpFailed(logFileName, static_cast<U32>(serializeStatus));
-            this->finishDpGeneration(Fw::CmdResponse::EXECUTION_ERROR);
+            this->finishDpGeneration();
             return;
         }
 
@@ -367,19 +367,21 @@ void FileManager ::processDpChunks() {
         // Last chunk of the requested range
         if (this->m_dpOffset >= this->m_dpEndOffset) {
             this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
-            this->finishDpGeneration(Fw::CmdResponse::OK);
+            this->finishDpGeneration();
             return;
         }
     }
 }
 
-void FileManager ::finishDpGeneration(Fw::CmdResponse::T response) {
+void FileManager ::finishDpGeneration() {
     this->m_dpFile.close();
     this->m_dpState = DP_IDLE;
     this->m_dpOffset = 0;
     this->m_dpEndOffset = 0;
     this->m_dpFileSize = 0;
-    this->cmdResponse_out(this->m_dpOpCode, this->m_dpCmdSeq, response);
+    // Failures emit a warning event but still respond with OK, so that a bad
+    // file name or a transient resource problem does not stop a whole sequence
+    this->cmdResponse_out(this->m_dpOpCode, this->m_dpCmdSeq, Fw::CmdResponse::OK);
 }
 
 void FileManager ::pingIn_handler(const FwIndexType portNum, U32 key) {

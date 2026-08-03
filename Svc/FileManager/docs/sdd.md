@@ -42,7 +42,14 @@ Chunks are paced by the rate group in the same way as directory listing, one
 chunk per tick by default, and the command response is deferred until the last
 chunk has been sent. The requested chunk size is clamped to
 `FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE`, which bounds the read buffer
-held by the component. Because each chunk header carries the absolute offset
+held by the component.
+
+Failures during data product generation emit a warning event but still return a
+successful command response. A bad file name or a transient resource problem
+therefore does not stop a command sequence that happens to contain the command,
+while operators still see exactly what went wrong in the event log.
+
+Because each chunk header carries the absolute offset
 within the source file, chunks produced by separate commands reassemble
 correctly on the ground with no extra bookkeeping. The data product ports are
 left for the deployment to

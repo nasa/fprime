@@ -254,7 +254,7 @@ class FileManager final : public FileManagerComponentBase {
     void processDpChunks();
 
     //! Close out data product generation and respond to the command
-    void finishDpGeneration(Fw::CmdResponse::T response);
+    void finishDpGeneration();
 };
 
 }  // end namespace Svc
