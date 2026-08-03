@@ -7,5 +7,6 @@
   },
   "worst": null,
   "tier": "platinum",
-  "dismissed": 14
+  "dismissed": 0,
+  "label": "CodeQL Security"
 }
