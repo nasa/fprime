@@ -44,6 +44,10 @@ Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum, 
     const Os::File::Status openStatus = file.open(this->m_path.toChar(), Os::File::OPEN_READ);
     if (openStatus != Os::File::OP_OK) {
         this->log_WARNING_HI_KeyReadFailed(static_cast<I32>(openStatus), 0, this->m_keySize);
+        // Zeroize any stale key bytes so they cannot leak to the caller
+        (void)::memset(key.getBuffAddr(), 0, static_cast<size_t>(key.getCapacity()));
+        const Fw::SerializeStatus resetStatus = key.setBuffLen(0);
+        FW_ASSERT(resetStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(resetStatus));
         return SdlsStatus::KEY_ERROR;
     }
     FwSizeType readSize = this->m_keySize;

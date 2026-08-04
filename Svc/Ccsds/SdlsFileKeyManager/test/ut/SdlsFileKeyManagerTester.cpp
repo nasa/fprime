@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Svc/Ccsds/SdlsFileKeyManager/test/ut/SdlsFileKeyManagerTester.hpp"
+#include <cstring>
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
 #include "STest/Pick/Pick.hpp"
@@ -59,11 +60,18 @@ void SdlsFileKeyManagerTester ::testMissingFile() {
     const FwSizeType keySize = static_cast<FwSizeType>(STest::Pick::lowerUpper(1, SdlsCfg::MAX_SDLS_KEY_SIZE));
     this->component.configure(TEST_MISSING_FILE, keySize);
 
+    // Simulate a reused buffer holding a previously-read key
     SdlsKeyBuffer key;
+    ::memset(key.getBuffAddr(), 0xAB, static_cast<size_t>(key.getCapacity()));
+    ASSERT_EQ(key.setBuffLen(keySize), Fw::FW_SERIALIZE_OK);
+
     const SdlsStatus status = this->invoke_to_keyGet(0, key);
 
     ASSERT_EQ(status, SdlsStatus::KEY_ERROR);
     ASSERT_EQ(key.getSize(), 0);
+    for (FwSizeType i = 0; i < key.getCapacity(); i++) {
+        ASSERT_EQ(key.getBuffAddr()[i], 0);
+    }
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_KeyReadFailed_SIZE(1);
     ASSERT_EVENTS_KeyReadFailed(0, static_cast<I32>(Os::File::DOESNT_EXIST), 0, keySize);
