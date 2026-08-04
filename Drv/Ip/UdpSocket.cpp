@@ -206,9 +206,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
                                          const U8* const data,
                                          const FwSizeType size) {
-    FW_ASSERT(this->m_addr_send.sin_family != 0);  // Make sure the address was previously setup
-    FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
-    FW_ASSERT(data != nullptr);                    // Data pointer should not be null
+    FW_ASSERT(socketDescriptor.fd >= 0);  // File descriptor should be valid
+    FW_ASSERT(data != nullptr);           // Data pointer should not be null
+
+    // In respond-to-sender mode the destination is learned from the first received
+    // packet; a send before then has nowhere to go and is a send error, not a bug
+    if (this->m_addr_send.sin_family == 0) {
+        errno = ENOTCONN;
+        return -1;
+    }
 
     return static_cast<FwSignedSizeType>(
         ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,

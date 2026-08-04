@@ -52,8 +52,8 @@ void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
     FW_ASSERT((std::numeric_limits<FwSizeType>::max() / maxNumBuffers) >= sizeof(Fw::Buffer));
     FwSizeType memSize = static_cast<FwSizeType>(sizeof(Fw::Buffer) * maxNumBuffers);
     bool recoverable = false;
-    this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.allocate(identifier, memSize, recoverable));
-    // TODO: Fail gracefully here
+    // A null or short allocation would be placement-new'd through by the queue below
+    this->m_bufferMemory = static_cast<Fw::Buffer*>(allocator.checkedAllocate(identifier, memSize, recoverable));
     m_bufferQueue.init(this->m_bufferMemory, maxNumBuffers);
     this->m_mode = initialMode;
     this->m_send = this->m_mode == BufferAccumulator_OpState::DRAIN;
@@ -79,6 +79,8 @@ void BufferAccumulator ::bufferSendInFill_handler(const FwIndexType portNum, Fw:
             this->log_WARNING_HI_BA_QueueFull();
         }
         m_numWarnings++;
+        // The buffer is dropped; ownership must go back to its sender or the pool is depleted
+        this->bufferSendOutReturn_out(0, buffer);
     }
     if (this->m_send) {
         this->sendStoredBuffer();

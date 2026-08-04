@@ -33,9 +33,16 @@ File::File(const File& other)
 
 File& File::operator=(const File& other) {
     if (this != &other) {
+        // The delegate below is constructed over the storage of the existing one. Any file this
+        // object currently holds must be closed first or its handle is orphaned permanently.
+        if (this->m_mode != OPEN_NO_MODE) {
+            this->close();
+        }
+        this->m_delegate.~FileInterface();
         this->m_mode = other.m_mode;
         this->m_hash = other.m_hash;
-        this->m_delegate = *FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
+        (void)FileInterface::getDelegate(m_handle_storage, &other.m_delegate);
+        FW_ASSERT(&this->m_delegate == reinterpret_cast<FileInterface*>(&this->m_handle_storage[0]));
     }
     return *this;
 }
