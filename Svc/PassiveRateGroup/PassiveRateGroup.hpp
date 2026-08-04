@@ -81,10 +81,19 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!  \param cycleStart value stored by the cycle driver, used to compute execution time.
     void CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 
-    U32 m_cycles;                                         //!< cycles executed
-    U32 m_maxTime;                                        //!< maximum execution time in microseconds
-    FwIndexType m_numContexts;                            //!< number of contexts
-    U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];  //!< Must match number of output ports
+    //!  \brief Command handler for CLEAR_STATISTICS
+    //!
+    //!  Clears all port duration high water marks and statistics to zero
+    //!
+    //!  \param opCode The command opcode
+    //!  \param cmdSeq The command sequence number
+    void CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
+
+    U32 m_cycles;                                             //!< cycles executed
+    U32 m_maxTime;                                            //!< maximum execution time in microseconds
+    PassiveRateGroup_CycleTime m_portDurationHighWaterMarks;  //!< HWM per port in microseconds
+    FwIndexType m_numContexts;                                //!< number of contexts
+    U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];      //!< Must match number of output ports
 };
 
 }  // namespace Svc

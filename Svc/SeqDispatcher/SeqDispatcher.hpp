@@ -104,6 +104,13 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     void CANCEL_NAME_cmdHandler(const FwOpcodeType opCode,         /*!< The opcode*/
                                 const U32 cmdSeq,                  /*!< The command sequence number*/
                                 const Fw::CmdStringArg& fileName); /*!< The name of the sequence file to cancel*/
+
+    //! Handler implementation for command CANCEL_ALL
+    //!
+    //! Broadcast a cancel to every running sequencer. This does not exclude the caller!
+    //! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+    void CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                               const U32 cmdSeq);         /*!< The command sequence number*/
 };
 
 }  // namespace Svc

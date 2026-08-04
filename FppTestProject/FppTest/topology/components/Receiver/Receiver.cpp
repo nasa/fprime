@@ -343,11 +343,15 @@ Fw::String Receiver ::stringAliasReturnSync_handler(FwIndexType portNum,
 void Receiver ::stringArgsAsync_handler(FwIndexType portNum,
                                         const Fw::StringBase& str80,
                                         Fw::StringBase& str80Ref,
+                                        const Fw::StringBase& str0,
+                                        Fw::StringBase& str0Ref,
                                         const Fw::StringBase& str100,
                                         Fw::StringBase& str100Ref) {
     m_recv.resetSer();
     str80.serializeTo(m_recv);
     str80Ref.serializeTo(m_recv);
+    str0.serializeTo(m_recv);
+    str0Ref.serializeTo(m_recv);
     str100.serializeTo(m_recv);
     str100Ref.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
@@ -357,11 +361,15 @@ void Receiver ::stringArgsAsync_handler(FwIndexType portNum,
 void Receiver ::stringArgsGuarded_handler(FwIndexType portNum,
                                           const Fw::StringBase& str80,
                                           Fw::StringBase& str80Ref,
+                                          const Fw::StringBase& str0,
+                                          Fw::StringBase& str0Ref,
                                           const Fw::StringBase& str100,
                                           Fw::StringBase& str100Ref) {
     m_recv.resetSer();
     str80.serializeTo(m_recv);
     str80Ref.serializeTo(m_recv);
+    str0.serializeTo(m_recv);
+    str0Ref.serializeTo(m_recv);
     str100.serializeTo(m_recv);
     str100Ref.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
@@ -371,11 +379,15 @@ void Receiver ::stringArgsGuarded_handler(FwIndexType portNum,
 void Receiver ::stringArgsSync_handler(FwIndexType portNum,
                                        const Fw::StringBase& str80,
                                        Fw::StringBase& str80Ref,
+                                       const Fw::StringBase& str0,
+                                       Fw::StringBase& str0Ref,
                                        const Fw::StringBase& str100,
                                        Fw::StringBase& str100Ref) {
     m_recv.resetSer();
     str80.serializeTo(m_recv);
     str80Ref.serializeTo(m_recv);
+    str0.serializeTo(m_recv);
+    str0Ref.serializeTo(m_recv);
     str100.serializeTo(m_recv);
     str100Ref.serializeTo(m_recv);
     Fw::Buffer data(m_data, m_recv.getSize());
