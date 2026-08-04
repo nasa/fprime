@@ -19,9 +19,6 @@ namespace Generic {
 
 namespace {
 
-//! Number of retry passes used by producers when updating the high-water mark via CAS.
-constexpr U32 HIGH_MARK_CAS_BOUND = 16;
-
 //! Sleep duration used by the BLOCKING send/receive paths when an entire bounded scan made no
 //! progress. The value is short enough that latency-sensitive consumers see negligible delay
 //! and long enough that an idle thread relinquishes its CPU instead of busy-spinning.
@@ -108,8 +105,9 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
     FW_ASSERT(depth <= (maxSize / sizeof(LocklessSlot)));
     FW_ASSERT(depth <= (maxSize / messageSize));
 
-    // The modular sequence comparison in isCandidatePreferred relies on the active set of
-    // sequence values (at most `depth`) being far smaller than half the U32 range.
+    // The modular comparison in isCandidatePreferred is exact only while queued equal-priority
+    // messages span less than half the U32 sequence domain (SDD section 7); depth bounds message
+    // count, not sequence spread.
     FW_ASSERT(depth < (std::numeric_limits<U32>::max() / 2));
 
     Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
@@ -227,10 +225,13 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                 // decrement (which can only follow a READY observation) never precedes this
                 // increment, so m_count cannot transiently underflow.
                 const U32 nextCount = this->m_handle.m_count.fetch_add(1, std::memory_order_acq_rel) + 1;
+                // Raise the high-water mark to nextCount. The mark only increases and is bounded
+                // by depth, so each strong-CAS failure strictly raises prevMark and the loop
+                // performs at most depth iterations.
                 U32 prevMark = this->m_handle.m_highMark.load(std::memory_order_relaxed);
-                for (U32 markPass = 0; (markPass < HIGH_MARK_CAS_BOUND) && (nextCount > prevMark); markPass++) {
-                    if (this->m_handle.m_highMark.compare_exchange_weak(prevMark, nextCount, std::memory_order_relaxed,
-                                                                        std::memory_order_relaxed)) {
+                while (nextCount > prevMark) {
+                    if (this->m_handle.m_highMark.compare_exchange_strong(
+                            prevMark, nextCount, std::memory_order_relaxed, std::memory_order_relaxed)) {
                         break;
                     }
                 }

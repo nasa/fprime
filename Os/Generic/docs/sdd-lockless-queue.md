@@ -80,6 +80,14 @@ slot's priority and sequence, and then attempts to CAS to
 `(READING, tag=T+1)` is guaranteed to fail if any other thread completed even
 one round-trip on this slot in the meantime.
 
+The tag occupies `32 - STATE_BITS = 28` bits and wraps after `2^28`
+transitions of a single slot. A stale CAS could therefore succeed only if a
+thread stalls between its scan and its CAS while other threads drive that
+same slot through an exact multiple of `2^28` transitions (≥ `2^26` complete
+message cycles) and the slot returns to the same state — a scenario requiring
+a thread to remain preempted across tens of millions of queue operations.
+This residual window is documented in §15.
+
 The slot's `m_size` field is written by the producer while the slot is in `WRITING` and read
 by the consumer while the slot is in `READING`; it is only ever accessed under exclusive
 ownership and is therefore non-atomic. The `m_priority` and `m_sequence` fields are
@@ -107,7 +115,7 @@ send(buffer, size, priority, blockType):
               m_slots[i].m_priority = priority
               m_slots[i].m_sequence = m_sequence.fetch_add(1, relaxed)
               count = m_count.fetch_add(1, acq_rel) + 1
-              update_high_mark_with_bounded_cas(count)
+              raise_high_mark_to(count)  // CAS until mark >= count; bounded by depth
               m_slots[i].m_stateTag.store(pack(READY, tag(desired) + 1), release)
               return OP_OK
   return FULL
@@ -212,14 +220,13 @@ counter is retained and the window is documented as a limitation (§15).
 producers (`fetch_add`) and consumers (`fetch_sub`). It is read atomically by
 `getMessagesAvailable`.
 
-`m_highMark` is updated by producers using a bounded compare-exchange loop
-(`HIGH_MARK_CAS_BOUND` iterations at most), preserving the bounded-loop
-requirement. Because the count is incremented before `READY` and decremented
-before `FREE`, `m_count` never exceeds `depth`, so the high-water mark never
-over-reports the queue's capacity usage. It may lag the true maximum if the
-CAS loop exhausts its budget under extreme contention; the existing
-`Os::Generic::PriorityQueue::getMessageHighWaterMark` contract permits this
-because it is an observability counter, not a correctness invariant.
+`m_highMark` is raised to the post-increment count by producers using a
+compare-exchange loop that runs until the mark reflects the observed count.
+The mark only increases and never exceeds `depth` (the count is incremented
+before `READY` and decremented before `FREE`), so every strong-CAS failure
+strictly raises the observed mark and the loop is bounded by `depth`
+iterations. The high-water mark is therefore exact: it equals the maximum
+number of messages the queue has held, and never exceeds `depth`.
 
 ## 9. Memory Ordering
 
@@ -275,11 +282,12 @@ cannot make forward progress while preempting the threads they are waiting on.
 | `receive`        | BLOCKING    | unbounded by user contract         |
 | `create`         | n/a         | `depth` (initialization scan)      |
 | `teardown`       | n/a         | `depth` (slot destruction scan)    |
-| high-water-mark  | n/a         | `HIGH_MARK_CAS_BOUND`              |
+| high-water-mark  | n/a         | `depth` (mark increases monotonically) |
 
-The unbounded blocking spin is identical in nature to the
-`condition_variable.wait()` loop used by `Os::Generic::PriorityQueue` and is
-covered by the same caller-side discipline.
+The unbounded blocking loop terminates only when the caller's condition is
+satisfied, which is the explicit `BlockingType::BLOCKING` contract; unlike
+`Os::Generic::PriorityQueue` it polls with a fixed backoff rather than
+blocking on a condition variable (see §15).
 
 ## 12. Memory Allocation
 
@@ -371,7 +379,8 @@ tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`).
   callers. ISR callers must use `BlockingType::NONBLOCKING`.
 - Non-blocking `send`/`receive` may return spurious `FULL`/`EMPTY` under
   contention (§5, §6).
-- The high-water mark is observability-only and may lag the true maximum
-  under extreme contention.
+- The ABA epoch tag is 28 bits wide; a stale CAS is defeated unless a thread
+  stalls between scan and CAS across an exact multiple of `2^28` transitions
+  of one slot (§4).
 - FIFO tie-breaking among equal-priority messages assumes no message remains
   queued across `2^31` intervening sends (§7).

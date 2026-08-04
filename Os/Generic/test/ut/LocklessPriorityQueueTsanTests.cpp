@@ -340,18 +340,29 @@ TEST(Adversarial, SingleSlotPingPong) {
     queue.teardown();
 }
 
-// Verify that high-water mark is accurate under contention. Multiple producers
-// fill the queue while a single consumer drains; afterwards the high-water mark
-// must be at least the queue depth (since the queue was fully filled).
+// Verify that high-water mark is exact under contention. The queue is pre-filled to DEPTH
+// before any consumer starts, so the mark must equal DEPTH; the count invariant (increment
+// before READY, decrement before FREE) guarantees it can never exceed DEPTH.
 TEST(Adversarial, HighWaterMarkAccuracy) {
     constexpr FwSizeType DEPTH = 16;
     constexpr U32 PRODUCERS = 8;
     constexpr U32 MESSAGES_PER = 2000;
-    constexpr U32 TOTAL = PRODUCERS * MESSAGES_PER;
+    constexpr U32 PREFILL = static_cast<U32>(DEPTH);
+    constexpr U32 TOTAL = (PRODUCERS * MESSAGES_PER) + PREFILL;
 
     Os::Queue queue;
     Fw::String name("high-water-mark-test");
     ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+
+    // Pre-fill the queue to capacity before any consumer runs, guaranteeing the
+    // high-water mark reaches DEPTH deterministically.
+    for (U32 i = 0; i < PREFILL; i++) {
+        U8 buffer[sizeof(U32)];
+        pack_u32((PRODUCERS * MESSAGES_PER) + i, buffer);
+        ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+                  Os::QueueInterface::Status::OP_OK);
+    }
+    ASSERT_EQ(queue.getMessagesAvailable(), static_cast<FwSizeType>(DEPTH));
 
     std::atomic<U32> consumed(0);
     std::atomic<bool> producersDone(false);
@@ -400,8 +411,7 @@ TEST(Adversarial, HighWaterMarkAccuracy) {
     consumer.join();
 
     EXPECT_EQ(consumed.load(), TOTAL);
-    // With 8 producers and depth=16, the queue must have been full at some point. The count
-    // is incremented before READY and decremented before FREE, so it never exceeds DEPTH.
+    // The pre-fill drove the count to exactly DEPTH, and the count can never exceed DEPTH.
     EXPECT_EQ(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH));
     EXPECT_EQ(queue.getMessagesAvailable(), 0u);
     queue.teardown();
@@ -599,12 +609,43 @@ TEST(Adversarial, MixedPriorityContention) {
 
     // Verify all messages were consumed
     EXPECT_EQ(consumed.load(), TOTAL);
-    // Verify priority distribution matches what was sent
-    U32 totalReceived = 0;
+    // Verify priority distribution matches what was sent: producers send value % NUM_PRIORITIES,
+    // so exactly TOTAL / NUM_PRIORITIES messages exist per priority.
     for (U32 p = 0; p < NUM_PRIORITIES; p++) {
-        totalReceived += receivedCount[p].load(std::memory_order_relaxed);
+        EXPECT_EQ(receivedCount[p].load(std::memory_order_relaxed), TOTAL / NUM_PRIORITIES) << "priority=" << p;
     }
-    EXPECT_EQ(totalReceived, TOTAL);
+
+    // Deterministic phase: with no concurrent senders, fill the queue with a shuffled mix of
+    // priorities and verify a single-threaded drain returns strictly highest-priority-first,
+    // FIFO within equal priorities.
+    for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
+        U8 buffer[sizeof(U32)];
+        pack_u32(i, buffer);
+        const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>((i * 5) % NUM_PRIORITIES);
+        ASSERT_EQ(queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING),
+                  Os::QueueInterface::Status::OP_OK);
+    }
+    FwQueuePriorityType lastPriority = static_cast<FwQueuePriorityType>(NUM_PRIORITIES - 1);
+    U32 lastValue = 0;
+    bool havePrevious = false;
+    for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
+        U8 buffer[sizeof(U32)];
+        FwSizeType actualSize = 0;
+        FwQueuePriorityType priority = 0;
+        ASSERT_EQ(
+            queue.receive(buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority),
+            Os::QueueInterface::Status::OP_OK);
+        const U32 value = unpack_u32(buffer);
+        if (havePrevious && (priority == lastPriority)) {
+            EXPECT_LT(lastValue, value) << "equal-priority FIFO violated at priority " << priority;
+        } else {
+            EXPECT_LE(priority, lastPriority) << "priority order violated";
+        }
+        lastPriority = priority;
+        lastValue = value;
+        havePrevious = true;
+    }
+    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
     queue.teardown();
 }
 

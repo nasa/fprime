@@ -38,7 +38,10 @@ struct LocklessSlot {
     //! Mask for the state portion of `m_stateTag`.
     static constexpr U32 STATE_MASK = (static_cast<U32>(1) << STATE_BITS) - static_cast<U32>(1);
 
-    //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations.
+    //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations. The 28-bit
+    //! tag increments on every transition; a stale CAS is defeated unless a thread stalls
+    //! between its scan and CAS across an exact multiple of 2^28 transitions of one slot (see
+    //! SDD sections 4 and 15).
     std::atomic<U32> m_stateTag;
     //! Sequence number assigned at publication time. Used as a FIFO tiebreaker when priorities
     //! are equal. Atomic because consumers read it during the scan phase without ownership.
@@ -67,7 +70,7 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
     FwSizeType m_depth;
     //! Configured maximum size of a single message.
     FwSizeType m_messageSize;
-    //! Monotonic sequence assigned to messages on publication for FIFO tiebreak.
+    //! Sequence assigned to messages on publication for FIFO tiebreak; may wrap (compared modularly).
     std::atomic<U32> m_sequence;
     //! Number of messages currently in the queue. Maintained by producers and consumers.
     std::atomic<U32> m_count;
@@ -92,11 +95,11 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
 //!   during `create`. No allocation occurs during `send`, `receive`, `getMessagesAvailable`, or
 //!   `getMessageHighWaterMark`.
 //! - Loops: All non-blocking control paths are bounded by the configured queue depth multiplied
-//!   by `MAX_RETRY_PASSES`. The high-water-mark update is bounded by a separate fixed CAS retry
-//!   bound (`HIGH_MARK_CAS_BOUND` in the implementation). Blocking
-//!   paths spin until the requested condition is satisfied; this is the explicit contract of
-//!   `BlockingType::BLOCKING` and is the same behavior provided by the existing
-//!   `Os::Generic::PriorityQueue`.
+//!   by `MAX_RETRY_PASSES`. The high-water-mark CAS loop is bounded by depth because the mark
+//!   only increases and never exceeds depth. Blocking paths poll with a fixed `Os::Task::delay`
+//!   backoff until the requested condition is satisfied; unlike the condition-variable-based
+//!   `Os::Generic::PriorityQueue`, an idle blocking caller wakes periodically rather than
+//!   sleeping until signaled.
 //! - Determinism: All operations execute in time bounded by queue depth; no per-message dynamic
 //!   work scales with the number of producers or consumers.
 //!
