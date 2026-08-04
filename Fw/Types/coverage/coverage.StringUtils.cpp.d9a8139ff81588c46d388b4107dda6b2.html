@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-04 22:02:53</td>
+      <td>2026-08-04 22:53:09</td>
     </tr>
   </table>
 </div>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>39</td>
-      <td>46</td>
-      <td class="coverage-medium">84.8%</td>
+      <td>37</td>
+      <td>44</td>
+      <td class="coverage-medium">84.1%</td>
     </tr>
   </table>
 </div>
@@ -73,7 +73,7 @@
     <tr><td><a href="#l7">Fw::StringUtils::string_copy(char*, char const*, unsigned long) (line 7)</a></td><td>called 54 times</td><td>71.0%</td></tr>
     <tr><td><a href="#l24">Fw::StringUtils::string_last_n(char const*, unsigned long, unsigned long) (line 24)</a></td><td>called 6 times</td><td>89.0%</td></tr>
     <tr><td><a href="#l32">Fw::StringUtils::string_length(char const*, unsigned long) (line 32)</a></td><td>called 109 times</td><td>91.0%</td></tr>
-    <tr><td><a href="#l43">Fw::StringUtils::substring_find(char const*, unsigned long, char const*, unsigned long) (line 43)</a></td><td>called 11 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l43">Fw::StringUtils::substring_find(char const*, unsigned long, char const*, unsigned long) (line 43)</a></td><td>called 12 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l85">Fw::StringUtils::substring_find_last(char const*, unsigned long, char const*, unsigned long) (line 85)</a></td><td>called 11 times</td><td>87.0%</td></tr>
   </table>
 </details>
@@ -425,7 +425,7 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="n">FwSignedSizeType</span><span class="w"> </span><span class="nf">Fw::StringUtils::substring_find</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CHAR</span><span class="o">*</span><span class="w"> </span><span class="n">source_string</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
@@ -453,14 +453,14 @@
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">source_string</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">11</td>
+      <td class="linecount coveredLine">12</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">sub_string</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -475,29 +475,27 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// zero size sub-strings should always match</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// zero size sub-strings should always match, including in an empty source</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
-          <summary class="linebranchSummary">4/4</summary>
+          <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 10 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 2 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 9 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">11</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">source_size</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sub_size</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">12</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">sub_size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1</td>
+      <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">

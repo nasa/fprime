@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-04 22:03:17</td>
+      <td>2026-08-04 22:53:34</td>
     </tr>
   </table>
 </div>
@@ -71,7 +71,7 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l63">Os::Generic::PriorityMemQueueHandle::PriorityMemQueueHandle() (line 63)</a></td><td>called 1050 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l98">Os::Generic::PriorityMemQueueHandle::getPriorityIndex(unsigned char) const (line 98)</a></td><td>called 468044 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l98">Os::Generic::PriorityMemQueueHandle::getPriorityIndex(unsigned char) const (line 98)</a></td><td>called 487393 times</td><td>86.0%</td></tr>
   </table>
 </details>
 
@@ -775,7 +775,7 @@
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">468044</td>
+      <td class="linecount coveredLine">487393</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">I8</span><span class="w"> </span><span class="nf">getPriorityIndex</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -789,14 +789,14 @@
       <td class="lineno"><a id="l100" href="#l100">100</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">468044</td>
+      <td class="linecount coveredLine">487393</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">priority</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Queue</span><span class="o">::</span><span class="n">MAX_PRIORITIES</span><span class="p">,</span><span class="w"> </span><span class="n">priority</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l101" href="#l101">101</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">468044</td>
+      <td class="linecount coveredLine">487393</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_priorityMap</span><span class="p">[</span><span class="n">priority</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
@@ -1504,112 +1504,112 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning A BLOCKING send can still return FULL: the underlying AtomicQueue bounds its</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer: message data</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!          reserve-retry cycle, so sustained producer contention that loses every attempt</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param size: size of message data</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!          reports FULL rather than blocking indefinitely</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l205" href="#l205">205</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority of the message</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l206" href="#l206">206</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffer: message data</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l207" href="#l207">207</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the send</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param size: size of message data</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l208" href="#l208">208</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="n">BlockingType</span><span class="w"> </span><span class="n">blockType</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority of the message</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l209" href="#l209">209</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param blockType: BLOCKING to block for space or NONBLOCKING to return error when queue is full</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l210" href="#l210">210</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief receive a message from the queue</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the send</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l211" href="#l211">211</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="n">BlockingType</span><span class="w"> </span><span class="n">blockType</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l212" href="#l212">212</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Receive a message from the queue, providing the message destination, capacity, priority, and blocking type.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l213" href="#l213">213</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! When `blockType` is set to BLOCKING, this call will block on queue empty. Otherwise, this will return an</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief receive a message from the queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l214" href="#l214">214</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! error status on queue empty. Actual size received and priority of message is set on success status.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l215" href="#l215">215</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Receive a message from the queue, providing the message destination, capacity, priority, and blocking type.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l216" href="#l216">216</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning It is invalid to send a null buffer</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! When `blockType` is set to BLOCKING, this call will block on queue empty. Otherwise, this will return an</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l217" href="#l217">217</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning This method will block if the queue is empty and blockType is set to BLOCKING</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! error status on queue empty. Actual size received and priority of message is set on success status.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l218" href="#l218">218</a></td>
@@ -1623,731 +1623,752 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param destination: destination for message data</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning It is invalid to send a null buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l220" href="#l220">220</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param capacity: maximum size of message data</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning This method will block if the queue is empty and blockType is set to BLOCKING</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l221" href="#l221">221</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param blockType: BLOCKING to wait for message or NONBLOCKING to return error when queue is empty</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l222" href="#l222">222</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param actualSize: (output) actual size of message read</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param destination: destination for message data</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l223" href="#l223">223</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: (output) priority of message read</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param capacity: maximum size of message data</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l224" href="#l224">224</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the send</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param blockType: BLOCKING to wait for message or NONBLOCKING to return error when queue is empty</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l225" href="#l225">225</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">destination</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param actualSize: (output) actual size of message read</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l226" href="#l226">226</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                   </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">capacity</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: (output) priority of message read</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l227" href="#l227">227</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                   </span><span class="n">BlockingType</span><span class="w"> </span><span class="n">blockType</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the send</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l228" href="#l228">228</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                   </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">actualSize</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="nf">receive</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">destination</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l229" href="#l229">229</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                   </span><span class="n">FwQueuePriorityType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">priority</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">                   </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">capacity</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l230" href="#l230">230</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                   </span><span class="n">BlockingType</span><span class="w"> </span><span class="n">blockType</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l231" href="#l231">231</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief get number of messages available</span></td>
+      <td class="src "><span class="w">                   </span><span class="n">FwSizeType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">actualSize</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l232" href="#l232">232</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">                   </span><span class="n">FwQueuePriorityType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">priority</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l233" href="#l233">233</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return number of messages available</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l234" href="#l234">234</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="nf">getMessagesAvailable</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief get number of messages available</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l235" href="#l235">235</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l236" href="#l236">236</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief get maximum messages stored at any given time</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return number of messages available</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l237" href="#l237">237</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="nf">getMessagesAvailable</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l238" href="#l238">238</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l239" href="#l239">239</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! queue.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief get maximum messages stored at any given time</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l240" href="#l240">240</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return queue message high-water mark</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l241" href="#l241">241</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="nf">getMessageHighWaterMark</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Returns the maximum number of messages in this queue at any given time. This is the high-water mark for this</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l242" href="#l242">242</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! queue.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l243" href="#l243">243</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">QueueHandle</span><span class="o">*</span><span class="w"> </span><span class="nf">getHandle</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return queue message high-water mark</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l244" href="#l244">244</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="nf">getMessageHighWaterMark</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l245" href="#l245">245</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">PriorityMemQueueHandle</span><span class="w"> </span><span class="n">m_handle</span><span class="p">;</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l246" href="#l246">246</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">QueueHandle</span><span class="o">*</span><span class="w"> </span><span class="nf">getHandle</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l247" href="#l247">247</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l248" href="#l248">248</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Static configuration storage</span></td>
+      <td class="src "><span class="w">    </span><span class="n">PriorityMemQueueHandle</span><span class="w"> </span><span class="n">m_handle</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l249" href="#l249">249</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \warning must be initialized by config</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l250" href="#l250">250</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">s_configs</span><span class="p">;</span></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l251" href="#l251">251</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">s_numConfigs</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Static configuration storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l252" href="#l252">252</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">s_requirePrioritySizing</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \warning must be initialized by config</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l253" href="#l253">253</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">s_configsUsed</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">s_configs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l254" href="#l254">254</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">s_configured</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">s_numConfigs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l255" href="#l255">255</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">s_allocatorId</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">s_requirePrioritySizing</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l256" href="#l256">256</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;*</span><span class="w"> </span><span class="n">s_configsUsed</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l257" href="#l257">257</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">s_configured</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l258" href="#l258">258</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Find the highest priority with available messages</span></td>
+      <td class="src "><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">s_allocatorId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l259" href="#l259">259</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return highest priority with available messages, or MAX_PRIORITIES if none</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l260" href="#l260">260</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">findHighestPriority</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">priorities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l261" href="#l261">261</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Find the highest priority with available messages</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l262" href="#l262">262</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Check if a priority is enabled</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return highest priority with available messages, or MAX_PRIORITIES if none</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l263" href="#l263">263</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority to check</span></td>
+      <td class="src "><span class="w">    </span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">findHighestPriority</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">priorities</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l264" href="#l264">264</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return true if the priority is enabled, false otherwise</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l265" href="#l265">265</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isPriorityEnabled</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Check if a priority is enabled</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l266" href="#l266">266</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority to check</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l267" href="#l267">267</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Enable or disable a priority (internal)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return true if the priority is enabled, false otherwise</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l268" href="#l268">268</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority to enable or disable</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isPriorityEnabled</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l269" href="#l269">269</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param enabled: true to enable, false to disable</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l270" href="#l270">270</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setPriorityEnabled</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Enable or disable a priority (internal)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l271" href="#l271">271</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority to enable or disable</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l272" href="#l272">272</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get the memory allocator for this queue</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param enabled: true to enable, false to disable</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l273" href="#l273">273</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return reference to the memory allocator</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setPriorityEnabled</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l274" href="#l274">274</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getAllocator</span><span class="p">();</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l275" href="#l275">275</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get the memory allocator for this queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l276" href="#l276">276</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return reference to the memory allocator</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l277" href="#l277">277</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Find a matching configuration for the given ID</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getAllocator</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l278" href="#l278">278</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l279" href="#l279">279</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param id: identifier for the queue</span></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l280" href="#l280">280</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: pointer to the matching configuration, or nullptr if none found</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Find a matching configuration for the given ID</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l281" href="#l281">281</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">findMatchingConfig</span><span class="p">(</span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">id</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l282" href="#l282">282</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param id: identifier for the queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l283" href="#l283">283</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create queues based on configuration</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: pointer to the matching configuration, or nullptr if none found</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l284" href="#l284">284</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">findMatchingConfig</span><span class="p">(</span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">id</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l285" href="#l285">285</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param queueConfig: configuration for the queue</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l286" href="#l286">286</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create queues based on configuration</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l287" href="#l287">287</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l288" href="#l288">288</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param queueConfig: configuration for the queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l289" href="#l289">289</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createConfiguredQueues</span><span class="p">(</span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">queueConfig</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l290" href="#l290">290</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l291" href="#l291">291</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                                  </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l292" href="#l292">292</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createConfiguredQueues</span><span class="p">(</span><span class="n">QueueConfig</span><span class="o">*</span><span class="w"> </span><span class="n">queueConfig</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l293" href="#l293">293</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create a single default priority queue</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l294" href="#l294">294</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">                                                  </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l295" href="#l295">295</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param depth: depth of queue in number of messages</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l296" href="#l296">296</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param messageSize: size of an individual message</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create a single default priority queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l297" href="#l297">297</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l298" href="#l298">298</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param depth: depth of queue in number of messages</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l299" href="#l299">299</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param messageSize: size of an individual message</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l300" href="#l300">300</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createDefaultQueue</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">depth</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l301" href="#l301">301</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">messageSize</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l302" href="#l302">302</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l303" href="#l303">303</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                              </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createDefaultQueue</span><span class="p">(</span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">depth</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l304" href="#l304">304</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">                                              </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">messageSize</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l305" href="#l305">305</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create a single priority queue</span></td>
+      <td class="src "><span class="w">                                              </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l306" href="#l306">306</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">                                              </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l307" href="#l307">307</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority of the queue</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l308" href="#l308">308</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param maxMsgSize: maximum size of a message</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Create a single priority queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l309" href="#l309">309</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param numMsgs: number of messages to allocate space for</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l310" href="#l310">310</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param priority: priority of the queue</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l311" href="#l311">311</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param maxMsgSize: maximum size of a message</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l312" href="#l312">312</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param numMsgs: number of messages to allocate space for</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l313" href="#l313">313</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createPriorityQueue</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocator: memory allocator to use</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l314" href="#l314">314</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">maxMsgSize</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param allocatorId: ID to use for memory allocation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l315" href="#l315">315</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">numMsgs</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return: status of the creation</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l316" href="#l316">316</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
+      <td class="src "><span class="w">    </span><span class="n">QueueInterface</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="nf">createPriorityQueue</span><span class="p">(</span><span class="n">FwQueuePriorityType</span><span class="w"> </span><span class="n">priority</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l317" href="#l317">317</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">                                               </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
+      <td class="src "><span class="w">                                               </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">maxMsgSize</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l318" href="#l318">318</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="w">                                               </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">numMsgs</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l319" href="#l319">319</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Generic</span></td>
+      <td class="src "><span class="w">                                               </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">&amp;</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l320" href="#l320">320</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Os</span></td>
+      <td class="src "><span class="w">                                               </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">allocatorId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l321" href="#l321">321</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l322" href="#l322">322</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif  </span><span class="c1">// OS_GENERIC_PRIORITYMEMQUEUE_HPP</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Generic</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l323" href="#l323">323</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Os</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l324" href="#l324">324</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l325" href="#l325">325</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif  </span><span class="c1">// OS_GENERIC_PRIORITYMEMQUEUE_HPP</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l326" href="#l326">326</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
