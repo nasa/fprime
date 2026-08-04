@@ -48,8 +48,8 @@ module Svc {
             @
             @ @par Description:
             @      The type used for file sizes and offsets in CFDP operations.
-            @      The CFDP protocol permits use of 64-bit values for file size/offsets,
-            @      although the current implementation supports 32-bit values.
+            @      The CFDP protocol permits use of 64-bit values for file size/offsets.
+            @      Changes have been made to support U64, but it remains untested.
             @
             @ @par Limits
             @         Must be one of U8, U16, U32, U64.
