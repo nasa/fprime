@@ -76,12 +76,8 @@ jobs:
       - name: "Download integration test files"
         uses: actions/download-artifact@v8
         with:
-          name: aarch64-linux-artifacts
-          path: aarch64-linux-artifacts
-      - name: "Debug: List downloaded artifacts"
-        run: |
-          echo "=== Downloaded artifacts structure ==="
-          ls -laR aarch64-linux-artifacts/
+          name: test-logs
+          path: ci-logs
       - name: "Install build dependencies"
         run: |
           sudo apt-get update
