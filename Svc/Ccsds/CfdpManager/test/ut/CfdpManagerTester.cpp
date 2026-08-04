@@ -1027,6 +1027,7 @@ void CfdpManagerTester::testClass2TxLateFinAck() {
     // Metadata + FileData PDUs
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();
+    ASSERT_FROM_PORT_HISTORY_SIZE(1 + numFileDataPdus);
     // EOF PDU
     this->invoke_to_run1Hz(0, 0);
     this->component.doDispatch();

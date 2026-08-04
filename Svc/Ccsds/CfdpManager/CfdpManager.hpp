@@ -56,7 +56,7 @@ class CfdpManager final : public CfdpManagerComponentBase {
     void cleanup();
 
     //! Tear down the fileIn request queue
-    void deinit();
+    void deinit() override;
 
   public:
     // ----------------------------------------------------------------------
