@@ -759,7 +759,7 @@ Status::T Engine::txFile(const Fw::String& src_filename,
 
     Status::T ret = Cfdp::Status::SUCCESS;
 
-    if (chan->getNumCmdTx() < CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN) {
+    if (chan->getNumCmdTx() < MaxCommandedPlaybackFilesPerChan) {
         txn = chan->findUnusedTransaction(Direction::DIRECTION_TX);
     } else {
         txn = nullptr;
@@ -864,14 +864,14 @@ Status::T Engine::playbackDir(const Fw::String& src_filename,
     Status::T status;
 
     // Loop through the channel's playback directories to find an open slot
-    for (i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i) {
+    for (i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
         pb = m_channels[chan]->getPlayback(i);
         if (!pb->busy) {
             break;
         }
     }
 
-    if (i == CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) {
+    if (i == MaxCommandedPlaybackDirectoriesPerChan) {
         this->m_manager->log_WARNING_LO_PlaybackDirSlotUnavailable();
         status = Cfdp::Status::ERROR;
     } else {
@@ -893,7 +893,7 @@ Status::T Engine::startPollDir(U8 chanId,
     CfdpPollDir* pd = nullptr;
 
     FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
-    FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
+    FW_ASSERT(pollId < MaxPollingDirPerChan, pollId, MaxPollingDirPerChan);
 
     // First check if the poll directory is already in use
     pd = m_channels[chanId]->getPollDir(pollId);
@@ -923,7 +923,7 @@ Status::T Engine::stopPollDir(U8 chanId, U8 pollId) {
     CfdpPollDir* pd = nullptr;
 
     FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
-    FW_ASSERT(pollId < CFDP_MAX_POLLING_DIR_PER_CHAN, pollId, CFDP_MAX_POLLING_DIR_PER_CHAN);
+    FW_ASSERT(pollId < MaxPollingDirPerChan, pollId, MaxPollingDirPerChan);
 
     // Check if the poll directory is in use
     pd = m_channels[chanId]->getPollDir(pollId);
@@ -1110,7 +1110,7 @@ bool Engine::isPollingDir(const Fw::StringBase& src_file, U8 chan_num) {
         src_dir.format("%.*s", static_cast<int>(lastSlashPos), src_file.toChar());
     }
 
-    for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i) {
+    for (i = 0; i < MaxPollingDirPerChan; ++i) {
         pd = m_channels[chan_num]->getPollDir(i);
         if (src_dir == pd->srcDir) {
             return_code = true;

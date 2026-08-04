@@ -561,8 +561,8 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex) {
 }
 
 Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex) {
-    if (pollIndex >= CFDP_MAX_POLLING_DIR_PER_CHAN) {
-        this->log_WARNING_LO_InvalidChannelPoll(pollIndex, CFDP_MAX_POLLING_DIR_PER_CHAN);
+    if (pollIndex >= MaxPollingDirPerChan) {
+        this->log_WARNING_LO_InvalidChannelPoll(pollIndex, MaxPollingDirPerChan);
         return Fw::CmdResponse::VALIDATION_ERROR;
     } else {
         return Fw::CmdResponse::OK;

@@ -88,7 +88,7 @@ class Tlv {
 class TlvList {
   private:
     U8 m_numTlv;
-    Tlv m_tlvs[CFDP_MAX_TLV];
+    Tlv m_tlvs[MaxTlv];
 
   public:
     TlvList();

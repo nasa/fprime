@@ -186,7 +186,7 @@ TlvList::TlvList() : m_numTlv(0) {
 }
 
 bool TlvList::appendTlv(const Tlv& tlv) {
-    if (this->m_numTlv >= CFDP_MAX_TLV) {
+    if (this->m_numTlv >= MaxTlv) {
         return false;  // List is full
     }
 
@@ -237,7 +237,7 @@ Fw::SerializeStatus TlvList::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer
     this->m_numTlv = 0;
 
     // Decode TLVs until buffer is exhausted or max count reached
-    while (serialBuffer.getDeserializeSizeLeft() > 0 && this->m_numTlv < CFDP_MAX_TLV) {
+    while (serialBuffer.getDeserializeSizeLeft() > 0 && this->m_numTlv < MaxTlv) {
         status = this->m_tlvs[this->m_numTlv].fromSerialBuffer(serialBuffer);
         if (status != Fw::FW_SERIALIZE_OK) {
             // If we fail to decode a TLV, stop (could be end of buffer or invalid data)

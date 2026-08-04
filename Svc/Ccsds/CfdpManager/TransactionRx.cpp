@@ -876,7 +876,7 @@ Status::T Transaction::rSubstateSendNak() {
 }
 
 Status::T Transaction::r2CalcCrcChunk() {
-    U8 buf[CFDP_R2_CRC_CHUNK_SIZE];
+    U8 buf[R2CrcChunkSize];
     FileSize count_bytes;
     FileSize want_offs_size;
     FwSizeType read_size;

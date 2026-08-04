@@ -133,18 +133,18 @@ TEST(TlvHelper, DeserializeEntityIdTooLong) {
 
 TEST(TlvHelper, ListAppendUpToMaxAndReject) {
     TlvList list;
-    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+    for (U8 i = 0; i < MaxTlv; i++) {
         Tlv tlv;
         tlv.initialize(static_cast<EntityId>(100 + i));
         ASSERT_TRUE(list.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
     }
-    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+    EXPECT_EQ(MaxTlv, list.getNumTlv());
 
     // One more should be rejected
     Tlv extra;
     extra.initialize(999);
     EXPECT_FALSE(list.appendTlv(extra));
-    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+    EXPECT_EQ(MaxTlv, list.getNumTlv());
 }
 
 TEST(TlvHelper, ListClearAndGetTlv) {
@@ -617,12 +617,12 @@ TEST(NakPduHelper, RoundTripWithSegments) {
 TEST(NakPduHelper, AddSegmentRejectsWhenFull) {
     NakPdu pdu;
     pdu.initialize(PduDirection::DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, 0, 100000);
-    for (U8 i = 0; i < CFDP_NAK_MAX_SEGMENTS; i++) {
+    for (U8 i = 0; i < NakMaxSegments; i++) {
         ASSERT_TRUE(pdu.addSegment(i * 1000, i * 1000 + 500)) << "Failed to add segment " << static_cast<int>(i);
     }
-    EXPECT_EQ(CFDP_NAK_MAX_SEGMENTS, pdu.getNumSegments());
+    EXPECT_EQ(NakMaxSegments, pdu.getNumSegments());
     EXPECT_FALSE(pdu.addSegment(999000, 999500));
-    EXPECT_EQ(CFDP_NAK_MAX_SEGMENTS, pdu.getNumSegments());
+    EXPECT_EQ(NakMaxSegments, pdu.getNumSegments());
 }
 
 TEST(NakPduHelper, ClearSegments) {

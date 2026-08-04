@@ -79,7 +79,7 @@ Channel::Channel(Engine* engine,
     }
 
     // Initialize poll directory playback state
-    for (U32 i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; i++) {
+    for (U32 i = 0; i < MaxPollingDirPerChan; i++) {
         m_polldir[i].pb.busy = false;
         m_polldir[i].pb.diropen = false;
         m_polldir[i].pb.counted = false;
@@ -88,7 +88,7 @@ Channel::Channel(Engine* engine,
     }
 
     // Initialize playback structures
-    for (U32 i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; i++) {
+    for (U32 i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; i++) {
         m_playback[i].busy = false;
         m_playback[i].diropen = false;
         m_playback[i].counted = false;
@@ -127,7 +127,7 @@ Channel::Channel(Engine* engine,
     m_chunks = static_cast<CfdpChunkWrapper*>(allocator.allocate(memId, chunksSize));
     FW_ASSERT(m_chunks != nullptr);
 
-    FwSizeType historiesSize = CFDP_NUM_HISTORIES_PER_CHANNEL * sizeof(History);
+    FwSizeType historiesSize = NumHistoriesPerChannel * sizeof(History);
     m_histories = static_cast<History*>(allocator.allocate(memId, historiesSize));
     FW_ASSERT(m_histories != nullptr);
 
@@ -157,7 +157,7 @@ Channel::Channel(Engine* engine,
     }
 
     // Initialize histories using placement new (History contains Fw::String which needs proper construction)
-    for (j = 0; j < CFDP_NUM_HISTORIES_PER_CHANNEL; ++j) {
+    for (j = 0; j < NumHistoriesPerChannel; ++j) {
         history = new (&m_histories[j]) History();  // Use placement new with default constructor
         CfdpCListInitNode(&history->cl_node);
         this->insertBackInQueue(QueueId::HIST_FREE, &history->cl_node);
@@ -191,7 +191,7 @@ void Channel::cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
 
     if (m_histories != nullptr) {
         // Call destructors on History objects
-        for (U32 j = 0; j < CFDP_NUM_HISTORIES_PER_CHANNEL; ++j) {
+        for (U32 j = 0; j < NumHistoriesPerChannel; ++j) {
             m_histories[j].~History();
         }
         allocator.deallocate(memId, m_histories);
@@ -278,10 +278,9 @@ void Channel::tickTransactions() {
 
         // Safety bound: retry loop should not exceed the number of transactions in the queue
         // Each retry processes one transaction that may request continuation
-        constexpr U32 maxRetries =
-            CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-            (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-            (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+        constexpr U32 maxRetries = MaxSimultaneousRx + MaxCommandedPlaybackFilesPerChan +
+                                   (MaxCommandedPlaybackDirectoriesPerChan * NumTransactionsPerPlayback) +
+                                   (MaxPollingDirPerChan * NumTransactionsPerPlayback);
 
         for (U32 retry = 0; retry < maxRetries; ++retry) {
             args.cont = 0;
@@ -336,7 +335,7 @@ void Channel::processPlaybackDirectories() {
     U32 i;
     U8 playback_count = 0;
 
-    for (i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i) {
+    for (i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
         this->processPlaybackDirectory(&m_playback[i]);
         // Count active playback operations
         if (m_playback[i].busy) {
@@ -355,7 +354,7 @@ void Channel::processPollingDirectories() {
     U8 poll_count = 0;
     Status::T status;
 
-    for (i = 0; i < CFDP_MAX_POLLING_DIR_PER_CHAN; ++i) {
+    for (i = 0; i < MaxPollingDirPerChan; ++i) {
         pd = &m_polldir[i];
 
         if (pd->enabled) {
@@ -754,7 +753,7 @@ void Channel::processPlaybackDirectory(Playback* pb) {
 
     // either there's no transaction (first one) or the last one was finished, so check for a new one
 
-    while (pb->diropen && (pb->num_ts < CFDP_NUM_TRANSACTIONS_PER_PLAYBACK)) {
+    while (pb->diropen && (pb->num_ts < NumTransactionsPerPlayback)) {
         if (pb->pending_file.length() == 0) {
             status = pb->dir.read(path);
             if (status == Os::Directory::NO_MORE_FILES) {
@@ -874,7 +873,7 @@ Transaction* Channel::getTransaction(U32 index) {
 }
 
 History* Channel::getHistory(U32 index) {
-    FW_ASSERT(index < CFDP_NUM_HISTORIES_PER_CHANNEL);
+    FW_ASSERT(index < NumHistoriesPerChannel);
     return &m_histories[index];
 }
 

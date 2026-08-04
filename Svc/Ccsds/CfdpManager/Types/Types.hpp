@@ -40,9 +40,8 @@ class Transaction;
  * @brief Maximum possible number of transactions that may exist on a single CFDP channel
  */
 static constexpr U32 CFDP_NUM_TRANSACTIONS_PER_CHANNEL =
-    (CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN + CFDP_MAX_SIMULTANEOUS_RX +
-     ((CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) *
-      CFDP_NUM_TRANSACTIONS_PER_PLAYBACK));
+    (MaxCommandedPlaybackFilesPerChan + MaxSimultaneousRx +
+     ((MaxPollingDirPerChan + MaxCommandedPlaybackDirectoriesPerChan) * NumTransactionsPerPlayback));
 
 // CFDP File Directive Codes
 // Blue Book section 5.2, table 5-4

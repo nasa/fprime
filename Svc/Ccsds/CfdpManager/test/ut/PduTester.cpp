@@ -640,7 +640,7 @@ void CfdpManagerTester::sendNakPdu(U8 channelId,
                       sourceEid, transactionSeq, destEid, scopeStart, scopeEnd);
 
     // Verify segment count does not exceed maximum
-    ASSERT_LE(numSegments, CFDP_NAK_MAX_SEGMENTS) << "Number of segments exceeds CFDP_NAK_MAX_SEGMENTS";
+    ASSERT_LE(numSegments, NakMaxSegments) << "Number of segments exceeds NakMaxSegments";
 
     // Add segment requests if provided
     for (U8 i = 0; i < numSegments; i++) {

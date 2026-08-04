@@ -427,9 +427,9 @@ These types define the size of CFDP protocol fields:
 
 | Constant | Purpose |
 |----------|---------|
-| `CFDP_NAK_MAX_SEGMENTS` | Maximum NAK segments supported in a NAK PDU. When sending or receiving NAK PDUs, this is the maximum number of segment requests supported. Should match ground CFDP engine configuration. |
-| `CFDP_MAX_TLV` | Maximum TLVs (Type-Length-Value) per PDU. Limits the number of TLV metadata fields in EOF and FIN PDUs for diagnostic information (entity IDs, fault handler overrides, messages). |
-| `CFDP_R2_CRC_CHUNK_SIZE` | Class 2 CRC calculation chunk size. Buffer size for CRC calculation upon file completion. Larger values use more stack but complete faster. Total bytes per scheduler cycle controlled by `RxCrcCalcBytesPerCycle` parameter. |
+| `NakMaxSegments` | Maximum NAK segments supported in a NAK PDU. When sending or receiving NAK PDUs, this is the maximum number of segment requests supported. Should match ground CFDP engine configuration. |
+| `MaxTlv` | Maximum TLVs (Type-Length-Value) per PDU. Limits the number of TLV metadata fields in EOF and FIN PDUs for diagnostic information (entity IDs, fault handler overrides, messages). |
+| `R2CrcChunkSize` | Class 2 CRC calculation chunk size. Buffer size for CRC calculation upon file completion. Larger values use more stack but complete faster. Total bytes per scheduler cycle controlled by `RxCrcCalcBytesPerCycle` parameter. |
 | `CFDP_CHANNEL_NUM_RX_CHUNKS_PER_TRANSACTION` | RX chunks per transaction per channel (array). For Class 2 receive transactions, each chunk tracks a contiguous received file segment. Used for gap detection and NAK generation. Array size must match `NumChannels`. |
 | `CFDP_CHANNEL_NUM_TX_CHUNKS_PER_TRANSACTION` | TX chunks per transaction per channel (array). For Class 2 transmit transactions, each chunk tracks a gap requested via NAK that needs retransmission. Array size must match `NumChannels`. |
 
@@ -437,12 +437,12 @@ These types define the size of CFDP protocol fields:
 
 | Constant | Purpose |
 |----------|---------|
-| `CFDP_MAX_SIMULTANEOUS_RX` | Maximum simultaneous file receives. Each channel can support this many active/concurrent receive transactions. Contributes to total transaction pool size. |
-| `CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN` | Maximum commanded playback files per channel. Maximum number of outstanding ground-commanded file transmits per channel. |
-| `CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN` | Maximum commanded playback directories per channel. Each channel can support this many ground-commanded directory playbacks. |
-| `CFDP_MAX_POLLING_DIR_PER_CHAN` | Maximum polling directories per channel. Determines the size of the per-channel polling directory array. |
-| `CFDP_NUM_TRANSACTIONS_PER_PLAYBACK` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
-| `CFDP_NUM_HISTORIES_PER_CHANNEL` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
+| `MaxSimultaneousRx` | Maximum simultaneous file receives. Each channel can support this many active/concurrent receive transactions. Contributes to total transaction pool size. |
+| `MaxCommandedPlaybackFilesPerChan` | Maximum commanded playback files per channel. Maximum number of outstanding ground-commanded file transmits per channel. |
+| `MaxCommandedPlaybackDirectoriesPerChan` | Maximum commanded playback directories per channel. Each channel can support this many ground-commanded directory playbacks. |
+| `MaxPollingDirPerChan` | Maximum polling directories per channel. Determines the size of the per-channel polling directory array. |
+| `NumTransactionsPerPlayback` | Number of transactions per playback directory. Each playback/polling directory operation can have this many active transfers pending or active at once. |
+| `NumHistoriesPerChannel` | Number of history entries per channel. Each channel maintains a circular buffer of completed transaction records for debugging and reference. Maximum value is 65536. |
 
 ## Events
 

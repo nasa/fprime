@@ -142,10 +142,9 @@ void CfdpCListTraverse(CListNode* start, CListFunc fn, void* context) {
     bool last = false;
     // Safety bound: maximum possible list size based on transaction pool configuration
     // Prevents infinite loop if list becomes corrupted
-    constexpr U32 maxIterations =
-        CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-        (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-        (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+    constexpr U32 maxIterations = MaxSimultaneousRx + MaxCommandedPlaybackFilesPerChan +
+                                  (MaxCommandedPlaybackDirectoriesPerChan * NumTransactionsPerPlayback) +
+                                  (MaxPollingDirPerChan * NumTransactionsPerPlayback);
 
     if (node) {
         U32 i;
@@ -178,10 +177,9 @@ void CfdpCListTraverseR(CListNode* end, CListFunc fn, void* context) {
         bool last = false;
         // Safety bound: maximum possible list size based on transaction pool configuration
         // Prevents infinite loop if list becomes corrupted
-        constexpr U32 maxIterations =
-            CFDP_MAX_SIMULTANEOUS_RX + CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN +
-            (CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK) +
-            (CFDP_MAX_POLLING_DIR_PER_CHAN * CFDP_NUM_TRANSACTIONS_PER_PLAYBACK);
+        constexpr U32 maxIterations = MaxSimultaneousRx + MaxCommandedPlaybackFilesPerChan +
+                                      (MaxCommandedPlaybackDirectoriesPerChan * NumTransactionsPerPlayback) +
+                                      (MaxPollingDirPerChan * NumTransactionsPerPlayback);
 
         if (node) {
             end = node;

@@ -943,10 +943,10 @@ void CfdpManagerTester::testRxTransactionLimitReachedEvent() {
     //
     // Note: CFDP_NUM_TRANSACTIONS_PER_CHANNEL is the total pool size shared by TX and RX.
     // From CfdpCfg.hpp:
-    //   = CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
-    //   + CFDP_MAX_SIMULTANEOUS_RX (5)
-    //   + (CFDP_MAX_POLLING_DIR_PER_CHAN + CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN) *
-    //   CFDP_NUM_TRANSACTIONS_PER_PLAYBACK = 10 + 5 + (5 + 2) * 5 = 50
+    //   = MaxCommandedPlaybackFilesPerChan (10)
+    //   + MaxSimultaneousRx (5)
+    //   + (MaxPollingDirPerChan + MaxCommandedPlaybackDirectoriesPerChan) *
+    //   NumTransactionsPerPlayback = 10 + 5 + (5 + 2) * 5 = 50
 
     U8 channelId = 0;
     Cfdp::EntityId sourceEid = TEST_GROUND_EID;
@@ -1703,11 +1703,11 @@ void CfdpManagerTester::testMaxTxTransactionsReachedEvent() {
     this->clearHistory();
 
     // Directly set the channel's commanded TX counter to the limit
-    // This simulates having CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN (10)
+    // This simulates having MaxCommandedPlaybackFilesPerChan (10)
     // active commanded TX transactions
     Channel* chan = this->component.m_engine->m_channels[channelId];
     FW_ASSERT(chan != nullptr);
-    chan->m_numCmdTx = CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN;
+    chan->m_numCmdTx = MaxCommandedPlaybackFilesPerChan;
 
     // Try to send one more file - should trigger MaxTxTransactionsReached
     Fw::String srcFileStr(srcFile);
@@ -2399,8 +2399,8 @@ void CfdpManagerTester::testRxReadCrcFailedEvent() {
     ASSERT_EVENTS_RxReadCrcFailed(0, Cfdp::Class::CLASS_2,
                                   txn->m_history->src_eid,  // Use actual src_eid from transaction
                                   transactionSeq,
-                                  CFDP_R2_CRC_CHUNK_SIZE,  // Expected read size (CRC chunk buffer size, 1024)
-                                  0                        // Actual read size (read failed, returns 0)
+                                  R2CrcChunkSize,  // Expected read size (CRC chunk buffer size, 1024)
+                                  0                // Actual read size (read failed, returns 0)
     );
 
     // Cleanup
@@ -2465,7 +2465,7 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     U8 channelId = this->component.paramGet_FileInDefaultChannel(valid);
     Channel* chan = this->component.m_engine->m_channels[channelId];
     FW_ASSERT(chan != nullptr);
-    chan->m_numCmdTx = CFDP_MAX_COMMANDED_PLAYBACK_FILES_PER_CHAN;
+    chan->m_numCmdTx = MaxCommandedPlaybackFilesPerChan;
 
     // preserve port/tlm history from setup; reset only events
     this->clearEvents();
@@ -2497,7 +2497,7 @@ void CfdpManagerTester::testInvalidChannelPollEvent() {
     this->clearHistory();
 
     // Send PollDirectory with pollIndex out of range
-    U8 invalidPollIndex = 255;  // Guaranteed to be >= CFDP_MAX_POLLING_DIR_PER_CHAN
+    U8 invalidPollIndex = 255;  // Guaranteed to be >= MaxPollingDirPerChan
     sendCmd_PollDirectory(0, 0, TEST_CHANNEL_ID_0, invalidPollIndex, TEST_GROUND_EID, Cfdp::Class::CLASS_1, 0, 10,
                           Fw::CmdStringArg("test/ut/output"), Fw::CmdStringArg("/dest"));
     component.doDispatch();
@@ -2505,9 +2505,9 @@ void CfdpManagerTester::testInvalidChannelPollEvent() {
     // Verify InvalidChannelPoll event and its arguments
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidChannelPoll_SIZE(1);
-    ASSERT_EVENTS_InvalidChannelPoll(0,                             // index
-                                     invalidPollIndex,              // requested poll ID
-                                     CFDP_MAX_POLLING_DIR_PER_CHAN  // maximum poll ID
+    ASSERT_EVENTS_InvalidChannelPoll(0,                    // index
+                                     invalidPollIndex,     // requested poll ID
+                                     MaxPollingDirPerChan  // maximum poll ID
     );
 }
 
@@ -2904,7 +2904,7 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
     ASSERT_NE(chan, nullptr);
 
     Playback* pb = nullptr;
-    for (U32 i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i) {
+    for (U32 i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
         Playback* candidate = chan->getPlayback(i);
         if (candidate->busy && candidate->diropen) {
             pb = candidate;
@@ -2936,7 +2936,7 @@ void CfdpManagerTester::testPlaybackDirReadFailedEvent() {
 
 void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
     // PlaybackDirSlotUnavailable emitted when all playback slots exhausted
-    // Strategy: Fill all CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN
+    // Strategy: Fill all MaxCommandedPlaybackDirectoriesPerChan
     // playback slots with successful playbackDir() calls (each consumes a slot
     // by opening a real directory), then attempt one more which must fail.
 
@@ -2948,7 +2948,7 @@ void CfdpManagerTester::testPlaybackDirSlotUnavailableEvent() {
 
     // Consume every playback slot on the channel. Each call opens the real
     // directory successfully, setting pb->busy = true for that slot.
-    for (U32 i = 0; i < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN; ++i) {
+    for (U32 i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
         Cfdp::Status::T setupStatus = this->component.m_engine->playbackDir(
             srcDir, dstDir, Cfdp::Class::CLASS_1, Cfdp::Keep::DELETE, channelId, 0, TEST_GROUND_EID);
         ASSERT_EQ(setupStatus, Cfdp::Status::SUCCESS) << "Setup playbackDir call " << i << " should consume a slot";

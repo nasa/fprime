@@ -1188,7 +1188,7 @@ TEST_F(PduTest, NakWithMaxSegments) {
 
     txPdu.initialize(PduDirection::DIRECTION_TOWARD_SENDER, Cfdp::Class::CLASS_2, 1, 2, 3, scopeStart, scopeEnd);
 
-    // Add 58 segments (CFDP_NAK_MAX_SEGMENTS)
+    // Add 58 segments (NakMaxSegments)
     for (U8 i = 0; i < 58; i++) {
         FileSize start = i * 1000;
         FileSize end = start + 500;
@@ -1386,13 +1386,13 @@ TEST_F(PduTest, TlvListAppendUpToMax) {
     // Test appending TLVs up to maximum (4)
     TlvList list;
 
-    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+    for (U8 i = 0; i < MaxTlv; i++) {
         Tlv tlv;
         tlv.initialize(static_cast<EntityId>(100 + i));
         ASSERT_TRUE(list.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
     }
 
-    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+    EXPECT_EQ(MaxTlv, list.getNumTlv());
 }
 
 TEST_F(PduTest, TlvListRejectWhenFull) {
@@ -1400,7 +1400,7 @@ TEST_F(PduTest, TlvListRejectWhenFull) {
     TlvList list;
 
     // Fill the list
-    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+    for (U8 i = 0; i < MaxTlv; i++) {
         Tlv tlv;
         tlv.initialize(static_cast<EntityId>(i));
         ASSERT_TRUE(list.appendTlv(tlv));
@@ -1410,7 +1410,7 @@ TEST_F(PduTest, TlvListRejectWhenFull) {
     Tlv extraTlv;
     extraTlv.initialize(999);
     EXPECT_FALSE(list.appendTlv(extraTlv));
-    EXPECT_EQ(CFDP_MAX_TLV, list.getNumTlv());
+    EXPECT_EQ(MaxTlv, list.getNumTlv());
 }
 
 TEST_F(PduTest, TlvListClear) {
@@ -1864,12 +1864,12 @@ TEST_F(PduTest, FinWithMaxTlvs) {
                      FinFileStatus::FIN_FILE_STATUS_RETAINED);
 
     // Add 4 TLVs
-    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+    for (U8 i = 0; i < MaxTlv; i++) {
         Tlv tlv;
         tlv.initialize(static_cast<EntityId>(100 + i));
         ASSERT_TRUE(txPdu.appendTlv(tlv)) << "Failed to append TLV " << static_cast<int>(i);
     }
-    EXPECT_EQ(CFDP_MAX_TLV, txPdu.getNumTlv());
+    EXPECT_EQ(MaxTlv, txPdu.getNumTlv());
 
     // Try to add one more - should fail
     Tlv extraTlv;
@@ -1891,8 +1891,8 @@ TEST_F(PduTest, FinWithMaxTlvs) {
     sb_rxBuffer.setBuffLen(rxBuffer.getSize());
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
 
-    EXPECT_EQ(CFDP_MAX_TLV, rxPdu.getNumTlv());
-    for (U8 i = 0; i < CFDP_MAX_TLV; i++) {
+    EXPECT_EQ(MaxTlv, rxPdu.getNumTlv());
+    for (U8 i = 0; i < MaxTlv; i++) {
         EXPECT_EQ(100 + i, rxPdu.getTlvList().getTlv(i).getData().getEntityId());
     }
 }

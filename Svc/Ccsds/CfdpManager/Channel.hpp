@@ -249,7 +249,7 @@ class Channel {
      * @returns Pointer to playback directory
      */
     inline Playback* getPlayback(U32 index) {
-        FW_ASSERT(index < CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN);
+        FW_ASSERT(index < MaxCommandedPlaybackDirectoriesPerChan);
         return &m_playback[index];
     }
 
@@ -260,7 +260,7 @@ class Channel {
      * @returns Pointer to polling directory
      */
     inline CfdpPollDir* getPollDir(U32 index) {
-        FW_ASSERT(index < CFDP_MAX_POLLING_DIR_PER_CHAN);
+        FW_ASSERT(index < MaxPollingDirPerChan);
         return &m_polldir[index];
     }
 
@@ -488,8 +488,8 @@ class Channel {
 
     U32 m_numCmdTx;  //!< Number of commanded TX transactions
 
-    Playback m_playback[CFDP_MAX_COMMANDED_PLAYBACK_DIRECTORIES_PER_CHAN];  //!< Playback state
-    CfdpPollDir m_polldir[CFDP_MAX_POLLING_DIR_PER_CHAN];                   //!< Polling directory state
+    Playback m_playback[MaxCommandedPlaybackDirectoriesPerChan];  //!< Playback state
+    CfdpPollDir m_polldir[MaxPollingDirPerChan];                  //!< Polling directory state
 
     const Transaction* m_currentTxn;  //!< Current transaction during channel cycle
     CfdpManager* m_cfdpManager;       //!< Reference to F' component for parameters
@@ -502,7 +502,7 @@ class Channel {
 
     // Per-channel resource arrays (dynamically allocated, moved from Engine)
     Transaction* m_transactions;  //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
-    History* m_histories;         //!< Array of CFDP_NUM_HISTORIES_PER_CHANNEL
+    History* m_histories;         //!< Array of NumHistoriesPerChannel
     CfdpChunkWrapper* m_chunks;   //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * Direction::DIRECTION_NUM
     Chunk* m_chunkMem;            //!< Chunk memory backing store
 
