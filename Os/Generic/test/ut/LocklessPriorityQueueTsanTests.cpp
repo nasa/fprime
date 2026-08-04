@@ -401,9 +401,8 @@ TEST(Adversarial, HighWaterMarkAccuracy) {
 
     EXPECT_EQ(consumed.load(), TOTAL);
     // With 8 producers and depth=16, the queue must have been full at some point.
-    // The high-water mark may transiently exceed DEPTH because m_count.fetch_add
-    // in send() is not atomic with the slot state transition; a consumer that frees
-    // a slot but hasn't decremented the count yet allows a producer to refill and
+    // The high-water mark may transiently exceed DEPTH because a consumer that frees
+    // a slot but has not yet decremented the count allows a producer to refill and
     // increment, momentarily pushing the count above DEPTH.
     EXPECT_GE(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH));
     EXPECT_LE(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH + PRODUCERS));

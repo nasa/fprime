@@ -81,23 +81,10 @@ LocklessPriorityQueueHandle::LocklessPriorityQueueHandle()
       m_id(0) {}
 
 LocklessPriorityQueue::~LocklessPriorityQueue() {
-    // The destructor intentionally does *not* free resources. Resource cleanup is the
-    // responsibility of `teardown()`, which the owner must call explicitly before the queue
-    // (or its hosting `Os::Queue`) is destroyed. Two reasons:
-    //
-    // 1. Static destruction order: a `LocklessPriorityQueue` may live in a global / topology
-    //    component that is destroyed at process exit. `teardownInternal()` calls
-    //    `Fw::MemAllocatorRegistry::getInstance()`, which is itself a function-local static
-    //    of unspecified destruction order with respect to other globals. A virtual
-    //    `MemAllocator::deallocate` call after the registry has been destroyed manifests as
-    //    "pure virtual method called" — a fault we have observed in upstream CI's topology
-    //    unit test (see PR nasa/fprime#5076).
-    //
-    // 2. Consistency with `Os::Generic::PriorityQueue::~PriorityQueue()`, which is also
-    //    empty for the same reason.
-    //
-    // Owners that fail to call `teardown()` will leak the slot pool and message-data region
-    // exactly as they would with the existing `Os::Generic::PriorityQueue`.
+    // Intentionally empty: cleanup is the responsibility of an explicit `teardown()` call.
+    // Freeing here would call the `Fw::MemAllocatorRegistry` singleton, whose destruction
+    // order relative to global queue objects is unspecified (matches
+    // `Os::Generic::PriorityQueue::~PriorityQueue()`).
 }
 
 QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
@@ -183,10 +170,6 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
 }
 
 void LocklessPriorityQueue::teardown() {
-    this->teardownInternal();
-}
-
-void LocklessPriorityQueue::teardownInternal() {
     if (this->m_handle.m_slots != nullptr) {
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
@@ -224,7 +207,7 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
     const bool nonBlocking = (blockType == QueueInterface::BlockingType::NONBLOCKING);
 
     // Bounded for non-blocking, unbounded for blocking (explicit user contract).
-    for (FwSizeType pass = 0; !nonBlocking || pass <= MAX_RETRY_PASSES; pass++) {
+    for (FwSizeType pass = 0; !nonBlocking || pass < MAX_RETRY_PASSES; pass++) {
         for (FwSizeType i = 0; i < depth; i++) {
             LocklessSlot& slot = this->m_handle.m_slots[i];
             U32 packed = slot.m_stateTag.load(std::memory_order_acquire);
@@ -243,8 +226,9 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                 slot.m_sequence.store(this->m_handle.m_sequence.fetch_add(1, std::memory_order_relaxed),
                                       std::memory_order_relaxed);
 
-                slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_READY, tagOf(desired) + 1), std::memory_order_release);
-
+                // Increment the count *before* publishing READY. This guarantees a consumer's
+                // decrement (which can only follow a READY observation) never precedes this
+                // increment, so m_count cannot transiently underflow.
                 const U32 nextCount = this->m_handle.m_count.fetch_add(1, std::memory_order_acq_rel) + 1;
                 U32 prevMark = this->m_handle.m_highMark.load(std::memory_order_relaxed);
                 for (U32 markPass = 0; (markPass < HIGH_MARK_CAS_BOUND) && (nextCount > prevMark); markPass++) {
@@ -253,6 +237,8 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                         break;
                     }
                 }
+
+                slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_READY, tagOf(desired) + 1), std::memory_order_release);
                 return QueueInterface::Status::OP_OK;
             }
         }
@@ -278,7 +264,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
     const bool nonBlocking = (blockType == QueueInterface::BlockingType::NONBLOCKING);
 
     // Bounded for non-blocking, unbounded for blocking (explicit user contract).
-    for (FwSizeType pass = 0; !nonBlocking || pass <= MAX_RETRY_PASSES; pass++) {
+    for (FwSizeType pass = 0; !nonBlocking || pass < MAX_RETRY_PASSES; pass++) {
         FwSizeType bestIndex = depth;
         FwQueuePriorityType bestPriority = FwQueuePriorityType();
         U32 bestSequence = 0;

@@ -165,9 +165,6 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! repeatedly; only the first call returns memory.
     void teardown() override;
 
-    //! \brief tear down the queue (helper used by the destructor)
-    void teardownInternal();
-
     //! \brief send a message into the queue
     //!
     //! When `blockType` is `NONBLOCKING`, the operation completes in time bounded by

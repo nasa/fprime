@@ -185,8 +185,7 @@ TEST(LocklessLifetime, DestructWithoutCreate) {
 
 //! Validate that destroying a created queue *after* an explicit teardown is safe and that
 //! the destructor performs no further work. Tests run under ASan/UBSan/LSan; if the
-//! destructor were to call `teardownInternal()` it would either double-free the slot pool
-//! or invoke a virtual function in a way UBSan would flag.
+//! destructor were to free resources it would double-free the slot pool.
 TEST(LocklessLifetime, CreateTeardownDestruct) {
     {
         Os::Queue queue;

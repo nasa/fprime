@@ -95,7 +95,7 @@ that publishes `READY`. Consumers acquire those fields through a matching `acqui
 send(buffer, size, priority, blockType):
   if size > m_messageSize:
       return SIZE_MISMATCH
-  for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES : infinity):
+  for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES - 1 : infinity):
       for i = 0 .. depth - 1:
           packed = m_slots[i].m_stateTag.load(acquire)
           if state(packed) != FREE:
@@ -106,13 +106,19 @@ send(buffer, size, priority, blockType):
               m_slots[i].m_size     = size
               m_slots[i].m_priority = priority
               m_slots[i].m_sequence = m_sequence.fetch_add(1, relaxed)
-              m_slots[i].m_stateTag.store(pack(READY, tag(desired) + 1), release)
               count = m_count.fetch_add(1, acq_rel) + 1
               update_high_mark_with_bounded_cas(count)
+              m_slots[i].m_stateTag.store(pack(READY, tag(desired) + 1), release)
               return OP_OK
-      if NONBLOCKING and pass == MAX_RETRY_PASSES:
-          return FULL
+  return FULL
 ```
+
+The count is incremented *before* the `release` store that publishes `READY`.
+A consumer can only decrement after observing `READY`, so the decrement is
+ordered after the increment and `m_count` can never transiently underflow.
+The cost is that `getMessagesAvailable` may briefly over-report by counting a
+message that is not yet receivable, which is benign for an observability
+counter.
 
 The outer loop is bounded for non-blocking callers and unbounded for blocking
 callers. The blocking spin is the explicit contract of `BlockingType::BLOCKING`
@@ -122,7 +128,7 @@ and is not safe to call from ISR context.
 
 ```
 receive(destination, capacity, blockType, &actualSize, &priority):
-  for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES : infinity):
+  for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES - 1 : infinity):
       best = none
       for i = 0 .. depth - 1:
           packed = m_slots[i].m_stateTag.load(acquire)
@@ -139,9 +145,7 @@ receive(destination, capacity, blockType, &actualSize, &priority):
               modular_less(candidate_sequence, best.sequence)):
               best = {i, candidate_priority, candidate_sequence, packed}
       if best is none:
-          if NONBLOCKING and pass == MAX_RETRY_PASSES:
-              return EMPTY
-          continue
+          continue  // returns EMPTY when the NONBLOCKING pass budget is exhausted
       desired = pack(READING, tag(best.packed) + 1)
       if CAS(m_slots[best.i].m_stateTag, best.packed -> desired):
           stored_size = m_slots[best.i].m_size
@@ -223,9 +227,9 @@ There are no system calls, no OS-level synchronization primitives, and no
 allocations on these paths. Both calls therefore satisfy the ISR-safety
 contract for the platforms F Prime currently supports.
 
-The blocking variants poll the same atomics but call
-`std::this_thread::sleep_for` between bounded scans when no progress is
-possible (queue empty for a consumer, queue full for a producer). The sleep is
+The blocking variants poll the same atomics but call `Os::Task::delay`
+between bounded scans when no progress is possible (queue empty for a
+consumer, queue full for a producer). The delay is
 a scheduling hint, not a synchronization primitive: it does not acquire any lock
 and does not change the memory ordering of any subsequent atomic operation. It
 is **only** reached on the BLOCKING path, so ISR callers — which must use
@@ -243,7 +247,7 @@ cannot make forward progress while preempting the threads they are waiting on.
 | `receive`        | NONBLOCKING | `depth * MAX_RETRY_PASSES`         |
 | `receive`        | BLOCKING    | unbounded by user contract         |
 | `create`         | n/a         | `depth` (initialization scan)      |
-| `teardown`       | n/a         | `depth` (destructor scan)          |
+| `teardown`       | n/a         | `depth` (slot destruction scan)    |
 | high-water-mark  | n/a         | `HIGH_MARK_CAS_BOUND`              |
 
 The unbounded blocking spin is identical in nature to the
@@ -260,8 +264,7 @@ introduced; system designers can configure either the existing
 ### 12.1 Resource-Management Contract (`teardown()` vs destructor)
 
 `create()` is the only allocating call in the queue's lifetime. Resource
-release happens in `teardown()`, which delegates to a non-virtual private
-helper `teardownInternal()`. `teardown()` is idempotent: only the first call
+release happens in `teardown()`, which is idempotent: only the first call
 returns memory; subsequent calls are no-ops.
 
 The destructor `~LocklessPriorityQueue()` is **intentionally empty**. Owners
@@ -270,7 +273,7 @@ must call `teardown()` explicitly before the queue (or its hosting
 
 1. **Static destruction order.** A `LocklessPriorityQueue` may live inside a
    global / topology-scoped component that is destroyed at process exit.
-   `teardownInternal()` calls
+   `teardown()` calls
    `Fw::MemAllocatorRegistry::getInstance().getAnAllocator(...)` and then
    invokes the virtual `MemAllocator::deallocate`. The registry is itself a
    function-local static and its destruction order with respect to other
