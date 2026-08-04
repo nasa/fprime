@@ -283,7 +283,9 @@ TEST_F(NonPrimitiveTest, ToString) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
-    buf1 << s;
+    Fw::StringTemplate<1024> str;
+    s.toString(str);
+    buf1 << str;
 
     buf2 << "( "
          << "mString = " << testString << ", "

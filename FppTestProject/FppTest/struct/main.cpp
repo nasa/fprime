@@ -21,7 +21,7 @@
 // Instantiate string tests for structs
 using StringTestImplementations =
     ::testing::Types<Fw::StringTemplate<80>, Fw::StringTemplate<50>, Fw::StringTemplate<60> >;
-INSTANTIATE_TYPED_TEST_SUITE_P(Struct, StringTest, StringTestImplementations);
+INSTANTIATE_TYPED_TEST_SUITE_P(Struct, StringTest, StringTestImplementations, );
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
