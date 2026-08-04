@@ -1,8 +1,10 @@
 /**
  * @name Division by unguarded divisor
- * @description Division and modulo operations whose divisor is a variable
- *              should be preceded by a check (condition or FW_ASSERT) that
- *              the divisor cannot be zero.
+ * @description Integer division and modulo operations whose divisor is a
+ *              variable should be preceded by a check (condition or
+ *              FW_ASSERT) that the divisor cannot be zero. Floating-point
+ *              division is excluded: IEEE 754 defines division by zero
+ *              (yielding infinity or NaN) and it is not undefined behavior.
  * @kind problem
  * @id cpp/fprime/division-guard
  * @problem.severity warning
@@ -38,6 +40,8 @@ where
   op.fromSource() and
   divisor.getTarget() = v and
   not exists(divisor.getValue()) and
+  // IEEE 754 floating-point division by zero is well-defined (inf/NaN)
+  not divisor.getFullyConverted().getUnspecifiedType() instanceof FloatingPointType and
   // No check of the divisor dominates the division
   not exists(VariableAccess check |
     checkingAccess(v, check) and

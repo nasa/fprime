@@ -9,7 +9,13 @@ The `Svc::Ccsds::SpacePacketFramer` is typically used upstream of a component th
 ## Configuration
 The `Svc::Ccsds::SpacePacketFramer` requires an Application Process Identifier (APID) for the Space Packets it generates. This APID is typically provided during instantiation or configuration. It also uses a sequence count, which is managed per APID via the `getApidSeqCount` port.
 
-The component also supports an optional Secondary Header Flag (`hasSecHdr`) that can be set via the `FrameContext` passed to the `dataIn` port. This flag defaults to `false` (no secondary header) but can be configured per packet to indicate the presence of a secondary header.
+The component supports an optional Secondary Header Flag (`hasSecHdr`) that can be set via the `FrameContext` passed to the `dataIn` port. This flag defaults to `false` (no secondary header) but can be configured per packet to indicate the presence of a secondary header.
+
+The component also supports configurable Sequence Flags (`sequenceFlags`) via the `FrameContext`. These 2-bit flags indicate the segmentation state of the user data and default to `0x3` (unsegmented). The flags can be set to:
+- `0x0` (0b00) - Continuation segment of a segmented packet
+- `0x1` (0b01) - First segment of a segmented packet
+- `0x2` (0b10) - Last segment of a segmented packet
+- `0x3` (0b11) - Unsegmented (complete user data in single packet)
 
 ## CCSDS Header Fields
 
@@ -21,7 +27,7 @@ For each Space Packet generated, the `Svc::Ccsds::SpacePacketFramer` will popula
 | Packet Type | 0 (Telemetry) | SpacePacketFramer emits reporting packets only (no commanding), as per 4.1.3.3.2 |
 | Secondary Header Flag | Uses value passed in the `context` argument | Presence of secondary header are defined in `config/ComCfg.fpp` |
 | Application Process Identifier (APID) | Uses value passed in the `context` argument | Project APIDs are defined in `config/ComCfg.fpp` |
-| Sequence Flags | `0b11` (Unsegmented) | Unsegmented user data, F´ data fits in a single packet |
+| Sequence Flags | Uses value passed in the `context` argument (defaults to `0b11` Unsegmented) | Indicates segmentation state: 0b00=Continuation, 0b01=First, 0b10=Last, 0b11=Unsegmented |
 | Packet Sequence Count | Incremented for each packet, unique count per APID | Managed externally by a [`Svc::Ccsds::ApidManager`](../../ApidManager/docs/sdd.md) |
 | Packet Data Length | Set to the length of the passed in data | Calculated based on the length of the data received on `dataIn` |
 

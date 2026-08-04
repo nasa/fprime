@@ -46,6 +46,8 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     void testRunArgsBlockingVsNonBlocking();
     void testCancelName();
     void testCancelNameNotFound();
+    void testCancelAll();
+    void testCancelAllNoneRunning();
 
   private:
     // ----------------------------------------------------------------------

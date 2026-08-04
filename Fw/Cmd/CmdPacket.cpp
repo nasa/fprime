@@ -44,6 +44,11 @@ SerializeStatus CmdPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endiann
     if (buffer.getDeserializeSizeLeft()) {
         // copy the serialized arguments to the buffer
         stat = buffer.copyRaw(this->m_argBuffer, buffer.getDeserializeSizeLeft());
+    } else {
+        // copyRaw overwrites the argument buffer, so an argument-bearing command
+        // needs no clearing here, but a command without arguments would otherwise
+        // inherit whatever this packet held before.
+        this->m_argBuffer.resetSer();
     }
 
     return stat;

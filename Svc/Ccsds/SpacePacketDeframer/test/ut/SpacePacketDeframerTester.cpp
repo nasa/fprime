@@ -54,7 +54,8 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
 
     bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));  // random secondary header flag
-    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength, hasSecHdr);
+    U8 seqFlags = static_cast<U8>(STest::Random::lowerUpper(0, 3));       // random 2 bit sequence flags
+    Fw::Buffer buffer = this->assemblePacket(apid, seqCount, lengthToken, data, dataLength, hasSecHdr, seqFlags);
     ComCfg::FrameContext nullContext;
 
     this->invoke_to_dataIn(0, buffer, nullContext);
@@ -77,6 +78,7 @@ void SpacePacketDeframerTester ::testNominalDeframing() {
     }
     ASSERT_EQ(context.get_sequenceCount(), seqCount);
     ASSERT_EQ(context.get_hasSecHdr(), hasSecHdr);
+    ASSERT_EQ(context.get_sequenceFlags(), seqFlags);
 
     ASSERT_EVENTS_SIZE(0);  // No events should be generated in the nominal case
 }
@@ -259,8 +261,9 @@ Fw::Buffer SpacePacketDeframerTester ::assemblePacket(U16 apid,
                                                       U16 lengthToken,
                                                       U8* packetData,
                                                       U16 packetDataLen,
-                                                      bool hasSecHdr) {
-    return this->assemblePacketWithControlFields(0x0, 0x0, static_cast<U16>(hasSecHdr), apid, 0x3, seqCount,
+                                                      bool hasSecHdr,
+                                                      U8 seqFlags) {
+    return this->assemblePacketWithControlFields(0x0, 0x0, static_cast<U16>(hasSecHdr), apid, seqFlags, seqCount,
                                                  lengthToken, packetData, packetDataLen);
 }
 

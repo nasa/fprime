@@ -70,9 +70,12 @@ void SpacePacketFramerTester::testNominalFraming() {
     U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
     // Choose a random secondary header flag
     bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));
+    // Choose random 2-bit sequence flags
+    U8 seqFlags = static_cast<U8>(STest::Random::lowerUpper(0, 3));
     ComCfg::FrameContext context;
     context.set_apid(apid);
     context.set_hasSecHdr(hasSecHdr);
+    context.set_sequenceFlags(seqFlags);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);
@@ -94,6 +97,11 @@ void SpacePacketFramerTester::testNominalFraming() {
     U16 extractedSecHdr = static_cast<U16>((header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) >>
                                            SpacePacketSubfields::SecHdrOffset);
     ASSERT_EQ(extractedSecHdr, hasSecHdr ? 1 : 0);
+
+    // Verify sequence flags in packetSequenceControl
+    U8 extractedSeqFlags = static_cast<U8>((header.get_packetSequenceControl() & SpacePacketSubfields::SeqFlagsMask) >>
+                                           SpacePacketSubfields::SeqFlagsOffset);
+    ASSERT_EQ(extractedSeqFlags, seqFlags);
 
     // Verify sequence count in packetSequenceControl
     U16 extractedSeqCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
