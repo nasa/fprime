@@ -53,6 +53,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
+    // Check that the buffer is large enough to hold a data product packet
+    if (fwBuffer.getSize() < Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_BufferTooSmallForPacket(fwBuffer.getSize(), Fw::DpContainer::MIN_PACKET_SIZE);
+        return;
+    }
+
     Fw::DpContainer container(0, fwBuffer);
     const Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {

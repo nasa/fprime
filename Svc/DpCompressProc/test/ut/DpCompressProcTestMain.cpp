@@ -9,6 +9,10 @@
 #include "STest/STest/Random/Random.hpp"
 #include "Svc/DpCompressProc/test/ut/Rules/Testers.hpp"
 
+TEST(OffNominal, BufferSmallerThanMinPacketSize) {
+    Svc::Testers::procRequest.testState.test_undersized_buffer();
+}
+
 TEST(Nominal, Compressible) {
     const FwSizeType chunk_size = 4096;
     std::vector<Svc::AbstractState::Chunk> chunks = {Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0xA5),
