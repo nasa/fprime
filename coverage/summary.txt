@@ -161,7 +161,7 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -291,7 +291,7 @@ Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       68      67    98%   34
 Svc/DpCatalog/DpCatalog.cpp                  468     356    76%   59,74,79-82,137-139,144,151,153-154,170-172,180-181,184-185,187-188,196,198-199,201-202,236,238,240-241,243,245,247-251,279-280,282,284,286-287,289,291-296,300,306,311-312,317-318,334-336,365-366,372-373,391,398,400,405,422-423,444,461,480-481,491-492,500-502,507-509,531-532,538-539,547,549,558-559,578,580,589-590,663,685,687,695,711,725-726,796,801-802,807-808,821-822,882-883,888-889
 Svc/DpCatalog/DpCatalog.hpp                    1       1   100%
-Svc/DpCompressProc/DpCompressProc.cpp        162     145    89%   53,60-61,68,75,187-189,193,288-290,326-328,370-371
+Svc/DpCompressProc/DpCompressProc.cpp        165     148    89%   53,66-67,74,81,193-195,199,294-296,332-334,376-377
 Svc/DpManager/DpManager.cpp                   39      38    97%   91
 Svc/DpWriter/DpWriter.cpp                    127     122    96%   26-28,91-92
 Svc/DpZLibCompressor/DpZLibCompressor.cpp
@@ -372,5 +372,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      19145   15802    82%
+TOTAL                                      19148   15806    82%
 ------------------------------------------------------------------------------

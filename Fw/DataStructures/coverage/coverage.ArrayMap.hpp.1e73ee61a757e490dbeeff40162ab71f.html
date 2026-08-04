@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 23:30:46</td>
+      <td>2026-08-04 04:53:43</td>
     </tr>
   </table>
 </div>
@@ -72,12 +72,12 @@
     </tr>
     <tr><td><a href="#l49">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::ArrayMap() (line 49)</a></td><td>called 16 times</td><td>81.0%</td></tr>
     <tr><td><a href="#l52">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::ArrayMap(Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt; const&amp;) (line 52)</a></td><td>called 1 time</td><td>48.0%</td></tr>
-    <tr><td><a href="#l70">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::begin() const (line 70)</a></td><td>called 276 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l73">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::clear() (line 73)</a></td><td>called 93 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l77">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::end() const (line 77)</a></td><td>called 82 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l70">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::begin() const (line 70)</a></td><td>called 270 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l73">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::clear() (line 73)</a></td><td>called 99 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l77">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::end() const (line 77)</a></td><td>called 83 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l81">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::find(unsigned short const&amp;, unsigned int&amp;) const (line 81)</a></td><td>called 1883 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l89">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::getCapacity() const (line 89)</a></td><td>called 1647 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l93">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::getSize() const (line 93)</a></td><td>called 6434 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l89">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::getCapacity() const (line 89)</a></td><td>called 1668 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l93">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::getSize() const (line 93)</a></td><td>called 6334 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l97">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::insert(unsigned short const&amp;, unsigned int const&amp;) (line 97)</a></td><td>called 5454 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l63">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::operator=(Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt; const&amp;) (line 63)</a></td><td>called 2 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l55">Fw::ArrayMap&lt;unsigned short, unsigned int, 1024ul&gt;::~ArrayMap() (line 55)</a></td><td>called 17 times</td><td>100.0%</td></tr>
@@ -620,7 +620,7 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">552</td>
+      <td class="linecount coveredLine">540</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -641,7 +641,7 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">188</td>
+      <td class="linecount coveredLine">200</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -669,7 +669,7 @@
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">164</td>
+      <td class="linecount coveredLine">166</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ConstIterator</span><span class="w"> </span><span class="n">end</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -753,7 +753,7 @@
       <td class="lineno"><a id="l89" href="#l89">89</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3300</td>
+      <td class="linecount coveredLine">3342</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">getCapacity</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -781,7 +781,7 @@
       <td class="lineno"><a id="l93" href="#l93">93</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">12868</td>
+      <td class="linecount coveredLine">12668</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">getSize</span><span class="p">();</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -865,7 +865,7 @@
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">303</td>
+      <td class="linecount coveredLine">290</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">K</span><span class="o">&amp;</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w">  </span><span class="c1">//!&lt; The key</span></td>
     </tr>
     <tr class="source-line">
@@ -886,7 +886,7 @@
       <td class="lineno"><a id="l108" href="#l108">108</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">303</td>
+      <td class="linecount coveredLine">290</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_extMap</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">

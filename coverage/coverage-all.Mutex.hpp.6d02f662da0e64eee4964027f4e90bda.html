@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-03 23:29:56</td>
+      <td>2026-08-04 04:52:44</td>
     </tr>
   </table>
 </div>
@@ -70,9 +70,9 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l64">Os::Mutex::unlock() (line 64)</a></td><td>called 6664018 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l26">Os::MutexInterface::MutexInterface() (line 26)</a></td><td>called 15362 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l29">Os::MutexInterface::~MutexInterface() (line 29)</a></td><td>called 15362 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l64">Os::Mutex::unlock() (line 64)</a></td><td>called 5647882 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l26">Os::MutexInterface::MutexInterface() (line 26)</a></td><td>called 15802 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l29">Os::MutexInterface::~MutexInterface() (line 29)</a></td><td>called 15802 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -265,7 +265,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">15362</td>
+      <td class="linecount coveredLine">15802</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">MutexInterface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -286,7 +286,7 @@
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">30724</td>
+      <td class="linecount coveredLine">31604</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">MutexInterface</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -531,7 +531,7 @@
       <td class="lineno"><a id="l64" href="#l64">64</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6664018</td>
+      <td class="linecount coveredLine">5647882</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">unlock</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">unLock</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w">  </span><span class="c1">//!&lt;  alias for unLock to meet BasicLockable requirements</span></td>
     </tr>
     <tr class="source-line">
