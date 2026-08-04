@@ -20,12 +20,11 @@
 
 namespace Svc {
 PassiveRateGroup::PassiveRateGroup(const char* compName)
-    : PassiveRateGroupComponentBase(compName), m_cycles(0), m_maxTime(0), m_numContexts(0) {
-    // Initialize port duration high water marks to zero
-    for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
-        this->m_portDurationHighWaterMarks[port] = 0;
-    }
-}
+    : PassiveRateGroupComponentBase(compName),
+      m_cycles(0),
+      m_maxTime(0),
+      m_portDurationHighWaterMarks{},
+      m_numContexts(0) {}
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
@@ -59,6 +58,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     // Pre-allocate RawTime objects outside loop to avoid repeated constructor calls
     Os::RawTime portStart;
     Os::RawTime portEnd;
+    PassiveRateGroup_CycleTime portTimes;
 
     // invoke any members of the rate group
     for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
@@ -73,9 +73,10 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
                 (void)portEnd.now();
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
+                portTimes[static_cast<FwSizeType>(port)] = cycleTime;
                 // Update high water mark if current cycle time exceeds it
-                if (cycleTime > this->m_portDurationHighWaterMarks[port]) {
-                    this->m_portDurationHighWaterMarks[port] = cycleTime;
+                if (cycleTime > this->m_portDurationHighWaterMarks[static_cast<FwSizeType>(port)]) {
+                    this->m_portDurationHighWaterMarks[static_cast<FwSizeType>(port)] = cycleTime;
                 }
             }
         }
@@ -95,12 +96,8 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     }
 
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
-        // Create array from HWM data for telemetry
-        PassiveRateGroup_CycleTime hwmArray;
-        for (FwSizeType i = 0; i < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; i++) {
-            hwmArray[i] = this->m_portDurationHighWaterMarks[i];
-        }
-        this->tlmWrite_PortCycleTime(hwmArray);
+        this->tlmWrite_PortCycleTimeLast(portTimes);
+        this->tlmWrite_PortCycleTimeHWM(this->m_portDurationHighWaterMarks);
     }
 
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
@@ -108,7 +105,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     this->tlmWrite_CycleCount(++this->m_cycles);
 }
 
-void PassiveRateGroup::CLEAR_PORT_HWM_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
+void PassiveRateGroup::CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Clear all port duration high water marks
     for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
         this->m_portDurationHighWaterMarks[port] = 0;
