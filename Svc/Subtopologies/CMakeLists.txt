@@ -1,59 +1,82 @@
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CdhCore/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComCcsds/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
+# Module subdirectories
 
-# DpCompression requires zlib - only add if available
-# For cross-compilation, look in the cross-compiler's sysroot
-if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-    find_library(ZLIB_LIBRARY z PATHS /usr/aarch64-linux-gnu/lib NO_DEFAULT_PATH)
-    if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
-        set(ZLIB_FOUND TRUE)
-        set(ZLIB_INCLUDE_DIRS /usr/aarch64-linux-gnu/include)
-    endif()
-else()
-    find_package(ZLIB)
-    if (NOT ZLIB_FOUND)
-        find_library(ZLIB_LIBRARY z)
-        if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
-            set(ZLIB_FOUND TRUE)
-        endif()
-    endif()
+# Types
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Types/")
+
+# Ports
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Cycle/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Fatal/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Interfaces/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ping/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyIf/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Sched/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Seq/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/WatchDog/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ports/")
+
+# Components
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActivePhaser/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/AssertFatalAdapter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferAccumulator/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferManager/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferLogger/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BufferRepeater/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ChronoTime/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLogger/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComQueue/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComSplitter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComStub/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdDispatcher/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdSequencer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CmdSplitter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCatalog/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpManager/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpWriter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/EventManager/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FatalHandler/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileDispatcher/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileDownlinkPorts/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileDownlink/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileManager/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileUplink/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileWorker/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeDeframer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeFramer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeProtocol/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FprimeRouter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FrameAccumulator/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GenericHub/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Health/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/OsTime/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PolyDb/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PrmDb/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/RateGroupDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SeqDispatcher/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/StaticMemory/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmChan/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/TlmPacketizer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/SystemResources/")
+
+# Subtopologies
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Subtopologies/")
+
+# Text logger components included by default, 
+# but can be disabled if FW_ENABLE_TEXT_LOGGING=0 is desired.
+if (FPRIME_ENABLE_TEXT_LOGGERS)
+	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger/")
+	add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger/")
 endif()
 
-if (ZLIB_FOUND)
-    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompression/")
-else()
-    message(STATUS "Skipping DpCompression subtopology - zlib not found")
-endif()
-
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")
-
-# Build list of subtopology dependencies
-set(SUBTOPOLOGY_DEPS
-    Svc_Subtopologies_CdhCore
-    Svc_Subtopologies_CdhCore_CdhCoreConfig
-    Svc_Subtopologies_ComCcsds
-    Svc_Subtopologies_ComCcsds_ComCcsdsConfig
-    Svc_Subtopologies_ComFprime
-    Svc_Subtopologies_ComFprime_ComFprimeConfig
-    Svc_Subtopologies_FileHandling
-    Svc_Subtopologies_FileHandling_FileHandlingConfig
-    Svc_Subtopologies_DataProducts
-    Svc_Subtopologies_DataProducts_DataProductsConfig
-    Svc_Subtopologies_ComLoggerTee
-)
-
-# Add DpCompression only if zlib was found
-if (TARGET Svc_Subtopologies_DpCompression)
-    list(APPEND SUBTOPOLOGY_DEPS
-        Svc_Subtopologies_DpCompression
-        Svc_Subtopologies_DpCompression_DpCompressionConfig
-    )
-endif()
-
-add_custom_target(
-    Svc_Subtopologies
-    DEPENDS ${SUBTOPOLOGY_DEPS}
-)
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PosixTime/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LinuxTimer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Version/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FpySequencer/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Ccsds/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComAggregator/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComRetry/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/PassThroughRouter/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompressProc/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpZLibCompressor/")
