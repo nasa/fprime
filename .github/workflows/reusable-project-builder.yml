@@ -89,6 +89,12 @@ jobs:
           fi
           fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
+      - name: "Upload build artifacts"
+        uses: actions/upload-artifact@v7
+        with:
+          name: examples-build-artifacts
+          path: build-artifacts/
+          retention-days: 1
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
@@ -113,11 +119,7 @@ jobs:
         run: |
           pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
-      - name: "Install ZLIB development library"
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zlib1g-dev
-        shell: bash
+
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
@@ -149,71 +151,11 @@ jobs:
           fi
           fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
-
-      - name: "Install AArch64 cross-compilation toolchain"
-        if: ${{ !inputs.skip_aarch64_build }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu ninja-build zlib1g-dev
-        shell: bash
-      - name: "Build zlib for ARM64"
-        if: ${{ !inputs.skip_aarch64_build }}
-        run: |
-          wget https://github.com/madler/zlib/releases/download/v1.3/zlib-1.3.tar.gz
-          tar -xzf zlib-1.3.tar.gz
-          cd zlib-1.3
-          CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar RANLIB=aarch64-linux-gnu-ranlib ./configure --prefix=/usr/aarch64-linux-gnu
-          make
-          sudo make install
-        shell: bash
-      - name: "Generate AArch64 Linux Build Cache"
-        if: ${{ !inputs.skip_aarch64_build }}
-        working-directory: ${{ inputs.build_location }}
-        run: |
-          export CMAKE_PREFIX_PATH=/usr/aarch64-linux-gnu:$CMAKE_PREFIX_PATH
-          fprime-util generate aarch64-linux
-      - name: "Build AArch64 Linux"
-        if: ${{ !inputs.skip_aarch64_build }}
-        working-directory: ${{ inputs.build_location }}
-        run: |
-          export CMAKE_PREFIX_PATH=/usr/aarch64-linux-gnu:$CMAKE_PREFIX_PATH
-          fprime-util build aarch64-linux
-      - name: "Prepare artifacts"
-        if: ${{ !inputs.skip_aarch64_build }}
-        working-directory: ${{ inputs.build_location }}
-        run: |
-          echo "=== Debug: Current directory ==="
-          pwd
-          echo "=== Debug: Listing build-artifacts structure ==="
-          find ./build-artifacts -name "*.xml" || echo "No XML files found"
-          ls -laR ./build-artifacts/aarch64-linux/ || echo "aarch64-linux doesn't exist"
-
-          mkdir -p aarch64-linux-artifacts
-          # Copy source directories that contain integration tests
-          if [ -d "ManagerWorker" ]; then
-            echo "Copying ManagerWorker source..."
-            cp -r ManagerWorker aarch64-linux-artifacts/
-          fi
-          # Overlay aarch64-linux build artifacts (dictionaries, binaries) into the source structure
-          if [ -d "./build-artifacts/aarch64-linux/ManagerWorker" ]; then
-            echo "Overlaying aarch64-linux build artifacts..."
-            cp -r ./build-artifacts/aarch64-linux/ManagerWorker/* aarch64-linux-artifacts/ManagerWorker/
-          fi
-          # Also copy the entire build-artifacts directory for integration tests that need build root
-          if [ -d "./build-artifacts" ]; then
-            echo "Copying entire build-artifacts directory..."
-            cp -r ./build-artifacts aarch64-linux-artifacts/
-          fi
-
-          echo "=== Debug: Final artifacts structure ==="
-          ls -laR ./aarch64-linux-artifacts/
-          echo "=== Debug: Searching for dictionary files ==="
-          find ./aarch64-linux-artifacts -name "*.xml"
-      - name: "Archive Build Artifacts"
-        if: ${{ !inputs.skip_aarch64_build }}
+      - name: "Archive test logs"
         uses: actions/upload-artifact@v7
+        if: always()
         with:
-          name: aarch64-linux-artifacts
-          path: ${{ inputs.build_location }}/aarch64-linux-artifacts
+          name: test-logs
+          path: ci-logs
           retention-days: 5
 

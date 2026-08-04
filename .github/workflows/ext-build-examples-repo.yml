@@ -106,21 +106,16 @@ jobs:
           chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
           mkdir -p ci-logs
           cd FlightExamples/${DEPLOYMENT}
-
-          echo ""
-          echo "=== Starting GDS ==="
           fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
           sleep 15
 
-          echo ""
-          echo "=== Running Integration Tests ==="
           cd ../..
           pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
             --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
             --no-zmq \
             -v \
             FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py
-            
+
           # Archive the outputs
       - name: 'Archive Logs'
         uses: actions/upload-artifact@v4
