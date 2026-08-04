@@ -159,7 +159,7 @@ jobs:
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: test-logs
+          name: unit-test-logs
           path: ${{ inputs.build_location }}/build-*/Testing/Temporary/*.log
           if-no-files-found: ignore
           retention-days: 5
