@@ -211,6 +211,7 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
     }
     // Check if the GPIO line exists
     if (gpio >= chip_info.lines) {
+        status = Os::File::Status::DOESNT_EXIST;
         this->log_WARNING_HI_OpenPinError(Fw::String(device), gpio, Fw::String("Does Not Exist"),
                                           Os::FileStatus(static_cast<Os::FileStatus::T>(status)));
         return status;
