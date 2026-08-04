@@ -213,6 +213,17 @@ event RxWriteFailed(
     severity warning low \
     format "RX class {} transaction {}:{} write failed: expected {} bytes, got {}"
 
+event RxFileDataOutOfBounds(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    offset: U32 @< File data offset from PDU
+    dataSize: U32 @< File data size from PDU
+    fileSize: U32 @< Declared file size from metadata
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} file data [{}, +{}] exceeds declared file size {}, PDU rejected"
+
 event RxFileSizeMismatch(
     cfdpClass: Cfdp.Class @< CFDP class
     srcEid: U32 @< Source entity ID

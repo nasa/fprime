@@ -496,6 +496,17 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     U16 dataSize = fd.getDataSize();
     const U8* dataPtr = fd.getData();
 
+    // Reject file data past the declared file size (subtraction form avoids offset + dataSize overflow).
+    if ((ret == Cfdp::Status::SUCCESS) && this->m_flags.rx.md_recv) {
+        if ((offset > this->m_fsize) || ((this->m_fsize - offset) < dataSize)) {
+            this->m_cfdpManager->log_WARNING_LO_RxFileDataOutOfBounds(
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num, offset, dataSize, this->m_fsize);
+            this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_FILE_SIZE_ERROR);
+            this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+            ret = Cfdp::Status::ERROR;
+        }
+    }
+
     // Seek to file offset if needed
     if (ret == Cfdp::Status::SUCCESS) {
         if (this->m_state_data.receive.cached_pos != offset) {

@@ -735,6 +735,52 @@ void CfdpManagerTester::testRxFileSizeMismatchEvent() {
     );
 }
 
+void CfdpManagerTester::testRxFileDataOutOfBoundsEvent() {
+    // RxFileDataOutOfBounds emitted when a FileData PDU's offset/size exceeds the
+    // metadata-declared file size (guards against remote disk exhaustion).
+
+    U8 channelId = 0;
+    Cfdp::EntityId sourceEid = TEST_GROUND_EID;
+    Cfdp::EntityId destEid = this->component.getLocalEidParam();
+    Cfdp::TransactionSeq transactionSeq = 950;
+    const char* srcFile = "/ground/oob_test.bin";
+    const char* dstFile = "test/ut/output/oob_rx.bin";
+
+    U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    Cfdp::FileSize metadataSize = 10;  // Declared file size
+    Cfdp::FileSize badOffset = 8;      // offset + dataSize (8 + 10 = 18) exceeds the 10-byte file
+
+    this->clearHistory();
+
+    // Send Metadata PDU declaring a 10-byte file
+    this->sendMetadataPdu(channelId, sourceEid, destEid, transactionSeq, metadataSize, srcFile, dstFile,
+                          Cfdp::Class::CLASS_1, 0);
+    this->component.doDispatch();
+
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn) << "RX transaction should exist after Metadata PDU";
+
+    // Send a FileData PDU whose end (offset + dataSize) runs past the declared file size
+    this->sendFileDataPdu(channelId, sourceEid, destEid, transactionSeq, badOffset, static_cast<U16>(sizeof(testData)),
+                          testData, Cfdp::Class::CLASS_1);
+    this->component.doDispatch();
+
+    // The out-of-bounds FileData PDU must be rejected with the expected event and arguments
+    ASSERT_EVENTS_RxFileDataOutOfBounds_SIZE(1);
+    ASSERT_EVENTS_RxFileDataOutOfBounds(0,                     // index
+                                        Cfdp::Class::CLASS_1,  // cfdpClass
+                                        sourceEid,             // srcEid
+                                        transactionSeq,        // seqNum
+                                        badOffset,             // offset
+                                        sizeof(testData),      // dataSize
+                                        metadataSize           // fileSize (declared)
+    );
+
+    // The rejection must flag the transaction as a file-size error
+    EXPECT_EQ(TxnStatus::TXN_STATUS_FILE_SIZE_ERROR, txn->m_history->txn_stat)
+        << "Out-of-bounds FileData should set the file-size-error status";
+}
+
 void CfdpManagerTester::testRxEofCancelReceivedEvent() {
     // RxEofCancelReceived emitted when EOF has CANCEL condition code
 

@@ -408,6 +408,12 @@ TEST(Event, RxFileSizeMismatch) {
     delete tester;
 }
 
+TEST(Event, RxFileDataOutOfBounds) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
+    tester->testRxFileDataOutOfBoundsEvent();
+    delete tester;
+}
+
 TEST(Event, RxEofCancelReceived) {
     Svc::Ccsds::Cfdp::CfdpManagerTester* tester = new Svc::Ccsds::Cfdp::CfdpManagerTester();
     tester->testRxEofCancelReceivedEvent();
