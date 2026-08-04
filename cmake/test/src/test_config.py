@@ -98,6 +98,27 @@ def test_library_new_config(CONFIG_BUILD):
     cmake.assert_process_success(CONFIG_BUILD, targets=["TestLibraryNewConfig"])
 
 
+def test_override_survives_reconfigure(CONFIG_BUILD):
+    """Test that a re-configure does not disturb an overridden configuration file
+
+    An overridden destination has two candidate sources, the original and the
+    override. Writing both leaves the file rewritten on every configure, which
+    moves its timestamp and rebuilds everything including it.
+    """
+    overridden = CONFIG_BUILD["build"] / "F-Prime" / "default" / "config" / "DpCfg.hpp"
+    assert overridden.exists(), "Override destination was never produced"
+    before = overridden.stat().st_mtime
+    contents = overridden.read_bytes()
+
+    return_code, _, _ = cmake.run_cmake(CONFIG_BUILD["source"], CONFIG_BUILD["build"])
+
+    assert return_code == 0, "Re-configure failed"
+    assert overridden.read_bytes() == contents, "Re-configure changed the override"
+    assert (
+        overridden.stat().st_mtime == before
+    ), "Re-configure rewrote the override, forcing a rebuild of everything using it"
+
+
 def test_library_bad_new_config(CONFIG_FAILED_NEW_FILE_BUILD):
     """Test that the new config that accidentally overrides work works"""
     with pytest.raises(AssertionError):
