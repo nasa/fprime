@@ -295,10 +295,14 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mStruct = " << testStruct << ", "
          << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ " << testU32Arr[0] << ", " << testU32Arr[1] << ", " << testU32Arr[2] << " ], "
-         << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ] "
-         << ")";
 
-    ASSERT_EQ(buf1.str(), buf2.str());
+         << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ]"
+         << " )";
+
+    // Use a large buffer capacity to prevent string truncation
+    Fw::StringTemplate<1024> s2(buf2.str().c_str());
+
+    ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
 }
 
 }  // namespace Struct
