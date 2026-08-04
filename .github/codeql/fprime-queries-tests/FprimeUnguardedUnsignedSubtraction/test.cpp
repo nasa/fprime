@@ -123,3 +123,45 @@ FwSizeType plainArithmetic(FwSizeType value) {
 void unguardedDataSize(const Container& c) {
     consume(nullptr, c.getDataSize() - Container::DATA_OFFSET);
 }
+
+// Violation: the only size comparison in the function is on a different
+// object, so nothing here constrains `buf`. This is the shape that let
+// nasa/fprime#5518 through a passing test suite: `procRequest_handler` is
+// ~330 lines and compares `compression_buffer` and `data_reser`, never the
+// port-supplied `fwBuffer`. The bound is computed at run time, which the
+// query must keep accepting for same-object checks -- so only the receiver
+// separates this from `checkedAgainstComputedBound` above.
+void checkOnOtherObject(const Buffer& buf, const Buffer& other) {
+    const FwSizeType limit = requiredSize();
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+    FW_ASSERT(other.getSize() <= limit);
+}
+
+// Violation: the bound is a constant and is strong enough, but it is
+// checked on a different object. Isolates receiver identity from bound
+// arithmetic: a fix that only tightened the bound handling passes the case
+// above and fails this one.
+void checkOnOtherObjectConstantBound(const Buffer& buf, const Buffer& other) {
+    FW_ASSERT(other.getSize() >= Container::MIN_PACKET_SIZE);
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
+
+// Violation: the check is on a local copy of a *different* object's size.
+// The receiver has to be carried out through the local-copy form as well as
+// the direct call; a fix that matches receivers only on direct calls still
+// misses this. DpCompressProc has exactly this second, independent path.
+void checkOnLocalCopyOfOtherObject(const Buffer& buf, const Buffer& other) {
+    const FwSizeType otherSize = other.getSize();
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+    FW_ASSERT(otherSize >= Container::MIN_PACKET_SIZE);
+}
+
+// Compliant: `buf` is checked, even though the function also compares a
+// different buffer. One sufficient check is enough -- receiver matching
+// must not degrade into requiring every comparison to be on the subtracted
+// object.
+void checkedAmongOtherObjectChecks(const Buffer& buf, const Buffer& other) {
+    FW_ASSERT(other.getSize() > 0);
+    FW_ASSERT(buf.getSize() >= Container::MIN_PACKET_SIZE);
+    consume(buf.getData(), buf.getSize() - Container::MIN_PACKET_SIZE);
+}
