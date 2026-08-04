@@ -59,7 +59,7 @@ class LinearBufferTemplate final : public LinearBufferBase {
     const U8* getBuffAddr() const override { return this->m_bufferData; }
 
   private:
-    U8 m_bufferData[MaxSize] = {};
+    U8 m_bufferData[MaxSize];
 };
 
 }  // namespace Fw

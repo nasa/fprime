@@ -13,11 +13,6 @@ Time::Time() : m_val() {
 
 Time::~Time() {}
 
-Time::Time(const Time& other) : Serializable() {
-    this->set(other.m_val.get_timeBase(), other.m_val.get_timeContext(), other.m_val.get_seconds(),
-              other.m_val.get_useconds());
-}
-
 Time::Time(U32 seconds, U32 useconds) {
     this->set(TimeBase::TB_NONE, 0, seconds, useconds);
 }
