@@ -400,12 +400,9 @@ TEST(Adversarial, HighWaterMarkAccuracy) {
     consumer.join();
 
     EXPECT_EQ(consumed.load(), TOTAL);
-    // With 8 producers and depth=16, the queue must have been full at some point.
-    // The high-water mark may transiently exceed DEPTH because a consumer that frees
-    // a slot but has not yet decremented the count allows a producer to refill and
-    // increment, momentarily pushing the count above DEPTH.
-    EXPECT_GE(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH));
-    EXPECT_LE(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH + PRODUCERS));
+    // With 8 producers and depth=16, the queue must have been full at some point. The count
+    // is incremented before READY and decremented before FREE, so it never exceeds DEPTH.
+    EXPECT_EQ(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH));
     EXPECT_EQ(queue.getMessagesAvailable(), 0u);
     queue.teardown();
 }
@@ -459,6 +456,7 @@ TEST(Adversarial, CreateTeardownRecreate) {
                         buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
                     if (status == Os::QueueInterface::Status::OP_OK) {
                         const U32 value = unpack_u32(buffer);
+                        ASSERT_LT(value, MESSAGES);
                         localReceived[value].fetch_add(1, std::memory_order_acq_rel);
                         localConsumed.fetch_add(1, std::memory_order_acq_rel);
                     } else {
@@ -488,19 +486,15 @@ TEST(Adversarial, CreateTeardownRecreate) {
     }
 }
 
-// Sequence-wrap logic test: directly verify that modular unsigned subtraction
-// handles wrap-around of the sequence counter correctly. This tests the same
-// comparison algorithm used by isCandidatePreferred() in the production code.
+// Sequence-wrap logic test: directly verify that the production comparison,
+// LocklessPriorityQueue::isCandidatePreferred, handles wrap-around of the
+// sequence counter correctly for equal-priority messages.
 TEST(Adversarial, SequenceWrapComparison) {
-    // The production code decides FIFO order via:
-    //   difference = candidateSeq - bestSeq
-    //   preferred  = (difference & topBit) != 0
-    // If candidate is "older" (smaller modular), difference has the top bit set.
+    // At equal priority, the candidate is preferred exactly when it is "older"
+    // (smaller in the wrap-aware modular ordering) than the current best.
     const U32 topBit = static_cast<U32>(1) << (std::numeric_limits<U32>::digits - 1);
-
-    auto isOlder = [topBit](U32 candidate, U32 best) -> bool {
-        const U32 diff = candidate - best;
-        return (diff & topBit) != 0;
+    auto isOlder = [](U32 candidate, U32 best) -> bool {
+        return Os::Generic::LocklessPriorityQueue::isCandidatePreferred(0, candidate, 0, best);
     };
 
     // Normal case: candidate < best  =>  candidate is older

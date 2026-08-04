@@ -209,6 +209,18 @@ TEST(LocklessLifetime, TeardownIsIdempotent) {
     EXPECT_EQ(queue.getMessagesAvailable(), 0u);
 }
 
+//! Validate that an oversized send is rejected with SIZE_MISMATCH and leaves the queue empty.
+TEST(LocklessLifetime, OversizedSendRejected) {
+    Os::Queue queue;
+    Fw::String name("oversize-test");
+    ASSERT_EQ(queue.create(0, name, 4, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+    U8 buffer[sizeof(U32) + 1] = {0};
+    ASSERT_EQ(queue.send(buffer, sizeof buffer, 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+              Os::QueueInterface::Status::SIZE_MISMATCH);
+    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
+    queue.teardown();
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {

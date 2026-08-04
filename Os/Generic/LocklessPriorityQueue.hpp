@@ -92,7 +92,8 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
 //!   during `create`. No allocation occurs during `send`, `receive`, `getMessagesAvailable`, or
 //!   `getMessageHighWaterMark`.
 //! - Loops: All non-blocking control paths are bounded by the configured queue depth multiplied
-//!   by `MAX_RETRY_PASSES`. The high-water-mark update is bounded by `MAX_RETRY_PASSES`. Blocking
+//!   by `MAX_RETRY_PASSES`. The high-water-mark update is bounded by a separate fixed CAS retry
+//!   bound (`HIGH_MARK_CAS_BOUND` in the implementation). Blocking
 //!   paths spin until the requested condition is satisfied; this is the explicit contract of
 //!   `BlockingType::BLOCKING` and is the same behavior provided by the existing
 //!   `Os::Generic::PriorityQueue`.
@@ -110,15 +111,32 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
 //!
 //! Consumers pop the slot with the highest priority. When multiple slots share the same priority,
 //! the one with the smallest sequence number (i.e. the earliest publication) is selected.
-//! Sequence numbers are assigned by an atomic counter at publication time. The counter is wide
-//! enough to avoid wrap during any practical mission lifetime; comparison uses unsigned modular
-//! subtraction so that any plausible wrap is still ordered correctly within the queue's window.
+//! Sequence numbers are assigned by an atomic counter at publication time. The U32 counter may
+//! wrap during a long mission; comparison uses unsigned modular subtraction so that wrap is
+//! still ordered correctly within the queue's active window (create() enforces `depth < 2^31`).
+//! FIFO tie-breaking assumes equal-priority messages do not remain queued across 2^31
+//! intervening sends; see the SDD (`docs/sdd-lockless-queue.md` section 7) for details.
 class LocklessPriorityQueue final : public Os::QueueInterface {
   public:
     //! Maximum number of retry passes through the slot array before a non-blocking operation
     //! gives up. Each pass scans up to the configured queue depth; the worst-case work per
     //! non-blocking call is therefore `depth * MAX_RETRY_PASSES`.
     static constexpr FwSizeType MAX_RETRY_PASSES = 4;
+
+    //! \brief decide whether a candidate (priority, sequence) is preferred over the current best
+    //!
+    //! Highest priority wins; on a tie, the smallest sequence in the wrap-aware modular ordering
+    //! wins. Exposed as a static member so unit tests exercise the shipped comparison.
+    //!
+    //! \param candidatePriority: priority of the candidate message
+    //! \param candidateSequence: sequence of the candidate message
+    //! \param bestPriority: priority of the current best message
+    //! \param bestSequence: sequence of the current best message
+    //! \return true if the candidate should be preferred over the current best
+    static bool isCandidatePreferred(FwQueuePriorityType candidatePriority,
+                                     U32 candidateSequence,
+                                     FwQueuePriorityType bestPriority,
+                                     U32 bestSequence);
 
     //! \brief default constructor
     LocklessPriorityQueue() = default;
@@ -136,7 +154,7 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! \brief copy constructor is forbidden
     LocklessPriorityQueue(const QueueInterface& other) = delete;
 
-    //! \brief copy constructor is forbidden
+    //! \brief constructing from a pointer is forbidden
     LocklessPriorityQueue(const QueueInterface* other) = delete;
 
     //! \brief assignment operator is forbidden
@@ -168,8 +186,11 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! \brief send a message into the queue
     //!
     //! When `blockType` is `NONBLOCKING`, the operation completes in time bounded by
-    //! `depth * MAX_RETRY_PASSES` and returns `FULL` if no slot can be claimed. When `blockType`
-    //! is `BLOCKING`, the operation spins until a slot becomes available.
+    //! `depth * MAX_RETRY_PASSES` and returns `FULL` if no slot can be claimed. Because slots
+    //! held mid-operation by concurrent producers or consumers are not claimable, a
+    //! non-blocking send may return `FULL` under contention even though fewer than `depth`
+    //! messages are queued. When `blockType` is `BLOCKING`, the operation spins until a slot
+    //! becomes available.
     //!
     //! \warning `BLOCKING` calls must not be invoked from ISR context.
     //!
@@ -184,8 +205,10 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //!
     //! Selects the highest-priority slot and, on a tie, the slot with the smallest sequence
     //! number. When `blockType` is `NONBLOCKING`, the operation completes in time bounded by
-    //! `depth * MAX_RETRY_PASSES` and returns `EMPTY` if no slot is available. When `blockType`
-    //! is `BLOCKING`, the operation spins until a slot is published.
+    //! `depth * MAX_RETRY_PASSES` and returns `EMPTY` if no slot is available. Because slots
+    //! held mid-operation by concurrent producers or consumers are not claimable, a
+    //! non-blocking receive may return `EMPTY` under contention even though messages are
+    //! queued. When `blockType` is `BLOCKING`, the operation spins until a slot is published.
     //!
     //! \warning `BLOCKING` calls must not be invoked from ISR context.
     //!

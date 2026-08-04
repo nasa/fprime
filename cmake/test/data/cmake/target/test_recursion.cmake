@@ -38,8 +38,9 @@ set(EXPECTED_FULL_DEPENDENCIES
     Os_File
     Os_File_Posix
     Os_File_Posix_Implementation
-    Os_Generic_LocklessPriorityQueue
-    Os_Generic_LocklessPriorityQueue_Implementation
+    Os_Generic_PriorityQueue
+    Os_Generic_PriorityQueue_Implementation
+    Os_Generic_Types
     Os_Memory
     Os_Memory_${FPRIME_PLATFORM}
     Os_Memory_${FPRIME_PLATFORM}_Implementation

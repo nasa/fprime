@@ -42,15 +42,12 @@ constexpr U32 packStateTag(U32 state, U32 tag) {
     return (tag << LocklessSlot::STATE_BITS) | (state & LocklessSlot::STATE_MASK);
 }
 
-//! Decide whether a candidate (priority, sequence) is preferred over the current best.
-//!
-//! Highest priority wins; on a tie, the smallest sequence wins. Sequence comparison uses unsigned
-//! modular subtraction so that any plausible wrap of the global sequence counter is still
-//! ordered correctly within the queue's active window.
-bool isCandidatePreferred(FwQueuePriorityType candidatePriority,
-                          U32 candidateSequence,
-                          FwQueuePriorityType bestPriority,
-                          U32 bestSequence) {
+}  // namespace
+
+bool LocklessPriorityQueue::isCandidatePreferred(FwQueuePriorityType candidatePriority,
+                                                 U32 candidateSequence,
+                                                 FwQueuePriorityType bestPriority,
+                                                 U32 bestSequence) {
     bool preferred = false;
     if (candidatePriority > bestPriority) {
         preferred = true;
@@ -63,8 +60,6 @@ bool isCandidatePreferred(FwQueuePriorityType candidatePriority,
     }
     return preferred;
 }
-
-}  // namespace
 
 LocklessSlot::LocklessSlot()
     : m_stateTag(packStateTag(LOCKLESS_SLOT_FREE, 0)), m_sequence(0), m_size(0), m_priority() {}
@@ -103,6 +98,8 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
     // C++14. On every supported flight target the atomic is in fact lock-free.
     std::atomic<U32> probe(0);
     FW_ASSERT(probe.is_lock_free());
+    std::atomic<FwQueuePriorityType> priorityProbe(0);
+    FW_ASSERT(priorityProbe.is_lock_free());
     FW_ASSERT(depth > 0);
     FW_ASSERT(messageSize > 0);
 
@@ -311,8 +308,11 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
             }
             actualSize = storedSize;
             priority = slot.m_priority.load(std::memory_order_relaxed);
-            slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_FREE, tagOf(desired) + 1), std::memory_order_release);
+            // Decrement the count *before* releasing the slot to FREE. This keeps m_count (and
+            // therefore the high-water mark) at or below the queue depth: a producer can only
+            // re-claim and re-count this slot after observing FREE, which follows the decrement.
             static_cast<void>(this->m_handle.m_count.fetch_sub(1, std::memory_order_acq_rel));
+            slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_FREE, tagOf(desired) + 1), std::memory_order_release);
             return QueueInterface::Status::OP_OK;
         }
         // CAS failed — another consumer claimed this slot; yield and rescan.

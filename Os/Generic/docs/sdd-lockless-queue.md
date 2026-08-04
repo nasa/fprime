@@ -124,6 +124,16 @@ The outer loop is bounded for non-blocking callers and unbounded for blocking
 callers. The blocking spin is the explicit contract of `BlockingType::BLOCKING`
 and is not safe to call from ISR context.
 
+**Spurious `FULL` under contention.** A slot held mid-operation by a concurrent
+producer (`WRITING`) or consumer (`READING`) is not claimable. A non-blocking
+send that exhausts its pass budget while every unclaimed slot is transiently
+held returns `FULL` even though fewer than `depth` messages are logically
+queued. This differs from the mutex-based `Os::Generic::PriorityQueue`, which
+reports fullness exactly under its lock; it is the price of bounded, lock-free
+progress. Callers for which a spurious `FULL` is unacceptable (e.g. async
+ports configured to assert on overflow) should size the queue with margin or
+select the mutex-based implementation.
+
 ## 6. Receive Algorithm
 
 ```
@@ -153,9 +163,9 @@ receive(destination, capacity, blockType, &actualSize, &priority):
           memcpy(destination, data + best.i * messageSize, stored_size)
           actualSize = stored_size
           priority   = m_slots[best.i].m_priority
+          m_count.fetch_sub(1, acq_rel)
           m_slots[best.i].m_stateTag.store(
               pack(FREE, tag(desired) + 1), release)
-          m_count.fetch_sub(1, acq_rel)
           return OP_OK
       // CAS failed; loop and retry
 ```
@@ -170,15 +180,31 @@ as the expected operand. Any concurrent transition on the slot — even one that
 returned the slot to `READY` with a different message — increments the tag,
 causing the CAS to fail and the pass to retry.
 
+The count is decremented *before* the `release` store that frees the slot. A
+producer can only re-claim (and re-count) the slot after observing `FREE`, so
+`m_count` — and therefore the high-water mark — never exceeds `depth`.
+
+**Spurious `EMPTY` under contention.** Symmetrically to send, a non-blocking
+receive can return `EMPTY` while messages are transiently held in `WRITING`
+or `READING` by concurrent threads.
+
 ## 7. Sequence-Number Ordering and Wrap
 
 `m_sequence` is a `std::atomic<U32>` global counter, incremented once per
 successful publication. Per-message sequences are compared with unsigned modular
 subtraction, so two values `a` and `b` with `(a - b)` having its top bit set are
-ordered as `a < b` regardless of wrap. Because the queue holds at most `depth`
-messages at once and `depth` is far less than `2^31`, the active set of
-sequence values at any moment is always within the wrap-aware window. Wrap of
-the global counter therefore never corrupts ordering.
+ordered as `a < b` regardless of wrap.
+
+The comparison is exact only while the sequence values of queued
+equal-priority messages span less than half the `U32` domain. `create()`
+enforces `depth < 2^31`, which bounds the number of queued messages but not
+the *spread* of their sequences: a message that remains queued while `2^31`
+or more intervening sends occur (≈ 2.5 days of continuous 10 kHz traffic
+through one queue) would compare as newest rather than oldest, perturbing
+FIFO order among equal-priority messages until it drains. Priority ordering
+is unaffected. A `U64` counter would remove the window but `std::atomic<U64>`
+is not lock-free on all supported 32-bit flight targets, so the `U32`
+counter is retained and the window is documented as a limitation (§15).
 
 ## 8. Counters and the High-Water Mark
 
@@ -186,11 +212,12 @@ the global counter therefore never corrupts ordering.
 producers (`fetch_add`) and consumers (`fetch_sub`). It is read atomically by
 `getMessagesAvailable`.
 
-`m_highMark` is updated by producers using a bounded compare-exchange loop.
-In the worst case the loop terminates after a fixed number of iterations,
-preserving the bounded-loop requirement. The high-water mark may lag the true
-maximum by at most one if the loop exhausts its budget under extreme
-contention; the existing
+`m_highMark` is updated by producers using a bounded compare-exchange loop
+(`HIGH_MARK_CAS_BOUND` iterations at most), preserving the bounded-loop
+requirement. Because the count is incremented before `READY` and decremented
+before `FREE`, `m_count` never exceeds `depth`, so the high-water mark never
+over-reports the queue's capacity usage. It may lag the true maximum if the
+CAS loop exhausts its budget under extreme contention; the existing
 `Os::Generic::PriorityQueue::getMessageHighWaterMark` contract permits this
 because it is an observability counter, not a correctness invariant.
 
@@ -296,9 +323,11 @@ The new module is registered through CMake as
 `register_fprime_implementation(Os_Generic_LocklessPriorityQueue ...)` block
 that supplies a delegate file `DefaultLocklessPriorityQueue.cpp`. A test target
 `LocklessPriorityQueueTest` chooses this implementation through
-`CHOOSES_IMPLEMENTATIONS`. Any deployment that wants the lockless behavior can
-adopt it through the same CMake mechanism the existing `Os_Generic_PriorityQueue`
-uses.
+`CHOOSES_IMPLEMENTATIONS`. The implementation is **opt-in**: platform default
+queues are unchanged (unix remains on `Os_Generic_PriorityQueue`), and any
+deployment or platform that needs ISR-safe queueing can select
+`Os_Generic_LocklessPriorityQueue` through the same CMake mechanism the
+existing `Os_Generic_PriorityQueue` uses.
 
 ## 14. Verification
 
@@ -331,7 +360,18 @@ tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`).
 - `receive` is O(`depth`) because it scans the slot array. For the
   flight-typical depths of tens of slots this is preferable to the dynamic
   bookkeeping required by an O(log n) lock-free priority queue.
+- The blocking variants poll with a fixed backoff rather than blocking on an
+  OS primitive: an idle blocking receiver wakes every
+  `LOCKLESS_BLOCKING_BACKOFF_US` (100 µs) instead of sleeping until a message
+  arrives, and each message may see up to one backoff period of added
+  latency. Deployments whose components idle on blocking receives should
+  prefer the condition-variable-based `Os::Generic::PriorityQueue` unless
+  they need ISR-safe non-blocking operations from the same queue.
 - The blocking variants spin and are therefore not appropriate for ISR
   callers. ISR callers must use `BlockingType::NONBLOCKING`.
-- The high-water mark is observability-only and may lag the true maximum by
-  one under extreme contention.
+- Non-blocking `send`/`receive` may return spurious `FULL`/`EMPTY` under
+  contention (§5, §6).
+- The high-water mark is observability-only and may lag the true maximum
+  under extreme contention.
+- FIFO tie-breaking among equal-priority messages assumes no message remains
+  queued across `2^31` intervening sends (§7).
