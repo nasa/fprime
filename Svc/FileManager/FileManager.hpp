@@ -16,8 +16,8 @@
 #include <atomic>
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
-#include "config/FileManagerConfig.hpp"
 #include "Svc/FileManager/FileManagerComponentAc.hpp"
+#include "config/FileManagerConfig.hpp"
 
 namespace Svc {
 
@@ -212,8 +212,8 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Data product generation state enumeration
     enum GenerateDpState {
-        DP_IDLE,       //!< Not currently generating a data product
-        DP_IN_PROGRESS //!< Currently emitting file chunks via rate group
+        DP_IDLE,        //!< Not currently generating a data product
+        DP_IN_PROGRESS  //!< Currently emitting file chunks via rate group
     };
 
     //! Current state of data product generation

@@ -185,9 +185,9 @@ class FileManagerTester : public FileManagerGTestBase {
     // ----------------------------------------------------------------------
 
     //! Handler for the data product get port; hands out the local buffer
-    Fw::Success::T productGet_handler(FwDpIdType id,        //!< The container ID
-                                      FwSizeType size,      //!< The requested size
-                                      Fw::Buffer& buffer    //!< The buffer (output)
+    Fw::Success::T productGet_handler(FwDpIdType id,      //!< The container ID
+                                      FwSizeType size,    //!< The requested size
+                                      Fw::Buffer& buffer  //!< The buffer (output)
                                       ) override;
 
     //! Handler for the data product send port; records the sent container

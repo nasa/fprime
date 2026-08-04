@@ -466,8 +466,7 @@ void FileManagerTester ::generateDpChunkSizeClamped() {
     Fw::CmdStringArg cmdStringFile(fileName);
     // A chunk size beyond the configured maximum is clamped, so the 50 byte
     // file still fits in a single chunk
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile,
-                             FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0);
     this->component.doDispatch();
     this->runRateGroupCycles(5);
 

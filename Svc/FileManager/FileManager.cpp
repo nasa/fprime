@@ -265,12 +265,10 @@ void FileManager ::GenerateDp_cmdHandler(FwOpcodeType opCode,
     }
 
     const bool emptyFile = (fileSize == 0);
-    const bool badRange = (beginOffset > static_cast<U64>(fileSize)) ||
-                          (!emptyFile && (beginOffset >= effectiveEnd));
+    const bool badRange = (beginOffset > static_cast<U64>(fileSize)) || (!emptyFile && (beginOffset >= effectiveEnd));
     if (badRange) {
         this->m_dpFile.close();
-        this->log_WARNING_HI_GenerateDpInvalidRange(logFileName, beginOffset, endOffset,
-                                                    static_cast<U64>(fileSize));
+        this->log_WARNING_HI_GenerateDpInvalidRange(logFileName, beginOffset, endOffset, static_cast<U64>(fileSize));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
     }
@@ -335,8 +333,7 @@ void FileManager ::processDpChunks() {
         }
 
         // Request a container large enough for this chunk's header and data
-        const FwSizeType dpSize = SIZE_OF_FileChunkHeaderRecord_RECORD +
-                                  SIZE_OF_FileChunkDataRecord_RECORD(readSize);
+        const FwSizeType dpSize = SIZE_OF_FileChunkHeaderRecord_RECORD + SIZE_OF_FileChunkDataRecord_RECORD(readSize);
         DpContainer container;
         const Fw::Success::T dpStatus = this->dpGet_FileDpContainer(dpSize, container);
         if (dpStatus != Fw::Success::SUCCESS) {
@@ -347,8 +344,7 @@ void FileManager ::processDpChunks() {
 
         // Each chunk is a metadata record followed by a data record, so that
         // ground tools can reassemble the file from any number of containers
-        const FileManager_FileChunkHeader header(this->m_dpFileName, this->m_dpOffset,
-                                                 static_cast<U32>(readSize));
+        const FileManager_FileChunkHeader header(this->m_dpFileName, this->m_dpOffset, static_cast<U32>(readSize));
         Fw::SerializeStatus serializeStatus = container.serializeRecord_FileChunkHeaderRecord(header);
         if (serializeStatus == Fw::FW_SERIALIZE_OK) {
             serializeStatus = container.serializeRecord_FileChunkDataRecord(this->m_dpBuffer, readSize);
