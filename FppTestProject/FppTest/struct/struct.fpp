@@ -28,17 +28,17 @@ module FppTest {
     }
 
     type StructAliasString = string size 30
-    type StructAliasStringZero = string size 0
+    type StructAliasStringZero = string size 1
 
     struct MultiString {
       mStr_1: string
       mStr_2: string
       mStr50_1: string size 50
       mStr50_2: string size 50
-      mStr0: string size 0
+      mStr0: string size 1
       mStrArr_1: [3] string size 60
       mStrArr_2: [3] string size 60
-      mStrArr0: [3] string size 0
+      mStrArr0: [3] string size 1
       mStrAlias: StructAliasString
       mStrAlias_2: [3] StructAliasString
       mStrAlias0: StructAliasStringZero

@@ -283,7 +283,9 @@ TEST_F(NonPrimitiveTest, ToString) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
-    buf1 << s;
+    Fw::StringTemplate<1024> str;
+    s.toString(str);
+    buf1 << str;
 
     buf2 << "( "
          << "mString = " << testString << ", "
@@ -294,12 +296,9 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ " << testU32Arr[0] << ", " << testU32Arr[1] << ", " << testU32Arr[2] << " ], "
          << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ] "
-         << " )";
+         << ")";
 
-    // Truncate string output
-    Fw::String s2(buf2.str().c_str());
-
-    ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
+    ASSERT_EQ(buf1.str(), buf2.str());
 }
 
 }  // namespace Struct
