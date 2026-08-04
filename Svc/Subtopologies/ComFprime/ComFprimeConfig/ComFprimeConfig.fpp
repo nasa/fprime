@@ -14,6 +14,12 @@ module ComFprimeConfig {
         constant comQueue   = 29
     }
 
+    module CpuAffinities {
+        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
+        constant TASK_DEFAULT = -1
+        constant comQueue   = TASK_DEFAULT
+    }
+
     # Queue configuration constants
     module QueueDepths {
         constant events      = 100            

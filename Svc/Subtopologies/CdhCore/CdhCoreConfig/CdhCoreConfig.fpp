@@ -23,4 +23,12 @@ module CdhCoreConfig {
         constant tlmSend     = 22
 
     }
+
+    module CpuAffinities {
+        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
+        constant TASK_DEFAULT = -1
+        constant cmdDisp     = TASK_DEFAULT
+        constant events      = TASK_DEFAULT
+        constant tlmSend     = TASK_DEFAULT
+    }
 }

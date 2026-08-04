@@ -29,6 +29,15 @@ module DataProductsConfig {
         constant dpBufferManager  = 21
     }
 
+    module CpuAffinities {
+        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
+        constant TASK_DEFAULT = -1
+        constant dpCat    = TASK_DEFAULT
+        constant dpMgr  = TASK_DEFAULT
+        constant dpWriter   = TASK_DEFAULT
+        constant dpBufferAccumulator = TASK_DEFAULT
+    }
+
     module BufferAccumulator {
         constant allocatorId   = 301
         constant maxNumBuffers = 10
