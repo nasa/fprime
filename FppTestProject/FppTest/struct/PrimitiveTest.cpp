@@ -219,7 +219,7 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
                             ToString);
 
 using PrimitiveTestImplementations = ::testing::Types<C_Primitive, SM_SMPrimitive>;
-INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations, );
+INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
 
 }  // namespace Struct
 

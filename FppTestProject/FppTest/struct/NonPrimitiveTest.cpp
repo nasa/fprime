@@ -296,7 +296,7 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ " << testU32Arr[0] << ", " << testU32Arr[1] << ", " << testU32Arr[2] << " ], "
          << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ]"
-         << " )";
+         << ")";
 
     // Use a large buffer capacity to prevent string truncation
     Fw::StringTemplate<1024> s2(buf2.str().c_str());
