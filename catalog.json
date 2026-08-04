@@ -3,22 +3,22 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "20b39184fabd53402d38a59eb87c73e9b680ebad",
-  "generated_at": "2026-08-04T21:50:38Z",
+  "generated_at": "2026-08-04T22:06:04Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
     "silver": 80.0
   },
   "overall": {
-    "line_pct": 82.54,
-    "line_covered": 15804,
-    "line_total": 19148,
-    "function_pct": 62.9,
-    "function_covered": 5610,
-    "function_total": 8919,
-    "branch_pct": 72.44,
-    "branch_covered": 9087,
-    "branch_total": 12545,
+    "line_pct": 83.57,
+    "line_covered": 18905,
+    "line_total": 22623,
+    "function_pct": 62.78,
+    "function_covered": 6294,
+    "function_total": 10026,
+    "branch_pct": 72.65,
+    "branch_covered": 10768,
+    "branch_total": 14821,
     "report": "coverage/coverage-all.html",
     "tier": "silver"
   },
@@ -2876,14 +2876,14 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 98.48,
-        "line_covered": 1105,
+        "line_pct": 98.13,
+        "line_covered": 1101,
         "line_total": 1122,
-        "function_pct": 97.14,
-        "function_covered": 509,
+        "function_pct": 96.95,
+        "function_covered": 508,
         "function_total": 524,
-        "branch_pct": 83.21,
-        "branch_covered": 451,
+        "branch_pct": 82.66,
+        "branch_covered": 448,
         "branch_total": 542,
         "report": "Fw/DataStructures/coverage/index.html",
         "tier": "platinum"
@@ -4142,8 +4142,8 @@
         "function_pct": 88.16,
         "function_covered": 67,
         "function_total": 76,
-        "branch_pct": 73.01,
-        "branch_covered": 303,
+        "branch_pct": 73.25,
+        "branch_covered": 304,
         "branch_total": 415,
         "report": "Os/Generic/coverage/index.html",
         "tier": "silver"
@@ -5202,8 +5202,20 @@
     {
       "path": "Svc/Ccsds/CfdpManager",
       "has_ut": true,
-      "has_coverage": false,
-      "ut": null,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 88.86,
+        "line_covered": 3086,
+        "line_total": 3473,
+        "function_pct": 96.0,
+        "function_covered": 360,
+        "function_total": 375,
+        "branch_pct": 73.36,
+        "branch_covered": 1666,
+        "branch_total": 2271,
+        "report": "Svc/Ccsds/CfdpManager/coverage/index.html",
+        "tier": "silver"
+      },
       "int": null,
       "codeql": null,
       "codeql_checks": {
@@ -5218,7 +5230,7 @@
         "report": "Svc/Ccsds/CfdpManager/checks/index.html"
       },
       "tiers": {
-        "ut": "bronze",
+        "ut": "silver",
         "int": null,
         "codeql": null,
         "checks": "bronze"
@@ -5227,8 +5239,20 @@
     {
       "path": "Svc/Ccsds/CfdpManager/Types",
       "has_ut": true,
-      "has_coverage": false,
-      "ut": null,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 79.88,
+        "line_covered": 659,
+        "line_total": 825,
+        "function_pct": 96.69,
+        "function_covered": 117,
+        "function_total": 121,
+        "branch_pct": 60.64,
+        "branch_covered": 265,
+        "branch_total": 437,
+        "report": "Svc/Ccsds/CfdpManager/Types/coverage/index.html",
+        "tier": "bronze"
+      },
       "int": null,
       "codeql": null,
       "codeql_checks": {

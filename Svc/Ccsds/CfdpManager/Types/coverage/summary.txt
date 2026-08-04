@@ -1,0 +1,31 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../../..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+Svc/Ccsds/CfdpManager/Types/AckPdu.cpp        72      62    86%   51,56,63,66,89,96,109,122,137,153
+Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
+Svc/Ccsds/CfdpManager/Types/EofPdu.cpp        71      57    80%   56,61,68,71,94,101,109,115,121,127,143,151,157,163
+Svc/Ccsds/CfdpManager/Types/EofPdu.hpp         8       8   100%
+Svc/Ccsds/CfdpManager/Types/FileDataPdu.cpp
+                                              83      49    59%   36,45-46,49-50,52,55,58-62,64-65,67,69-70,73-75,79-80,84,87-88,103,109-110,117,124,145,155,163,183
+Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp
+                                               5       5   100%
+Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      57    85%   54,59,66,69,92,99,114,120,135,154
+Svc/Ccsds/CfdpManager/Types/FinPdu.hpp        11      11   100%
+Svc/Ccsds/CfdpManager/Types/MetadataPdu.cpp
+                                             114      92    80%   69,74,81,84,107,114,128,134,141,148,155,162,177,187,194,199,204,212,222,227,232,240
+Svc/Ccsds/CfdpManager/Types/MetadataPdu.hpp
+                                              12      12   100%
+Svc/Ccsds/CfdpManager/Types/NakPdu.cpp        85      70    82%   64,69,76,79,102,109,115,121,129,135,150,156,168,176,182
+Svc/Ccsds/CfdpManager/Types/NakPdu.hpp         6       6   100%
+Svc/Ccsds/CfdpManager/Types/PduBase.hpp        2       2   100%
+Svc/Ccsds/CfdpManager/Types/PduHeader.cpp
+                                             151     103    68%   57,72,119,125,141,147,152,157,170,183,190,205,210,215,230-231,234-236,240-241,243-244,248-250,253,256,258,261-278,283
+Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
+                                               8       8   100%
+Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     107    89%   88,95,104,112,127,135,144,154,171,226,245-246,249
+------------------------------------------------------------------------------
+TOTAL                                        825     659    79%
+------------------------------------------------------------------------------
