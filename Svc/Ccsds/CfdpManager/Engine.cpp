@@ -1,0 +1,1188 @@
+// ======================================================================
+// \title  Engine.cpp
+// \brief  CFDP Engine implementation
+//
+// This file is a port of CFDP engine operations from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp.c (CFDP PDU validation, processing, and engine operations)
+//
+// This file contains two sets of functions. The first is what is needed
+// to deal with CFDP PDUs. Specifically validating them for correctness
+// and ensuring the byte-order is correct for the target. The second
+// is incoming and outgoing CFDP PDUs pass through here. All receive
+// CFDP PDU logic is performed here and the data is passed to the
+// R (rx) and S (tx) logic.
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
+
+#include <string.h>
+#include <new>
+
+#include <Fw/Types/StringUtils.hpp>
+#include <Os/FileSystem.hpp>
+
+#include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
+#include <Svc/Ccsds/CfdpManager/Channel.hpp>
+#include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Transaction.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduBase.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
+
+namespace Svc {
+namespace Ccsds {
+namespace Cfdp {
+
+// ----------------------------------------------------------------------
+// Construction and destruction
+// ----------------------------------------------------------------------
+
+Engine::Engine(CfdpManager* manager) : m_manager(manager), m_seqNum(0), m_allocator(nullptr), m_allocatorId(0) {
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
+        m_channels[i] = nullptr;
+    }
+}
+
+Engine::~Engine() {
+    FW_ASSERT(m_allocator != nullptr, 0);  // init() must have been called
+
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
+        if (m_channels[i] != nullptr) {
+            // Clean up Channel's internal arrays first
+            m_channels[i]->cleanup(*m_allocator, m_allocatorId);
+
+            // Call destructor
+            m_channels[i]->~Channel();
+
+            // Deallocate the Channel object itself
+            m_allocator->deallocate(m_allocatorId, m_channels[i]);
+            m_channels[i] = nullptr;
+        }
+    }
+}
+
+// ----------------------------------------------------------------------
+// Public interface methods
+// ----------------------------------------------------------------------
+
+void Engine::init(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
+    // Store allocator for cleanup in destructor
+    m_allocator = &allocator;
+    m_allocatorId = memId;
+
+    // Allocate and construct all channels using the allocator
+    for (U8 i = 0; i < Cfdp::NumChannels; ++i) {
+        FwSizeType channelSize = sizeof(Channel);
+        void* channelMem = allocator.allocate(memId, channelSize);
+        FW_ASSERT(channelMem != nullptr);
+
+        // Use placement new to construct Channel in allocated memory
+        m_channels[i] = new (channelMem) Channel(this, i, this->m_manager, allocator, memId);
+    }
+}
+
+void Engine::armAckTimer(Transaction* txn) {
+    txn->m_ack_timer.setTimer(txn->m_cfdpManager->getAckTimerParam(txn->m_chan_num));
+    txn->m_flags.com.ack_timer_armed = true;
+}
+
+void Engine::armInactTimer(Transaction* txn) {
+    U32 timerDuration = 0;
+
+    // select timeout based on the state
+    if (GetTxnStatus(txn) == AckTxnStatus::ACK_TXN_STATUS_ACTIVE) {
+        // in an active transaction, we expect traffic so use the normal inactivity timer
+        timerDuration = txn->m_cfdpManager->getInactivityTimerParam(txn->m_chan_num);
+    } else {
+        // in an inactive transaction, we do NOT expect traffic, and this timer is now used
+        // just in case any late straggler PDUs dp get delivered.  In this case the
+        // time should be longer than the retransmit time (ack timer) but less than the full
+        // inactivity timer (because again, we are not expecting traffic, so waiting the full
+        // timeout would hold resources longer than needed).  Using double the ack timer should
+        // ensure that if the remote retransmitted anything, we will see it, and avoids adding
+        // another config option just for this.
+        timerDuration = txn->m_cfdpManager->getAckTimerParam(txn->m_chan_num) * 2;
+    }
+
+    txn->m_inactivity_timer.setTimer(timerDuration);
+}
+
+void Engine::dispatchRecv(Transaction* txn, const Fw::Buffer& buffer) {
+    // Loop to handle state transitions without recursion
+    // The loop allows recvInit to transition to R2 state and re-dispatch
+    bool needsDispatch = true;
+    while (needsDispatch) {
+        needsDispatch = false;  // Assume single dispatch unless state handler requests re-dispatch
+
+        // Dispatch based on transaction state
+        switch (txn->m_state) {
+            case TxnState::TXN_STATE_INIT:
+                needsDispatch = this->recvInit(txn, buffer);
+                break;
+            case TxnState::TXN_STATE_R1:
+                txn->r1Recv(buffer);
+                break;
+            case TxnState::TXN_STATE_S1:
+                txn->s1Recv(buffer);
+                break;
+            case TxnState::TXN_STATE_R2:
+                txn->r2Recv(buffer);
+                break;
+            case TxnState::TXN_STATE_S2:
+                txn->s2Recv(buffer);
+                break;
+            case TxnState::TXN_STATE_DROP:
+                this->recvDrop(txn, buffer);
+                break;
+            case TxnState::TXN_STATE_HOLD:
+                this->recvHold(txn, buffer);
+                break;
+            default:
+                // Invalid or undefined state
+                break;
+        }
+    }
+
+    this->armInactTimer(txn);  // whenever a packet was received by the other size, always arm its inactivity timer
+}
+
+void Engine::dispatchTx(Transaction* txn) {
+    static const TxnSendDispatchTable state_fns = {{
+        nullptr,             // TxnState::TXN_STATE_UNDEF
+        nullptr,             // TxnState::TXN_STATE_INIT
+        nullptr,             // TxnState::TXN_STATE_R1
+        &Transaction::s1Tx,  // TxnState::TXN_STATE_S1
+        nullptr,             // TxnState::TXN_STATE_R2
+        &Transaction::s2Tx,  // TxnState::TXN_STATE_S2
+        nullptr,             // TxnState::TXN_STATE_DROP
+        nullptr              // TxnState::TXN_STATE_HOLD
+    }};
+
+    txn->txStateDispatch(&state_fns);
+}
+
+Status::T Engine::sendMd(Transaction* txn) {
+    FW_ASSERT((txn->m_state == TxnState::TXN_STATE_S1) || (txn->m_state == TxnState::TXN_STATE_S2),
+              static_cast<U8>(txn->m_state));
+    FW_ASSERT(txn->m_chan != nullptr);
+
+    // Create and initialize Metadata PDU
+    MetadataPdu md;
+
+    // Set closure requested flag based on transaction class
+    // Class 1: closure not requested (0), Class 2: closure requested (1)
+    U8 closureRequested = (txn->m_state == TxnState::TXN_STATE_S2) ? 1 : 0;
+
+    // Direction is toward receiver for metadata PDU sent by sender
+    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
+
+    md.initialize(direction,
+                  txn->getClass(),                      // transmission mode (Class 1 or 2)
+                  m_manager->getLocalEidParam(),        // source EID
+                  txn->m_history->seq_num,              // transaction sequence number
+                  txn->m_history->peer_eid,             // destination EID
+                  txn->m_fsize,                         // file size
+                  txn->m_history->fnames.src_filename,  // source filename
+                  txn->m_history->fnames.dst_filename,  // destination filename
+                  ChecksumType::CHECKSUM_TYPE_MODULAR,  // checksum type
+                  closureRequested                      // closure requested flag
+    );
+
+    return serializeAndSendPdu(txn, md);
+}
+
+Status::T Engine::sendFd(Transaction* txn, FileDataPdu& fdPdu) {
+    Status::T status = serializeAndSendPdu(txn, fdPdu);
+    if (status == Cfdp::Status::SUCCESS) {
+        m_manager->addSentFileDataBytes(txn->getChannelId(), fdPdu.getDataSize());
+    }
+    return status;
+}
+
+Status::T Engine::sendEof(Transaction* txn) {
+    // Create and initialize EOF PDU
+    EofPdu eof;
+
+    // Direction is toward receiver for EOF sent by sender
+    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_RECEIVER;
+    ConditionCode conditionCode = static_cast<ConditionCode>(TxnStatusToConditionCode(txn->m_history->txn_stat));
+
+    // Increment sent EOF counters based on condition code
+    if (conditionCode == ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+        this->m_manager->incrementSentEofCanceled(txn->getChannelId());
+    } else if (conditionCode != ConditionCode::CONDITION_CODE_NO_ERROR) {
+        this->m_manager->incrementFaultTxEofError(txn->getChannelId());
+    }
+
+    eof.initialize(direction,
+                   txn->getClass(),                // transmission mode
+                   m_manager->getLocalEidParam(),  // source EID
+                   txn->m_history->seq_num,        // transaction sequence number
+                   txn->m_history->peer_eid,       // destination EID
+                   conditionCode,                  // condition code
+                   txn->m_crc.getValue(),          // checksum
+                   txn->m_fsize                    // file size
+    );
+
+    // Add entity ID TLV on error conditions (optional per CCSDS spec)
+    if (conditionCode != ConditionCode::CONDITION_CODE_NO_ERROR) {
+        Cfdp::Tlv tlv;
+        tlv.initialize(m_manager->getLocalEidParam());  // Local entity ID
+        eof.appendTlv(tlv);
+    }
+
+    return serializeAndSendPdu(txn, eof);
+}
+
+Status::T Engine::sendAck(Transaction* txn,
+                          AckTxnStatus ts,
+                          FileDirective dir_code,
+                          ConditionCode cc,
+                          EntityId peer_eid,
+                          TransactionSeq tsn) {
+    FW_ASSERT(
+        (dir_code == FileDirective::FILE_DIRECTIVE_END_OF_FILE) || (dir_code == FileDirective::FILE_DIRECTIVE_FIN),
+        static_cast<U8>(dir_code));
+
+    // Determine source and destination EIDs based on transaction direction
+    EntityId src_eid;
+    EntityId dst_eid;
+    if (txn->getHistory()->dir == Direction::DIRECTION_TX) {
+        src_eid = m_manager->getLocalEidParam();
+        dst_eid = peer_eid;
+    } else {
+        src_eid = peer_eid;
+        dst_eid = m_manager->getLocalEidParam();
+    }
+
+    // Create and initialize ACK PDU
+    AckPdu ack;
+
+    // Direction: toward sender for EOF ACK, toward receiver for FIN ACK
+    Cfdp::PduDirection direction = (dir_code == FileDirective::FILE_DIRECTIVE_END_OF_FILE)
+                                       ? Cfdp::PduDirection::DIRECTION_TOWARD_SENDER
+                                       : Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER;
+
+    ack.initialize(direction,
+                   txn->getClass(),  // transmission mode
+                   src_eid,          // source EID
+                   tsn,              // transaction sequence number
+                   dst_eid,          // destination EID
+                   dir_code,         // directive being acknowledged
+                   1,                // directive subtype code (always 1)
+                   cc,               // condition code
+                   ts                // transaction status
+    );
+
+    return serializeAndSendPdu(txn, ack);
+}
+
+Status::T Engine::sendFin(Transaction* txn, FinDeliveryCode dc, FinFileStatus fs, ConditionCode cc) {
+    // Create and initialize FIN PDU
+    FinPdu fin;
+
+    // Direction is toward sender for FIN sent by receiver
+    Cfdp::PduDirection direction = PduDirection::DIRECTION_TOWARD_SENDER;
+
+    fin.initialize(direction,
+                   txn->getClass(),                   // transmission mode
+                   txn->m_history->peer_eid,          // source EID (receiver)
+                   txn->m_history->seq_num,           // transaction sequence number
+                   m_manager->getLocalEidParam(),     // destination EID (sender)
+                   cc,                                // condition code
+                   static_cast<FinDeliveryCode>(dc),  // delivery code
+                   static_cast<FinFileStatus>(fs)     // file status
+    );
+
+    // Add entity ID TLV on error conditions (optional per CCSDS spec)
+    if (cc != ConditionCode::CONDITION_CODE_NO_ERROR) {
+        Cfdp::Tlv tlv;
+        tlv.initialize(m_manager->getLocalEidParam());  // Local entity ID
+        fin.appendTlv(tlv);
+    }
+
+    return serializeAndSendPdu(txn, fin);
+}
+
+Status::T Engine::sendNak(Transaction* txn, NakPdu& nakPdu) {
+    // Verify this is a Class 2 transaction (NAK only used in Class 2)
+    Class::T tx_class = txn->getClass();
+    FW_ASSERT(tx_class == Cfdp::Class::CLASS_2, tx_class);
+
+    return serializeAndSendPdu(txn, nakPdu);
+}
+
+Status::T Engine::serializeAndSendPdu(Transaction* txn, PduBase& pdu) {
+    // Delegate to the channel-based helper; a transaction always carries its channel.
+    return this->serializeAndSendPduOnChannel(*txn->m_chan, pdu);
+}
+
+Status::T Engine::serializeAndSendPduOnChannel(Channel& chan, PduBase& pdu) {
+    Fw::Buffer buffer;
+    Status::T status = Cfdp::Status::SUCCESS;
+
+    // Allocate buffer with space for packet descriptor
+    const FwSizeType bufferSize = pdu.getBufferSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE;
+    status = m_manager->getPduBuffer(buffer, chan, bufferSize);
+
+    if (status == Cfdp::Status::SUCCESS) {
+        // Serialize to buffer at offset to leave room for descriptor
+        Fw::SerialBuffer sb(buffer.getData() + CfdpManager::PACKET_DESCRIPTOR_SIZE,
+                            buffer.getSize() - CfdpManager::PACKET_DESCRIPTOR_SIZE);
+        Fw::SerializeStatus serStatus = pdu.serializeTo(sb);
+
+        if (serStatus != Fw::FW_SERIALIZE_OK) {
+            // Log generic PDU serialization error with PDU type
+            m_manager->log_WARNING_LO_FailPduSerialization(chan.getChannelId(), pdu.getType(),
+                                                           static_cast<I32>(serStatus));
+            m_manager->returnPduBuffer(chan, buffer);
+            status = Cfdp::Status::ERROR;
+        } else {
+            // Update buffer size to actual serialized size plus descriptor
+            buffer.setSize(sb.getSize() + CfdpManager::PACKET_DESCRIPTOR_SIZE);
+            m_manager->sendPduBuffer(chan, buffer);
+            m_manager->incrementSentPdu(chan.getChannelId());
+        }
+    }
+
+    return status;
+}
+
+Status::T Engine::sendFinAckStateless(Channel& chan,
+                                      TransactionSeq tsn,
+                                      EntityId finSrcEid,
+                                      EntityId finDstEid,
+                                      ConditionCode cc) {
+    // A FIN has arrived for a downlink transaction we sourced, but no live transaction
+    // remains (it already completed and was recycled). Per CFDP the sender must still
+    // acknowledge a retransmitted FIN; we do so statelessly from the FIN header.
+    //
+    // The FIN was sent toward us (the sender), so its header carries
+    //   sourceEid = the transaction source = this local entity,
+    //   destEid   = the peer (receiver).
+    // The ACK(FIN) we emit travels toward the receiver, mirroring Engine::sendAck's
+    // DIRECTION_TX case: src = local entity, dst = peer.
+    AckPdu ack;
+    ack.initialize(Cfdp::PduDirection::DIRECTION_TOWARD_RECEIVER,
+                   Cfdp::Class::CLASS_2,                      // FIN/ACK only exist in class 2
+                   finSrcEid,                                 // source EID (this local entity)
+                   tsn,                                       // transaction sequence number
+                   finDstEid,                                 // destination EID (the peer/receiver)
+                   FileDirective::FILE_DIRECTIVE_FIN,         // directive being acknowledged
+                   1,                                         // directive subtype code (always 1)
+                   cc,                                        // echo the FIN's condition code
+                   AckTxnStatus::ACK_TXN_STATUS_UNRECOGNIZED  // we no longer recognize this transaction
+    );
+
+    return this->serializeAndSendPduOnChannel(chan, ack);
+}
+
+void Engine::recvMd(Transaction* txn, const MetadataPdu& md) {
+    /* store the expected file size in transaction */
+    txn->m_fsize = md.getFileSize();
+
+    /* store the filenames in transaction - validation already done during deserialization */
+    txn->m_history->fnames.src_filename = md.getSourceFilename();
+    txn->m_history->fnames.dst_filename = md.getDestFilename();
+
+    this->m_manager->log_ACTIVITY_LO_MetadataReceived(txn->m_history->fnames.src_filename,
+                                                      txn->m_history->fnames.dst_filename, txn->m_history->seq_num);
+}
+
+Status::T Engine::recvFd(Transaction* txn, const FileDataPdu& fd) {
+    Status::T ret = Cfdp::Status::SUCCESS;
+
+    // Extract header
+    const Cfdp::PduHeader& header = fd.asHeader();
+
+    // Check for segment metadata flag (not currently supported)
+    if (header.hasSegmentMetadata()) {
+        /* If recv PDU has the "segment_meta_flag" set, this is not currently handled in CF. */
+        this->m_manager->log_WARNING_LO_FileDataSegmentMetadata();
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_PROTOCOL_ERROR);
+        this->m_manager->incrementRecvErrors(txn->getChannelId());
+        ret = Cfdp::Status::ERROR;
+    }
+
+    return ret;
+}
+
+Status::T Engine::recvEof(Transaction* txn, const EofPdu& eofPdu) {
+    // EOF PDU has been validated during fromBuffer()
+
+    // Process TLVs if present
+    const Cfdp::TlvList& tlvList = eofPdu.getTlvList();
+    for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
+        const Cfdp::Tlv& tlv = tlvList.getTlv(i);
+        if (tlv.getType() == Cfdp::TlvType::TLV_TYPE_ENTITY_ID) {
+            // Entity ID TLV present - validation not currently performed
+            // Future enhancement: Add validation or logging if required
+        }
+        // Other TLV types can be processed here in the future
+    }
+
+    return Cfdp::Status::SUCCESS;
+}
+
+Status::T Engine::recvFin(Transaction* txn, const FinPdu& finPdu) {
+    // FIN PDU has been validated during fromBuffer()
+
+    // Process TLVs if present
+    const Cfdp::TlvList& tlvList = finPdu.getTlvList();
+    for (U8 i = 0; i < tlvList.getNumTlv(); i++) {
+        const Cfdp::Tlv& tlv = tlvList.getTlv(i);
+        if (tlv.getType() == Cfdp::TlvType::TLV_TYPE_ENTITY_ID) {
+            // Entity ID TLV present - validation not currently performed
+            // Future enhancement: Add validation or logging if required
+        }
+        // Other TLV types can be processed here in the future
+    }
+
+    return Cfdp::Status::SUCCESS;
+}
+
+Status::T Engine::recvNak(Transaction* txn, const NakPdu& pdu) {
+    // NAK PDU has been validated during fromBuffer()
+    return Cfdp::Status::SUCCESS;
+}
+
+void Engine::recvDrop(Transaction* txn, const Fw::Buffer& buffer) {
+    this->m_manager->incrementRecvDropped(txn->getChannelId());
+    (void)buffer;  // Unused - we're just dropping the PDU
+}
+
+void Engine::recvHold(Transaction* txn, const Fw::Buffer& buffer) {
+    // anything received in this state is considered spurious
+    this->m_manager->incrementRecvSpurious(txn->getChannelId());
+
+    //
+    // Normally we do not expect PDUs for a transaction in holdover, because
+    // from the local point of view it is completed and done.  But the reason
+    // for the holdover is because the remote side might not have gotten all
+    // the acks and could still be [re-]sending us PDUs for anything it does
+    // not know we got already.
+    //
+    // If an R2 sent FIN, it's possible that the peer missed the
+    // FIN-ACK and is sending another FIN. In that case we need to send
+    // another ACK.
+    //
+
+    // currently the only thing we will re-ack is the FIN.
+
+    // Use peekPduType to determine the PDU type
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
+
+    // Check if this is a FIN PDU for a Class 2 transaction
+    if (pduType == Cfdp::PduTypeEnum::FINISHED && txn->getClass() == Cfdp::Class::CLASS_2) {
+        // Deserialize FIN PDU
+        FinPdu fin;
+        Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
+        sb2.setBuffLen(buffer.getSize());
+
+        Fw::SerializeStatus deserStatus = fin.deserializeFrom(sb2);
+        if (deserStatus == Fw::FW_SERIALIZE_OK) {
+            // Re-send the FIN-ACK
+            this->sendAck(txn, AckTxnStatus::ACK_TXN_STATUS_TERMINATED, FileDirective::FILE_DIRECTIVE_FIN,
+                          fin.getConditionCode(), txn->m_history->peer_eid, txn->m_history->seq_num);
+        }
+        // Note: Deserialization errors are silently ignored in hold state
+        // as we're just trying to be helpful by re-acknowledging FIN if we can
+    }
+}
+
+bool Engine::recvInit(Transaction* txn, const Fw::Buffer& buffer) {
+    // Use peekPduType to determine the PDU type before deserializing
+    Cfdp::PduTypeEnum::T pduType = Cfdp::peekPduType(buffer);
+
+    // First parse header to get transaction information
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+
+    Cfdp::PduHeader header;
+    Fw::SerializeStatus status = header.fromSerialBuffer(sb);
+
+    if (status == Fw::FW_SERIALIZE_OK) {
+        TransactionSeq transactionSeq = header.getTransactionSeq();
+        EntityId sourceEid = header.getSourceEid();
+        Class::T txmMode = header.getTxmMode();
+
+        // only RX transactions dare tread here
+        txn->m_history->seq_num = transactionSeq;
+
+        // peer_eid is always the remote partner. src_eid is always the transaction source.
+        // in this case, they are the same
+        txn->m_history->peer_eid = sourceEid;
+        txn->m_history->src_eid = sourceEid;
+
+        // all RX transactions will need a chunk list to track file segments
+        if (txn->m_chunks == nullptr) {
+            txn->m_chunks = txn->m_chan->findUnusedChunks(Direction::DIRECTION_RX);
+        }
+        if (txn->m_chunks == nullptr) {
+            this->m_manager->log_WARNING_LO_ChunklistUnavailable(transactionSeq);
+        } else {
+            if (pduType == Cfdp::PduTypeEnum::FILE_DATA) {
+                // file data PDU
+                // being idle and receiving a file data PDU means that no active transaction knew
+                // about the transaction in progress, so most likely PDUs were missed.
+
+                if (txmMode == Cfdp::Class::CLASS_1) {
+                    // R1, can't do anything without metadata first
+                    txn->m_state = TxnState::TXN_STATE_DROP;  // drop all incoming
+                    // use inactivity timer to ultimately free the state
+                } else {
+                    // R2 can handle missing metadata, so go ahead and create a temp file
+                    txn->m_state = TxnState::TXN_STATE_R2;
+                    txn->m_txn_class = Cfdp::Class::CLASS_2;
+                    txn->rInit();
+                    return true;  // Request re-dispatch to enter r2 state handler
+                }
+            } else if (pduType == Cfdp::PduTypeEnum::METADATA) {
+                // file directive PDU with metadata - this is the expected case for starting a new RX transaction
+                MetadataPdu md;
+                Fw::SerialBuffer sb2(const_cast<U8*>(buffer.getData()), buffer.getSize());
+                sb2.setBuffLen(buffer.getSize());
+
+                Fw::SerializeStatus deserStatus = md.deserializeFrom(sb2);
+                if (deserStatus == Fw::FW_SERIALIZE_OK) {
+                    this->recvMd(txn, md);
+
+                    // NOTE: whether or not class 1 or 2, get a free chunks. It's cheap, and simplifies cleanup path
+                    txn->m_state = txmMode == Cfdp::Class::CLASS_1 ? TxnState::TXN_STATE_R1 : TxnState::TXN_STATE_R2;
+                    txn->m_txn_class = txmMode;
+                    txn->m_flags.rx.md_recv = true;
+                    txn->rInit();  // initialize R
+                } else {
+                    m_manager->log_WARNING_LO_FailMetadataPduDeserialization(txn->getChannelId(),
+                                                                             static_cast<I32>(deserStatus));
+                }
+            } else {
+                // Unexpected PDU type in init state
+                this->m_manager->log_WARNING_LO_UnhandledPduInIdleState();
+                this->m_manager->incrementRecvErrors(txn->getChannelId());
+            }
+        }
+
+        if (txn->m_state == TxnState::TXN_STATE_INIT) {
+            // state was not changed, so free the transaction
+            this->finishTransaction(txn, false);
+        }
+    } else {
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(txn->getChannelId(), status);
+    }
+    return false;  // No re-dispatch needed
+}
+
+void Engine::receivePdu(U8 chan_id, const Fw::Buffer& buffer) {
+    Transaction* txn = nullptr;
+    Channel* chan = nullptr;
+
+    FW_ASSERT(chan_id < Cfdp::NumChannels, chan_id, Cfdp::NumChannels);
+
+    chan = m_channels[chan_id];
+    FW_ASSERT(chan != nullptr);
+
+    // Parse the header to get transaction routing info
+    // Avoid full PDU deserialization here to defer it until the appropriate handler
+    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+
+    Cfdp::PduHeader header;
+    Fw::SerializeStatus status = header.fromSerialBuffer(sb);
+
+    if (status == Fw::FW_SERIALIZE_OK) {
+        // Increment received PDU counter for PDUs with valid headers
+        this->m_manager->incrementRecvPdu(chan_id);
+
+        TransactionSeq transactionSeq = header.getTransactionSeq();
+        EntityId sourceEid = header.getSourceEid();
+        EntityId destEid = header.getDestEid();
+
+        // Look up transaction by sequence number
+        txn = chan->findTransactionBySequenceNumber(transactionSeq, sourceEid);
+
+        if (txn == nullptr) {
+            // A retransmitted FIN can arrive for a downlink transaction we sourced after
+            // that transaction has already completed and been recycled (e.g. the peer
+            // kept retransmitting FIN across a lossy/quiet link). Per CFDP the sender
+            // must still acknowledge it, so re-ACK statelessly from the FIN header.
+            // Such a FIN carries sourceEid == our local entity (we were the source) and
+            // destEid == the peer, so it would otherwise be dropped as InvalidDestinationEid.
+            if (Cfdp::peekPduType(buffer) == Cfdp::PduTypeEnum::FINISHED &&
+                sourceEid == this->m_manager->getLocalEidParam()) {
+                FinPdu fin;
+                Fw::SerialBuffer finSb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+                finSb.setBuffLen(buffer.getSize());
+                if (fin.deserializeFrom(finSb) == Fw::FW_SERIALIZE_OK) {
+                    this->sendFinAckStateless(*chan, transactionSeq, sourceEid, destEid, fin.getConditionCode());
+                    this->m_manager->log_DIAGNOSTIC_TxLateFinAcked(sourceEid, transactionSeq);
+                } else {
+                    this->m_manager->log_WARNING_LO_FailFinPduDeserialization(
+                        chan_id, static_cast<I32>(Fw::FW_DESERIALIZE_FORMAT_ERROR));
+                }
+            }
+            // if no match found, then it must be the case that we would be the destination entity id, so verify it
+            else if (destEid == this->m_manager->getLocalEidParam()) {
+                // we didn't find a match, so assign it to a transaction
+                // assume this is initiating an RX transaction, as TX transactions are only commanded
+                txn = this->startRxTransaction(chan->getChannelId());
+                if (txn == nullptr) {
+                    this->m_manager->log_WARNING_LO_RxTransactionLimitReached(sourceEid, transactionSeq);
+                }
+            } else {
+                this->m_manager->log_WARNING_LO_InvalidDestinationEid(destEid);
+            }
+        }
+
+        if (txn != nullptr) {
+            // found one! Send it to the transaction state processor
+            this->dispatchRecv(txn, buffer);
+        } else {
+            // Transaction limit reached - EVR already emitted by findOrStartRxTransaction
+        }
+    } else {
+        // Invalid PDU header, drop packet
+        m_manager->log_WARNING_LO_FailPduHeaderDeserialization(chan_id, static_cast<I32>(status));
+    }
+}
+
+void Engine::setChannelFlowState(U8 channelId, Flow::T flowState) {
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+    m_channels[channelId]->setFlowState(flowState);
+}
+
+Status::T Engine::setSuspendResumeTransaction(U8 channelId,
+                                              TransactionSeq transactionSeq,
+                                              EntityId entityId,
+                                              SuspendResume::T action) {
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        txn->m_flags.com.suspended = (action == SuspendResume::SUSPEND);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
+Status::T Engine::cancelTransactionBySeq(U8 channelId, TransactionSeq transactionSeq, EntityId entityId) {
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        this->cancelTransaction(txn);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
+Status::T Engine::abandonTransaction(U8 channelId, TransactionSeq transactionSeq, EntityId entityId) {
+    Status::T status = Status::ERROR;
+
+    FW_ASSERT(channelId < Cfdp::NumChannels, channelId, Cfdp::NumChannels);
+
+    Channel* chan = m_channels[channelId];
+    Transaction* txn = chan->findTransactionBySequenceNumber(transactionSeq, entityId);
+
+    if (txn != nullptr) {
+        this->finishTransaction(txn, false);
+        status = Status::SUCCESS;
+    }
+
+    return status;
+}
+
+void Engine::txFileInitiate(Transaction* txn,
+                            Class::T cfdp_class,
+                            Keep::T keep,
+                            U8 chan,
+                            U8 priority,
+                            EntityId dest_id) {
+    txn->initTxFile(cfdp_class, keep, chan, priority);
+
+    // Increment sequence number for new transaction
+    ++this->m_seqNum;
+
+    // Capture info for history
+    txn->m_history->seq_num = this->m_seqNum;
+    txn->m_history->src_eid = m_manager->getLocalEidParam();
+    txn->m_history->peer_eid = dest_id;
+
+    txn->m_chan->insertSortPrio(txn, QueueId::PEND);
+}
+
+Status::T Engine::txFile(const Fw::String& src_filename,
+                         const Fw::String& dst_filename,
+                         Class::T cfdp_class,
+                         Keep::T keep,
+                         U8 chan_num,
+                         U8 priority,
+                         EntityId dest_id,
+                         TransactionInitType initType) {
+    Transaction* txn;
+    Channel* chan = nullptr;
+
+    FW_ASSERT(chan_num < Cfdp::NumChannels, chan_num, Cfdp::NumChannels);
+    chan = m_channels[chan_num];
+
+    Status::T ret = Cfdp::Status::SUCCESS;
+
+    if (chan->getNumCmdTx() < MaxCommandedPlaybackFilesPerChan) {
+        txn = chan->findUnusedTransaction(Direction::DIRECTION_TX);
+    } else {
+        txn = nullptr;
+    }
+
+    if (txn == nullptr) {
+        this->m_manager->log_WARNING_LO_MaxTxTransactionsReached();
+        ret = Cfdp::Status::ERROR;
+    } else {
+        // NOTE: the caller of this function ensures the provided src and dst filenames are nullptr terminated
+
+        txn->m_history->fnames.src_filename = src_filename;
+        txn->m_history->fnames.dst_filename = dst_filename;
+        this->txFileInitiate(txn, cfdp_class, keep, chan_num, priority, dest_id);
+
+        chan->incrementCmdTxCounter();
+        txn->m_flags.tx.cmd_tx = true;
+
+        // Set transaction initiation type
+        txn->m_initType = initType;
+
+        // Log transaction queued event
+        this->m_manager->log_ACTIVITY_LO_TxFileQueued(txn->m_history->fnames.src_filename, txn->m_history->seq_num);
+    }
+
+    return ret;
+}
+
+Transaction* Engine::startRxTransaction(U8 chan_num) {
+    Channel* chan = nullptr;
+    Transaction* txn;
+
+    FW_ASSERT(chan_num < Cfdp::NumChannels, chan_num, Cfdp::NumChannels);
+    chan = m_channels[chan_num];
+
+    // if (CF_AppData.hk.Payload.channel_hk[chan_num].q_size[QueueId::RX] < CF_MAX_SIMULTANEOUS_RX)
+    // {
+    //     txn = chan->findUnusedTransaction(Direction::DIRECTION_RX);
+    // }
+    // else
+    // {
+    //     txn = nullptr;
+    // }
+    // Receive transactions are limited by MaxRxTransactions parameter
+    txn = chan->findUnusedTransaction(Direction::DIRECTION_RX);
+
+    if (txn != nullptr) {
+        // set default FIN status
+        txn->m_state_data.receive.r2.dc = FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE;
+        txn->m_state_data.receive.r2.fs = FinFileStatus::FIN_FILE_STATUS_DISCARDED;
+
+        txn->m_flags.com.q_index = QueueId::RX;
+        chan->insertBackInQueue(static_cast<QueueId::T>(txn->m_flags.com.q_index), &txn->m_cl_node);
+    }
+
+    return txn;
+}
+
+Status::T Engine::playbackDirInitiate(Playback* pb,
+                                      const Fw::String& src_filename,
+                                      const Fw::String& dst_filename,
+                                      Class::T cfdp_class,
+                                      Keep::T keep,
+                                      U8 chan,
+                                      U8 priority,
+                                      EntityId dest_id) {
+    Status::T status = Cfdp::Status::SUCCESS;
+    Os::Directory::Status dirStatus;
+
+    // make sure the directory can be open
+    dirStatus = pb->dir.open(src_filename.toChar(), Os::Directory::READ);
+    if (dirStatus != Os::Directory::OP_OK) {
+        this->m_manager->log_WARNING_LO_PlaybackDirOpenFailed(src_filename, dirStatus);
+        this->m_manager->incrementFaultDirectoryRead(chan);
+        status = Cfdp::Status::ERROR;
+    } else {
+        pb->diropen = true;
+        pb->busy = true;
+        pb->keep = keep;
+        pb->priority = priority;
+        pb->dest_id = dest_id;
+        pb->cfdp_class = cfdp_class;
+
+        // NOTE: the caller of this function ensures the provided src and dst filenames are nullptr terminated
+        pb->fnames.src_filename = src_filename;
+        pb->fnames.dst_filename = dst_filename;
+    }
+
+    // the executor will start the transfer next cycle
+    return status;
+}
+
+Status::T Engine::playbackDir(const Fw::String& src_filename,
+                              const Fw::String& dst_filename,
+                              Class::T cfdp_class,
+                              Keep::T keep,
+                              U8 chan,
+                              U8 priority,
+                              EntityId dest_id) {
+    U32 i;
+    Playback* pb;
+    Status::T status;
+
+    // Loop through the channel's playback directories to find an open slot
+    for (i = 0; i < MaxCommandedPlaybackDirectoriesPerChan; ++i) {
+        pb = m_channels[chan]->getPlayback(i);
+        if (!pb->busy) {
+            break;
+        }
+    }
+
+    if (i == MaxCommandedPlaybackDirectoriesPerChan) {
+        this->m_manager->log_WARNING_LO_PlaybackDirSlotUnavailable();
+        status = Cfdp::Status::ERROR;
+    } else {
+        status = this->playbackDirInitiate(pb, src_filename, dst_filename, cfdp_class, keep, chan, priority, dest_id);
+    }
+
+    return status;
+}
+
+Status::T Engine::startPollDir(U8 chanId,
+                               U8 pollId,
+                               const Fw::String& srcDir,
+                               const Fw::String& dstDir,
+                               Class::T cfdp_class,
+                               U8 priority,
+                               EntityId destEid,
+                               U32 intervalSec) {
+    Status::T status = Cfdp::Status::SUCCESS;
+    CfdpPollDir* pd = nullptr;
+
+    FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
+    FW_ASSERT(pollId < MaxPollingDirPerChan, pollId, MaxPollingDirPerChan);
+
+    // First check if the poll directory is already in use
+    pd = m_channels[chanId]->getPollDir(pollId);
+    if (pd->enabled == Fw::Enabled::DISABLED) {
+        // Populate arguments
+        pd->intervalSec = intervalSec;
+        pd->priority = priority;
+        pd->cfdpClass = cfdp_class;
+        pd->destEid = destEid;
+        pd->srcDir = srcDir;
+        pd->dstDir = dstDir;
+
+        // Set timer and enable polling
+        pd->intervalTimer.setTimer(pd->intervalSec);
+        pd->enabled = Fw::Enabled::ENABLED;
+    } else {
+        // Poll directory slot already in use
+        this->m_manager->log_WARNING_LO_PollDirBusy(chanId, pollId);
+        status = Cfdp::Status::ERROR;
+    }
+
+    return status;
+}
+
+Status::T Engine::stopPollDir(U8 chanId, U8 pollId) {
+    Status::T status = Cfdp::Status::SUCCESS;
+    CfdpPollDir* pd = nullptr;
+
+    FW_ASSERT(chanId < Cfdp::NumChannels, chanId, Cfdp::NumChannels);
+    FW_ASSERT(pollId < MaxPollingDirPerChan, pollId, MaxPollingDirPerChan);
+
+    // Check if the poll directory is in use
+    pd = m_channels[chanId]->getPollDir(pollId);
+    if (pd->enabled == Fw::Enabled::ENABLED) {
+        // Clear poll directory arguments
+        pd->intervalSec = 0;
+        pd->priority = 0;
+        pd->cfdpClass = static_cast<Class::T>(0);
+        pd->destEid = static_cast<EntityId>(0);
+        pd->srcDir = "";
+        pd->dstDir = "";
+
+        // Disable timer and polling
+        pd->intervalTimer.disableTimer();
+        pd->enabled = Fw::Enabled::DISABLED;
+    } else {
+        // Poll directory not active - cannot stop
+        this->m_manager->log_WARNING_LO_PollDirNotActive(chanId, pollId);
+        status = Cfdp::Status::ERROR;
+    }
+
+    return status;
+}
+
+void Engine::cycle(void) {
+    U32 i;
+
+    for (i = 0; i < Cfdp::NumChannels; ++i) {
+        Channel* chan = m_channels[i];
+        FW_ASSERT(chan != nullptr);
+
+        chan->resetOutgoingCounter();
+
+        if (chan->getFlowState() == Cfdp::Flow::NOT_FROZEN) {
+            // handle ticks before tx cycle. Do this because there may be a limited number of TX messages available
+            // this cycle, and it's important to respond to class 2 ACK/NAK more than it is to send new filedata
+            // PDUs.
+
+            // cycle all transactions (tick)
+            chan->tickTransactions();
+
+            // cycle the current tx transaction
+            chan->cycleTx();
+
+            chan->processPlaybackDirectories();
+            chan->processPollingDirectories();
+        }
+    }
+}
+
+void Engine::finishTransaction(Transaction* txn, bool keep_history) {
+    if (txn->m_flags.com.q_index == QueueId::FREE) {
+        this->m_manager->log_DIAGNOSTIC_ResetFreedTransaction();
+        return;
+    }
+
+    // this should always be
+    FW_ASSERT(txn->m_chan != nullptr);
+
+    // If this was on the TXA queue (transmit side) then we need to move it out
+    // so the tick processor will stop trying to actively transmit something -
+    // it should move on to the next transaction.
+    //
+    // RX transactions can stay on the RX queue, that does not hurt anything
+    // because they are only triggered when a PDU comes in matching that seq_num
+    // (RX queue is not separated into A/W parts)
+    if (txn->m_flags.com.q_index == QueueId::TXA) {
+        txn->m_chan->dequeueTransaction(txn);
+        txn->m_chan->insertSortPrio(txn, QueueId::TXW);
+    }
+
+    if (true == txn->m_fd.isOpen()) {
+        txn->m_fd.close();
+
+        if (!txn->m_keep) {
+            this->handleNotKeepFile(txn);
+        }
+    }
+
+    if (txn->m_history != nullptr) {
+        // Emit completion events for successful transactions
+        if (!TxnStatusIsError(txn->m_history->txn_stat)) {
+            if (txn->m_history->dir == Direction::DIRECTION_TX) {
+                this->m_manager->log_ACTIVITY_HI_TxFileTransferCompleted(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
+                    static_cast<U32>(txn->m_fsize));
+            } else if (txn->m_history->dir == Direction::DIRECTION_RX) {
+                this->m_manager->log_ACTIVITY_HI_RxFileTransferCompleted(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, m_manager->getLocalEidParam(),
+                    txn->m_history->fnames.dst_filename, static_cast<U32>(txn->m_fsize));
+            }
+        } else {
+            // Log failure events for failed transactions
+            if (txn->m_history->dir == Direction::DIRECTION_TX) {
+                this->m_manager->log_WARNING_LO_TxFileTransferFailed(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
+                    static_cast<U8>(txn->m_history->txn_stat));
+            } else if (txn->m_history->dir == Direction::DIRECTION_RX) {
+                this->m_manager->log_WARNING_LO_RxFileTransferFailed(
+                    txn->m_txn_class, txn->m_history->seq_num, txn->m_history->src_eid,
+                    txn->m_history->fnames.src_filename, txn->m_history->peer_eid, txn->m_history->fnames.dst_filename,
+                    static_cast<U8>(txn->m_history->txn_stat));
+            }
+        }
+
+        // extra bookkeeping for tx direction only
+        if (txn->m_history->dir == Direction::DIRECTION_TX && txn->m_flags.tx.cmd_tx) {
+            txn->m_chan->decrementCmdTxCounter();
+        }
+
+        // Notify via port if this was a port-initiated transfer
+        if (txn->m_initType == TransactionInitType::INIT_BY_PORT) {
+            // Map transaction status to SendFileStatus
+            Svc::SendFileStatus::T status;
+            if (TxnStatusIsError(txn->m_history->txn_stat)) {
+                status = Svc::SendFileStatus::STATUS_ERROR;
+            } else {
+                status = Svc::SendFileStatus::STATUS_OK;
+            }
+
+            // Invoke the file complete notification
+            this->m_manager->sendFileComplete(status);
+        }
+
+        txn->m_flags.com.keep_history = keep_history;
+    }
+
+    if (txn->m_pb) {
+        // a playback's transaction is now done, decrement the playback counter
+        FW_ASSERT(txn->m_pb->num_ts);
+        --txn->m_pb->num_ts;
+    }
+
+    txn->m_chan->clearCurrentIfMatch(txn);
+
+    // Put this transaction into the holdover state, inactivity timer will recycle it
+    txn->m_state = TxnState::TXN_STATE_HOLD;
+    this->armInactTimer(txn);
+}
+
+void Engine::setTxnStatus(Transaction* txn, TxnStatus txn_stat) {
+    if (!TxnStatusIsError(txn->m_history->txn_stat)) {
+        txn->m_history->txn_stat = txn_stat;
+    }
+}
+
+void Engine::cancelTransaction(Transaction* txn) {
+    void (Transaction::* fns[static_cast<U32>(Direction::DIRECTION_NUM)])() = {nullptr};
+
+    fns[static_cast<U32>(Direction::DIRECTION_RX)] = &Transaction::rCancel;
+    fns[static_cast<U32>(Direction::DIRECTION_TX)] = &Transaction::sCancel;
+
+    if (!txn->m_flags.com.canceled) {
+        txn->m_flags.com.canceled = true;
+        this->setTxnStatus(txn, TxnStatus::TXN_STATUS_CANCEL_REQUEST_RECEIVED);
+
+        // this should always be true, just confirming before indexing into array
+        if (txn->m_history->dir < Direction::DIRECTION_NUM) {
+            (txn->*fns[static_cast<U32>(txn->m_history->dir)])();
+        }
+    }
+}
+
+bool Engine::isPollingDir(const Fw::StringBase& src_file, U8 chan_num) {
+    bool return_code = false;
+    Fw::String src_dir;
+    CfdpPollDir* pd;
+    U32 i;
+
+    // Extract directory portion (everything before last '/')
+    FwSizeType lastSlashPos = 0;
+    bool foundSlash = false;
+    for (FwSizeType pos = 0; pos < src_file.length(); ++pos) {
+        if (src_file.toChar()[pos] == '/') {
+            lastSlashPos = pos;
+            foundSlash = true;
+        }
+    }
+
+    if (foundSlash) {
+        src_dir.format("%.*s", static_cast<int>(lastSlashPos), src_file.toChar());
+    }
+
+    for (i = 0; i < MaxPollingDirPerChan; ++i) {
+        pd = m_channels[chan_num]->getPollDir(i);
+        if (src_dir == pd->srcDir) {
+            return_code = true;
+            break;
+        }
+    }
+
+    return return_code;
+}
+
+void Engine::handleNotKeepFile(Transaction* txn) {
+    Os::FileSystem::Status fileStatus = Os::FileSystem::OTHER_ERROR;
+    Fw::String failDir;
+    Fw::String moveDir;
+
+    // Sender
+    if (txn->getHistory()->dir == Direction::DIRECTION_TX) {
+        if (!TxnStatusIsError(txn->getHistory()->txn_stat)) {
+            // If move directory is defined attempt move
+            moveDir = m_manager->getMoveDirParam(txn->getChannelId());
+            if (moveDir.length() > 0) {
+                fileStatus = Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), moveDir.toChar());
+                if (fileStatus != Os::FileSystem::OP_OK) {
+                    m_manager->log_WARNING_LO_FailKeepFileMove(txn->m_history->fnames.src_filename, moveDir,
+                                                               fileStatus);
+                }
+            }
+
+            // If move_dir is empty or move failed, delete the file
+            if (fileStatus != Os::FileSystem::OP_OK) {
+                fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
+                if (fileStatus != Os::FileSystem::OP_OK) {
+                    m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.src_filename, fileStatus);
+                }
+            }
+        } else {
+            // file inside a polling directory
+            if (this->isPollingDir(txn->m_history->fnames.src_filename, txn->getChannelId())) {
+                // If fail directory is defined attempt move
+                failDir = m_manager->getFailDirParam(txn->getChannelId());
+                if (failDir.length() > 0) {
+                    fileStatus =
+                        Os::FileSystem::moveFile(txn->m_history->fnames.src_filename.toChar(), failDir.toChar());
+                    if (fileStatus != Os::FileSystem::OP_OK) {
+                        m_manager->log_WARNING_LO_FailPollFileMove(txn->m_history->fnames.src_filename, failDir,
+                                                                   fileStatus);
+                    }
+                }
+
+                // If fail_dir is empty or move failed, delete the file
+                if (fileStatus != Os::FileSystem::OP_OK) {
+                    fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.src_filename.toChar());
+                    if (fileStatus != Os::FileSystem::OP_OK) {
+                        m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.src_filename, fileStatus);
+                    }
+                }
+            }
+        }
+    }
+    // Not Sender
+    else {
+        fileStatus = Os::FileSystem::removeFile(txn->m_history->fnames.dst_filename.toChar());
+        if (fileStatus != Os::FileSystem::OP_OK) {
+            m_manager->log_WARNING_LO_FileRemoveFailed(txn->m_history->fnames.dst_filename, fileStatus);
+        }
+    }
+}
+
+Cfdp::ChannelTelemetry& Engine::getChannelTelemetryRef(U8 channelId) {
+    return this->m_manager->getChannelTelemetryRef(channelId);
+}
+
+}  // namespace Cfdp
+}  // namespace Ccsds
+}  // namespace Svc
