@@ -159,13 +159,22 @@ jobs:
           cd ../..
           pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
             --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
+            --no-zmq \
             -v \
             FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py || {
             echo ""
             echo "Integration tests failed!"
             echo ""
+            echo "=== Checking for log files ==="
+            ls -la ci-logs/ || echo "ci-logs directory not found"
+            echo ""
             echo "=== GDS Logs ==="
-            cat ci-logs/*.log 2>/dev/null || echo "No log files found"
+            for logfile in ci-logs/*; do
+              if [ -f "$logfile" ]; then
+                echo "=== Contents of $logfile ==="
+                cat "$logfile"
+              fi
+            done
             exit 1
           }
           # Archive the outputs
