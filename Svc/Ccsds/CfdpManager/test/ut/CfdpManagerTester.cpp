@@ -34,7 +34,7 @@ CfdpManagerTester ::CfdpManagerTester()
     this->component.loadParameters();
 
     // Configure CFDP engine after parameters are loaded
-    this->component.configure(this->m_allocator);
+    this->component.configure(this->m_allocator, 10);
 }
 
 CfdpManagerTester ::~CfdpManagerTester() {
@@ -202,10 +202,13 @@ void CfdpManagerTester::setupTxPortTransaction(const char* srcFile,
     // Capture current sequence number before initiating
     const U32 initialSeqNum = component.m_engine->m_seqNum;
 
-    // Initiate via port (synchronous - no dispatch needed)
+    // Initiate via port. The guarded port only enqueues the request; the transaction is not
+    // created until the active thread drains the queue, which we trigger explicitly here.
     Svc::SendFileResponse response = invokeSendFilePort(srcFile, dstFile);
 
-    ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, response.get_status()) << "Port-based file send should succeed";
+    ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, response.get_status()) << "Port-based file send should be accepted";
+
+    this->component.drainFileInQueue();
 
     // Find the transaction that was created
     setup.expectedSeqNum = initialSeqNum + 1;

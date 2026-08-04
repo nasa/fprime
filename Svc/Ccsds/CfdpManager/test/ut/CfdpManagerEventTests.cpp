@@ -2456,8 +2456,9 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     // txFile() does NOT validate that the source file exists (a nonexistent file is
     // detected later, during a TX tick, as TxFileOpenFailed). The only path that makes
     // txFile() return ERROR is transaction-slot exhaustion, so drive that: fill the
-    // channel's commanded-TX slots, then invoke the fileIn port. The port handler maps
-    // the txFile error to SendFileInitiateFail (CfdpManager.cpp:166).
+    // channel's commanded-TX slots, then invoke the fileIn port. The port only enqueues
+    // the request; draining the queue on the active thread runs txFile() and maps its
+    // error to SendFileInitiateFail (see CfdpManager::drainFileInQueue).
 
     // Fill the commanded-TX slots on the default fileIn channel so the next txFile() fails.
     Fw::ParamValid valid;
@@ -2472,10 +2473,13 @@ void CfdpManagerTester::testSendFileInitiateFailEvent() {
     Fw::String source("test/ut/output/send_file_initiate_fail.bin");
     Fw::String dest("/dest/test.bin");
 
-    // fileIn is a guarded (synchronous) port: the handler runs inline and emits the
-    // event immediately. Do NOT call doDispatch() here - it would block forever on the
-    // active component's empty message queue.
-    invoke_to_fileIn(0, source, dest, 0, 0);
+    // fileIn is a guarded (synchronous) port: the handler runs inline and only enqueues the
+    // request, returning STATUS_OK. Do NOT call doDispatch() here - it would block forever on
+    // the active component's empty message queue. Draining the queue runs txFile() and emits
+    // the failure event.
+    Svc::SendFileResponse response = invoke_to_fileIn(0, source, dest, 0, 0);
+    ASSERT_EQ(Svc::SendFileStatus::STATUS_OK, response.get_status()) << "Request should be accepted for processing";
+    this->component.drainFileInQueue();
 
     // Verify SendFileInitiateFail event and its argument (the source filename).
     // txFile()'s slot-exhaustion path also emits MaxTxTransactionsReached (Engine.cpp),

@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include <Fw/Com/ComPacket.hpp>
+#include <Os/QueueString.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManager.hpp>
 #include <Svc/Ccsds/CfdpManager/Channel.hpp>
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
@@ -30,7 +31,7 @@ CfdpManager ::~CfdpManager() {
     }
 }
 
-void CfdpManager ::configure(Fw::MemAllocator& allocator, FwEnumStoreType memId) {
+void CfdpManager ::configure(Fw::MemAllocator& allocator, FwSizeType fileQueueDepth, FwEnumStoreType memId) {
     // Allocate and initialize the CFDP engine
     FwSizeType engineSize = sizeof(Engine);
     this->m_engine = static_cast<Engine*>(allocator.allocate(memId, engineSize));
@@ -46,6 +47,18 @@ void CfdpManager ::configure(Fw::MemAllocator& allocator, FwEnumStoreType memId)
     for (U8 i = 0; i < Cfdp::NumChannels; i++) {
         this->m_channelTelemetry[i] = Cfdp::ChannelTelemetry();
     }
+
+    // Create the fileIn request handoff queue
+    this->m_fileInQueueDepth = fileQueueDepth;
+    Os::Queue::Status queueStat =
+        this->m_fileInQueue.create(this->getInstance(), Os::QueueString("cfdpFileInQueue"), fileQueueDepth,
+                                   static_cast<FwSizeType>(sizeof(FileInRequest)));
+    FW_ASSERT(queueStat == Os::Queue::OP_OK, static_cast<FwAssertArgType>(queueStat));
+}
+
+void CfdpManager ::deinit() {
+    this->m_fileInQueue.teardown();
+    CfdpManagerComponentBase::deinit();
 }
 
 void CfdpManager ::cleanup() {
@@ -66,10 +79,74 @@ void CfdpManager ::cleanup() {
 void CfdpManager ::run1Hz_handler(FwIndexType portNum, U32 context) {
     // The timer logic built into the CFDP engine requires it to be driven at 1 Hz
     FW_ASSERT(this->m_engine != nullptr);
+
+    // Drain any port-initiated file send requests before cycling the engine
+    this->drainFileInQueue();
+
     this->m_engine->cycle();
 
     // Emit telemetry once per second
     this->tlmWrite_ChannelTelemetry(this->m_channelTelemetry);
+}
+
+void CfdpManager ::drainFileInQueue() {
+    FW_ASSERT(this->m_engine != nullptr);
+
+    // Drain the whole queue; the depth bound guarantees the loop terminates.
+    for (FwSizeType drained = 0; drained < this->m_fileInQueueDepth; drained++) {
+        FileInRequest request;
+        FwSizeType actualSize = 0;
+        FwQueuePriorityType priority = 0;
+        Os::Queue::Status status =
+            this->m_fileInQueue.receive(reinterpret_cast<U8*>(&request), static_cast<FwSizeType>(sizeof(request)),
+                                        Os::Queue::BlockingType::NONBLOCKING, actualSize, priority);
+
+        // Queue empty (or any non-OK status) ends the drain for this cycle
+        if (status != Os::Queue::Status::OP_OK || actualSize != sizeof(request)) {
+            break;
+        }
+
+        // Look up the per-channel default parameters
+        Fw::ParamValid valid;
+        U8 channelId = this->paramGet_FileInDefaultChannel(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        // Reject an out-of-range channel parameter rather than letting it assert in Engine::txFile
+        if (channelId >= Cfdp::NumChannels) {
+            this->log_WARNING_LO_InvalidChannel(channelId, Cfdp::NumChannels);
+            this->sendFileComplete(Svc::SendFileStatus::STATUS_INVALID);
+            continue;
+        }
+
+        EntityId destEid = this->paramGet_FileInDefaultDestEntityId(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        Class::T cfdpClass = this->paramGet_FileInDefaultClass(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        Keep::T keep = this->paramGet_FileInDefaultKeep(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        U8 priorityParam = this->paramGet_FileInDefaultPriority(valid);
+        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+                  static_cast<FwAssertArgType>(valid.e));
+
+        // Initiate the transfer on the active thread
+        Status::T txStatus =
+            this->m_engine->txFile(request.sourceFileName, request.destFileName, cfdpClass, keep, channelId,
+                                   priorityParam, destEid, TransactionInitType::INIT_BY_PORT);
+
+        // The caller already received queue-acceptance success; report the deferred initiation
+        // result via fileDoneOut so a failed initiation does not leave the caller waiting forever.
+        if (txStatus != Status::SUCCESS) {
+            this->log_WARNING_LO_SendFileInitiateFail(request.sourceFileName);
+            this->sendFileComplete(Svc::SendFileStatus::STATUS_ERROR);
+        }
+    }
 }
 
 void CfdpManager ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
@@ -124,60 +201,46 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(FwIndexType portNum,
                                                    U32 offset,
                                                    U32 length) {
     Svc::SendFileResponse response;
-    FW_ASSERT(this->m_engine != nullptr);
+    // Set context to portNum so we can identify this transaction later
+    response.set_context(static_cast<U32>(portNum));
 
     // CFDP engine does not support partial file retransmit at this time
     // Offset and length must be 0 to send the entire file
     if (offset > 0 || length > 0) {
         response.set_status(Svc::SendFileStatus::STATUS_INVALID);
         this->log_WARNING_LO_UnsupportedSendFileArguments(offset, length);
-    } else {
-        // Get parameters for fileIn port-initiated transfers
-        Fw::ParamValid valid;
-        U8 channelId = this->paramGet_FileInDefaultChannel(valid);
-        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-                  static_cast<FwAssertArgType>(valid.e));
-
-        // channelId is a ground-settable parameter; reject an out-of-range value rather than
-        // letting it assert in Engine::txFile.
-        if (channelId >= Cfdp::NumChannels) {
-            this->log_WARNING_LO_InvalidChannel(channelId, Cfdp::NumChannels);
-            response.set_status(Svc::SendFileStatus::STATUS_INVALID);
-            response.set_context(static_cast<U32>(portNum));
-            return response;
-        }
-
-        EntityId destEid = this->paramGet_FileInDefaultDestEntityId(valid);
-        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-                  static_cast<FwAssertArgType>(valid.e));
-
-        Class::T cfdpClass = this->paramGet_FileInDefaultClass(valid);
-        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-                  static_cast<FwAssertArgType>(valid.e));
-
-        Keep::T keep = this->paramGet_FileInDefaultKeep(valid);
-        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-                  static_cast<FwAssertArgType>(valid.e));
-
-        U8 priority = this->paramGet_FileInDefaultPriority(valid);
-        FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-                  static_cast<FwAssertArgType>(valid.e));
-
-        // Attempt to initiate the file transfer (mark as port-initiated)
-        Status::T status = this->m_engine->txFile(sourceFileName, destFileName, cfdpClass, keep, channelId, priority,
-                                                  destEid, TransactionInitType::INIT_BY_PORT);
-
-        // Map CFDP status to SendFileStatus
-        if (status == Status::SUCCESS) {
-            response.set_status(Svc::SendFileStatus::STATUS_OK);
-        } else {
-            response.set_status(Svc::SendFileStatus::STATUS_ERROR);
-            this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
-        }
+        return response;
     }
 
-    // Set context to portNum so we can identify this transaction later
-    response.set_context(static_cast<U32>(portNum));
+    // Copy the request into the internal queue instead of touching the engine here. This handler
+    // runs on the caller's thread (guarded port); the engine is mutated on the active thread when
+    // run1Hz drains the queue. The synchronous response only indicates that the request was
+    // accepted for processing; the final transfer result is delivered later via fileDoneOut.
+    FileInRequest request;
+
+    // Guard against filenames that would not fit in the queued request
+    if (sourceFileName.length() >= request.sourceFileName.getCapacity() ||
+        destFileName.length() >= request.destFileName.getCapacity()) {
+        response.set_status(Svc::SendFileStatus::STATUS_INVALID);
+        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+        return response;
+    }
+
+    request.sourceFileName = sourceFileName;
+    request.destFileName = destFileName;
+    request.context = static_cast<U32>(portNum);
+
+    Os::Queue::Status status =
+        this->m_fileInQueue.send(reinterpret_cast<U8*>(&request), static_cast<FwSizeType>(sizeof(request)), 0,
+                                 Os::Queue::BlockingType::NONBLOCKING);
+
+    if (status != Os::Queue::Status::OP_OK) {
+        // Queue full - reject the request so the caller can retry later
+        response.set_status(Svc::SendFileStatus::STATUS_BUSY);
+        this->log_WARNING_LO_SendFileInitiateFail(sourceFileName);
+    } else {
+        response.set_status(Svc::SendFileStatus::STATUS_OK);
+    }
 
     return response;
 }

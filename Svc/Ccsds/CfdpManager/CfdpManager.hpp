@@ -8,6 +8,8 @@
 #define CCSDS_CFDPMANAGER_HPP
 
 #include <Fw/Types/MemAllocator.hpp>
+#include <Fw/Types/String.hpp>
+#include <Os/Queue.hpp>
 #include <Svc/Ccsds/CfdpManager/CfdpManagerComponentAc.hpp>
 #include <Svc/Ccsds/CfdpManager/Types/StatusEnumAc.hpp>
 
@@ -46,11 +48,15 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! Must be called once after construction and before any CFDP operations.
     //!
     //! \param allocator Memory allocator to use for Engine allocation
+    //! \param fileQueueDepth Depth of the fileIn request handoff queue
     //! \param memId Allocator ID for deallocation
-    void configure(Fw::MemAllocator& allocator, FwEnumStoreType memId = 0);
+    void configure(Fw::MemAllocator& allocator, FwSizeType fileQueueDepth, FwEnumStoreType memId = 0);
 
     //! Cleanup CFDP engine and deallocate resources
     void cleanup();
+
+    //! Tear down the fileIn request queue
+    void deinit();
 
   public:
     // ----------------------------------------------------------------------
@@ -405,6 +411,12 @@ class CfdpManager final : public CfdpManagerComponentBase {
     // Private command helper functions
     // ----------------------------------------------------------------------
 
+    //! Drains the fileIn request queue and initiates the transfers on the active thread
+    //!
+    //! Called at the start of run1Hz, before the engine is cycled, so that all engine state
+    //! mutation happens on the component thread and never races the caller's thread.
+    void drainFileInQueue();
+
     //! Checks if the requested channel index is valid, and emits an EVR if not
     Fw::CmdResponse::T checkCommandChannelIndex(U8 channelIndex  //!< The channel index to check
     );
@@ -494,10 +506,30 @@ class CfdpManager final : public CfdpManagerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Types
+    // ----------------------------------------------------------------------
+
+    //! A port-initiated file send request, copied into the internal queue by fileIn_handler
+    //! and consumed on the active thread in run1Hz. Fixed-size and trivially relocatable so it
+    //! can be transported through Os::Queue.
+    struct FileInRequest {
+        Fw::String sourceFileName;  //!< Path of file to send
+        Fw::String destFileName;    //!< Path to store file at destination
+        U32 context;                //!< Port number of the originating fileIn request
+    };
+
+    // ----------------------------------------------------------------------
     // Member variables
     // ----------------------------------------------------------------------
     // CFDP Engine - owns all protocol state and operations
     Engine* m_engine;
+
+    //! Queue of accepted port-initiated file send requests, drained on the active thread
+    Os::Queue m_fileInQueue;
+
+    //! Depth of the fileIn request handoff queue, also the max drained per cycle. Set at
+    //! configure time from the fileQueueDepth argument.
+    FwSizeType m_fileInQueueDepth = 0;
 
     //! Telemetry array for all CFDP channels
     Cfdp::ChannelTelemetryArray m_channelTelemetry;
