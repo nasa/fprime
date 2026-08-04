@@ -168,20 +168,14 @@ Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
 }
 
 Fw::SerializeStatus FileDataPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
-    // Cast to SerialBuffer and delegate to toSerialBuffer
-    Fw::SerialBuffer* serialBuffer = dynamic_cast<Fw::SerialBuffer*>(&buffer);
-    if (serialBuffer == nullptr) {
-        return Fw::FW_SERIALIZE_FORMAT_ERROR;
-    }
+    // Caller contract guarantees a SerialBuffer.
+    Fw::SerialBuffer* serialBuffer = static_cast<Fw::SerialBuffer*>(&buffer);
     return this->toSerialBuffer(*serialBuffer);
 }
 
 Fw::SerializeStatus FileDataPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
-    // Cast to SerialBuffer and delegate to fromSerialBuffer
-    Fw::SerialBuffer* serialBuffer = dynamic_cast<Fw::SerialBuffer*>(&buffer);
-    if (serialBuffer == nullptr) {
-        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
-    }
+    // Caller contract guarantees a SerialBuffer.
+    Fw::SerialBuffer* serialBuffer = static_cast<Fw::SerialBuffer*>(&buffer);
 
     // Deserialize header first
     Fw::SerializeStatus status = this->m_header.fromSerialBuffer(*serialBuffer);

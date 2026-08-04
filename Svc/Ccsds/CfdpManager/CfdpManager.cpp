@@ -138,6 +138,15 @@ Svc::SendFileResponse CfdpManager ::fileIn_handler(FwIndexType portNum,
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));
 
+        // channelId is a ground-settable parameter; reject an out-of-range value rather than
+        // letting it assert in Engine::txFile.
+        if (channelId >= Cfdp::NumChannels) {
+            this->log_WARNING_LO_InvalidChannel(channelId, Cfdp::NumChannels);
+            response.set_status(Svc::SendFileStatus::STATUS_INVALID);
+            response.set_context(static_cast<U32>(portNum));
+            return response;
+        }
+
         EntityId destEid = this->paramGet_FileInDefaultDestEntityId(valid);
         FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
                   static_cast<FwAssertArgType>(valid.e));

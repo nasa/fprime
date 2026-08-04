@@ -608,11 +608,7 @@ CfdpManager's per-channel parameter architecture supports multiple mission profi
 
 ## Telemetry
 
-**Note:** Telemetry channels are currently **proposals** defined in [Telemetry.fppi](../Telemetry.fppi) but not yet implemented. Proposals are based on the CF implementation.
-
-### ChannelTelemetry
-
-An array of telemetry structures, one per CFDP channel. Each element is a `ChannelTelemetry` struct containing the following fields:
+Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` struct per CFDP channel. Each struct contains the following fields:
 
 #### Receive Counters
 | Field | Type | Description |
@@ -623,6 +619,7 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | recvFileDataBytes | U64 | Total file data bytes received across all transactions |
 | recvNakSegmentRequests | U32 | Number of NAK segment requests received from peer entity |
 | recvPdu | U32 | Number of PDUs received with valid headers |
+| recvEofCanceled | U32 | Number of EOF PDUs received with cancellation condition code |
 
 #### Sent Counters
 | Field | Type | Description |
@@ -630,6 +627,7 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | sentNakSegmentRequests | U32 | Number of NAK segment requests sent to peer entity |
 | sentFileDataBytes | U64 | Total file data bytes sent across all transactions |
 | sentPdu | U32 | Number of PDUs sent with valid headers |
+| sentEofCanceled | U32 | Number of EOF PDUs sent with cancellation condition code |
 
 #### Fault Counters
 | Field | Type | Description |
@@ -645,6 +643,8 @@ An array of telemetry structures, one per CFDP channel. Each element is a `Chann
 | faultFileSeek | U32 | Number of file seek failures |
 | faultFileRename | U32 | Number of file rename failures |
 | faultDirectoryRead | U32 | Number of directory read failures during playback/poll operations |
+| faultRxEofError | U32 | Number of EOF PDUs received with error condition code (other than cancel) |
+| faultTxEofError | U32 | Number of EOF PDUs sent with error condition code (other than cancel) |
 
 #### Queue Depths
 | Field | Type | Description |
