@@ -225,11 +225,10 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                 // decrement (which can only follow a READY observation) never precedes this
                 // increment, so m_count cannot transiently underflow.
                 const U32 nextCount = this->m_handle.m_count.fetch_add(1, std::memory_order_acq_rel) + 1;
-                // Raise the high-water mark to nextCount. The mark only increases and is bounded
-                // by depth, so each strong-CAS failure strictly raises prevMark and the loop
-                // performs at most depth iterations.
+                // Raise the high-water mark: each strong-CAS failure strictly raises prevMark
+                // (mark only increases, capped at depth), so at most depth iterations run.
                 U32 prevMark = this->m_handle.m_highMark.load(std::memory_order_relaxed);
-                while (nextCount > prevMark) {
+                for (FwSizeType markPass = 0; (markPass < depth) && (nextCount > prevMark); markPass++) {
                     if (this->m_handle.m_highMark.compare_exchange_strong(
                             prevMark, nextCount, std::memory_order_relaxed, std::memory_order_relaxed)) {
                         break;

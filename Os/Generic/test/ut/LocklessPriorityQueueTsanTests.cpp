@@ -357,7 +357,7 @@ TEST(Adversarial, HighWaterMarkAccuracy) {
     // Pre-fill the queue to capacity before any consumer runs, guaranteeing the
     // high-water mark reaches DEPTH deterministically.
     for (U32 i = 0; i < PREFILL; i++) {
-        U8 buffer[sizeof(U32)];
+        U8 buffer[sizeof(U32)] = {0};
         pack_u32((PRODUCERS * MESSAGES_PER) + i, buffer);
         ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
                   Os::QueueInterface::Status::OP_OK);
@@ -619,7 +619,7 @@ TEST(Adversarial, MixedPriorityContention) {
     // priorities and verify a single-threaded drain returns strictly highest-priority-first,
     // FIFO within equal priorities.
     for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
-        U8 buffer[sizeof(U32)];
+        U8 buffer[sizeof(U32)] = {0};
         pack_u32(i, buffer);
         const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>((i * 5) % NUM_PRIORITIES);
         ASSERT_EQ(queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING),
@@ -629,7 +629,7 @@ TEST(Adversarial, MixedPriorityContention) {
     U32 lastValue = 0;
     bool havePrevious = false;
     for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
-        U8 buffer[sizeof(U32)];
+        U8 buffer[sizeof(U32)] = {0};
         FwSizeType actualSize = 0;
         FwQueuePriorityType priority = 0;
         ASSERT_EQ(
