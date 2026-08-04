@@ -118,6 +118,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
         // Increment cycle count modulo some common factor of all contexts
+        FW_ASSERT(m_ticks_rollover != 0);
         m_cycle_count = (m_cycle_count + 1) % m_ticks_rollover;
         m_state.current = 0;  // Back to processing the first task.
     }
@@ -166,8 +167,11 @@ void ActivePhaser ::startChild(U32 full_ticks) {
     // If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of
     // execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a
     // user-specified time window.
-    FW_ASSERT((entry.contextType == SEQUENTIAL) || (entry.context != 0), static_cast<FwAssertArgType>(entry.port));
-    U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
+    U32 context = entry.context;
+    if (entry.contextType != SEQUENTIAL) {
+        FW_ASSERT(entry.context != 0, static_cast<FwAssertArgType>(entry.port));
+        context = m_cycle_count % entry.context;
+    }
     entry.started = true;
     m_last_start_ticks = full_ticks;
     this->PhaserMemberOut_out(entry.port, context);

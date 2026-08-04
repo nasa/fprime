@@ -14,6 +14,7 @@
 #define OS_GENERIC_TYPES_ATOMIC_QUEUE_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
 #include <Fw/Types/ByteArray.hpp>
 #include <Fw/Types/MemAllocator.hpp>
 #include <Os/CountingSemaphore.hpp>
@@ -177,6 +178,7 @@ class AtomicQueue {
     //! \param pos position value
     //! \return slot index in range [0, capacity)
     inline FwSizeType getIndex(FwSizeType pos) const {
+        FW_ASSERT(this->m_capacity > 0);
         return (this->m_mask != 0) ? (pos & this->m_mask) : (pos % this->m_capacity);
     }
 
