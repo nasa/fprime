@@ -35,7 +35,7 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 ### 2.2 Configuration Hooks inside the Subtopology
 
 * **Health**: Configures `$health` with a ping table (`ConfigObjects.CdhCore_health::pingEntries`).
-* **Version**: Calls `version.config(true)` so version/config reporting is enabled at startup.
+* **Version**: Calls `version.config(true)` so version/config reporting is enabled at startup. Calls `version.start()` to send initial version events and telemetry. 
 
 ### 2.3 Internal Wiring
 

@@ -364,6 +364,105 @@ void ActiveTextLoggerTester ::testWorkstationTimestamp() {
     remove(logFileName);
 }
 
+void ActiveTextLoggerTester ::testSeverityFilter() {
+    printf("Testing severity filtering\n");
+
+    // Clean up any stale files from previous runs
+    remove("test_severity_filter");
+
+    // Setup file for writing to - we'll use file output to verify filtering
+    bool stat = this->component.set_log_file("test_severity_filter", 4096);
+    ASSERT_TRUE(stat);
+
+    FwEventIdType id = 1;
+    Fw::Time timeTag(TimeBase::TB_NONE, 1, 0);
+
+    // Disable WARNING_LO severity
+    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, false);
+
+    // Send WARNING_LO event (filtered) followed by WARNING_HI event (passes)
+    // Only WARNING_HI should appear in output.
+    // Note: filtered events never enqueue, so no doDispatch() for them.
+    Fw::TextLogString text("This should be filtered");
+    this->invoke_to_TextLogger(0, id, timeTag, Fw::LogSeverity::WARNING_LO, text);
+
+    id = 2;
+    Fw::TextLogString text2("This should pass through");
+    this->invoke_to_TextLogger(0, id, timeTag, Fw::LogSeverity::WARNING_HI, text2);
+    this->component.doDispatch();
+
+    // Read file - only WARNING_HI event should be present
+    std::ifstream stream("test_severity_filter");
+    U32 lineCount = 0;
+    while (stream) {
+        char buf[256];
+        stream.getline(buf, 256);
+        if (stream) {
+            std::cout << "readLine: " << buf << std::endl;
+            // Verify it's the WARNING_HI event, not WARNING_LO
+            ASSERT_TRUE(strstr(buf, "WARNING_HI") != nullptr);
+            ASSERT_TRUE(strstr(buf, "This should pass through") != nullptr);
+            lineCount++;
+        }
+    }
+    stream.close();
+    ASSERT_EQ(1U, lineCount);
+
+    // Re-enable WARNING_LO
+    this->component.setSeverityFilter(Fw::LogSeverity::WARNING_LO, true);
+
+    // Clean up
+    remove("test_severity_filter");
+}
+
+void ActiveTextLoggerTester ::testSeverityFilterDiagnosticDisabled() {
+    printf("Testing severity filter with DIAGNOSTIC disabled\n");
+
+    // Clean up any stale files from previous runs
+    remove("test_diag_filter");
+
+    // Setup file for writing to
+    bool stat = this->component.set_log_file("test_diag_filter", 4096);
+    ASSERT_TRUE(stat);
+
+    // Disable DIAGNOSTIC severity
+    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, false);
+
+    FwEventIdType id = 1;
+    Fw::Time timeTag(TimeBase::TB_NONE, 1, 0);
+
+    // Send DIAGNOSTIC event (filtered) then FATAL event (always passes)
+    Fw::TextLogString text("Diagnostic event");
+    this->invoke_to_TextLogger(0, id, timeTag, Fw::LogSeverity::DIAGNOSTIC, text);
+
+    id = 2;
+    Fw::TextLogString text2("Fatal event");
+    this->invoke_to_TextLogger(0, id, timeTag, Fw::LogSeverity::FATAL, text2);
+    this->component.doDispatch();
+
+    // Verify only FATAL event appears in file
+    std::ifstream stream("test_diag_filter");
+    U32 lineCount = 0;
+    while (stream) {
+        char buf[256];
+        stream.getline(buf, 256);
+        if (stream) {
+            std::cout << "readLine: " << buf << std::endl;
+            ASSERT_TRUE(strstr(buf, "FATAL") != nullptr);
+            ASSERT_TRUE(strstr(buf, "Fatal event") != nullptr);
+            lineCount++;
+        }
+    }
+    stream.close();
+    ASSERT_EQ(1U, lineCount);
+
+    // Re-enable DIAGNOSTIC
+    this->component.setSeverityFilter(Fw::LogSeverity::DIAGNOSTIC, true);
+
+    // Clean up
+    remove("test_diag_filter");
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

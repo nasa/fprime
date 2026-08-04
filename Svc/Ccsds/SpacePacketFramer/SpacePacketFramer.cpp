@@ -51,11 +51,11 @@ void SpacePacketFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
                                                       (secHdrFlag << SpacePacketSubfields::SecHdrOffset));
 
     U16 sequenceCount = this->getApidSeqCount_out(0, apid, 0);  // retrieve the sequence count for this APID
-    U16 packetSequenceControl = 0;
-    packetSequenceControl |=
-        0x3 << SpacePacketSubfields::SeqFlagsOffset;  // Sequence Flags 0b11 = unsegmented User Data
-    packetSequenceControl |=
-        sequenceCount & static_cast<U16>(SpacePacketSubfields::SeqCountMask);  // 14 bit sequence count
+    const U8 seqFlags = context.get_sequenceFlags();
+    // 2 bit sequence flags | 14 bit sequence count
+    U16 packetSequenceControl = static_cast<U16>(
+        ((static_cast<U16>(seqFlags) << SpacePacketSubfields::SeqFlagsOffset) & SpacePacketSubfields::SeqFlagsMask) |
+        (sequenceCount & SpacePacketSubfields::SeqCountMask));
 
     FW_ASSERT(data.getSize() <= std::numeric_limits<U16>::max(), static_cast<FwAssertArgType>(data.getSize()));
     U16 packetDataLength =

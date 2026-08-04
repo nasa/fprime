@@ -943,6 +943,15 @@ DirectiveError FpySequencerTester::tester_op_itrunc_64_16() {
 DirectiveError FpySequencerTester::tester_op_itrunc_64_32() {
     return this->cmp.op_itrunc_64_32();
 }
+DirectiveError FpySequencerTester::tester_op_ffloor() {
+    return this->cmp.op_ffloor();
+}
+DirectiveError FpySequencerTester::tester_op_iabs() {
+    return this->cmp.op_iabs();
+}
+DirectiveError FpySequencerTester::tester_op_fabs() {
+    return this->cmp.op_fabs();
+}
 void FpySequencerTester::tester_doDispatch() {
     this->cmp.doDispatch();
 }

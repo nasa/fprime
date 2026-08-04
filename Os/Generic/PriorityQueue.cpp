@@ -14,12 +14,14 @@ namespace Os {
 namespace Generic {
 
 FwSizeType PriorityQueueHandle ::find_index() {
+    FW_ASSERT(this->m_depth > 0);
     FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth];
     this->m_startIndex = (this->m_startIndex + 1) % this->m_depth;
     return index;
 }
 
 void PriorityQueueHandle ::return_index(FwSizeType index) {
+    FW_ASSERT(this->m_depth > 0);
     this->m_indices[this->m_stopIndex % this->m_depth] = index;
     this->m_stopIndex = (this->m_stopIndex + 1) % this->m_depth;
 }

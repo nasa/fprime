@@ -51,9 +51,11 @@ FormalParamEnum Tester ::from_enumReturnOut_handler(const FwIndexType portNum,
 void Tester ::from_stringArgsOut_handler(const FwIndexType portNum,
                                          const Fw::StringBase& str80,
                                          Fw::StringBase& str80Ref,
+                                         const Fw::StringBase& str0,
+                                         Fw::StringBase& str0Ref,
                                          const Fw::StringBase& str100,
                                          Fw::StringBase& str100Ref) {
-    this->pushFromPortEntry_stringArgsOut(str80, str80Ref, str100, str100Ref);
+    this->pushFromPortEntry_stringArgsOut(str80, str80Ref, str0, str0Ref, str100, str100Ref);
 }
 
 Fw::String Tester ::from_stringReturnOut_handler(const FwIndexType portNum,

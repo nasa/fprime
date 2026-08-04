@@ -214,6 +214,8 @@ class Receiver final : public ReceiverComponentBase {
     void stringArgsAsync_handler(FwIndexType portNum,          //!< The port number
                                  const Fw::StringBase& str80,  //!< A string of size 80
                                  Fw::StringBase& str80Ref,
+                                 const Fw::StringBase& str0,  //!< A string of size 0
+                                 Fw::StringBase& str0Ref,
                                  const Fw::StringBase& str100,  //!< A string of size 100
                                  Fw::StringBase& str100Ref) override;
 
@@ -221,6 +223,8 @@ class Receiver final : public ReceiverComponentBase {
     void stringArgsGuarded_handler(FwIndexType portNum,          //!< The port number
                                    const Fw::StringBase& str80,  //!< A string of size 80
                                    Fw::StringBase& str80Ref,
+                                   const Fw::StringBase& str0,  //!< A string of size 0
+                                   Fw::StringBase& str0Ref,
                                    const Fw::StringBase& str100,  //!< A string of size 100
                                    Fw::StringBase& str100Ref) override;
 
@@ -228,6 +232,8 @@ class Receiver final : public ReceiverComponentBase {
     void stringArgsSync_handler(FwIndexType portNum,          //!< The port number
                                 const Fw::StringBase& str80,  //!< A string of size 80
                                 Fw::StringBase& str80Ref,
+                                const Fw::StringBase& str0,  //!< A string of size 0
+                                Fw::StringBase& str0Ref,
                                 const Fw::StringBase& str100,  //!< A string of size 100
                                 Fw::StringBase& str100Ref) override;
 
