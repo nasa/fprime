@@ -161,7 +161,6 @@ void CfdpManager ::dataIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     FW_ASSERT(portNum < Cfdp::NumChannels, portNum, Cfdp::NumChannels);
     FW_ASSERT(portNum >= 0, portNum);
 
-    // TODO JMP Is there a more efficient way of doing this? Look into receivePdu()
     // Strip FW_PACKET_FILE descriptor (first 2 bytes) from buffer
     // FprimeRouter sends the entire Space Packet data field, which includes the packet type descriptor
     if (fwBuffer.getSize() < sizeof(FwPacketDescriptorType)) {
