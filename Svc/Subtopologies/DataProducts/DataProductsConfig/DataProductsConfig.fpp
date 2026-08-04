@@ -30,12 +30,10 @@ module DataProductsConfig {
     }
 
     module CpuAffinities {
-        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
-        constant TASK_DEFAULT = -1
-        constant dpCat    = TASK_DEFAULT
-        constant dpMgr  = TASK_DEFAULT
-        constant dpWriter   = TASK_DEFAULT
-        constant dpBufferAccumulator = TASK_DEFAULT
+        constant dpCat    = Os.TASK_DEFAULT
+        constant dpMgr  = Os.TASK_DEFAULT
+        constant dpWriter   = Os.TASK_DEFAULT
+        constant dpBufferAccumulator = Os.TASK_DEFAULT
     }
 
     module BufferAccumulator {

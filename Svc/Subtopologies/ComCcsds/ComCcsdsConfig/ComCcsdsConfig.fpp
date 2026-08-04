@@ -18,10 +18,8 @@ module ComCcsdsConfig {
     }
 
     module CpuAffinities {
-        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
-        constant TASK_DEFAULT = -1
-        constant aggregator = TASK_DEFAULT
-        constant comQueue   = TASK_DEFAULT
+        constant aggregator = Os.TASK_DEFAULT
+        constant comQueue   = Os.TASK_DEFAULT
     }
 
     # Queue configuration constants

@@ -24,12 +24,10 @@ module FileHandlingConfig {
     }
 
     module CpuAffinities {
-        # -1 casts to Os::Task::TASK_DEFAULT (no CPU pinning)
-        constant TASK_DEFAULT = -1
-        constant fileUplink    = TASK_DEFAULT
-        constant fileDownlink  = TASK_DEFAULT
-        constant fileManager   = TASK_DEFAULT
-        constant prmDb         = TASK_DEFAULT
+        constant fileUplink    = Os.TASK_DEFAULT
+        constant fileDownlink  = Os.TASK_DEFAULT
+        constant fileManager   = Os.TASK_DEFAULT
+        constant prmDb         = Os.TASK_DEFAULT
     }
 
     # File downlink configuration constants
