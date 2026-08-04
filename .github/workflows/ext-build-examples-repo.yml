@@ -73,8 +73,8 @@ jobs:
         with:
           repository: nasa/fprime-gds
           pr-branch-only: true
-      - name: "Download integration test files"
-        uses: actions/download-artifact@v8
+      - name: "Download build artifacts"
+        uses: actions/download-artifact@v7
         with:
           name: test-logs
           path: ci-logs
