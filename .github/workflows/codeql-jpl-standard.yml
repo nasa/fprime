@@ -71,7 +71,7 @@ jobs:
     # googletest via FetchContent), and vendored third-party code (libcrc)
     # are not first-party code
     - name: Filter CMake-internal and third-party paths out of SARIF
-      uses: advanced-security/filter-sarif@v1.1
+      uses: advanced-security/filter-sarif@2da736ff05ef065cb2894ac6892e47b5eac2c3c0 # v1.1
       with:
         patterns: |
           -**/CMakeFiles/**
@@ -85,7 +85,7 @@ jobs:
     # the no-autocode run guard only hand-written sources
     - name: Filter build paths out of SARIF (no-autocode run)
       if: matrix.config-file == 'jpl-standard-known-autocode-issues.yml'
-      uses: advanced-security/filter-sarif@v1.1
+      uses: advanced-security/filter-sarif@2da736ff05ef065cb2894ac6892e47b5eac2c3c0 # v1.1
       with:
         patterns: |
           -**/build-fprime-*/**
