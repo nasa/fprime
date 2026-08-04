@@ -91,9 +91,13 @@ jobs:
         shell: bash
       - name: "Upload build artifacts"
         uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: examples-build-artifacts
-          path: build-artifacts/
+          path: |
+            ${{ inputs.build_location }}/build-artifacts/
+            build-artifacts/
+          if-no-files-found: ignore
           retention-days: 1
 
   runUT:
@@ -156,6 +160,7 @@ jobs:
         if: always()
         with:
           name: test-logs
-          path: ci-logs
+          path: ${{ inputs.build_location }}/build-*/Testing/Temporary/*.log
+          if-no-files-found: ignore
           retention-days: 5
 
