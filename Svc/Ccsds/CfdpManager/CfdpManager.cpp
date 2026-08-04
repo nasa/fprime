@@ -542,6 +542,17 @@ U32 CfdpManager::getRxCrcCalcBytesPerCycleParam(void) {
     return rxSize;
 }
 
+U8 CfdpManager::getPostInactivitySendRetriesParam(void) {
+    Fw::ParamValid valid;
+
+    // Check for coding errors as all CFDP parameters must have a default
+    U8 retries = this->paramGet_PostInactivitySendRetries(valid);
+    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
+              static_cast<FwAssertArgType>(valid.e));
+
+    return retries;
+}
+
 Fw::String CfdpManager::getTmpDirParam(U8 channelIndex) {
     Fw::ParamValid valid;
 

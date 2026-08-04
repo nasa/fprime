@@ -208,13 +208,22 @@ void Transaction::sTick(I32* cont /* unused */) {
     }
 
     // tx maintenance: possibly process send_eof, or send_fin_ack
+    // On ERROR, clear the flag so we do not retry forever. On NO_BUF_AVAIL, leave it set to retry.
     if (this->m_flags.tx.send_eof) {
-        if (this->sSendEof() == Cfdp::Status::SUCCESS) {
+        Status::T sret = this->sSendEof();
+        if (sret == Cfdp::Status::SUCCESS) {
             this->m_flags.tx.send_eof = false;
+        } else if (sret == Cfdp::Status::ERROR) {
+            this->m_flags.tx.send_eof = false;
+            pending_send = false;
         }
     } else if (this->m_flags.tx.send_fin_ack) {
-        if (this->sSendFinAck() == Cfdp::Status::SUCCESS) {
+        Status::T sret = this->sSendFinAck();
+        if (sret == Cfdp::Status::SUCCESS) {
             this->m_flags.tx.send_fin_ack = false;
+        } else if (sret == Cfdp::Status::ERROR) {
+            this->m_flags.tx.send_fin_ack = false;
+            pending_send = false;
         }
     } else {
         pending_send = false;
@@ -232,7 +241,19 @@ void Transaction::sTick(I32* cont /* unused */) {
     // This covers the HOLD (finished) and S2/CLOSEOUT_SYNC (stuck waiting for a FIN) cases,
     // which by then have no pending send, without dropping a FIN-ACK that has not yet been
     // transmitted.
-    bool should_recycle = this->m_flags.com.inactivity_fired && !pending_send;
+    //
+    // Bound the deferral so a send that keeps failing on a buffer shortage cannot hold the slot
+    // forever: after a small retry budget, recycle regardless. A late FIN is answered statelessly.
+    bool retries_exhausted = false;
+    if (this->m_flags.com.inactivity_fired && pending_send) {
+        if (this->m_flags.com.post_inactivity_send_retries >=
+            this->m_cfdpManager->getPostInactivitySendRetriesParam()) {
+            retries_exhausted = true;
+        } else {
+            this->m_flags.com.post_inactivity_send_retries++;
+        }
+    }
+    bool should_recycle = this->m_flags.com.inactivity_fired && (!pending_send || retries_exhausted);
 
     if (should_recycle) {
         // the transaction is now recyclable - this means we will

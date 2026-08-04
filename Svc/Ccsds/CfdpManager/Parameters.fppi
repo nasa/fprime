@@ -10,6 +10,11 @@ param OutgoingFileChunkSize: U32 \
 param RxCrcCalcBytesPerCycle: U32 \
     default 65536
 
+@ Extra scheduler cycles a pending terminal send (EOF or FIN-ACK) is retried after the
+@ inactivity timer fires before the transaction is recycled regardless
+param PostInactivitySendRetries: U8 \
+    default 3
+
 @ Default CFDP channel for fileIn port-initiated file transfers
 param FileInDefaultChannel: U8 \
     default 0

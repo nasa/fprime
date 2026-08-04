@@ -300,8 +300,19 @@ void Transaction::rTick(I32* cont /* unused */) {
     /* if the inactivity timer ran out, then there is no sense
      * pending for responses for anything.  Send out anything
      * that we need to send (i.e. the FIN) just in case the sender
-     * is still listening to us but do not expect any future ACKs */
-    if (this->m_flags.com.inactivity_fired && !pending_send) {
+     * is still listening to us but do not expect any future ACKs.
+     *
+     * Bound the deferral like the TX path: after a small retry budget, recycle regardless. */
+    bool retries_exhausted = false;
+    if (this->m_flags.com.inactivity_fired && pending_send) {
+        if (this->m_flags.com.post_inactivity_send_retries >=
+            this->m_cfdpManager->getPostInactivitySendRetriesParam()) {
+            retries_exhausted = true;
+        } else {
+            this->m_flags.com.post_inactivity_send_retries++;
+        }
+    }
+    if (this->m_flags.com.inactivity_fired && (!pending_send || retries_exhausted)) {
         /* the transaction is now recyclable - this means we will
          * no longer have a record of this transaction seq.  If the sender
          * wakes up or if the network delivers severely delayed PDUs at

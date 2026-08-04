@@ -362,8 +362,9 @@ struct CfdpFlagsCommon {
     bool suspended;
     bool canceled;
     bool crc_calc;
-    bool inactivity_fired; /**< \brief set whenever the inactivity timeout expires */
-    bool keep_history;     /**< \brief whether history should be preserved during recycle */
+    bool inactivity_fired;           /**< \brief set whenever the inactivity timeout expires */
+    bool keep_history;               /**< \brief whether history should be preserved during recycle */
+    U8 post_inactivity_send_retries; /**< \brief terminal-send retries attempted after inactivity fired */
 };
 
 /**

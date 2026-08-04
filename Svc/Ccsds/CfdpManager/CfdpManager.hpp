@@ -433,6 +433,11 @@ class CfdpManager final : public CfdpManagerComponentBase {
     //! \return Number of bytes to process per cycle when calculating received file CRC
     U32 getRxCrcCalcBytesPerCycleParam(void);
 
+    //! Get the post-inactivity terminal-send retry budget parameter
+    //!
+    //! \return Number of extra cycles a pending terminal send is retried after inactivity fires
+    U8 getPostInactivitySendRetriesParam(void);
+
     //! Get the temporary directory parameter for a channel
     //!
     //! \param channelIndex [in] Index of the channel
