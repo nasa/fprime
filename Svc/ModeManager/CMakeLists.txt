@@ -15,6 +15,16 @@ register_fprime_module(
     Svc_ModeManager_config_ModeManagerConfig
 )
 
+# ModeManager.cpp includes ModeList.inc via its framework-relative path.
+# F Prime's default include order places the source root ahead of the build
+# root, so when a project overrides ModeManagerConfig, the #include resolves
+# to the stock source copy instead of the override in the build cache. Prepend
+# the build root here so overrides are found first.
+target_include_directories(Svc_ModeManager
+    BEFORE PRIVATE
+    "${CMAKE_BINARY_DIR}/F-Prime"
+)
+
 ### UTs ###
 # UT_AUTO_HELPERS is intentionally omitted: connectPorts()/initComponents()
 # are hand-written in ModeManagerTester.cpp so that checkTransition can be
