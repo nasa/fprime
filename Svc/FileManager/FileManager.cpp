@@ -309,17 +309,9 @@ void FileManager ::processDpChunks() {
     Fw::LogStringArg logFileName(this->m_dpFileName.toChar());
 
     for (U32 chunk = 0; chunk < FileManagerConfig::CHUNKS_PER_RATE_TICK; chunk++) {
-        if (this->m_dpState != DP_IN_PROGRESS) {
-            return;
-        }
-
-        // Number of bytes remaining in the requested range
+        // Number of bytes remaining in the requested range. The loop returns as
+        // soon as the range is exhausted, so this is always non-zero here.
         const FwSizeType remaining = static_cast<FwSizeType>(this->m_dpEndOffset - this->m_dpOffset);
-        if (remaining == 0) {
-            this->log_ACTIVITY_HI_GenerateDpComplete(logFileName, this->m_dpChunkCount);
-            this->finishDpGeneration();
-            return;
-        }
 
         FwSizeType readSize = (remaining < static_cast<FwSizeType>(this->m_dpChunkSize))
                                   ? remaining

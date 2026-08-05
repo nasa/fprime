@@ -359,6 +359,7 @@ void FileManagerTester ::resetDpState() {
     this->m_dpSendCount = 0;
     this->m_dpBytesSent = 0;
     this->m_dpGetShouldFail = false;
+    this->m_dpGetUndersizedBuffer = false;
     this->m_dpContainerBuffer.setData(this->m_dpContainerData);
     this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
 }
@@ -368,7 +369,9 @@ Fw::Success::T FileManagerTester ::productGet_handler(FwDpIdType id, FwSizeType 
         return Fw::Success::FAILURE;
     }
     this->m_dpContainerBuffer.setData(this->m_dpContainerData);
-    this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
+    // An undersized buffer lets the serialization failure path be exercised
+    this->m_dpContainerBuffer.setSize(this->m_dpGetUndersizedBuffer ? Fw::DpContainer::MIN_PACKET_SIZE
+                                                                    : sizeof this->m_dpContainerData);
     buffer = this->m_dpContainerBuffer;
     return Fw::Success::SUCCESS;
 }
@@ -531,6 +534,94 @@ void FileManagerTester ::generateDpInvalidRange() {
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_bad_range_file");
+#endif
+}
+
+void FileManagerTester ::generateDpBufferFailure() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_buffer_fail_file";
+    this->system("rm -f dp_buffer_fail_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_buffer_fail_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+    this->m_dpGetShouldFail = true;
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    // A container allocation failure is reported but does not fail the command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpBufferFailed_SIZE(1);
+    ASSERT_EQ(0u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_buffer_fail_file");
+#endif
+}
+
+void FileManagerTester ::generateDpWhileBusy() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_busy_file";
+    this->system("rm -f dp_busy_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_busy_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // Start a generation and leave it in progress by not running the rate group
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // A second request while one is in progress is reported and rejected
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+
+    // Let the first generation finish so the component returns to idle
+    this->runRateGroupCycles(10);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_busy_file");
+#endif
+}
+
+void FileManagerTester ::generateDpSerializationFailure() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_serialize_fail_file";
+    this->system("rm -f dp_serialize_fail_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_serialize_fail_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+    this->m_dpGetUndersizedBuffer = true;
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->component.doDispatch();
+    this->runRateGroupCycles(5);
+
+    // A serialization failure is reported but does not fail the command
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_serialize_fail_file");
 #endif
 }
 

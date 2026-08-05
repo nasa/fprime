@@ -119,6 +119,21 @@ TEST(Test, generateDpInvalidRange) {
     tester.generateDpInvalidRange();
 }
 
+TEST(Test, generateDpBufferFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpBufferFailure();
+}
+
+TEST(Test, generateDpWhileBusy) {
+    Svc::FileManagerTester tester;
+    tester.generateDpWhileBusy();
+}
+
+TEST(Test, generateDpSerializationFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSerializationFailure();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

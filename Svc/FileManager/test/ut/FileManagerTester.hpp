@@ -128,6 +128,15 @@ class FileManagerTester : public FileManagerGTestBase {
     //! Reject a data product request with an invalid offset range
     void generateDpInvalidRange();
 
+    //! Report a data product container allocation failure without failing the command
+    void generateDpBufferFailure();
+
+    //! Reject a data product request that arrives while another is in progress
+    void generateDpWhileBusy();
+
+    //! Report a serialization failure without failing the command
+    void generateDpSerializationFailure();
+
   private:
     // ----------------------------------------------------------------------
     // Helper methods
@@ -212,6 +221,9 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Whether the get port should fail, for testing the failure path
     bool m_dpGetShouldFail;
+
+    //! Whether the get port should hand out a buffer too small for a chunk
+    bool m_dpGetUndersizedBuffer;
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
