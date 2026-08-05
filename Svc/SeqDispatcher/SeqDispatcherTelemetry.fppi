@@ -6,5 +6,5 @@ telemetry dispatchedCount: U32
 telemetry errorCount: U32
 @ Number of sequencers in an available state
 telemetry sequencersAvailable: U32
-@ Number of sequences canceled by the CANCEL_NAME command
+@ Number of sequences canceled by the CANCEL_NAME and CANCEL_ALL commands
 telemetry canceledCount: U32

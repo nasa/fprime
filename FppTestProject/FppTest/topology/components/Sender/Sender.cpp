@@ -75,7 +75,7 @@ void Sender::testPrimitiveArgs(const TestDeploymentPort& portId) {
 void Sender::testStringArgs(const TestDeploymentPort& portId) {
     for (FwIndexType i = 0; i < 3; i++) {
         auto args = initTestCase<Types::PortStringTypes>(i, portId);
-        stringArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4);
+        stringArgsOut_out(m_expectedPortNum, args.val1, args.val2, args.val3, args.val4, args.val5, args.val6);
         wait();
 
         if (i == 2) {

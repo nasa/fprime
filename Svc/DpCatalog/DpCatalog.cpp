@@ -47,8 +47,11 @@ void DpCatalog::configure(const Fw::ExternalArray<Fw::FileNameString>& directori
 
     // Initialize if there is enough room for at least one record and memory was allocated
     if ((this->m_memSize >= slotSize) and (this->m_memPtr != nullptr)) {
-        // set the number of available record slots based on how much memory we actually got
-        this->m_numDpSlots = this->m_memSize / slotSize;
+        // set the number of available record slots based on how much memory we actually got,
+        // never exceeding the DP_MAX_FILES working arrays even if the allocator returned more
+        // memory than was requested
+        const FwSizeType allocatedSlots = this->m_memSize / slotSize;
+        this->m_numDpSlots = (allocatedSlots < DP_MAX_FILES) ? allocatedSlots : DP_MAX_FILES;
         // Initialize the catalog
         this->resetCatalog();
         // assign pointer for the state file storage

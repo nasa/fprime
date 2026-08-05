@@ -116,7 +116,7 @@ event SequenceCancelled(
 
 event SequenceExitedWithError(
     filePath: string
-    errorCode: U8
+    errorCode: I32
 ) \
     severity warning high \
     format "Sequence {} exited with error code {}"

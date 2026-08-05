@@ -2,6 +2,7 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/CdhCore/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComCcsds/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandlingCfdp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompression/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")
@@ -17,6 +18,8 @@ add_custom_target(
         Svc_Subtopologies_ComFprime_ComFprimeConfig
         Svc_Subtopologies_FileHandling
         Svc_Subtopologies_FileHandling_FileHandlingConfig
+        Svc_Subtopologies_FileHandlingCfdp
+        Svc_Subtopologies_FileHandlingCfdp_FileHandlingCfdpConfig
         Svc_Subtopologies_DataProducts
         Svc_Subtopologies_DataProducts_DataProductsConfig
         Svc_Subtopologies_ComLoggerTee

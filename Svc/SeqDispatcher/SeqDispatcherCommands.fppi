@@ -21,3 +21,7 @@ async command CANCEL_NAME(
                       fileName: string size FileNameStringSize @< The name of the sequence file to cancel
                     ) \
     opcode 3
+
+@ Broadcast a cancel to every running sequencer. This does not exclude the caller!
+@ A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+async command CANCEL_ALL() opcode 4
