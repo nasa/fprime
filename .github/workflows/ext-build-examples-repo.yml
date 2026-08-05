@@ -5,7 +5,7 @@ name: "External Repo: fprime-examples"
 on:
   
   push:
-    branches: [ dp-int-testing, release/** ]
+    branches: [ devel, release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          repository: Specky26846/fprime-examples
+          repository: nasa/fprime-examples
           ref: ${{ needs.get-branch.outputs.target-branch }}
       - name: "Overlay current F´ revision"
         uses: actions/checkout@v4

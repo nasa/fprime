@@ -14,29 +14,16 @@
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
 
-# For cross-compilation, look in the cross-compiler's sysroot
-if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
-    find_library(ZLIB_LIBRARY z PATHS /usr/aarch64-linux-gnu/lib NO_DEFAULT_PATH)
+find_package(ZLIB)
+
+if (NOT ZLIB_FOUND)
+    find_library(ZLIB_LIBRARY z)
     if (ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
         message(STATUS "Unable to add Svc_DpZLibCompressor. libz not found")
         set(ZLIB_FOUND FALSE)
     else()
         set(ZLIB_FOUND TRUE)
         set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-        set(ZLIB_INCLUDE_DIRS /usr/aarch64-linux-gnu/include)
-    endif()
-else()
-    find_package(ZLIB)
-
-    if (NOT ZLIB_FOUND)
-        find_library(ZLIB_LIBRARY z)
-        if (ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
-            message(STATUS "Unable to add Svc_DpZLibCompressor. libz not found")
-            set(ZLIB_FOUND FALSE)
-        else()
-            set(ZLIB_FOUND TRUE)
-            set(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-        endif()
     endif()
 endif()
 
