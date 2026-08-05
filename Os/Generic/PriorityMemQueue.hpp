@@ -199,6 +199,9 @@ class PriorityMemQueue : public Os::QueueInterface {
     //!
     //! \warning It is invalid to send a null buffer
     //! \warning This method will block if the queue is full and blockType is set to BLOCKING
+    //! \warning A BLOCKING send can still return FULL: the underlying AtomicQueue bounds its
+    //!          reserve-retry cycle, so sustained producer contention that loses every attempt
+    //!          reports FULL rather than blocking indefinitely
     //!
     //! \param buffer: message data
     //! \param size: size of message data

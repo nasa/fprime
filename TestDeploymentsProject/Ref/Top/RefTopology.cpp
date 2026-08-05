@@ -70,8 +70,6 @@ void setupTopology(const TopologyState& state) {
     setBaseIds();
     // Autocoded connection wiring. Function provided by autocoder.
     connectComponents();
-    // Autocoded command registration. Function provided by autocoder.
-    regCommands();
     // Autocoded configuration. Function provided by autocoder.
     configComponents(state);
     if (state.hostname != nullptr && state.port != 0) {
@@ -79,6 +77,8 @@ void setupTopology(const TopologyState& state) {
     }
     // Project-specific component configuration. Function provided above. May be inlined, if desired.
     configureTopology();
+    // Autocoded command registration. Function provided by autocoder.
+    regCommands();
     // Autocoded parameter loading. Function provided by autocoder.
     loadParameters();
     // Autocoded task kick-off (active components). Function provided by autocoder.

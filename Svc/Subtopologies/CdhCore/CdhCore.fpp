@@ -42,6 +42,10 @@ module CdhCore {
         // Startup TLM and Config verbosity for Versions
         CdhCore::version.config(true);
         """
+        phase Fpp.ToCpp.Phases.startTasks """
+        // Startup TLM and EVENTS
+        CdhCore::version.start();
+        """
     }
 
     instance textLogger: Svc.PassiveTextLogger base id CdhCoreConfig.BASE_ID + 0x004000

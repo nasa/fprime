@@ -1,7 +1,7 @@
 module Svc {
     module Fpy {
         @ the current schema version (must be representable in U8)
-        constant SCHEMA_VERSION = 6;
+        constant SCHEMA_VERSION = 7;
 
         @ the type which everything referencing a size or offset on the stack is represented in
         # we use a U32 because U16 is too small (would only allow up to 65 kB max stack size)
@@ -22,7 +22,9 @@ module Svc {
             CONST_CMD = 8
             # stack op directives
             # all of these are handled at the CPP level by one StackOpDirective to save boilerplate
-            # you MUST keep them all in between OR and ITRUNC_64_32 inclusive
+            # the stack ops are OR through ITRUNC_64_32 inclusive, plus FFLOOR through FABS
+            # inclusive; keep the case lists in FpySequencerRunState.cpp and
+            # FpySequencerDirectives.cpp in sync with these ranges
             # boolean ops
             OR = 9
             AND = 10
@@ -110,6 +112,10 @@ module Svc {
             SET_SEED = 76
             PUSH_RAND = 77
             POP_SERIALIZABLE = 78
+            # more stack op directives (see comment above OR)
+            FFLOOR = 79
+            IABS = 80
+            FABS = 81
         }
 
         enum DirectiveErrorCode : U8 {

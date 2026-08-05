@@ -8,15 +8,16 @@
 #ifndef Config_EventManagerCfg_HPP_
 #define Config_EventManagerCfg_HPP_
 
-// set default filters
-
+// Severity filter defaults
+// true  = events pass through
+// false = events are filtered out
 enum {
-    FILTER_WARNING_HI_DEFAULT = true,   //!< WARNING HI events are filtered at input
-    FILTER_WARNING_LO_DEFAULT = true,   //!< WARNING LO events are filtered at input
-    FILTER_COMMAND_DEFAULT = true,      //!< COMMAND events are filtered at input
-    FILTER_ACTIVITY_HI_DEFAULT = true,  //!< ACTIVITY HI events are filtered at input
-    FILTER_ACTIVITY_LO_DEFAULT = true,  //!< ACTIVITY LO  events are filtered at input
-    FILTER_DIAGNOSTIC_DEFAULT = false,  //!< DIAGNOSTIC events are filtered at input
+    FILTER_WARNING_HI_DEFAULT = true,
+    FILTER_WARNING_LO_DEFAULT = true,
+    FILTER_COMMAND_DEFAULT = true,
+    FILTER_ACTIVITY_HI_DEFAULT = true,
+    FILTER_ACTIVITY_LO_DEFAULT = true,
+    FILTER_DIAGNOSTIC_DEFAULT = false,
 };
 
 enum {
