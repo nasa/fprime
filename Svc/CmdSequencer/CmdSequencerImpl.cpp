@@ -82,6 +82,13 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
         return;
     }
 
+    if ((Svc::BlockState::BLOCK == block.e) && (MANUAL == this->m_stepMode)) {
+        // In MANUAL mode nothing executes until CS_STEP, so a BLOCK response could never be sent
+        this->log_WARNING_HI_CS_InvalidMode();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
     this->m_blockState = block.e;
     this->m_cmdSeq = cmdSeq;
     this->m_opCode = opCode;
@@ -360,6 +367,13 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
 void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) {
     FW_ASSERT(this->m_sequence != nullptr);
     if (this->requireRunMode(RUNNING)) {
+        if (not this->m_sequence->hasMoreRecords()) {
+            // A sequence with no end-of-sequence record leaves nothing to step; stepping anyway
+            // asserts in the sequence reader
+            this->log_WARNING_LO_CS_NoSequenceActive();
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
         this->performCmd_Step();
         // check for special case where end of sequence entry was encountered
         if (this->m_runMode != STOPPED) {

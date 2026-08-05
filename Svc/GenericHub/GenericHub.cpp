@@ -202,7 +202,9 @@ void GenericHub::fromBufferDriver_handler(const FwIndexType portNum, Fw::Buffer&
         } else if (type == HUB_TYPE_CMD_DISP) {
             U32 context;
             // Check that the size is sufficient for the context
-            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > Fw::ComBuffer::SERIALIZED_SIZE) {
+            // The wrapped command must fit the ComBuffer capacity; SERIALIZED_SIZE is the capacity
+            // plus the stored length and would admit sizes the ComBuffer cannot hold
+            if (rawSize < sizeof(U32) || (rawSize - sizeof(U32)) > FW_COM_BUFFER_MAX_SIZE) {
                 status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
             }
             // Shift the command buffer out and deserialize the context
