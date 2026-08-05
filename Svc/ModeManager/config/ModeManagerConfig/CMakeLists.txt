@@ -12,4 +12,6 @@ register_fprime_config(
     HEADERS
         "${CMAKE_CURRENT_LIST_DIR}/ModeManagerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/ModeList.inc"
+    DEPENDS
+        Fw_Types
 )
