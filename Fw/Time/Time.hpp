@@ -15,10 +15,10 @@ class Time : public Serializable {
   public:
     enum { SERIALIZED_SIZE = sizeof(FwTimeBaseStoreType) + sizeof(FwTimeContextStoreType) + sizeof(U32) + sizeof(U32) };
 
-    Time();                                              // !< Default constructor
-    Time(const Time& other);                             // !< Copy constructor
-    Time(U32 seconds, U32 useconds);                     // !< Constructor with member values as arguments
-    Time(TimeBase timeBase, U32 seconds, U32 useconds);  // !< Constructor with member values as arguments
+    Time();                                                          // !< Default constructor
+    Time(const Time& other) : Serializable(), m_val(other.m_val) {}  // !< Copy constructor
+    Time(U32 seconds, U32 useconds);                                 // !< Constructor with member values as arguments
+    Time(TimeBase timeBase, U32 seconds, U32 useconds);              // !< Constructor with member values as arguments
     Time(TimeBase timeBase,
          FwTimeContextStoreType context,
          U32 seconds,
