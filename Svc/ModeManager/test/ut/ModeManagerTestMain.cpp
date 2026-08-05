@@ -75,7 +75,7 @@ TEST(ModeManager, RequestModePortReservedPort) {
 
 TEST(ModeManager, GetMode) {
     REQUIREMENT("MM-018");
-    COMMENT("getMode must return the component's actual current mode");
+    COMMENT("getCurrentMode must return the component's actual current mode");
     ModeManagerTester tester;
     ModeManagerTester::GetMode__Query rule;
     rule.apply(tester);

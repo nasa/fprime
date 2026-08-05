@@ -187,7 +187,7 @@ class ModeManagerTester final : public ModeManagerGTestBase {
     //! Ground command START
     FW_RBT_DEFINE_RULE(ModeManagerTester, Start, ToIdle);
 
-    //! Query the current mode via getMode
+    //! Query the current mode via getCurrentMode
     FW_RBT_DEFINE_RULE(ModeManagerTester, GetMode, Query);
 
     //! Health ping round trip

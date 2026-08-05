@@ -108,7 +108,7 @@ void ModeManagerTester ::ExternalPolicy__DeniesEvenObviousTransition__action() {
 
     // Confirm the mode really is still IDLE, not just that no event fired.
     this->clearHistory();
-    const Mode returned = this->invoke_to_getMode(0);
+    const Mode returned = this->invoke_to_getCurrentMode(0);
     ASSERT_EQ(returned.e, Mode::IDLE) << "Denied transition must leave the mode unchanged";
 }
 

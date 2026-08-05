@@ -43,7 +43,7 @@ MM-014 | The `Svc::ModeManager` component shall emit a `TransitionRejected` even
 MM-015 | The `Svc::ModeManager` component shall notify every connected `modeChanged` subscriber on each mode change, reporting the previous and new mode | Unit Test
 MM-016 | The `Svc::ModeManager` component shall emit a `ModeTransitioned` event on each mode change, identifying the previous mode, the new mode, and the requester | Unit Test
 MM-017 | The `Svc::ModeManager` component shall report the current mode as telemetry on each mode change | Unit Test
-MM-018 | The `Svc::ModeManager` component shall return the current mode on the `getMode` port | Unit Test
+MM-018 | The `Svc::ModeManager` component shall return the current mode on the `getCurrentMode` port | Unit Test
 MM-019 | The `Svc::ModeManager` component shall perform no fault detection, fault isolation, or fault response | Inspection
 MM-020 | The `Svc::ModeManager` component shall respond to health pings | Unit Test
 MM-021 | The `Svc::ModeManager` component shall reject a request arriving on `requestMode` port index 0 without constructing a `ModeRequest` and without stamping it as originating from ground | Unit Test
@@ -57,7 +57,7 @@ MM-021 | The `Svc::ModeManager` component shall reject a request arriving on `re
 Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 `Svc::ModeRequestPort` | requestMode | Input | Asynchronous | Transition request from another component. The port index identifies the requester. Index 0 is reserved and always rejected (MM-021); real requesters occupy indices 1 through `NUM_REQUESTERS - 1`.
-`Svc::GetMode` | getMode | Input | Guarded | Return the current mode to the caller. Guarded because it executes in the caller's thread.
+`Svc::GetMode` | getCurrentMode | Input | Guarded | Return the current mode to the caller. Guarded because it executes in the caller's thread.
 [`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Health check request
 `Svc::ModeChanged` | modeChanged | Output | n/a | Notify a subscriber that the mode changed
 `Svc::CheckTransition` | checkTransition | Output | n/a | Optional external policy query. When unconnected, the default policy decides.
@@ -123,7 +123,7 @@ connected `modeChanged` port (MM-015 through MM-017).
 ### 3.3 State
 
 The current mode is held both by the generated state machine and by a component
-member. The member is the value reported on `getMode`, telemetry, and events; it
+member. The member is the value reported on `getCurrentMode`, telemetry, and events; it
 is updated inside the `announce` action. This avoids any dependence on when the
 generated state variable is updated relative to transition actions.
 
@@ -219,7 +219,7 @@ Group | Exercises | Requirements
 `RequestModeCmd.UnsupportedTarget` | `REQUEST_MODE(STARTUP)` -- rejected before any policy is consulted | MM-005
 `RequestModePort` | `requestMode[n]`, every reachable mode and requester | MM-001, MM-005, MM-007, MM-010 to MM-012, MM-015 to MM-017
 `RequestModePort.ReservedPort` | `requestMode[0]` -- rejected via `TransitionRejected` before a `ModeRequest` is constructed, never stamped as ground | MM-021
-`GetMode` | `getMode` query | MM-018
+`GetMode` | `getCurrentMode` query | MM-018
 `Ping` | Health ping round trip | MM-020
 `ExternalPolicy` | `checkTransition` connected: permits, denies, and denies a transition the default would always allow (proving precedence, not mere consultation) | MM-005, MM-006, MM-013, MM-014
 

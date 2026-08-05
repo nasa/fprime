@@ -29,12 +29,12 @@ class ModeManager final : public ModeManagerComponentBase {
     // Handler implementations for typed input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for getMode
+    //! Handler implementation for getCurrentMode
     //!
     //! Current mode query. Guarded because it executes in the caller's
     //! thread and reads state this component's thread may be writing.
-    Svc::Mode getMode_handler(FwIndexType portNum  //!< The port number
-                              ) override;
+    Svc::Mode getCurrentMode_handler(FwIndexType portNum  //!< The port number
+                                     ) override;
 
     //! Handler implementation for pingIn
     //!
@@ -119,7 +119,7 @@ class ModeManager final : public ModeManagerComponentBase {
     // ----------------------------------------------------------------------
 
     //! The current mode. This, not the generated state machine's own state
-    //! variable, is the source of truth for getMode, telemetry, and events
+    //! variable, is the source of truth for getCurrentMode, telemetry, and events
     //! -- it is updated at a single well-defined point (announce) rather
     //! than depending on when the generated state variable changes
     //! relative to transition actions.

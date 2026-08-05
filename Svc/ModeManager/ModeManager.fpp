@@ -50,10 +50,13 @@ module Svc {
 
         @ Current mode query. Guarded because it executes in the caller's
         @ thread and reads state this component's thread may be writing.
-        guarded input port getMode: GetMode
+        guarded input port getCurrentMode: GetMode
 
         @ Mode change notification to subscribers
         output port modeChanged: [ModeManagerCfg.NUM_SUBSCRIBERS] ModeChanged
+
+        @ Current mode query output port that any component can invoke
+        output port getCurrentMode: GetMode
 
         @ Optional external transition policy. When unconnected, the
         @ default policy in the config module decides.

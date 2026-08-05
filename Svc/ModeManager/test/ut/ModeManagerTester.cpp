@@ -48,7 +48,7 @@ void ModeManagerTester ::connectPorts() {
 
     // Connect typed input ports
 
-    this->connect_to_getMode(0, this->component.get_getMode_InputPort(0));
+    this->connect_to_getCurrentMode(0, this->component.get_getCurrentMode_InputPort(0));
     this->connect_to_pingIn(0, this->component.get_pingIn_InputPort(0));
 
     for (FwIndexType i = 0; i < ModeManagerTester::NUM_REQUESTERS; i++) {

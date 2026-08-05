@@ -25,7 +25,7 @@ ModeManager ::~ModeManager() {}
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
 
-Svc::Mode ModeManager ::getMode_handler(FwIndexType portNum) {
+Svc::Mode ModeManager ::getCurrentMode_handler(FwIndexType portNum) {
     return this->m_currentMode;
 }
 

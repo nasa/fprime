@@ -1,9 +1,9 @@
 // ======================================================================
 // \title  GetMode.cpp
 // \author Yukti Vijay
-// \brief  Rule implementation for the getMode query port
+// \brief  Rule implementation for the getCurrentMode query port
 //
-// getMode is guarded (synchronous with the component's mutex), so no
+// getCurrentMode is guarded (synchronous with the component's mutex), so no
 // doDispatch() is needed -- the call returns before this action
 // continues.
 // ======================================================================
@@ -23,10 +23,10 @@ bool ModeManagerTester ::GetMode__Query__precondition() const {
 void ModeManagerTester ::GetMode__Query__action() {
     this->clearHistory();
 
-    const Mode returned = this->invoke_to_getMode(0);
+    const Mode returned = this->invoke_to_getCurrentMode(0);
 
     ASSERT_EQ(returned.e, this->shadow.shadow_currentMode.e)
-        << "getMode returned a mode that does not match the last known transition";
+        << "getCurrentMode returned a mode that does not match the last known transition";
 }
 
 }  // namespace Svc
