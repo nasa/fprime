@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  ModeManagerTestMain.cpp
+// \author Yukti Vijay
 // \brief  cpp file for ModeManager component test main function
 // ======================================================================
 

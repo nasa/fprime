@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  ModeManager.cpp
+// \author Yukti Vijay
 // \brief  cpp file for ModeManager component implementation class
 // ======================================================================
 

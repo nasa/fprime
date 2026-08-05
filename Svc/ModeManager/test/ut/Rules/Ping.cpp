@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  Ping.cpp
+// \author Yukti Vijay
 // \brief  Rule implementation for the pingIn/pingOut health-check pair
 //
 // Unrelated to mode state, exercised interleaved with the mode rules so

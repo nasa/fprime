@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  ModeManagerTester.cpp
+// \author Yukti Vijay
 // \brief  cpp file for ModeManager component rule-based test harness
 // ======================================================================
 

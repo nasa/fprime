@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  RequestModePort.cpp
+// \author Yukti Vijay
 // \brief  Rule implementations for the requestMode port array
 //
 // Exercises the component request path: provenance is stamped COMPONENT,

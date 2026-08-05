@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  Start.cpp
+// \author Yukti Vijay
 // \brief  Rule implementations for the Start command
 //
 // START is a convenience command: leaving the initial state always means

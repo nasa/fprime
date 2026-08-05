@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  GetMode.cpp
+// \author Yukti Vijay
 // \brief  Rule implementation for the getMode query port
 //
 // getMode is guarded (synchronous with the component's mutex), so no

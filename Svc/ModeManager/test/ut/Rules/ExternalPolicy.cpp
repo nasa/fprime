@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  ExternalPolicy.cpp
+// \author Yukti Vijay
 // \brief  Rule implementations exercising an external policy on
 //         checkTransition
 //

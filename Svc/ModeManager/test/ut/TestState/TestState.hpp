@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  TestState.hpp
+// \author Yukti Vijay
 // \brief  Shadow state model for ModeManager rule-based testing
 //
 // The shadow is a minimal model of what the component's current mode

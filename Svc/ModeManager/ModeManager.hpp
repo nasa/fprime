@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  ModeManager.hpp
+// \author Yukti Vijay
 // \brief  hpp file for ModeManager component implementation class
 // ======================================================================
 

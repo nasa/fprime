@@ -1,5 +1,6 @@
 // ======================================================================
 // \title  RequestModeCmd.cpp
+// \author Yukti Vijay
 // \brief  Rule implementations for the REQUEST_MODE ground command
 //
 // Under the shipped default policy (checkTransition unconnected in this
