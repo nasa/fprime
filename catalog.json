@@ -2,23 +2,23 @@
   "schema": 4,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "4bc7685e6e1dc392142c077ea81e6bbcd7850291",
-  "generated_at": "2026-08-05T01:05:05Z",
+  "commit": "95eeb5cfb44e5609eff0887f0e11e640cdacef6b",
+  "generated_at": "2026-08-05T01:21:34Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
     "silver": 80.0
   },
   "overall": {
-    "line_pct": 83.53,
-    "line_covered": 18912,
-    "line_total": 22640,
-    "function_pct": 62.79,
-    "function_covered": 6296,
-    "function_total": 10027,
-    "branch_pct": 72.6,
-    "branch_covered": 10771,
-    "branch_total": 14836,
+    "line_pct": 83.66,
+    "line_covered": 19117,
+    "line_total": 22852,
+    "function_pct": 62.82,
+    "function_covered": 6433,
+    "function_total": 10241,
+    "branch_pct": 72.78,
+    "branch_covered": 10907,
+    "branch_total": 14987,
     "report": "coverage/coverage-all.html",
     "tier": "silver"
   },
@@ -2876,14 +2876,14 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 98.13,
-        "line_covered": 1103,
+        "line_pct": 98.4,
+        "line_covered": 1106,
         "line_total": 1124,
-        "function_pct": 97.14,
-        "function_covered": 509,
+        "function_pct": 96.76,
+        "function_covered": 507,
         "function_total": 524,
-        "branch_pct": 82.78,
-        "branch_covered": 452,
+        "branch_pct": 83.15,
+        "branch_covered": 454,
         "branch_total": 546,
         "report": "Fw/DataStructures/coverage/index.html",
         "tier": "platinum"
@@ -3728,15 +3728,15 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 88.66,
-        "line_covered": 219,
-        "line_total": 247,
-        "function_pct": 85.48,
-        "function_covered": 53,
+        "line_pct": 88.63,
+        "line_covered": 226,
+        "line_total": 255,
+        "function_pct": 87.1,
+        "function_covered": 54,
         "function_total": 62,
-        "branch_pct": 86.84,
-        "branch_covered": 99,
-        "branch_total": 114,
+        "branch_pct": 85.12,
+        "branch_covered": 103,
+        "branch_total": 121,
         "report": "Fw/Time/coverage/index.html",
         "tier": "silver"
       },
@@ -4136,14 +4136,14 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 89.03,
-        "line_covered": 714,
+        "line_pct": 89.15,
+        "line_covered": 715,
         "line_total": 802,
         "function_pct": 88.16,
         "function_covered": 67,
         "function_total": 76,
-        "branch_pct": 73.01,
-        "branch_covered": 303,
+        "branch_pct": 73.25,
+        "branch_covered": 304,
         "branch_total": 415,
         "report": "Os/Generic/coverage/index.html",
         "tier": "silver"
@@ -4208,14 +4208,14 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 92.5,
-        "line_covered": 259,
+        "line_pct": 92.14,
+        "line_covered": 258,
         "line_total": 280,
         "function_pct": 92.86,
         "function_covered": 26,
         "function_total": 28,
-        "branch_pct": 74.77,
-        "branch_covered": 80,
+        "branch_pct": 76.64,
+        "branch_covered": 82,
         "branch_total": 107,
         "report": "Os/Generic/Types/coverage/index.html",
         "tier": "gold"
@@ -4340,14 +4340,14 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 64.56,
-        "line_covered": 490,
+        "line_pct": 64.43,
+        "line_covered": 489,
         "line_total": 759,
         "function_pct": 85.26,
         "function_covered": 81,
         "function_total": 95,
-        "branch_pct": 45.71,
-        "branch_covered": 197,
+        "branch_pct": 45.94,
+        "branch_covered": 198,
         "branch_total": 431,
         "report": "Os/Posix/coverage/index.html",
         "tier": "bronze"
@@ -4628,9 +4628,9 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 94.74,
+        "line_pct": 93.1,
         "line_covered": 54,
-        "line_total": 57,
+        "line_total": 58,
         "function_pct": 100.0,
         "function_covered": 8,
         "function_total": 8,
@@ -4988,15 +4988,15 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 98.56,
-        "line_covered": 273,
-        "line_total": 277,
+        "line_pct": 98.59,
+        "line_covered": 280,
+        "line_total": 284,
         "function_pct": 100.0,
         "function_covered": 16,
         "function_total": 16,
-        "branch_pct": 89.35,
-        "branch_covered": 193,
-        "branch_total": 216,
+        "branch_pct": 89.91,
+        "branch_covered": 196,
+        "branch_total": 218,
         "report": "Svc/Ccsds/AosDeframer/coverage/index.html",
         "tier": "platinum"
       },
@@ -5200,6 +5200,68 @@
       }
     },
     {
+      "path": "Svc/Ccsds/CcsdsSdlsDeframer",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 30,
+        "line_total": 30,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 94.12,
+        "branch_covered": 16,
+        "branch_total": 17,
+        "report": "Svc/Ccsds/CcsdsSdlsDeframer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
+      "path": "Svc/Ccsds/CcsdsSdlsFramer",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 55,
+        "line_total": 55,
+        "function_pct": 100.0,
+        "function_covered": 8,
+        "function_total": 8,
+        "branch_pct": 95.35,
+        "branch_covered": 41,
+        "branch_total": 43,
+        "report": "Svc/Ccsds/CcsdsSdlsFramer/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
       "path": "Svc/Ccsds/CfdpManager",
       "has_ut": true,
       "has_coverage": true,
@@ -5344,6 +5406,130 @@
       }
     },
     {
+      "path": "Svc/Ccsds/ClearTextDecryptor",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 8,
+        "line_total": 8,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 2,
+        "branch_total": 2,
+        "report": "Svc/Ccsds/ClearTextDecryptor/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
+      "path": "Svc/Ccsds/ClearTextEncryptor",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 8,
+        "line_total": 8,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 100.0,
+        "branch_covered": 2,
+        "branch_total": 2,
+        "report": "Svc/Ccsds/ClearTextEncryptor/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
+      "path": "Svc/Ccsds/SdlsFileKeyManager",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 34,
+        "line_total": 34,
+        "function_pct": 100.0,
+        "function_covered": 4,
+        "function_total": 4,
+        "branch_pct": 86.36,
+        "branch_covered": 19,
+        "branch_total": 22,
+        "report": "Svc/Ccsds/SdlsFileKeyManager/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
+      "path": "Svc/Ccsds/SdlsSaRouter",
+      "has_ut": true,
+      "has_coverage": true,
+      "ut": {
+        "line_pct": 100.0,
+        "line_covered": 50,
+        "line_total": 50,
+        "function_pct": 100.0,
+        "function_covered": 6,
+        "function_total": 6,
+        "branch_pct": 95.92,
+        "branch_covered": 47,
+        "branch_total": 49,
+        "report": "Svc/Ccsds/SdlsSaRouter/coverage/index.html",
+        "tier": "platinum"
+      },
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "platinum",
+        "int": null,
+        "codeql": null,
+        "checks": null
+      }
+    },
+    {
       "path": "Svc/Ccsds/SpacePacketDeframer",
       "has_ut": true,
       "has_coverage": true,
@@ -5426,8 +5612,8 @@
         "function_pct": 100.0,
         "function_covered": 5,
         "function_total": 5,
-        "branch_pct": 88.0,
-        "branch_covered": 22,
+        "branch_pct": 84.0,
+        "branch_covered": 21,
         "branch_total": 25,
         "report": "Svc/Ccsds/SpacePacketFramer/coverage/index.html",
         "tier": "platinum"
@@ -5704,6 +5890,47 @@
       }
     },
     {
+      "path": "Svc/Ccsds/Types",
+      "has_ut": false,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": {
+        "findings": 0,
+        "by_severity": {
+          "error": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "worst": null,
+        "tier": "platinum",
+        "dismissed": 0,
+        "report": "Svc/Ccsds/Types/codeql/index.html"
+      },
+      "codeql_checks": {
+        "codeql": {
+          "findings": 0,
+          "by_severity": {
+            "error": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "worst": null,
+          "tier": "platinum",
+          "dismissed": 0,
+          "report": "Svc/Ccsds/Types/codeql/index.html"
+        },
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": "platinum",
+        "checks": null
+      }
+    },
+    {
       "path": "Svc/ChronoTime",
       "has_ut": true,
       "has_coverage": true,
@@ -5852,15 +6079,15 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 94.22,
-        "line_covered": 783,
-        "line_total": 831,
+        "line_pct": 93.56,
+        "line_covered": 785,
+        "line_total": 839,
         "function_pct": 98.08,
         "function_covered": 102,
         "function_total": 104,
-        "branch_pct": 85.18,
-        "branch_covered": 477,
-        "branch_total": 560,
+        "branch_pct": 84.15,
+        "branch_covered": 483,
+        "branch_total": 574,
         "report": "Svc/CmdSequencer/coverage/index.html",
         "tier": "gold"
       },
@@ -6992,9 +7219,9 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 84.03,
+        "line_pct": 83.81,
         "line_covered": 321,
-        "line_total": 382,
+        "line_total": 383,
         "function_pct": 91.49,
         "function_covered": 43,
         "function_total": 47,
@@ -7496,15 +7723,15 @@
       "has_ut": true,
       "has_coverage": true,
       "ut": {
-        "line_pct": 86.42,
-        "line_covered": 1902,
-        "line_total": 2201,
+        "line_pct": 86.34,
+        "line_covered": 1903,
+        "line_total": 2204,
         "function_pct": 98.59,
         "function_covered": 210,
         "function_total": 213,
-        "branch_pct": 77.31,
-        "branch_covered": 1581,
-        "branch_total": 2045,
+        "branch_pct": 77.18,
+        "branch_covered": 1573,
+        "branch_total": 2038,
         "report": "Svc/FpySequencer/coverage/index.html",
         "tier": "silver"
       },
@@ -7713,8 +7940,8 @@
       "has_coverage": true,
       "ut": {
         "line_pct": 100.0,
-        "line_covered": 113,
-        "line_total": 113,
+        "line_covered": 112,
+        "line_total": 112,
         "function_pct": 100.0,
         "function_covered": 10,
         "function_total": 10,
@@ -8689,6 +8916,25 @@
         "int": null,
         "codeql": "platinum",
         "checks": "bronze"
+      }
+    },
+    {
+      "path": "Svc/Subtopologies/ComCcsdsSdls",
+      "has_ut": false,
+      "has_coverage": false,
+      "ut": null,
+      "int": null,
+      "codeql": null,
+      "codeql_checks": {
+        "codeql": null,
+        "codeql-jpl": null
+      },
+      "checks": null,
+      "tiers": {
+        "ut": "bronze",
+        "int": null,
+        "codeql": null,
+        "checks": null
       }
     },
     {

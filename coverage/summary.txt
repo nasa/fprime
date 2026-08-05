@@ -34,7 +34,7 @@ Fw/Buffer/Buffer.cpp                          97      81    83%   120,124,128,13
 Fw/Cmd/CmdPacket.cpp                          24      21    87%   21,23-24
 Fw/Com/ComPacket.cpp                          10      10   100%
 Fw/Comp/ActiveComponentBase.cpp               62       6     9%   11,13,15,30-31,35,39,42,48-52,54-59,61-62,65-66,69-70,72,77,80-83,86-88,90,93-96,98-102,104,106-108,112-113,115,117,119-120,122,127
-Fw/Comp/PassiveComponentBase.cpp              25      10    40%   12-13,16-20,22,27-28,30,35,46-48
+Fw/Comp/PassiveComponentBase.cpp              25      11    44%   12-13,16-20,22,27-28,30,46-48
 Fw/Comp/QueuedComponentBase.cpp               28      18    64%   23-24,46-52,55
 Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
@@ -92,7 +92,8 @@ Fw/Port/PortBase.cpp                          48      18    37%   9-11,50-51,54,
 Fw/SerializableFile/SerializableFile.cpp      50      45    90%   45-46,56,77-78
 Fw/Test/String.hpp                            10       0     0%   25,29,31-33,41-43,46,48
 Fw/Test/UnitTestAssert.cpp                    47       0     0%   22-32,34-35,37,39-40,42-43,47,49,51,63,65-73,75,84-93,95-96,99-101
-Fw/Time/Time.cpp                             158     158   100%
+Fw/Time/Time.cpp                             165     164    99%   118
+Fw/Time/Time.hpp                               1       1   100%
 Fw/Time/TimeInterval.cpp                      87      81    93%   60,62,65,67,102-103
 Fw/Time/TimeInterval.hpp                       2       2   100%
 Fw/Tlm/TlmPacket.cpp                          69      46    66%   41,45,75,81,87,109,115,121,127,129-131,134,137,139-141,144-146,148-149,151
@@ -190,7 +191,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      82    46%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -249,7 +250,7 @@ Svc/ActiveTextLogger/ActiveTextLogger.cpp
                                               65      47    72%   32-34,37-39,41,63-64,81-83,90-95
 Svc/ActiveTextLogger/LogFile.cpp              51      50    98%   115
 Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.cpp
-                                              57      54    94%   69-70,120
+                                              58      54    93%   69-70,123-124
 Svc/BufferAccumulator/ArrayFIFOBuffer.cpp
                                               36      32    88%   45,65,89-90
 Svc/BufferAccumulator/BufferAccumulator.cpp
@@ -259,10 +260,14 @@ Svc/BufferLogger/BufferLoggerFile.cpp        113     108    95%   60,117-118,188
 Svc/BufferManager/BufferManagerComponentImpl.cpp
                                              105     104    99%   42
 Svc/BufferRepeater/BufferRepeater.cpp         37      34    91%   51-53
-Svc/Ccsds/AosDeframer/AosDeframer.cpp        277     273    98%   485,487-488,578
+Svc/Ccsds/AosDeframer/AosDeframer.cpp        284     280    98%   498,500-501,591
 Svc/Ccsds/AosFramer/AosFramer.cpp            190     190   100%
 Svc/Ccsds/ApidManager/ApidManager.cpp         20      20   100%
 Svc/Ccsds/ApidManager/ApidManager.hpp          1       1   100%
+Svc/Ccsds/CcsdsSdlsDeframer/CcsdsSdlsDeframer.cpp
+                                              30      30   100%
+Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.cpp
+                                              55      55   100%
 Svc/Ccsds/CfdpManager/CfdpManager.cpp        345     336    97%   30,117-119,223-225,238-239
 Svc/Ccsds/CfdpManager/CfdpManager.hpp         99      99   100%
 Svc/Ccsds/CfdpManager/Channel.cpp            420     304    72%   253,312-313,316,325,342,361,363-364,366-367,369-371,375,378,382,412-413,477-478,485,487-488,491,494-497,510,512-513,526,528-530,533-535,546,548-550,552-554,556-558,560-562,564-565,570-571,578-580,584-593,596-598,674-677,679,701,705-707,719,761-763,774,776-777,781,785-787,789-791,793,795-796,798,809-810,812,814-815,817-818,821,829,862-863,902,908-912
@@ -300,6 +305,13 @@ Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
 Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     108    90%   88,95,104,112,127,135,154,171,226,245-246,249
 Svc/Ccsds/CfdpManager/Types/Types.hpp          1       1   100%
 Svc/Ccsds/CfdpManager/Utils.cpp               50      46    92%   105-106,109-110
+Svc/Ccsds/ClearTextDecryptor/ClearTextDecryptor.cpp
+                                               8       8   100%
+Svc/Ccsds/ClearTextEncryptor/ClearTextEncryptor.cpp
+                                               8       8   100%
+Svc/Ccsds/SdlsFileKeyManager/SdlsFileKeyManager.cpp
+                                              34      34   100%
+Svc/Ccsds/SdlsSaRouter/SdlsSaRouter.cpp       50      50   100%
 Svc/Ccsds/SpacePacketDeframer/SpacePacketDeframer.cpp
                                               56      51    91%   67-69,71-72
 Svc/Ccsds/SpacePacketFramer/SpacePacketFramer.cpp
@@ -312,11 +324,11 @@ Svc/Ccsds/Utils/CRC16.hpp                     10      10   100%
 Svc/ChronoTime/ChronoTime.cpp                  8       8   100%
 Svc/CmdDispatcher/CommandDispatcherImpl.cpp
                                               99      96    97%   157,159-160
-Svc/CmdSequencer/CmdSequencerImpl.cpp        295     272    92%   58,79,104-106,171-173,191-196,198,200,279-280,354-356,431-432
+Svc/CmdSequencer/CmdSequencerImpl.cpp        302     273    90%   58,79,87-89,111-113,178-180,198-203,205,207,286-287,361-363,373-375,445-446
 Svc/CmdSequencer/CmdSequencerImpl.hpp         13      13   100%
 Svc/CmdSequencer/Events.cpp                   60      60   100%
 Svc/CmdSequencer/formats/AMPCSSequence.cpp
-                                             212     199    93%   83-85,87-88,161-162,172-173,210-211,301,306
+                                             213     200    93%   83-85,87-88,161-162,172-173,210-211,301,311
 Svc/CmdSequencer/FPrimeSequence.cpp          208     198    95%   145-146,155-156,162-163,169-170,253,288
 Svc/CmdSequencer/Sequence.cpp                 43      41    95%   70-71
 Svc/CmdSplitter/CmdSplitter.cpp               19      19   100%
@@ -342,7 +354,7 @@ Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
                                                6       0     0%   26,28-32
 Svc/FileDispatcher/FileDispatcher.cpp         41      41   100%
 Svc/FileDownlink/File.cpp                     33      26    78%   43-44,48-49,59,66,70
-Svc/FileDownlink/FileDownlink.cpp            300     254    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-309,311,323-325,362-363,469-471,474
+Svc/FileDownlink/FileDownlink.cpp            301     254    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,326-328,365-366,472-474,477
 Svc/FileDownlink/FileDownlink.hpp             33      33   100%
 Svc/FileDownlink/Warnings.cpp                 16       8    50%   20-23,25-28
 Svc/FileManager/FileManager.cpp              167     147    88%   72-75,156-158,200-201,206,208-209,254,268,275-276,278-281
@@ -357,14 +369,14 @@ Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
 Svc/FpySequencer/FpySequencer.cpp            250     201    80%   265-267,336-339,437,439-445,448,450-452,454-461,464,466-472,475-482,492-495,508-509
 Svc/FpySequencer/FpySequencer.hpp              2       2   100%
 Svc/FpySequencer/FpySequencerDirectives.cpp
-                                            1139     976    85%   29-30,51,55,59,285-289,292,294-297,302-303,319-320,372-373,396-397,432-433,463,1081-1083,1093-1107,1111-1116,1123-1221,1231-1232,1393-1394,1399,1523-1524,1621-1622,1657-1658,1714-1715,1717
+                                            1138     975    85%   29-30,51,55,59,285-289,292,294-297,302-303,319-320,372-373,396-397,432-433,463,1081-1083,1093-1107,1111-1116,1123-1221,1231-1232,1393-1394,1399,1523-1524,1616-1617,1652-1653,1714-1715,1717
 Svc/FpySequencer/FpySequencerRunState.cpp
                                              430     369    85%   36,156-158,167,169-170,178-180,267-269,277-279,287-289,301,303-304,312-314,358,360-361,418,420-421,429-431,439-441,449-451,459-461,486,488,492,494,500,502-503,672-674,676-678,682,729,733,735,753
 Svc/FpySequencer/FpySequencerStack.cpp        87      87   100%
 Svc/FpySequencer/FpySequencerStateMachine.cpp
                                              159     144    90%   132-134,136-137,251-253,255-256,278-280,282-283
 Svc/FpySequencer/FpySequencerValidationState.cpp
-                                             134     123    91%   76,82,93-94,100-101,112,176-177,247-248
+                                             138     125    90%   76,82,93-94,100-101,112,119-120,184-185,255-256
 Svc/FrameAccumulator/FrameAccumulator.cpp
                                               89      89   100%
 Svc/FrameAccumulator/FrameDetector.hpp         1       1   100%
@@ -373,7 +385,7 @@ Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.cpp
 Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.cpp
                                               55      49    89%   37,45,68,91,98,128
 Svc/GenericHub/GenericHub.cpp                179     179   100%
-Svc/Health/HealthComponentImpl.cpp           113     113   100%
+Svc/Health/HealthComponentImpl.cpp           112     112   100%
 Svc/LinuxTimer/LinuxTimerCommon.cpp            7       7   100%
 Svc/LinuxTimer/LinuxTimerFd.cpp               37      30    81%   30-31,43,51-53,70
 Svc/OsTime/OsTime.cpp                         50      35    70%   34-40,42-47,74,80
@@ -409,5 +421,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      22640   18912    83%
+TOTAL                                      22852   19117    83%
 ------------------------------------------------------------------------------
