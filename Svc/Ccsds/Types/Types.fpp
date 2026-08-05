@@ -17,6 +17,26 @@ module Ccsds {
         AOS_INVALID_VERSION = 10   @< CCSDS 732.0-B-5: Transfer Frame Version Number mismatch (4.1.2.2.2)
         AOS_INVALID_EPP = 11      @< CCSDS 133.1-B-3: Encapsulation Packet Protocol error
         AOS_VC_FRAME_COUNT_GAP = 12 @< CCSDS 732.0-B-5: AOS VC frame count discontinuity detected
+        SDLS_DECRYPTION_FAILURE = 13 @< SDLS decryption failed
+    }
+
+    @ Status of an SDLS (Space Data Link Security) encryption/decryption request
+    enum SdlsStatus: U8 {
+        SUCCESS = 0             @< Request completed successfully
+        UNKNOWN_SA = 1          @< Security association index has no known mapping
+        UNKNOWN_PORT = 2        @< Mapped port index is out of range or unconnected
+        ENCRYPTION_FAILURE = 3  @< Encryption operation failed
+        DECRYPTION_FAILURE = 4  @< Decryption operation failed
+        KEY_ERROR = 5           @< Key retrieval failed
+    }
+
+    @ An on-stack buffer sized to hold an SDLS key
+    type SdlsKeyBuffer
+
+    @ A single security association index to port index mapping entry
+    struct SaMapEntry {
+        securityAssociationIndex: U16,  @< Security association index
+        portIndex: FwIndexType          @< Port index
     }
 
     # ------------------------------------------------
