@@ -26,7 +26,7 @@ class ActivePhaser final : public ActivePhaserComponentBase {
     static constexpr FwIndexType CONNECTION_COUNT_MAX = NUM_PHASERMEMBEROUT_OUTPUT_PORTS;
 
     enum PhaserContextType {
-        SEQUENTIAL,  // Context stores the number of times a port is called from the beginning of execution.
+        SEQUENTIAL,  // Context stores the port's registration index, assigned when the port is registered.
         COUNT        // Context stores the number of phaser cycles elapsed within a user-specified time window.
     };
 

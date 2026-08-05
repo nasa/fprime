@@ -151,6 +151,25 @@ agents:
       (that is security-review's scope). Does not contribute to CI
       safety.
 
+  - name: F Prime Maintainability & Readability Reviewer
+    short_name: maintainability-review
+    review_label: Maintainability
+    role: reviewer
+    path: .github/agents/maintainability-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Eleven categories: unclear / misleading naming, oversized or
+      overly-complex functions, deep nesting / convoluted control
+      flow, copy-paste duplication in production code, dead or
+      commented-out code introduced by the diff, misleading or
+      stale inline comments, unclear parameter shapes
+      (boolean-flag arguments, long positional lists),
+      inconsistency with the surrounding file's local conventions,
+      inexplicit return values (bare bools / raw int status codes),
+      overly-clever constructs, and structure carrying behavior
+      (brace-less bodies, asymmetric returns across branches --
+      fragile-edit hazards). Does not contribute to CI safety.
+
   - name: F Prime PR Review Summary Aggregator
     short_name: review-summary
     role: aggregator

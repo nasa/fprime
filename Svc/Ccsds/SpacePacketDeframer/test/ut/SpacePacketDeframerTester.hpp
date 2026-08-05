@@ -74,7 +74,8 @@ class SpacePacketDeframerTester final : public SpacePacketDeframerGTestBase {
                               U16 lengthToken,
                               U8* packetData,
                               U16 packetDataLen,
-                              bool hasSecHdr = false);
+                              bool hasSecHdr = false,
+                              U8 seqFlags = 0x3);
 
     //! Verify that protocol-valid control fields are accepted
     void testControlFieldAccepted(U16 pvn,

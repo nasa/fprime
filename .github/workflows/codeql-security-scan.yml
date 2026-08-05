@@ -73,7 +73,7 @@ jobs:
     # switch structure is dictated by the code generator.
     - if: ${{ matrix.language == 'cpp' }}
       name: Filter CMake-internal and third-party paths out of SARIF
-      uses: advanced-security/filter-sarif@v1.1
+      uses: advanced-security/filter-sarif@2da736ff05ef065cb2894ac6892e47b5eac2c3c0 # v1.1
       with:
         patterns: |
           -**/CMakeFiles/**

@@ -71,6 +71,8 @@ Add requirements in the chart below
 |-----------------------|--------------------------------------------------------------------|
 | CompressionComplete   | DIAGNOSTIC event when DpCompressProc compresses a buffer           |
 | DidNotCompress        | ACTIVITY\_LO event when DpCompressProc can not compress any chunks |
+| InvalidHeader         | WARNING\_HI event when the container header cannot be deserialized |
+| BufferTooSmallForPacket | WARNING\_HI event when the incoming buffer is smaller than `Fw::DpContainer::MIN_PACKET_SIZE` |
 
 
 ## Detailed Documentation

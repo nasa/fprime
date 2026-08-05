@@ -10,7 +10,7 @@ For more information on data products and records, see the
 ## 2. Configuration
 
 The following types and constants are configurable via the file
-[`config/DpCfg.fpp`](../../../config/DpCfg.fpp):
+[`config/DpCfg.fpp`](../../../default/config/DpCfg.fpp):
 
 | Name | Kind | Description |
 | ---- | ---- | ---- |

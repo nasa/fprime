@@ -56,6 +56,7 @@ void RateGroupDriver::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSta
 
     // rollover the tick value when the tick count reaches the rollover value
     // the rollover value is the product of all the dividers. See comment in constructor.
+    FW_ASSERT(this->m_rollover > 0);
     this->m_ticks = (this->m_ticks + 1) % this->m_rollover;
 }
 
