@@ -1,0 +1,94 @@
+// ======================================================================
+// \title  SdlsSaRouter.hpp
+// \author lestarch-autobot
+// \brief  hpp file for SdlsSaRouter component implementation class
+// ======================================================================
+
+#ifndef Svc_Ccsds_SdlsSaRouter_HPP
+#define Svc_Ccsds_SdlsSaRouter_HPP
+
+#include "Fw/DataStructures/ArrayMap.hpp"
+#include "SdlsSaRouterConfig/FppConstantsAc.hpp"
+#include "SdlsSaRouterConfig/SaMapArrayAc.hpp"
+#include "Svc/Ccsds/SdlsSaRouter/SdlsSaRouterComponentAc.hpp"
+
+namespace Svc {
+
+namespace Ccsds {
+
+class SdlsSaRouter final : public SdlsSaRouterComponentBase {
+  public:
+    // ----------------------------------------------------------------------
+    // Component construction and destruction
+    // ----------------------------------------------------------------------
+
+    //! Construct SdlsSaRouter object
+    SdlsSaRouter(const char* const compName  //!< The component name
+    );
+
+    //! Destroy SdlsSaRouter object
+    ~SdlsSaRouter();
+
+  private:
+    // ----------------------------------------------------------------------
+    // Handler implementations for typed input ports
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for dataIn
+    //!
+    //! Port to receive the security association index and iv/data buffer to route
+    void dataIn_handler(FwIndexType portNum,  //!< The port number
+                        U16 securityAssociationIndex,
+                        Fw::Buffer& data,
+                        const ComCfg::FrameContext& context) override;
+
+    //! Handler implementation for dataReturnIn
+    //!
+    //! Port for receiving back ownership of buffers sent on dataOut
+    void dataReturnIn_handler(FwIndexType portNum,  //!< The port number
+                              Fw::Buffer& data,
+                              const ComCfg::FrameContext& context) override;
+
+    //! Handler implementation for saBufferReturnIn
+    //!
+    //! Ports for receiving back iv/data buffers from downstream crypto components for deallocation
+    void saBufferReturnIn_handler(FwIndexType portNum,  //!< The port number
+                                  Fw::Buffer& data,
+                                  const ComCfg::FrameContext& context) override;
+
+    //! Handler implementation for saDataIn
+    //!
+    //! Ports for receiving the operation status and processed data (possibly newly allocated) from downstream
+    //! crypto components
+    void saDataIn_handler(FwIndexType portNum,  //!< The port number
+                          const Svc::Ccsds::SdlsStatus& status,
+                          Fw::Buffer& data,
+                          const ComCfg::FrameContext& context) override;
+
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    //! Map from SA index to downstream port index
+    Fw::ArrayMap<U16, FwIndexType, SdlsCfg::SaRouterMapEntryCount> m_saMap;
+
+    // ----------------------------------------------------------------------
+    // Constants
+    // ----------------------------------------------------------------------
+
+    //! Sentinel port index marking buffers forwarded by the router itself on routing errors
+    static constexpr FwIndexType ROUTER_ERROR_PORT = -1;
+
+    //! Table of outstanding processed data buffers (keyed by allocation context, which is
+    //! stable across in-place pointer/size adjustments made downstream) to their originating
+    //! port index
+    //! TODO: key on the original allocation pointer once Fw::Buffer stores original pointer + offset
+    Fw::ArrayMap<U32, FwIndexType, SdlsCfg::SaRouterMaxOutstandingBuffers> m_outstanding;
+};
+
+}  // namespace Ccsds
+
+}  // namespace Svc
+
+#endif

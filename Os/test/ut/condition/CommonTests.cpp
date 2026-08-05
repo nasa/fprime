@@ -26,20 +26,22 @@ TEST(Blocking, WaitAll) {
     Os::Test::Condition::Tester::Wait wait_rule2(aggregator);
     Os::Test::Condition::Tester::NotifyAll notify_rule(aggregator);
     aggregator.apply(tester);
+    std::string to_notify("NotifyAll");
     {
         Os::ScopeLock lock(aggregator.getLock());
         while (tester.m_waiters != 2) {
             pseudoRule.wait_for_next_step();
         }
+        // Notify while holding the lock: the target rule checks its condition flag and waits while
+        // holding this same lock, so notifying without it can lose the wakeup between check and wait
+        aggregator.notify(to_notify);
     }
-    std::string to_notify("NotifyAll");
-    aggregator.notify(to_notify);
     {
         Os::ScopeLock lock(aggregator.getLock());
         while (tester.m_waiters > 0) {
             pseudoRule.wait_for_next_step();
         }
+        aggregator.notify(to_notify);
     }
-    aggregator.notify(to_notify);
     aggregator.join();
 }
