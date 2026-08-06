@@ -64,16 +64,10 @@ Choose the operating system you are using to install F Prime:
     2. [CMake](https://cmake.org/download/)
     3. clang and lld
 
-    The clang shipped with Xcode does not include `lld`, so install a complete LLVM
-    distribution. Either install via Homebrew:
-
-    ```bash
-    brew install llvm
-    export LLVM_TOOLS_PATH=$(brew --prefix llvm)
-    ```
-
-    or download an official [llvm.org release](https://github.com/llvm/llvm-project/releases)
-    for your Mac, extract it, and point `LLVM_TOOLS_PATH` at the extracted directory.
+    The clang shipped with Xcode does not include `lld`, so download an official
+    [llvm.org release](https://github.com/llvm/llvm-project/releases) for your Mac,
+    extract it, and point the `LLVM_TOOLS_PATH` environment variable at the extracted
+    directory (the one containing `bin/`).
 
     CMake requires one additional step to ensure it is on the path:
 
@@ -109,46 +103,19 @@ set `LLVM_TOOLS_PATH` to the root of your LLVM installation (the directory conta
 ## Obtaining a Sysroot
 
 The `aarch64-clang-linux` toolchain requires a sysroot for the target: a directory containing the
-target's glibc, libstdc++, headers, and GCC runtime files. There are several ways to obtain one:
+target's glibc, libstdc++, headers, and GCC runtime files. A ready-made sysroot for 64-bit ARM
+Linux targets (e.g. Raspberry Pi 4/5) is published at
+[fprime-community/fprime-rpi-5-sysroot](https://github.com/fprime-community/fprime-rpi-5-sysroot/releases).
+Download and extract it:
 
-1. **Download the pre-built sysroot (recommended).** A ready-made sysroot for 64-bit ARM Linux
-   targets (e.g. Raspberry Pi 4/5) is published at
-   [fprime-community/fprime-rpi-5-sysroot](https://github.com/fprime-community/fprime-rpi-5-sysroot/releases).
-   Download and extract it:
+```bash
+sudo mkdir -p /opt/sysroots
+sudo chown $USER /opt/sysroots
+curl -Ls https://github.com/fprime-community/fprime-rpi-5-sysroot/archive/refs/tags/v0.1.tar.gz | tar -C /opt/sysroots -xz
+export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
+```
 
-    ```bash
-    sudo mkdir -p /opt/sysroots
-    sudo chown $USER /opt/sysroots
-    curl -Ls https://github.com/fprime-community/fprime-rpi-5-sysroot/archive/refs/tags/v0.1.tar.gz | tar -C /opt/sysroots -xz
-    export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
-    ```
-
-    The tarball contains no host binaries, so the same sysroot works from Linux and macOS hosts.
-
-2. **Extract one from a GNU cross-toolchain.** The Arm GNU toolchain releases contain a complete
-   sysroot (glibc 2.31 based, compatible with recent Raspberry Pi OS and Ubuntu targets). The
-   following commands download the toolchain and assemble a standalone sysroot from its `libc`
-   tree, libstdc++ headers, and GCC runtime:
-
-    ```bash
-    sudo mkdir -p /opt/sysroots /tmp/arm-gnu
-    sudo chown $USER /opt/sysroots
-    curl -Ls https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz | tar -JC /tmp/arm-gnu --strip-components=1 -x
-
-    export SYSROOT=/opt/sysroots/aarch64-none-linux-gnu
-    mkdir -p $SYSROOT
-    cp -a /tmp/arm-gnu/aarch64-none-linux-gnu/libc/. $SYSROOT/
-    mkdir -p $SYSROOT/usr/include/c++
-    cp -a /tmp/arm-gnu/aarch64-none-linux-gnu/include/c++/10.2.1 $SYSROOT/usr/include/c++/
-    mkdir -p $SYSROOT/usr/lib/gcc/aarch64-none-linux-gnu
-    cp -a /tmp/arm-gnu/lib/gcc/aarch64-none-linux-gnu/10.2.1 $SYSROOT/usr/lib/gcc/aarch64-none-linux-gnu/
-    cp -a /tmp/arm-gnu/aarch64-none-linux-gnu/lib64/. $SYSROOT/usr/lib64/
-    rm -rf /tmp/arm-gnu
-    ```
-
-3. **Copy one from the target device.** For an exact match with the deployed OS, copy the relevant
-   directories (`/lib`, `/usr/lib`, `/usr/include`) from the running target into a local sysroot
-   directory, e.g. using `rsync`.
+The sysroot contains no host binaries, so the same download works from Linux and macOS hosts.
 
 > [!NOTE]
 > The sysroot's glibc version must be no newer than the glibc on the target device, or the
@@ -229,11 +196,10 @@ ssh <username>@<device-address>
 - **Sysroot errors at generate time**: the toolchain emits a fatal error if no sysroot is set.
   Ensure `AARCH64_SYSROOT` is exported (or pass `-DCMAKE_SYSROOT=...`) before running
   `fprime-util generate aarch64-clang-linux`.
-- **Missing headers or libraries**: verify the sysroot contains `usr/include`, the libstdc++
-  headers (`usr/include/c++/<version>`), and the GCC runtime (`usr/lib/gcc/<triple>/<version>`).
-  See [Obtaining a Sysroot](#obtaining-a-sysroot).
+- **Missing headers or libraries**: verify `AARCH64_SYSROOT` points at the extracted sysroot
+  directory itself (the one containing `usr/`). See [Obtaining a Sysroot](#obtaining-a-sysroot).
 - **`GLIBC_x.yz not found` when running on the target**: the sysroot's glibc is newer than the
-  target's. Use a sysroot built from (or matching) the target OS.
+  target's. Use a sysroot matching the target OS.
 - **Wrong tools picked up**: run `fprime-util generate aarch64-clang-linux -DCMAKE_DEBUG_OUTPUT=ON`
   and watch the logs to verify the expected `clang`/`clang++` and sysroot are used.
 
