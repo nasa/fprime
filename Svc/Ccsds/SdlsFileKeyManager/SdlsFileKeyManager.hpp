@@ -42,6 +42,12 @@ class SdlsFileKeyManager final : public SdlsFileKeyManagerComponentBase {
     //! Port to receive a key request: fills the provided buffer with the key
     Svc::Ccsds::SdlsStatus keyGet_handler(FwIndexType portNum,  //!< The port number
                                           Svc::Ccsds::SdlsKeyBuffer& key) override;
+    
+    //! Handler implementation for keySet
+    //!
+    //! Port to receive a key request: fills the provided buffer with the key
+    void keySet_handler(FwIndexType portNum, Fw::Buffer& key) override;
+
 
     // ----------------------------------------------------------------------
     // Member variables

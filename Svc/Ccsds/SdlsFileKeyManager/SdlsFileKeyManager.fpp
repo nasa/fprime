@@ -12,6 +12,11 @@ module Ccsds {
             severity warning high \
             format "Failed to read key file: status {}, read {} of {} bytes"
 
+        @ Event raised when the key file cannot be written
+        event KeyWriteFailed(status: I32, bytesWritten: FwSizeType, expectedSize: FwSizeType) \
+            severity warning high \
+            format "Failed to write key file: status {}, wrote {} of {} bytes"
+
         ##############################################################################
         #### Interfaces used by the component                                     ####
         ##############################################################################

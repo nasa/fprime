@@ -41,7 +41,7 @@ void SdlsFileKeyManager ::configure(const char* path, FwSizeType keySize) {
 Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum, Svc::Ccsds::SdlsKeyBuffer& key) {
     FW_ASSERT(this->m_configured);
     Os::File file;
-    const Os::File::Status openStatus = file.open(this->m_path.toChar(), Os::File::OPEN_READ);
+    const Os::File::Status openStatus = file.open(this->m_path.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
     if (openStatus != Os::File::OP_OK) {
         this->log_WARNING_HI_KeyReadFailed(static_cast<I32>(openStatus), 0, this->m_keySize);
         // Zeroize any stale key bytes so they cannot leak to the caller
@@ -63,6 +63,25 @@ Svc::Ccsds::SdlsStatus SdlsFileKeyManager ::keyGet_handler(FwIndexType portNum, 
     const Fw::SerializeStatus setStatus = key.setBuffLen(this->m_keySize);
     FW_ASSERT(setStatus == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(setStatus));
     return SdlsStatus::SUCCESS;
+}
+
+void SdlsFileKeyManager ::keySet_handler(FwIndexType portNum, Fw::Buffer& key) {
+    FW_ASSERT(this->m_configured);
+    Os::File file;
+    const Os::File::Status openStatus = file.open(this->m_path.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    if (openStatus != Os::File::OP_OK) {
+        this->log_WARNING_HI_KeyWriteFailed(static_cast<I32>(openStatus), 0, this->m_keySize);
+        return;
+    }
+
+    FwSizeType writeSize = static_cast<FwSizeType>(key.getSize());
+    const Os::File::Status writeStatus = file.write(key.getData(), writeSize);
+    file.close();
+
+    if ((writeStatus != Os::File::OP_OK) || (writeSize != static_cast<FwSizeType>(key.getSize()))) {
+        this->log_WARNING_HI_KeyWriteFailed(static_cast<I32>(writeStatus), 0, this->m_keySize);
+        return;
+    }
 }
 
 }  // namespace Ccsds
