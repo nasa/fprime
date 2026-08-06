@@ -111,14 +111,19 @@ set `LLVM_TOOLS_PATH` to the root of your LLVM installation (the directory conta
 The `aarch64-clang-linux` toolchain requires a sysroot for the target: a directory containing the
 target's glibc, libstdc++, headers, and GCC runtime files. There are several ways to obtain one:
 
-1. **Download a pre-built sysroot.** Projects typically publish a sysroot tarball (e.g. as a GitHub
-   Release asset) matched to their target OS. If your project provides one, download and extract it:
+1. **Download the pre-built sysroot (recommended).** A ready-made sysroot for 64-bit ARM Linux
+   targets (e.g. Raspberry Pi 4/5) is published at
+   [fprime-community/fprime-rpi-5-sysroot](https://github.com/fprime-community/fprime-rpi-5-sysroot/releases).
+   Download and extract it:
 
     ```bash
     sudo mkdir -p /opt/sysroots
     sudo chown $USER /opt/sysroots
-    curl -Ls <sysroot-tarball-url> | tar -C /opt/sysroots -xz
+    curl -Ls https://github.com/fprime-community/fprime-rpi-5-sysroot/archive/refs/tags/v0.1.tar.gz | tar -C /opt/sysroots -xz
+    export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
     ```
+
+    The tarball contains no host binaries, so the same sysroot works from Linux and macOS hosts.
 
 2. **Extract one from a GNU cross-toolchain.** The Arm GNU toolchain releases contain a complete
    sysroot (glibc 2.31 based, compatible with recent Raspberry Pi OS and Ubuntu targets). The
@@ -176,12 +181,12 @@ on 64-bit ARM Linux the platform is called `aarch64-clang-linux`. This toolchain
 Here is how to build for the 64-bit ARM Linux platform:
 
 ```sh
-export AARCH64_SYSROOT=/opt/sysroots/aarch64-none-linux-gnu
+export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
 
 #You can check to make sure the environment variable is set by running:
 echo $AARCH64_SYSROOT
 
-#This should return the path /opt/sysroots/aarch64-none-linux-gnu
+#This should return the path to your sysroot
 
 # In: Deployment Folder
 fprime-util generate aarch64-clang-linux
