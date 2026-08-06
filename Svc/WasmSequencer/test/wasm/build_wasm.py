@@ -2,18 +2,11 @@
 # ======================================================================
 # build_wasm.py
 #
-# Regenerates the golden WebAssembly test modules for the WasmSequencer
-# unit tests from the WAT sources in ./src, plus two hand-crafted invalid
-# binaries used by the load-failure tests.
-#
-# The generated *.wasm files are COMMITTED to git (a golden set) so the
-# unit-test build does not require a WebAssembly toolchain. Only run this
-# script when the WAT sources change.
+# Regenerates the binary WebAssembly test modules for the WasmSequencer
+# unit tests from the WAT sources in ./src
 #
 # Requirements: `wat2wasm` (from WABT) on PATH, built with custom
-# page-size support. Guest modules use 1-byte custom pages so their linear
-# memory fits the WasmSequencer's 2048-byte guest pool
-# (Svc/WasmSequencer default config GUEST_MEMORY_SIZE).
+# page-size support.
 #
 # Usage:  python3 build_wasm.py
 # ======================================================================

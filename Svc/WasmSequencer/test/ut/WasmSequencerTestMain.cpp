@@ -29,6 +29,7 @@ TEST_F(WasmSequencerTester, InitialStateIsIdle) {
     ASSERT_FALSE(this->hasPendingTimer());
     ASSERT_FALSE(this->pendingRun());
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::NONE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -44,6 +45,7 @@ TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 10, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -55,11 +57,13 @@ TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
 
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD_NAME, 11, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
 TEST_F(WasmSequencerTester, LoadFileNotFound) {
     // No copyAsset: the file simply does not exist in the CWD.
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("does_not_exist.wasm");
     this->sendCmd_LOAD(0, 12, Fw::CmdStringArg("does_not_exist.wasm"));
     this->dispatchAll();
@@ -84,6 +88,7 @@ TEST_F(WasmSequencerTester, LoadMalformedMagic) {
     // A bad wasm magic number decodes to ERR_MALFORMED_MAGIC.
     ASSERT_EVENTS_ModuleLoadFailed(0, WasmSequencer_Status::ERR_MALFORMED_MAGIC);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 13, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("malformed.wasm");
 }
 
@@ -94,6 +99,7 @@ TEST_F(WasmSequencerTester, LoadTruncated) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("truncated.wasm");
 }
 
@@ -107,6 +113,7 @@ TEST_F(WasmSequencerTester, LoadBigMemFailsAllocator) {
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
     // A failed load must return the guest allocator to empty (no fragmentation).
     ASSERT_EQ(this->getGuestOffset(), static_cast<FwSizeType>(0));
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("bigmem.wasm");
 }
 
@@ -117,6 +124,7 @@ TEST_F(WasmSequencerTester, LoadBadImportNameFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("bad_import_name.wasm");
 }
 
@@ -127,6 +135,7 @@ TEST_F(WasmSequencerTester, LoadBadImportModuleFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("bad_import_module.wasm");
 }
 
@@ -137,6 +146,7 @@ TEST_F(WasmSequencerTester, LoadBadImportSigFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_ModuleLoadFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("bad_import_sig.wasm");
 }
 
@@ -155,6 +165,7 @@ TEST_F(WasmSequencerTester, RunEmptyNoBlock) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 20, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -168,6 +179,7 @@ TEST_F(WasmSequencerTester, RunEmptyBlock) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 21, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -181,6 +193,7 @@ TEST_F(WasmSequencerTester, RunStartModule) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 22, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("start.wasm");
 }
 
@@ -196,6 +209,7 @@ TEST_F(WasmSequencerTester, RunNoMainFailsInvoke) {
     // No `main` export resolves to ERR_NOT_FOUND.
     ASSERT_EVENTS_ModuleInvokeFailed(0, WasmSequencer_Status::ERR_NOT_FOUND);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 23, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("no_main.wasm");
 }
 
@@ -209,6 +223,7 @@ TEST_F(WasmSequencerTester, RunUnreachableTraps) {
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 24, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("unreachable.wasm");
 }
 
@@ -221,6 +236,7 @@ TEST_F(WasmSequencerTester, RunDivZeroTraps) {
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::DIVIDE_BY_ZERO);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("divzero.wasm");
 }
 
@@ -235,6 +251,7 @@ TEST_F(WasmSequencerTester, RunExitTraps) {
     // A host function returning SPACEWASM_TRAP surfaces as the HOST trap reason.
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 26, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("exit.wasm");
 }
 
@@ -248,6 +265,7 @@ TEST_F(WasmSequencerTester, RunPanicTraps) {
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     // fprime.panic returns SPACEWASM_TRAP, surfacing as the HOST trap reason.
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("panic.wasm");
 }
 
@@ -265,6 +283,7 @@ TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 28, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("start_trap.wasm");
 }
 
@@ -288,6 +307,7 @@ TEST_F(WasmSequencerTester, InvokeAfterLoad) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 31, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -305,6 +325,7 @@ TEST_F(WasmSequencerTester, InvokeNoBlockRespondsImmediately) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 36, Fw::CmdResponse::OK);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -323,6 +344,7 @@ TEST_F(WasmSequencerTester, InvokeUnknownModule) {
     ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 33, Fw::CmdResponse::EXECUTION_ERROR);
     // State is unchanged (still READY).
     ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -335,6 +357,7 @@ TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::IDLE);
     ASSERT_CMD_RESPONSE(0, OPCODE_INVOKE, 34, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -346,6 +369,7 @@ TEST_F(WasmSequencerTester, WaitFromIdleRespondsImmediately) {
     this->dispatchAll();
     ASSERT_CMD_RESPONSE(0, OPCODE_WAIT, 40, Fw::CmdResponse::OK);
     ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
@@ -358,6 +382,7 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
     ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 42, Fw::CmdResponse::OK);
     // WAIT from READY responds immediately without changing state.
     ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -373,6 +398,7 @@ TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
     ASSERT_CMD_RESPONSE(0, OPCODE_CONTINUE, 50, Fw::CmdResponse::EXECUTION_ERROR);
     // The rejected command leaves the component in IDLE.
     ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -398,6 +424,7 @@ TEST_F(WasmSequencerTester, MapTrapReasonAllCases) {
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_BAD_CONVERSION_TO_INTEGER), TR::BAD_CONVERSION_TO_INTEGER);
     // Anything unmapped (e.g. TRAP_NONE) falls through to HOST.
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_NONE), TR::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -414,6 +441,7 @@ TEST_F(WasmSequencerTester, EventActivityHi) {
     ASSERT_EVENTS_LogActivityHi_SIZE(1);
     ASSERT_EVENTS_LogActivityHi(0, "hello wasm");
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event.wasm");
 }
 
@@ -432,6 +460,7 @@ TEST_F(WasmSequencerTester, EventAllSeverities) {
     ASSERT_EVENTS_LogActivityHi_SIZE(1);
     ASSERT_EVENTS_LogActivityLo_SIZE(1);
     ASSERT_EVENTS_LogDiagnostic_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_all_sev.wasm");
 }
 
@@ -454,6 +483,7 @@ TEST_F(WasmSequencerTester, EventMessageTruncatedToMax) {
     const std::string expected(128, 'A');
     ASSERT_EVENTS_LogActivityHi(0, expected.c_str());
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_toobig.wasm");
 }
 
@@ -470,6 +500,7 @@ TEST_F(WasmSequencerTester, EventBadSeverityTraps) {
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     // The host function returned SPACEWASM_TRAP -> HOST trap reason.
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_bad_sev.wasm");
 }
 
@@ -478,7 +509,6 @@ TEST_F(WasmSequencerTester, EventBadSeverityTraps) {
 // ----------------------------------------------------------------------
 
 TEST_F(WasmSequencerTester, TelemetryRead) {
-    // Canned telemetry payload the getTlmChan handler returns.
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
     this->nextTlmTime = Fw::Time(1000, 2000);
@@ -489,9 +519,31 @@ TEST_F(WasmSequencerTester, TelemetryRead) {
     this->dispatchUntilState(State::READY);
 
     ASSERT_EQ(this->getState(), State::READY);
-    // getTlmChan was invoked by the guest tlm host call.
     ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("tlm.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryReadValueMismatchTraps) {
+    U8 raw[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+    this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
+    this->nextTlmTime = Fw::Time(1000, 2000);
+    this->nextTlmId = 42;
+
+    const Fw::String file = this->copyAsset("tlm.wasm");
+    this->sendCmd_RUN(0, 73, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("tlm.wasm");
 }
 
@@ -507,6 +559,7 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
     ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TELEMETRY, 8, Fw::Time::SERIALIZED_SIZE);
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("tlm_badtime.wasm");
 }
 
@@ -521,6 +574,7 @@ TEST_F(WasmSequencerTester, TelemetryTooBigTraps) {
     ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TELEMETRY, 600, FW_TLM_BUFFER_MAX_SIZE);
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("tlm_toobig.wasm");
 }
 
@@ -539,7 +593,29 @@ TEST_F(WasmSequencerTester, ParameterRead) {
 
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_from_getParam_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getParam->at(0).id, static_cast<FwPrmIdType>(7));
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("prm.wasm");
+}
+
+TEST_F(WasmSequencerTester, ParameterReadValueMismatchTraps) {
+    U8 raw[4] = {0x00, 0x11, 0x22, 0x33};
+    this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
+    this->nextPrmId = 7;
+
+    const Fw::String file = this->copyAsset("prm.wasm");
+    this->sendCmd_RUN(0, 82, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_from_getParam_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getParam->at(0).id, static_cast<FwPrmIdType>(7));
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("prm.wasm");
 }
 
@@ -554,6 +630,7 @@ TEST_F(WasmSequencerTester, ParameterTooBigTraps) {
     ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::PARAMETER, 600, FW_PARAM_BUFFER_MAX_SIZE);
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("prm_toobig.wasm");
 }
 
@@ -595,6 +672,7 @@ TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("cmd.wasm");
 }
 
@@ -611,6 +689,7 @@ TEST_F(WasmSequencerTester, CommandTooBigTraps) {
                                  FW_COM_BUFFER_MAX_SIZE - sizeof(FwPacketDescriptorType));
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("cmd_toobig.wasm");
 }
 
@@ -620,6 +699,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseFromIdle) {
     this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
     this->dispatchAll();
     ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -642,6 +722,7 @@ TEST_F(WasmSequencerTester, CommandBadPointerFails) {
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 92, Fw::CmdResponse::EXECUTION_ERROR);
     // No command was actually dispatched.
     ASSERT_from_cmdOut_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("cmd_badptr.wasm");
 }
 
@@ -655,6 +736,7 @@ TEST_F(WasmSequencerTester, EventBadPointerFails) {
     ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::EVENT,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_badptr.wasm");
 }
 
@@ -670,10 +752,12 @@ TEST_F(WasmSequencerTester, ParameterBadPointerFails) {
     ASSERT_EQ(this->getState(), State::IDLE);
     // getParam was queried, but writing the value into guest memory failed.
     ASSERT_from_getParam_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getParam->at(0).id, static_cast<FwPrmIdType>(7));
     ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
     ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::PARAMETER,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("prm_badptr.wasm");
 }
 
@@ -690,11 +774,13 @@ TEST_F(WasmSequencerTester, TelemetryBadTimePointerFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
     ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
     // The time (first) mem_write fails on the OOB pointer in the TELEMETRY path.
     ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::TELEMETRY,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("tlm_badtimeptr.wasm");
 }
 
@@ -712,11 +798,13 @@ TEST_F(WasmSequencerTester, TelemetryBadValuePointerFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
     ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
     // The value (second) mem_write fails on the OOB pointer in the TELEMETRY path.
     ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::TELEMETRY,
                                              WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("tlm_badvalptr.wasm");
 }
 
@@ -747,6 +835,7 @@ TEST_F(WasmSequencerTester, RelativeSleepWakes) {
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("rsleep.wasm");
 }
 
@@ -763,6 +852,7 @@ TEST_F(WasmSequencerTester, AbsoluteSleepWakes) {
     this->invoke_to_checkTimers(0, 0);
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("asleep.wasm");
 }
 
@@ -782,6 +872,7 @@ TEST_F(WasmSequencerTester, SleepTimeBaseMismatchFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("rsleep.wasm");
 }
 
@@ -810,6 +901,7 @@ TEST_F(WasmSequencerTester, PauseThenContinueCompletes) {
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -826,6 +918,7 @@ TEST_F(WasmSequencerTester, CancelWhileSpinning) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -843,6 +936,7 @@ TEST_F(WasmSequencerTester, CancelWhilePaused) {
     this->dispatchUntilState(State::IDLE);
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -858,6 +952,7 @@ TEST_F(WasmSequencerTester, CancelWhileAwaitingResponse) {
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(1);
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::NONE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
     this->removeFile("cmd.wasm");
 }
 
@@ -869,6 +964,7 @@ TEST_F(WasmSequencerTester, CancelFromReadyReturnsIdle) {
     this->sendCmd_CANCEL(0, 131);
     this->dispatchUntilState(State::IDLE);
     ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
 }
 
@@ -895,6 +991,7 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 150, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 151, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -916,6 +1013,7 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
     ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 152, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 153, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -936,6 +1034,7 @@ TEST_F(WasmSequencerTester, WaitWhileRunningQueuesUntilFinish) {
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 160, Fw::CmdResponse::OK);
     ASSERT_CMD_RESPONSE(1, OPCODE_WAIT, 161, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -953,6 +1052,7 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -976,6 +1076,7 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
     // All queued WAITs are drained on finish and the sequence returns to READY.
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_TooManyBlockingCommands_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 
@@ -987,6 +1088,7 @@ TEST_F(WasmSequencerTester, WriteTelemetryTickIsNoOp) {
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_CMD_RESPONSE_SIZE(0);
     ASSERT_EVENTS_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
@@ -1004,6 +1106,7 @@ TEST_F(WasmSequencerTester, ContinueWhileSpinningIsOk) {
     this->dispatchUntilState(State::READY);
     // CONTINUE while running just responds OK; the loop still finishes.
     ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
 

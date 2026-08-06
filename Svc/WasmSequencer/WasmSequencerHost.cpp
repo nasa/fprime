@@ -10,7 +10,6 @@
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
-#include "config/FwPrmIdTypeAliasAc.h"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -107,7 +106,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TELEMETRY;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.prm_id = static_cast<FwPrmIdType>(id);
+        this->m_pendingHostFunction.id = static_cast<U64>(id);
         this->m_pendingHostFunction.ptr1 = time_ptr;
         this->m_pendingHostFunction.len1 = time_size;
         this->m_pendingHostFunction.ptr2 = value_ptr;
@@ -145,7 +144,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadParameter(spacewasm_caller_t*
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::PARAMETER;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.prm_id = static_cast<FwPrmIdType>(id);
+        this->m_pendingHostFunction.id = static_cast<U64>(id);
         this->m_pendingHostFunction.ptr1 = ptr;
         this->m_pendingHostFunction.len1 = len;
 

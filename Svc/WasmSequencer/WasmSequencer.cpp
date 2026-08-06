@@ -21,6 +21,8 @@
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
+#include "config/FwChanIdTypeAliasAc.h"
+#include "config/FwPrmIdTypeAliasAc.h"
 
 namespace Svc {
 
@@ -629,7 +631,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             Fw::Time time;
             Fw::TlmBuffer tlmBuffer;
 
-            auto valid = this->getTlmChan_out(0, this->m_pendingHostFunction.chan_id, time, tlmBuffer);
+            auto valid =
+                this->getTlmChan_out(0, static_cast<FwChanIdType>(this->m_pendingHostFunction.id), time, tlmBuffer);
 
             // Write the response into guest memory
             FW_ASSERT(this->m_pendingHostFunction.len1 == Fw::Time::SERIALIZED_SIZE,
@@ -677,7 +680,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
         }
         case WasmSequencer_HostFunction::PARAMETER: {
             Fw::ParamBuffer prmBuf;
-            auto prmStatus = this->getParam_out(0, this->m_pendingHostFunction.prm_id, prmBuf);
+            auto prmStatus = this->getParam_out(0, static_cast<FwPrmIdType>(this->m_pendingHostFunction.id), prmBuf);
 
             // Write the parameter to linear memory
             spacewasm_status_t status =

@@ -542,8 +542,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         // TODO(tumbar) We should be able to do memory ops on `spacewasm_t`
         spacewasm_caller_t* caller;
 
-        FwChanIdType chan_id;
-        FwPrmIdType prm_id;
+        U64 id;
         Fw::LogSeverity severity;
 
         // The first pointer/length in one of the host commands

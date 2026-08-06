@@ -1,7 +1,5 @@
-;; Reads telemetry channel 42 into guest memory.
+;; Reads telemetry channel 42 into guest memory and VALIDATES the round trip.
 ;; tlm(id:i64, time_ptr, time_size, value_ptr, value_size) -> i32(valid)
-;; time_size MUST equal Fw::Time::SERIALIZED_SIZE (11). value_size <= FW_TLM_BUFFER_MAX_SIZE.
-;; Exercises TELEMETRY host fn -> getTlmChan_out -> mem_write(time)+mem_write(value) -> resume_value.
 (module
   (import "fprime_v1" "tlm"
     (func $tlm (param i64 i32 i32 i32 i32) (result i32)))
@@ -15,4 +13,17 @@
     i32.const 16   ;; value_ptr
     i32.const 4    ;; value_size
     call $tlm
-    drop))
+    ;; stack: valid(i32). Require Fw::TlmValid::VALID (0).
+    i32.const 0
+    i32.ne
+    if
+      unreachable
+    end
+    ;; Read the value bytes back and require the exact canned pattern.
+    i32.const 16
+    i32.load
+    i32.const 0x44332211
+    i32.ne
+    if
+      unreachable
+    end))
