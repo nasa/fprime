@@ -6,7 +6,6 @@
 1. [Obtaining a Sysroot](#obtaining-a-sysroot)
 1. [Cross-Compilation Tutorial - Compiling for ARM](#cross-compilation-tutorial-compiling-for-arm)
 1. [F´ Running on ARM Linux Tutorial](#f-running-on-arm-linux-tutorial)
-1. [Appendix I: Legacy GNU Cross-Toolchains](#appendix-i-legacy-gnu-cross-toolchains)
 
 ## Cross-Compilation Setup
 
@@ -202,40 +201,3 @@ ssh <username>@<device-address>
   target's. Use a sysroot matching the target OS.
 - **Wrong tools picked up**: run `fprime-util generate aarch64-clang-linux -DCMAKE_DEBUG_OUTPUT=ON`
   and watch the logs to verify the expected `clang`/`clang++` and sysroot are used.
-
-
-## Appendix I: Legacy GNU Cross-Toolchains
-
-Prior to the clang + sysroot approach, cross-compilation used per-host GNU cross-toolchains via
-the `aarch64-linux` (64-bit) and `arm-hf-linux` (32-bit) platforms. These toolchains remain
-available and are still the supported route for 32-bit ARM targets.
-
-Install the pre-built packages provided by ARM into the `/opt/toolchains` directory:
-
-```bash
-sudo mkdir -p /opt/toolchains
-sudo chown $USER /opt/toolchains
-# For users running on 64-bit ARM
-curl -Ls https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz | tar -JC /opt/toolchains --strip-components=1 -x
-# For users running on 32-bit ARM
-curl -Ls https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf.tar.xz | tar -JC /opt/toolchains --strip-components=1 -x
-```
-
-These packages expect the environment variable `ARM_TOOLS_PATH` to point to the installation
-directory of the ARM cross-compilers:
-
-```sh
-export ARM_TOOLS_PATH=/opt/toolchains
-
-# For ARM 64-bit hardware
-fprime-util generate aarch64-linux
-fprime-util build aarch64-linux
-
-# For ARM 32-bit hardware
-fprime-util generate arm-hf-linux
-fprime-util build arm-hf-linux
-```
-
-Note that the GNU cross-toolchains are Linux-only: macOS users following this route must run the
-builds inside a Linux virtual machine or the `nasafprime/fprime-arm:latest` Docker container. The
-clang + sysroot approach above removes this requirement.
