@@ -50,7 +50,7 @@ TEST(SizeofTest, Enum) {
 
 TEST(SizeofTest, Struct) {
     ASSERT_EQ(SizeofStruct, TestStruct1::SERIALIZED_SIZE);
-    ASSERT_EQ(SizeofStruct, 94);
+    ASSERT_EQ(SizeofStruct, 100);
     ASSERT_EQ(SizeofStruct2, TestStruct2::SERIALIZED_SIZE);
-    ASSERT_EQ(SizeofStruct2, 338);
+    ASSERT_EQ(SizeofStruct2, 350);
 }

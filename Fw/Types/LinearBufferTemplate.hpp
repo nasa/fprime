@@ -62,7 +62,7 @@ class LinearBufferTemplate final : public LinearBufferBase {
     FwSizeType getCapacity() const override { return MaxSize; }
 
   private:
-    U8 m_bufferData[MaxSize] = {};
+    U8 m_bufferData[MaxSize];
 };
 
 }  // namespace Fw

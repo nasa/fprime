@@ -53,6 +53,8 @@ FormalAliasString from_stringAliasReturnOut_handler(FwIndexType portNum,        
 void from_stringArgsOut_handler(const FwIndexType portNum,
                                 const Fw::StringBase& str80,
                                 Fw::StringBase& str80Ref,
+                                const Fw::StringBase& str0,
+                                Fw::StringBase& str0Ref,
                                 const Fw::StringBase& str100,
                                 Fw::StringBase& str100Ref) final;
 

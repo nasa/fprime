@@ -1,0 +1,536 @@
+// ======================================================================
+// \title  Channel.hpp
+// \brief  CFDP Channel operations
+//
+// This file is a port of channel-specific functions from the following files
+// from the NASA Core Flight System (cFS) CFDP (CF) Application, version 3.0.0,
+// adapted for use within the F-Prime (F') framework:
+// - cf_cfdp.c (channel processing functions)
+// - cf_utils.c (channel transaction and resource management)
+//
+// ======================================================================
+//
+// NASA Docket No. GSC-18,447-1
+//
+// Copyright (c) 2019 United States Government as represented by the
+// Administrator of the National Aeronautics and Space Administration.
+// All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// ======================================================================
+
+#ifndef CFDP_CHANNEL_HPP
+#define CFDP_CHANNEL_HPP
+
+#include <Fw/Types/Assert.hpp>
+#include <Fw/Types/MemAllocator.hpp>
+
+#include <Svc/Ccsds/CfdpManager/Types/Types.hpp>
+
+namespace Svc {
+namespace Ccsds {
+namespace Cfdp {
+
+// Forward declarations
+class Engine;
+class Transaction;
+
+/**
+ * @brief CFDP Channel class
+ *
+ * Encapsulates channel-specific operations for CFDP protocol processing.
+ * Each channel manages its own set of transactions, playback directories,
+ * and polling directories.
+ */
+class Channel {
+  public:
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Construct a Channel
+     *
+     * @param engine      Pointer to parent CFDP engine
+     * @param channelId   Channel ID (index)
+     * @param cfdpManager Pointer to parent CfdpManager component
+     * @param allocator   Memory allocator for dynamic allocation
+     * @param memId       Memory allocation identifier
+     */
+    Channel(Engine* engine, U8 channelId, CfdpManager* cfdpManager, Fw::MemAllocator& allocator, FwEnumStoreType memId);
+
+    /**
+     * @brief Destruct a Channel
+     */
+    ~Channel();
+
+    /**
+     * @brief Clean up dynamically allocated resources
+     *
+     * Must be called before destruction to free internal arrays
+     *
+     * @param allocator Memory allocator used during construction
+     * @param memId     Memory allocation identifier
+     */
+    void cleanup(Fw::MemAllocator& allocator, FwEnumStoreType memId);
+
+    // Disable copy constructor and assignment operator
+    // Channel manages dynamic resources and should not be copied
+    Channel(const Channel&) = delete;
+    Channel& operator=(const Channel&) = delete;
+
+    // ----------------------------------------------------------------------
+    // Channel Processing
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Cycle the TX side of this channel
+     *
+     * Processes outgoing transactions and sends PDUs for this channel.
+     */
+    void cycleTx();
+
+    /**
+     * @brief Tick all transactions on this channel
+     *
+     * Processes timer expirations and retransmissions for all active transactions.
+     */
+    void tickTransactions();
+
+    /**
+     * @brief Process all playback directories for this channel
+     */
+    void processPlaybackDirectories();
+
+    /**
+     * @brief Process all polling directories for this channel
+     */
+    void processPollingDirectories();
+
+    // ----------------------------------------------------------------------
+    // Transaction Management
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Find an unused transaction on this channel
+     *
+     * @param direction Intended direction of data flow (TX or RX)
+     *
+     * @returns Pointer to a free transaction
+     * @retval  nullptr if no free transactions available.
+     */
+    Transaction* findUnusedTransaction(Direction direction);
+
+    /**
+     * @brief Finds an active transaction by sequence number
+     *
+     * This function traverses the active rx, pending, txa, and txw
+     * transaction queues and looks for the requested transaction.
+     *
+     * @param transaction_sequence_number  Sequence number to find
+     * @param src_eid                      Entity ID associated with sequence number
+     *
+     * @returns Pointer to the given transaction if found
+     * @retval  nullptr if the transaction is not found
+     */
+    Transaction* findTransactionBySequenceNumber(TransactionSeq transaction_sequence_number, EntityId src_eid);
+
+    /**
+     * @brief Traverses all transactions on all active queues and performs an operation on them
+     *
+     * @param fn      Callback to invoke for all traversed transactions
+     * @param context Opaque object to pass to all callbacks
+     *
+     * @returns Number of transactions traversed
+     */
+    I32 traverseAllTransactions(CfdpTraverseAllTransactionsFunc fn, void* context);
+
+    /**
+     * @brief Returns a history structure back to its unused state
+     *
+     * There's nothing to do currently other than remove the history
+     * from its current queue and put it back on QueueId::HIST_FREE.
+     *
+     * @param history Pointer to the history entry
+     */
+    void resetHistory(History* history);
+
+    // ----------------------------------------------------------------------
+    // Channel State Management
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Get the channel ID
+     *
+     * @returns Channel ID
+     */
+    inline U8 getChannelId() const { return m_channelId; }
+
+    /**
+     * @brief Get the outgoing PDU counter for this cycle
+     *
+     * @returns Current outgoing PDU count
+     */
+    inline U32 getOutgoingCounter() const { return m_outgoingCounter; }
+
+    /**
+     * @brief Increment the outgoing PDU counter
+     */
+    inline void incrementOutgoingCounter() { ++m_outgoingCounter; }
+
+    /**
+     * @brief Reset the outgoing PDU counter to zero
+     */
+    inline void resetOutgoingCounter() { m_outgoingCounter = 0; }
+
+    /**
+     * @brief Get the number of commanded TX transactions
+     *
+     * @returns Number of commanded TX transactions
+     */
+    inline U32 getNumCmdTx() const { return m_numCmdTx; }
+
+    /**
+     * @brief Increment the command TX counter for this channel
+     */
+    inline void incrementCmdTxCounter() { ++m_numCmdTx; }
+
+    /**
+     * @brief Decrement the command TX counter for this channel
+     */
+    void decrementCmdTxCounter();
+
+    /**
+     * @brief Check if current transaction matches and clear if so
+     *
+     * @param txn Transaction to check against current
+     */
+    void clearCurrentIfMatch(Transaction* txn);
+
+    /**
+     * @brief Set current transaction
+     *
+     * Used when a transaction cannot make progress this cycle
+     * (e.g., throttle limit reached, file transfer complete).
+     *
+     * @param txn Transaction to set as current
+     */
+    void setCurrentTxn(const Transaction* txn);
+
+    /**
+     * @brief Set the flow state for this channel
+     *
+     * @param flowState New flow state (NORMAL or FROZEN)
+     */
+    inline void setFlowState(Flow::T flowState) { m_flowState = flowState; }
+
+    /**
+     * @brief Get the flow state for this channel
+     *
+     * @returns Current flow state
+     */
+    inline Flow::T getFlowState() const { return m_flowState; }
+
+    /**
+     * @brief Get a playback directory entry
+     *
+     * @param index Index of playback directory
+     * @returns Pointer to playback directory
+     */
+    inline Playback* getPlayback(U32 index) {
+        FW_ASSERT(index < MaxCommandedPlaybackDirectoriesPerChan);
+        return &m_playback[index];
+    }
+
+    /**
+     * @brief Get a polling directory entry
+     *
+     * @param index Index of polling directory
+     * @returns Pointer to polling directory
+     */
+    inline CfdpPollDir* getPollDir(U32 index) {
+        FW_ASSERT(index < MaxPollingDirPerChan);
+        return &m_polldir[index];
+    }
+
+    /**
+     * @brief Get a transaction by index (for testing)
+     *
+     * @param index Transaction index within this channel
+     * @returns Pointer to transaction
+     */
+    Transaction* getTransaction(U32 index);
+
+    /**
+     * @brief Get a history by index (for testing)
+     *
+     * @param index History index within this channel
+     * @returns Pointer to history entry
+     */
+    History* getHistory(U32 index);
+
+    // ----------------------------------------------------------------------
+    // Resource Management
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Gets the head of the chunk list for this channel + direction
+     *
+     * The chunk list contains structs that are available for tracking the chunks
+     * associated with files in transit.  An entry needs to be pulled from this
+     * list for every transaction, and returned to this list when the transaction
+     * completes.
+     *
+     * @param direction  Whether this is TX or RX
+     *
+     * @returns Pointer to list head
+     */
+    CListNode** getChunkListHead(U8 direction);
+
+    /**
+     * @brief Find unused chunks for this channel
+     *
+     * @param dir  Direction (TX or RX)
+     *
+     * @returns Pointer to unused chunk wrapper
+     * @retval  nullptr if no chunks available
+     */
+    CfdpChunkWrapper* findUnusedChunks(Direction dir);
+
+    // ----------------------------------------------------------------------
+    // Transaction Management
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Free a transaction from the queue it's on
+     *
+     * NOTE: this leaves the transaction in a bad state,
+     * so it must be followed by placing the transaction on
+     * another queue. Need this function because the path of
+     * freeing a transaction (returning to default state)
+     * means that it must be removed from the current queue
+     * otherwise if the structure is cleared the queue
+     * will become corrupted due to other nodes on the queue
+     * pointing to an invalid node
+     *
+     * @param txn Pointer to the transaction object
+     */
+    void dequeueTransaction(Transaction* txn);
+
+    /**
+     * @brief Move a transaction from one queue to another
+     *
+     * @param txn   Pointer to the transaction object
+     * @param queue Index of destination queue
+     */
+    void moveTransaction(Transaction* txn, QueueId::T queue);
+
+    /**
+     * @brief Frees and resets a transaction and returns it for later use
+     *
+     * @param txn Pointer to the transaction object
+     */
+    void freeTransaction(Transaction* txn);
+
+    /**
+     * @brief Recover resources associated with a transaction
+     *
+     * Wipes all data in the transaction struct and returns everything to its
+     * relevant FREE list so it can be used again.
+     *
+     * Notably, should any PDUs arrive after this that is related to this
+     * transaction, these PDUs will not be identifiable, and no longer associable
+     * to this transaction.
+     *
+     * It is imperative that nothing uses the txn struct after this call,
+     * as it will now be invalid.  This is effectively like free().
+     *
+     * @param txn  Pointer to the transaction object
+     */
+    void recycleTransaction(Transaction* txn);
+
+    /**
+     * @brief Insert a transaction into a priority sorted transaction queue
+     *
+     * This function works by walking the queue in reverse to find a
+     * transaction with a higher priority than the given transaction.
+     * The given transaction is then inserted after that one, since it
+     * would be the next lower priority.
+     *
+     * @param txn   Pointer to the transaction object
+     * @param queue Index of queue to insert into
+     */
+    void insertSortPrio(Transaction* txn, QueueId::T queue);
+
+    // ----------------------------------------------------------------------
+    // Queue Management
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Remove a node from a channel queue
+     *
+     * @param queueidx  Queue index
+     * @param node      Node to remove
+     */
+    inline void removeFromQueue(QueueId::T queueidx, CListNode* node);
+
+    /**
+     * @brief Insert a node after another in a channel queue
+     *
+     * @param queueidx  Queue index
+     * @param start     Node to insert after
+     * @param after     Node to insert
+     */
+    inline void insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after);
+
+    /**
+     * @brief Insert a node at the back of a channel queue
+     *
+     * @param queueidx  Queue index
+     * @param node      Node to insert
+     */
+    inline void insertBackInQueue(QueueId::T queueidx, CListNode* node);
+
+    // ----------------------------------------------------------------------
+    // Callback methods (public so wrappers can call them)
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Traverse callback for cycling the first active transaction
+     *
+     * @param node     List node being traversed
+     * @param context  Callback context (CycleTxArgs*)
+     * @returns Traversal status (CONT or EXIT)
+     */
+    CListTraverseStatus cycleTxFirstActive(CListNode* node, void* context);
+
+    /**
+     * @brief Traverse callback for ticking a transaction
+     *
+     * @param node     List node being traversed
+     * @param context  Callback context (TickArgs*)
+     * @returns Traversal status (CONT or EXIT)
+     */
+    CListTraverseStatus doTick(CListNode* node, void* context);
+
+    // ----------------------------------------------------------------------
+    // Static callback wrappers (for function pointer callbacks)
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Static wrapper for cycleTxFirstActive callback
+     * @param node CList node
+     * @param context Pointer to Channel instance
+     * @return Traversal status
+     */
+    static CListTraverseStatus cycleTxFirstActiveWrapper(CListNode* node, void* context);
+
+    /**
+     * @brief Static wrapper for doTick callback
+     * @param node CList node
+     * @param context Pointer to Channel instance
+     * @return Traversal status
+     */
+    static CListTraverseStatus doTickWrapper(CListNode* node, void* context);
+
+    /**
+     * @brief Static wrapper for traverseAllTransactions callback
+     * @param node CList node
+     * @param context Pointer to TraverseAllContext struct
+     * @return Traversal status
+     */
+    static CListTraverseStatus traverseAllTransactionsWrapper(CListNode* node, void* context);
+
+  private:
+    // ----------------------------------------------------------------------
+    // Private helper methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * @brief Step each active playback directory
+     *
+     * Check if a playback directory needs iterated, and if so does, and
+     * if a valid file is found initiates playback on it.
+     *
+     * @param pb    The playback state
+     */
+    void processPlaybackDirectory(Playback* pb);
+
+    /**
+     * @brief Update playback/poll counted state
+     *
+     * @param pb      Playback state
+     * @param up      Whether to increment (1) or decrement (0)
+     * @param counter Counter to update
+     */
+    void updatePollPbCounted(Playback* pb, I32 up, U8* counter);
+
+  private:
+    // ----------------------------------------------------------------------
+    // Member variables
+    // ----------------------------------------------------------------------
+
+    Engine* m_engine;  //!< Parent CFDP engine
+
+    CListNode* m_qs[QueueId::NUM];                                //!< Transaction queues
+    CListNode* m_cs[static_cast<U32>(Direction::DIRECTION_NUM)];  //!< Command/history lists
+
+    U32 m_numCmdTx;  //!< Number of commanded TX transactions
+
+    Playback m_playback[MaxCommandedPlaybackDirectoriesPerChan];  //!< Playback state
+    CfdpPollDir m_polldir[MaxPollingDirPerChan];                  //!< Polling directory state
+
+    const Transaction* m_currentTxn;  //!< Current transaction during channel cycle
+    CfdpManager* m_cfdpManager;       //!< Reference to F' component for parameters
+
+    U8 m_tickType;   //!< Type of tick being processed
+    U8 m_channelId;  //!< Channel ID (index into engine array)
+
+    Flow::T m_flowState;    //!< Channel flow state (normal/frozen)
+    U32 m_outgoingCounter;  //!< PDU throttling counter
+
+    // Per-channel resource arrays (dynamically allocated, moved from Engine)
+    Transaction* m_transactions;  //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL
+    History* m_histories;         //!< Array of NumHistoriesPerChannel
+    CfdpChunkWrapper* m_chunks;   //!< Array of CFDP_NUM_TRANSACTIONS_PER_CHANNEL * Direction::DIRECTION_NUM
+    Chunk* m_chunkMem;            //!< Chunk memory backing store
+
+    U32 m_dirMaxChunks[static_cast<U32>(
+        Direction::DIRECTION_NUM)];  //!< Max chunks per direction (RX/TX) for this channel
+
+    // Friend declarations for testing
+    friend class CfdpManagerTester;
+};
+
+// ----------------------------------------------------------------------
+// Inline function implementations
+// ----------------------------------------------------------------------
+
+inline void Channel::removeFromQueue(QueueId::T queueidx, CListNode* node) {
+    CfdpCListRemove(&m_qs[queueidx], node);
+}
+
+inline void Channel::insertAfterInQueue(QueueId::T queueidx, CListNode* start, CListNode* after) {
+    CfdpCListInsertAfter(&m_qs[queueidx], start, after);
+}
+
+inline void Channel::insertBackInQueue(QueueId::T queueidx, CListNode* node) {
+    CfdpCListInsertBack(&m_qs[queueidx], node);
+}
+
+}  // namespace Cfdp
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif  // CFDP_CHANNEL_HPP
