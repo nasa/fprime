@@ -2,6 +2,9 @@ module FileHandlingCfdpConfig {
     # Base ID for the FileHandlingCfdp Subtopology, all components are offsets from this base ID
     constant BASE_ID = 0x06000000
 
+    # Depth of the cfdpManager fileIn request handoff queue
+    constant FileQueueDepth = 10
+
     module QueueSizes {
         constant cfdpManager   = 30
         constant fileManager   = 10
