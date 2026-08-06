@@ -5,7 +5,22 @@ add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComFprime/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandling/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/FileHandlingCfdp/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DataProducts/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompression/")
+
+# DpCompression requires zlib - only add if available
+find_package(ZLIB)
+if (NOT ZLIB_FOUND)
+    find_library(ZLIB_LIBRARY z)
+    if (NOT ZLIB_LIBRARY STREQUAL "ZLIB_LIBRARY-NOTFOUND")
+        set(ZLIB_FOUND TRUE)
+    endif()
+endif()
+
+if (ZLIB_FOUND)
+    add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/DpCompression/")
+else()
+    message(STATUS "Skipping DpCompression subtopology - zlib not found")
+endif()
+
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ComLoggerTee/")
 
 add_custom_target(
@@ -28,4 +43,10 @@ add_custom_target(
         Svc_Subtopologies_ComLoggerTee
         Svc_Subtopologies_DpCompression
         Svc_Subtopologies_DpCompression_DpCompressionConfig
+    )
+endif()
+
+add_custom_target(
+    Svc_Subtopologies
+    DEPENDS ${SUBTOPOLOGY_DEPS}
 )
