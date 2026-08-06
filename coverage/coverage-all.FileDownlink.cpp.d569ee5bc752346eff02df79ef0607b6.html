@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-05 01:41:38</td>
+      <td>2026-08-06 23:54:29</td>
     </tr>
   </table>
 </div>
@@ -40,9 +40,9 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>254</td>
-      <td>301</td>
-      <td class="coverage-medium">84.4%</td>
+      <td>257</td>
+      <td>304</td>
+      <td class="coverage-medium">84.5%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
@@ -52,9 +52,9 @@
     </tr>
     <tr>
       <th scope="row">Branches:</th>
-      <td>149</td>
-      <td>212</td>
-      <td class="coverage-low">70.3%</td>
+      <td>151</td>
+      <td>214</td>
+      <td class="coverage-low">70.6%</td>
     </tr>
   </table>
 </div>
@@ -80,19 +80,19 @@
     <tr><td><a href="#l53">Svc::FileDownlink::configure(char const*) (line 53)</a></td><td>called 7 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l42">Svc::FileDownlink::configure(unsigned int, unsigned int, unsigned int) (line 42)</a></td><td>called 7 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l57">Svc::FileDownlink::deinit() (line 57)</a></td><td>called 7 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l457">Svc::FileDownlink::downlinkPacket() (line 457)</a></td><td>called 7 times</td><td>63.0%</td></tr>
-    <tr><td><a href="#l450">Svc::FileDownlink::enterCooldown() (line 450)</a></td><td>called 5 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l489">Svc::FileDownlink::finishHelper(bool) (line 489)</a></td><td>called 4 times</td><td>93.0%</td></tr>
-    <tr><td><a href="#l501">Svc::FileDownlink::getBuffer(Fw::Buffer&amp;, Svc::FileDownlink::PacketType) (line 501)</a></td><td>called 5 times</td><td>97.0%</td></tr>
+    <tr><td><a href="#l461">Svc::FileDownlink::downlinkPacket() (line 461)</a></td><td>called 7 times</td><td>63.0%</td></tr>
+    <tr><td><a href="#l454">Svc::FileDownlink::enterCooldown() (line 454)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l493">Svc::FileDownlink::finishHelper(bool) (line 493)</a></td><td>called 4 times</td><td>93.0%</td></tr>
+    <tr><td><a href="#l505">Svc::FileDownlink::getBuffer(Fw::Buffer&amp;, Svc::FileDownlink::PacketType) (line 505)</a></td><td>called 5 times</td><td>97.0%</td></tr>
     <tr><td><a href="#l143">Svc::FileDownlink::pingIn_handler(short, unsigned int) (line 143)</a></td><td>not called</td><td>0.0%</td></tr>
     <tr><td><a href="#l62">Svc::FileDownlink::preamble() (line 62)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l381">Svc::FileDownlink::sendCancelPacket() (line 381)</a></td><td>called 1 time</td><td>73.0%</td></tr>
+    <tr><td><a href="#l381">Svc::FileDownlink::sendCancelPacket() (line 381)</a></td><td>called 1 time</td><td>72.0%</td></tr>
     <tr><td><a href="#l351">Svc::FileDownlink::sendDataPacket(unsigned int&amp;) (line 351)</a></td><td>called 3 times</td><td>86.0%</td></tr>
-    <tr><td><a href="#l406">Svc::FileDownlink::sendEndPacket() (line 406)</a></td><td>called 3 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l410">Svc::FileDownlink::sendEndPacket() (line 410)</a></td><td>called 3 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l286">Svc::FileDownlink::sendFile(Fw::StringTemplate&lt;240ul&gt; const&amp;, Fw::StringTemplate&lt;240ul&gt; const&amp;, unsigned int, unsigned int) (line 286)</a></td><td>called 7 times</td><td>72.0%</td></tr>
-    <tr><td><a href="#l427">Svc::FileDownlink::sendFilePacket(Fw::FilePacket const&amp;) (line 427)</a></td><td>called 10 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l431">Svc::FileDownlink::sendFilePacket(Fw::FilePacket const&amp;) (line 431)</a></td><td>called 10 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l272">Svc::FileDownlink::sendResponse(Svc::SendFileStatus) (line 272)</a></td><td>called 7 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l418">Svc::FileDownlink::sendStartPacket() (line 418)</a></td><td>called 4 times</td><td>94.0%</td></tr>
+    <tr><td><a href="#l422">Svc::FileDownlink::sendStartPacket() (line 422)</a></td><td>called 4 times</td><td>94.0%</td></tr>
     <tr><td><a href="#l253">Svc::FileDownlink::statusToCmdResp(Svc::SendFileStatus) (line 253)</a></td><td>called 6 times</td><td>54.0%</td></tr>
     <tr><td><a href="#l66">Svc::FileDownlink::~FileDownlink() (line 66)</a></td><td>called 7 times</td><td>100.0%</td></tr>
   </table>
@@ -3385,6 +3385,46 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 1 taken 1 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">bufferSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filePacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">FwPacketDescriptorType</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l403" href="#l403">403</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">bufferSize</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()),</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l404" href="#l404">404</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bufferSize</span><span class="p">));</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l405" href="#l405">405</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 1 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">bufferSize</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l406" href="#l406">406</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 5 taken 1 times.</div>
           </div>
         </details>
@@ -3393,7 +3433,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bufferSendOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l403" href="#l403">403</a></td>
+      <td class="lineno"><a id="l407" href="#l407">407</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3406,51 +3446,11 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_packetsSent</span><span class="p">.</span><span class="n">packetSent</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l404" href="#l404">404</a></td>
+      <td class="lineno"><a id="l408" href="#l408">408</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l405" href="#l405">405</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l406" href="#l406">406</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">sendEndPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l407" href="#l407">407</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 3 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">checksum</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l408" href="#l408">408</a></td>
-      <td class="linebranch">
-        <details class="linebranchDetails">
-          <summary class="linebranchSummary">1/1</summary>
-          <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
-          </div>
-        </details>
-      </td>
-      <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getChecksum</span><span class="p">(</span><span class="n">checksum</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l409" href="#l409">409</a></td>
@@ -3464,10 +3464,50 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">EndPacket</span><span class="w"> </span><span class="n">endPacket</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">sendEndPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l411" href="#l411">411</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 2 taken 3 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">CFDP</span><span class="o">::</span><span class="n">Checksum</span><span class="w"> </span><span class="n">checksum</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l412" href="#l412">412</a></td>
+      <td class="linebranch">
+        <details class="linebranchDetails">
+          <summary class="linebranchSummary">1/1</summary>
+          <div class="linebranchContents">
+            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
+          </div>
+        </details>
+      </td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getChecksum</span><span class="p">(</span><span class="n">checksum</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l413" href="#l413">413</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l414" href="#l414">414</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">3</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">EndPacket</span><span class="w"> </span><span class="n">endPacket</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l415" href="#l415">415</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3480,21 +3520,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">endPacket</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_sequenceIndex</span><span class="p">,</span><span class="w"> </span><span class="n">checksum</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l412" href="#l412">412</a></td>
+      <td class="lineno"><a id="l416" href="#l416">416</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l413" href="#l413">413</a></td>
+      <td class="lineno"><a id="l417" href="#l417">417</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="w"> </span><span class="n">filePacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l414" href="#l414">414</a></td>
+      <td class="lineno"><a id="l418" href="#l418">418</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3507,7 +3547,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">filePacket</span><span class="p">.</span><span class="n">fromEndPacket</span><span class="p">(</span><span class="n">endPacket</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l415" href="#l415">415</a></td>
+      <td class="lineno"><a id="l419" href="#l419">419</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3520,35 +3560,35 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendFilePacket</span><span class="p">(</span><span class="n">filePacket</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l416" href="#l416">416</a></td>
+      <td class="lineno"><a id="l420" href="#l420">420</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">6</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l417" href="#l417">417</a></td>
+      <td class="lineno"><a id="l421" href="#l421">421</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l418" href="#l418">418</a></td>
+      <td class="lineno"><a id="l422" href="#l422">422</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">sendStartPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l419" href="#l419">419</a></td>
+      <td class="lineno"><a id="l423" href="#l423">423</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">StartPacket</span><span class="w"> </span><span class="n">startPacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l420" href="#l420">420</a></td>
+      <td class="lineno"><a id="l424" href="#l424">424</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3561,21 +3601,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">startPacket</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getSize</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getSourceName</span><span class="p">().</span><span class="n">toChar</span><span class="p">(),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l421" href="#l421">421</a></td>
+      <td class="lineno"><a id="l425" href="#l425">425</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">                           </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getDestName</span><span class="p">().</span><span class="n">toChar</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l422" href="#l422">422</a></td>
+      <td class="lineno"><a id="l426" href="#l426">426</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="w"> </span><span class="n">filePacket</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l423" href="#l423">423</a></td>
+      <td class="lineno"><a id="l427" href="#l427">427</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3588,7 +3628,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">filePacket</span><span class="p">.</span><span class="n">fromStartPacket</span><span class="p">(</span><span class="n">startPacket</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l424" href="#l424">424</a></td>
+      <td class="lineno"><a id="l428" href="#l428">428</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3601,28 +3641,28 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendFilePacket</span><span class="p">(</span><span class="n">filePacket</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l425" href="#l425">425</a></td>
+      <td class="lineno"><a id="l429" href="#l429">429</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l426" href="#l426">426</a></td>
+      <td class="lineno"><a id="l430" href="#l430">430</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l427" href="#l427">427</a></td>
+      <td class="lineno"><a id="l431" href="#l431">431</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">sendFilePacket</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filePacket</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l428" href="#l428">428</a></td>
+      <td class="lineno"><a id="l432" href="#l432">432</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3635,35 +3675,35 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U32</span><span class="w"> </span><span class="n">bufferSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filePacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">FwPacketDescriptorType</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l429" href="#l429">429</a></td>
+      <td class="lineno"><a id="l433" href="#l433">433</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l430" href="#l430">430</a></td>
+      <td class="lineno"><a id="l434" href="#l434">434</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">bufferSize</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bufferSize</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l431" href="#l431">431</a></td>
+      <td class="lineno"><a id="l435" href="#l435">435</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l432" href="#l432">432</a></td>
+      <td class="lineno"><a id="l436" href="#l436">436</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Serialize packet descriptor FW_PACKET_FILE to the buffer</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l433" href="#l433">433</a></td>
+      <td class="lineno"><a id="l437" href="#l437">437</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -3677,35 +3717,35 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">SerializeStatus</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getSerializer</span><span class="p">().</span><span class="n">serializeFrom</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l434" href="#l434">434</a></td>
+      <td class="lineno"><a id="l438" href="#l438">438</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwPacketDescriptorType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">ComPacketType</span><span class="o">::</span><span class="n">FW_PACKET_FILE</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l435" href="#l435">435</a></td>
+      <td class="lineno"><a id="l439" href="#l439">439</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l436" href="#l436">436</a></td>
+      <td class="lineno"><a id="l440" href="#l440">440</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Serialize the filePacket content into the buffer, offset by the size of the packet descriptor</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l437" href="#l437">437</a></td>
+      <td class="lineno"><a id="l441" href="#l441">441</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="nf">offsetBuffer</span><span class="p">(</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l438" href="#l438">438</a></td>
+      <td class="lineno"><a id="l442" href="#l442">442</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3718,7 +3758,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">FwPacketDescriptorType</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l439" href="#l439">439</a></td>
+      <td class="lineno"><a id="l443" href="#l443">443</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -3732,7 +3772,7 @@
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">::</span><span class="n">SizeType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">FwPacketDescriptorType</span><span class="p">)));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l440" href="#l440">440</a></td>
+      <td class="lineno"><a id="l444" href="#l444">444</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3745,21 +3785,21 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">filePacket</span><span class="p">.</span><span class="n">toBuffer</span><span class="p">(</span><span class="n">offsetBuffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l441" href="#l441">441</a></td>
+      <td class="lineno"><a id="l445" href="#l445">445</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">10</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FW_SERIALIZE_OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l442" href="#l442">442</a></td>
+      <td class="lineno"><a id="l446" href="#l446">446</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// set the buffer size to the packet size</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l443" href="#l443">443</a></td>
+      <td class="lineno"><a id="l447" href="#l447">447</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3772,7 +3812,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">bufferSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l444" href="#l444">444</a></td>
+      <td class="lineno"><a id="l448" href="#l448">448</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3785,14 +3825,14 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bufferSendOut_out</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l445" href="#l445">445</a></td>
+      <td class="lineno"><a id="l449" href="#l449">449</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// restore buffer size to max</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l446" href="#l446">446</a></td>
+      <td class="lineno"><a id="l450" href="#l450">450</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3805,7 +3845,7 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffer</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l447" href="#l447">447</a></td>
+      <td class="lineno"><a id="l451" href="#l451">451</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
@@ -3818,112 +3858,112 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_packetsSent</span><span class="p">.</span><span class="n">packetSent</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l448" href="#l448">448</a></td>
+      <td class="lineno"><a id="l452" href="#l452">452</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">20</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l449" href="#l449">449</a></td>
+      <td class="lineno"><a id="l453" href="#l453">453</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l450" href="#l450">450</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">enterCooldown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l451" href="#l451">451</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getOsFile</span><span class="p">().</span><span class="n">close</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l452" href="#l452">452</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">Mode</span><span class="o">::</span><span class="n">COOLDOWN</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l453" href="#l453">453</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_NONE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l454" href="#l454">454</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_curTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">enterCooldown</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l455" href="#l455">455</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
-      <td class="src coveredLine"><span class="p">}</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getOsFile</span><span class="p">().</span><span class="n">close</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l456" href="#l456">456</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">Mode</span><span class="o">::</span><span class="n">COOLDOWN</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l457" href="#l457">457</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_NONE</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l458" href="#l458">458</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_curTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l459" href="#l459">459</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">5</td>
+      <td class="src coveredLine"><span class="p">}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l460" href="#l460">460</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l457" href="#l457">457</a></td>
+      <td class="lineno"><a id="l461" href="#l461">461</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">downlinkPacket</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l458" href="#l458">458</a></td>
+      <td class="lineno"><a id="l462" href="#l462">462</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_NONE</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l459" href="#l459">459</a></td>
+      <td class="lineno"><a id="l463" href="#l463">463</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l460" href="#l460">460</a></td>
+      <td class="lineno"><a id="l464" href="#l464">464</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">CANCEL</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">DOWNLINK</span><span class="p">,</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l461" href="#l461">461</a></td>
+      <td class="lineno"><a id="l465" href="#l465">465</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">              </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">get</span><span class="p">()));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l462" href="#l462">462</a></td>
+      <td class="lineno"><a id="l466" href="#l466">466</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If canceled mode and currently downlinking data then send a cancel packet</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l463" href="#l463">463</a></td>
+      <td class="lineno"><a id="l467" href="#l467">467</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/8</summary>
@@ -3943,35 +3983,35 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">CANCEL</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_START</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l464" href="#l464">464</a></td>
+      <td class="lineno"><a id="l468" href="#l468">468</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendCancelPacket</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l465" href="#l465">465</a></td>
+      <td class="lineno"><a id="l469" href="#l469">469</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_CANCEL</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l466" href="#l466">466</a></td>
+      <td class="lineno"><a id="l470" href="#l470">470</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l467" href="#l467">467</a></td>
+      <td class="lineno"><a id="l471" href="#l471">471</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If in downlink mode and currently downlinking data then continue with the next packer</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l468" href="#l468">468</a></td>
+      <td class="lineno"><a id="l472" href="#l472">472</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">6/8</summary>
@@ -3991,21 +4031,21 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Mode</span><span class="o">::</span><span class="n">DOWNLINK</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_START</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l469" href="#l469">469</a></td>
+      <td class="lineno"><a id="l473" href="#l473">473</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Send the next packet, or fail doing so</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l470" href="#l470">470</a></td>
+      <td class="lineno"><a id="l474" href="#l474">474</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendDataPacket</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_byteOffset</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l471" href="#l471">471</a></td>
+      <td class="lineno"><a id="l475" href="#l475">475</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -4019,70 +4059,70 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">Os</span><span class="o">::</span><span class="n">File</span><span class="o">::</span><span class="n">OP_OK</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l472" href="#l472">472</a></td>
+      <td class="lineno"><a id="l476" href="#l476">476</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_WARNING_HI_SendDataFail</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getSourceName</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_byteOffset</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l473" href="#l473">473</a></td>
+      <td class="lineno"><a id="l477" href="#l477">477</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">enterCooldown</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l474" href="#l474">474</a></td>
+      <td class="lineno"><a id="l478" href="#l478">478</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendResponse</span><span class="p">(</span><span class="n">FILEDOWNLINK_COMMAND_FAILURES_DISABLED</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">SendFileStatus</span><span class="o">::</span><span class="n">STATUS_OK</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l475" href="#l475">475</a></td>
+      <td class="lineno"><a id="l479" href="#l479">479</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">                                                                      </span><span class="o">:</span><span class="w"> </span><span class="n">SendFileStatus</span><span class="o">::</span><span class="n">STATUS_ERROR</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l476" href="#l476">476</a></td>
+      <td class="lineno"><a id="l480" href="#l480">480</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">            </span><span class="c1">// Don&#39;t go to wait state</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l477" href="#l477">477</a></td>
+      <td class="lineno"><a id="l481" href="#l481">481</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount uncoveredLine">&cross;</td>
       <td class="src uncoveredLine"><span class="w">            </span><span class="k">return</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l478" href="#l478">478</a></td>
+      <td class="lineno"><a id="l482" href="#l482">482</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l479" href="#l479">479</a></td>
+      <td class="lineno"><a id="l483" href="#l483">483</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l480" href="#l480">480</a></td>
+      <td class="lineno"><a id="l484" href="#l484">484</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// If in downlink mode or cancel and finished downlinking data then send the last packet</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l481" href="#l481">481</a></td>
+      <td class="lineno"><a id="l485" href="#l485">485</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
@@ -4098,70 +4138,70 @@
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_DATA</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l482" href="#l482">482</a></td>
+      <td class="lineno"><a id="l486" href="#l486">486</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">sendEndPacket</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l483" href="#l483">483</a></td>
+      <td class="lineno"><a id="l487" href="#l487">487</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_lastCompletedType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">FilePacket</span><span class="o">::</span><span class="n">T_END</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l484" href="#l484">484</a></td>
+      <td class="lineno"><a id="l488" href="#l488">488</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l485" href="#l485">485</a></td>
+      <td class="lineno"><a id="l489" href="#l489">489</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mode</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="n">Mode</span><span class="o">::</span><span class="n">WAIT</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l486" href="#l486">486</a></td>
+      <td class="lineno"><a id="l490" href="#l490">490</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">7</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_curTimer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l487" href="#l487">487</a></td>
+      <td class="lineno"><a id="l491" href="#l491">491</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l488" href="#l488">488</a></td>
+      <td class="lineno"><a id="l492" href="#l492">492</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l489" href="#l489">489</a></td>
+      <td class="lineno"><a id="l493" href="#l493">493</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">finishHelper</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">cancel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l490" href="#l490">490</a></td>
+      <td class="lineno"><a id="l494" href="#l494">494</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Complete command and switch to IDLE</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l491" href="#l491">491</a></td>
+      <td class="lineno"><a id="l495" href="#l495">495</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4175,49 +4215,49 @@
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="n">cancel</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l492" href="#l492">492</a></td>
+      <td class="lineno"><a id="l496" href="#l496">496</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_filesSent</span><span class="p">.</span><span class="n">fileSent</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l493" href="#l493">493</a></td>
+      <td class="lineno"><a id="l497" href="#l497">497</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">3</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_FileSent</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getSourceName</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getDestName</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l494" href="#l494">494</a></td>
+      <td class="lineno"><a id="l498" href="#l498">498</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l495" href="#l495">495</a></td>
+      <td class="lineno"><a id="l499" href="#l499">499</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">log_ACTIVITY_HI_DownlinkCanceled</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getSourceName</span><span class="p">(),</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_file</span><span class="p">.</span><span class="n">getDestName</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l496" href="#l496">496</a></td>
+      <td class="lineno"><a id="l500" href="#l500">500</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l497" href="#l497">497</a></td>
+      <td class="lineno"><a id="l501" href="#l501">501</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">enterCooldown</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l498" href="#l498">498</a></td>
+      <td class="lineno"><a id="l502" href="#l502">502</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
@@ -4231,98 +4271,98 @@
       <td class="src coveredLine"><span class="w">    </span><span class="n">sendResponse</span><span class="p">(</span><span class="n">SendFileStatus</span><span class="o">::</span><span class="n">STATUS_OK</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l499" href="#l499">499</a></td>
+      <td class="lineno"><a id="l503" href="#l503">503</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l500" href="#l500">500</a></td>
+      <td class="lineno"><a id="l504" href="#l504">504</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l501" href="#l501">501</a></td>
+      <td class="lineno"><a id="l505" href="#l505">505</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FileDownlink</span><span class="w"> </span><span class="o">::</span><span class="n">getBuffer</span><span class="p">(</span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">PacketType</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l502" href="#l502">502</a></td>
+      <td class="lineno"><a id="l506" href="#l506">506</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Check type is correct</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l503" href="#l503">503</a></td>
+      <td class="lineno"><a id="l507" href="#l507">507</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">COUNT_PACKET_TYPE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">type</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l504" href="#l504">504</a></td>
+      <td class="lineno"><a id="l508" href="#l508">508</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Wrap the buffer around our indexed memory.</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l505" href="#l505">505</a></td>
+      <td class="lineno"><a id="l509" href="#l509">509</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">setData</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_memoryStore</span><span class="p">[</span><span class="n">type</span><span class="p">]);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l506" href="#l506">506</a></td>
+      <td class="lineno"><a id="l510" href="#l510">510</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">FILEDOWNLINK_INTERNAL_BUFFER_SIZE</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l507" href="#l507">507</a></td>
+      <td class="lineno"><a id="l511" href="#l511">511</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">// Set a known ID to look for later</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l508" href="#l508">508</a></td>
+      <td class="lineno"><a id="l512" href="#l512">512</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">buffer</span><span class="p">.</span><span class="n">setContext</span><span class="p">(</span><span class="n">m_lastBufferId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l509" href="#l509">509</a></td>
+      <td class="lineno"><a id="l513" href="#l513">513</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_lastBufferId</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l510" href="#l510">510</a></td>
+      <td class="lineno"><a id="l514" href="#l514">514</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">5</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l511" href="#l511">511</a></td>
+      <td class="lineno"><a id="l515" href="#l515">515</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// end namespace Svc</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l512" href="#l512">512</a></td>
+      <td class="lineno"><a id="l516" href="#l516">516</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

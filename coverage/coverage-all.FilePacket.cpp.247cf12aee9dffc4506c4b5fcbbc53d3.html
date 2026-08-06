@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-05 01:41:38</td>
+      <td>2026-08-06 23:54:29</td>
     </tr>
   </table>
 </div>
@@ -75,7 +75,7 @@
     <tr><td><a href="#l43">Fw::FilePacket::asEndPacket() const (line 43)</a></td><td>called 7 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l29">Fw::FilePacket::asHeader() const (line 29)</a></td><td>called 36 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l33">Fw::FilePacket::asStartPacket() const (line 33)</a></td><td>called 12 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l73">Fw::FilePacket::bufferSize() const (line 73)</a></td><td>called 38 times</td><td>86.0%</td></tr>
+    <tr><td><a href="#l73">Fw::FilePacket::bufferSize() const (line 73)</a></td><td>called 39 times</td><td>86.0%</td></tr>
     <tr><td><a href="#l22">Fw::FilePacket::fromBuffer(Fw::Buffer const&amp;) (line 22)</a></td><td>called 40 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l68">Fw::FilePacket::fromCancelPacket(Fw::FilePacket::CancelPacket const&amp;) (line 68)</a></td><td>called 3 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l58">Fw::FilePacket::fromDataPacket(Fw::FilePacket::DataPacket const&amp;) (line 58)</a></td><td>called 14 times</td><td>100.0%</td></tr>
@@ -624,7 +624,7 @@
       <td class="lineno"><a id="l73" href="#l73">73</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">38</td>
+      <td class="linecount coveredLine">39</td>
       <td class="src coveredLine"><span class="n">U32</span><span class="w"> </span><span class="n">FilePacket</span><span class="w"> </span><span class="o">::</span><span class="n">bufferSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -634,17 +634,17 @@
           <summary class="linebranchSummary">5/8</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 38 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 39 times.</div>
             <div class="takenBranch">&check; Branch 3 taken 15 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 14 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 6 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 4 times.</div>
             <div class="notTakenBranch">&cross; Branch 7 not taken.</div>
             <div class="notTakenBranch">&cross; Branch 8 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">38</td>
+      <td class="linecount partialCoveredLine">39</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_header</span><span class="p">.</span><span class="n">m_type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -693,14 +693,14 @@
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">T_CANCEL</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cancelPacket</span><span class="p">.</span><span class="n">bufferSize</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">

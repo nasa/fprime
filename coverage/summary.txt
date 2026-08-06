@@ -162,7 +162,7 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -191,7 +191,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      82    46%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -354,7 +354,7 @@ Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
                                                6       0     0%   26,28-32
 Svc/FileDispatcher/FileDispatcher.cpp         41      41   100%
 Svc/FileDownlink/File.cpp                     33      26    78%   43-44,48-49,59,66,70
-Svc/FileDownlink/FileDownlink.cpp            301     254    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,326-328,365-366,472-474,477
+Svc/FileDownlink/FileDownlink.cpp            304     257    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,326-328,365-366,476-478,481
 Svc/FileDownlink/FileDownlink.hpp             33      33   100%
 Svc/FileDownlink/Warnings.cpp                 16       8    50%   20-23,25-28
 Svc/FileManager/FileManager.cpp              167     147    88%   72-75,156-158,200-201,206,208-209,254,268,275-276,278-281
@@ -421,5 +421,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      22852   19116    83%
+TOTAL                                      22855   19115    83%
 ------------------------------------------------------------------------------
