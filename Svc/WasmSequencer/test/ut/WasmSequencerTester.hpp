@@ -62,6 +62,10 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! Remove a file previously written into the working directory.
     void removeFile(const char* name);
 
+    //! Build a Svc::SeqArgs holding the given raw bytes (size + buffer), for driving
+    //! the `args` host function round trip through RUN/INVOKE.
+    static Svc::SeqArgs makeSeqArgs(const U8* bytes, FwSizeType size);
+
     // ----------------------------------------------------------------------
     // Dispatch / state helpers
     // ----------------------------------------------------------------------

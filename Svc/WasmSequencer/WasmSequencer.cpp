@@ -138,12 +138,9 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
         case BlockState::BLOCK: {
             // Queue up a response when the execution finishes
             auto status = this->m_pendingFinishCmds.enqueue(PendingCmd(opCode, cmdSeq));
-            if (status != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_TooManyBlockingCommands();
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
 
+            // Queuing this command should not fail because the queue should be empty in 'READY'/'IDLE' states
+            FW_ASSERT(status == Fw::Success::SUCCESS, status);
             break;
         }
         case BlockState::NO_BLOCK:
@@ -224,11 +221,9 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
     switch (block) {
         case BlockState::BLOCK: {
             auto status = this->m_pendingFinishCmds.enqueue(PendingCmd(opCode, cmdSeq));
-            if (status != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_TooManyBlockingCommands();
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
+
+            // Queuing this command should not fail because the queue should be empty in 'READY' state
+            FW_ASSERT(status == Fw::Success::SUCCESS, status);
             break;
         }
         case BlockState::NO_BLOCK:

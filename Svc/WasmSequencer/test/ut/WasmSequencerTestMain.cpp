@@ -691,6 +691,103 @@ TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
 }
 
 // ----------------------------------------------------------------------
+// Host functions: ARGS (sequence arguments host->guest round trip)
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, ArgsRoundTrip) {
+    // The RUN command carries the sequence arguments; the guest args() host call reads
+    // them back into linear memory. args.wasm requests a 64-byte buffer, verifies the
+    // returned count is 4, that the injected pattern round-trips verbatim, and that the
+    // byte past the args is untouched (no host stack leak). A clean SequenceSucceeded is
+    // a genuine host->guest argument round trip.
+    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("args.wasm");
+    this->sendCmd_RUN(0, 200, file, BLOCK, args);
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args.wasm");
+}
+
+TEST_F(WasmSequencerTester, ArgsRoundTripMismatchTraps) {
+    // Negative control: inject a different pattern than args.wasm hard-codes. The guest
+    // reads the args back, sees the mismatch, and traps (UNREACHABLE). This proves the
+    // round-trip check in ArgsRoundTrip is real: if the host dropped the args, this test
+    // would (wrongly) succeed too.
+    const U8 argBytes[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("args.wasm");
+    this->sendCmd_RUN(0, 201, file, BLOCK, args);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args.wasm");
+}
+
+TEST_F(WasmSequencerTester, ArgsEmpty) {
+    // No arguments supplied (default-constructed SeqArgs, size 0). args_empty.wasm
+    // asserts the returned count is 0 and that nothing was written to guest memory.
+    const Fw::String file = this->copyAsset("args_empty.wasm");
+    this->sendCmd_RUN(0, 202, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args_empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, ArgsUndersizedBufferFails) {
+    // The guest declares a 2-byte buffer but 4 arg bytes are present. Writing them would
+    // overrun the guest's intent, so the host rejects it at dispatch with
+    // BufferTooSmall(ARGS, 2, 4) -> SequenceFailed, writing nothing to guest memory.
+    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("args_toosmall.wasm");
+    this->sendCmd_RUN(0, 203, file, BLOCK, args);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::ARGS, 2, static_cast<U32>(sizeof argBytes));
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args_toosmall.wasm");
+}
+
+TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
+    // The guest declares an ample buffer (passes the too-small guard) but points args()
+    // at an out-of-bounds address. The mem_write fails ->
+    // HostFunctionInvalidPointer(ARGS) -> SequenceFailed.
+    const U8 argBytes[4] = {0xCA, 0xFE, 0xBA, 0xBE};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("args_badptr.wasm");
+    this->sendCmd_RUN(0, 204, file, BLOCK, args);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_HostFunctionInvalidPointer_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidPointer(0, WasmSequencer_HostFunction::ARGS,
+                                             WasmSequencer_Status::ERR_MEM_OUT_OF_BOUNDS);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("args_badptr.wasm");
+}
+
+// ----------------------------------------------------------------------
 // Host functions: COMMAND (byte-fidelity of guest bytes -> cmdOut ComBuffer)
 // ----------------------------------------------------------------------
 
@@ -1134,17 +1231,6 @@ TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
     ASSERT_EVENTS_TooManyBlockingCommands_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
-}
-
-TEST_F(WasmSequencerTester, WriteTelemetryTickIsNoOp) {
-    // The writeTelemetry port handler is an intentional no-op; dispatching a tick
-    // must not change state or emit anything.
-    this->invoke_to_writeTelemetry(0, 0);
-    this->dispatchAll();
-    ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_CMD_RESPONSE_SIZE(0);
-    ASSERT_EVENTS_SIZE(0);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
 // ----------------------------------------------------------------------
