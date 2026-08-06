@@ -10,12 +10,14 @@
 #include "Fw/DataStructures/FifoQueue.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
+#include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_SequenceInvokeSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
+#include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
-#include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 
 namespace Svc {
 
@@ -62,6 +64,20 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
   private:
     // ----------------------------------------------------------------------
+    // Handler implementations for serial input ports
+    // ----------------------------------------------------------------------
+
+    //! Handler implementation for serialAsyncReply
+    //!
+    //! Reply port for [serialAsyncOut]. This reply is subject to timeout if configured.
+    //! Sequences that send serialAsyncOut messages will block until this reply is received
+    //! on the corresponding port
+    void serialAsyncReply_handler(FwIndexType portNum,          //!< The port number
+                                  Fw::LinearBufferBase& buffer  //!< The serialization buffer
+                                  ) override;
+
+  private:
+    // ----------------------------------------------------------------------
     // Handler implementations for commands
     // ----------------------------------------------------------------------
 
@@ -74,18 +90,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! 3. CONTINUE
     //!
     //! If $block == Svc.BlockState.BLOCK this command will wait for complemention.
-    void RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
-                        U32 cmdSeq,                        //!< The command sequence number
-                        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
-                        const Svc::BlockState& block       //!< Return command status when complete or not
-                        ) override;
-
-    //! Handler implementation for command WAIT
-    //!
-    //! Wait for the interpreter to finish and return it's result as a CmdResponse
-    void WAIT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
-                         U32 cmdSeq            //!< The command sequence number
-                         ) override;
+    void RUN_cmdHandler(
+        FwOpcodeType opCode,               //!< The opcode
+        U32 cmdSeq,                        //!< The command sequence number
+        const Fw::CmdStringArg& fileName,  //!< The name of the sequence file
+        const Svc::BlockState& block,      //!< Block until sequence has finished running
+                                           //!< Binary arguments to pass to the sequence
+        const Svc::SeqArgs& seqArgs        //!< Optional arguments to execute the sequence with
+                                           //!< Depending on the sequence being loaded these arguments may differ
+        ) override;
 
     //! Handler implementation for command LOAD
     //!
@@ -114,7 +127,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void INVOKE_cmdHandler(FwOpcodeType opCode,             //!< The opcode
                            U32 cmdSeq,                      //!< The command sequence number
                            const Fw::CmdStringArg& module,  //!< Name of the module to invoke a function from
-                           const Svc::BlockState& block) override;
+                           const Svc::BlockState& block,    //!< Block until sequence has finished running
+                           const Svc::SeqArgs& seqArgs      //!< Arguments to invalid sequence entrypoint with
+                           ) override;
+
+    //! Handler implementation for command WAIT
+    //!
+    //! Wait for the interpreter to finish and return it's result as a CmdResponse
+    void WAIT_cmdHandler(FwOpcodeType opCode,  //!< The opcode
+                         U32 cmdSeq            //!< The command sequence number
+                         ) override;
 
     //! Handler implementation for command CANCEL
     //!
@@ -175,7 +197,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
         SmId smId,                                               //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                //!< The value
+        const Svc::WasmSequencer_SequenceInvoke& invokeArgs      //!< The value
         ) override;
 
     //! Implementation for action pendRun of state machine Svc_WasmSequencer_SequencerStateMachine
@@ -185,7 +207,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void Svc_WasmSequencer_SequencerStateMachine_action_pendRun(
         SmId smId,                                               //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_SequenceExecutionArgs& value    //!< The value
+        const Svc::WasmSequencer_SequenceRun& value              //!< The value
         ) override;
 
     //! Implementation for action pendLoad of state machine Svc_WasmSequencer_SequencerStateMachine
@@ -456,6 +478,9 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Current bump offset into `m_guest_pool`.
     FwSizeType m_guest_offset;
+
+    //! Currently stored sequence arguments
+    Svc::SeqArgs m_args;
 
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[256];

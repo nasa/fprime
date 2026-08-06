@@ -1,6 +1,13 @@
-struct SequenceExecutionArgs {
+type ModuleIdx = U8
+
+struct SequenceRun {
     filePath: string size FileNameStringSize
-    buffer: Svc.SeqArgs
+    args: Svc.SeqArgs
+}
+
+struct SequenceInvoke {
+    moduleIdx: ModuleIdx
+    args: Svc.SeqArgs
 }
 
 struct ModuleLoad {
@@ -52,8 +59,6 @@ enum AllocError: U8 {
     ALLOCATION_FAILED
 }
 
-type ModuleIdx = U8
-
 state machine SequencerStateMachine {
     initial enter IDLE
 
@@ -63,7 +68,7 @@ state machine SequencerStateMachine {
 
     @ Signal sent from a command to execute a Wasm module
     @ Only valid while in the IDLE state
-    signal cmd_RUN: SequenceExecutionArgs
+    signal cmd_RUN: SequenceRun
 
     @ Signal sent from command to load a Wasm module but not execute it
     signal cmd_LOAD: ModuleLoad
@@ -74,7 +79,7 @@ state machine SequencerStateMachine {
     @ called on PAUSE cmd. only raised in RUNNING state
     signal cmd_PAUSE
 
-    signal cmd_INVOKE: ModuleIdx
+    signal cmd_INVOKE: SequenceInvoke
 
     @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
     signal cmd_CANCEL
@@ -115,11 +120,11 @@ state machine SequencerStateMachine {
     action invokeMainOfLastModule
 
     @ Invoke the main function on a module given its index
-    action invokeMain: ModuleIdx
+    action invokeMain: SequenceInvoke
 
     @ Set the Wasm module to load and execute
     @ Sets pendingInvoke
-    action pendRun: SequenceExecutionArgs
+    action pendRun: SequenceRun
 
     @ Set the Wasm module to load but not execute
     action pendLoad: ModuleLoad

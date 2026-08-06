@@ -3,23 +3,18 @@
 @ 1. LOAD_NAME [fileName] ""
 @ 2. INVOKE "" "main"
 @ 3. CONTINUE
-@ 
+@
 @ If $block == Svc.BlockState.BLOCK this command will wait for complemention.
 async command RUN(
     fileName: string size FileNameStringSize @< The name of the sequence file
-    $block: Svc.BlockState                   @< Return command status when complete or not
+    @ Block until sequence has finished running
+    @ Binary arguments to pass to the sequence
+    $block: Svc.BlockState
+    @ Optional arguments to execute the sequence with
+    @ Depending on the sequence being loaded these arguments may differ
+    seqArgs: Svc.SeqArgs
 ) \
-    opcode 0x0
-
-@ Wait for the interpreter to finish and return it's result as a CmdResponse
-async command WAIT opcode 0x1
-
-# async command RUN_ARGS(
-#                       fileName: string size FileNameStringSize @< The name of the sequence file
-#                       $block: Svc.BlockState @< Return command status when complete or not
-#                       buffer: Svc.SeqArgs @< Arguments to pass to the sequencer
-#                     ) \
-#     opcode 1 priority 7 assert
+    opcode 0
 
 @ Loads and validates a WebAssembly module into the store.
 @ This command loads the module with a empty name meaning only a single module may be loaded.
@@ -27,7 +22,7 @@ async command WAIT opcode 0x1
 async command LOAD(
     fileName: string size FileNameStringSize @< The name of the sequence file
 ) \
-    opcode 0x2
+    opcode 1
 
 @ Load and validate a WebAssembly module into the store. This module is given a name so that
 @ it's exports can be referenced by other modules.
@@ -35,37 +30,29 @@ async command LOAD_NAME(
     fileName: string size FileNameStringSize @< The name of the sequence file
     name: string size 16                     @< WebAssembly module name, must not conflict with previously loaded modules
 ) \
-    opcode 0x3
+    opcode 2
 
 @ Invoke a main function from a loaded module
 async command INVOKE(
     $module: string size 16 @< Name of the module to invoke a function from
-    $block: Svc.BlockState
+    $block: Svc.BlockState  @< Block until sequence has finished running
+    seqArgs: Svc.SeqArgs       @< Arguments to invalid sequence entrypoint with
 ) \
-    opcode 0x4
+    opcode 3
 
-# @ Loads and validates a sequence with arguments
-# # prio: lower than sm sig and CANCEL
-# async command VALIDATE_ARGS(
-#     fileName: string size FileNameStringSize @< The name of the sequence file
-#     buffer: Svc.SeqArgs @< Arguments to pass to the sequencer
-# ) \
-#     opcode 3 priority 7 assert
+@ Wait for the interpreter to finish and return it's result as a CmdResponse
+async command WAIT opcode 4
 
 @ Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE
 @ This completely clears the store.
 @ Cancelling during LOADING will trigger a fail response in the reader and
 @ return to IDLE mode.
-sync command CANCEL opcode 0x5
+sync command CANCEL opcode 5
 
 @ Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
-@ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid 
+@ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
 @ substates of the RUNNING state that are not RUNNING.PAUSED.
-sync command PAUSE opcode 0x6
+sync command PAUSE opcode 6
 
 @ Resume the sequence from a paused state
-async command CONTINUE opcode 0x7
-
-# TODO(tumbar) Expose an unwind/tracing mechanism in SpaceWasm
-# @ Dump a stack trace in events
-# @ async command TRACE opcode 0x8
+async command CONTINUE opcode 7

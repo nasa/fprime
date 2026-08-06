@@ -14,6 +14,7 @@
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Os/Mutex.hpp"
+#include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_SequencerStateMachine_StateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
@@ -39,7 +40,6 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingTimer(false),
       m_breakBeforeNextLine(false),
       m_loadFile(nullptr) {
-
     getGlobalAllocatorLock()->lock();
     const auto status = spacewasm_fprime_register_global_allocator(
         [](void* userdata, std::size_t size, std::size_t align) -> U8* {
@@ -103,7 +103,17 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     }
 }
 
-void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {}
+void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
+    // TODO
+}
+
+// ----------------------------------------------------------------------
+// Handler implementations for serial input ports
+// ----------------------------------------------------------------------
+
+void WasmSequencer ::serialAsyncReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    // TODO
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for commands
@@ -112,7 +122,8 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {}
 void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    const Svc::BlockState& block) {
+                                    const Svc::BlockState& block,
+                                    const SeqArgs& seqArgs) {
     // RUN is only valid from IDLE
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
         this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
@@ -143,7 +154,7 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, static_cast<FwAssertArgType>(block));
     }
 
-    this->sequencer_sendSignal_cmd_RUN(Svc::WasmSequencer_SequenceExecutionArgs(fileName, Svc::SeqArgs{0, 0}));
+    this->sequencer_sendSignal_cmd_RUN(Svc::WasmSequencer_SequenceRun(fileName, seqArgs));
 }
 
 void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -189,7 +200,8 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
 void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        U32 cmdSeq,
                                        const Fw::CmdStringArg& module,
-                                       const Svc::BlockState& block) {
+                                       const Svc::BlockState& block,
+                                       const Svc::SeqArgs& seqArgs) {
     // INVOKE is only valid from IDLE.
     if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
@@ -224,7 +236,8 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, block);
     }
 
-    this->sequencer_sendSignal_cmd_INVOKE(static_cast<Svc::WasmSequencer_ModuleIdx>(moduleIdx));
+    this->sequencer_sendSignal_cmd_INVOKE(
+        WasmSequencer_SequenceInvoke(static_cast<Svc::WasmSequencer_ModuleIdx>(moduleIdx), seqArgs));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -276,26 +289,31 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMainOf
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     // Invoke main on the loaded module index
-    this->Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(smId, signal,
-                                                                    Svc::WasmSequencer_ModuleIdx(this->m_moduleIndex));
+    this->Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
+        smId, signal,
+        Svc::WasmSequencer_SequenceInvoke(static_cast<Svc::WasmSequencer_ModuleIdx>(this->m_moduleIndex),
+                                          this->m_args));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) {
+    const Svc::WasmSequencer_SequenceInvoke& value) {
     FW_ASSERT(this->m_wasm != nullptr);
 
     // Clear any pending main
     this->m_pendingRun = false;
 
+    // Store the execution arguments
+    this->m_args = value.get_args();
+
     // Resolve the exported function in the most-recently-loaded module.
     U32 funcIndex = 0;
-    this->m_invokeStatus = spacewasm_find_export_func(this->m_wasm, value, "main", &funcIndex);
+    this->m_invokeStatus = spacewasm_find_export_func(this->m_wasm, value.get_moduleIdx(), "main", &funcIndex);
 
     if (this->m_invokeStatus == SPACEWASM_OK) {
         // Attempt to invoke the main function
-        this->m_invokeStatus = spacewasm_invoke(this->m_wasm, value, funcIndex, nullptr, 0);
+        this->m_invokeStatus = spacewasm_invoke(this->m_wasm, value.get_moduleIdx(), funcIndex, nullptr, 0);
     }
 }
 
@@ -325,11 +343,12 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartO
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendRun(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const Svc::WasmSequencer_SequenceExecutionArgs& value) {
+    const Svc::WasmSequencer_SequenceRun& value) {
     // RUN == load the file (unnamed) then invoke its "main".
     this->m_pendingLoad = Svc::WasmSequencer_ModuleLoad(value.get_filePath(), Fw::String(""));
     this->m_hasPendingLoad = true;
     this->m_pendingRun = true;
+    this->m_args = value.get_args();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(

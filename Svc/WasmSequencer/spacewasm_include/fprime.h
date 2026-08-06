@@ -35,6 +35,14 @@ extern void fprime_wasm_exit(I32 code);
 WASM_IMPORT("fprime", "panic")
 extern void fprime_wasm_panic(I32 code);
 
+/// @brief Get the sequence arguments this sequence was invoked with
+/// This function will write the arguments provided from the invoke/run
+/// into the guest memory.
+///
+/// @param destination_ptr Guest memory address to argument buffer
+/// @param destination_size Length of the argument buffer. This size must be greater than or equal to 
+extern U32 fprime_wasm_get_args(U32 destination_ptr, U32 destination_size);
+
 enum FprimeTlmValid {
     FPRIME_TLM_VALID = 0,
     FPRIME_TLM_INVALID = 1,
@@ -48,11 +56,7 @@ enum FprimeTlmValid {
 /// @param value_ptr Guest memory address to channel's value
 /// @param value_size Size allocated for value_ptr
 WASM_IMPORT("fprime", "tlm")
-extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id,
-                                                 U32 time_ptr,
-                                                 U32 time_size,
-                                                 U32 value_ptr,
-                                                 U32 value_size);
+extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id, U32 time_ptr, U32 time_size, U32 value_ptr, U32 value_size);
 
 /// @brief Read a parameter value and write it to the specified memory addresses
 ///

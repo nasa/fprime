@@ -15,7 +15,7 @@ module Svc {
         @ Port for dispatching commands
         output port cmdOut: Fw.Com
 
-        @ Response
+        @ Command response input
         async input port cmdResponseIn: Fw.CmdResponse assert
 
         @ Port for getting telemetry channel values (backs the guest `tlm` host function)
@@ -29,6 +29,19 @@ module Svc {
 
         @ Port to periodically write telemetry channels (optional)
         async input port writeTelemetry: Svc.Sched drop
+
+        @ Port for sending synchronous port invocation (no reply)
+        output port serialSyncOut: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+
+        @ Port for sending asynchronous port invocations (with reply on [serialAsyncReply])
+        output port serialAsyncOut: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+
+        @ Reply port for [serialAsyncOut]. This reply is subject to timeout if configured.
+        @ Sequences that send serialAsyncOut messages will block until this reply is received
+        @ on the corresponding port
+        async input port serialAsyncReply: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
+
+        match serialAsyncOut with serialAsyncReply
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
