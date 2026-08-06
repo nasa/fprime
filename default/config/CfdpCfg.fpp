@@ -62,7 +62,10 @@ module Svc {
             @
             @ @par Limits:
             @      Must respect any CCSDS packet size limits on the system.
-            constant MaxPduSize = 1024
+            @      A Tx PDU is wrapped in an 8-byte header (6-byte space packet
+            @      + 2-byte F' descriptor) before reaching ComAggregator, which
+            @      asserts on anything over ComCfg.AggregationSize.
+            constant MaxPduSize = 992
 
             @ @brief Max NAK segments supported in a NAK PDU
             @
