@@ -3,25 +3,18 @@
 
 namespace Drv {
 
-DataBuffer::DataBuffer(const U8* args, FwSizeType size) {
-    this->m_buffAddr = this->m_data;
-    this->m_capacity = sizeof(this->m_data);
+DataBuffer::DataBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase(m_data, sizeof(m_data)) {
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
-DataBuffer::DataBuffer() {
-    this->m_buffAddr = this->m_data;
-    this->m_capacity = sizeof(this->m_data);
-}
+DataBuffer::DataBuffer() : Fw::LinearBufferBase(m_data, sizeof(m_data)) {}
 
 DataBuffer::~DataBuffer() {}
 
 // m_data contents are copied via setBuff below
 // cppcheck-suppress missingMemberCopy
-DataBuffer::DataBuffer(const DataBuffer& other) : Fw::LinearBufferBase() {
-    this->m_buffAddr = this->m_data;
-    this->m_capacity = sizeof(this->m_data);
+DataBuffer::DataBuffer(const DataBuffer& other) : Fw::LinearBufferBase(m_data, sizeof(m_data)) {
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.m_serLoc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }

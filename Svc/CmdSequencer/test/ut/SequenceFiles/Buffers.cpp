@@ -19,14 +19,9 @@ namespace SequenceFiles {
 
 namespace Buffers {
 
-FileBuffer::FileBuffer() : Fw::LinearBufferBase() {
-    this->m_buffAddr = this->m_buff;
-    this->m_capacity = sizeof(this->m_buff);
-}
+FileBuffer::FileBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
-FileBuffer::FileBuffer(const FileBuffer& other) : Fw::LinearBufferBase() {
-    this->m_buffAddr = this->m_buff;
-    this->m_capacity = sizeof(this->m_buff);
+FileBuffer::FileBuffer(const FileBuffer& other) : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_buff, other.m_serLoc);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }

@@ -50,10 +50,9 @@ def test_dp_decode(fprime_test_api):
     assert Path(decoded_file_name).is_file(), "Decoded file not created"
 
     # Open both reference JSON and output JSON and compare
-    with (
-        open(Path(__file__).parent / "dp_ref_output.json", "r") as ref_file,
-        open(decoded_file_name, "r") as output_file,
-    ):
+    with open(Path(__file__).parent / "dp_ref_output.json", "r") as ref_file, open(
+        decoded_file_name, "r"
+    ) as output_file:
         ref_json = json.load(ref_file)
         output_json = json.load(output_file)
         # Exclude Time and Checksum header fields since the timestamp will change every time

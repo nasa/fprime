@@ -4,25 +4,20 @@
 
 namespace Fw {
 
-StatementArgBuffer::StatementArgBuffer(const U8* args, FwSizeType size) {
-    this->m_buffAddr = this->m_bufferData;
-    this->m_capacity = sizeof(this->m_bufferData);
+StatementArgBuffer::StatementArgBuffer(const U8* args, FwSizeType size)
+    : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     SerializeStatus stat = LinearBufferBase::setBuff(args, size);
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
-StatementArgBuffer::StatementArgBuffer() {
-    this->m_buffAddr = this->m_bufferData;
-    this->m_capacity = sizeof(this->m_bufferData);
-}
+StatementArgBuffer::StatementArgBuffer() : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {}
 
 StatementArgBuffer::~StatementArgBuffer() {}
 
 // m_bufferData contents are copied via setBuff below
 // cppcheck-suppress missingMemberCopy
-StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other) : Fw::LinearBufferBase() {
-    this->m_buffAddr = this->m_bufferData;
-    this->m_capacity = sizeof(this->m_bufferData);
+StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other)
+    : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }

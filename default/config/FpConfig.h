@@ -151,12 +151,12 @@ extern "C" {
 
 // Hint to the compiler to always inline LinearBufferBase serialization &
 // deserialization methods
-#define ALWAYS_INLINE_LLB_SERIAL
+#define FW_SERIALIZE_FORCE_INLINE_LLB
 // NOTE: To encourage inlining, uncomment below
 // #if defined(__GNUC__) || defined(__clang__)
-// #define ALWAYS_INLINE_LLB_SERIAL __attribute__((always_inline)) inline
+// #define FW_SERIALIZE_FORCE_INLINE_LLB __attribute__((always_inline)) inline
 // #else
-// #define ALWAYS_INLINE_LLB_SERIAL
+// #define FW_SERIALIZE_FORCE_INLINE_LLB
 // #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have

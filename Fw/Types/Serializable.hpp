@@ -8,7 +8,6 @@
 #include <Fw/FPrimeBasicTypes.hpp>
 #include "Fw/Deprecate.hpp"
 
-
 namespace Fw {
 
 class StringBase;  //!< forward declaration for string
@@ -1353,11 +1352,19 @@ class LinearBufferBase : public SerialBufferBase {
 #endif
 
   protected:
-    //! \brief Default constructor
+    //! There is no default constructor: every derived class must supply its
+    //! storage during construction
+    LinearBufferBase() = delete;
+
+    //! \brief Storage constructor
     //!
-    //! Initializes a LinearBufferBase instance with default values.
-    //! Sets the serialization and deserialization locations to zero.
-    LinearBufferBase();
+    //! Initializes a LinearBufferBase instance with the buffer storage that the
+    //! derived class provides. Using the constructor makes it a
+    //! compile-time error for a derived class to forget to setup its storage.
+    //!
+    //! \param buffAddr Pointer to the buffer address (may be nullptr)
+    //! \param capacity Capacity of the buffer storage in bytes
+    LinearBufferBase(U8* buffAddr, Serializable::SizeType capacity);
 
     //! \brief Copy constructor (protected)
     //!
@@ -1380,12 +1387,8 @@ class LinearBufferBase : public SerialBufferBase {
   protected:
     U8* m_buffAddr;                     //!< pointer to buffer storage
     Serializable::SizeType m_capacity;  //!< capacity of buffer storage
-
-  public:
     Serializable::SizeType m_serLoc;    //!< current offset in buffer of serialized data
     Serializable::SizeType m_deserLoc;  //!< current offset for deserialization
-
-  private:
 };
 
 // Helper classes for building buffers with external storage
