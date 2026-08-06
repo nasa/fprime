@@ -8,6 +8,7 @@
 #define Svc_WasmSequencer_HPP
 
 #include "Fw/DataStructures/FifoQueue.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
@@ -16,6 +17,7 @@
 #include "Svc/WasmSequencer/WasmSequencer_SequenceInvokeSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
+#include "config/FppConstantsAc.hpp"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 
@@ -458,6 +460,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Map a spacewasm_trap_t onto the TrapReason event enum.
     static Svc::WasmSequencer_TrapReason::T mapTrapReason(spacewasm_trap_t trap);
 
+    //! Record the SeqName telemetry for a load. Uses moduleName when non-empty
+    //! (LOAD_NAME); otherwise derives it from the file's basename with any ".wasm"
+    //! suffix stripped (RUN / LOAD).
+    void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
+
     //! Emit a guest event at the requested severity id (see FprimeEventSeverity
     //! in fprime.h); unknown severities fall back to ACTIVITY_HI.
     void emitGuestEvent(U32 severity, const Fw::LogStringArg& msg);
@@ -532,6 +539,27 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Currently loading file handle
     Os::File* m_loadFile;
 
+    //! Sequences successfully completed
+    U64 m_tlmSequencesSucceeded;
+
+    //! Sequences that failed to validate or execute
+    U64 m_tlmSequencesFailed;
+
+    //! Sequences that were cancelled
+    U64 m_tlmSequencesCancelled;
+
+    //! Commands dispatched total
+    U64 m_tlmCommandsDispatched;
+
+    //! Number of commands that failed
+    U64 m_tlmCommandsFailed;
+
+    //! Reason last sequence trapped
+    WasmSequencer_TrapReason m_tlmLastTrapReason;
+
+    //! Currently running sequence name
+    Fw::StringTemplate<FileNameStringSize> m_tlmSequenceName;
+
     struct PendingHostFunction {
         PendingHostFunction() = default;
         bool isPending() const { return kind != WasmSequencer_HostFunction::NONE; }
@@ -539,7 +567,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
         WasmSequencer_HostFunction kind;
 
-        // TODO(tumbar) We should be able to do memory ops on `spacewasm_t`
+        // Handle that holds the Wasm guest memory pointer
         spacewasm_caller_t* caller;
 
         U64 id;

@@ -16,6 +16,8 @@ struct ModuleLoad {
 }
 
 enum TrapReason {
+    @ No recorded trap
+    NONE
     @ Triggered by unreachable instruction
     UNREACHABLE
     @ A host function has noted an unrecoverable failure

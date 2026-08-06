@@ -62,6 +62,14 @@ void WasmSequencerTester ::removeFile(const char* name) {
     (void)Os::FileSystem::removeFile(name);
 }
 
+void WasmSequencerTester ::flushTelemetry() {
+    // The writeTelemetry port is an async scheduler tick; drive it and dispatch so the
+    // handler runs and every tlmWrite_* lands in the tester history.
+    this->clearTlm();
+    this->invoke_to_writeTelemetry(0, 0);
+    this->dispatchAll();
+}
+
 Svc::SeqArgs WasmSequencerTester ::makeSeqArgs(const U8* bytes, FwSizeType size) {
     Svc::SeqArgs args;
     Svc::SeqArgs::Type_of_buffer buffer = {};

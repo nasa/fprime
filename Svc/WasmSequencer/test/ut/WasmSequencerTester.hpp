@@ -66,6 +66,10 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! the `args` host function round trip through RUN/INVOKE.
     static Svc::SeqArgs makeSeqArgs(const U8* bytes, FwSizeType size);
 
+    //! Drive the writeTelemetry scheduler tick and dispatch it, flushing every
+    //! telemetry channel into the tester history so ASSERT_TLM_* can read them.
+    void flushTelemetry();
+
     // ----------------------------------------------------------------------
     // Dispatch / state helpers
     // ----------------------------------------------------------------------

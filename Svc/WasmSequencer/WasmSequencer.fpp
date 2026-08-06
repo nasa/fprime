@@ -6,7 +6,7 @@ module Svc {
         include "WasmSequencerStateMachine.fppi"
         include "WasmSequencerParams.fppi"
         include "WasmSequencerEvents.fppi"
-        # include "WasmSequencerTelemetry.fppi"
+        include "WasmSequencerTelemetry.fppi"
 
         # All signals and async inputs are processed in order of emission; the
         # sequencer does not rely on queue priorities (see SDD).

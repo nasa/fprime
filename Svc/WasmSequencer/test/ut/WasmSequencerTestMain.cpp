@@ -788,6 +788,156 @@ TEST_F(WasmSequencerTester, ArgsBadPointerFails) {
 }
 
 // ----------------------------------------------------------------------
+// Telemetry channels (populated by the counters, flushed via writeTelemetry)
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
+    // A fresh component reports zeroed counters, IDLE state, no trap, empty name.
+    this->flushTelemetry();
+
+    ASSERT_TLM_State(0, State::IDLE);
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
+    ASSERT_TLM_CommandsDispatched(0, static_cast<U64>(0));
+    ASSERT_TLM_CommandsFailed(0, static_cast<U64>(0));
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
+    ASSERT_TLM_SeqName(0, "");
+}
+
+TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
+    // A completed RUN increments SequencesSucceeded, leaves the component READY, and
+    // records the sequence name as the filename stem (empty.wasm -> "empty").
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_RUN(0, 300, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_State(0, State::READY);
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(0));
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
+    ASSERT_TLM_SeqName(0, "empty");
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetrySuccessCountAccumulates) {
+    // Counters are cumulative across sequences: two successful runs -> 2.
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_RUN(0, 301, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+
+    // The second RUN starts from READY, so drain the queue rather than waiting for a
+    // state change that has effectively already happened.
+    this->sendCmd_RUN(0, 302, file, BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(2);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(2));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryLoadNameRecordsModuleName) {
+    // LOAD_NAME records the user-provided module name verbatim (not the filename).
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_LOAD_NAME(0, 303, file, Fw::CmdStringArg("mod"));
+    this->dispatchUntilState(State::READY);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_SeqName(0, "mod");
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryFailedCount) {
+    // A no-main module fails to invoke -> SequencesFailed increments, others stay 0.
+    const Fw::String file = this->copyAsset("no_main.wasm");
+    this->sendCmd_RUN(0, 304, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
+    this->removeFile("no_main.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryTrapRecordsReasonAndFails) {
+    // A trap records LastTrapReason and counts as a failed sequence.
+    const Fw::String file = this->copyAsset("unreachable.wasm");
+    this->sendCmd_RUN(0, 305, file, BLOCK, {});
+    this->dispatchAll();
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_State(0, State::IDLE);
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::UNREACHABLE);
+    this->removeFile("unreachable.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryCancelledCount) {
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("loop.wasm");
+    this->sendCmd_RUN(0, 306, file, NO_BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_SPINNING);
+    this->sendCmd_CANCEL(0, 307);
+    this->dispatchUntilState(State::IDLE);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_SequencesCancelled(0, static_cast<U64>(1));
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(0));
+    ASSERT_TLM_SequencesFailed(0, static_cast<U64>(0));
+    this->removeFile("loop.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
+    // cmd.wasm dispatches one command out cmdOut; feeding a non-OK response bumps
+    // CommandsFailed while CommandsDispatched counts the dispatch.
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 308, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->dispatchUntilState(State::READY);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_CommandsDispatched(0, static_cast<U64>(1));
+    ASSERT_TLM_CommandsFailed(0, static_cast<U64>(1));
+    // The guest still ran to completion after the failed command response.
+    ASSERT_TLM_SequencesSucceeded(0, static_cast<U64>(1));
+    this->removeFile("cmd.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
+    // An OK command response dispatches but does not increment CommandsFailed.
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 309, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->dispatchUntilState(State::READY);
+
+    this->flushTelemetry();
+
+    ASSERT_TLM_CommandsDispatched(0, static_cast<U64>(1));
+    ASSERT_TLM_CommandsFailed(0, static_cast<U64>(0));
+    this->removeFile("cmd.wasm");
+}
+
+// ----------------------------------------------------------------------
 // Host functions: COMMAND (byte-fidelity of guest bytes -> cmdOut ComBuffer)
 // ----------------------------------------------------------------------
 

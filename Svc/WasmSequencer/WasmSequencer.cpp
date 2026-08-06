@@ -41,7 +41,14 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_breakBeforeNextLine(false),
-      m_loadFile(nullptr) {
+      m_loadFile(nullptr),
+      m_tlmSequencesSucceeded(0),
+      m_tlmSequencesFailed(0),
+      m_tlmSequencesCancelled(0),
+      m_tlmCommandsDispatched(0),
+      m_tlmCommandsFailed(0),
+      m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
+      m_tlmSequenceName("") {
     getGlobalAllocatorLock()->lock();
     const auto status = spacewasm_fprime_register_global_allocator(
         [](void* userdata, std::size_t size, std::size_t align) -> U8* {
@@ -93,6 +100,11 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     } else {
         this->m_pendingHostFunction.clear();
 
+        // Track commands that came back with a non-OK response.
+        if (response != Fw::CmdResponse::OK) {
+            this->m_tlmCommandsFailed++;
+        }
+
         // Respond to the host command by pushing a value to the Wasm operand stack
         spacewasm_value_t return_val;
         return_val.tag = SPACEWASM_I32;
@@ -106,7 +118,16 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
-    // TODO
+    auto now = this->getTime();
+
+    this->tlmWrite_State(this->sequencer_getState(), now);
+    this->tlmWrite_SequencesSucceeded(this->m_tlmSequencesSucceeded, now);
+    this->tlmWrite_SequencesFailed(this->m_tlmSequencesFailed, now);
+    this->tlmWrite_SequencesCancelled(this->m_tlmSequencesCancelled, now);
+    this->tlmWrite_CommandsDispatched(this->m_tlmCommandsDispatched, now);
+    this->tlmWrite_CommandsFailed(this->m_tlmCommandsFailed, now);
+    this->tlmWrite_LastTrapReason(this->m_tlmLastTrapReason, now);
+    this->tlmWrite_SeqName(this->m_tlmSequenceName, now);
 }
 
 // ----------------------------------------------------------------------
@@ -360,12 +381,16 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    // A module that fails to load is a sequence that failed to execute.
+    this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_ModuleLoadFailed(static_cast<WasmSequencer_Status::T>(this->m_loadStatus));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    // A module that fails to invoke its entry point is a sequence that failed to execute.
+    this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_ModuleInvokeFailed(static_cast<WasmSequencer_Status::T>(this->m_invokeStatus));
 }
 
@@ -377,6 +402,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
 
     const Fw::String filePath(this->m_pendingLoad.get_fileName());
     const Fw::String moduleName(this->m_pendingLoad.get_moduleName());
+
+    // Record the sequence name for telemetry (module name, or filename stem).
+    this->setSequenceName(filePath, moduleName);
 
     // Acknowledge the pending load
     this->m_hasPendingLoad = false;
@@ -472,18 +500,21 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqSucceeded(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    this->m_tlmSequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceSucceeded();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqCancelled(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    this->m_tlmSequencesCancelled++;
     this->log_ACTIVITY_HI_SequenceCancelled();
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqFailed(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_SequenceFailed();
 }
 
@@ -491,6 +522,10 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTr
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal,
     const WasmSequencer_TrapReason& trapReason) {
+    // A trap terminates the sequence in failure: record the reason and count it as a
+    // failed sequence (the state machine transitions to IDLE with EXECUTION_ERROR).
+    this->m_tlmLastTrapReason = trapReason;
+    this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_SequenceTrap(trapReason);
 }
 
@@ -617,6 +652,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
 
                 // Dispatch command to CmdDisp
                 // TODO(tumbar) Use ctx to keep track of which command was sent?
+                this->m_tlmCommandsDispatched++;
                 this->cmdOut_out(0, cmd, 0);
             }
 

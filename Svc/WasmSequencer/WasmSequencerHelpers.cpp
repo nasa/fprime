@@ -178,6 +178,51 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
     }
 }
 
+void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName) {
+    // LOAD_NAME supplies an explicit module name; use it verbatim.
+    if (moduleName.length() > 0) {
+        this->m_tlmSequenceName = moduleName;
+        return;
+    }
+
+    // RUN / LOAD: derive from the file's basename with any ".wasm" suffix stripped.
+    const char* const path = filePath.toChar();
+    const FwSizeType len = static_cast<FwSizeType>(filePath.length());
+
+    // Find the start of the basename (character after the last '/').
+    FwSizeType start = 0;
+    for (FwSizeType i = 0; i < len; i++) {
+        if (path[i] == '/') {
+            start = i + 1;
+        }
+    }
+
+    // Drop a trailing ".wasm" if present.
+    FwSizeType end = len;
+    static const char suffix[] = ".wasm";
+    const FwSizeType suffixLen = static_cast<FwSizeType>(sizeof(suffix) - 1);
+    if ((end - start) >= suffixLen) {
+        bool match = true;
+        for (FwSizeType i = 0; i < suffixLen; i++) {
+            if (path[end - suffixLen + i] != suffix[i]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            end -= suffixLen;
+        }
+    }
+
+    char name[FileNameStringSize];
+    FwSizeType n = 0;
+    for (FwSizeType i = start; i < end && n < static_cast<FwSizeType>(sizeof(name) - 1); i++) {
+        name[n++] = path[i];
+    }
+    name[n] = '\0';
+    this->m_tlmSequenceName = name;
+}
+
 //! Panic hook the spacewasm interpreter calls on a fatal internal error. Must
 //! not return. Signature matches the extern declaration in spacewasm.h exactly.
 extern "C" void spacewasm_panic(const U8* filename,
