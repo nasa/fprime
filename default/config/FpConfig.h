@@ -149,6 +149,14 @@ extern "C" {
 #define POSIX_THREADS_ENABLE_NAMES (1)  //!< Enable/Disable assigning names to threads
 #endif
 
+// Hint to the compiler to always inline LinearBufferBase serialization & 
+// deserialization methods
+#if defined(__GNUC__) || defined(__clang__)
+#define ALWAYS_INLINE_LLB_SERIAL __attribute__((always_inline)) inline
+#else
+#define ALWAYS_INLINE_LLB_SERIAL
+#endif
+
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.
 #ifdef __cplusplus
