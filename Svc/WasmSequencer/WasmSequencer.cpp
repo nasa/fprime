@@ -381,7 +381,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // A module that fails to load is a sequence that failed to execute.
     this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_ModuleLoadFailed(static_cast<WasmSequencer_Status::T>(this->m_loadStatus));
 }
@@ -389,7 +388,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFa
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // A module that fails to invoke its entry point is a sequence that failed to execute.
     this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_ModuleInvokeFailed(static_cast<WasmSequencer_Status::T>(this->m_invokeStatus));
 }
@@ -522,8 +520,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTr
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal,
     const WasmSequencer_TrapReason& trapReason) {
-    // A trap terminates the sequence in failure: record the reason and count it as a
-    // failed sequence (the state machine transitions to IDLE with EXECUTION_ERROR).
     this->m_tlmLastTrapReason = trapReason;
     this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_SequenceTrap(trapReason);

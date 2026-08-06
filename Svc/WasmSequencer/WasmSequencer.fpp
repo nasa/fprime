@@ -8,8 +8,6 @@ module Svc {
         include "WasmSequencerEvents.fppi"
         include "WasmSequencerTelemetry.fppi"
 
-        # All signals and async inputs are processed in order of emission; the
-        # sequencer does not rely on queue priorities (see SDD).
         state machine instance sequencer: SequencerStateMachine assert
 
         @ Port for dispatching commands
