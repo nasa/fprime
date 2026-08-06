@@ -35,8 +35,12 @@ module ComCcsdsConfig {
         constant frameAccumulatorSize  = 2048     
         constant commsBuffSize         = 2048      
         constant commsFileBuffSize     = 3000      
-        constant commsBuffCount        = 20        
-        constant commsFileBuffCount    = 30       
+        # A CFDP downlink bursts the whole file into the queue at once, taking
+        # two buffers per PDU (one for the PDU, one for the framed packet), so
+        # the stock 20 runs dry a few KB in and the framer FATALs on the null
+        # buffer. Sized for a ~200 KB file at 992-byte PDUs.
+        constant commsBuffCount        = 512
+        constant commsFileBuffCount    = 64
         constant commsBuffMgrId        = 200      
     }
 }
