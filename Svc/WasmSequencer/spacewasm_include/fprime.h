@@ -19,20 +19,22 @@ extern "C" {
 #define WASM_IMPORT(module, name)
 #endif  // defined(__wasm__)
 
+#define WASM_MODULE_NAME ("fprime_v1")
+
 /// @brief Exit the current Wasm program with a return code.
 /// This function does not return.
 ///
 /// @param code: 0 indicates success, any non-zero exit code will
 //               be reported in an event and the sequence will exit
 //               with failure status
-WASM_IMPORT("fprime", "exit")
+WASM_IMPORT(WASM_MODULE_NAME, "exit")
 extern void fprime_wasm_exit(I32 code);
 
 /// @brief Exit the current Wasm program with a failure.
 /// This function does not return.
 ///
 /// @param code: Aribtrary code to indicate source of the panic
-WASM_IMPORT("fprime", "panic")
+WASM_IMPORT(WASM_MODULE_NAME, "panic")
 extern void fprime_wasm_panic(I32 code);
 
 /// @brief Get the sequence arguments this sequence was invoked with
@@ -40,7 +42,8 @@ extern void fprime_wasm_panic(I32 code);
 /// into the guest memory.
 ///
 /// @param destination_ptr Guest memory address to argument buffer
-/// @param destination_size Length of the argument buffer. This size must be greater than or equal to 
+/// @param destination_size Length of the argument buffer. This size must be greater than or equal to
+WASM_IMPORT(WASM_MODULE_NAME, "args")
 extern U32 fprime_wasm_get_args(U32 destination_ptr, U32 destination_size);
 
 enum FprimeTlmValid {
@@ -55,7 +58,7 @@ enum FprimeTlmValid {
 /// @param time_size Size allocated for time_ptr, should be Fw::Time::SERIALIZED_SIZE
 /// @param value_ptr Guest memory address to channel's value
 /// @param value_size Size allocated for value_ptr
-WASM_IMPORT("fprime", "tlm")
+WASM_IMPORT(WASM_MODULE_NAME, "tlm")
 extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id, U32 time_ptr, U32 time_size, U32 value_ptr, U32 value_size);
 
 /// @brief Read a parameter value and write it to the specified memory addresses
@@ -63,7 +66,7 @@ extern FprimeTlmValid fprime_wasm_read_telemetry(I64 id, U32 time_ptr, U32 time_
 /// @param id Parameter ID to read
 /// @param value_ptr Guest memory address to parameters's value
 /// @param value_size Size allocated for value_ptr
-WASM_IMPORT("fprime", "prm")
+WASM_IMPORT(WASM_MODULE_NAME, "prm")
 extern FprimeTlmValid fprime_wasm_read_parameter(I64 id, U32 value_ptr, U32 value_size);
 
 enum FprimeCmdResponse {
@@ -88,7 +91,7 @@ enum FprimeCmdResponse {
 ///
 /// @param buf_ptr Guest memory address to encoded command
 /// @param buf_size Size allocated for value_ptr
-WASM_IMPORT("fprime", "cmd")
+WASM_IMPORT(WASM_MODULE_NAME, "cmd")
 extern FprimeCmdResponse fprime_wasm_command(U32 buf_ptr, U32 buf_size);
 
 enum FprimeEventSeverity {
@@ -106,19 +109,19 @@ enum FprimeEventSeverity {
 /// @param severity Event severity level to emit
 /// @param msg_ptr Guest memory address to event message string
 /// @param msg_size Size allocated for value_ptr
-WASM_IMPORT("fprime", "event")
+WASM_IMPORT(WASM_MODULE_NAME, "event")
 extern void fprime_wasm_event(FprimeEventSeverity severity, U32 msg_ptr, U32 msg_size);
 
 /// @brief Pause the runtime for a specified time
 ///
 /// @param us Microseconds to pause the runtime for
-WASM_IMPORT("fprime", "rsleep")
+WASM_IMPORT(WASM_MODULE_NAME, "rsleep")
 extern void fprime_wasm_rsleep(U64 us);
 
 /// @brief Pause the runtime until a specified time
 ///
 /// @param us Microseconds from system epoch to pause until
-WASM_IMPORT("fprime", "asleep")
+WASM_IMPORT(WASM_MODULE_NAME, "asleep")
 extern void fprime_wasm_asleep(U64 us);
 
 #ifdef __cplusplus

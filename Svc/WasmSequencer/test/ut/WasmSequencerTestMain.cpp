@@ -553,29 +553,57 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
     this->dispatchAll();
 
     ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    // A time_size of 8 != Fw::Time::SERIALIZED_SIZE is rejected; the reported
-    // maxSize is the required serialized time size.
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TELEMETRY, 8, Fw::Time::SERIALIZED_SIZE);
+    // A time_size of 8 < Fw::Time::SERIALIZED_SIZE cannot hold the serialized time and
+    // is rejected as too small; the reported valueSize is the required serialized size.
+    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::TELEMETRY, 8, Fw::Time::SERIALIZED_SIZE);
     ASSERT_EVENTS_SequenceTrap_SIZE(1);
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("tlm_badtime.wasm");
 }
 
-TEST_F(WasmSequencerTester, TelemetryTooBigTraps) {
-    const Fw::String file = this->copyAsset("tlm_toobig.wasm");
+TEST_F(WasmSequencerTester, TelemetryOversizedRequestWritesOnlyValueBytes) {
+    U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
+    this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
+    this->nextTlmTime = Fw::Time(1000, 2000);
+    this->nextTlmId = 42;
+
+    const Fw::String file = this->copyAsset("tlm_largebuf.wasm");
     this->sendCmd_RUN(0, 72, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_BufferTooLarge_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("tlm_largebuf.wasm");
+}
+
+TEST_F(WasmSequencerTester, TelemetryUndersizedRequestFails) {
+    // A value_size (2) smaller than the actual serialized value (4) is rejected at
+    // dispatch with BufferTooSmall; nothing is written into guest memory.
+    U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
+    this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
+    this->nextTlmTime = Fw::Time(1000, 2000);
+    this->nextTlmId = 42;
+
+    const Fw::String file = this->copyAsset("tlm_toosmall.wasm");
+    this->sendCmd_RUN(0, 74, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    // value_size 600 > FW_TLM_BUFFER_MAX_SIZE is rejected.
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TELEMETRY, 600, FW_TLM_BUFFER_MAX_SIZE);
-    ASSERT_EVENTS_SequenceTrap_SIZE(1);
-    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-    this->removeFile("tlm_toobig.wasm");
+    ASSERT_from_getTlmChan_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getTlmChan->at(0).id, static_cast<FwChanIdType>(42));
+    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    // value_size 2 smaller than the 4-byte serialized value.
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::TELEMETRY, 2, static_cast<U32>(sizeof raw));
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("tlm_toosmall.wasm");
 }
 
 // ----------------------------------------------------------------------
@@ -619,19 +647,47 @@ TEST_F(WasmSequencerTester, ParameterReadValueMismatchTraps) {
     this->removeFile("prm.wasm");
 }
 
-TEST_F(WasmSequencerTester, ParameterTooBigTraps) {
-    const Fw::String file = this->copyAsset("prm_toobig.wasm");
+TEST_F(WasmSequencerTester, ParameterOversizedRequestWritesOnlyValueBytes) {
+    // Mirror of TelemetryOversizedRequestWritesOnlyValueBytes: an oversized len (64)
+    // for a 4-byte value writes only the real value bytes. prm_toobig poisons the byte
+    // past the value and traps unless it survives, so success proves no stack leak.
+    U8 raw[4] = {0xAA, 0xBB, 0xCC, 0xDD};
+    this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
+    this->nextPrmId = 7;
+
+    const Fw::String file = this->copyAsset("prm_largebuf.wasm");
     this->sendCmd_RUN(0, 81, file, BLOCK, {});
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_from_getParam_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getParam->at(0).id, static_cast<FwPrmIdType>(7));
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_BufferTooLarge_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("prm_largebuf.wasm");
+}
+
+TEST_F(WasmSequencerTester, ParameterUndersizedRequestFails) {
+    // A len (2) smaller than the actual serialized value (4) is rejected at dispatch
+    // with BufferTooSmall; nothing is written into guest memory.
+    U8 raw[4] = {0xAA, 0xBB, 0xCC, 0xDD};
+    this->nextPrmValue = Fw::ParamBuffer(raw, sizeof raw);
+    this->nextPrmId = 7;
+
+    const Fw::String file = this->copyAsset("prm_toosmall.wasm");
+    this->sendCmd_RUN(0, 83, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
-    // len 600 > FW_PARAM_BUFFER_MAX_SIZE is rejected.
-    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::PARAMETER, 600, FW_PARAM_BUFFER_MAX_SIZE);
-    ASSERT_EVENTS_SequenceTrap_SIZE(1);
-    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
-    ASSERT_FROM_PORT_HISTORY_SIZE(0);
-    this->removeFile("prm_toobig.wasm");
+    ASSERT_from_getParam_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_getParam->at(0).id, static_cast<FwPrmIdType>(7));
+    ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::PARAMETER, 2, static_cast<U32>(sizeof raw));
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    this->removeFile("prm_toosmall.wasm");
 }
 
 // ----------------------------------------------------------------------

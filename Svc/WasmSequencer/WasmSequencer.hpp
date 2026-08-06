@@ -572,6 +572,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                           size_t n_params,
                                           struct spacewasm_value_t* out_result);
 
+    spacewasm_hostcall_result_t wasmArgs(struct spacewasm_caller_t* caller,
+                                         const struct spacewasm_value_t* params,
+                                         size_t n_params,
+                                         struct spacewasm_value_t* out_result);
+
     spacewasm_hostcall_result_t wasmReadTelemetry(struct spacewasm_caller_t* caller,
                                                   const struct spacewasm_value_t* params,
                                                   size_t n_params,

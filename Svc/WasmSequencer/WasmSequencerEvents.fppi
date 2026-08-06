@@ -40,6 +40,10 @@ event BufferTooLarge(host_function: HostFunction, $size: U32, maxSize: U32) \
     severity warning high \
     format "Host function {} buffer payload size {} larger than host maximum size {}"
 
+event BufferTooSmall(host_function: HostFunction, $size: U32, valueSize: U32) \
+    severity warning high \
+    format "Host function {} buffer payload size {} smaller than host value size {}"
+
 event HostFunctionInvalidPointer(host_function: HostFunction, code: Status) \
     severity warning high \
     format "Failed to read guest pointer in host function {}: {}"

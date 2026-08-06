@@ -6,6 +6,7 @@ enum HostFunction: U8 {
     EVENT
     RSLEEP
     ASLEEP
+    ARGS
 }
 
 enum Status: I32 {
