@@ -55,9 +55,6 @@ module Svc {
         @ Mode change notification to subscribers
         output port modeChanged: [ModeManagerCfg.NUM_SUBSCRIBERS] ModeChanged
 
-        @ Current mode query output port that any component can invoke
-        output port getCurrentMode: GetMode
-
         @ Optional external transition policy. When unconnected, the
         @ default policy in the config module decides.
         output port checkTransition: CheckTransition
