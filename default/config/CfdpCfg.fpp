@@ -7,11 +7,7 @@ module Svc {
     module Ccsds {
         module Cfdp {
             @ Number of CFDP channels
-            @
-            @ Must stay in step with the ChannelConfig parameter default in
-            @ Svc/Ccsds/CfdpManager/Parameters.fppi, which needs exactly this
-            @ many elements.
-            constant NumChannels = 1
+            constant NumChannels = 2
 
             @ File path size used for CFDP file system operations
             constant MaxFilePathSize = 200
