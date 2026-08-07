@@ -6,6 +6,7 @@
 #define SVC_OSTIME_TEST_UT_RAWTIMETESTER_HPP
 
 #include "Fw/Time/Time.hpp"
+#include "Fw/Types/SerialBuffer.hpp"
 #include "Os/RawTime.hpp"
 
 namespace Svc {
@@ -38,12 +39,14 @@ class RawTimeTester : public Os::RawTimeInterface {
     }
 
     Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override {
-        const RawTimeTesterHandle* other_handle =
-            reinterpret_cast<const RawTimeTesterHandle*>(const_cast<Os::RawTime&>(other).getHandle());
-
-        Fw::TimeInterval t_start = Fw::TimeInterval(other_handle->t.getSeconds(), other_handle->t.getUSeconds());
-        Fw::TimeInterval t_end = Fw::TimeInterval(m_handle.t.getSeconds(), m_handle.t.getUSeconds());
-
+        U8 buf_data[Os::RawTimeInterface::SERIALIZED_SIZE];
+        Fw::SerialBuffer buf(buf_data, sizeof(buf_data));
+        other.serializeTo(buf);
+        buf.resetDeser();
+        Fw::Time other_time;
+        buf.deserializeTo(other_time);
+        Fw::TimeInterval t_start(other_time.getSeconds(), other_time.getUSeconds());
+        Fw::TimeInterval t_end(m_handle.t.getSeconds(), m_handle.t.getUSeconds());
         interval = Fw::TimeInterval::sub(t_start, t_end);
         return OP_OK;
     }

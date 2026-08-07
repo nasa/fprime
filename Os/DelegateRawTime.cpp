@@ -1,61 +1,62 @@
 // ======================================================================
-// \title Os/RawTime.cpp
-// \brief common function implementation for Os::RawTime
+// \title Os/DelegateRawTime.cpp
+// \brief common function implementation for Os::RawTimeInterface and Os::DelegateRawTime
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
+#include <Os/DelegateRawTime.hpp>
 #include <Os/RawTime.hpp>
 
 namespace Os {
 
-RawTime::RawTime() : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
+DelegateRawTime::DelegateRawTime() : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
-RawTime::~RawTime() {
+DelegateRawTime::~DelegateRawTime() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
     m_delegate.~RawTimeInterface();
 }
 
 // m_handle_storage is placement-new storage populated by getDelegate below
 // cppcheck-suppress missingMemberCopy
-RawTime::RawTime(const RawTime& other)
+DelegateRawTime::DelegateRawTime(const DelegateRawTime& other)
     : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate)) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
-RawTime& RawTime::operator=(const RawTime& other) {
+DelegateRawTime& DelegateRawTime::operator=(const DelegateRawTime& other) {
     if (this != &other) {
         this->m_delegate = *RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate);
     }
     return *this;
 }
 
-RawTimeHandle* RawTime::getHandle() {
+RawTimeHandle* DelegateRawTime::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
 }
 
-RawTime::Status RawTime::now() {
+DelegateRawTime::Status DelegateRawTime::now() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.now();
 }
 
-RawTime::Status RawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& result) const {
+DelegateRawTime::Status DelegateRawTime::getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& result) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getTimeInterval(other, result);
 }
 
-Fw::SerializeStatus RawTime::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
+Fw::SerializeStatus DelegateRawTime::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.serializeTo(buffer, mode);
 }
 
-Fw::SerializeStatus RawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
+Fw::SerializeStatus DelegateRawTime::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.deserializeFrom(buffer, mode);
 }
 
-RawTime::Status RawTime::getDiffUsec(const RawTime& other, U32& result) const {
+DelegateRawTime::Status DelegateRawTime::getDiffUsec(const RawTime& other, U32& result) const {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getDiffUsec(other, result);
 }
@@ -84,7 +85,12 @@ RawTimeInterface::Status RawTimeInterface::getDiffUsec(const RawTime& other, U32
     return status;
 }
 
-bool RawTime::operator==(const RawTime& other) const {
+bool DelegateRawTime::operator==(const RawTime& other) const {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate == other;
+}
+
+bool RawTimeInterface::operator==(const RawTime& other) const {
     Fw::TimeInterval interval;
     Status status = this->getTimeInterval(other, interval);
     // If we error out, then the values are either:

@@ -35,6 +35,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FPrimeNumericalConfig.h"
         "${CMAKE_CURRENT_LIST_DIR}/IpCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplTesterCfg.hpp"
