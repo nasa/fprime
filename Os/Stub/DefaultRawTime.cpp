@@ -2,8 +2,8 @@
 // \title Os/Stub/DefaultRawTime.cpp
 // \brief sets default Os::RawTime to no-op stub implementation via linker
 // ======================================================================
+#include <config/RawTimeSource.hpp>
 #include "Os/Delegate.hpp"
-#include "Os/RawTimeSource.hpp"
 #include "Os/Stub/RawTime.hpp"
 
 namespace Os {

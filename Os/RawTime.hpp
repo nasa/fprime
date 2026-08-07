@@ -9,7 +9,7 @@
 #include <Fw/Time/TimeInterval.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
-#include <Os/RawTimeSource.hpp>
+#include <config/RawTimeSource.hpp>
 
 namespace Os {
 
@@ -122,7 +122,7 @@ class RawTime final : public RawTimeInterface {
   public:
     //! \brief Constructor with optional timer source selection
     //! \param source Timer source to use (defaults to RAWTIME_DEFAULT)
-    explicit RawTime(RawTimeSource source = RAWTIME_DEFAULT);
+    RawTime(RawTimeSource source = RAWTIME_DEFAULT);
 
     ~RawTime() final;  //!<  Destructor
 

@@ -51,7 +51,7 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!
     //!  \param contexts Array of context values that will be sent to each member component.
     //!         The index of the array corresponds to the output port number.
-    void configure(const ContextArray& contexts);
+    void configure(const ContextArray& contexts, const Os::RawTimeSource rawTimeSource = Os::RAWTIME_DEFAULT);
 
     //!  \brief PassiveRateGroup configuration function
     //!
@@ -89,11 +89,20 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //!  \param cmdSeq The command sequence number
     void CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq);
 
-    U32 m_cycles;                                             //!< cycles executed
-    U32 m_maxTime;                                            //!< maximum execution time in microseconds
-    PassiveRateGroup_CycleTime m_portDurationHighWaterMarks;  //!< HWM per port in microseconds
-    FwIndexType m_numContexts;                                //!< number of contexts
-    U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];      //!< Must match number of output ports
+    //!  \brief Create a RawTime object using the configured raw time source
+    //!
+    //!  Helper method to create RawTime objects that use the same timer source
+    //!  as this PassiveRateGroup component.
+    //!
+    //!  \return RawTime object configured with m_rawTimeSource
+    Os::RawTime createRawTime() const;
+
+    U32 m_cycles;                                                 //!< cycles executed
+    U32 m_maxTime;                                                //!< maximum execution time in microseconds
+    PassiveRateGroup_CycleTime m_portDurationHighWaterMarksUsec;  //!< HWM per port in microseconds
+    Os::RawTimeSource m_rawTimeSource;                            //!< time source set by client
+    FwIndexType m_numContexts;                                    //!< number of contexts
+    U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];          //!< Must match number of output ports
 };
 
 }  // namespace Svc

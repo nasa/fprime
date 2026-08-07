@@ -2,9 +2,9 @@
 // \title Os/Posix/DefaultRawTime.cpp
 // \brief sets default Os::RawTime Posix implementation via linker
 // ======================================================================
+#include <config/RawTimeSource.hpp>
 #include "Os/Delegate.hpp"
 #include "Os/Posix/RawTime.hpp"
-#include "Os/RawTimeSource.hpp"
 
 namespace Os {
 

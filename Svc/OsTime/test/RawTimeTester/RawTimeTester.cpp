@@ -1,9 +1,9 @@
 
 #include "RawTimeTester.hpp"
+#include <config/RawTimeSource.hpp>
 #include "Fw/Time/Time.hpp"
 #include "Os/Delegate.hpp"
 #include "Os/RawTime.hpp"
-#include "Os/RawTimeSource.hpp"
 
 namespace Os {
 RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_new_memory,

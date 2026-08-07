@@ -2,8 +2,8 @@
 // \title Os/Stub/test/DefaultRawTime.cpp
 // \brief sets default Os::RawTime to test stub implementation via linker
 // ======================================================================
+#include <config/RawTimeSource.hpp>
 #include "Os/Delegate.hpp"
-#include "Os/RawTimeSource.hpp"
 #include "Os/Stub/test/RawTime.hpp"
 
 namespace Os {

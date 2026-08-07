@@ -23,12 +23,17 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
     : PassiveRateGroupComponentBase(compName),
       m_cycles(0),
       m_maxTime(0),
-      m_portDurationHighWaterMarks{},
+      m_portDurationHighWaterMarksUsec{},
+      m_rawTimeSource(Os::RAWTIME_DEFAULT),
       m_numContexts(0) {}
 
 PassiveRateGroup::~PassiveRateGroup() {}
 
-void PassiveRateGroup::configure(const ContextArray& contexts) {
+Os::RawTime PassiveRateGroup::createRawTime() const {
+    return Os::RawTime(this->m_rawTimeSource);
+}
+
+void PassiveRateGroup::configure(const ContextArray& contexts, const Os::RawTimeSource rawTimeSource) {
     static_assert(FW_NUM_ARRAY_ELEMENTS(m_contexts) == NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS,
                   "Context table size must match the number of rate group member output ports");
 
@@ -37,6 +42,8 @@ void PassiveRateGroup::configure(const ContextArray& contexts) {
     for (FwIndexType entry = 0; entry < this->m_numContexts; entry++) {
         this->m_contexts[entry] = contexts[static_cast<FwSizeType>(entry)];
     }
+
+    this->m_rawTimeSource = rawTimeSource;
 }
 
 void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numContexts) {
@@ -52,12 +59,12 @@ void PassiveRateGroup::configure(const U32 contexts[], const FwIndexType numCont
 }
 
 void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleStart) {
-    Os::RawTime endTime;
+    Os::RawTime endTime = this->createRawTime();
     FW_ASSERT(this->m_numContexts != 0);
 
     // Pre-allocate RawTime objects outside loop to avoid repeated constructor calls
-    Os::RawTime portStart;
-    Os::RawTime portEnd;
+    Os::RawTime portStart = this->createRawTime();
+    Os::RawTime portEnd = this->createRawTime();
     PassiveRateGroup_CycleTime portTimes;
 
     // invoke any members of the rate group
@@ -75,8 +82,8 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
                 portTimes[static_cast<FwSizeType>(port)] = cycleTime;
                 // Update high water mark if current cycle time exceeds it
-                if (cycleTime > this->m_portDurationHighWaterMarks[static_cast<FwSizeType>(port)]) {
-                    this->m_portDurationHighWaterMarks[static_cast<FwSizeType>(port)] = cycleTime;
+                if (cycleTime > this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)]) {
+                    this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)] = cycleTime;
                 }
             }
         }
@@ -97,7 +104,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
         this->tlmWrite_PortCycleTimeLast(portTimes);
-        this->tlmWrite_PortCycleTimeHWM(this->m_portDurationHighWaterMarks);
+        this->tlmWrite_PortCycleTimeHWM(this->m_portDurationHighWaterMarksUsec);
     }
 
     this->tlmWrite_MaxCycleTime(this->m_maxTime);
@@ -108,7 +115,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 void PassiveRateGroup::CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Clear all port duration high water marks
     for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
-        this->m_portDurationHighWaterMarks[port] = 0;
+        this->m_portDurationHighWaterMarksUsec[port] = 0;
     }
     this->m_maxTime = 0;
     this->m_cycles = 0;
