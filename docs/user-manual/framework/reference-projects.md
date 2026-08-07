@@ -6,7 +6,7 @@ platform, and continuous integration (CI) that exercises repositories under
 [fprime-community](https://github.com/fprime-community) on an ongoing basis. Both are
 listed here.
 
-## Other Reference Projects
+## fprime-community References
 
 Reference repositories under `fprime-community` that are not already covered by a row in the
 [Supported Platforms](./supported-platforms.md#supported-platforms) or
@@ -25,7 +25,7 @@ Reference repositories under `fprime-community` that are not already covered by 
 | [`fprime-yamcs-reference`](https://github.com/fprime-community/fprime-yamcs-reference) | Reference F´ project integrated with YAMCS mission control software |
 | [`fprime_cfs_reference`](https://github.com/fprime-community/fprime_cfs_reference) | cFS reference project using applications built with F´ |
 
-## External Repository CI
+## External Repository Continuous Integration (CI)
 
 `ext-*.yml` workflows in this repository's [CI](https://github.com/nasa/fprime/tree/devel/.github/workflows)
 keep the reference and tutorial repositories above building against `devel`. The trigger
