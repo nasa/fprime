@@ -255,6 +255,25 @@ void HealthTester ::faultTlm() {
     }
 }
 
+void HealthTester ::equalWarnFatalCycles() {
+    TEST_CASE(900.1.11, "FATAL takes precedence when warnCycles equals fatalCycles");
+
+    const U32 cycles = 3;
+    for (FwIndexType entry = 0; entry < this->numPingEntries; entry++) {
+        this->pingEntries[entry].warnCycles = cycles;
+        this->pingEntries[entry].fatalCycles = cycles;
+    }
+    this->component.setPingEntries(this->pingEntries, this->numPingEntries, this->watchDogCode);
+
+    // Never answer the pings; the first cycle sends the ping, so the threshold is reached one later
+    for (U32 i = 0; i < cycles + 1; i++) {
+        this->invoke_to_Run(0, 0);
+    }
+
+    ASSERT_EVENTS_HLTH_PING_LATE_SIZE(this->numPingEntries);
+    ASSERT_EVENTS_HLTH_PING_WARN_SIZE(0);
+}
+
 void HealthTester ::disableAllMonitoring() {
     TEST_CASE(900.1.4, "Enable/Disable all monitoring");
     REQUIREMENT("ISF-HTH-004");

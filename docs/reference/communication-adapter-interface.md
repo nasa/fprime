@@ -25,7 +25,7 @@ This can be seen in [`Svc.ComStub`](https://github.com/nasa/fprime/blob/fff0e0bf
 
 ## Ports
 
-The `Svc.ComDataWithContext` port type is used to transmit comms data between components of the F´ system. This port type is composed of a `Fw::Buffer` object and a `ComCfg::FrameContext` object. The `Fw::Buffer` object is used to transmit the data, while the `ComCfg::FrameContext` object is used to provide context for the data being transmitted, such as header information once the header has been consumed.
+The `Svc.ComDataWithContext` port type is used to transmit comms data between components of the F´ system. This port type is composed of a `Fw::Buffer` object and a `ComCfg::FrameContext` object. The `Fw::Buffer` object is used to transmit the data, while the `ComCfg::FrameContext` object is used to provide context for the data being transmitted, such as header information once the header has been consumed. The context's `saIndex` field carries the SDLS security association index (set by SDLS deframers and read by SDLS framers); the default `ComCfg.SaIndexUnset` (0xFFFF) is reserved to mean "unset".
 
 The communication adapter interface is composed of five ports. These ports are used to transmit outgoing data through
 some communication hardware and receive incoming data from that same hardware. These ports share types with the byte

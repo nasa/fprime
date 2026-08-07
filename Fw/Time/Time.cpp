@@ -13,11 +13,6 @@ Time::Time() : m_val() {
 
 Time::~Time() {}
 
-Time::Time(const Time& other) : Serializable() {
-    this->set(other.m_val.get_timeBase(), other.m_val.get_timeContext(), other.m_val.get_seconds(),
-              other.m_val.get_useconds());
-}
-
 Time::Time(U32 seconds, U32 useconds) {
     this->set(TimeBase::TB_NONE, 0, seconds, useconds);
 }
@@ -51,6 +46,11 @@ Fw::Time::Time(F64 seconds) {
 void Fw::Time::set(F64 seconds) {
     U32 parsedSeconds = this->parseSeconds(seconds);
     U32 parsedUseconds = this->parseUSeconds(seconds);
+    // parseUSeconds rounds up to a whole second at 999999.5 or above; carry it as add() does
+    if (parsedUseconds >= 1000000) {
+        parsedSeconds++;
+        parsedUseconds -= 1000000;
+    }
     this->set(parsedSeconds, parsedUseconds);
 }
 
@@ -112,7 +112,17 @@ SerializeStatus Time::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode)
 }
 
 SerializeStatus Time::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
-    return this->m_val.deserializeFrom(buffer, mode);
+    TimeValue value;
+    const SerializeStatus status = value.deserializeFrom(buffer, mode);
+    if (status != FW_SERIALIZE_OK) {
+        return status;
+    }
+    // Reject out-of-range microseconds rather than admitting a value that asserts on later use
+    if (value.get_useconds() >= 1000000) {
+        return FW_DESERIALIZE_FORMAT_ERROR;
+    }
+    this->m_val = value;
+    return FW_SERIALIZE_OK;
 }
 
 U32 Time::getSeconds() const {
