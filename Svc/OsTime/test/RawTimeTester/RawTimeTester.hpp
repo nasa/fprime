@@ -43,9 +43,11 @@ class RawTimeTester : public Os::RawTimeInterface {
         Fw::SerialBuffer buf(buf_data, sizeof(buf_data));
         other.serializeTo(buf);
         buf.resetDeser();
-        Fw::Time other_time;
-        buf.deserializeTo(other_time);
-        Fw::TimeInterval t_start(other_time.getSeconds(), other_time.getUSeconds());
+        U32 other_seconds = 0;
+        U32 other_useconds = 0;
+        buf.deserializeTo(other_seconds);
+        buf.deserializeTo(other_useconds);
+        Fw::TimeInterval t_start(other_seconds, other_useconds);
         Fw::TimeInterval t_end(m_handle.t.getSeconds(), m_handle.t.getUSeconds());
         interval = Fw::TimeInterval::sub(t_start, t_end);
         return OP_OK;
@@ -53,12 +55,27 @@ class RawTimeTester : public Os::RawTimeInterface {
 
     Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const override {
-        return buffer.serializeFrom(m_handle.t, mode);
+        Fw::SerializeStatus status = buffer.serializeFrom(m_handle.t.getSeconds(), mode);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+        return buffer.serializeFrom(m_handle.t.getUSeconds(), mode);
     }
 
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override {
-        return buffer.deserializeTo(m_handle.t, mode);
+        U32 seconds = 0;
+        U32 useconds = 0;
+        Fw::SerializeStatus status = buffer.deserializeTo(seconds, mode);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+        status = buffer.deserializeTo(useconds, mode);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+        m_handle.t.set(seconds, useconds);
+        return status;
     }
 
     static void setNowTime(const Fw::Time&& t) { s_now_time = t; }
