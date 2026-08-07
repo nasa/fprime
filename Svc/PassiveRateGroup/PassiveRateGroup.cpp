@@ -108,7 +108,7 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 void PassiveRateGroup::CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     // Clear all port duration high water marks
     for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
-        this->m_portDurationHighWaterMarks[port] = 0;
+        this->m_portDurationHighWaterMarks[static_cast<FwSizeType>(port)] = 0;
     }
     this->m_maxTime = 0;
     this->m_cycles = 0;
