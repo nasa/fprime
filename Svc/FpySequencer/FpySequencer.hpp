@@ -831,6 +831,19 @@ class FpySequencer : public FpySequencerComponentBase {
     // dispatches a command, returns whether successful or not
     Fw::Success sendCmd(FwOpcodeType opcode, const U8* argBuf, FwSizeType argBufSize);
 
+    // HandlerBase wrappers for queue capacity monitoring
+    void FpySequencer::checkTimers_handlerBase(FwIndexType portNum, U32 context);
+    
+    void cmdResponseIn_handlerBase(FwIndexType portNum,
+                                   FwOpcodeType opCode,
+                                   U32 cmdSeq,
+                                   const Fw::CmdResponse& response);
+    void pingIn_handlerBase(FwIndexType portNum, U32 key);
+    void seqRunIn_handlerBase(FwIndexType portNum,
+                              const Fw::StringBase& filename,
+                              const Svc::SeqArgs& args);
+    void tlmWrite_handlerBase(FwIndexType portNum, U32 context);
+
     // returns the index of the current statement
     U32 currentStatementIdx();
 

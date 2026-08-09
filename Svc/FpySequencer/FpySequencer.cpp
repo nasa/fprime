@@ -7,6 +7,8 @@
 #include <Svc/FpySequencer/FpySequencer.hpp>
 #include <new>
 
+#define LOAD_MARGIN 4
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -522,5 +524,50 @@ bool FpySequencer::isRunningState(State state) {
            this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT ||
            this->sequencer_getState() == State::RUNNING_PAUSED || this->sequencer_getState() == State::RUNNING_SLEEPING;
 }
+
+//----------------------------------------------------
+// Wrapper functions for monitoring queue capacity
+//----------------------------------------------------
+
+void FpySequencer::checkTimers_handlerBase(FwIndexType portNum, U32 context) {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+    FpySequencerComponentBase::checkTimers_handlerBase(portNum, context);
+}
+
+void FpySequencer::cmdResponseIn_handlerBase(FwIndexType portNum,
+                                             FwOpcodeType opCode,
+                                             U32 cmdSeq,
+                                             const Fw::CmdResponse& response) {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+    FpySequencerComponentBase::cmdResponseIn_handlerBase(portNum, opCode, cmdSeq, response);
+}
+
+void FpySequencer::pingIn_handlerBase(FwIndexType portNum, U32 key) {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+    FpySequencerComponentBase::pingIn_handlerBase(portNum, key);
+}
+
+void FpySequencer::seqRunIn_handlerBase(FwIndexType portNum,
+                                         const Fw::StringBase& filename,
+                                         const Svc::SeqArgs& args) {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+    FpySequencerComponentBase::seqRunIn_handlerBase(portNum, filename, args);
+}
+
+void FpySequencer::tlmWrite_handlerBase(FwIndexType portNum, U32 context) {
+    if (this->m_queue.getMessagesAvailable() > this->m_queue.getDepth() - LOAD_MARGIN) {
+        this->sequencer_sendSignal_cmd_CANCEL();
+    }
+    FpySequencerComponentBase::tlmWrite_handlerBase(portNum, context);
+}
+
 
 }  // namespace Svc
