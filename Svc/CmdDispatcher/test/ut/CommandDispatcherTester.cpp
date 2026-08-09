@@ -74,12 +74,16 @@ void CommandDispatcherTester::registerBuiltinCommands() {
     ASSERT_EQ(port, 1);
 
     // verify event
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     ASSERT_EVENTS_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
     ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
     ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
     ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+#else
+    ASSERT_EVENTS_SIZE(0);
+#endif
 }
 
 void CommandDispatcherTester::runNominalDispatch() {
@@ -307,9 +311,13 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     ASSERT_EQ(port, 0);
 
     // verify registration event
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+#else
+    ASSERT_EVENTS_SIZE(0);
+#endif
 
     // dispatch a test command with a bad opcode
     U32 testCmdArg = 100;
@@ -326,9 +334,13 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify dispatch event
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidCommand_SIZE(1);
     ASSERT_EVENTS_InvalidCommand(0u, testOpCode + 1);
+#else
+    ASSERT_EVENTS_SIZE(0);
+#endif
 
     // Verify status passed back to port
 

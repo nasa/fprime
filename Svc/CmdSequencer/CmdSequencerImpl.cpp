@@ -232,8 +232,10 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     } else {
         m_join_waiting = true;
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
         this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, m_opCode);
+#endif
         m_cmdSeq = cmdSeq;
         m_opCode = opCode;
     }
@@ -296,7 +298,9 @@ void CmdSequencerComponentImpl ::cmdResponseIn_handler(FwIndexType portNum,
                                                        const Fw::CmdResponse& response) {
     if (this->m_runMode == STOPPED) {
         // Sequencer is not running
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_WARNING_HI_CS_UnexpectedCompletion(opcode);
+#endif
     } else {
         // clear command timeout
         this->m_cmdTimeoutTimer.clear();
@@ -419,7 +423,9 @@ bool CmdSequencerComponentImpl::requireRunMode(RunMode mode) {
 }
 
 void CmdSequencerComponentImpl ::commandError(const U32 number, const FwOpcodeType opCode, const U32 error) {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     this->log_WARNING_HI_CS_CommandError(this->m_sequence->getLogFileName(), number, opCode, error);
+#endif
     this->error();
 }
 
@@ -470,7 +476,9 @@ void CmdSequencerComponentImpl::sequenceComplete() {
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     this->log_ACTIVITY_LO_CS_CommandComplete(this->m_sequence->getLogFileName(), this->m_executedCount, opcode);
+#endif
     ++this->m_executedCount;
     ++this->m_totalExecutedCount;
     this->tlmWrite_CS_CommandsExecuted(this->m_totalExecutedCount);

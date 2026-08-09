@@ -28,12 +28,18 @@ void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType
     if (this->m_entryTable.find(opCode, existingPort) == Fw::Success::SUCCESS) {
         // Opcode already present — must be the same port (re-registration)
         FW_ASSERT(existingPort == portNum, static_cast<FwAssertArgType>(opCode));
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_DIAGNOSTIC_OpCodeReregistered(opCode, portNum);
+#endif
     } else {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         const I32 slot = static_cast<I32>(this->m_entryTable.getSize());
+#endif
         const Fw::Success status = this->m_entryTable.insert(opCode, portNum);
         FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(opCode));
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_DIAGNOSTIC_OpCodeRegistered(opCode, portNum, slot);
+#endif
     }
 }
 
@@ -43,11 +49,15 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
                                                 const Fw::CmdResponse& response) {
     // check response and log
     if (Fw::CmdResponse::OK == response.e) {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_COMMAND_OpCodeCompleted(opCode);
+#endif
     } else {
         this->m_numCmdErrors++;
         FW_ASSERT(response.e != Fw::CmdResponse::OK);
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_COMMAND_OpCodeError(opCode, response);
+#endif
     }
     // look for command source
     SequenceTrackerEntry trackedCmd;
@@ -96,7 +106,9 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
             // if we couldn't find a slot to track the command, quit
             if (pendingInsertStatus != Fw::Success::SUCCESS) {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
                 this->log_WARNING_HI_TooManyCommands(cmdPkt.getOpCode());
+#endif
                 if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
                     this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 }
@@ -106,12 +118,16 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         // pass arguments to argument buffer
         this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
         // log dispatched command
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_COMMAND_OpCodeDispatched(cmdPkt.getOpCode(), entryPort);
+#endif
 
         // increment command count
         this->m_numCmdsDispatched++;
     } else {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
         this->log_WARNING_HI_InvalidCommand(cmdPkt.getOpCode());
+#endif
         this->m_numCmdErrors++;
         // Fail command back to port, if connected
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
@@ -160,6 +176,7 @@ void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
 }
 
 void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
     // Extract command opcode
     Fw::CmdPacket cmdPkt;
     Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
@@ -169,9 +186,10 @@ void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::Com
         opcode = cmdPkt.getOpCode();
     }
 
-    // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
-    this->m_numCmdsDropped++;
     this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode, context);
+#endif
+    // Increment CommandsDroppedBufOverflow counter
+    this->m_numCmdsDropped++;
 }
 
 }  // namespace Svc

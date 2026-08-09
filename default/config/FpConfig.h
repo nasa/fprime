@@ -126,6 +126,11 @@ extern "C" {
 #define FW_CMD_CHECK_RESIDUAL (1)  //!< Check for leftover command bytes
 #endif
 
+// Enables events that contain command opcodes. Disable when command opcodes must not be downlinked.
+#ifndef FW_ENABLE_COMMAND_OPCODE_EVENTS
+#define FW_ENABLE_COMMAND_OPCODE_EVENTS (1)  //!< Indicates whether events containing command opcodes are emitted
+#endif
+
 // Enables text logging of events as well as data logging. Adds a second logging port for text output.
 // In order to set this to 0, FPRIME_ENABLE_TEXT_LOGGERS must be set to OFF.
 #ifndef FW_ENABLE_TEXT_LOGGING

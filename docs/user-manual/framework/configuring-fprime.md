@@ -348,6 +348,7 @@ Table 47 describes other user settings.
 | Macro                       | Definition                                              | Default | Valid Values     |
 | --------------------------- | --------------------------------------------------------|---------|------------------|
 | FW_CMD_CHECK_RESIDUAL       | Enables command serialization extra bytes check         | 1 (on)  | 0 (off) 1 (on)   |
+| FW_ENABLE_COMMAND_OPCODE_EVENTS | Enables events containing command opcodes           | 1 (on)  | 0 (off) 1 (on)   |
 | FW_AMPCS_COMPATIBLE         | Adds argument sizes to event argument serialization     | 0 (off) | 0 (off) 1 (on)   |
 
 > [!NOTE]
