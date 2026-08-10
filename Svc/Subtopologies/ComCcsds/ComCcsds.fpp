@@ -100,7 +100,12 @@ module ComCcsds {
     instance aggregator: Svc.ComAggregator base id ComCcsdsConfig.BASE_ID + 0x06000 \
         queue size ComCcsdsConfig.QueueSizes.aggregator \
         stack size ComCcsdsConfig.StackSizes.aggregator \
-        priority ComCcsdsConfig.Priorities.aggregator
+        priority ComCcsdsConfig.Priorities.aggregator \
+    {
+        phase Fpp.ToCpp.Phases.configComponents """
+        ComCcsds::aggregator.configure(ComCcsdsConfig::Aggregator::packetSpanning != 0);
+        """
+    }
 
     # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
     instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000
