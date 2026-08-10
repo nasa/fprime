@@ -36,9 +36,9 @@ class PrimitiveTest : public ::testing::Test {
         ASSERT_EQ(s.get_mF64(), testF64);
     }
     void assertUnsuccessfulSerialization(T& s, U32 bufSize) {
-        // Array padded by 1 to bypass the LinearBufferBase check that
-        // capacity is 0 iff buf addr is null ptr
+        // Avoid creating an array of size zero
         U8 data[bufSize + 1];
+        // If array size size should be 0, pass in a nullptr instead of address
         Fw::SerialBuffer buf(bufSize > 0 ? data : nullptr, bufSize);
         Fw::SerializeStatus status;
 
