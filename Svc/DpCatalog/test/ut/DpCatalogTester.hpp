@@ -127,6 +127,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! The component under test
     DpCatalog component;
 
+    //! When true, from_fileOut_handler invokes a successful fileDone automatically
+    bool m_autoFileDone = true;
+
   public:
     // ----------------------------------------------------------------------
     // Moved Tests due to private/protected access
