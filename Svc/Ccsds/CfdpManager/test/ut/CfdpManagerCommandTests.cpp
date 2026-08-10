@@ -420,7 +420,7 @@ void CfdpManagerTester::testPollDirectoryNominal() {
     // Verify PollDirInitiated event was emitted
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_PollDirInitiated_SIZE(1);
-    ASSERT_EVENTS_PollDirInitiated(0, srcDir.toChar());
+    ASSERT_EVENTS_PollDirInitiated(0, srcDir.toChar(), pollId);
 
     // Clean up - stop the poll
     this->clearHistory();

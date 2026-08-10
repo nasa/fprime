@@ -403,7 +403,7 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode,
     if (rspStatus == Fw::CmdResponse::OK) {
         if (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
                                                             cfdpClass.e, priority, destId, interval)) {
-            this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory);
+            this->log_ACTIVITY_LO_PollDirInitiated(sourceDirectory, pollId);
         } else {
             // Failure EVR was already emitted
             rspStatus = Fw::CmdResponse::EXECUTION_ERROR;

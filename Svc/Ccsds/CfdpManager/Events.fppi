@@ -36,9 +36,10 @@ event PlaybackInitiated(
 
 event PollDirInitiated(
     sourceDirectory: string size MaxFilePathSize @< Source directory being sent
+    pollId: U8 @< Channel poll index
 ) \
     severity activity low \
-    format "Successfully initiated directory poll for {}"
+    format "Successfully initiated directory poll for {} (index {})"
 
 event PollDirStopped(
     channelId: U8 @< Channel index stopped
