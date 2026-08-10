@@ -15,11 +15,8 @@
 #ifndef CONFIG_OS_DELEGATERAWTIME_HPP
 #define CONFIG_OS_DELEGATERAWTIME_HPP
 
-// #include "Os/DelegateRawTime.hpp"  // complete type for the aliased class
-
 //!< Forward declaration of the link-time delegate
 //!< Default: select the RawTime implementation at link time
-
 namespace Os {
 
 class DelegateRawTime;
