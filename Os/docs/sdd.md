@@ -182,7 +182,7 @@ namespace Os {
 
 > [!IMPORTANT]
 > When using compile-time selection:
-> - All object files in the build directory same configuration (same ABI)
+> - All object files in the build directory must use the same configuration (same ABI)
 > - The concrete implementation MUST inherit from the corresponding interface class
 > - The configuration header MUST NOT include Os OSAL headers (to avoid circular dependencies)
 
