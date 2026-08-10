@@ -94,18 +94,3 @@ SVC-FRAME-ACCUMULATOR-004 | `Svc::FrameAccumulator` shall accept byte buffers co
 | `output`| bufferDeallocate | `Fw.BufferSend` | Port for deallocating buffers received on dataIn. |
 | `output` | dataReturnOut | `Svc.ComDataWithContext` | Port for returning ownership of buffers received on dataIn |
 | `sync input` | dataReturnIn | `Svc.ComDataWithContext` | Receiving back ownership of buffers sent on dataOut |
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `NoBufferAvailable` | `warning high` | An error occurred while deserializing a packet |
-| `FrameDetectionSizeError` | `warning high` | A frame was detected whose size exceeds the internal accumulation buffer capacity. No choice but to drop the frame. |
-| `FrameDetectionValidFrameDropped` | `warning high` | A frame was detected but dropped because there was no buffer to hold it |
-
-<!-- fpp-dictionary-end -->

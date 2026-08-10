@@ -109,17 +109,3 @@ This port receives the connected signal from the driver and responds with exactl
 
 The `drvReceiveIn` handler receives data read from the driver and supplies it out the `dataOut` port. It is usually
 connected to the `Svc::Deframer` component
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `drvAsyncSendOut` | `output` | `Fw.BufferSend` | Send (write) data to the driver asynchronously |
-| `drvAsyncSendReturnIn` | `sync input` | `Drv.ByteStreamData` | Callback from drvAsyncSendOut (retrieving status and ownership of sent buffer) |
-
-<!-- fpp-dictionary-end -->

@@ -38,22 +38,3 @@ The epoch timestamp pair may be changed after initial operation to update the ep
 Date | Description
 ---- | -----------
 3/10/2025  | Initial Version
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Commands
-
-| Name | Kind | Description |
-|---|---|---|
-| `SetCurrentTime` | `sync` |  |
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `SetCurrentTimeError` | `warning high` | An error occurred while attempting to set the current time |
-
-<!-- fpp-dictionary-end -->

@@ -65,17 +65,3 @@ void exitTasks() {
 | UDP-COMP-001 | The udp component shall implement the ByteStreamDriverModel  | inspection |
 | UDP-COMP-002 | The udp component shall provide a read thread | unit test |
 | UDP-COMP-003 | The udp component shall provide single and bidirectional communication across udp | unit test |
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `allocate` | `output` | `Fw.BufferGet` |  |
-| `deallocate` | `output` | `Fw.BufferSend` |  |
-
-<!-- fpp-dictionary-end -->

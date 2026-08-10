@@ -48,20 +48,3 @@ SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall return ownership of input buffers
 | `output` | `dataOut` | `Svc.ComDataWithContext` | Emits deframed data (F´ packets) |
 | `sync input` | `dataReturnIn` | `Svc.ComDataWithContext` | Receives ownership of the emitted data back |
 | `output` | `dataReturnOut` | `Svc.ComDataWithContext` | Returns ownership of the input buffer back to the sender |
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `InvalidBufferReceived` | `warning high` | An invalid frame was received (too short to be a frame) |
-| `InvalidStartWord` | `warning high` | An invalid frame was received (start word is wrong) |
-| `InvalidLengthReceived` | `warning high` | An invalid frame was received (length is wrong) |
-| `InvalidChecksum` | `warning high` | An invalid frame was received (checksum mismatch) |
-| `PayloadTooShort` | `warning low` | An invalid frame was received (not enough data to contain a valid FwPacketDescriptor type) |
-
-<!-- fpp-dictionary-end -->

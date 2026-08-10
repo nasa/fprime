@@ -71,19 +71,3 @@ sequenceDiagram
 Date | Description
 ---- | -----------
 2/9/2017 | First Draft
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Telemetry
-
-| Name | Type | Description |
-|---|---|---|
-| `MaxCycleTime` | `U32` | Max execution time of rate group cycle |
-| `CycleTime` | `U32` | Execution time of current cycle |
-| `CycleCount` | `U32` | Count of number of cycles |
-| `PortCycleTime` | `CycleTime` |  |
-
-<!-- fpp-dictionary-end -->

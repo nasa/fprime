@@ -51,23 +51,3 @@ The `Svc::AssertFatalAdapter` component contains a private implementation of the
 Date | Description
 ---- | -----------
 10/16/2016 | Implementation and unit tests
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `AF_ASSERT_0` | `fatal` | An assert happened |
-| `AF_ASSERT_1` | `fatal` | An assert happened |
-| `AF_ASSERT_2` | `fatal` | An assert happened |
-| `AF_ASSERT_3` | `fatal` | An assert happened |
-| `AF_ASSERT_4` | `fatal` | An assert happened |
-| `AF_ASSERT_5` | `fatal` | An assert happened |
-| `AF_ASSERT_6` | `fatal` | An assert happened |
-| `AF_UNEXPECTED_ASSERT` | `fatal` | An unexpected assert happened |
-
-<!-- fpp-dictionary-end -->

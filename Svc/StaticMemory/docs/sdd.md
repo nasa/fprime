@@ -44,17 +44,3 @@ This means the total memory used is `StaticMemoryAllocations` * `STATIC_MEMORY_A
 | Date | Description |
 |---|---|
 | 2020-12-21 | Initial Draft |
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `bufferDeallocate` | `guarded input` | `[StaticMemoryAllocations] Fw.BufferSend` | Mutexed buffer deallocate input port |
-| `bufferAllocate` | `guarded input` | `[StaticMemoryAllocations] Fw.BufferGet` | Mutexed buffer allocate input port |
-
-<!-- fpp-dictionary-end -->

@@ -110,34 +110,3 @@ Date | Description
 7/22/2015 | Design review actions
 8/10/2015 | Updated to cycle input port 
 8/31/2015 | Unit test review updates
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `CycleIn` | `async input` | `Svc.Cycle` | The rate group cycle input |
-| `RateGroupMemberOut` | `output` | `[ActiveRateGroupOutputPorts] Sched` | Scheduler output port to rate group members |
-| `PingIn` | `async input` | `Ping` | Ping input port for health |
-| `PingOut` | `output` | `Ping` | Ping output port for health |
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `RateGroupStarted` | `diagnostic` | Informational event that rate group has started |
-| `RateGroupCycleSlip` | `warning high` | Warning event that rate group has had a cycle slip |
-| `RateGroupTimeGetError` | `warning high` | Warning event that reading the cycle end time failed |
-
-### Telemetry
-
-| Name | Type | Description |
-|---|---|---|
-| `RgMaxTime` | `U32` | Max execution time rate group |
-| `RgCycleSlips` | `U32` | Cycle slips for rate group |
-
-<!-- fpp-dictionary-end -->

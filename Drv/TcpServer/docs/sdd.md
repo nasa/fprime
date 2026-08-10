@@ -65,17 +65,3 @@ void exitTasks() {
 | TCP-SERVER-COMP-001 | The tcp server component shall implement the ByteStreamDriverModel  | inspection |
 | TCP-SERVER-COMP-002 | The tcp server component shall provide a read thread | unit test |
 | TCP-SERVER-COMP-003 | The tcp server component shall provide bidirectional communication with a tcp client | unit test |
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `allocate` | `output` | `Fw.BufferGet` | Allocation for received data |
-| `deallocate` | `output` | `Fw.BufferSend` | Deallocation of allocated buffers |
-
-<!-- fpp-dictionary-end -->

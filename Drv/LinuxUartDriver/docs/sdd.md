@@ -180,18 +180,3 @@ The component reports the following telemetry:
 
 - **BytesSent**: Total bytes transmitted
 - **BytesRecv**: Total bytes received
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `allocate` | `output` | `Fw.BufferGet` | Allocation port used for allocating memory in the receive task |
-| `deallocate` | `output` | `Fw.BufferSend` | Deallocation of allocated buffers |
-| `run` | `sync input` | `Svc.Sched` | The rate group input for sending telemetry |
-
-<!-- fpp-dictionary-end -->

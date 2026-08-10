@@ -97,19 +97,3 @@ sb.deserializeTo(my_byte, Fw::Endianness::LITTLE);
 The objects returned by `getSerializer()` and `getDeserializer()` implement the `Fw::SerialBufferBase` interface. This
 allows them to be passed directly to `Fw::Serializable::serializeTo` and `Fw::Serializable::deserializeFrom` on
 user-defined serializable types.
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Port Descriptions
-
-| Name | Kind | Port Type | Description |
-|---|---|---|---|
-| `bufferIn` | `sync input` | `BufferSend` | Port for receiving buffers |
-| `bufferInReturn` | `output` | `BufferSend` | Port for returning buffers received on bufferIn |
-| `bufferOut` | `output` | `BufferSend` | Port for sending buffers |
-| `bufferOutReturn` | `sync input` | `BufferSend` | Port for receiving buffers sent on bufferOut and then returned |
-
-<!-- fpp-dictionary-end -->

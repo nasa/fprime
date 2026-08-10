@@ -59,33 +59,3 @@ Add requirements in the chart below
 | Name | Description | Validation |
 |---|---|---|
 |---|---|---|
-
-<!-- fpp-dictionary-begin -->
-## Component Dictionary
-
-The following tables are derived from the component's FPP model.
-
-### Commands
-
-| Name | Kind | Description |
-|---|---|---|
-| `RUN` | `async` | Dispatches a sequence to the first available sequencer |
-| `RUN_ARGS` | `async` | Dispatches a sequence with arguments to the first available sequencer |
-| `LOG_STATUS` | `async` | Logs via Events the state of each connected command sequencer |
-| `CANCEL_NAME` | `async` | Cancels any running sequence matching the given file name |
-| `CANCEL_ALL` | `async` | Broadcast a cancel to every running sequencer. This does not exclude the caller! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher. |
-
-### Events
-
-| Name | Severity | Description |
-|---|---|---|
-| `InvalidSequencer` | `warning high` |  |
-| `NoAvailableSequencers` | `warning high` |  |
-| `UnknownSequenceFinished` | `warning low` |  |
-| `ConflictingSequenceStarted` | `warning high` |  |
-| `UnexpectedSequenceStarted` | `warning low` |  |
-| `LogSequencerStatus` | `activity low` |  |
-| `SequenceCanceled` | `activity high` |  |
-| `CancelSequenceNotFound` | `warning low` |  |
-
-<!-- fpp-dictionary-end -->
