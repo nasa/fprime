@@ -237,25 +237,19 @@ void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::S
     this->m_tlmSequenceName = name;
 }
 
-//! Panic hook the spacewasm interpreter calls on a fatal internal error. Must
-//! not return. Signature matches the extern declaration in spacewasm.h exactly.
+//! Panic hook the spacewasm interpreter calls on a fatal internal error.
+// Must not return.
 extern "C" void spacewasm_panic(const U8* filename,
                                 std::size_t filename_len,
                                 U32 line,
                                 const U8* msg,
                                 std::size_t len) {
-    (void)filename;
-    (void)filename_len;
-    (void)line;
-    (void)msg;
-    (void)len;
-
     Fw::String fmtMsg;
     fmtMsg.format("Rust panic %.*s:%d: %.*s\n", static_cast<int>(filename_len), reinterpret_cast<const char*>(filename),
                   static_cast<int>(line), static_cast<int>(len), reinterpret_cast<const char*>(msg));
     Os::Console::write(fmtMsg);
 
-    // TODO(tumbar) Is there a clean way to expose the filename/line to FW_ASSERT?
+    // Rust panics map to FSW assertions
     FW_ASSERT(false);
 }
 
