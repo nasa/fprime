@@ -1,3 +1,4 @@
+@ The interpreter store was allocated with capacity for the given number of modules
 event StoreAllocationSucceeded(moduleCount: U16) \
     severity diagnostic \
     format "Successfully allocated store with {} modules"
@@ -17,6 +18,12 @@ event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
     severity warning high \
     format "Failed to open Wasm module file {}: status {}"
 
+@ The SEQ_BASE_DIR base directory joined with the requested sequence file path
+@ exceeds the file-path buffer; the load will fail to open the truncated path.
+event SequenceFilePathTooLong(baseDir: string size FileNameStringSize, fileName: string size FileNameStringSize) \
+    severity warning high \
+    format "Sequence file path too long: base dir {} + file {}"
+
 @ A module failed to decode/validate while loading
 event ModuleLoadFailed(status: Status) \
     severity warning high \
@@ -27,6 +34,8 @@ event ModuleInvokeFailed(status: Status) \
     severity warning high \
     format "Module main invoke failed: {}"
 
+@ A blocking command could not be queued because too many commands are already
+@ waiting on the sequencer to finish
 event TooManyBlockingCommands \
     severity warning high \
     format "Too many commands blocking on sequencer finish"
@@ -36,10 +45,12 @@ event SequenceSucceeded() \
     severity activity high \
     format "Wasm program completed successfully"
 
+@ A guest host function supplied a buffer larger than the host maximum for that call
 event BufferTooLarge(host_function: HostFunction, $size: U32, maxSize: U32) \
     severity warning high \
     format "Host function {} buffer payload size {} larger than host maximum size {}"
 
+@ A guest host function supplied a buffer too small to hold the host value being returned
 event BufferTooSmall(host_function: HostFunction, $size: U32, valueSize: U32) \
     severity warning high \
     format "Host function {} buffer payload size {} smaller than host value size {}"
@@ -53,9 +64,12 @@ event HostFunctionInvalidPort(host_function: HostFunction, index: I32, numPorts:
     severity warning high \
     format "Host function {} requested invalid serial port index {} (have {} ports)"
 
-event HostFunctionInvalidSeverity(raw: I32) \
+@ The guest requested an event at a severity that is not permitted for guest
+@ programs (an out-of-range id, or FATAL/COMMAND which are reserved for the
+@ host). The guest message is preserved and reported here at WARNING_HI.
+event HostFunctionInvalidSeverity(raw: I32, msg: string size 128) \
     severity warning high \
-    format "Invalid event severity '{}'"
+    format "Guest event at invalid/forbidden severity '{}': {}"
 
 @ The sequence was cancelled
 event SequenceCancelled() severity activity high format "Wasm program cancelled"
@@ -101,22 +115,20 @@ event WrongCmdResponseIndex($opcode: FwOpcodeType, response: Fw.CmdResponse, act
     format "Command response (opcode {}, response {}) was for a different command instance (actual idx {}, expected {})"
 
 # ----------------------------------------------------------------------
-# Guest-emitted events (fprime.event host function). One event per F´
-# severity; the host function switches on the requested severity id to
-# emit the matching one so the event carries the correct FPP severity.
+# Guest-emitted events (fprime.event host function). One event per guest-
+# permitted F´ severity; the host function switches on the requested
+# severity id to emit the matching one so the event carries the correct
+# FPP severity. FATAL and COMMAND are intentionally NOT guest-emittable
+# (FATAL would let untrusted guest code trigger the FatalHandler; COMMAND
+# is reserved for the command dispatcher). A guest request for either, or
+# for an out-of-range id, is reported via HostFunctionInvalidSeverity.
 # ----------------------------------------------------------------------
-
-@ A FATAL event emitted by the guest program
-event LogFatal(msg: string size 128) severity fatal format "{}"
 
 @ A WARNING_HI event emitted by the guest program
 event LogWarningHi(msg: string size 128) severity warning high format "{}"
 
 @ A WARNING_LO event emitted by the guest program
 event LogWarningLo(msg: string size 128) severity warning low format "{}"
-
-@ A COMMAND event emitted by the guest program
-event LogCommand(msg: string size 128) severity command format "{}"
 
 @ An ACTIVITY_HI event emitted by the guest program
 event LogActivityHi(msg: string size 128) severity activity high format "{}"

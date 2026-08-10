@@ -39,6 +39,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Destroy WasmSequencer object
     ~WasmSequencer();
 
+    //! WasmSequencer owns a raw spacewasm_t* handle and a slot in the
+    //! process-wide global-allocator registry; copying would double-free both.
+    WasmSequencer(const WasmSequencer&) = delete;
+    WasmSequencer& operator=(const WasmSequencer&) = delete;
+
   private:
     // ----------------------------------------------------------------------
     // Handler implementations for typed input ports
@@ -154,7 +159,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Handler implementation for command PAUSE
     //!
     //! Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
-    //! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
+    //! until unpaused by the CONTINUE command. This command is only valid in
     //! substates of the RUNNING state that are not RUNNING.PAUSED.
     void PAUSE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                           U32 cmdSeq            //!< The command sequence number
@@ -403,7 +408,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Implementation for guard invokeFailed of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
-    //! return true if an invoke succeeded and the interpreter can now run
+    //! return true if the invoke failed (the interpreter cannot run)
     bool Svc_WasmSequencer_SequencerStateMachine_guard_invokeFailed(
         SmId smId,                                              //!< The state machine id
         Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
@@ -474,14 +479,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! suffix stripped (RUN / LOAD).
     void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
 
-    //! Emit a guest event at the requested severity id (see FprimeEventSeverity
-    //! in fprime.h); unknown severities fall back to ACTIVITY_HI.
-    void emitGuestEvent(U32 severity, const Fw::LogStringArg& msg);
-
-    //! Map an F´ command response onto the FprimeCmdResponse guest enum
-    //! (see fprime.h), returned to the guest on resume.
-    static I32 mapCmdResponse(const Fw::CmdResponse& response);
-
     //! Static pool backing the process-wide spacewasm global page allocator.
     alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
 
@@ -535,9 +532,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! STATEMENT_TIMEOUT_SECS. Only meaningful while awaiting one of those.
     Fw::Time m_statementStart;
     bool m_hasStatementStart;
-
-    //! Break-before-next-statement flag, toggled by BREAK/CONTINUE.
-    bool m_breakBeforeNextLine;
 
     //! Flag indicating a function invocation failed
     spacewasm_status_t m_invokeStatus;
@@ -608,24 +602,25 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         bool isPending() const { return kind != WasmSequencer_HostFunction::NONE; }
         void clear() { kind = WasmSequencer_HostFunction::NONE; }
 
-        WasmSequencer_HostFunction kind;
+        WasmSequencer_HostFunction kind{WasmSequencer_HostFunction::NONE};
 
         // Handle that holds the Wasm guest memory pointer
-        spacewasm_caller_t* caller;
+        spacewasm_caller_t* caller{nullptr};
 
-        U64 id;
-        Fw::LogSeverity severity;
+        // Port/channel/param id, or (for EVENT) the raw guest-requested
+        // severity id as passed by the guest (may be out of range).
+        U64 id{0};
 
         // The first pointer/length in one of the host commands
-        U32 ptr1;
-        U32 len1;
+        U32 ptr1{0};
+        U32 len1{0};
 
         // The second pointer/length in one of the host commands
-        U32 ptr2;
-        U32 len2;
+        U32 ptr2{0};
+        U32 len2{0};
 
         // The absolute/relative time for [ar]sleep
-        U64 time_us;
+        U64 time_us{0};
     };
 
     PendingHostFunction m_pendingHostFunction;

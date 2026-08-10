@@ -44,7 +44,10 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingTimer(false),
       m_statementStart(),
       m_hasStatementStart(false),
-      m_breakBeforeNextLine(false),
+      m_invokeStatus(SPACEWASM_OK),
+      m_loadStatus(SPACEWASM_OK),
+      m_pendingRun(false),
+      m_pendingPause(false),
       m_loadFile(nullptr),
       m_tlmSequencesSucceeded(0),
       m_tlmSequencesFailed(0),
@@ -139,7 +142,11 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
         this->m_tlmCommandsFailed++;
     }
 
-    // Respond to the host command by pushing a value to the Wasm operand stack
+    // Respond to the host command by pushing a value to the Wasm operand stack.
+    // Fw::CmdResponse ordinals 0..5 (OK, INVALID_OPCODE, VALIDATION_ERROR,
+    // FORMAT_ERROR, EXECUTION_ERROR, BUSY) coincide with the guest's
+    // FprimeCmdResponse enum (see fprime.h), so the ordinal is passed through
+    // directly. Keep the two enums in sync if either is reordered.
     spacewasm_value_t return_val;
     return_val.tag = SPACEWASM_I32;
     return_val.u.i32_ = static_cast<I32>(response.e);
@@ -218,7 +225,7 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     const Fw::CmdStringArg& fileName,
                                     const Svc::BlockState& block,
                                     const SeqArgs& seqArgs) {
-    // RUN is only valid from IDLE
+    // RUN is only valid from IDLE or READY.
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
         this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
@@ -274,7 +281,7 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
                                           U32 cmdSeq,
                                           const Fw::CmdStringArg& fileName,
                                           const Fw::CmdStringArg& name) {
-    // Loading is only valid from IDLE.
+    // Loading is only valid from IDLE or READY.
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
         this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
@@ -293,7 +300,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        const Fw::CmdStringArg& module,
                                        const Svc::BlockState& block,
                                        const Svc::SeqArgs& seqArgs) {
-    // INVOKE is only valid from IDLE.
+    // INVOKE is only valid from READY (a module must already be loaded).
     if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::READY) {
         this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
@@ -322,7 +329,7 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
         default:
-            FW_ASSERT(false, block);
+            FW_ASSERT(false, static_cast<FwAssertArgType>(block));
     }
 
     this->sequencer_sendSignal_cmd_INVOKE(
@@ -370,7 +377,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_signalEntere
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_resetStore(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    Fw::ParamValid valid;
     this->createStore();
 }
 
@@ -393,7 +399,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
     // Clear any pending main
     this->m_pendingRun = false;
 
-    // A fresh execution window begins. Reset the exit disposition so a stale.
+    // A fresh execution window begins. Reset the exit disposition so a stale
+    // host exit/panic from a previous program is not misread as this window's outcome.
     this->m_exitReason = ExitReason::INTERPRETER;
     this->m_exitCode = 0;
 
@@ -445,6 +452,9 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartO
         case SPACEWASM_RUN_TRAP:
             this->sequencer_sendSignal_startError();
             break;
+        default:
+            FW_ASSERT(false, invokeStatus);
+            break;
     }
 }
 
@@ -488,8 +498,28 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     FW_ASSERT(this->m_wasm != nullptr);
     FW_ASSERT(this->m_hasPendingLoad);
 
-    const Fw::String filePath(this->m_pendingLoad.get_fileName());
+    const Fw::String requestedPath(this->m_pendingLoad.get_fileName());
     const Fw::String moduleName(this->m_pendingLoad.get_moduleName());
+
+    // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
+    // base dir (the default) means paths are used verbatim; otherwise a single
+    // '/' is inserted between the base dir and the requested path, matching the
+    // parameter's documented contract.
+    Fw::ParamValid baseDirValid;
+    const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
+    Fw::String filePath;
+    if (baseDir.length() == 0) {
+        filePath = requestedPath;
+    } else {
+        // The result is truncated to filePath's capacity on overflow; a
+        // truncated path will then fail to open and report FileOpenError.
+        const Fw::FormatStatus fmtStatus =
+            filePath.format("%s/%s", baseDir.toChar(), requestedPath.toChar());
+        if (fmtStatus != Fw::FormatStatus::SUCCESS) {
+            FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
+            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, requestedPath);
+        }
+    }
 
     // Record the sequence name for telemetry (module name, or filename stem).
     this->setSequenceName(filePath, moduleName);
@@ -719,8 +749,15 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStateme
 
     // Deadline = statement start + timeout. Round microseconds up so the timeout
     // is never reported early.
-    const U32 seconds = static_cast<U32>(timeoutSecs);
-    const U32 useconds = static_cast<U32>((timeoutSecs - static_cast<F32>(seconds)) * 1000000.0f + 0.5f);
+    U32 seconds = static_cast<U32>(timeoutSecs);
+    U32 useconds = static_cast<U32>((timeoutSecs - static_cast<F32>(seconds)) * 1000000.0f + 0.5f);
+
+    // Rounding up can push the microsecond field to 1000000; carry it into
+    // seconds so Fw::Time::add() always receives a normalized (< 1e6) value.
+    if (useconds >= 1000000u) {
+        seconds += useconds / 1000000u;
+        useconds %= 1000000u;
+    }
 
     Fw::Time deadline = this->m_statementStart;
     deadline.add(seconds, useconds);
@@ -749,7 +786,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldW
     FW_ASSERT(this->m_hasPendingTimer);
 
     const Fw::Time now = this->getTime();
-    switch (now.compare(now, this->m_pendingTimer)) {
+    switch (Fw::Time::compare(now, this->m_pendingTimer)) {
         case Fw::TimeComparison::LT:
             // No timer overrun
             break;
@@ -934,19 +971,19 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                     Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
                 this->sequencer_sendSignal_stmtFailure();
             } else {
-                // Emit the event
-                switch (this->m_pendingHostFunction.severity) {
-                    case Fw::LogSeverity::FATAL:
-                        this->log_FATAL_LogFatal(msg);
-                        break;
+                // Emit the event at the guest-requested severity. FATAL and
+                // COMMAND are forbidden for guest programs (FATAL would let
+                // untrusted code trigger the FatalHandler; COMMAND is reserved
+                // for the command dispatcher). A forbidden or out-of-range
+                // severity is reported via HostFunctionInvalidSeverity, carrying
+                // the raw id and the guest message, and the guest continues.
+                const I32 rawSeverity = static_cast<I32>(this->m_pendingHostFunction.id);
+                switch (static_cast<Fw::LogSeverity::T>(rawSeverity)) {
                     case Fw::LogSeverity::WARNING_HI:
                         this->log_WARNING_HI_LogWarningHi(msg);
                         break;
                     case Fw::LogSeverity::WARNING_LO:
                         this->log_WARNING_LO_LogWarningLo(msg);
-                        break;
-                    case Fw::LogSeverity::COMMAND:
-                        this->log_COMMAND_LogCommand(msg);
                         break;
                     case Fw::LogSeverity::ACTIVITY_HI:
                         this->log_ACTIVITY_HI_LogActivityHi(msg);
@@ -956,6 +993,11 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                         break;
                     case Fw::LogSeverity::DIAGNOSTIC:
                         this->log_DIAGNOSTIC_LogDiagnostic(msg);
+                        break;
+                    case Fw::LogSeverity::FATAL:
+                    case Fw::LogSeverity::COMMAND:
+                    default:
+                        this->log_WARNING_HI_HostFunctionInvalidSeverity(rawSeverity, msg);
                         break;
                 }
 
@@ -1018,7 +1060,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             status = spacewasm_resume_value(this->m_wasm, return_val);
             FW_ASSERT(status == SPACEWASM_OK, status);
 
-            // Make up the state machine
+            // Wake up the state machine
             this->sequencer_sendSignal_stmtSuccess();
             break;
         }

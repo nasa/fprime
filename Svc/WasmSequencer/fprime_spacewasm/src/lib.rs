@@ -8,6 +8,7 @@ use core::{
 
 pub use spacewasm_c_api::*;
 
+// TODO(tumbar) Make these configurable at the top fprime config level
 const MAX_PAGES: usize = 8;
 const PAGE_SIZE: usize = 8192;
 const MAX_SEQUENCERS: usize = 8;

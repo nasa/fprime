@@ -180,12 +180,12 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
 
     spacewasm_hostcall_result_t return_status;
     if (time_size < Fw::Time::SERIALIZED_SIZE) {
-        // We expect an expact match for serialized time
+        // We expect an exact match for serialized time
         this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::TELEMETRY, time_size,
                                             Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
     } else if (time_size > Fw::Time::SERIALIZED_SIZE) {
-        // We expect an expact match for serialized time
+        // We expect an exact match for serialized time
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TELEMETRY, time_size,
                                             Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
@@ -277,11 +277,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmEvent(spacewasm_caller_t* caller,
     FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
     FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
 
-    if (!Fw::LogSeverity::isValid(static_cast<Fw::LogSeverity::SerialType>(params[0].u.i32_))) {
-        this->log_WARNING_HI_HostFunctionInvalidSeverity(params[0].u.i32_);
-        return SPACEWASM_TRAP;
-    }
-
+    // The requested severity is validated when the event is dispatched (see the
+    // EVENT case in dispatchPendingHostFunction). A forbidden or out-of-range
+    // severity is reported (with the guest message) rather than trapping, so we
+    // read the message here in all cases and stash the raw id.
     U32 ptr = static_cast<U32>(params[1].u.i32_);
     U32 len = static_cast<U32>(params[2].u.i32_);
     if (len > FW_LOG_STRING_MAX_SIZE) {
@@ -291,7 +290,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmEvent(spacewasm_caller_t* caller,
     // Pend this event dispatch to be executed by the sequencer state machine
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::EVENT;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.severity = static_cast<Fw::LogSeverity::T>(params[0].u.i32_);
+    this->m_pendingHostFunction.id = static_cast<U64>(static_cast<U32>(params[0].u.i32_));
     this->m_pendingHostFunction.ptr1 = ptr;
     this->m_pendingHostFunction.len1 = len;
 
@@ -349,7 +348,13 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialSync(spacewasm_caller_t* ca
     const U32 len = static_cast<U32>(params[2].u.i32_);
 
     spacewasm_hostcall_result_t return_status;
-    if (index < 0 || index >= this->getNum_serialOut_OutputPorts()) {
+    // The index must be in range AND the serialOut port at that index must be
+    // connected: dispatchPendingHostFunction calls serialOut_out(index, ...),
+    // whose autocoded body asserts on an unconnected port. Reject a valid-index
+    // but unconnected port here (with a trap) rather than letting a guest force
+    // that assert.
+    if (index < 0 || index >= this->getNum_serialOut_OutputPorts() ||
+        !this->isConnected_serialOut_OutputPort(static_cast<FwIndexType>(index))) {
         this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::SYNC_PORT, index,
                                                      static_cast<U32>(this->getNum_serialOut_OutputPorts()));
         return_status = SPACEWASM_TRAP;
@@ -392,9 +397,14 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialAsync(spacewasm_caller_t* c
     const U32 return_len = static_cast<U32>(params[4].u.i32_);
 
     spacewasm_hostcall_result_t return_status;
-    if (index < 0 || index >= this->getNum_serialReply_InputPorts()) {
+    // The async variant dispatches on serialOut (and awaits the reply on
+    // serialReply[index]); validate against the serialOut output array that is
+    // actually invoked, and require it be connected so a guest cannot force the
+    // autocoded unconnected-port assert.
+    if (index < 0 || index >= this->getNum_serialOut_OutputPorts() ||
+        !this->isConnected_serialOut_OutputPort(static_cast<FwIndexType>(index))) {
         this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::ASYNC_PORT, index,
-                                                     static_cast<U32>(this->getNum_serialReply_InputPorts()));
+                                                     static_cast<U32>(this->getNum_serialOut_OutputPorts()));
         return_status = SPACEWASM_TRAP;
     } else if (len > Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE) {
         this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ASYNC_PORT, len,

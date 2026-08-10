@@ -49,6 +49,42 @@ TEST_F(WasmSequencerTester, LoadEmptyModuleReady) {
     this->removeFile("empty.wasm");
 }
 
+TEST_F(WasmSequencerTester, LoadResolvesAgainstSeqBaseDir) {
+    // With SEQ_BASE_DIR set, the requested (bare) file name is resolved relative
+    // to the base dir with a single '/' separator. copyAsset stages the module in
+    // the CWD, so a base dir of "." resolves "empty.wasm" -> "./empty.wasm", which
+    // opens successfully.
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("."), Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_LOAD(0, 11, file);
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 11, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_FileOpenError_SIZE(0);
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, LoadAgainstMissingBaseDirFailsToOpen) {
+    // A non-empty base dir that does not contain the file resolves to a path that
+    // cannot be opened; the load fails with FileOpenError and returns to IDLE.
+    this->paramSet_SEQ_BASE_DIR(Fw::ParamString("no_such_dir"), Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_LOAD(0, 12, file);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_FileOpenError_SIZE(1);
+    // The path that failed to open is the base dir joined with the file name.
+    ASSERT_STREQ(this->eventHistory_FileOpenError->at(0).fileName.toChar(), "no_such_dir/empty.wasm");
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 12, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("empty.wasm");
+}
+
 TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
     const Fw::String file = this->copyAsset("empty.wasm");
 
@@ -593,14 +629,25 @@ TEST_F(WasmSequencerTester, EventAllSeverities) {
     this->dispatchUntilState(State::READY);
 
     ASSERT_EQ(this->getState(), State::READY);
-    // One event emitted per severity 1..7.
-    ASSERT_EVENTS_LogFatal_SIZE(1);
+    // The fixture emits severities 1..7. FATAL (1) and COMMAND (4) are forbidden
+    // for guest programs, so each is reported via HostFunctionInvalidSeverity
+    // (carrying the raw id and the guest message) instead of a Log* event. The
+    // remaining five map to their matching guest-severity events. Every emitted
+    // event carries the fixture's "sev" message, so assert the payload too.
     ASSERT_EVENTS_LogWarningHi_SIZE(1);
+    ASSERT_EVENTS_LogWarningHi(0, "sev");
     ASSERT_EVENTS_LogWarningLo_SIZE(1);
-    ASSERT_EVENTS_LogCommand_SIZE(1);
+    ASSERT_EVENTS_LogWarningLo(0, "sev");
     ASSERT_EVENTS_LogActivityHi_SIZE(1);
+    ASSERT_EVENTS_LogActivityHi(0, "sev");
     ASSERT_EVENTS_LogActivityLo_SIZE(1);
+    ASSERT_EVENTS_LogActivityLo(0, "sev");
     ASSERT_EVENTS_LogDiagnostic_SIZE(1);
+    ASSERT_EVENTS_LogDiagnostic(0, "sev");
+    // FATAL (1) and COMMAND (4) rejected, message preserved.
+    ASSERT_EVENTS_HostFunctionInvalidSeverity_SIZE(2);
+    ASSERT_EVENTS_HostFunctionInvalidSeverity(0, Fw::LogSeverity::FATAL, "sev");
+    ASSERT_EVENTS_HostFunctionInvalidSeverity(1, Fw::LogSeverity::COMMAND, "sev");
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_all_sev.wasm");
 }
@@ -628,19 +675,20 @@ TEST_F(WasmSequencerTester, EventMessageTruncatedToMax) {
     this->removeFile("event_toobig.wasm");
 }
 
-TEST_F(WasmSequencerTester, EventBadSeverityTraps) {
+TEST_F(WasmSequencerTester, EventBadSeverityReported) {
     const Fw::String file = this->copyAsset("event_bad_sev.wasm");
 
     this->sendCmd_RUN(0, 62, file, BLOCK, {});
-    this->dispatchAll();
+    this->dispatchUntilState(State::READY);
 
-    ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_HostFunctionInvalidSeverity_SIZE(1);
     // The guest requested severity id 99, which is not a valid Fw::LogSeverity.
-    ASSERT_EVENTS_HostFunctionInvalidSeverity(0, 99);
-    ASSERT_EVENTS_SequenceTrap_SIZE(1);
-    // The host function returned SPACEWASM_TRAP -> HOST trap reason.
-    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    // Rather than trap, the host reports it (with the guest message) and lets the
+    // guest continue, so the sequence runs to completion.
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_HostFunctionInvalidSeverity_SIZE(1);
+    ASSERT_EVENTS_HostFunctionInvalidSeverity(0, 99, "x");
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("event_bad_sev.wasm");
 }
@@ -1508,6 +1556,11 @@ TEST_F(WasmSequencerTester, CancelFromIdleStaysIdle) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_SequenceCancelled_SIZE(0);
+    // Re-entering IDLE reallocated the store; the diagnostic event reports the
+    // configured module capacity. (Asserted here rather than at construction
+    // because the store is first created before the test harness connects ports.)
+    ASSERT_EVENTS_StoreAllocationSucceeded_SIZE(1);
+    ASSERT_EVENTS_StoreAllocationSucceeded(0, WasmSequencerConfig::MAX_GUEST_MODULES);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
 
@@ -1690,6 +1743,10 @@ TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
     // Still awaiting; the stale reply was ignored with a warning.
     ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
     ASSERT_EVENTS_CmdResponseFromOldSequence_SIZE(1);
+    // The event must carry the perturbed opcode/response and the old-vs-current
+    // sequence indices, not just fire.
+    ASSERT_EVENTS_CmdResponseFromOldSequence(0, 0, Fw::CmdResponse::OK, oldSeq,
+                                             static_cast<U16>((currentUid >> 16) & 0xFFFF));
 
     // The correct reply still completes the sequence.
     this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
@@ -1715,6 +1772,11 @@ TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
 
     ASSERT_EQ(this->getState(), State::IDLE);
     ASSERT_EVENTS_WrongCmdResponseIndex_SIZE(1);
+    // The event must carry the opcode/response and the actual-vs-expected command
+    // indices, not just fire.
+    ASSERT_EVENTS_WrongCmdResponseIndex(0, 0, Fw::CmdResponse::OK,
+                                        static_cast<U16>((wrongUid) & 0xFFFF),
+                                        static_cast<U16>(currentUid & 0xFFFF));
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 411, Fw::CmdResponse::EXECUTION_ERROR);
     this->removeFile("cmd.wasm");

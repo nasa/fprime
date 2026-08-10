@@ -69,7 +69,7 @@ state machine SequencerStateMachine {
     ###############
 
     @ Signal sent from a command to execute a Wasm module
-    @ Only valid while in the IDLE state
+    @ Valid while in the IDLE or READY state
     signal cmd_RUN: SequenceRun
 
     @ Signal sent from command to load a Wasm module but not execute it
@@ -81,6 +81,8 @@ state machine SequencerStateMachine {
     @ called on PAUSE cmd. only raised in RUNNING state
     signal cmd_PAUSE
 
+    @ Signal sent from a command to invoke main on an already-loaded module
+    @ Only valid while in the READY state
     signal cmd_INVOKE: SequenceInvoke
 
     @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes

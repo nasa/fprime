@@ -59,7 +59,7 @@ if (CARGO)
     # (opt-level, lto, codegen-units, panic=abort); --release selects it.
     add_custom_command(
         OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-        COMMAND "${CARGO}" build ${FPRIME_SPACEWASM_PROFILE_FLAG}
+        COMMAND "${CARGO}" build --locked ${FPRIME_SPACEWASM_PROFILE_FLAG}
                 --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
                 --target        "${RUST_TARGET_TRIPLE}"
                 --target-dir    "${FPRIME_SPACEWASM_TDIR}"
