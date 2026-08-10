@@ -513,8 +513,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
     } else {
         // The result is truncated to filePath's capacity on overflow; a
         // truncated path will then fail to open and report FileOpenError.
-        const Fw::FormatStatus fmtStatus =
-            filePath.format("%s/%s", baseDir.toChar(), requestedPath.toChar());
+        const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), requestedPath.toChar());
         if (fmtStatus != Fw::FormatStatus::SUCCESS) {
             FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
             this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, requestedPath);

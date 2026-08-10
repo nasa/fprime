@@ -4,7 +4,6 @@
 // \brief  cpp file for WasmSequencer Wasm Host functions
 // ======================================================================
 
-#include "Fw/Log/LogSeverityEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
