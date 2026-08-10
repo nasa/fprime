@@ -101,4 +101,6 @@ module Ref {
 
   instance comDriver: Drv.TcpClient base id 0x10025000
 
+  instance asmFramer: Svc.Ccsds.AsmFramer base id 0x10026000
+
 }

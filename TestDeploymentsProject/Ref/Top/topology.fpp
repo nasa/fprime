@@ -17,7 +17,7 @@ module Ref {
     # Subtopology instances
     # ----------------------------------------------------------------------
     instance CdhCore.Subtopology
-    instance ComCcsds.Subtopology
+    instance ComCcsds.FramingSubtopology
     instance FileHandling.Subtopology
     instance DataProducts.Subtopology
     #instance DpCompression.Subtopology
@@ -46,6 +46,8 @@ module Ref {
     instance linuxTimer
     instance comDriver
     instance cmdSeq
+    instance asmFramer
+    instance ComCcsds.comStub
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -87,9 +89,9 @@ module Ref {
       rateGroup1Comp.RateGroupMemberOut[2] -> CdhCore.Subtopology.tlmSendRun
       rateGroup1Comp.RateGroupMemberOut[3] -> FileHandling.Subtopology.fileDownlinkRun
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.Subtopology.comQueueRun
+      rateGroup1Comp.RateGroupMemberOut[5] -> ComCcsds.comQueue.run
       rateGroup1Comp.RateGroupMemberOut[6] -> CdhCore.Subtopology.cmdDispRun
-      rateGroup1Comp.RateGroupMemberOut[7] -> ComCcsds.Subtopology.aggregatorTimeout
+      rateGroup1Comp.RateGroupMemberOut[7] -> ComCcsds.aggregator.timeout
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -106,7 +108,7 @@ module Ref {
       rateGroup3Comp.RateGroupMemberOut[0] -> CdhCore.Subtopology.healthRun
       rateGroup3Comp.RateGroupMemberOut[1] -> SG5.schedIn
       rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> ComCcsds.Subtopology.bufferManagerSchedIn
+      rateGroup3Comp.RateGroupMemberOut[3] -> ComCcsds.commsBufferManager.schedIn
       rateGroup3Comp.RateGroupMemberOut[4] -> DataProducts.Subtopology.dpBufferManagerSchedIn
       rateGroup3Comp.RateGroupMemberOut[5] -> DataProducts.Subtopology.dpWriterSchedIn
       rateGroup3Comp.RateGroupMemberOut[6] -> DataProducts.Subtopology.dpMgrSchedIn
@@ -116,16 +118,32 @@ module Ref {
 
     connections Communications {
       # ComDriver buffer allocations
-      comDriver.allocate   -> ComCcsds.Subtopology.commsBufferGetCallee
-      comDriver.deallocate -> ComCcsds.Subtopology.commsBufferSendIn
+      comDriver.allocate   -> ComCcsds.commsBufferManager.bufferGetCallee
+      comDriver.deallocate -> ComCcsds.commsBufferManager.bufferSendIn
 
       # ComDriver <-> ComStub (Uplink)
-      comDriver.$recv                          -> ComCcsds.Subtopology.drvReceiveIn
-      ComCcsds.Subtopology.drvReceiveReturnOut -> comDriver.recvReturnIn
+      comDriver.$recv                    -> ComCcsds.comStub.drvReceiveIn
+      ComCcsds.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
 
       # ComStub <-> ComDriver (Downlink)
-      ComCcsds.Subtopology.drvSendOut -> comDriver.$send
-      comDriver.ready                 -> ComCcsds.Subtopology.drvConnected
+      ComCcsds.comStub.drvSendOut -> comDriver.$send
+      comDriver.ready             -> ComCcsds.comStub.drvConnected
+
+      # FramingSubtopology <-> AsmFramer (Downlink: TM frame -> Sync-Marked Transfer Frame)
+      ComCcsds.FramingSubtopology.dataOut -> asmFramer.dataIn
+      asmFramer.dataReturnOut             -> ComCcsds.FramingSubtopology.dataReturnIn
+
+      # AsmFramer <-> ComStub (Downlink)
+      asmFramer.dataOut          -> ComCcsds.comStub.dataIn
+      ComCcsds.comStub.dataReturnOut -> asmFramer.dataReturnIn
+
+      # ComStatus chain: ComStub -> AsmFramer -> FramingSubtopology
+      ComCcsds.comStub.comStatusOut -> asmFramer.comStatusIn
+      asmFramer.comStatusOut        -> ComCcsds.FramingSubtopology.comStatusIn
+
+      # ComStub <-> FramingSubtopology (Uplink - no ASM on TC uplink)
+      ComCcsds.comStub.dataOut                     -> ComCcsds.FramingSubtopology.dataIn
+      ComCcsds.FramingSubtopology.dataReturnOut    -> ComCcsds.comStub.dataReturnIn
     }
 
     connections Ref {
@@ -151,24 +169,24 @@ module Ref {
 
     connections ComCcsds_CdhCore {
       # Events and telemetry to comQueue
-      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
-      ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff
-      CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
+      ComCcsds.fprimeRouter.commandOut       -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.fprimeRouter.cmdResponseIn
       cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
       CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
     }
 
     connections ComCcsds_FileHandling {
       # File Downlink <-> ComQueue
-      FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.Subtopology.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-      ComCcsds.Subtopology.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
+      FileHandling.Subtopology.fileDownlinkBufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.Subtopology.fileDownlinkBufferReturn
 
       # Router <-> FileUplink
-      ComCcsds.Subtopology.fileUplinkOut                    -> FileHandling.Subtopology.fileUplinkBufferSendIn
-      FileHandling.Subtopology.fileUplinkBufferSendOut     -> ComCcsds.Subtopology.fileUplinkReturnIn
+      ComCcsds.fprimeRouter.fileOut                      -> FileHandling.Subtopology.fileUplinkBufferSendIn
+      FileHandling.Subtopology.fileUplinkBufferSendOut   -> ComCcsds.fprimeRouter.fileBufferReturnIn
     }
 
     connections FileHandling_DataProducts {
