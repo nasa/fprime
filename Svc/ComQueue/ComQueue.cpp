@@ -284,8 +284,8 @@ void ComQueue::run_handler(const FwIndexType portNum, U32 context) {
 
 void ComQueue ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     static_assert(std::numeric_limits<FwIndexType>::is_signed, "FwIndexType must be signed");
-    FW_ASSERT(this->m_buffer_state == UNOWNED);
-    this->m_buffer_state = OWNED;
+    // This handler runs on the returning caller's thread: take ownership atomically
+    FW_ASSERT(this->m_buffer_state.exchange(OWNED) == UNOWNED);
     // For the buffer queues, the index of the queue is portNum offset by COM_PORT_COUNT since
     // the first COM_PORT_COUNT queues are for ComBuffer. So we have for buffer queues:
     // queueNum = portNum + COM_PORT_COUNT
@@ -380,8 +380,7 @@ void ComQueue::sendComBuffer(Fw::ComBuffer& comBuffer, FwIndexType queueIndex) {
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     context.set_apid(static_cast<ComCfg::Apid::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
-    FW_ASSERT(this->m_buffer_state == OWNED);
-    this->m_buffer_state = UNOWNED;
+    FW_ASSERT(this->m_buffer_state.exchange(UNOWNED) == OWNED);
     this->dataOut_out(0, outBuffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
@@ -398,8 +397,7 @@ void ComQueue::sendBuffer(Fw::Buffer& buffer, FwIndexType queueIndex) {
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
     context.set_apid(static_cast<ComCfg::Apid::T>(descriptor));
     context.set_comQueueIndex(queueIndex);
-    FW_ASSERT(this->m_buffer_state == OWNED);
-    this->m_buffer_state = UNOWNED;
+    FW_ASSERT(this->m_buffer_state.exchange(UNOWNED) == OWNED);
     this->dataOut_out(0, buffer, context);
     // Set state to WAITING for the status to come back
     this->m_state = WAITING;
@@ -449,7 +447,7 @@ void ComQueue::processQueue() {
         if (entry.index < COM_PORT_COUNT) {
             // Dequeue is reading the whole persisted Fw::ComBuffer object from the queue's storage.
             // thus it takes an address to the object to fill and the size of the actual object.
-            FW_ASSERT(this->m_buffer_state == OWNED);
+            FW_ASSERT(this->m_buffer_state.load() == OWNED);
             auto dequeue_status =
                 queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
             FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
