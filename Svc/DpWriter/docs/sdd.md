@@ -231,3 +231,34 @@ sequenceDiagram
     deactivate dpManager
     deactivate producer
 ```
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `InvalidBuffer` | `warning high` | Received buffer is invalid |
+| `BufferTooSmallForPacket` | `warning high` | Received buffer is too small to hold a data product packet |
+| `InvalidHeaderHash` | `warning high` | The received buffer has an invalid header hash |
+| `InvalidHeader` | `warning high` | Error occurred when deserializing the packet header |
+| `BufferTooSmallForData` | `warning high` | Received buffer is too small to hold the data specified in the header |
+| `FileNameFormatError` | `warning high` | An error occurred when formatting a file name |
+| `FileOpenError` | `warning high` | An error occurred when opening a file |
+| `FileWriteError` | `warning high` | An error occurred when writing to a file |
+| `FileWritten` | `activity low` | File written |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `NumBuffersReceived` | `U32` | The number of buffers received |
+| `NumBytesWritten` | `U64` | The number of bytes written |
+| `NumSuccessfulWrites` | `U32` | The number of successful writes |
+| `NumFailedWrites` | `U32` | The number of failed writes |
+| `NumErrors` | `U32` | The number of errors |
+
+<!-- fpp-dictionary-end -->

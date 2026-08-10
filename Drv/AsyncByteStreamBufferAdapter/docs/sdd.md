@@ -31,3 +31,18 @@ The design of `AsyncByteStreamBufferAdapter` assumes the following:
 `AsyncByteStreamBufferAdapter` maintains a single state variable:
 
 * **m_driverIsReady**: An atomic boolean flag indicating whether the async byte stream driver is ready to accept data. Initialized to `false` and set to `true` when a ready signal is received from the driver.
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `DriverNotReady` | `warning low` | Driver Ready |
+| `DataSendError` | `warning low` | Data Send |
+| `DataReceiveError` | `warning low` | Data Receive |
+
+<!-- fpp-dictionary-end -->

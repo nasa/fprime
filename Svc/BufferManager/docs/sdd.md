@@ -180,3 +180,27 @@ bufferManager.setup(1, 0, allocator, bins);
 ```
 
 A real-world usage and configuration example can be found in the [`Svc.ComCcsds` subtopology](../../Subtopologies/ComCcsds/).
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `NoBuffsAvailable` | `warning high` | The BufferManager was unable to allocate a requested buffer |
+| `NullEmptyBuffer` | `warning high` | The buffer manager received a null pointer and zero-sized buffer as a return. Probably undetected failed buffer allocation |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `TotalBuffs` | `U32` | The total buffers allocated |
+| `CurrBuffs` | `U32` | The current number of allocated buffers |
+| `HiBuffs` | `U32` | The high water mark of allocated buffers |
+| `NoBuffs` | `U32` | The number of requests that couldn't return a buffer |
+| `EmptyBuffs` | `U32` | The number of empty buffers returned |
+
+<!-- fpp-dictionary-end -->

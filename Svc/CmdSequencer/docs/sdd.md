@@ -338,3 +338,80 @@ Date | Change Description
 2/26/2017|Version for Design/Code Review
 4/6/2017|Version for Unit test
 10/30/2017|Revise design to make sequence format configurable
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `seqCancelIn` | `async input` | `Svc.CmdSeqCancel` | Sequence cancel port |
+| `cmdResponseIn` | `async input` | `Fw.CmdResponse` | Command response in port |
+| `pingIn` | `async input` | `Svc.Ping` | Ping in port |
+| `pingOut` | `output` | `Svc.Ping` | Ping out port |
+| `seqDone` | `output` | `Fw.CmdResponse` | Port for indicating sequence done |
+| `seqRunIn` | `async input` | `Svc.CmdSeqIn` | Port for requests to run sequences |
+| `seqDispatchIn` | `async input` | `Svc.FileDispatch` | Port for file dispatches to run sequences |
+| `comCmdOut` | `output` | `Fw.Com` | Port for sending sequence commands |
+| `schedIn` | `async input` | `Svc.Sched` | Schedule in port |
+| `seqStartOut` | `output` | `Svc.CmdSeqIn` | Notifies that a sequence has started running |
+
+### Commands
+
+| Name | Kind | Description |
+|---|---|---|
+| `CS_RUN` | `async` | Run a command sequence file |
+| `CS_VALIDATE` | `async` | Validate a command sequence file |
+| `CS_CANCEL` | `async` | Cancel a command sequence |
+| `CS_START` | `async` | Start running a command sequence |
+| `CS_STEP` | `async` | Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode. |
+| `CS_AUTO` | `async` | Set the run mode to AUTO. |
+| `CS_MANUAL` | `async` | Set the run mode to MANUAL. |
+| `CS_JOIN_WAIT` | `async` | Wait for sequences that are running to finish. Allow user to run multiple seq files in SEQ_NO_BLOCK mode then wait for them to finish before allowing more seq run request. |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `CS_SequenceLoaded` | `activity low` | Sequence file was successfully loaded. |
+| `CS_SequenceCanceled` | `activity high` | A command sequence was successfully canceled. |
+| `CS_FileReadError` | `warning high` | The Sequence File Loader could not read the sequence file. |
+| `CS_FileInvalid` | `warning high` | The sequence file format was invalid. |
+| `CS_RecordInvalid` | `warning high` | The format of a command record was invalid. |
+| `CS_FileSizeError` | `warning high` | The sequence file was too large. |
+| `CS_FileNotFound` | `warning high` | The sequence file was not found |
+| `CS_FileCrcFailure` | `warning high` | The sequence file validation failed |
+| `CS_CommandComplete` | `activity low` | The Command Sequencer issued a command and received a success status in return. |
+| `CS_SequenceComplete` | `activity high` | A command sequence successfully completed. |
+| `CS_CommandError` | `warning high` | The Command Sequencer issued a command and received an error status in return. |
+| `CS_InvalidMode` | `warning high` | The Command Sequencer received a command that was invalid for its current mode. |
+| `CS_RecordMismatch` | `warning high` | Number of records in header doesn't match number in file |
+| `CS_TimeBaseMismatch` | `warning high` | The running time base doesn't match the time base in the sequence files |
+| `CS_TimeContextMismatch` | `warning high` | The running time base doesn't match the time base in the sequence files |
+| `CS_PortSequenceStarted` | `activity high` | A local port request to run a sequence was started |
+| `CS_UnexpectedCompletion` | `warning high` | A command status came back when no sequence was running |
+| `CS_ModeSwitched` | `activity high` | Switched step mode |
+| `CS_NoSequenceActive` | `warning low` | A sequence related command came with no active sequence |
+| `CS_SequenceValid` | `activity high` | A sequence passed validation |
+| `CS_SequenceTimeout` | `warning high` | A sequence passed validation |
+| `CS_CmdStepped` | `activity high` | A command in a sequence was stepped through |
+| `CS_CmdStarted` | `activity high` | A manual sequence was started |
+| `CS_JoinWaiting` | `activity high` | Wait for the current running sequence file complete |
+| `CS_JoinWaitingNotComplete` | `warning high` | Cannot run new sequence when current sequence file is still running. |
+| `CS_NoRecords` | `warning low` |  |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `CS_LoadCommands` | `U32` | The number of Load commands executed |
+| `CS_CancelCommands` | `U32` | The number of Cancel commands executed |
+| `CS_Errors` | `U32` | The number of errors that have occurred |
+| `CS_CommandsExecuted` | `U32` | The number of commands executed across all sequences. |
+| `CS_SequencesCompleted` | `U32` | The number of sequences completed. |
+| `CS_CurrentSequence` | `string size FileNameStringSize` | The sequence file currently executing |
+
+<!-- fpp-dictionary-end -->

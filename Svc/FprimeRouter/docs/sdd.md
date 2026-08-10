@@ -58,3 +58,20 @@ SVC-ROUTER-006 | `Svc::FprimeRouter` shall pass through buffers for `FW_PACKET_F
 SVC-ROUTER-007 | `Svc::FprimeRouter` shall return ownership of all buffers received on `dataIn` through `dataReturnOut` | Memory management | Unit test |
 SVC-ROUTER-008 | `Svc::FprimeRouter` shall preserve the `ComCfg::FrameContext` received on `dataIn` and restore it on the corresponding `dataReturnOut`, including across the `fileOut`/`unknownDataOut` → `fileBufferReturnIn` round-trip | Allows a shared router to return buffers to the correct originating uplink path (e.g. by `vcId`) | Unit test |
 SVC-ROUTER-009 | `Svc::FprimeRouter` shall emit a warning event and return the buffer with an empty context when the buffer-to-context table is full on hand-off, or when a returned buffer is not found in the table | Graceful degradation without loss of buffer ownership | Unit test |
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `SerializationError` | `warning high` | An error occurred while serializing a com buffer |
+| `DeserializationError` | `warning high` | An error occurred while deserializing a packet |
+| `FileOutContextTableFull` | `warning high` | The buffer-to-context table was full when a buffer was handed off on fileOut. The buffer is still forwarded, but its context cannot be restored on return and will be returned empty. |
+| `UnknownDataOutContextTableFull` | `warning high` | The buffer-to-context table was full when a buffer was handed off on unknownDataOut. The buffer is still forwarded, but its context cannot be restored on return and will be returned empty. |
+| `BufferContextNotFound` | `warning high` | A buffer returned on fileBufferReturnIn was not found in the buffer-to-context table. The buffer is still returned, but with an empty context. |
+
+<!-- fpp-dictionary-end -->

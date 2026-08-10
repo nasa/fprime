@@ -54,3 +54,23 @@ Add requirements in the chart below
 | Date | Description |
 |---|---|
 |04/14/2026| Initial Draft |
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `ZLibCompressionBadBuffer` | `warning low` | Unable to allocate a compression buffer for ZLib |
+| `ZLibAllocBadBuffer` | `warning low` | Unable to allocate an alloc buffer for ZLib |
+| `ZLibInitError` | `warning low` | ZLib error during deflateInit |
+| `ZLibDeflateError` | `warning low` | ZLib error during deflate |
+| `BufferTooBigForZLib` | `warning low` | Buffers are too large to process with zlib due to the type differences between FwSizeType and uInt |
+| `ZLibNoCompression` | `diagnostic` | ZLib compression failed |
+| `ZLibCompression` | `diagnostic` | ZLib compression succeeded |
+| `ZLibMemoryUsage` | `diagnostic` | ZLib compression memory usage |
+
+<!-- fpp-dictionary-end -->

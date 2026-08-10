@@ -31,3 +31,60 @@ The version component can emit versions on startup by calling `version.start();`
 |---|---|
 |---| Initial Draft |
 | 07/30/26 | Added `start()` information |
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `getVersion` | `guarded input` | `Svc.Version` | Mutexed Port to get values |
+| `setVersion` | `guarded input` | `Svc.Version` | Mutexed Port to set values |
+
+### Commands
+
+| Name | Kind | Description |
+|---|---|---|
+| `ENABLE` | `guarded` | A command to enable or disable Event verbosity and Telemetry |
+| `VERSION` | `guarded` | Report version as Event |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `FrameworkVersion` | `activity low` | Version of the git repository. |
+| `ProjectVersion` | `activity low` | Version of the git repository. |
+| `LibraryVersions` | `activity low` | Version of the git repository. |
+| `CustomVersions` | `activity low` | Version of the git repository. |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `FrameworkVersion` | `string size 40` | Software framework version |
+| `ProjectVersion` | `string size 40` | Software project version |
+| `CustomVersion01` | `CustomVersionDb` | Custom Versions |
+| `CustomVersion02` | `CustomVersionDb` |  |
+| `CustomVersion03` | `CustomVersionDb` |  |
+| `CustomVersion04` | `CustomVersionDb` |  |
+| `CustomVersion05` | `CustomVersionDb` |  |
+| `CustomVersion06` | `CustomVersionDb` |  |
+| `CustomVersion07` | `CustomVersionDb` |  |
+| `CustomVersion08` | `CustomVersionDb` |  |
+| `CustomVersion09` | `CustomVersionDb` |  |
+| `CustomVersion10` | `CustomVersionDb` |  |
+| `LibraryVersion01` | `string size 40` | Library Versions |
+| `LibraryVersion02` | `string size 40` |  |
+| `LibraryVersion03` | `string size 40` |  |
+| `LibraryVersion04` | `string size 40` |  |
+| `LibraryVersion05` | `string size 40` |  |
+| `LibraryVersion06` | `string size 40` |  |
+| `LibraryVersion07` | `string size 40` |  |
+| `LibraryVersion08` | `string size 40` |  |
+| `LibraryVersion09` | `string size 40` |  |
+| `LibraryVersion10` | `string size 40` |  |
+
+<!-- fpp-dictionary-end -->

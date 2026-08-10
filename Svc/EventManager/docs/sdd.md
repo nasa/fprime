@@ -112,5 +112,38 @@ Date | Description
 12/1/2020 | Removed event buffers and post-filter
 6/27/2026 | Added EventsDropped telemetry channel and rate group port
 
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
 
+The following tables are derived from the component's FPP model.
 
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `LogRecv` | `sync input` | `Fw.Log` | Event input port |
+| `PktSend` | `output` | `Fw.Com` | Packet send port |
+| `FatalAnnounce` | `output` | `Svc.FatalEvent` | FATAL event announce port |
+| `run` | `async input` | `Svc.Sched` | Rate group input port for telemetry |
+| `pingIn` | `async input` | `Svc.Ping` | Ping input port |
+| `pingOut` | `output` | `Svc.Ping` | Ping output port |
+
+### Commands
+
+| Name | Kind | Description |
+|---|---|---|
+| `SET_EVENT_FILTER` | `sync` | Set filter for reporting events. Events are not stored in component. |
+| `SET_ID_FILTER` | `async` | Filter a particular ID |
+| `DUMP_FILTER_STATE` | `async` | Dump the filter states via events |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `SEVERITY_FILTER_STATE` | `activity low` | Dump severity filter state |
+| `ID_FILTER_ENABLED` | `activity high` | Indicate ID is filtered |
+| `ID_FILTER_LIST_FULL` | `warning low` | Attempted to add ID to full ID filter ID |
+| `ID_FILTER_REMOVED` | `activity high` | Removed an ID from the filter |
+| `ID_FILTER_NOT_FOUND` | `warning low` | ID not in filter |
+
+<!-- fpp-dictionary-end -->

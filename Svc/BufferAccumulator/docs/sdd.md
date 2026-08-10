@@ -35,3 +35,21 @@
 |BA_NonBlockDrain|6 (0x6)|Not enough buffers to complete requested drain, and NOBLOCK was set; will only drain what we have| | | | |
 | | | |numWillDrain|U32|||    
 | | | |numReqDrain|U32|||    
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `bufferSendInFill` | `async input` | `[1] Fw.BufferSend` | Receive a Buffer from an upstream component to enqueue |
+| `bufferSendInReturn` | `async input` | `[1] Fw.BufferSend` | Receive a Buffer back from a downstream component |
+| `bufferSendOutDrain` | `output` | `[1] Fw.BufferSend` | Pass a Buffer onwards to a downstream component |
+| `bufferSendOutReturn` | `output` | `[1] Fw.BufferSend` | Return a Buffer to the original upstream component |
+| `pingIn` | `async input` | `[1] Svc.Ping` | Ping input port for health |
+| `pingOut` | `output` | `[1] Svc.Ping` | Ping output port for health |
+
+<!-- fpp-dictionary-end -->

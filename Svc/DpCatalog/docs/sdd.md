@@ -148,3 +148,71 @@ When a data product is downlinked, it is marked in the node as completed, but th
 
 ## 6 Unit Testing
 
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `pingIn` | `async input` | `Svc.Ping` | Ping input port |
+| `pingOut` | `output` | `Svc.Ping` | Ping output port |
+| `fileOut` | `output` | `Svc.SendFileRequest` | File Downlink send port |
+| `fileDone` | `async input` | `SendFileComplete` | File Downlink send complete port |
+| `addToCat` | `async input` | `DpWritten` | DP Writer Add File to Cat |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `DirectoryOpenError` | `warning high` | Error opening directory |
+| `ProcessingDirectory` | `activity low` | Processing directory |
+| `ProcessingFile` | `activity low` | Processing directory |
+| `ProcessingDirectoryComplete` | `activity high` | Directory Processing complete |
+| `CatalogBuildComplete` | `activity high` | Catalog processing complete |
+| `DirectoryNotManaged` | `warning high` | Error opening directory |
+| `CatalogXmitStarted` | `activity high` | Catalog transmission started |
+| `CatalogXmitStopped` | `activity high` | Catalog transmission stopped |
+| `CatalogXmitCompleted` | `activity high` | Catalog transmission completed |
+| `SendingProduct` | `activity low` | Sending product |
+| `ProductComplete` | `activity low` | Product send complete |
+| `ComponentNotInitialized` | `warning high` | Component not initialized error |
+| `ComponentNoMemory` | `warning high` | Component didn't get memory error |
+| `CatalogFull` | `warning high` | Catalog is full |
+| `FileOpenError` | `warning high` | Error opening file |
+| `FileReadError` | `warning high` | Error opening file |
+| `FileHdrError` | `warning high` | Error reading header data from DP file |
+| `FileHdrDesError` | `warning high` | Error deserializing header data |
+| `DpInsertError` | `warning high` | Error inserting entry into list |
+| `DpDuplicate` | `diagnostic` | Error inserting entry into list |
+| `DpCatalogFull` | `warning high` | Error inserting entry into list |
+| `DpXmitInProgress` | `warning low` | Tried to build catalog while downlink process active |
+| `FileSizeError` | `warning high` | Error getting file size |
+| `NoDpMemory` | `warning high` |  |
+| `XmitNotActive` | `warning low` |  |
+| `StateFileOpenError` | `warning high` |  |
+| `StateFileReadError` | `warning high` |  |
+| `StateFileTruncated` | `warning high` |  |
+| `NoStateFileSpecified` | `warning low` |  |
+| `StateFileWriteError` | `warning high` |  |
+| `NoStateFile` | `warning low` |  |
+| `DpFileXmitError` | `warning high` |  |
+| `DpFileSendError` | `warning high` |  |
+| `DpFileAdded` | `activity high` | File added |
+| `NotLoaded` | `activity high` |  |
+| `DpFileSkipped` | `activity high` | Skipped a transmitted file |
+| `XmitUnbuiltCatalog` | `warning high` |  |
+| `InvalidFileName` | `warning high` | DP file name does not match the file's header metadata |
+| `FileCorruptedDataError` | `warning high` | The file contained malformed or invalid data during deserialization |
+| `FileNameFormatError` | `warning high` | Error formatting a DP file name |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `CatalogDps` | `U32` | Number of data products in catalog |
+| `DpsSent` | `U32` | Number of data products sent |
+
+<!-- fpp-dictionary-end -->

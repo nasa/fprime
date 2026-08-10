@@ -186,4 +186,33 @@ Checklist |
 
 ## 6 Unit Testing
 
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
 
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `BadChecksum` | `warning high` | During receipt of a file, the computed checksum value did not match the stored value |
+| `FileOpenError` | `warning high` | An error occurred opening a file |
+| `FileReceived` | `activity high` | The File Uplink component successfully received a file |
+| `FileWriteError` | `warning high` | An error occurred writing to a file |
+| `InvalidReceiveMode` | `warning high` | The File Uplink component received a packet with a type that was invalid for the current receive mode |
+| `PacketOutOfBounds` | `warning high` | During receipt of a file, the File Uplink component encountered a packet with offset and size out of bounds for the current file |
+| `PacketOutOfOrder` | `warning high` | The File Uplink component encountered an out-of-order packet during file receipt |
+| `PacketDuplicate` | `warning high` | The File Uplink component encountered a duplicate packet during file receipt |
+| `UplinkCanceled` | `activity high` | The File Uplink component received a CANCEL packet |
+| `DecodeError` | `warning high` | Error decoding file packet |
+| `InvalidPacketReceived` | `warning high` | Invalid packet received |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `FilesReceived` | `U32` | The total number of complete files received |
+| `PacketsReceived` | `U32` | The total number of packets received |
+| `Warnings` | `U32` | The total number of warnings issued |
+
+<!-- fpp-dictionary-end -->

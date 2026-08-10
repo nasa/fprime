@@ -53,3 +53,20 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 | SVC-CCSDS-TC-DEFRAMER-008 | The TcDeframer shall log an `InvalidCrc` event if a frame fails the CRC check. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-009 | The TcDeframer shall provide an input port (`dataIn`) to receive framed data, and emit deframed data packets on its `dataOut` output port. | Unit Test |
 | SVC-CCSDS-TC-DEFRAMER-010 | The TcDeframer shall emit notifications on its `errorNotify` port when deframing errors occur. | Unit Test |
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `InvalidPacket` | `warning low` | Invalid packet received that will be dropped |
+| `InvalidSpacecraftId` | `warning low` | Deframing received an invalid SCID |
+| `InvalidFrameLength` | `warning high` | Deframing received an invalid frame length |
+| `InvalidVcId` | `activity low` | Deframing received an invalid VCID |
+| `InvalidCrc` | `warning high` | Deframing received an invalid checksum |
+
+<!-- fpp-dictionary-end -->

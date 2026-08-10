@@ -51,3 +51,16 @@ void exitTasks() {
 | TCP-CLIENT-COMP-002 | The tcp client component shall provide a read thread | unit test |
 | TCP-CLIENT-COMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | unit test |
 
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `allocate` | `output` | `Fw.BufferGet` | Allocation for received data |
+| `deallocate` | `output` | `Fw.BufferSend` | Deallocation of allocated buffers |
+
+<!-- fpp-dictionary-end -->

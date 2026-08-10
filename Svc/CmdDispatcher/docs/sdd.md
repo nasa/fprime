@@ -125,5 +125,56 @@ Date | Description
 5/17/2021 | Added CMD Reregistration option
 5/05/2025 | Added a note about Fw::CmdResponse::cmdSeq usage in seqCmdStatus
 
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
 
+The following tables are derived from the component's FPP model.
 
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `compCmdSend` | `output` | `[CmdDispatcherComponentCommandPorts] Fw.Cmd` | Command dispatch port |
+| `compCmdReg` | `guarded input` | `[CmdDispatcherComponentCommandPorts] Fw.CmdReg` | Command Registration Port. max_number should match dispatch port. |
+| `compCmdStat` | `async input` | `Fw.CmdResponse` | Input Command Status Port |
+| `seqCmdStatus` | `output` | `[CmdDispatcherSequencePorts] Fw.CmdResponse` | Output Command Status Port |
+| `seqCmdBuff` | `async input` | `[CmdDispatcherSequencePorts] Fw.Com` | Command buffer input port for sequencers or other sources of command buffers |
+| `pingIn` | `async input` | `Svc.Ping` | Ping input port |
+| `run` | `async input` | `Svc.Sched` | Run port used to emit telemetry |
+| `pingOut` | `output` | `Svc.Ping` | Ping output port |
+
+### Commands
+
+| Name | Kind | Description |
+|---|---|---|
+| `CMD_NO_OP` | `async` | No-op command |
+| `CMD_NO_OP_STRING` | `async` | No-op string command |
+| `CMD_TEST_CMD_1` | `async` | No-op command |
+| `CMD_CLEAR_TRACKING` | `async` | Clear command tracking info to recover from components not returning status |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `OpCodeRegistered` | `diagnostic` |  |
+| `OpCodeDispatched` | `command` | Op code dispatched event |
+| `OpCodeCompleted` | `command` | Op code completed event |
+| `OpCodeError` | `command` | Op code completed with error event |
+| `MalformedCommand` | `warning high` | Received a malformed command packet |
+| `InvalidCommand` | `warning high` | Received an invalid opcode |
+| `TooManyCommands` | `warning high` | Exceeded the number of commands that can be simultaneously executed |
+| `NoOpReceived` | `activity high` | The command dispatcher has successfully received a NO-OP command |
+| `NoOpStringReceived` | `activity high` | The command dispatcher has successfully received a NO-OP command from GUI with a string |
+| `TestCmd1Args` | `activity high` | This log event message returns the TEST_CMD_1 arguments. |
+| `OpCodeReregistered` | `diagnostic` | Op code reregistered event |
+| `CommandDroppedQueueOverflow` | `warning high` | This log event reports the Command Sequence Buffer port queue has overflowed. |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `CommandsDispatched` | `U32` | Number of commands dispatched |
+| `CommandErrors` | `U32` | Number of command errors |
+| `CommandsDropped` | `U32` | Number of commands drooped due to buffer overflow |
+
+<!-- fpp-dictionary-end -->

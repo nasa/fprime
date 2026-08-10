@@ -303,3 +303,52 @@ Date | Description
 01/23/2026 | Added group level rate logic
 02/23/2026 | Added section/group mapping logic
 03/30/2026 | Added configuration section
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Port Descriptions
+
+| Name | Kind | Port Type | Description |
+|---|---|---|---|
+| `PktSend` | `output` | `[TELEMETRY_SEND_PORTS] Fw.Com` | Packet send port Ordered by Section, Group |
+| `controlIn` | `async input` | `EnableSection` |  |
+| `pingIn` | `async input` | `Svc.Ping` | Ping input port |
+| `pingOut` | `output` | `Svc.Ping` | Ping output port |
+| `Run` | `async input` | `Svc.Sched` | Run port for starting packet send cycle |
+| `configureSectionGroupRate` | `async input` | `ConfigureGroupRate` | Input configuration port |
+| `TlmRecv` | `sync input` | `Fw.Tlm` | Telemetry input port |
+| `TlmGet` | `sync input` | `Fw.TlmGet` | Telemetry getter port |
+
+### Commands
+
+| Name | Kind | Description |
+|---|---|---|
+| `SET_LEVEL` | `async` | Set telemetry send level |
+| `SEND_PKT` | `async` | Force a packet to be sent |
+| `ENABLE_SECTION` | `async` | Enable / disable a telemetry section |
+| `ENABLE_GROUP` | `async` | Enable / disable telemetry of a group on a section |
+| `FORCE_GROUP` | `async` | Force telemetering a group on a section, even if disabled |
+| `CONFIGURE_GROUP_RATES` | `async` | Set Min and Max Deltas between successive packets |
+
+### Events
+
+| Name | Severity | Description |
+|---|---|---|
+| `NoChan` | `warning low` | Telemetry channel is not part of a telemetry packet. |
+| `LevelSet` | `activity high` | Telemetry send level set |
+| `MaxLevelExceed` | `warning low` | Telemetry send level set |
+| `PacketSent` | `activity low` | Packet manually sent |
+| `PacketNotFound` | `warning low` | Couldn't find the packet to send |
+| `SectionUnconfigurable` | `warning low` |  |
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `GroupConfigs` | `SectionConfigs` | Telemetry send level |
+| `SectionEnabled` | `SectionEnabled` |  |
+
+<!-- fpp-dictionary-end -->

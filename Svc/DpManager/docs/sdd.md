@@ -249,3 +249,19 @@ sequenceDiagram
     deactivate dpManager
     deactivate producer
 ```
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Telemetry
+
+| Name | Type | Description |
+|---|---|---|
+| `NumSuccessfulAllocations` | `U32` | The number of successful buffer allocations |
+| `NumFailedAllocations` | `U32` | The number of failed buffer allocations |
+| `NumDataProducts` | `U32` | Number of data products handled |
+| `NumBytes` | `U64` | Number of bytes handled |
+
+<!-- fpp-dictionary-end -->

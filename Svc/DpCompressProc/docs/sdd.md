@@ -182,3 +182,17 @@ This algorithm is non-trivial but allows data products, that can be fairly large
 | Date | Description |
 |---|---|
 |04/14/2026| Initial Draft |
+
+<!-- fpp-dictionary-begin -->
+## Component Dictionary
+
+The following tables are derived from the component's FPP model.
+
+### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| `CHUNK_SIZE` | `FwSizeStoreType` | Chunk size to use when passing data to the compression backend |
+| `ENABLE` | `Fw.Enabled` | Number of bytes to use in a compression chunk |
+
+<!-- fpp-dictionary-end -->
