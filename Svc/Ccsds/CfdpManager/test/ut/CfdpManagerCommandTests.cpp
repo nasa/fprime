@@ -522,6 +522,122 @@ void CfdpManagerTester::testPollDirectoryBusy() {
     Os::FileSystem::removeDirectory(srcDir.toChar());
 }
 
+void CfdpManagerTester::testPollDirectoryInvalidInterval() {
+    // Test that PollDirectory command with a zero interval is rejected with
+    // VALIDATION_ERROR and emits the InvalidPollInterval event.
+    //
+    // A zero interval would arm the poll timer with no time remaining, which is
+    // not a valid polling configuration.
+    //
+    // Event coverage: InvalidPollInterval
+
+    U8 channelId = 0;
+    U8 pollId = 0;
+    EntityId destEid = 2;
+    U32 interval = 0;  // invalid - must be non-zero
+    U8 priority = 0;
+    Fw::String srcDir("test/ut/output/poll_src");
+    Fw::String dstDir("test/ut/output/poll_dst");
+
+    // Clear events
+    this->clearHistory();
+
+    // Send PollDirectory command with a zero interval
+    this->sendCmd_PollDirectory(0,  // Instance
+                                0,  // cmdSeq
+                                channelId, pollId, destEid, Cfdp::Class::CLASS_1, priority, interval, srcDir, dstDir);
+
+    this->component.doDispatch();
+
+    // Verify VALIDATION_ERROR response
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::VALIDATION_ERROR);
+
+    // Verify InvalidPollInterval event was emitted with the requested interval
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_InvalidPollInterval_SIZE(1);
+    ASSERT_EVENTS_InvalidPollInterval(0, interval);
+}
+
+void CfdpManagerTester::testPollDirectoryTimerExpiry() {
+    // Test that a polling directory actually fires once its interval timer
+    // expires.
+    //
+    // Observable behavior: the poll timer is armed for `interval` seconds when
+    // the poll is started, and each 1 Hz cycle decrements it by one second.
+    // On the cycle after it reaches zero (EXPIRED) the poll opens the source
+    // directory for playback, which sets the playback state busy. Before the
+    // fix that expired branch was unreachable, so the playback never became
+    // busy no matter how many cycles ran.
+
+    U8 channelId = 0;
+    U8 pollId = 0;
+    EntityId destEid = 2;
+    U32 interval = 3;  // seconds; small so the test only needs a few cycles
+    U8 priority = 0;
+    Fw::String srcDir("test/ut/output/poll_timer_src");
+    Fw::String dstDir("test/ut/output/poll_timer_dst");
+
+    // Create source directory with a single file to be picked up by the poll
+    Os::FileSystem::Status dirStatus = Os::FileSystem::createDirectory(srcDir.toChar());
+    ASSERT_TRUE(dirStatus == Os::FileSystem::OP_OK || dirStatus == Os::FileSystem::ALREADY_EXISTS);
+
+    Fw::String testFilePath(srcDir);
+    testFilePath += "/poll_file.bin";
+    Os::File file;
+    Os::File::Status fileStatus = file.open(testFilePath.toChar(), Os::File::OPEN_CREATE, Os::File::OVERWRITE);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus);
+    U8 testData[64] = {0};
+    FwSizeType bytesToWrite = sizeof(testData);
+    fileStatus = file.write(testData, bytesToWrite);
+    ASSERT_EQ(Os::File::OP_OK, fileStatus);
+    file.close();
+
+    // Clear events
+    this->clearHistory();
+
+    // Start the polling directory
+    this->sendCmd_PollDirectory(0,  // Instance
+                                0,  // cmdSeq
+                                channelId, pollId, destEid, Cfdp::Class::CLASS_1, priority, interval, srcDir, dstDir);
+
+    this->component.doDispatch();
+
+    // Verify start succeeded
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, CfdpManagerComponentBase::OPCODE_POLLDIRECTORY, 0, Fw::CmdResponse::OK);
+
+    // Reach into the engine to observe the poll directory's playback state
+    // (CfdpManagerTester is a friend of Channel/Engine).
+    CfdpPollDir* pollDir = this->component.m_engine->m_channels[channelId]->getPollDir(pollId);
+
+    // The playback is idle while the timer is counting down.
+    ASSERT_FALSE(pollDir->pb.busy) << "Poll playback should be idle before the timer expires";
+
+    // Cycle the engine while the timer counts down. After `interval` cycles the
+    // timer has just reached EXPIRED but the poll has not fired yet.
+    for (U32 i = 0; i < interval; i++) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+    }
+    ASSERT_FALSE(pollDir->pb.busy) << "Poll playback should not fire before the interval elapses";
+
+    // One more cycle: the timer is now EXPIRED, so the poll initiates a
+    // directory playback and the playback state becomes busy.
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+    ASSERT_TRUE(pollDir->pb.busy) << "Poll should initiate a directory playback once the timer expires";
+
+    // Clean up - stop the poll
+    this->clearHistory();
+    this->sendCmd_StopPollDirectory(0, 0, channelId, pollId);
+    this->component.doDispatch();
+
+    // Clean up files/directory
+    Os::FileSystem::removeFile(testFilePath.toChar());
+    Os::FileSystem::removeDirectory(srcDir.toChar());
+}
+
 // ----------------------------------------------------------------------
 // SetChannelFlow Command Tests
 // ----------------------------------------------------------------------
