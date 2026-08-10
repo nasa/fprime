@@ -62,6 +62,17 @@ _3 = cmake.get_build(
 )
 
 
+_4 = cmake.get_build(
+    "CONFIG_INCLUDE_CONFLICT_BUILD",
+    settings.DATA_DIR / "TestConfigConflictDeployment",
+    {
+        "FPRIME_FRAMEWORK_PATH": settings.FRAMEWORK_PATH,
+        "FPRIME_PROJECT_ROOT": settings.DATA_DIR / "TestConfigConflictDeployment",
+    },
+    make_targets=[],
+)
+
+
 def test_fprime_model_override(CONFIG_BUILD):
     """Test that the config override works"""
     cmake.assert_process_success(CONFIG_BUILD, targets=["TestModelOverride"])
@@ -97,3 +108,9 @@ def test_library_bad_override_config(CONFIG_FAILED_OVERRIDE_BUILD):
     """Test that the config that is not an override overrides work works"""
     with pytest.raises(AssertionError):
         cmake.assert_process_success(CONFIG_FAILED_OVERRIDE_BUILD, targets=[])
+
+
+def test_config_include_path_conflict(CONFIG_INCLUDE_CONFLICT_BUILD):
+    """Test that config files with conflicting source and build cache include paths fail"""
+    with pytest.raises(AssertionError):
+        cmake.assert_process_success(CONFIG_INCLUDE_CONFLICT_BUILD, targets=[])
