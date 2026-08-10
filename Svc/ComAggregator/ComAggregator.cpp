@@ -41,7 +41,8 @@ void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const
 
 void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // This handler runs on the returning caller's thread: take ownership atomically
-    FW_ASSERT(this->m_bufferState.exchange(Fw::Buffer::OwnershipState::OWNED) == Fw::Buffer::OwnershipState::NOT_OWNED);
+    const Fw::Buffer::OwnershipState previousState = this->m_bufferState.exchange(Fw::Buffer::OwnershipState::OWNED);
+    FW_ASSERT(previousState == Fw::Buffer::OwnershipState::NOT_OWNED, static_cast<FwAssertArgType>(previousState));
 }
 
 void ComAggregator ::timeout_handler(FwIndexType portNum, U32 context) {
@@ -92,8 +93,9 @@ void ComAggregator ::Svc_AggregationMachine_action_doFill(SmId smId,
 void ComAggregator ::Svc_AggregationMachine_action_doSend(SmId smId, Svc_AggregationMachine::Signal signal) {
     // Send only when the buffer will be valid
     if (this->m_frameSerializer.getSize() > 0) {
-        FW_ASSERT(this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED) ==
-                  Fw::Buffer::OwnershipState::OWNED);
+        const Fw::Buffer::OwnershipState previousState =
+            this->m_bufferState.exchange(Fw::Buffer::OwnershipState::NOT_OWNED);
+        FW_ASSERT(previousState == Fw::Buffer::OwnershipState::OWNED, static_cast<FwAssertArgType>(previousState));
         this->m_frameBuffer.setSize(this->m_frameSerializer.getSize());
         this->m_allow_timeout = false;  // Timeout messages should be discarded in WAIT_STATUS state
         this->dataOut_out(0, this->m_frameBuffer, this->m_lastContext);
