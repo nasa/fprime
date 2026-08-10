@@ -1,6 +1,6 @@
 // ======================================================================
 // \title Os/DelegateRawTime.hpp
-// \brief common definitions for Os::RawTimeInterface and Os::DelegateRawTime
+// \brief Define the Os::DelegateRawTime class
 // ======================================================================
 #ifndef OS_DELEGATERAWTIME_HPP_
 #define OS_DELEGATERAWTIME_HPP_

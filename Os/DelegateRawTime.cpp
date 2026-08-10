@@ -61,6 +61,17 @@ DelegateRawTime::Status DelegateRawTime::getDiffUsec(const RawTime& other, U32& 
     return this->m_delegate.getDiffUsec(other, result);
 }
 
+bool DelegateRawTime::operator==(const RawTime& other) const {
+    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
+    return this->m_delegate == other;
+}
+
+// ------------------------------------------------------------
+// RawTimeInterface default implementations
+// Built on pure virtual methods. Located here (not RawTimeInterface.cpp)
+// to keep RawTime implementation code in one translation unit.
+// ------------------------------------------------------------
+
 RawTimeInterface::Status RawTimeInterface::getDiffUsec(const RawTime& other, U32& result) const {
     Fw::TimeInterval interval;
     Status status = this->getTimeInterval(other, interval);
@@ -83,11 +94,6 @@ RawTimeInterface::Status RawTimeInterface::getDiffUsec(const RawTime& other, U32
     // No overflow, we can safely add values to get total microseconds
     result = secToUsec + useconds;
     return status;
-}
-
-bool DelegateRawTime::operator==(const RawTime& other) const {
-    FW_ASSERT(&this->m_delegate == reinterpret_cast<const RawTimeInterface*>(&this->m_handle_storage[0]));
-    return this->m_delegate == other;
 }
 
 bool RawTimeInterface::operator==(const RawTime& other) const {

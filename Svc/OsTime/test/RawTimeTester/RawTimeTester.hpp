@@ -39,6 +39,10 @@ class RawTimeTester : public Os::RawTimeInterface {
     }
 
     Status getTimeInterval(const Os::RawTime& other, Fw::TimeInterval& interval) const override {
+        // Use serialization to access other's time without assuming internal structure.
+        // Works with both link-time and compile-time implementations.
+        // NOTE: Assumes serialization format (seconds: U32, useconds: U32) matching
+        // standard Posix/Stub implementations. Platform implementations must match.
         U8 buf_data[Os::RawTimeInterface::SERIALIZED_SIZE];
         Fw::SerialBuffer buf(buf_data, sizeof(buf_data));
         other.serializeTo(buf);
@@ -55,6 +59,8 @@ class RawTimeTester : public Os::RawTimeInterface {
 
     Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer,
                                     Fw::Endianness mode = Fw::Endianness::BIG) const override {
+        // Standard serialization format: (seconds: U32, useconds: U32)
+        // This format must match the actual RawTime implementations (Posix, Stub, etc.)
         Fw::SerializeStatus status = buffer.serializeFrom(m_handle.t.getSeconds(), mode);
         if (status != Fw::FW_SERIALIZE_OK) {
             return status;
@@ -64,6 +70,8 @@ class RawTimeTester : public Os::RawTimeInterface {
 
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
                                         Fw::Endianness mode = Fw::Endianness::BIG) override {
+        // Standard deserialization format: (seconds: U32, useconds: U32)
+        // This format must match the actual RawTime implementations (Posix, Stub, etc.)
         U32 seconds = 0;
         U32 useconds = 0;
         Fw::SerializeStatus status = buffer.deserializeTo(seconds, mode);
