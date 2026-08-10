@@ -35,20 +35,20 @@ class PrimitiveTest : public ::testing::Test {
         ASSERT_EQ(s.get_mI16(), testI16);
         ASSERT_EQ(s.get_mF64(), testF64);
     }
-
     void assertUnsuccessfulSerialization(T& s, U32 bufSize) {
-        // Avoid creating an array of size zero
+        // Array padded by 1 to bypass the LinearBufferBase check that
+        // capacity is 0 iff buf addr is null ptr
         U8 data[bufSize + 1];
-        Fw::SerialBuffer buf(data, bufSize);
+        Fw::SerialBuffer buf(bufSize > 0 ? data : nullptr, bufSize);
         Fw::SerializeStatus status;
 
         // Serialize
         status = buf.serializeFrom(s);
-        ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_NE(status, Fw::FW_SERIALIZE_OK) << "Buffer size " << bufSize << " should fail serialization";
 
         // Deserialize
         status = buf.deserializeTo(s);
-        ASSERT_NE(status, Fw::FW_SERIALIZE_OK);
+        ASSERT_NE(status, Fw::FW_SERIALIZE_OK) << "Buffer size " << bufSize << " should fail deserialization";
     }
 
     bool testBool;
@@ -220,6 +220,16 @@ REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
 
 using PrimitiveTestImplementations = ::testing::Types<C_Primitive, SM_SMPrimitive>;
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, PrimitiveTest, PrimitiveTestImplementations);
+
+// Verify LinearBufferBase invariant: buffAddr is null iff capacity is zero.
+TEST(SerialBufferInvariant, NonNullAddrZeroCapacityAborts) {
+    U8 data[1];
+    EXPECT_DEATH(Fw::SerialBuffer(data, 0), "Assert");
+}
+
+TEST(SerialBufferInvariant, NullAddrNonZeroCapacityAborts) {
+    EXPECT_DEATH(Fw::SerialBuffer(nullptr, 1), "Assert");
+}
 
 }  // namespace Struct
 

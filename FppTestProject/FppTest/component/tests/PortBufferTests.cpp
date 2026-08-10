@@ -15,7 +15,9 @@ TEST(PortBufferTest, ParamPortConstructorInitializesBuffAddr) {
 
 TEST(PortBufferTest, ParamPortConstructorInitializesCapacity) {
     PrimitiveArgsPortBuffer buf;
-    ASSERT_EQ(buf.getCapacity(), PrimitiveArgsPortBuffer::CAPACITY);
+    // local avoids ODR-use of static constexpr in C++14
+    constexpr Fw::Serializable::SizeType expected = PrimitiveArgsPortBuffer::CAPACITY;
+    ASSERT_EQ(buf.getCapacity(), expected);
     ASSERT_GT(buf.getCapacity(), static_cast<Fw::Serializable::SizeType>(0));
 }
 
