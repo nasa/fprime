@@ -50,3 +50,4 @@ void exitTasks() {
 | TCP-CLIENT-COMP-001 | The tcp client component shall implement the ByteStreamDriverModel  | inspection |
 | TCP-CLIENT-COMP-002 | The tcp client component shall provide a read thread | unit test |
 | TCP-CLIENT-COMP-003 | The tcp client component shall provide bidirectional communication with a tcp server | unit test |
+

@@ -677,3 +677,4 @@ Telemetry is emitted as the `ChannelTelemetry` array, one `ChannelTelemetry` str
 | CFDP-010 | `CfdpManager` shall support configurable file archiving to move completed files instead of deletion | Preserves files for audit trails and operational analysis while managing storage | Unit Test |
 | CFDP-011 | `CfdpManager` shall support both command-initiated and port-initiated file transfers | Allows both ground operators and onboard components to initiate file transfers | Unit Test, System Test |
 | CFDP-012 | `CfdpManager` shall support flow control to freeze and resume channel operations | Provides mechanism to temporarily halt file transfers during critical spacecraft operations | Unit Test |
+

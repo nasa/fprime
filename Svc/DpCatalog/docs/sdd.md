@@ -147,3 +147,4 @@ When data products are downlinked, the tree is traversed in priority order. As e
 When a data product is downlinked, it is marked in the node as completed, but the state is also written to a file so that downlinked state is preserved across restarts of the software. When the catalog is built, the state file is first read into a data structure in memory.
 
 ## 6 Unit Testing
+

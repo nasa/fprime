@@ -22,3 +22,5 @@ telemetry, and command responses.
 
 For each command, the component returns success or failure and emits status
 information for operators.
+
+

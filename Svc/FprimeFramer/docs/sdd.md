@@ -42,3 +42,4 @@ On receiving a data packet, the `Svc::FprimeFramer` performs the following actio
 | SVC-FPRIME_FRAMER-002 | `Svc::FprimeFramer` shall emit one F Prime frame on its `framedOut` output port for each packet received on `dataIn` input port | Unit Test |
 | SVC-FPRIME_FRAMER-003 | `Svc::FprimeFramer` shall emit F Prime frames that conforms to the [F´ frame specification](../../FprimeProtocol/docs/sdd.md) | Unit Test |
 | SVC-FPRIME_FRAMER-004 | `Svc::FprimeFramer` shall pass through all `Fw.SuccessCondition` received on `comStatusIn` to `comStatusOut`, including the initial start-up `Fw::Success::SUCCESS`, per-message statuses, and any recovery `Fw::Success::SUCCESS` after a `Fw::Success::FAILURE`, per the [Framer Status Protocol](../../../docs/reference/communication-adapter-interface.md#framer-status-protocol) | Unit Test |
+

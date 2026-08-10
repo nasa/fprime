@@ -111,3 +111,6 @@ Date | Description
 10/28/2015 | Added FATAL announce port
 12/1/2020 | Removed event buffers and post-filter
 6/27/2026 | Added EventsDropped telemetry channel and rate group port
+
+
+

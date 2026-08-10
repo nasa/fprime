@@ -124,3 +124,6 @@ Date | Description
 1/28/2016 | Added context value discussion
 5/17/2021 | Added CMD Reregistration option
 5/05/2025 | Added a note about Fw::CmdResponse::cmdSeq usage in seqCmdStatus
+
+
+

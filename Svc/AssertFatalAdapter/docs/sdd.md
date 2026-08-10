@@ -51,3 +51,4 @@ The `Svc::AssertFatalAdapter` component contains a private implementation of the
 Date | Description
 ---- | -----------
 10/16/2016 | Implementation and unit tests
+

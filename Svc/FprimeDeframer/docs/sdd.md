@@ -48,3 +48,4 @@ SVC-DEFRAMER-002 | `Svc::FprimeDeframer` shall return ownership of input buffers
 | `output` | `dataOut` | `Svc.ComDataWithContext` | Emits deframed data (F´ packets) |
 | `sync input` | `dataReturnIn` | `Svc.ComDataWithContext` | Receives ownership of the emitted data back |
 | `output` | `dataReturnOut` | `Svc.ComDataWithContext` | Returns ownership of the input buffer back to the sender |
+
