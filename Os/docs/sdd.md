@@ -129,7 +129,7 @@ Most OSAL services use **link-time selection** with runtime virtual dispatch:
 - Well-suited where call overhead is negligible
 
 **Disadvantages:**
-- Virtual dispatch overhead (~10-50 cycles per call)
+- Virtual dispatch overhead
 - Compiler cannot inline methods across the virtual boundary
 
 #### 5.2.2 Compile-Time Selection (Performance Optimization)
@@ -182,7 +182,7 @@ namespace Os {
 
 > [!IMPORTANT]
 > When using compile-time selection:
-> - All object files in a deployment MUST use the same configuration (same ABI)
+> - All object files in the build directory same configuration (same ABI)
 > - The concrete implementation MUST inherit from the corresponding interface class
 > - The configuration header MUST NOT include Os OSAL headers (to avoid circular dependencies)
 
