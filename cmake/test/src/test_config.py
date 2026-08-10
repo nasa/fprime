@@ -109,6 +109,12 @@ def test_override_survives_reconfigure(CONFIG_BUILD):
     assert overridden.exists(), "Override destination was never produced"
     before = overridden.stat().st_mtime
     contents = overridden.read_bytes()
+    override_source = (
+        CONFIG_BUILD["source"] / "override" / "project" / "DpCfg.hpp"
+    )
+    assert (
+        contents == override_source.read_bytes()
+    ), "Destination does not hold the override's content"
 
     return_code, _, _ = cmake.run_cmake(CONFIG_BUILD["source"], CONFIG_BUILD["build"])
 
