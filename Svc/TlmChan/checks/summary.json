@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-08T20:11:56Z",
+  "generated_at": "2026-08-10T17:40:35Z",
   "ref": "devel",
-  "commit": "dc115c3dc2228c403477bd7738fc6bd895a72468",
-  "passed": 3,
-  "failed": 5,
+  "commit": "041aee36e673fc0ccd03313a3da171784816bd81",
+  "passed": 2,
+  "failed": 6,
   "skipped": 8,
   "checks": [
     {
@@ -175,9 +175,12 @@
       "name": "Unit-test dependencies in CMakeLists",
       "category": "unit-testing",
       "module": "/home/runner/work/fprime/fprime/Svc/TlmChan",
-      "status": "pass",
-      "failures": [],
-      "detail": "0 dependency module(s) checked"
+      "status": "fail",
+      "failures": [
+        "unit-test dependency 'Fw/Time' (from #include \"Fw/Time/TimeInterval.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)",
+        "unit-test dependency 'Os' (from #include \"Os/Task.hpp\") is not declared in the module's CMake files (add it to UT_DEPENDS/DEPENDS)"
+      ],
+      "detail": "2 dependency module(s) checked"
     }
   ]
 }
