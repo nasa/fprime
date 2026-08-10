@@ -13,6 +13,8 @@ Requirement | Description | Verification Method
 FPRIME-PRG-001 | The `Svc::PassiveRateGroup` component shall be passive and will be driven by an input synchronous port call | Inspection, Unit test
 FPRIME-PRG-002 | The `Svc::PassiveRateGroup` component shall invoke its output ports in order, passing the value contained in a table based on port number | Unit Test
 FPRIME-PRG-003 | The `Svc::PassiveRateGroup` component shall track the time required to execute the rate group and report it as telemetry | Unit Test
+FPRIME-PRG-004 | The `Svc::PassiveRateGroup` component shall track per-port execution times and high water marks when configured | Unit Test
+FPRIME-PRG-005 | The `Svc::PassiveRateGroup` component shall provide a command to clear statistics and high water marks | Unit Test
 
 
 ## 3. Design
@@ -33,10 +35,42 @@ Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 Svc::Cycle | CycleIn | Input | synchronous | Receive a call to run one cycle of the rate group
 [`Svc::Sched`](../../Sched/docs/sdd.md) | RateGroupMemberOut | Output | n/a | Rate group ports
+Fw::Cmd | CmdDisp | Input | guarded | Command receive port
+Fw::CmdResponse | CmdStatus | Output | n/a | Command response port
+Fw::CmdReg | CmdReg | Output | n/a | Command registration port
+Fw::Tlm | Tlm | Output | n/a | Telemetry port
+Fw::Time | Time | Output | n/a | Time get port
 
 #### 3.2 Functional Description
 
-The `Svc::PassiveRateGroup` component has one input port that is used to drive all of the processing.  The component calls the output ports in order, passing the context from the context list as the port argument.   
+The `Svc::PassiveRateGroup` component has one input port that is used to drive all of the processing.  The component calls the output ports in order, passing the context from the context list as the port argument.
+
+The component tracks execution time statistics:
+- Overall rate group cycle time (current and maximum)
+- Per-port execution times and high water marks (when PassiveRateGroupCfg::PortCycleTime is enabled)
+- Total cycle count
+
+These statistics can be cleared via the `CLEAR_STATISTICS` guarded command, which safely resets all tracked values to zero.
+
+#### 3.2.1 Commands
+
+The `Svc::PassiveRateGroup` component supports the following commands:
+
+Command | Description
+------- | -----------
+CLEAR_STATISTICS | Clears port duration high water marks and maximum cycle time. Does NOT reset cycle count, which is a running total. (synchronized via mutex to prevent race conditions with CycleIn handler)
+
+#### 3.2.2 Telemetry
+
+The `Svc::PassiveRateGroup` component provides the following telemetry channels:
+
+Channel | Type | Description
+------- | ---- | -----------
+MaxCycleTime | U32 | Maximum execution time of rate group cycle (microseconds). Cleared by CLEAR_STATISTICS command.
+CycleTime | U32 | Execution time of current cycle (microseconds)
+CycleCount | U32 | Running total count of cycles executed. NOT cleared by CLEAR_STATISTICS command.
+PortCycleTimeLast | U32[PassiveRateGroupOutputPorts] | Last execution time for each port (microseconds)
+PortCycleTimeHWM | U32[PassiveRateGroupOutputPorts] | High water mark for each port execution time (microseconds). Cleared by CLEAR_STATISTICS command.   
 
 ### 3.3 Scenarios
 
@@ -71,6 +105,7 @@ sequenceDiagram
 Date | Description
 ---- | -----------
 2/9/2017 | First Draft
+8/8/2026 | Updated to document CLEAR_STATISTICS command, telemetry channels, and standard ports. Added mutex synchronization to prevent race condition between CycleIn handler and CLEAR_STATISTICS command
 
 
 

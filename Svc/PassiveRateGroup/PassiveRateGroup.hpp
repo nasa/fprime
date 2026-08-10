@@ -16,6 +16,7 @@
 
 #include <Fw/DataStructures/Array.hpp>
 #include <Fw/Deprecate.hpp>
+#include <Os/Mutex.hpp>
 #include <Svc/PassiveRateGroup/PassiveRateGroupComponentAc.hpp>
 
 namespace Svc {
@@ -103,6 +104,7 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     Os::RawTimeSource m_rawTimeSource;                            //!< time source set by client
     FwIndexType m_numContexts;                                    //!< number of contexts
     U32 m_contexts[NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS];          //!< Must match number of output ports
+    Os::Mutex m_statisticsMutex;                                  //!< mutex to protect statistics
 };
 
 }  // namespace Svc

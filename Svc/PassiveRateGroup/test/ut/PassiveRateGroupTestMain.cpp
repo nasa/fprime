@@ -29,6 +29,9 @@ void connectPorts(Svc::PassiveRateGroup& impl, Svc::PassiveRateGroupTester& test
 
     impl.set_Tlm_OutputPort(0, tester.get_from_Tlm(0));
     impl.set_Time_OutputPort(0, tester.get_from_Time(0));
+    impl.set_CmdStatus_OutputPort(0, tester.get_from_CmdStatus(0));
+    impl.set_CmdReg_OutputPort(0, tester.get_from_CmdReg(0));
+    tester.connect_to_CmdDisp(0, impl.get_CmdDisp_InputPort(0));
 }
 
 TEST(PassiveRateGroupTest, NominalSchedule) {
@@ -50,6 +53,44 @@ TEST(PassiveRateGroupTest, NominalSchedule) {
 
         tester.runNominal(contexts.getElements(), Svc::PassiveRateGroup::CONNECTION_COUNT_MAX, inst);
     }
+}
+
+TEST(PassiveRateGroupTest, PortCycleTimes) {
+    Svc::PassiveRateGroup::ContextArray contexts(0);
+    for (FwSizeType i = 0; i < 5; i++) {
+        contexts[i] = static_cast<U32>(i + 1);
+    }
+
+    Svc::PassiveRateGroup impl("PassiveRateGroup");
+    impl.configure(contexts);
+    Svc::PassiveRateGroupTester tester(impl);
+
+    tester.init();
+    impl.init(0);
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPortCycleTimeTest();
+}
+
+TEST(PassiveRateGroupTest, ClearStatistics) {
+    Svc::PassiveRateGroup::ContextArray contexts(0);
+    for (FwSizeType i = 0; i < 5; i++) {
+        contexts[i] = static_cast<U32>(i + 1);
+    }
+
+    Svc::PassiveRateGroup impl("PassiveRateGroup");
+    impl.configure(contexts);
+    Svc::PassiveRateGroupTester tester(impl);
+
+    tester.init();
+    impl.init(0);
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runClearStatisticsTest();
 }
 
 int main(int argc, char* argv[]) {

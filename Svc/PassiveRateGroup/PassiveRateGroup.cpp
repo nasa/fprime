@@ -97,28 +97,43 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     // Cast to void as the only possible error is overflow, which we can't handle other
     // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
     (void)endTime.getDiffUsec(cycleStart, cycleTime);
+
+    // Lock mutex to protect statistics that can be cleared by CLEAR_STATISTICS command
+    this->m_statisticsMutex.lock();
+
     // check to see if the time has exceeded the previous maximum
     if (cycleTime > this->m_maxTime) {
         this->m_maxTime = cycleTime;
     }
 
+    U32 maxTime = this->m_maxTime;
+    U32 cycles = ++this->m_cycles;
+    PassiveRateGroup_CycleTime portDurationHighWaterMarks = this->m_portDurationHighWaterMarksUsec;
+
+    this->m_statisticsMutex.unlock();
+
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
         this->tlmWrite_PortCycleTimeLast(portTimes);
-        this->tlmWrite_PortCycleTimeHWM(this->m_portDurationHighWaterMarksUsec);
+        this->tlmWrite_PortCycleTimeHWM(portDurationHighWaterMarks);
     }
 
-    this->tlmWrite_MaxCycleTime(this->m_maxTime);
+    this->tlmWrite_MaxCycleTime(maxTime);
     this->tlmWrite_CycleTime(cycleTime);
-    this->tlmWrite_CycleCount(++this->m_cycles);
+    this->tlmWrite_CycleCount(cycles);
 }
 
 void PassiveRateGroup::CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // Clear all port duration high water marks
+    // Lock mutex to protect statistics shared with CycleIn handler
+    this->m_statisticsMutex.lock();
+
+    // Clear all port duration high water marks and max cycle time
     for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
-        this->m_portDurationHighWaterMarksUsec[port] = 0;
+        this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)] = 0;
     }
     this->m_maxTime = 0;
-    this->m_cycles = 0;
+    // Note: m_cycles is intentionally NOT cleared - it's a running total
+
+    this->m_statisticsMutex.unlock();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
