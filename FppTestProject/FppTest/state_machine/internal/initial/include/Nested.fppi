@@ -1,6 +1,5 @@
 @ A state machine with nested initial transitions
 state machine Nested {
-
   @ Action a
   action a
 
@@ -8,7 +7,6 @@ state machine Nested {
 
   @ State S
   state S {
-
     entry do { a, a }
 
     initial enter T
@@ -17,7 +15,5 @@ state machine Nested {
     state T {
       entry do { a, a, a }
     }
-
   }
-
 }

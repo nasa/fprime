@@ -1,6 +1,5 @@
 @ A basic state machine
 state machine Basic {
-
   @ Action a
   action a
 
@@ -10,5 +9,4 @@ state machine Basic {
   state S {
     entry do { a, a }
   }
-
 }

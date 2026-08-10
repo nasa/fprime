@@ -1,8 +1,10 @@
 module FppTest {
-
   module Struct {
-
-    enum StructEnum { A, B, C }
+    enum StructEnum {
+      A
+      B
+      C
+    }
     array StructArray = [3] U32
     type StructArrAlias = StructArray
 
@@ -10,7 +12,8 @@ module FppTest {
 
     type StructSAlias = Primitive
 
-    struct Empty { }
+    struct Empty {
+    }
 
     struct NonPrimitive {
       mString: string
@@ -54,7 +57,5 @@ module FppTest {
       initial enter S
       type SMPrimitive = Primitive
     }
-
   }
-
 }

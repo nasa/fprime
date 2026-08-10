@@ -1,1 +1,2 @@
-passive component Empty {}
+passive component Empty {
+}

@@ -1,28 +1,25 @@
 module Svc {
-
   @ A component for storing parameters
   active component PrmDb {
-
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
 
     @ Parameter DB type
-    enum PrmDbType : U8 {
-      DB_ACTIVE,
+    enum PrmDbType: U8 {
+      DB_ACTIVE
       DB_STAGING
     }
 
     @ State of parameter DB file load operations
-    enum PrmDbFileLoadState : U8 {
-        IDLE,
-        LOADING_FILE_UPDATES,
-        FILE_UPDATES_STAGED,
+    enum PrmDbFileLoadState: U8 {
+      IDLE
+      LOADING_FILE_UPDATES
+      FILE_UPDATES_STAGED
     }
 
-
     @ Parameter read error
-    enum PrmReadError : U8 {
+    enum PrmReadError: U8 {
       OPEN
       DELIMITER
       DELIMITER_SIZE
@@ -41,7 +38,7 @@ module Svc {
     }
 
     @ Parameter write error
-    enum PrmWriteError : U8 {
+    enum PrmWriteError: U8 {
       OPEN
       DELIMITER
       DELIMITER_SIZE
@@ -107,7 +104,5 @@ module Svc {
     # ----------------------------------------------------------------------
 
     include "PrmDbEventDict.fppi"
-
   }
-
 }

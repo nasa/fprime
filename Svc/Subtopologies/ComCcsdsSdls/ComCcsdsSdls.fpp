@@ -1,306 +1,303 @@
 module ComCcsdsSdls {
+  # ----------------------------------------------------------------------
+  # SDLS decryption instances
+  # ----------------------------------------------------------------------
+
+  instance sdlsDeframer: Svc.Ccsds.CcsdsSdlsDeframer base id ComCcsdsSdlsConfig.BASE_ID + 0x00000
+
+  instance decryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x01000
+
+  # ----------------------------------------------------------------------
+  # SDLS encryption instances
+  # ----------------------------------------------------------------------
+
+  instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
+
+  instance encryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x05000
+
+  # NOTE: the 'decryptor' and 'encryptor' instances are defined in the ComCcsdsSdlsConfig
+  # configuration module, allowing projects to override the configuration and select
+  # different decryptor/encryptor implementations. The defaults are
+  # Svc.Ccsds.ClearTextDecryptor and Svc.Ccsds.ClearTextEncryptor (NO security).
+
+  # This subtopology boxes the SDLS decryption layer: the SDLS deframer (SA extraction),
+  # the SA router, and the default decryptor. It sits between the transfer frame layer
+  # and the packet layer in the uplink path.
+  topology SdlsDecryption {
+    # Usage Note:
+    #
+    # When importing this subtopology, users shall establish the following external connections:
+    #
+    # 1) Upstream (transfer frame layer, e.g. ComCcsds.TmTcFraming):
+    #     - [upstream].dataOut                       -> ComCcsdsSdls.SdlsDecryption.dataIn
+    #     - ComCcsdsSdls.SdlsDecryption.dataReturnOut -> [upstream].dataReturnIn
+    # 2) Downstream (packet layer, e.g. ComCcsds.SpacePacketFraming):
+    #     - ComCcsdsSdls.SdlsDecryption.dataOut      -> [downstream].dataIn
+    #     - [downstream].dataReturnOut               -> ComCcsdsSdls.SdlsDecryption.dataReturnIn
+
+    instance sdlsDeframer
+    instance decryptionSaRouter
+    instance decryptor
+
+    connections Decryption {
+      # CcsdsSdlsDeframer <-> SdlsSaRouter (decryption requests and returns)
+      sdlsDeframer.decryptOut            -> decryptionSaRouter.dataIn
+      decryptionSaRouter.dataOut         -> sdlsDeframer.decryptIn
+      sdlsDeframer.decryptReturnOut      -> decryptionSaRouter.dataReturnIn
+      decryptionSaRouter.bufferReturnOut -> sdlsDeframer.bufferReturnIn
+
+      # SdlsSaRouter <-> default decryptor
+      decryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> decryptor.decryptIn
+      decryptor.decryptOut                                                -> decryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+      decryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> decryptor.decryptReturnIn
+      decryptor.bufferReturnOut                                           -> decryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+    }
 
     # ----------------------------------------------------------------------
-    # SDLS decryption instances
+    # Topology ports
     # ----------------------------------------------------------------------
 
-    instance sdlsDeframer: Svc.Ccsds.CcsdsSdlsDeframer base id ComCcsdsSdlsConfig.BASE_ID + 0x00000
+    # Upstream boundary (transfer frame layer)
+    @ Input port receiving TC-deframed SDLS frames from the transfer frame layer
+    port dataIn = sdlsDeframer.dataIn
 
-    instance decryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x01000
+    @ Output port returning ownership of uplinked buffers to the transfer frame layer
+    port dataReturnOut = sdlsDeframer.dataReturnOut
+
+    # Downstream boundary (packet layer)
+    @ Output port sending decrypted data to the packet layer
+    port dataOut = sdlsDeframer.dataOut
+
+    @ Input port receiving back ownership of decrypted buffers from the packet layer
+    port dataReturnIn = sdlsDeframer.dataReturnIn
+  } # end SdlsDecryption
+
+  # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend),
+  # the SA router, and the default encryptor. It sits between the packet layer and
+  # the transfer frame layer in the downlink path.
+  topology SdlsEncryption {
+    # Usage Note:
+    #
+    # When importing this subtopology, users shall establish the following external connections:
+    #
+    # 1) Upstream (packet layer, e.g. ComCcsds.SpacePacketFraming):
+    #     - [upstream].dataOut                        -> ComCcsdsSdls.SdlsEncryption.dataIn
+    #     - ComCcsdsSdls.SdlsEncryption.dataReturnOut -> [upstream].dataReturnIn
+    #     - ComCcsdsSdls.SdlsEncryption.comStatusOut  -> [upstream].comStatusIn
+    # 2) Downstream (transfer frame layer, e.g. ComCcsds.TmTcFraming):
+    #     - ComCcsdsSdls.SdlsEncryption.dataOut       -> [downstream].dataIn
+    #     - [downstream].dataReturnOut                -> ComCcsdsSdls.SdlsEncryption.dataReturnIn
+    #     - [downstream].comStatusOut                 -> ComCcsdsSdls.SdlsEncryption.comStatusIn
+    # 3) Buffer management (e.g. a Svc.BufferManager):
+    #     - ComCcsdsSdls.SdlsEncryption.bufferAllocate   -> [BufferManager].bufferGetCallee
+    #     - ComCcsdsSdls.SdlsEncryption.bufferDeallocate -> [BufferManager].bufferSendIn
+
+    instance sdlsFramer
+    instance encryptionSaRouter
+    instance encryptor
+
+    connections Encryption {
+      # CcsdsSdlsFramer <-> SdlsSaRouter (encryption requests and returns)
+      sdlsFramer.encryptOut              -> encryptionSaRouter.dataIn
+      encryptionSaRouter.dataOut         -> sdlsFramer.encryptIn
+      sdlsFramer.encryptReturnOut        -> encryptionSaRouter.dataReturnIn
+      encryptionSaRouter.bufferReturnOut -> sdlsFramer.bufferReturnIn
+
+      # SdlsSaRouter <-> default encryptor
+      encryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> encryptor.encryptIn
+      encryptor.encryptOut                                                -> encryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+      encryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> encryptor.encryptReturnIn
+      encryptor.bufferReturnOut                                           -> encryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
+    }
 
     # ----------------------------------------------------------------------
-    # SDLS encryption instances
+    # Topology ports
     # ----------------------------------------------------------------------
 
-    instance sdlsFramer: Svc.Ccsds.CcsdsSdlsFramer base id ComCcsdsSdlsConfig.BASE_ID + 0x03000
-
-    instance encryptionSaRouter: Svc.Ccsds.SdlsSaRouter base id ComCcsdsSdlsConfig.BASE_ID + 0x05000
-
-    # NOTE: the 'decryptor' and 'encryptor' instances are defined in the ComCcsdsSdlsConfig
-    # configuration module, allowing projects to override the configuration and select
-    # different decryptor/encryptor implementations. The defaults are
-    # Svc.Ccsds.ClearTextDecryptor and Svc.Ccsds.ClearTextEncryptor (NO security).
-
-    # This subtopology boxes the SDLS decryption layer: the SDLS deframer (SA extraction),
-    # the SA router, and the default decryptor. It sits between the transfer frame layer
-    # and the packet layer in the uplink path.
-    topology SdlsDecryption {
-        # Usage Note:
-        #
-        # When importing this subtopology, users shall establish the following external connections:
-        #
-        # 1) Upstream (transfer frame layer, e.g. ComCcsds.TmTcFraming):
-        #     - [upstream].dataOut                       -> ComCcsdsSdls.SdlsDecryption.dataIn
-        #     - ComCcsdsSdls.SdlsDecryption.dataReturnOut -> [upstream].dataReturnIn
-        # 2) Downstream (packet layer, e.g. ComCcsds.SpacePacketFraming):
-        #     - ComCcsdsSdls.SdlsDecryption.dataOut      -> [downstream].dataIn
-        #     - [downstream].dataReturnOut               -> ComCcsdsSdls.SdlsDecryption.dataReturnIn
-
-        instance sdlsDeframer
-        instance decryptionSaRouter
-        instance decryptor
-
-        connections Decryption {
-            # CcsdsSdlsDeframer <-> SdlsSaRouter (decryption requests and returns)
-            sdlsDeframer.decryptOut       -> decryptionSaRouter.dataIn
-            decryptionSaRouter.dataOut    -> sdlsDeframer.decryptIn
-            sdlsDeframer.decryptReturnOut -> decryptionSaRouter.dataReturnIn
-            decryptionSaRouter.bufferReturnOut -> sdlsDeframer.bufferReturnIn
-
-            # SdlsSaRouter <-> default decryptor
-            decryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> decryptor.decryptIn
-            decryptor.decryptOut          -> decryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
-            decryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> decryptor.decryptReturnIn
-            decryptor.bufferReturnOut     -> decryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
-        }
-
-        # ----------------------------------------------------------------------
-        # Topology ports
-        # ----------------------------------------------------------------------
-
-        # Upstream boundary (transfer frame layer)
-        @ Input port receiving TC-deframed SDLS frames from the transfer frame layer
-        port dataIn        = sdlsDeframer.dataIn
-
-        @ Output port returning ownership of uplinked buffers to the transfer frame layer
-        port dataReturnOut = sdlsDeframer.dataReturnOut
-
-        # Downstream boundary (packet layer)
-        @ Output port sending decrypted data to the packet layer
-        port dataOut       = sdlsDeframer.dataOut
-
-        @ Input port receiving back ownership of decrypted buffers from the packet layer
-        port dataReturnIn  = sdlsDeframer.dataReturnIn
-    } # end SdlsDecryption
-
-    # This subtopology boxes the SDLS encryption layer: the SDLS framer (SA prepend),
-    # the SA router, and the default encryptor. It sits between the packet layer and
-    # the transfer frame layer in the downlink path.
-    topology SdlsEncryption {
-        # Usage Note:
-        #
-        # When importing this subtopology, users shall establish the following external connections:
-        #
-        # 1) Upstream (packet layer, e.g. ComCcsds.SpacePacketFraming):
-        #     - [upstream].dataOut                        -> ComCcsdsSdls.SdlsEncryption.dataIn
-        #     - ComCcsdsSdls.SdlsEncryption.dataReturnOut -> [upstream].dataReturnIn
-        #     - ComCcsdsSdls.SdlsEncryption.comStatusOut  -> [upstream].comStatusIn
-        # 2) Downstream (transfer frame layer, e.g. ComCcsds.TmTcFraming):
-        #     - ComCcsdsSdls.SdlsEncryption.dataOut       -> [downstream].dataIn
-        #     - [downstream].dataReturnOut                -> ComCcsdsSdls.SdlsEncryption.dataReturnIn
-        #     - [downstream].comStatusOut                 -> ComCcsdsSdls.SdlsEncryption.comStatusIn
-        # 3) Buffer management (e.g. a Svc.BufferManager):
-        #     - ComCcsdsSdls.SdlsEncryption.bufferAllocate   -> [BufferManager].bufferGetCallee
-        #     - ComCcsdsSdls.SdlsEncryption.bufferDeallocate -> [BufferManager].bufferSendIn
-
-        instance sdlsFramer
-        instance encryptionSaRouter
-        instance encryptor
-
-        connections Encryption {
-            # CcsdsSdlsFramer <-> SdlsSaRouter (encryption requests and returns)
-            sdlsFramer.encryptOut       -> encryptionSaRouter.dataIn
-            encryptionSaRouter.dataOut  -> sdlsFramer.encryptIn
-            sdlsFramer.encryptReturnOut -> encryptionSaRouter.dataReturnIn
-            encryptionSaRouter.bufferReturnOut -> sdlsFramer.bufferReturnIn
-
-            # SdlsSaRouter <-> default encryptor
-            encryptionSaRouter.saDataOut[SdlsCfg.SaRouterPorts.PLAINTEXT]       -> encryptor.encryptIn
-            encryptor.encryptOut        -> encryptionSaRouter.saDataIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
-            encryptionSaRouter.saDataReturnOut[SdlsCfg.SaRouterPorts.PLAINTEXT] -> encryptor.encryptReturnIn
-            encryptor.bufferReturnOut   -> encryptionSaRouter.saBufferReturnIn[SdlsCfg.SaRouterPorts.PLAINTEXT]
-        }
-
-        # ----------------------------------------------------------------------
-        # Topology ports
-        # ----------------------------------------------------------------------
-
-        # Upstream boundary (packet layer)
-        @ Input port receiving packet-layer data to frame into SDLS frames
-        port dataIn        = sdlsFramer.dataIn
-
-        @ Output port returning ownership of downlinked buffers to the packet layer
-        port dataReturnOut = sdlsFramer.dataReturnOut
-
-        @ Output port forwarding com status to the packet layer
-        port comStatusOut  = sdlsFramer.comStatusOut
-
-        # Downstream boundary (transfer frame layer)
-        @ Output port sending SDLS frames to the transfer frame layer
-        port dataOut       = sdlsFramer.dataOut
-
-        @ Input port receiving back ownership of SDLS frame buffers from the transfer frame layer
-        port dataReturnIn  = sdlsFramer.dataReturnIn
-
-        @ Input port receiving com status from the transfer frame layer
-        port comStatusIn   = sdlsFramer.comStatusIn
-
-        # Buffer management boundary
-        @ Output port allocating SDLS frame buffers
-        port bufferAllocate   = sdlsFramer.bufferAllocate
-
-        @ Output port deallocating SDLS frame buffers
-        port bufferDeallocate = sdlsFramer.bufferDeallocate
-    } # end SdlsEncryption
-
-    # This subtopology composes the ComCcsds SpacePacketFraming packet layer and the
-    # ComCcsds TmTcFraming transfer frame layer with the SdlsDecryption layer inserted
-    # in between on the uplink path and the SdlsEncryption layer inserted in between
-    # on the downlink path.
-    topology FramingSubtopology {
-        # Usage Note:
-        #
-        # When importing this subtopology, users shall establish 5 port connections with a component implementing
-        # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
-        #
-        # 1) Outputs:
-        #     - ComCcsdsSdls.FramingSubtopology.dataOut       -> [Svc.Com].dataIn
-        #     - ComCcsdsSdls.FramingSubtopology.dataReturnOut -> [Svc.Com].dataReturnIn
-        # 2) Inputs:
-        #     - [Svc.Com].dataReturnOut -> ComCcsdsSdls.FramingSubtopology.dataReturnIn
-        #     - [Svc.Com].comStatusOut  -> ComCcsdsSdls.FramingSubtopology.comStatusIn
-        #     - [Svc.Com].dataOut       -> ComCcsdsSdls.FramingSubtopology.dataIn
-
-        # Packet layer (router, ComQueue, space packet framer/deframer, buffer manager)
-        import ComCcsds.SpacePacketFraming
-
-        # TM/TC transfer frame layer (TM framer, frame accumulator, TC deframer)
-        import ComCcsds.TmTcFraming
-
-        # SDLS decryption layer (SDLS deframer, SA router, decryptor)
-        import SdlsDecryption
-
-        # SDLS encryption layer (SDLS framer, SA router, encryptor)
-        import SdlsEncryption
-
-        connections Downlink {
-            # SpacePacketFraming <-> SdlsEncryption (SDLS encryption step)
-            ComCcsds.SpacePacketFraming.dataOut -> SdlsEncryption.dataIn
-            SdlsEncryption.dataReturnOut        -> ComCcsds.SpacePacketFraming.dataReturnIn
-
-            # SdlsEncryption <-> TmTcFraming
-            SdlsEncryption.dataOut             -> ComCcsds.TmTcFraming.dataIn
-            ComCcsds.TmTcFraming.dataReturnOut -> SdlsEncryption.dataReturnIn
-
-            # SdlsEncryption frame buffer allocations
-            SdlsEncryption.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
-            SdlsEncryption.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
-
-            # ComStatus
-            ComCcsds.TmTcFraming.comStatusOut -> SdlsEncryption.comStatusIn
-            SdlsEncryption.comStatusOut       -> ComCcsds.SpacePacketFraming.comStatusIn
-            # (Outgoing) TmTcFraming <-> ComInterface connections shall be established by the user
-        }
+    # Upstream boundary (packet layer)
+    @ Input port receiving packet-layer data to frame into SDLS frames
+    port dataIn = sdlsFramer.dataIn
+
+    @ Output port returning ownership of downlinked buffers to the packet layer
+    port dataReturnOut = sdlsFramer.dataReturnOut
+
+    @ Output port forwarding com status to the packet layer
+    port comStatusOut = sdlsFramer.comStatusOut
+
+    # Downstream boundary (transfer frame layer)
+    @ Output port sending SDLS frames to the transfer frame layer
+    port dataOut = sdlsFramer.dataOut
+
+    @ Input port receiving back ownership of SDLS frame buffers from the transfer frame layer
+    port dataReturnIn = sdlsFramer.dataReturnIn
+
+    @ Input port receiving com status from the transfer frame layer
+    port comStatusIn = sdlsFramer.comStatusIn
+
+    # Buffer management boundary
+    @ Output port allocating SDLS frame buffers
+    port bufferAllocate = sdlsFramer.bufferAllocate
+
+    @ Output port deallocating SDLS frame buffers
+    port bufferDeallocate = sdlsFramer.bufferDeallocate
+  } # end SdlsEncryption
+
+  # This subtopology composes the ComCcsds SpacePacketFraming packet layer and the
+  # ComCcsds TmTcFraming transfer frame layer with the SdlsDecryption layer inserted
+  # in between on the uplink path and the SdlsEncryption layer inserted in between
+  # on the downlink path.
+  topology FramingSubtopology {
+    # Usage Note:
+    #
+    # When importing this subtopology, users shall establish 5 port connections with a component implementing
+    # the Svc.Com (Svc/Interfaces/Com.fpp) interface. They are as follows:
+    #
+    # 1) Outputs:
+    #     - ComCcsdsSdls.FramingSubtopology.dataOut       -> [Svc.Com].dataIn
+    #     - ComCcsdsSdls.FramingSubtopology.dataReturnOut -> [Svc.Com].dataReturnIn
+    # 2) Inputs:
+    #     - [Svc.Com].dataReturnOut -> ComCcsdsSdls.FramingSubtopology.dataReturnIn
+    #     - [Svc.Com].comStatusOut  -> ComCcsdsSdls.FramingSubtopology.comStatusIn
+    #     - [Svc.Com].dataOut       -> ComCcsdsSdls.FramingSubtopology.dataIn
+
+    # Packet layer (router, ComQueue, space packet framer/deframer, buffer manager)
+    import ComCcsds.SpacePacketFraming
+
+    # TM/TC transfer frame layer (TM framer, frame accumulator, TC deframer)
+    import ComCcsds.TmTcFraming
+
+    # SDLS decryption layer (SDLS deframer, SA router, decryptor)
+    import SdlsDecryption
+
+    # SDLS encryption layer (SDLS framer, SA router, encryptor)
+    import SdlsEncryption
+
+    connections Downlink {
+      # SpacePacketFraming <-> SdlsEncryption (SDLS encryption step)
+      ComCcsds.SpacePacketFraming.dataOut -> SdlsEncryption.dataIn
+      SdlsEncryption.dataReturnOut        -> ComCcsds.SpacePacketFraming.dataReturnIn
+
+      # SdlsEncryption <-> TmTcFraming
+      SdlsEncryption.dataOut             -> ComCcsds.TmTcFraming.dataIn
+      ComCcsds.TmTcFraming.dataReturnOut -> SdlsEncryption.dataReturnIn
+
+      # SdlsEncryption frame buffer allocations
+      SdlsEncryption.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
+      SdlsEncryption.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
+
+      # ComStatus
+      ComCcsds.TmTcFraming.comStatusOut -> SdlsEncryption.comStatusIn
+      SdlsEncryption.comStatusOut       -> ComCcsds.SpacePacketFraming.comStatusIn
+      # (Outgoing) TmTcFraming <-> ComInterface connections shall be established by the user
+    }
 
-        connections Uplink {
-            # (Incoming) ComInterface <-> TmTcFraming connections shall be established by the user
-            # TmTcFraming buffer allocations
-            ComCcsds.TmTcFraming.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
-            ComCcsds.TmTcFraming.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
-
-            # TmTcFraming <-> SdlsDecryption (SDLS decryption step)
-            ComCcsds.TmTcFraming.dataOut -> SdlsDecryption.dataIn
-            SdlsDecryption.dataReturnOut -> ComCcsds.TmTcFraming.dataReturnIn
+    connections Uplink {
+      # (Incoming) ComInterface <-> TmTcFraming connections shall be established by the user
+      # TmTcFraming buffer allocations
+      ComCcsds.TmTcFraming.bufferDeallocate -> ComCcsds.SpacePacketFraming.bufferSendIn
+      ComCcsds.TmTcFraming.bufferAllocate   -> ComCcsds.SpacePacketFraming.bufferGetCallee
+
+      # TmTcFraming <-> SdlsDecryption (SDLS decryption step)
+      ComCcsds.TmTcFraming.dataOut -> SdlsDecryption.dataIn
+      SdlsDecryption.dataReturnOut -> ComCcsds.TmTcFraming.dataReturnIn
+
+      # SdlsDecryption <-> SpacePacketFraming
+      SdlsDecryption.dataOut                    -> ComCcsds.SpacePacketFraming.dataIn
+      ComCcsds.SpacePacketFraming.dataReturnOut -> SdlsDecryption.dataReturnIn
+    }
+
+    # ----------------------------------------------------------------------
+    # Topology ports (Svc.Com boundary)
+    # ----------------------------------------------------------------------
+
+    @ Output port sending TM transfer frames to the com interface
+    port dataOut = ComCcsds.framer.dataOut
+
+    @ Input port receiving back ownership of transmitted frame buffers from the com interface
+    port dataReturnIn = ComCcsds.framer.dataReturnIn
 
-            # SdlsDecryption <-> SpacePacketFraming
-            SdlsDecryption.dataOut                    -> ComCcsds.SpacePacketFraming.dataIn
-            ComCcsds.SpacePacketFraming.dataReturnOut -> SdlsDecryption.dataReturnIn
-        }
+    @ Input port receiving com status from the com interface
+    port comStatusIn = ComCcsds.framer.comStatusIn
 
-        # ----------------------------------------------------------------------
-        # Topology ports (Svc.Com boundary)
-        # ----------------------------------------------------------------------
+    @ Input port receiving raw uplink data from the com interface
+    port dataIn = ComCcsds.frameAccumulator.dataIn
 
-        @ Output port sending TM transfer frames to the com interface
-        port dataOut       = ComCcsds.framer.dataOut
+    @ Output port returning ownership of received uplink buffers to the com interface
+    port dataReturnOut = ComCcsds.frameAccumulator.dataReturnOut
+  } # end FramingSubtopology
 
-        @ Input port receiving back ownership of transmitted frame buffers from the com interface
-        port dataReturnIn  = ComCcsds.framer.dataReturnIn
+  # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
+  topology Subtopology {
+    import FramingSubtopology
 
-        @ Input port receiving com status from the com interface
-        port comStatusIn   = ComCcsds.framer.comStatusIn
+    instance ComCcsds.comStub
 
-        @ Input port receiving raw uplink data from the com interface
-        port dataIn        = ComCcsds.frameAccumulator.dataIn
+    connections ComStub {
+      # FramingSubtopology <-> ComStub (Downlink)
+      FramingSubtopology.dataOut     -> ComCcsds.comStub.dataIn
+      ComCcsds.comStub.dataReturnOut -> FramingSubtopology.dataReturnIn
+      ComCcsds.comStub.comStatusOut  -> FramingSubtopology.comStatusIn
 
-        @ Output port returning ownership of received uplink buffers to the com interface
-        port dataReturnOut = ComCcsds.frameAccumulator.dataReturnOut
-    } # end FramingSubtopology
+      # ComStub <-> FramingSubtopology (Uplink)
+      ComCcsds.comStub.dataOut         -> FramingSubtopology.dataIn
+      FramingSubtopology.dataReturnOut -> ComCcsds.comStub.dataReturnIn
+    }
 
-    # This subtopology uses FramingSubtopology with a ComStub component for Com Interface
-    topology Subtopology {
-        import FramingSubtopology
+    # ----------------------------------------------------------------------
+    # Topology ports
+    # ----------------------------------------------------------------------
 
-        instance ComCcsds.comStub
+    # Command routing
+    @ Output port sending routed command packets to the command dispatcher
+    port commandOut = ComCcsds.fprimeRouter.commandOut
 
-        connections ComStub {
-            # FramingSubtopology <-> ComStub (Downlink)
-            FramingSubtopology.dataOut  -> ComCcsds.comStub.dataIn
-            ComCcsds.comStub.dataReturnOut -> FramingSubtopology.dataReturnIn
-            ComCcsds.comStub.comStatusOut  -> FramingSubtopology.comStatusIn
+    @ Input port receiving command response messages back into the router
+    port cmdResponseIn = ComCcsds.fprimeRouter.cmdResponseIn
 
-            # ComStub <-> FramingSubtopology (Uplink)
-            ComCcsds.comStub.dataOut -> FramingSubtopology.dataIn
-            FramingSubtopology.dataReturnOut -> ComCcsds.comStub.dataReturnIn
-        }
+    @ Output port sending uplinked file packets to the file handling stack
+    port fileUplinkOut = ComCcsds.fprimeRouter.fileOut
 
-        # ----------------------------------------------------------------------
-        # Topology ports
-        # ----------------------------------------------------------------------
+    @ Input port receiving back buffer ownership from the file handling stack
+    port fileUplinkReturnIn = ComCcsds.fprimeRouter.fileBufferReturnIn
 
-        # Command routing
-        @ Output port sending routed command packets to the command dispatcher
-        port commandOut         = ComCcsds.fprimeRouter.commandOut
+    # Telemetry/events/file queuing (array ports - index at connection site)
+    @ Input port array for queueing Fw::ComBuffers
+    port comPacketQueueIn = ComCcsds.comQueue.comPacketQueueIn
 
-        @ Input port receiving command response messages back into the router
-        port cmdResponseIn      = ComCcsds.fprimeRouter.cmdResponseIn
+    @ Input port array for queueing Fw::Buffers
+    port bufferQueueIn = ComCcsds.comQueue.bufferQueueIn
 
-        @ Output port sending uplinked file packets to the file handling stack
-        port fileUplinkOut          = ComCcsds.fprimeRouter.fileOut
+    @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
+    port bufferReturnOut = ComCcsds.comQueue.bufferReturnOut
 
-        @ Input port receiving back buffer ownership from the file handling stack
-        port fileUplinkReturnIn = ComCcsds.fprimeRouter.fileBufferReturnIn
+    # ComDriver interface (via ComStub)
+    @ Input port receiving data read from the ByteStream driver
+    port drvReceiveIn = ComCcsds.comStub.drvReceiveIn
 
-        # Telemetry/events/file queuing (array ports - index at connection site)
-        @ Input port array for queueing Fw::ComBuffers
-        port comPacketQueueIn = ComCcsds.comQueue.comPacketQueueIn
+    @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
+    port drvReceiveReturnOut = ComCcsds.comStub.drvReceiveReturnOut
 
-        @ Input port array for queueing Fw::Buffers
-        port bufferQueueIn    = ComCcsds.comQueue.bufferQueueIn
+    @ Output port sending framed data to the ByteStream driver for transmission
+    port drvSendOut = ComCcsds.comStub.drvSendOut
 
-        @ Output port array returning ownership of Fw::Buffers to their original sender after dequeuing
-        port bufferReturnOut  = ComCcsds.comQueue.bufferReturnOut
+    @ Input port receiving the ready signal when the ByteStream driver has connected
+    port drvConnected = ComCcsds.comStub.drvConnected
 
-        # ComDriver interface (via ComStub)
-        @ Input port receiving data read from the ByteStream driver
-        port drvReceiveIn        = ComCcsds.comStub.drvReceiveIn
+    # Buffer management for ComDriver
+    @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
+    port commsBufferGetCallee = ComCcsds.commsBufferManager.bufferGetCallee
 
-        @ Output port returning ownership of the buffer that came in on drvReceiveIn back to the driver
-        port drvReceiveReturnOut = ComCcsds.comStub.drvReceiveReturnOut
+    @ Input port for deallocating Fw::Buffers back into the comms buffer pool
+    port commsBufferSendIn = ComCcsds.commsBufferManager.bufferSendIn
 
-        @ Output port sending framed data to the ByteStream driver for transmission
-        port drvSendOut          = ComCcsds.comStub.drvSendOut
+    # Scheduling
+    @ Input port for scheduling ComQueue telemetry output
+    port comQueueRun = ComCcsds.comQueue.run
 
-        @ Input port receiving the ready signal when the ByteStream driver has connected
-        port drvConnected        = ComCcsds.comStub.drvConnected
+    @ Rate-group driven timeout to flush the ComAggregator buffer
+    port aggregatorTimeout = ComCcsds.aggregator.timeout
 
-        # Buffer management for ComDriver
-        @ Input port for requesting (allocating) a new Fw::Buffer from the comms buffer pool
-        port commsBufferGetCallee = ComCcsds.commsBufferManager.bufferGetCallee
-
-        @ Input port for deallocating Fw::Buffers back into the comms buffer pool
-        port commsBufferSendIn    = ComCcsds.commsBufferManager.bufferSendIn
-
-        # Scheduling
-        @ Input port for scheduling ComQueue telemetry output
-        port comQueueRun          = ComCcsds.comQueue.run
-
-        @ Rate-group driven timeout to flush the ComAggregator buffer
-        port aggregatorTimeout    = ComCcsds.aggregator.timeout
-
-        @ Input port triggering commsBufferManager telemetry output
-        port bufferManagerSchedIn = ComCcsds.commsBufferManager.schedIn
-
-    } # end Subtopology
-
+    @ Input port triggering commsBufferManager telemetry output
+    port bufferManagerSchedIn = ComCcsds.commsBufferManager.schedIn
+  } # end Subtopology
 } # end ComCcsdsSdls

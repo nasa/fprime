@@ -1,3 +1,3 @@
 module Os {
-    type RawTime
+  type RawTime
 }

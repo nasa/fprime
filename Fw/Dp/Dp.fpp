@@ -1,5 +1,4 @@
 module Fw {
-
   # ----------------------------------------------------------------------
   # Types
   # ----------------------------------------------------------------------
@@ -26,12 +25,12 @@ module Fw {
   @ to hold a data product packet with the requested data size (if
   @ status is SUCCESS) or an invalid buffer (if status is FAILURE).
   port DpGet(
-      @ The container ID (input)
-      $id: FwDpIdType
-      @ The data size of the requested buffer (input)
-      dataSize: FwSizeType
-      @ The buffer (output)
-      ref buffer: Fw.Buffer
+    @ The container ID (input)
+    $id: FwDpIdType
+    @ The data size of the requested buffer (input)
+    dataSize: FwSizeType
+    @ The buffer (output)
+    ref buffer: Fw.Buffer
   ) -> Fw.Success
 
   @ Port for sending a request for a data product buffer to
@@ -39,28 +38,27 @@ module Fw {
   @ large enough to hold a data product packet with the requested
   @ data size.
   port DpRequest(
-      @ The container ID
-      $id: FwDpIdType
-      @ The data size of the requested buffer
-      dataSize: FwSizeType
+    @ The container ID
+    $id: FwDpIdType
+    @ The data size of the requested buffer
+    dataSize: FwSizeType
   )
 
   @ Port for receiving a response to a buffer request
   port DpResponse(
-      @ The container ID
-      $id: FwDpIdType
-      @ The buffer
-      buffer: Fw.Buffer
-      @ The status
-      status: Fw.Success
+    @ The container ID
+    $id: FwDpIdType
+    @ The buffer
+    buffer: Fw.Buffer
+    @ The status
+    status: Fw.Success
   )
 
   @ Port for sending a data product buffer
   port DpSend(
-      @ The container ID
-      $id: FwDpIdType
-      @ The buffer
-      buffer: Fw.Buffer
+    @ The container ID
+    $id: FwDpIdType
+    @ The buffer
+    buffer: Fw.Buffer
   )
-
 }

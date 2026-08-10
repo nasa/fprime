@@ -3,11 +3,9 @@
 # ======================================================================
 
 module Svc {
-
   module VersionCfg {
-
     @ Define a set of Version entries on a project-specific
-    @ basis. 
+    @ basis.
     enum VersionEnum: U32 {
       @ Entry 0
       PROJECT_VERSION_00
@@ -30,7 +28,5 @@ module Svc {
       @ Entry 9
       PROJECT_VERSION_09
     }
-
   }
-
 }

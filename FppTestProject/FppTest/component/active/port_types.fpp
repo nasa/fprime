@@ -23,25 +23,25 @@ port StringArgs(
 
 @ A port with enum arguments
 port EnumArgs(
-  en: FormalParamEnum @< An enum
-  ref enRef: FormalParamEnum @< An enum ref
-  enA: FormalAliasEnum @< An enum alias
+  en: FormalParamEnum         @< An enum
+  ref enRef: FormalParamEnum  @< An enum ref
+  enA: FormalAliasEnum        @< An enum alias
   ref enARef: FormalAliasEnum @< An enum alias ref
 )
 
 @ A port with array arguments
 port ArrayArgs(
-  a: FormalParamArray @< An array
-  ref aRef: FormalParamArray @< An array ref
-  b: FormalAliasArray @< alias of an array
-  ref bRef: FormalAliasArray @< alias of array ref
-  c: FormalAliasStringArray @< array of string aliases
+  a: FormalParamArray              @< An array
+  ref aRef: FormalParamArray       @< An array ref
+  b: FormalAliasArray              @< alias of an array
+  ref bRef: FormalAliasArray       @< alias of array ref
+  c: FormalAliasStringArray        @< array of string aliases
   ref cRef: FormalAliasStringArray @< array of string aliases ref
 )
 
 @ A port with struct arguments
 port StructArgs(
-  s: FormalParamStruct @< A struct
+  s: FormalParamStruct        @< A struct
   ref sRef: FormalParamStruct @< A struct ref
 )
 
@@ -60,36 +60,36 @@ port PrimitiveReturn(
 
 @ A port returning a string type
 port StringReturn(
-  str: string @< A string
+  str: string        @< A string
   ref strRef: string @< A string ref
 ) -> string
 
 @ A port returning a string type
 port StringAliasReturn(
-  str: string @< A string
+  str: string        @< A string
   ref strRef: string @< A string ref
 ) -> FormalAliasString
 
 @ A port returning an enum type
 port EnumReturn(
-  en: FormalParamEnum @< An enum
+  en: FormalParamEnum        @< An enum
   ref enRef: FormalParamEnum @< An enum ref
 ) -> FormalParamEnum
 
 @ A port returning an array type
 port ArrayReturn(
-  a: FormalParamArray @< An array
+  a: FormalParamArray        @< An array
   ref aRef: FormalParamArray @< An array ref
 ) -> FormalParamArray
 
 @ A port returning an array type of string aliases
 port ArrayStringAliasReturn(
-  a: FormalParamArray @< An array
+  a: FormalParamArray        @< An array
   ref aRef: FormalParamArray @< An array ref
 ) -> FormalAliasStringArray
 
 @ A port returning a struct type
 port StructReturn(
-  s: FormalParamStruct @< A struct
+  s: FormalParamStruct        @< A struct
   ref sRef: FormalParamStruct @< A struct ref
 ) -> FormalParamStruct

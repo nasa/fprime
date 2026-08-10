@@ -8,13 +8,17 @@ telemetry CurrBuffs: U32 id 0x01 update on change
 telemetry HiBuffs: U32 id 0x02 update on change
 
 @ The number of requests that couldn't return a buffer
-telemetry NoBuffs: U32 id 0x03 update on change \
+telemetry NoBuffs: U32 \
+  id 0x03 \
+  update on change \
   high {
     red 1
   }
 
 @ The number of empty buffers returned
-telemetry EmptyBuffs: U32 id 0x04 update on change \
+telemetry EmptyBuffs: U32 \
+  id 0x04 \
+  update on change \
   high {
     red 1
   }

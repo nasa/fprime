@@ -1,8 +1,6 @@
 module Svc {
-
   @ A rate group passive component with input and output scheduler ports
   passive component PassiveRateGroup {
-
     @ The rate group cycle input
     sync input port CycleIn: Cycle
 
@@ -27,7 +25,5 @@ module Svc {
 
     @ A port for emitting telemetry
     telemetry port Tlm
-
   }
-
 }

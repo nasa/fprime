@@ -1,10 +1,8 @@
 module Svc {
-module Ccsds {
-module Cfdp {
-
-    @ F' implementation of the CFDP file transfer protocol
-    active component CfdpManager {
-
+  module Ccsds {
+    module Cfdp {
+      @ F' implementation of the CFDP file transfer protocol
+      active component CfdpManager {
         ##############################################################################
         # Includes
         ##############################################################################
@@ -55,7 +53,6 @@ module Cfdp {
         @ File send complete notification port
         output port fileDoneOut: Svc.SendFileComplete
 
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################
@@ -76,8 +73,7 @@ module Cfdp {
 
         @Port to set the value of a parameter
         param set port prmSetOut
-
-    }
-} # end Cfdp
-} # end Ccsds
+      }
+    } # end Cfdp
+  } # end Ccsds
 } # end Svc

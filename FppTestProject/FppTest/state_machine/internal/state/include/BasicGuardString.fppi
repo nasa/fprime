@@ -1,9 +1,7 @@
 constant basicGuardStringSize = 80
 
 @ A basic state machine with a string guard
-state machine BasicGuardString { 
-
-
+state machine BasicGuardString {
   @ Action a
   action a: string
 
@@ -17,13 +15,10 @@ state machine BasicGuardString {
 
   @ State S
   state S {
-
     @ State transition
     on s if g do { a } enter T
-
   }
 
   @ State T
   state T
-
 }

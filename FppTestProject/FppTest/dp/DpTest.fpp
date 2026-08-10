@@ -1,8 +1,6 @@
 module FppTest {
-
   @ A component for testing data product code gen
   active component DpTest {
-
     # ----------------------------------------------------------------------
     # Constants
     # ----------------------------------------------------------------------
@@ -94,7 +92,5 @@ module FppTest {
 
     @ Container 7
     product container Container7 id 700 default priority 70
-
   }
-
 }

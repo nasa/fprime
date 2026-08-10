@@ -1,6 +1,6 @@
 module Svc {
-    interface Time {
-        @ Port to retrieve time
-        sync input port timeGetPort: Fw.Time
-    }
+  interface Time {
+    @ Port to retrieve time
+    sync input port timeGetPort: Fw.Time
+  }
 }

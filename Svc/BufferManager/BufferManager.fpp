@@ -1,8 +1,6 @@
 module Svc {
-
   @ A component for managing memory buffers
   passive component BufferManager {
-
     # ----------------------------------------------------------------------
     # General ports
     # ----------------------------------------------------------------------
@@ -43,7 +41,5 @@ module Svc {
     # ----------------------------------------------------------------------
 
     include "Telemetry.fppi"
-
   }
-
 }

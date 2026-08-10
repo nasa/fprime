@@ -1,11 +1,10 @@
 module Fw {
-  
-  @ Data structure for Time 
+  @ Data structure for Time
   dictionary struct TimeValue {
-    timeBase: TimeBase  @< basis of time (defined by system)
-    timeContext: FwTimeContextStoreType  @< user settable value. Could be reboot count, node, etc
-    seconds: U32  @< seconds portion of Time
-    useconds: U32  @< microseconds portion of Time
+    timeBase: TimeBase                  @< basis of time (defined by system)
+    timeContext: FwTimeContextStoreType @< user settable value. Could be reboot count, node, etc
+    seconds: U32                        @< seconds portion of Time
+    useconds: U32                       @< microseconds portion of Time
   }
 
   type Time
@@ -18,7 +17,7 @@ module Fw {
   @ Data structure for Time Interval
   dictionary struct TimeIntervalValue {
     seconds: U32  @< seconds portion of TimeInterval
-    useconds: U32  @< microseconds portion of TimeInterval
+    useconds: U32 @< microseconds portion of TimeInterval
   }
 
   type TimeInterval
@@ -29,10 +28,9 @@ module Fw {
   )
 
   dictionary enum TimeComparison {
-    LT = -1
-    EQ = 0
-    GT = 1
+    LT           = -1
+    EQ           = 0
+    GT           = 1
     INCOMPARABLE = 2
   }
-
 }

@@ -1,9 +1,7 @@
 module Svc {
-
   @ A component for deframing input received from the ground
   @ via a FrameAccumulator
   passive component FprimeDeframer {
-
     # ----------------------------------------------------------------------
     # Deframer interface
     # ----------------------------------------------------------------------
@@ -36,7 +34,7 @@ module Svc {
       format "The received buffer is too short to contain a valid FwPacketDescriptor"
 
     ###############################################################################
-    # Standard AC Ports for Events 
+    # Standard AC Ports for Events
     ###############################################################################
     @ Port for requesting the current time
     time get port timeCaller
@@ -47,5 +45,4 @@ module Svc {
     @ Port for sending events to downlink
     event port logOut
   }
-
 }

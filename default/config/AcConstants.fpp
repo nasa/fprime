@@ -58,7 +58,7 @@ constant FwAssertTextSize = 256
 @ Note: File names in assertion failures are also truncated by
 @ the constants FwAssertTextSize (in this file) and FW_LOG_STRING_MAX_SIZE (set
 @ in FW_LOG_STRING_MAX_SIZE)
-@ Set much smaller than FwAssertTextSize so there's space for time stamp/assert 
+@ Set much smaller than FwAssertTextSize so there's space for time stamp/assert
 @ arguments in log message
 constant AssertFatalAdapterEventFileSize = FileNameStringSize
 

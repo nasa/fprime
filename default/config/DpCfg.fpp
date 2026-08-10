@@ -3,12 +3,10 @@
 # ======================================================================
 
 module Fw {
-
   module DpCfg {
-
     @ The size in bytes of the user-configurable data in the container
     @ packet header
-    constant CONTAINER_USER_DATA_SIZE = 32;
+    constant CONTAINER_USER_DATA_SIZE = 32
 
     @ A bit mask for selecting the type of processing to perform on
     @ a container before writing it to disk.
@@ -22,7 +20,5 @@ module Fw {
       @ Processing type 2
       PROC_TYPE_TWO = 0x04
     }
-
   }
-
 }

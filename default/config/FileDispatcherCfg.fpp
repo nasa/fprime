@@ -3,9 +3,7 @@
 # ======================================================================
 
 module Svc {
-
   module FileDispatcherCfg {
-
     @ An enumeration that maps file types to ports in the FileDispatcher component.
     @ Projects can add custom dispatcher ports by extending this enumeration.
 
@@ -20,8 +18,6 @@ module Svc {
       MAX_FILE_DISPATCH_PORTS = 3
     }
 
-    constant FILE_DISPATCHER_MAX_TABLE_SIZE = 10;
-
+    constant FILE_DISPATCHER_MAX_TABLE_SIZE = 10
   }
-
 }

@@ -1,5 +1,4 @@
 module Drv {
-
   @ A passive component for mediating between the ByteStreamDriver
   @ interface and the PassiveBufferDriver interface
   @
@@ -20,7 +19,6 @@ module Drv {
   @ -------------------------------------------------
   @
   passive component ByteStreamBufferAdapter {
-
     @ ByteStreamBufferAdapter is a passive client of the ByteStreamDriver
     @ interface
     import PassiveByteStreamDriverClient
@@ -44,20 +42,15 @@ module Drv {
       format "Buffer Driver not ready"
 
     @Data Send
-    event DataSendError(
-                          stat: I32 
-                        ) \
+    event DataSendError(stat: I32) \
       severity warning low \
       id 1 \
       format "Data send error status: {}"
 
     @Data Receive
-    event DataReceiveError(
-                          stat: I32 
-                        ) \
+    event DataReceiveError(stat: I32) \
       severity warning low \
       id 2 \
       format "Data reception error status: {}"
   }
-
 }

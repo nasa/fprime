@@ -1,6 +1,5 @@
 @ A queued component
 queued component QueuedTest {
-
   import FppTest.SerialPorts
   import FppTest.SerialPortsAsync
   import FppTest.SpecialPorts
@@ -19,5 +18,4 @@ queued component QueuedTest {
   include "../include/telemetry.fppi"
   include "../include/params.fppi"
   include "../include/external_params.fppi"
-
 }

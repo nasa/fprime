@@ -18,10 +18,10 @@ permissions:
 
 jobs:
   cpp-formatting:
-    name: C++ Formatting
+    name: C++ and FPP Formatting
     runs-on: ubuntu-22.04
     steps:
-      - name: "Checkout F´ Repository"
+      - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -31,9 +31,11 @@ jobs:
         with:
           python-version: 3.12
       - uses: ./.github/actions/setup
-      - name: "Check C++ Formatting"
+      - name: "Check C++ and FPP Formatting"
         env:
           # Svc is currently listing all but Svc/FpySequencer
+          # 'fprime-util format --check' routes C/C++ files to clang-format and
+          # .fpp files to fpp-format (from the fprime-fpp-format package).
           CHECKED_DIRS: >-
             CFDP
             default

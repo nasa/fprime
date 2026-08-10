@@ -1,6 +1,5 @@
 @ A basic state machine with a U32 guard
-state machine BasicGuardU32 { 
-
+state machine BasicGuardU32 {
   @ Action a
   action a: U32
 
@@ -14,13 +13,10 @@ state machine BasicGuardU32 {
 
   @ State S
   state S {
-
     @ State transition
     on s if g do { a } enter T
-
   }
 
   @ State T
   state T
-
 }

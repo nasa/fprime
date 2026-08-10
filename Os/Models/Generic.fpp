@@ -4,10 +4,9 @@
 # ======================================================================
 
 module Os {
-@ FPP shadow-enum representing Os::Generic::Status
-enum GenericStatus : U8 {
-    OP_OK, @< operation okay
-    ERROR, @< error return value
+  @ FPP shadow-enum representing Os::Generic::Status
+  enum GenericStatus: U8 {
+    OP_OK @< operation okay
+    ERROR @< error return value
+  }
 }
-}
-

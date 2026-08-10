@@ -1,5 +1,4 @@
 module FppTest {
-
   # ----------------------------------------------------------------------
   # Defaults
   # ----------------------------------------------------------------------
@@ -30,5 +29,4 @@ module FppTest {
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 20
-
 }

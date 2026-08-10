@@ -1,20 +1,21 @@
 module Svc {
   @ A component for storing telemetry
   active component TlmChan {
-#-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-#Events
-#-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    #Events
+    #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-      @Epoch Processing cap reached; one or more telemetry entries were deferred this cycle
+    @Epoch Processing cap reached; one or more telemetry entries were deferred this cycle
     event TlmChanEpochProcessingCapReached(
-        numDeferred: U32 @< Entries skipped (dropped) this invocation
-        numTimesDeferredCountReached: U32 @< Cumulative invocations where cap was reached
-    ) severity warning high \
-    format "TlmChan epoch processing cap reached: {} entries deferred (cumulative: {})"
+      numDeferred: U32                  @< Entries skipped (dropped) this invocation
+      numTimesDeferredCountReached: U32 @< Cumulative invocations where cap was reached
+    ) \
+      severity warning high \
+      format "TlmChan epoch processing cap reached: {} entries deferred (cumulative: {})"
 
-#-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-#Ports
-#-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    #Ports
+    #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
     @ Guarded port for receiving telemetry values
     guarded input port TlmRecv: Fw.Tlm

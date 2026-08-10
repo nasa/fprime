@@ -1,6 +1,5 @@
 @ A state machine with an initial choice
 state machine Choice {
-
   @ Action a
   action a
 
@@ -10,7 +9,9 @@ state machine Choice {
   initial do { a } enter C
 
   @ Choice C
-  choice C { if g do { a } enter S else do { a, a } enter T }
+  choice C {
+    if g do { a } enter S else do { a, a } enter T
+  }
 
   @ State S
   state S {
@@ -21,5 +22,4 @@ state machine Choice {
   state T {
     entry do { a, a }
   }
-
 }

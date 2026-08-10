@@ -5,6 +5,6 @@
 #####
 
 module Fw {
-    @ Port to signal some condition
-    port Signal()
+  @ Port to signal some condition
+  port Signal()
 }

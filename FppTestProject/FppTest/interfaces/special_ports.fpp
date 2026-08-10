@@ -1,42 +1,42 @@
 module FppTest {
-    interface SpecialPorts {
-        @ A port for receiving commands
-        command recv port cmdIn
+  interface SpecialPorts {
+    @ A port for receiving commands
+    command recv port cmdIn
 
-        @ A port for sending command registration requests
-        command reg port cmdRegOut
+    @ A port for sending command registration requests
+    command reg port cmdRegOut
 
-        @ A port for sending command responses
-        command resp port cmdResponseOut
+    @ A port for sending command responses
+    command resp port cmdResponseOut
 
-        @ A port for emitting events
-        event port eventOut
+    @ A port for emitting events
+    event port eventOut
 
-        @ A port for emitting text events
-        text event port textEventOut
+    @ A port for emitting text events
+    text event port textEventOut
 
-        @ A port for emitting telemetry
-        telemetry port tlmOut
+    @ A port for emitting telemetry
+    telemetry port tlmOut
 
-        @ A port for getting parameter values
-        param get port prmGetOut
+    @ A port for getting parameter values
+    param get port prmGetOut
 
-        @ A port for setting parameter values
-        param set port prmSetOut
+    @ A port for setting parameter values
+    param set port prmSetOut
 
-        @ A port for getting the time
-        time get port timeGetOut
+    @ A port for getting the time
+    time get port timeGetOut
 
-        @ Data product get port
-        product get port productGetOut
+    @ Data product get port
+    product get port productGetOut
 
-        @ Data product request port
-        product request port productRequestOut
+    @ Data product request port
+    product request port productRequestOut
 
-        @ Data product receive port
-        sync product recv port productRecvIn
+    @ Data product receive port
+    sync product recv port productRecvIn
 
-        @ Data product send port
-        product send port productSendOut
-    }
+    @ Data product send port
+    product send port productSendOut
+  }
 }

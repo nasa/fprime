@@ -1,6 +1,5 @@
 @ A basic state machine with a TestStruct guard
-state machine BasicGuardTestStruct { 
-
+state machine BasicGuardTestStruct {
   @ Action a
   action a: SmHarness.TestStruct
 
@@ -14,13 +13,10 @@ state machine BasicGuardTestStruct {
 
   @ State S
   state S {
-
     @ State transition
     on s if g do { a } enter T
-
   }
 
   @ State T
   state T
-
 }

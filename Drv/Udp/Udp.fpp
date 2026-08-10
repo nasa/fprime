@@ -1,11 +1,8 @@
 module Drv {
-    passive component Udp {
+  passive component Udp {
+    import ByteStreamDriver
+    output port allocate: Fw.BufferGet
 
-        import ByteStreamDriver
-        
-        output port allocate: Fw.BufferGet
-
-        output port deallocate: Fw.BufferSend
-
-    }
+    output port deallocate: Fw.BufferSend
+  }
 }

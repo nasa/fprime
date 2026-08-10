@@ -1,6 +1,5 @@
-    @ A basic state machine with a TestEnum guard
-state machine BasicGuardTestEnum { 
-
+@ A basic state machine with a TestEnum guard
+state machine BasicGuardTestEnum {
   @ Action a
   action a: SmHarness.TestEnum
 
@@ -14,13 +13,10 @@ state machine BasicGuardTestEnum {
 
   @ State S
   state S {
-
     @ State transition
     on s if g do { a } enter T
-
   }
 
   @ State T
   state T
-
 }

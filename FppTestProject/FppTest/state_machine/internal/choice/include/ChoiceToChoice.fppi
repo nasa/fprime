@@ -1,7 +1,6 @@
 @ A state machine for testing choice-to-choice transitions
 @ with hierarchy
 state machine ChoiceToChoice {
-
   @ Exit S1
   action exitS1
 
@@ -25,7 +24,6 @@ state machine ChoiceToChoice {
 
   @ State S1
   state S1 {
-
     @ Exit S1
     exit do { exitS1 }
 
@@ -36,12 +34,10 @@ state machine ChoiceToChoice {
 
     @ State transition to C1
     on s enter C1
-
   }
 
   @ State S2
   state S2 {
-
     @ Enter S2
     entry do { enterS2 }
 
@@ -58,7 +54,5 @@ state machine ChoiceToChoice {
 
     @ State S4
     state S4
-
   }
-
 }

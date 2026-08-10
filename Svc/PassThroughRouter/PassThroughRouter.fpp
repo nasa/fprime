@@ -1,8 +1,6 @@
 module Svc {
-
   @ A direct pass through router for single custom route use cases
   passive component PassThroughRouter {
-
     @ Receiving data (Fw::Buffer) to be routed with optional context to help with routing
     sync input port dataIn: Svc.ComDataWithContext
 
@@ -20,7 +18,5 @@ module Svc {
 
     @ Enables event handling
     import Fw.Event
-
   }
-
 }

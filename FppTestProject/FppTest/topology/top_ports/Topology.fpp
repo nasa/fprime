@@ -1,5 +1,4 @@
 module FppTest {
-
   instance sender1Top: Sender base id 0x2010 queue size 1
   instance sender2Top: Sender base id 0x2020 queue size 1
 
@@ -55,22 +54,22 @@ module FppTest {
     instance ReceiverTop
 
     connections Top2Top {
-        SenderTop.primitiveArgsOut1[0] -> ReceiverTop.primitiveArgsSync1[0]
-        SenderTop.primitiveArgsOut1[1] -> ReceiverTop.primitiveArgsSync1[1]
-        SenderTop.primitiveArgsOut1[2] -> ReceiverTop.serialIn1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+      SenderTop.primitiveArgsOut1[0] -> ReceiverTop.primitiveArgsSync1[0]
+      SenderTop.primitiveArgsOut1[1] -> ReceiverTop.primitiveArgsSync1[1]
+      SenderTop.primitiveArgsOut1[2] -> ReceiverTop.serialIn1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
 
-        SenderTop.primitiveArgsOut2[0] -> ReceiverTop.primitiveArgsSync2[0]
-        SenderTop.primitiveArgsOut2[1] -> ReceiverTop.primitiveArgsSync2[1]
-        SenderTop.primitiveArgsOut2[2] -> ReceiverTop.serialIn2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
+      SenderTop.primitiveArgsOut2[0] -> ReceiverTop.primitiveArgsSync2[0]
+      SenderTop.primitiveArgsOut2[1] -> ReceiverTop.primitiveArgsSync2[1]
+      SenderTop.primitiveArgsOut2[2] -> ReceiverTop.serialIn2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
 
-        ReceiverTop.replyOut1[SenderId.SYNC] -> SenderTop.replyIn1
-        ReceiverTop.replyOut2[SenderId.SYNC] -> SenderTop.replyIn2
+      ReceiverTop.replyOut1[SenderId.SYNC] -> SenderTop.replyIn1
+      ReceiverTop.replyOut2[SenderId.SYNC] -> SenderTop.replyIn2
 
-        ReceiverTop.serialReplyOut1[SenderId.SYNC] -> SenderTop.serialReplyIn1
-        ReceiverTop.serialReplyOut2[SenderId.SYNC] -> SenderTop.serialReplyIn2
+      ReceiverTop.serialReplyOut1[SenderId.SYNC] -> SenderTop.serialReplyIn1
+      ReceiverTop.serialReplyOut2[SenderId.SYNC] -> SenderTop.serialReplyIn2
 
-        SenderTop.serialOut1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync1[2]
-        SenderTop.serialOut2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync2[2]
+      SenderTop.serialOut1[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync1[2]
+      SenderTop.serialOut2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC] -> ReceiverTop.primitiveArgsSync2[2]
     }
 
     connections SerialToSerialTest {
@@ -78,5 +77,4 @@ module FppTest {
       SenderTop.serialOut2[TestDeploymentPort.SERIAL] -> ReceiverTop.serialIn2[TestDeploymentPort.PRIMITIVE_ARGS_SYNC]
     }
   }
-
 }

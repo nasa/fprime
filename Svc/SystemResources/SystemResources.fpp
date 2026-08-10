@@ -1,15 +1,12 @@
 module Svc {
-
-  enum SystemResourceEnabled : U8 {
+  enum SystemResourceEnabled: U8 {
     DISABLED = 0
-    ENABLED = 1
+    ENABLED  = 1
   }
 
   passive component SystemResources {
-
     @ Run port
     guarded input port run: [1] Svc.Sched
-    
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------
@@ -35,28 +32,23 @@ module Svc {
     @ Telemetry port
     telemetry port Tlm
 
-
     @ A command to enable or disable system resource telemetry
     guarded command ENABLE(
-                            enable: SystemResourceEnabled @< whether or not system resource telemetry is enabled
-                          ) \
+      enable: SystemResourceEnabled @< whether or not system resource telemetry is enabled
+    ) \
       opcode 0
 
     @ Total system memory in KB
-    telemetry MEMORY_TOTAL: U64 id 0 \
-      format "{} KB"
+    telemetry MEMORY_TOTAL: U64 id 0 format "{} KB"
 
     @ System memory used in KB
-    telemetry MEMORY_USED: U64 id 1 \
-      format "{} KB"
+    telemetry MEMORY_USED: U64 id 1 format "{} KB"
 
     @ System non-volatile available in KB
-    telemetry NON_VOLATILE_TOTAL: U64 id 2 \
-      format "{} KB"
+    telemetry NON_VOLATILE_TOTAL: U64 id 2 format "{} KB"
 
     @ System non-volatile available in KB
-    telemetry NON_VOLATILE_FREE: U64 id 3 \
-      format "{} KB"
+    telemetry NON_VOLATILE_FREE: U64 id 3 format "{} KB"
 
     @ System's CPU Percentage
     telemetry CPU: F32 id 4 format "{.2f} percent"
@@ -108,7 +100,5 @@ module Svc {
 
     @ System's CPU Percentage
     telemetry CPU_15: F32 id 20 format "{.2f} percent"
-
   }
-
 }

@@ -14,4 +14,6 @@ telemetry CS_CommandsExecuted: U32 id 3
 telemetry CS_SequencesCompleted: U32 id 4
 
 @ The sequence file currently executing
-telemetry CS_CurrentSequence: string size FileNameStringSize id 5 update on change
+telemetry CS_CurrentSequence: string size FileNameStringSize \
+  id 5 \
+  update on change

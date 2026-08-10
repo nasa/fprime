@@ -1,5 +1,4 @@
 module Svc {
-
   @| ----------------------------------------------------------------------
   @| A generic hub component
   @| ----------------------------------------------------------------------
@@ -41,7 +40,6 @@ module Svc {
   @| its interface, and so can support any transport mechanism.
   @| ----------------------------------------------------------------------
   passive component GenericHub {
-
     # ----------------------------------------------------------------------
     # Ports for sending data from FSW to the hub
     # ----------------------------------------------------------------------
@@ -103,7 +101,7 @@ module Svc {
     @ bufferIn and bufferInReturn ports must match
     match bufferIn with bufferInReturn
 
-    @ for sending remote commands 
+    @ for sending remote commands
     sync input port cmdDispIn: [CmdDispatcherSequencePorts] Fw.Com
 
     @ Command response back from remote hub
@@ -179,7 +177,7 @@ module Svc {
     @ Port for receiving events
     @ Data emitted on this port is copied from a buffer received on fromBufferDriver,
     @ and the buffer is returned.
-    output port eventOut:  Fw.Log
+    output port eventOut: Fw.Log
 
     @ Port for receiving telemetry channels
     @ Data emitted on this port is copied from a buffer received on fromBufferDriver,
@@ -206,9 +204,7 @@ module Svc {
     @ handling remote commands
     output port cmdDispOut: [CmdDispatcherSequencePorts] Fw.Com
 
-    @ remote command response 
+    @ remote command response
     sync input port cmdRespIn: [CmdDispatcherSequencePorts] Fw.CmdResponse
-
   }
-
 }

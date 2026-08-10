@@ -1,6 +1,5 @@
 @ A basic state machine with a self transition
 state machine BasicSelf {
-
   @ Action a
   action a
 
@@ -11,7 +10,6 @@ state machine BasicSelf {
 
   @ State S
   state S {
-
     @ Entry
     entry do { a }
 
@@ -20,7 +18,5 @@ state machine BasicSelf {
 
     @ State transition
     on s do { a, a, a } enter S
-
   }
-
 }

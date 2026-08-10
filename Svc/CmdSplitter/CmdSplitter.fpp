@@ -1,9 +1,6 @@
-
 module Svc {
-
   @ A component for splitting incoming commands to local or remote
   passive component CmdSplitter {
-
     # ----------------------------------------------------------------------
     # Upstream connections: uplink commanding and command sequencers
     # ----------------------------------------------------------------------
@@ -26,6 +23,5 @@ module Svc {
 
     @ Output port for remote commands
     output port RemoteCmd: [CmdSplitterPorts] Fw.Com
-
   }
 }
