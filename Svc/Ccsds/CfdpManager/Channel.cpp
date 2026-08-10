@@ -80,6 +80,7 @@ Channel::Channel(Engine* engine,
 
     // Initialize poll directory playback state
     for (U32 i = 0; i < MaxPollingDirPerChan; i++) {
+        m_polldir[i].enabled = Fw::Enabled::DISABLED;
         m_polldir[i].pb.busy = false;
         m_polldir[i].pb.diropen = false;
         m_polldir[i].pb.counted = false;
