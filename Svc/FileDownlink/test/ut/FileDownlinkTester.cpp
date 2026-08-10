@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <cstring>
+#include <limits>
 
 #include <Os/FilePathUtils.hpp>
 #include "FileDownlinkTester.hpp"
@@ -254,6 +255,106 @@ void FileDownlinkTester ::downlinkPartial() {
 
     // Remove the outgoing file
     this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::downlinkPartialOffsetLengthOverflow() {
+    // Regression test for GHSA-hfvp-x35q-5c9g: a startOffset/length pair whose U32 sum wraps must
+    // still be clamped to the end of the file rather than skipping the bounds check.
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    U8 dataSubset[] = {5, 6, 7, 8, 9};
+    const U32 offset = 5;
+    // offset + length wraps to 0 in U32 arithmetic
+    const U32 length = std::numeric_limits<U32>::max() - offset + 1;
+    const U32 clampedLength = static_cast<U32>(sizeof(data)) - offset;
+
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+    FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
+
+    // The command must succeed with the length clamped to the remainder of the file, not read
+    // past the end of it
+    this->sendFilePartial(sourceFileName, destFileName, Fw::CmdResponse::OK, offset, length);
+
+    // The clamp must have been reported
+    ASSERT_EVENTS_DownlinkPartialWarning_SIZE(1);
+    ASSERT_EVENTS_DownlinkPartialWarning(0, offset, length, static_cast<U32>(sizeof(data)), sourceFileName,
+                                         destFileName);
+    ASSERT_EVENTS_SendStarted_SIZE(1);
+    ASSERT_EVENTS_SendStarted(0, clampedLength, sourceFileName, destFileName);
+    ASSERT_EVENTS_FileSent_SIZE(1);
+    ASSERT_EVENTS_FileSent(0, sourceFileName, destFileName);
+
+    // Exactly the tail of the file was downlinked
+    History<Fw::FilePacket::DataPacket> dataPackets(MAX_HISTORY_SIZE);
+    CFDP::Checksum checksum;
+    checksum.update(dataSubset, offset, clampedLength);
+    validatePacketHistory(*this->fromPortHistory_bufferSendOut, dataPackets, Fw::FilePacket::T_END, 3, checksum,
+                          offset);
+
+    FileBuffer fileBufferIn(dataPackets);
+    ASSERT_EQ(true, FileBuffer::compare(fileBufferIn, fileBufferOutSubset));
+
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    this->removeFile(sourceFileName);
+}
+
+namespace {
+//! Assert hook that records the failure and returns rather than aborting. This models the
+//! non-aborting configuration described in GHSA-hfvp-x35q-5c9g, in which FW_ASSERT falls through
+//! into the code that follows it.
+class NonAbortingAssertHook : public Fw::AssertHook {
+  public:
+    NonAbortingAssertHook() : m_count(0) { this->registerHook(); }
+    ~NonAbortingAssertHook() override { this->deregisterHook(); }
+    void reportAssert(FILE_NAME_ARG,
+                      FwSizeType,
+                      FwSizeType,
+                      FwAssertArgType,
+                      FwAssertArgType,
+                      FwAssertArgType,
+                      FwAssertArgType,
+                      FwAssertArgType,
+                      FwAssertArgType) override {
+        this->m_count++;
+    }
+    void doAssert() override {}
+    FwSizeType count() const { return this->m_count; }
+
+  private:
+    FwSizeType m_count;
+};
+}  // namespace
+
+void FileDownlinkTester ::sendDataPacketRejectsExhaustedRange() {
+    // Regression test for GHSA-hfvp-x35q-5c9g: sendDataPacket() must not compute an underflowed
+    // dataSize if its byteOffset < m_endOffset precondition is ever violated. FW_ASSERT alone is
+    // not sufficient -- it is permitted to return and is compiled out under NDEBUG -- so the
+    // explicit check must reject the call even when the assertion does not halt.
+    NonAbortingAssertHook hook;
+
+    this->component.m_endOffset = 100;
+
+    // byteOffset == m_endOffset: the old code computed dataSize == 0 and read into the buffer
+    U32 byteOffset = 100;
+    ASSERT_NE(Os::File::OP_OK, this->component.sendDataPacket(byteOffset));
+    // byteOffset must be left untouched by the rejected call
+    ASSERT_EQ(100u, byteOffset);
+
+    // byteOffset > m_endOffset: the old code computed dataSize == 0xFFFFFF9C
+    byteOffset = 200;
+    ASSERT_NE(Os::File::OP_OK, this->component.sendDataPacket(byteOffset));
+    ASSERT_EQ(200u, byteOffset);
+
+    // The assertion still fired on both rejected calls
+    ASSERT_EQ(2u, hook.count());
+
+    // No packets were emitted
+    ASSERT_from_bufferSendOut_SIZE(0);
 }
 
 void FileDownlinkTester ::sendFilePort() {
