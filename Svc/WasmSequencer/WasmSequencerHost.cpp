@@ -60,30 +60,42 @@ void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
     status = spacewasm_add_host_function(host, module_idx, "serial_sync", "iii", "", HOST_FN(wasmSerialSync), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    status = spacewasm_add_host_function(host, module_idx, "serial_async", "iiiii", "i", HOST_FN(wasmSerialAsync), this);
+    status =
+        spacewasm_add_host_function(host, module_idx, "serial_async", "iiiii", "i", HOST_FN(wasmSerialAsync), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
 #undef HOST_FN
 }
 
-spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t*,
-                                                    const spacewasm_value_t*,
-                                                    size_t,
+spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t* caller,
+                                                    const spacewasm_value_t* params,
+                                                    size_t n_params,
                                                     spacewasm_value_t*) {
-    this->m_exitReason = ExitReason::HOST_EXIT;
-    
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 1, static_cast<FwAssertArgType>(n_params));
 
-                                                        // TODO(tumbar) Add "exit" return code to SpaceWasm host functions
-    //              This is basically the same as trap but not 'error-ey'
-    // Exit the interpreter
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+
+    this->m_exitReason = ExitReason::HOST_EXIT;
+    this->m_exitCode = params[0].u.i32_;
+
     return SPACEWASM_TRAP;
 }
 
-spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t*,
-                                                     const spacewasm_value_t*,
-                                                     size_t,
+spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t* caller,
+                                                     const spacewasm_value_t* params,
+                                                     size_t n_params,
                                                      spacewasm_value_t*) {
-    // TODO(tumbar) Extract status code
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 1, static_cast<FwAssertArgType>(n_params));
+
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+
+    this->m_exitReason = ExitReason::HOST_PANIC;
+    this->m_exitCode = params[0].u.i32_;
+
     return SPACEWASM_TRAP;
 }
 
@@ -125,13 +137,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmTime(spacewasm_caller_t* caller,
     spacewasm_hostcall_result_t return_status;
     if (time_size < Fw::Time::SERIALIZED_SIZE) {
         // We expect an exact match for serialized time
-        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::TIME, time_size,
-                                            Fw::Time::SERIALIZED_SIZE);
+        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::TIME, time_size, Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
     } else if (time_size > Fw::Time::SERIALIZED_SIZE) {
         // We expect an exact match for serialized time
-        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TIME, time_size,
-                                            Fw::Time::SERIALIZED_SIZE);
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TIME, time_size, Fw::Time::SERIALIZED_SIZE);
         return_status = SPACEWASM_TRAP;
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TIME;

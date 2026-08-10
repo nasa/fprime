@@ -4,7 +4,7 @@
 @ 2. INVOKE "" "main"
 @ 3. CONTINUE
 @
-@ If $block == Svc.BlockState.BLOCK this command will wait for complemention.
+@ If $block == Svc.BlockState.BLOCK this command will wait for completion.
 async command RUN(
     fileName: string size FileNameStringSize @< The name of the sequence file
     @ Block until sequence has finished running
@@ -36,7 +36,7 @@ async command LOAD_NAME(
 async command INVOKE(
     $module: string size 16 @< Name of the module to invoke a function from
     $block: Svc.BlockState  @< Block until sequence has finished running
-    seqArgs: Svc.SeqArgs       @< Arguments to invalid sequence entrypoint with
+    seqArgs: Svc.SeqArgs    @< Arguments to invalid sequence entrypoint with
 ) \
     opcode 3
 

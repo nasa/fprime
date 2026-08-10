@@ -61,6 +61,64 @@ TEST_F(WasmSequencerTester, LoadNamedModuleReady) {
     this->removeFile("empty.wasm");
 }
 
+TEST_F(WasmSequencerTester, LoadStartModuleRespondsOk) {
+    // A LOAD whose module carries a (running) Wasm start function drives
+    // STARTING -> startInvoked -> RUNNING and spins the start to completion. The
+    // load command must be answered when the start finishes and we settle in
+    // READY -- not left dangling (which previously also wedged the single load-cmd
+    // slot, tripping an assert on the next load).
+    const Fw::String file = this->copyAsset("start.wasm");
+
+    this->sendCmd_LOAD(0, 40, file);
+    this->dispatchUntilState(State::READY);
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 40, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("start.wasm");
+}
+
+TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
+    // The module's start function begins running then traps (unreachable). The
+    // pending load command must receive EXECUTION_ERROR as we fall back to IDLE.
+    const Fw::String file = this->copyAsset("start_trap.wasm");
+
+    this->sendCmd_LOAD(0, 41, file);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 41, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("start_trap.wasm");
+}
+
+TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
+    // Regression: the load-cmd slot must be freed on the startInvoked->RUNNING
+    // completion path. A second LOAD-with-start would otherwise trip the
+    // FW_ASSERT(!m_hasPendingLoadCmd) guard in LOAD_NAME_cmdHandler.
+    const Fw::String file = this->copyAsset("start.wasm");
+
+    this->sendCmd_LOAD(0, 42, file);
+    this->dispatchUntilState(State::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 42, Fw::CmdResponse::OK);
+
+    // Second load from READY reuses the store and runs the start again. The
+    // component is already in READY, so drain the queue rather than waiting for a
+    // state change that has effectively already happened.
+    this->sendCmd_LOAD(0, 43, file);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 43, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("start.wasm");
+}
+
 TEST_F(WasmSequencerTester, LoadFileNotFound) {
     // No copyAsset: the file simply does not exist in the CWD.
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -590,6 +648,22 @@ TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTraps) {
     this->removeFile("tlm_badtime.wasm");
 }
 
+TEST_F(WasmSequencerTester, TelemetryBadTimeSizeTooLargeTraps) {
+    const Fw::String file = this->copyAsset("tlm_bigtime.wasm");
+    this->sendCmd_RUN(0, 74, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    // A time_size of 16 > Fw::Time::SERIALIZED_SIZE must match exactly and is
+    // rejected as too large; the reported maxSize is the required serialized size.
+    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TELEMETRY, 16, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("tlm_bigtime.wasm");
+}
+
 TEST_F(WasmSequencerTester, TelemetryOversizedRequestWritesOnlyValueBytes) {
     U8 raw[4] = {0x11, 0x22, 0x33, 0x44};
     this->nextTlmValue = Fw::TlmBuffer(raw, sizeof raw);
@@ -867,6 +941,23 @@ TEST_F(WasmSequencerTester, TimeBadSizeTraps) {
     ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("time_toosmall.wasm");
+}
+
+TEST_F(WasmSequencerTester, TimeBadSizeTooLargeTraps) {
+    // The guest requests a time_size of 16 > Fw::Time::SERIALIZED_SIZE (11), which
+    // must match exactly. wasmTime rejects it up front with
+    // BufferTooLarge(TIME, 16, 11) -> TRAP (HOST trap reason); nothing is written.
+    const Fw::String file = this->copyAsset("time_toobig.wasm");
+    this->sendCmd_RUN(0, 213, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_BufferTooLarge_SIZE(1);
+    ASSERT_EVENTS_BufferTooLarge(0, WasmSequencer_HostFunction::TIME, 16, Fw::Time::SERIALIZED_SIZE);
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("time_toobig.wasm");
 }
 
 // ----------------------------------------------------------------------

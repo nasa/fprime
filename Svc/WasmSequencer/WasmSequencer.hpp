@@ -92,7 +92,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! 2. INVOKE "" "main"
     //! 3. CONTINUE
     //!
-    //! If $block == Svc.BlockState.BLOCK this command will wait for complemention.
+    //! If $block == Svc.BlockState.BLOCK this command will wait for completion.
     void RUN_cmdHandler(
         FwOpcodeType opCode,               //!< The opcode
         U32 cmdSeq,                        //!< The command sequence number

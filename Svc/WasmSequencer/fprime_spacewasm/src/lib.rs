@@ -12,9 +12,6 @@ const MAX_PAGES: usize = 8;
 const PAGE_SIZE: usize = 8192;
 const MAX_SEQUENCERS: usize = 8;
 
-// TODO(tumbar) Remove these aliases.
-// SpaceWasm currently only exports these when the global alloc feature is active
-
 /// Allocate `size` bytes aligned to `align`. Return NULL on failure. Per page allocation.
 type SpacewasmGlobalAllocFnT =
     Option<unsafe extern "C" fn(userdata: *mut c_void, size: usize, align: usize) -> *mut u8>;

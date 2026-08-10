@@ -308,6 +308,7 @@ state machine SequencerStateMachine {
 
             on interpreterTrap do {
                 report_seqTrap
+                sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
 
@@ -325,6 +326,7 @@ state machine SequencerStateMachine {
                     # that requested the interpreter to spin
                     report_seqSucceeded
                     clearPause
+                    sendLoadCmdResponse_OK
                     sendRunCmdResponse_OK
                 } enter READY
             }
@@ -348,6 +350,7 @@ state machine SequencerStateMachine {
             on stmtTimeout do {
                 clearPendingHostFunction
                 report_seqFailed
+                sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
 
@@ -355,6 +358,7 @@ state machine SequencerStateMachine {
             on stmtTimeOpFailed do {
                 clearPendingHostFunction
                 report_seqFailed
+                sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
 
@@ -363,6 +367,7 @@ state machine SequencerStateMachine {
             on stmtFailure do {
                 clearPendingHostFunction
                 report_seqFailed
+                sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
         }
@@ -386,6 +391,7 @@ state machine SequencerStateMachine {
         @ quickly running sequences. this signal does not cover such cases.
         on stmtUnexpected do {
             report_seqFailed
+            sendLoadCmdResponse_EXECUTION_ERROR
             sendRunCmdResponse_EXECUTION_ERROR
         } enter IDLE
 
@@ -396,6 +402,7 @@ state machine SequencerStateMachine {
             clearPause
             clearPendingHostFunction
             report_seqCancelled
+            sendLoadCmdResponse_EXECUTION_ERROR
             sendRunCmdResponse_EXECUTION_ERROR
         } enter IDLE
 
