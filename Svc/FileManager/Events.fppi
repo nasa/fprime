@@ -233,7 +233,7 @@ event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name
   format "{} has CRC value 0x{x}"
 @ File data product generation started
 event GenerateDpStarted(fileName: string size FileNameStringSize @< The file being packaged
-                        fileSize: U64 @< The size of the file in bytes
+                        bytesToWrite: U64 @< The number of file bytes that will be written
                        ) \
   severity activity high \
   id 0x1e \
@@ -249,11 +249,12 @@ event GenerateDpComplete(fileName: string size FileNameStringSize @< The file th
 
 @ File data product generation failed
 event GenerateDpFailed(fileName: string size FileNameStringSize @< The file being packaged
+                       stage: Svc.FileManager.GenerateDpStage @< Where the failure occurred
                        status: U32 @< The error status
                       ) \
   severity warning high \
   id 0x20 \
-  format "Data product generation failed for file {}, status {}"
+  format "Data product generation failed for file {} at stage {}, status {}"
 
 @ Data product container allocation failed
 event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The file being packaged

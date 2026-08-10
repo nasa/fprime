@@ -59,5 +59,7 @@ async command GenerateDp(
                           chunkSize: U32 @< The maximum number of file bytes per chunk
                           beginOffset: U64 @< The offset in the file at which to start
                           endOffset: U64 @< The offset in the file at which to stop, exclusive; 0 means the end of the file
+                          $priority: U32 @< The container priority; 0 means the configured default
+                          mode: Svc.FileManager.GenerateDpMode @< Whether to pace the chunks with the rate group or emit them immediately
                         ) \
   opcode 0x09

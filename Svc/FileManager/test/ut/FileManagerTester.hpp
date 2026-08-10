@@ -134,6 +134,12 @@ class FileManagerTester : public FileManagerGTestBase {
     //! Reject a data product request that arrives while another is in progress
     void generateDpWhileBusy();
 
+    //! Emit all chunks in the command handler instead of pacing them
+    void generateDpImmediateMode();
+
+    //! Use a container priority supplied by the command
+    void generateDpCustomPriority();
+
     //! Report a serialization failure without failing the command
     void generateDpSerializationFailure();
 
@@ -224,6 +230,9 @@ class FileManagerTester : public FileManagerGTestBase {
 
     //! Whether the get port should hand out a buffer too small for a chunk
     bool m_dpGetUndersizedBuffer;
+
+    //! Priority carried by the most recently sent container
+    FwDpPriorityType m_dpLastPriority;
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/

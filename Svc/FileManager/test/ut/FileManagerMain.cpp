@@ -134,6 +134,16 @@ TEST(Test, generateDpSerializationFailure) {
     tester.generateDpSerializationFailure();
 }
 
+TEST(Test, generateDpImmediateMode) {
+    Svc::FileManagerTester tester;
+    tester.generateDpImmediateMode();
+}
+
+TEST(Test, generateDpCustomPriority) {
+    Svc::FileManagerTester tester;
+    tester.generateDpCustomPriority();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -27,8 +27,9 @@ information for operators.
 ### GenerateDp
 
 `GenerateDp` packages a file into data products. The command takes the file
-name, a chunk size, and a begin and end offset, and the requested range of the
-file is emitted one chunk at a time. An end offset of zero means the end of the
+name, a chunk size, a begin and end offset, a container priority and an
+emission mode, and the requested range of the file is emitted one chunk at a
+time. An end offset of zero means the end of the
 file, so a begin and end offset of zero packages the whole file. Ranges let an
 operator retransmit part of a file, or spread a downlink over several commands
 when a project cannot fit the whole file into data products at once. Each chunk
@@ -38,9 +39,16 @@ bytes, followed by a `FileChunkDataRecord` holding the chunk bytes. Ground
 tools reassemble the original file from these records, so the command works
 regardless of the size of the buffers allocated to data products.
 
-Chunks are paced by the rate group in the same way as directory listing, one
-chunk per tick by default, and the command response is deferred until the last
-chunk has been sent. The requested chunk size is clamped to
+The emission mode selects how the chunks are written. In `PACED` mode they are
+metered out by the rate group in the same way as directory listing, one chunk
+per tick by default, and the command response is deferred until the last chunk
+has been sent. In `IMMEDIATE` mode the whole range is written in the command
+handler, which suits projects that would rather finish quickly than spread the
+work over time.
+
+A priority of zero uses `Svc::FileManagerCfg::DEFAULT_DP_PRIORITY`, which
+projects can adjust, while a non-zero priority applies to the containers of
+that request only. The requested chunk size is clamped to
 `FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE`, which bounds the read buffer
 held by the component.
 

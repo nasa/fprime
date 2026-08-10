@@ -105,12 +105,14 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Implementation for GenerateDp command handler
     //! Package a file into a data product, split into chunks
-    void GenerateDp_cmdHandler(FwOpcodeType opCode,               //!< The opcode
-                               U32 cmdSeq,                        //!< The command sequence number
-                               const Fw::CmdStringArg& fileName,  //!< The file to package as a data product
-                               U32 chunkSize,                     //!< The maximum number of file bytes per chunk
-                               U64 beginOffset,                   //!< The offset in the file at which to start
-                               U64 endOffset                      //!< The offset at which to stop, exclusive
+    void GenerateDp_cmdHandler(FwOpcodeType opCode,                    //!< The opcode
+                               U32 cmdSeq,                             //!< The command sequence number
+                               const Fw::CmdStringArg& fileName,       //!< The file to package as a data product
+                               U32 chunkSize,                          //!< The maximum number of file bytes per chunk
+                               U64 beginOffset,                        //!< The offset in the file at which to start
+                               U64 endOffset,                          //!< The offset at which to stop, exclusive
+                               U32 priority,                           //!< The container priority; 0 means the default
+                               const FileManager_GenerateDpMode& mode  //!< Paced or immediate chunk emission
                                ) override;
 
     //! Handler implementation for pingIn
@@ -237,6 +239,9 @@ class FileManager final : public FileManagerComponentBase {
     //! Offset at which packaging stops, exclusive
     U64 m_dpEndOffset;
 
+    //! Priority to use for the containers of the current request
+    FwDpPriorityType m_dpPriority;
+
     //! Number of chunks emitted so far (for the completion event)
     U32 m_dpChunkCount;
 
@@ -250,8 +255,8 @@ class FileManager final : public FileManagerComponentBase {
     //! dynamic allocation is needed in flight code
     U8 m_dpBuffer[FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE];
 
-    //! Emit up to CHUNKS_PER_RATE_TICK chunks of the current file
-    void processDpChunks();
+    //! Emit chunks of the current file; a limit of zero emits all remaining chunks
+    void processDpChunks(U32 chunkLimit);
 
     //! Close out data product generation and respond to the command
     void finishDpGeneration();

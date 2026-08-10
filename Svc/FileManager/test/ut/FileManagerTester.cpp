@@ -360,6 +360,7 @@ void FileManagerTester ::resetDpState() {
     this->m_dpBytesSent = 0;
     this->m_dpGetShouldFail = false;
     this->m_dpGetUndersizedBuffer = false;
+    this->m_dpLastPriority = 0;
     this->m_dpContainerBuffer.setData(this->m_dpContainerData);
     this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
 }
@@ -379,6 +380,12 @@ Fw::Success::T FileManagerTester ::productGet_handler(FwDpIdType id, FwSizeType 
 void FileManagerTester ::productSend_handler(FwDpIdType id, const Fw::Buffer& buffer) {
     this->m_dpSendCount++;
     this->m_dpBytesSent += buffer.getSize();
+
+    // Recover the priority from the serialized container header
+    Fw::DpContainer container(id, buffer);
+    if (container.deserializeHeader() == Fw::FW_SERIALIZE_OK) {
+        this->m_dpLastPriority = container.getPriority();
+    }
 }
 
 void FileManagerTester ::generateDpSucceed() {
@@ -395,7 +402,7 @@ void FileManagerTester ::generateDpSucceed() {
 
     Fw::CmdStringArg cmdStringFile(fileName);
     // 32 byte chunks over a 100 byte file yields 4 chunks (32 + 32 + 32 + 4)
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     // Only the start event so far; the response is deferred
@@ -420,7 +427,7 @@ void FileManagerTester ::generateDpFileNotFound() {
     this->resetDpState();
 
     Fw::CmdStringArg cmdStringFile("no_such_dp_file");
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -441,7 +448,7 @@ void FileManagerTester ::generateDpEmptyFile() {
     this->resetDpState();
 
     Fw::CmdStringArg cmdStringFile(fileName);
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     // An empty file completes immediately with no chunks
@@ -469,7 +476,8 @@ void FileManagerTester ::generateDpChunkSizeClamped() {
     Fw::CmdStringArg cmdStringFile(fileName);
     // A chunk size beyond the configured maximum is clamped, so the 50 byte
     // file still fits in a single chunk
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, FileManagerConfig::GENERATE_DP_MAX_CHUNK_SIZE * 4, 0, 0,
+                             0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
     this->runRateGroupCycles(5);
 
@@ -497,7 +505,7 @@ void FileManagerTester ::generateDpPartialRange() {
     Fw::CmdStringArg cmdStringFile(fileName);
     // Bytes [20, 60) of a 100 byte file with 16 byte chunks yields 3 chunks
     // (16 + 16 + 8), which lets an operator retransmit part of a file
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 20, 60);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 20, 60, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
     this->runRateGroupCycles(10);
 
@@ -524,7 +532,7 @@ void FileManagerTester ::generateDpInvalidRange() {
 
     Fw::CmdStringArg cmdStringFile(fileName);
     // A begin offset at or past the end offset has nothing to package
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 60, 20);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 60, 20, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -550,7 +558,7 @@ void FileManagerTester ::generateDpBufferFailure() {
     this->m_dpGetShouldFail = true;
 
     Fw::CmdStringArg cmdStringFile(fileName);
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
     this->runRateGroupCycles(5);
 
@@ -578,12 +586,12 @@ void FileManagerTester ::generateDpWhileBusy() {
 
     Fw::CmdStringArg cmdStringFile(fileName);
     // Start a generation and leave it in progress by not running the rate group
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
     ASSERT_CMD_RESPONSE_SIZE(0);
 
     // A second request while one is in progress is reported and rejected
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
@@ -611,7 +619,7 @@ void FileManagerTester ::generateDpSerializationFailure() {
     this->m_dpGetUndersizedBuffer = true;
 
     Fw::CmdStringArg cmdStringFile(fileName);
-    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0);
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 16, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
     this->runRateGroupCycles(5);
 
@@ -622,6 +630,58 @@ void FileManagerTester ::generateDpSerializationFailure() {
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_serialize_fail_file");
+#endif
+}
+
+void FileManagerTester ::generateDpImmediateMode() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_immediate_file";
+    this->system("rm -f dp_immediate_file");
+    this->system("printf '0123456789%.0s' $(seq 1 10) > dp_immediate_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // In immediate mode the whole file is emitted without the rate group
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 4);
+    ASSERT_EQ(4u, this->m_dpSendCount);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_immediate_file");
+#endif
+}
+
+void FileManagerTester ::generateDpCustomPriority() {
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    const char* const fileName = "dp_priority_file";
+    this->system("rm -f dp_priority_file");
+    this->system("printf '0123456789%.0s' $(seq 1 5) > dp_priority_file");
+#else
+    SKIP();  // Commands not implemented for this OS
+#endif
+
+    this->resetDpState();
+
+    Fw::CmdStringArg cmdStringFile(fileName);
+    // A non-zero priority overrides the configured default
+    this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 64, 0, 0, 42, FileManager_GenerateDpMode::IMMEDIATE);
+    this->component.doDispatch();
+
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EQ(1u, this->m_dpSendCount);
+    ASSERT_EQ(42u, this->m_dpLastPriority);
+
+#if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
+    this->system("rm -f dp_priority_file");
 #endif
 }
 
