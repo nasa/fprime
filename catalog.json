@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "009854488b265e9f76ac8e7ca99a09d344b417c8",
-  "generated_at": "2026-08-10T21:30:10Z",
+  "generated_at": "2026-08-10T21:43:17Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
