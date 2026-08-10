@@ -258,8 +258,8 @@ void FileDownlinkTester ::downlinkPartial() {
 }
 
 void FileDownlinkTester ::downlinkPartialOffsetLengthOverflow() {
-    // Regression test for GHSA-hfvp-x35q-5c9g: a startOffset/length pair whose U32 sum wraps must
-    // still be clamped to the end of the file rather than skipping the bounds check.
+    // Regression test: a startOffset/length pair whose U32 sum wraps must still be clamped to the
+    // end of the file rather than skipping the bounds check.
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 
     const char* const sourceFileName = "source.bin";
@@ -305,8 +305,7 @@ void FileDownlinkTester ::downlinkPartialOffsetLengthOverflow() {
 
 namespace {
 //! Assert hook that records the failure and returns rather than aborting. This models the
-//! non-aborting configuration described in GHSA-hfvp-x35q-5c9g, in which FW_ASSERT falls through
-//! into the code that follows it.
+//! non-aborting configurations in which FW_ASSERT falls through into the code that follows it.
 class NonAbortingAssertHook : public Fw::AssertHook {
   public:
     NonAbortingAssertHook() : m_count(0) { this->registerHook(); }
@@ -331,8 +330,8 @@ class NonAbortingAssertHook : public Fw::AssertHook {
 }  // namespace
 
 void FileDownlinkTester ::sendDataPacketRejectsExhaustedRange() {
-    // Regression test for GHSA-hfvp-x35q-5c9g: sendDataPacket() must not compute an underflowed
-    // dataSize if its byteOffset < m_endOffset precondition is ever violated. FW_ASSERT alone is
+    // Regression test: sendDataPacket() must not compute an underflowed dataSize if its
+    // byteOffset < m_endOffset precondition is ever violated. FW_ASSERT alone is
     // not sufficient -- it is permitted to return and is compiled out under NDEBUG -- so the
     // explicit check must reject the call even when the assertion does not halt.
     NonAbortingAssertHook hook;

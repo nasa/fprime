@@ -102,10 +102,10 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //!
     void downlinkPartial();
 
-    //! Downlink a partial file whose startOffset + length overflows U32 (GHSA-hfvp-x35q-5c9g)
+    //! Downlink a partial file whose startOffset + length overflows U32
     void downlinkPartialOffsetLengthOverflow();
 
-    //! sendDataPacket rejects a byteOffset at or past m_endOffset (GHSA-hfvp-x35q-5c9g)
+    //! sendDataPacket rejects a byteOffset at or past m_endOffset
     void sendDataPacketRejectsExhaustedRange();
 
     //! sendFilePort
