@@ -7,6 +7,9 @@ enum HostFunction: U8 {
     RSLEEP
     ASLEEP
     ARGS
+    TIME
+    SYNC_PORT
+    ASYNC_PORT
 }
 
 enum Status: I32 {

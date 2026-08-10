@@ -22,7 +22,7 @@ event ModuleLoadFailed(status: Status) \
     severity warning high \
     format "Module load failed: {}"
 
-@ A module failed to decode/validate while loading
+@ A module failed to invoke a function
 event ModuleInvokeFailed(status: Status) \
     severity warning high \
     format "Module main invoke failed: {}"
@@ -47,6 +47,11 @@ event BufferTooSmall(host_function: HostFunction, $size: U32, valueSize: U32) \
 event HostFunctionInvalidPointer(host_function: HostFunction, code: Status) \
     severity warning high \
     format "Failed to read guest pointer in host function {}: {}"
+
+@ A guest serial port host function requested a port index outside the configured range
+event HostFunctionInvalidPort(host_function: HostFunction, index: I32, numPorts: U32) \
+    severity warning high \
+    format "Host function {} requested invalid serial port index {} (have {} ports)"
 
 event HostFunctionInvalidSeverity(raw: I32) \
     severity warning high \

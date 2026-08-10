@@ -25,6 +25,10 @@ WasmSequencerTester ::WasmSequencerTester()
     : WasmSequencerGTestBase("WasmSequencerTester", WasmSequencerTester::MAX_HISTORY_SIZE),
       nextTlmId(0),
       nextPrmId(0),
+      serialOutCount(0),
+      lastSerialOutPort(0),
+      lastSerialOutData{},
+      lastSerialOutSize(0),
       component("WasmSequencer") {
     this->initComponents();
     this->connectPorts();
@@ -145,6 +149,17 @@ Fw::ParamValid WasmSequencerTester ::from_getParam_handler(FwIndexType portNum, 
     }
     val = this->nextPrmValue;
     return Fw::ParamValid::VALID;
+}
+
+void WasmSequencerTester ::from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
+    this->serialOutCount++;
+    this->lastSerialOutPort = portNum;
+    this->lastSerialOutSize = buffer.getSize();
+    FW_ASSERT(this->lastSerialOutSize <= sizeof this->lastSerialOutData,
+              static_cast<FwAssertArgType>(this->lastSerialOutSize));
+    for (FwSizeType i = 0; i < this->lastSerialOutSize; i++) {
+        this->lastSerialOutData[i] = buffer.getBuffAddr()[i];
+    }
 }
 
 }  // namespace Svc

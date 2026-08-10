@@ -24,7 +24,7 @@ void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
 
     spacewasm_status_t status;
     U32 module_idx;
-    status = spacewasm_add_host_module(host, "fprime_v1", 9, 0, &module_idx);
+    status = spacewasm_add_host_module(host, "fprime_v1", 12, 0, &module_idx);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     status = spacewasm_add_host_function(host, module_idx, "exit", "i", "", HOST_FN(wasmExit), this);
@@ -34,6 +34,9 @@ void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     status = spacewasm_add_host_function(host, module_idx, "args", "ii", "i", HOST_FN(wasmArgs), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "time", "ii", "", HOST_FN(wasmTime), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     status = spacewasm_add_host_function(host, module_idx, "tlm", "Iiiii", "i", HOST_FN(wasmReadTelemetry), this);
@@ -54,6 +57,12 @@ void WasmSequencer ::hostFprimeV1(spacewasm_host_t* host) {
     status = spacewasm_add_host_function(host, module_idx, "asleep", "I", "", HOST_FN(wasmAsleep), this);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
+    status = spacewasm_add_host_function(host, module_idx, "serial_sync", "iii", "", HOST_FN(wasmSerialSync), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    status = spacewasm_add_host_function(host, module_idx, "serial_async", "iiiii", "i", HOST_FN(wasmSerialAsync), this);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
 #undef HOST_FN
 }
 
@@ -61,7 +70,10 @@ spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t*,
                                                     const spacewasm_value_t*,
                                                     size_t,
                                                     spacewasm_value_t*) {
-    // TODO(tumbar) Add "exit" return code to SpaceWasm host functions
+    this->m_exitReason = ExitReason::HOST_EXIT;
+    
+
+                                                        // TODO(tumbar) Add "exit" return code to SpaceWasm host functions
     //              This is basically the same as trap but not 'error-ey'
     // Exit the interpreter
     return SPACEWASM_TRAP;
@@ -95,6 +107,43 @@ spacewasm_hostcall_result_t WasmSequencer::wasmArgs(spacewasm_caller_t* caller,
     this->m_pendingHostFunction.len1 = size;
 
     return SPACEWASM_PAUSE;
+}
+
+spacewasm_hostcall_result_t WasmSequencer::wasmTime(spacewasm_caller_t* caller,
+                                                    const spacewasm_value_t* params,
+                                                    size_t n_params,
+                                                    spacewasm_value_t*) {
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 2, static_cast<FwAssertArgType>(n_params));
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+
+    const U32 time_ptr = static_cast<U32>(params[0].u.i32_);
+    const U32 time_size = static_cast<U32>(params[1].u.i32_);
+
+    spacewasm_hostcall_result_t return_status;
+    if (time_size < Fw::Time::SERIALIZED_SIZE) {
+        // We expect an exact match for serialized time
+        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::TIME, time_size,
+                                            Fw::Time::SERIALIZED_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else if (time_size > Fw::Time::SERIALIZED_SIZE) {
+        // We expect an exact match for serialized time
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::TIME, time_size,
+                                            Fw::Time::SERIALIZED_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else {
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TIME;
+        this->m_pendingHostFunction.caller = caller;
+        this->m_pendingHostFunction.ptr1 = time_ptr;
+        this->m_pendingHostFunction.len1 = time_size;
+
+        // Always pause the interpreter to allow the state machine to process this request
+        return_status = SPACEWASM_PAUSE;
+    }
+
+    return return_status;
 }
 
 spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t* caller,
@@ -271,6 +320,90 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
     this->m_pendingHostFunction.time_us = us;
 
     return SPACEWASM_PAUSE;
+}
+
+spacewasm_hostcall_result_t WasmSequencer::wasmSerialSync(spacewasm_caller_t* caller,
+                                                          const spacewasm_value_t* params,
+                                                          size_t n_params,
+                                                          spacewasm_value_t*) {
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    // These are automatically validated by spacewasm so it should be safe to assert them
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 3, static_cast<FwAssertArgType>(n_params));
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
+
+    const I32 index = params[0].u.i32_;
+    const U32 ptr = static_cast<U32>(params[1].u.i32_);
+    const U32 len = static_cast<U32>(params[2].u.i32_);
+
+    spacewasm_hostcall_result_t return_status;
+    if (index < 0 || index >= this->getNum_serialOut_OutputPorts()) {
+        this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::SYNC_PORT, index,
+                                                     static_cast<U32>(this->getNum_serialOut_OutputPorts()));
+        return_status = SPACEWASM_TRAP;
+    } else if (len > Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE) {
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::SYNC_PORT, len,
+                                            Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else {
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::SYNC_PORT;
+        this->m_pendingHostFunction.caller = caller;
+        this->m_pendingHostFunction.id = static_cast<U64>(index);
+        this->m_pendingHostFunction.ptr1 = ptr;
+        this->m_pendingHostFunction.len1 = len;
+
+        // Always pause the interpreter to allow the state machine to process this request
+        return_status = SPACEWASM_PAUSE;
+    }
+
+    return return_status;
+}
+
+spacewasm_hostcall_result_t WasmSequencer::wasmSerialAsync(spacewasm_caller_t* caller,
+                                                           const spacewasm_value_t* params,
+                                                           size_t n_params,
+                                                           spacewasm_value_t*) {
+    FW_ASSERT(!this->m_pendingHostFunction.isPending());
+    // These are automatically validated by spacewasm so it should be safe to assert them
+    FW_ASSERT(params != nullptr);
+    FW_ASSERT(n_params == 5, static_cast<FwAssertArgType>(n_params));
+    FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
+    FW_ASSERT(params[1].tag == spacewasm_valtype_t::SPACEWASM_I32, params[1].tag);
+    FW_ASSERT(params[2].tag == spacewasm_valtype_t::SPACEWASM_I32, params[2].tag);
+    FW_ASSERT(params[3].tag == spacewasm_valtype_t::SPACEWASM_I32, params[3].tag);
+    FW_ASSERT(params[4].tag == spacewasm_valtype_t::SPACEWASM_I32, params[4].tag);
+
+    const I32 index = params[0].u.i32_;
+    const U32 ptr = static_cast<U32>(params[1].u.i32_);
+    const U32 len = static_cast<U32>(params[2].u.i32_);
+    const U32 return_ptr = static_cast<U32>(params[3].u.i32_);
+    const U32 return_len = static_cast<U32>(params[4].u.i32_);
+
+    spacewasm_hostcall_result_t return_status;
+    if (index < 0 || index >= this->getNum_serialReply_InputPorts()) {
+        this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::ASYNC_PORT, index,
+                                                     static_cast<U32>(this->getNum_serialReply_InputPorts()));
+        return_status = SPACEWASM_TRAP;
+    } else if (len > Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE) {
+        this->log_WARNING_HI_BufferTooLarge(WasmSequencer_HostFunction::ASYNC_PORT, len,
+                                            Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE);
+        return_status = SPACEWASM_TRAP;
+    } else {
+        this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASYNC_PORT;
+        this->m_pendingHostFunction.caller = caller;
+        this->m_pendingHostFunction.id = static_cast<U64>(index);
+        this->m_pendingHostFunction.ptr1 = ptr;
+        this->m_pendingHostFunction.len1 = len;
+        this->m_pendingHostFunction.ptr2 = return_ptr;
+        this->m_pendingHostFunction.len2 = return_len;
+
+        // Always pause the interpreter to allow the state machine to process this request
+        return_status = SPACEWASM_PAUSE;
+    }
+
+    return return_status;
 }
 
 Os::Mutex* WasmSequencer::getGlobalAllocatorLock() {

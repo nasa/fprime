@@ -8,6 +8,7 @@
 #define Svc_WasmSequencer_HPP
 
 #include "Fw/DataStructures/FifoQueue.hpp"
+#include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
@@ -69,14 +70,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Handler implementations for serial input ports
     // ----------------------------------------------------------------------
 
-    //! Handler implementation for serialAsyncReply
+    //! Handler implementation for serialReply
     //!
-    //! Reply port for [serialAsyncOut]. This reply is subject to timeout if configured.
-    //! Sequences that send serialAsyncOut messages will block until this reply is received
-    //! on the corresponding port
-    void serialAsyncReply_handler(FwIndexType portNum,          //!< The port number
-                                  Fw::LinearBufferBase& buffer  //!< The serialization buffer
-                                  ) override;
+    //! Reply port for [serialOut]. This reply is subject to timeout if configured.
+    //! Sequences that send async serial messages will block until this reply is received
+    //! on the corresponding port number
+    void serialReply_handler(FwIndexType portNum,          //!< The port number
+                             Fw::LinearBufferBase& buffer  //!< The serialization buffer
+                             ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -554,11 +555,27 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Number of commands that failed
     U64 m_tlmCommandsFailed;
 
+    enum class ExitReason {
+        INTERPRETER,
+        HOST_EXIT,
+        HOST_PANIC,
+    };
+
+    //! Reason the current program exited.
+    //! By default this is INTERPRETER but can be overriden from host functions
+    ExitReason m_exitReason;
+
+    //! Currently stored exit code for non-INTERPRETER exits
+    I32 m_exitCode;
+
     //! Reason last sequence trapped
     WasmSequencer_TrapReason m_tlmLastTrapReason;
 
     //! Currently running sequence name
     Fw::StringTemplate<FileNameStringSize> m_tlmSequenceName;
+
+    //! Buffer to hold the serial output port invocation invoked by the guest
+    Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialPortBuffer;
 
     struct PendingHostFunction {
         PendingHostFunction() = default;
@@ -605,6 +622,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                          size_t n_params,
                                          struct spacewasm_value_t* out_result);
 
+    spacewasm_hostcall_result_t wasmTime(struct spacewasm_caller_t* caller,
+                                         const struct spacewasm_value_t* params,
+                                         size_t n_params,
+                                         struct spacewasm_value_t* out_result);
+
     spacewasm_hostcall_result_t wasmReadTelemetry(struct spacewasm_caller_t* caller,
                                                   const struct spacewasm_value_t* params,
                                                   size_t n_params,
@@ -634,6 +656,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                            const struct spacewasm_value_t* params,
                                            size_t n_params,
                                            struct spacewasm_value_t* out_result);
+
+    spacewasm_hostcall_result_t wasmSerialSync(struct spacewasm_caller_t* caller,
+                                               const struct spacewasm_value_t* params,
+                                               size_t n_params,
+                                               struct spacewasm_value_t* out_result);
+
+    spacewasm_hostcall_result_t wasmSerialAsync(struct spacewasm_caller_t* caller,
+                                                const struct spacewasm_value_t* params,
+                                                size_t n_params,
+                                                struct spacewasm_value_t* out_result);
 
     // A global static lock. This is needed to allow the global allocator in spacewasm
     // to not require to pass context to fine grained context to allocations.

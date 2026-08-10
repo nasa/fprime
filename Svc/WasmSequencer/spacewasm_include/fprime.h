@@ -42,9 +42,21 @@ extern void fprime_wasm_panic(I32 code);
 /// into the guest memory.
 ///
 /// @param destination_ptr Guest memory address to argument buffer
-/// @param destination_size Length of the argument buffer. This size must be greater than or equal to
+/// @param destination_size Length of the argument buffer.
+///                         This size must be greater than or equal to the length of arguments
+///                         passed to the sequence otherwise the interpreter will trap
+/// @returns The number of bytes written to [destination_ptr]
 WASM_IMPORT(WASM_MODULE_NAME, "args")
 extern U32 fprime_wasm_get_args(U32 destination_ptr, U32 destination_size);
+
+/// @brief Read the current F´ system time into guest memory
+///
+/// The host serializes an Fw::Time into the guest buffer.
+///
+/// @param time_ptr Guest memory address to write the serialized time
+/// @param time_size Size allocated for time_ptr, must equal Fw::Time::SERIALIZED_SIZE
+WASM_IMPORT(WASM_MODULE_NAME, "time")
+extern void fprime_wasm_get_time(U32 time_ptr, U32 time_size);
 
 enum FprimeTlmValid {
     FPRIME_TLM_VALID = 0,
@@ -123,6 +135,29 @@ extern void fprime_wasm_rsleep(U64 us);
 /// @param us Microseconds from system epoch to pause until
 WASM_IMPORT(WASM_MODULE_NAME, "asleep")
 extern void fprime_wasm_asleep(U64 us);
+
+/// @brief Invoke a serial port
+///
+/// The corresponding serialReply port on [index] MUST NOT be connected
+/// @param index Port index to emit on the serial async output/serial async reply
+/// @param data_ptr Pointer to the data to send on the output port
+/// @param data_size Length of the data to send on the output port
+WASM_IMPORT(WASM_MODULE_NAME, "serial_sync")
+extern void fprime_wasm_serial_sync(I32 index, U32 data_ptr, U32 data_size);
+
+/// @brief Invoke a serial port and await a reply on the reply port
+///
+/// This host function will block the Wasm interpreter until a reply is received
+/// on the [index] port (or timeout)
+/// The corresponding serialReply port MUST be connected
+/// @param index Port index to emit on the serial async output/serial async reply
+/// @param data_ptr Pointer to the data to send on the output port
+/// @param data_size Length of the data to send on the output port
+/// @param return_ptr Pointer to the return value
+/// @param return_size Maximum length allowed to be copied into [return_ptr]
+/// @returns The number of bytes written to [return_ptr]
+WASM_IMPORT(WASM_MODULE_NAME, "serial_async")
+extern U32 fprime_wasm_serial_async(I32 index, U32 data_ptr, U32 data_size, U32 return_ptr, U32 return_size);
 
 #ifdef __cplusplus
 }  // extern "C"

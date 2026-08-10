@@ -145,8 +145,14 @@ state machine SequencerStateMachine {
 
     @ Invoke the start function on a loaded module
     action invokeStartOfLastModule
+
+    @ A start function 'finished' or didn't exist
     signal startFinished
+
+    @ A start function has been invoked and must be processed
     signal startInvoked
+
+    @ A start function failed to be invoked
     signal startError
 
     ###############
@@ -197,6 +203,7 @@ state machine SequencerStateMachine {
         # Start finished might be either start=host function or start=None
         on startFinished do { sendLoadCmdResponse_OK } enter RUN_CHECK
         on startInvoked enter RUNNING
+
         on startError do {
             reportInvokeFailure
             sendLoadCmdResponse_EXECUTION_ERROR
@@ -259,15 +266,15 @@ state machine SequencerStateMachine {
     signal checkTimersIn
     @ raised when an operation could not be performed on a Fw::Time object due to a
     @ mismatched time base or context
-    signal result_timeOpFailed
+    signal stmtTimeOpFailed
     @ raised when the statement times out, according to the timeout parameter
-    signal result_checkStatementTimeout_statementTimeout
+    signal stmtTimeout
     @ called when a paused host statement (F´ command) successfully executed. only raised in RUNNING.AWAITING_RESPONSE
-    signal stmtResponse_success
+    signal stmtSuccess
     @ called when a paused host statement (F´ command) unsuccessfully executed. only raised in RUNNING.AWAITING_RESPONSE
-    signal stmtResponse_failure
+    signal stmtFailure
     @ called when an unexpected or incorrect statement response comes in. only raised in the RUNNING state
-    signal stmtResponse_unexpected
+    signal stmtUnexpected
 
     @ The program has completed
     signal interpreterFinished
@@ -338,23 +345,22 @@ state machine SequencerStateMachine {
             }
 
             # -->
-            on result_checkStatementTimeout_statementTimeout do {
+            on stmtTimeout do {
                 clearPendingHostFunction
                 report_seqFailed
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
 
             # this can occur if the time base/ctx changes, or was invalid from the start
-            on result_timeOpFailed do {
+            on stmtTimeOpFailed do {
                 clearPendingHostFunction
                 report_seqFailed
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
 
-            on stmtResponse_success do {
-                clearPendingHostFunction
-            } enter PAUSE_CHECK
-            on stmtResponse_failure do {
+            on stmtSuccess do { clearPendingHostFunction } enter PAUSE_CHECK
+
+            on stmtFailure do {
                 clearPendingHostFunction
                 report_seqFailed
                 sendRunCmdResponse_EXECUTION_ERROR
@@ -378,7 +384,7 @@ state machine SequencerStateMachine {
         @ in general, it is "unexpected" if there isn't a nominal way of producing this response.
         @ sometimes, we can produce responses in strange situations nominally by cancelling and
         @ quickly running sequences. this signal does not cover such cases.
-        on stmtResponse_unexpected do {
+        on stmtUnexpected do {
             report_seqFailed
             sendRunCmdResponse_EXECUTION_ERROR
         } enter IDLE

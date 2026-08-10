@@ -125,12 +125,23 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! reports the parameter invalid.
     Fw::ParamValid from_getParam_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) override;
 
+    //! Handler for serialOut: records the last port number and payload bytes so tests can
+    //! assert the guest's serial invocation round-tripped verbatim.
+    void from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) override;
+
     FwChanIdType nextTlmId;
     Fw::Time nextTlmTime;
     Fw::TlmBuffer nextTlmValue;
 
     FwPrmIdType nextPrmId;
     Fw::ParamBuffer nextPrmValue;
+
+    //! Number of serialOut invocations observed
+    U32 serialOutCount;
+    //! Port number and payload captured from the most recent serialOut invocation
+    FwIndexType lastSerialOutPort;
+    U8 lastSerialOutData[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
+    FwSizeType lastSerialOutSize;
 
   private:
     // ----------------------------------------------------------------------
