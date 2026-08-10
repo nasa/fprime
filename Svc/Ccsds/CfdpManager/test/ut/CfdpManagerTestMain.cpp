@@ -81,6 +81,16 @@ TEST(Transaction, Class2TxPortBasedNack) {
     tester.testClass2TxPortBasedNack();
 }
 
+TEST(Transaction, Class2RxZeroLengthFile) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxZeroLengthFile();
+}
+
+TEST(Transaction, Class2RxFileDataOffsetOverflow) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testClass2RxFileDataOffsetOverflow();
+}
+
 TEST(Transaction, MultipleTransactionsInSeries) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testMultipleTransactionsInSeries();

@@ -9,6 +9,8 @@
 #include <Os/FileSystem.hpp>
 #include <Svc/Ccsds/CfdpManager/Clist.hpp>
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
+#include <Svc/Ccsds/CfdpManager/Utils.hpp>
+#include <limits>
 
 namespace Svc {
 namespace Ccsds {
@@ -1099,6 +1101,86 @@ void CfdpManagerTester::testClass2RxNack() {
                           expectedFileSize,
                           true  // Simulate NAK
     );
+}
+
+void CfdpManagerTester::testClass2RxZeroLengthFile() {
+    const char* groundSrcFile = "/ground/test_class2_rx_zero_source.bin";
+    const char* dstFile = "test/ut/output/test_class2_rx_zero_received.bin";
+    const U8 channelId = 0;
+    const U32 transactionSeq = 500;
+
+    // A zero-length file is a legal CFDP transfer: metadata declares size 0 and no FileData
+    // PDUs follow, so the EOF alone must complete the transaction.
+    TransactionSetup setup;
+    setupRxTransaction(groundSrcFile, dstFile, channelId, TEST_GROUND_EID, Cfdp::Class::CLASS_2, 0, transactionSeq,
+                       TxnState::TXN_STATE_R2, setup);
+
+    CFDP::Checksum crc;
+    sendEofPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
+               Cfdp::ConditionCode::CONDITION_CODE_NO_ERROR, crc.getValue(), 0, Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    EXPECT_TRUE(setup.txn->m_flags.rx.eof_recv);
+    EXPECT_TRUE(setup.txn->m_flags.rx.send_fin) << "Zero-length file has no gaps, so FIN should be requested";
+
+    // Cycle until the FIN is emitted
+    bool foundFin = false;
+    for (U32 cycle = 0; (cycle < 20) && !foundFin; ++cycle) {
+        this->invoke_to_run1Hz(0, 0);
+        this->component.doDispatch();
+
+        for (FwSizeType i = 0; (i < this->fromPortHistory_dataOut->size()) && !foundFin; ++i) {
+            Fw::Buffer pduBuffer = this->getSentPduBuffer(static_cast<FwIndexType>(i));
+            const U8* pduData;
+            FwSizeType pduSize;
+            if (this->getPduData(pduBuffer, pduData, pduSize) &&
+                (Cfdp::peekPduType(Fw::Buffer(const_cast<U8*>(pduData), pduSize)) == Cfdp::PduTypeEnum::FINISHED)) {
+                foundFin = true;
+            }
+        }
+    }
+    ASSERT_TRUE(foundFin) << "FIN should be sent for a completed zero-length transfer";
+
+    EXPECT_EQ(RxSubState::RX_SUB_STATE_CLOSEOUT_SYNC, setup.txn->m_state_data.receive.sub_state);
+    EXPECT_FALSE(TxnStatusIsError(setup.txn->m_history->txn_stat)) << "Zero-length transfer should not fault";
+
+    cleanupTestFile(dstFile);
+}
+
+void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
+    const U8 channelId = 0;
+    const U32 transactionSeq = 501;
+    const U16 dataSize = 32;
+    // Offset chosen so that offset + dataSize wraps the 32-bit file offset space
+    const FileSize offset = std::numeric_limits<FileSize>::max() - (dataSize / 2);
+    U8 data[dataSize];
+    memset(data, 0xA5, sizeof(data));
+
+    // Class 2 FileData arriving before any metadata starts an R2 transaction with no declared
+    // file size. The PDU must still be rejected rather than overflowing the offset arithmetic.
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, offset, dataSize, data,
+                    Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn) << "R2 transaction should be created for FileData received before metadata";
+    EXPECT_FALSE(txn->m_flags.rx.md_recv);
+
+    ASSERT_EVENTS_RxFileDataOutOfBounds_SIZE(1);
+    ASSERT_EVENTS_RxFileDataOutOfBounds(0,  // index
+                                        Cfdp::Class::CLASS_2, TEST_GROUND_EID, transactionSeq, offset, dataSize,
+                                        std::numeric_limits<FileSize>::max());
+
+    // Cycle once so channel telemetry is emitted
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+    EXPECT_EQ(0u, tlm[channelId].get_recvFileDataBytes()) << "Rejected FileData must not be written";
+
+    cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
 }
 
 // ----------------------------------------------------------------------
