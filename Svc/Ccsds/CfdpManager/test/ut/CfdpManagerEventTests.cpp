@@ -5,6 +5,11 @@
 //
 // ======================================================================
 
+// If this is compiled for unix, include unistd to check user id
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+#include <unistd.h>
+#endif
+
 #include "CfdpManagerTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/SerialBuffer.hpp"
@@ -2721,6 +2726,14 @@ void CfdpManagerTester::testFailPollFileMoveEvent() {
     // before the last '/') against each channel PollDir::srcDir slot. We register a
     // slot by writing directly to the channel's CfdpPollDir via getPollDir() (friend
     // access), setting srcDir to the exact directory portion of our source file.
+
+// Skip test if running as root, since root bypasses Unix permission checks and can
+// create the default fail_dir ("/fail") at the filesystem root, making moveFile() succeed.
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    if (getuid() == 0) {
+        GTEST_SKIP() << "Test skipped when running as root (permission checks are bypassed)";
+    }
+#endif
 
     U8 channelId = 0;
     const char* srcDirPath = "test/ut/output";
