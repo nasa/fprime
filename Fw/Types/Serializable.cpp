@@ -40,7 +40,7 @@ SerialBufferBase::~SerialBufferBase() {}
 LinearBufferBase::LinearBufferBase(U8* buffAddr, Serializable::SizeType capacity)
     : m_buffAddr(buffAddr), m_capacity(capacity), m_serLoc(0), m_deserLoc(0) {
     // Ensure buffAddr & capacity are consistent
-    FW_ASSERT((buffAddr == nullptr) == (capacity == 0), capacity);
+    FW_ASSERT((buffAddr == nullptr) == (capacity == 0), static_cast<FwAssertArgType>(capacity));
 }
 
 LinearBufferBase::~LinearBufferBase() {}

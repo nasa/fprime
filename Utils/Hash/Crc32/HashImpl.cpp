@@ -41,8 +41,7 @@ void Hash ::finalize(HashBuffer& buffer) const {
     HashBuffer bufferOut;
     // For CRC32 we need to return the one's complement of the result:
     Fw::SerializeStatus status = bufferOut.serializeFrom(~(this->hash_handle));
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status, reinterpret_cast<FwAssertArgType>(bufferOut.getBuffAddr()),
-              static_cast<FwAssertArgType>(bufferOut.getCapacity()));
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status, static_cast<FwAssertArgType>(bufferOut.getCapacity()));
     buffer = bufferOut;
 }
 
