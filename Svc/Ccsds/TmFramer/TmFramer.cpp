@@ -42,9 +42,11 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
 
     // Data Field Status (Standard 4.1.2.7):
     // - all flags to 0 except segment length id 0b11 per standard (4.1.2.7)
-    // - First Header Pointer is always 0 since we are always wrapping a single entire packet at offset 0
+    // - First Header Pointer from context (Standard 4.1.2.7.6): set by an upstream aggregator when packets
+    //   span frames; the default of 0 indicates a packet header at offset 0 of the data field
     U16 dataFieldStatus = 0;
     dataFieldStatus |= 0x3 << TMSubfields::segLengthOffset;  // Seg Length Id '11' (0x3) per Standard (4.1.2.7.5)
+    dataFieldStatus |= static_cast<U16>(context.get_firstHeaderPointer() & TMSubfields::fhpMask);
 
     header.set_globalVcId(globalVcId);
     header.set_masterFrameCount(this->m_masterFrameCount);
@@ -68,8 +70,11 @@ void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComC
     status = frameSerializer.serializeFrom(data.getData(), data.getSize(), Fw::Serialization::OMIT_LENGTH);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
-    // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet
-    this->fill_with_idle_packet(frameSerializer);
+    // As per TM Standard 4.2.2.5, fill the rest of the data field with an Idle Packet.
+    // A full data field (e.g. delivered by a spanning aggregator) requires no fill.
+    if (frameSerializer.getSize() < ComCfg::TmFrameFixedSize - TMTrailer::SERIALIZED_SIZE) {
+        this->fill_with_idle_packet(frameSerializer);
+    }
 
     // -------------------------------------------------
     // Trailer (CRC)

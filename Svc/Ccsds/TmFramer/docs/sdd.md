@@ -32,7 +32,7 @@ For each frame generated, the `Svc::Ccsds::TmFramer` will populate the CCSDS TM 
 | Synchronization Flag | 0 | 0 as Packets are inserted |
 | Packet Order Flag | 0 | As per protocol 4.1.2.7.4 |
 | Segment Length Identifier | 0b11 | As per protocol 4.1.2.7.5 |
-| First Header Pointer | 0 | F Prime packets are limited in length and always sent in a single frame, aligned to the start of the frame. |
+| First Header Pointer | From context | Taken from `ComCfg::FrameContext.firstHeaderPointer` (default 0). An upstream spanning aggregator (e.g. `Svc::ComAggregator`) sets the offset of the first packet header in the data field, or `0x7FF` for continuation-only frames, per protocol 4.1.2.7.6. |
 
 ## Port Descriptions
 

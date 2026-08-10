@@ -77,6 +77,15 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
     //! Tests clear operation with held data
     void test_clear_with_hold();
 
+    //! Tests a packet spanning from one aggregate into a single following aggregate
+    void test_spanning_split_two();
+
+    //! Tests a packet spanning a start aggregate, a complete middle aggregate, and an end aggregate
+    void test_spanning_three_frames();
+
+    //! Tests an idle packet spanning across aggregates when residual space is below the minimum
+    void test_spanning_idle_span();
+
     //! Helper to fill a buffer with random data
     Fw::Buffer fill_buffer(U32 size);
 
@@ -88,6 +97,18 @@ class ComAggregatorTester final : public ComAggregatorGTestBase {
 
     //! Helper to validate a buffer has been aggregated correctly
     void validate_buffer_aggregated(const Fw::Buffer& buffer, const ComCfg::FrameContext& context);
+
+    //! Helper to append the expected encoding of an SPP idle packet of the given total size
+    static void append_idle_packet(std::vector<U8>& expected, FwSizeType idleSize);
+
+    //! Helper to send a data buffer and dispatch the state machine
+    void spanning_send(Fw::Buffer& buffer);
+
+    //! Helper to validate an emitted aggregate against expected content and First Header Pointer
+    void expect_frame(U32 index, const std::vector<U8>& expected, U16 expectedFhp);
+
+    //! Helper to return the emitted aggregate and send a SUCCESS status
+    void return_and_status(U32 index);
 
   private:
     // ----------------------------------------------------------------------

@@ -48,6 +48,8 @@ class TmFramerTester final : public TmFramerGTestBase {
     void testInputBufferTooLarge();
     void testDataReturn();
     void testBufferOwnershipState();
+    void testFirstHeaderPointerFromContext();
+    void testFullDataFieldNoIdleFill();
 
   private:
     // ----------------------------------------------------------------------
@@ -64,6 +66,7 @@ class TmFramerTester final : public TmFramerGTestBase {
     U8 getFrameVcId(U8* frameData);     //!< Get the Virtual Channel ID from the frame - no boundary check
     U8 getFrameMcCount(U8* frameData);  //!< Get the Master Frame Count from the frame - no boundary check
     U8 getFrameVcCount(U8* frameData);  //!< Get the Virtual Frame Count from the frame - no boundary check
+    U16 getFrameFhp(U8* frameData);     //!< Get the First Header Pointer from the frame - no boundary check
 
   private:
     // ----------------------------------------------------------------------

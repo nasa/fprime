@@ -81,6 +81,21 @@ TEST(Nominal, Clear) {
     tester.test_full();
 }
 
+TEST(Spanning, SplitAcrossTwoFrames) {
+    Svc::ComAggregatorTester tester;
+    tester.test_spanning_split_two();
+}
+
+TEST(Spanning, SpanCompleteMiddleFrame) {
+    Svc::ComAggregatorTester tester;
+    tester.test_spanning_three_frames();
+}
+
+TEST(Spanning, IdlePacketSpansFrames) {
+    Svc::ComAggregatorTester tester;
+    tester.test_spanning_idle_span();
+}
+
 int main(int argc, char** argv) {
     STest::Random::seed();
     ::testing::InitGoogleTest(&argc, argv);

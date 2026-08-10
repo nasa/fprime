@@ -19,6 +19,8 @@ register_fprime_library(
         "${CMAKE_CURRENT_LIST_DIR}/ComAggregator.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/ComAggregator.cpp"
+    DEPENDS
+        Svc_Ccsds_Types
 )
 
 ### Unit Tests ###

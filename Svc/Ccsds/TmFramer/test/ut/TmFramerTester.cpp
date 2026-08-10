@@ -152,6 +152,52 @@ void TmFramerTester ::testBufferOwnershipState() {
     ASSERT_EQ(this->component.m_bufferState, TmFramer::BufferOwnershipState::NOT_OWNED);
 }
 
+void TmFramerTester ::testFirstHeaderPointerFromContext() {
+    U8 bufferData[100];
+    Fw::Buffer buffer(bufferData, sizeof(bufferData));
+    ComCfg::FrameContext context;
+
+    // Default context: FHP of 0 (packet header at offset 0 of the data field)
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->getFrameFhp(this->fromPortHistory_dataOut->at(0).data.getData()), 0);
+
+    // Context-provided FHP (spanning aggregator: first packet header at a non-zero offset)
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    context.set_firstHeaderPointer(42);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_EQ(this->getFrameFhp(this->fromPortHistory_dataOut->at(1).data.getData()), 42);
+
+    // Continuation-only frame: no packet starts in this frame
+    this->component.m_bufferState = TmFramer::BufferOwnershipState::OWNED;
+    context.set_firstHeaderPointer(TMSubfields::FHP_NO_PACKET_START);
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(3);
+    ASSERT_EQ(this->getFrameFhp(this->fromPortHistory_dataOut->at(2).data.getData()),
+              static_cast<U16>(TMSubfields::FHP_NO_PACKET_START));
+}
+
+void TmFramerTester ::testFullDataFieldNoIdleFill() {
+    // A data field delivered at full capacity (e.g. by a spanning aggregator) requires no idle fill
+    const FwSizeType fullSize = ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE;
+    U8 bufferData[fullSize];
+    for (FwSizeType i = 0; i < fullSize; ++i) {
+        bufferData[i] = static_cast<U8>(i & 0xFF);
+    }
+    Fw::Buffer buffer(bufferData, fullSize);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+    ASSERT_from_dataOut_SIZE(1);
+    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
+    ASSERT_EQ(outBuffer.getSize(), static_cast<FwSizeType>(ComCfg::TmFrameFixedSize));
+    // Data field must be exactly the input data with no idle packet inserted
+    for (FwSizeType i = 0; i < fullSize; ++i) {
+        ASSERT_EQ(outBuffer.getData()[TMHeader::SERIALIZED_SIZE + i], bufferData[i]) << "Data mismatch at index " << i;
+    }
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
@@ -167,6 +213,9 @@ U8 TmFramerTester::getFrameMcCount(U8* frameData) {
 }
 U8 TmFramerTester::getFrameVcCount(U8* frameData) {
     return frameData[3];
+}
+U16 TmFramerTester::getFrameFhp(U8* frameData) {
+    return static_cast<U16>(((frameData[4] << 8) | frameData[5]) & TMSubfields::fhpMask);
 }
 
 }  // namespace Ccsds
