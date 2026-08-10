@@ -40,7 +40,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           56      56   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -162,7 +162,7 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     155    91%   21-26,28,194,248-249,253,318,343,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -421,5 +421,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      22857   19125    83%
+TOTAL                                      22857   19127    83%
 ------------------------------------------------------------------------------

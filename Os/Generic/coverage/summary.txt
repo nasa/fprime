@@ -10,9 +10,9 @@ Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     147    87%   21-26,28,194,228,248-249,253,314,317-318,320,323-324,330,346,351,353
+Os/Generic/Types/AtomicQueue.cpp             169     146    86%   21-26,28,194,228,248-249,253,314,317-318,320,323-324,330,343,346,351,353
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     105    98%   68,117
 ------------------------------------------------------------------------------
-TOTAL                                        802     715    89%
+TOTAL                                        802     714    89%
 ------------------------------------------------------------------------------
