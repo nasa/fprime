@@ -396,6 +396,9 @@ void CfdpManager ::PollDirectory_cmdHandler(FwOpcodeType opCode,
     if (rspStatus == Fw::CmdResponse::OK) {
         rspStatus = this->checkCommandChannelPollIndex(pollId);
     }
+    if (rspStatus == Fw::CmdResponse::OK) {
+        rspStatus = this->checkCommandPollInterval(interval);
+    }
 
     if (rspStatus == Fw::CmdResponse::OK) {
         if (Status::SUCCESS == this->m_engine->startPollDir(channelId, pollId, sourceDirectory, destDirectory,
@@ -562,6 +565,17 @@ Fw::CmdResponse::T CfdpManager ::checkCommandChannelIndex(U8 channelIndex) {
 Fw::CmdResponse::T CfdpManager ::checkCommandChannelPollIndex(U8 pollIndex) {
     if (pollIndex >= MaxPollingDirPerChan) {
         this->log_WARNING_LO_InvalidChannelPoll(pollIndex, MaxPollingDirPerChan);
+        return Fw::CmdResponse::VALIDATION_ERROR;
+    } else {
+        return Fw::CmdResponse::OK;
+    }
+}
+
+Fw::CmdResponse::T CfdpManager ::checkCommandPollInterval(U32 interval) {
+    // A zero interval would arm the poll timer with no time remaining, which is
+    // not a valid polling configuration, so reject it here.
+    if (interval == 0) {
+        this->log_WARNING_LO_InvalidPollInterval(interval);
         return Fw::CmdResponse::VALIDATION_ERROR;
     } else {
         return Fw::CmdResponse::OK;

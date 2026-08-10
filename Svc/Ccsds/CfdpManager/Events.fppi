@@ -73,7 +73,13 @@ event InvalidChannelPoll(
     maxPollId: U8 @< Maximum channel index
 ) \
     severity warning low \
-    format "Invalid poll ID {}, maximum poll ID is {}" 
+    format "Invalid poll ID {}, maximum poll ID is {}"
+
+event InvalidPollInterval(
+    interval: U32 @< Requested poll interval in seconds
+) \
+    severity warning low \
+    format "Invalid poll interval {} seconds, must be non-zero"
 
 event FailKeepFileMove(
     srcFile: string size MaxFilePathSize @< Source file being moved
