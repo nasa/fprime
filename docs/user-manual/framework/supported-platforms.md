@@ -1,8 +1,5 @@
 # Supported Platforms
 
-This page lists platforms tied to a specific hardware and OS pair. For reference projects
-and CI that aren't tied to a particular platform, see [F´ Reference Projects](./reference-projects.md).
-
 | Hardware         | OS | Architecture   | Reference Project | Build Status |
 | ---------------- | -------------------- | ------------------------------- | ---------------------------------- | ------------ |
 | Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI [macOS]](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml) |
@@ -10,6 +7,7 @@ and CI that aren't tied to a particular platform, see [F´ Reference Projects](.
 | Feather M4 	   | FreeRTOS  | ARM | [`fprime-featherm4-freertos-reference`](https://github.com/fprime-community/fprime-featherm4-freertos-reference) | N/A |
 | Pi Pico          | Zephyr    | ARMv6-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | N/A |
 | Pi Pico 2        | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Pico 2)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml) |
+| PolarFire SoC    | VxWorks 7 | RISC-V | TBD | N/A |
 | PyCubed          | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | N/A |
 | Raspberry Pi     | Linux     | ARMv8 | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | [![External Repo: RPI LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml) |
 | Teensy41         | Zephyr    | ARMv7-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Teensy 4.1)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml) |
@@ -30,7 +28,6 @@ These are platforms that the F Prime community or core team is actively working 
 | Pi Pico  | Baremetal  | ARM | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | Pi Pico 2| Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | PolarFire SoC  | Linux | RISC-V | Not started | |TBD|
-| PolarFire SoC  | VxWorks 7 | RISC-V | Not started | |TBD|
 | PyCubed  | Baremetal | RISC-V | In development |[`fprime-baremetal-reference`](https://github.com/fprime-community/fprime-baremetal-reference) | TBD |
 | Snapdragon CoProcessor | Linux | ARM | Not started | |TBD|
 | Vorago | Baremetal | ARM | In development | |TBD|
