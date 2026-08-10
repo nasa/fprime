@@ -23,33 +23,48 @@
 set(FPRIME_SPACEWASM_DIR  "${CMAKE_CURRENT_LIST_DIR}/fprime_spacewasm")
 set(FPRIME_SPACEWASM_TDIR "${CMAKE_CURRENT_BINARY_DIR}/fprime_spacewasm_target")
 
-# Stable, triple-independent location for the built archive. cargo places the
-# real `.a` under a target-triple/profile subdirectory whose layout is a cargo
-# implementation detail; the build step (below) parses cargo's JSON output to
-# find that path and copies it here, so the linker can point at a fixed path
-# regardless of the active Rust target triple.
-set(FPRIME_SPACEWASM_LIB "${FPRIME_SPACEWASM_TDIR}/libfprime_spacewasm.a")
+# Resolve the Rust target triple. A cross-compile toolchain may set
+# RUST_TARGET_TRIPLE; otherwise fall back to rustc's host triple. Passing an
+# explicit --target makes cargo's output path deterministic (see below).
+if (NOT RUST_TARGET_TRIPLE)
+    execute_process(
+        COMMAND rustc -vV
+        OUTPUT_VARIABLE _rustc_version
+        RESULT_VARIABLE _rustc_rc
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (_rustc_rc EQUAL 0 AND _rustc_version MATCHES "host: ([^ \n]+)")
+        set(RUST_TARGET_TRIPLE "${CMAKE_MATCH_1}")
+    endif()
+endif()
+
+# Select the cargo profile from the CMake build type. The profile name is also
+# the subdirectory cargo writes the archive into.
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(FPRIME_SPACEWASM_PROFILE "debug")
+    set(FPRIME_SPACEWASM_PROFILE_FLAG "")
+else()
+    set(FPRIME_SPACEWASM_PROFILE "release")
+    set(FPRIME_SPACEWASM_PROFILE_FLAG "--release")
+endif()
+
+# With an explicit --target and --target-dir, cargo writes the archive to a
+# fixed, documented path: <target-dir>/<triple>/<profile>/lib<crate>.a. Point
+# the linker straight at it -- no JSON parsing or copy step needed.
+set(FPRIME_SPACEWASM_LIB
+    "${FPRIME_SPACEWASM_TDIR}/${RUST_TARGET_TRIPLE}/${FPRIME_SPACEWASM_PROFILE}/libfprime_spacewasm.a")
 
 if (CARGO)
-    # The build runs through a `cmake -P` helper: it invokes
-    # `cargo build --release --message-format=json`, extracts the archive path
-    # from the crate's compiler-artifact record, and copies it to
-    # FPRIME_SPACEWASM_LIB. Optimization/codegen flags live in the crate's
-    # [profile.release] (opt-level, lto, codegen-units, panic=abort);
-    # `--release` selects that profile.
+    # Optimization/codegen flags live in the crate's [profile.release]
+    # (opt-level, lto, codegen-units, panic=abort); --release selects it.
     add_custom_command(
         OUTPUT  "${FPRIME_SPACEWASM_LIB}"
-        COMMAND "${CMAKE_COMMAND}"
-                -DCARGO=${CARGO}
-                -DMANIFEST_PATH=${FPRIME_SPACEWASM_DIR}/Cargo.toml
-                -DTARGET_DIR=${FPRIME_SPACEWASM_TDIR}
-                -DTARGET_TRIPLE=${RUST_TARGET_TRIPLE}
-                -DCRATE_NAME=fprime_spacewasm
-                -DOUTPUT_LIB=${FPRIME_SPACEWASM_LIB}
-                -P ${CMAKE_CURRENT_LIST_DIR}/cargo_build_staticlib.cmake
+        COMMAND "${CARGO}" build ${FPRIME_SPACEWASM_PROFILE_FLAG}
+                --manifest-path "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
+                --target        "${RUST_TARGET_TRIPLE}"
+                --target-dir    "${FPRIME_SPACEWASM_TDIR}"
         DEPENDS "${FPRIME_SPACEWASM_DIR}/src/lib.rs"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.toml"
-                "${CMAKE_CURRENT_LIST_DIR}/cargo_build_staticlib.cmake"
                 "${FPRIME_SPACEWASM_DIR}/Cargo.lock"
         COMMENT "Building fprime_spacewasm Rust static library"
         VERBATIM
