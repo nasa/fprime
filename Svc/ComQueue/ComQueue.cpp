@@ -454,6 +454,9 @@ void ComQueue::processQueue() {
                 queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
             FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
                       static_cast<FwAssertArgType>(dequeue_status));
+            // The raw byte copy above leaves the ComBuffer's self-pointer aimed at the source
+            // object's storage; repair it to reference m_dequeued_com_buffer's own buffer.
+            this->m_dequeued_com_buffer.recomputeBuffAddr();
             this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
             Fw::Buffer buffer;
