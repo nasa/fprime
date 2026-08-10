@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-10T21:10:31Z",
+  "generated_at": "2026-08-10T23:28:01Z",
   "ref": "devel",
-  "commit": "009854488b265e9f76ac8e7ca99a09d344b417c8",
-  "passed": 0,
-  "failed": 1,
-  "skipped": 15,
+  "commit": "2c0ee4e5d455b628fed81fc6163d708407eecc11",
+  "passed": 1,
+  "failed": 3,
+  "skipped": 12,
   "checks": [
     {
       "id": "D1",
@@ -48,9 +48,9 @@
       "name": "Requirements mapped to design artifacts",
       "category": "design",
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression",
-      "status": "skip",
+      "status": "pass",
       "failures": [],
-      "detail": "no requirements found"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -133,18 +133,30 @@
       "name": "Requirement parent traceability",
       "category": "requirements",
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression",
-      "status": "skip",
-      "failures": [],
-      "detail": "no requirements found"
+      "status": "fail",
+      "failures": [
+        "requirement 'SVC-DPCOMPRESSION-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:81) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCOMPRESSION-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:82) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCOMPRESSION-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:83) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCOMPRESSION-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:84) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'SVC-DPCOMPRESSION-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:85) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+      ],
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "R8",
       "name": "Requirement verification method",
       "category": "requirements",
       "module": "/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression",
-      "status": "skip",
-      "failures": [],
-      "detail": "no requirements found"
+      "status": "fail",
+      "failures": [
+        "requirement 'SVC-DPCOMPRESSION-001' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:81) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-DPCOMPRESSION-002' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:82) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-DPCOMPRESSION-003' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:83) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-DPCOMPRESSION-004' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:84) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')",
+        "requirement 'SVC-DPCOMPRESSION-005' (/home/runner/work/fprime/fprime/Svc/Subtopologies/DpCompression/docs/sdd.md:85) has no verification method (expected one of Test/Analysis/Inspection/Demonstration, got: '<empty>')"
+      ],
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "U3",

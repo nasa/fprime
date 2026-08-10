@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-10T21:10:31Z",
+  "generated_at": "2026-08-10T23:28:01Z",
   "ref": "devel",
-  "commit": "009854488b265e9f76ac8e7ca99a09d344b417c8",
+  "commit": "2c0ee4e5d455b628fed81fc6163d708407eecc11",
   "passed": 2,
   "failed": 3,
   "skipped": 11,
@@ -86,7 +86,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer",
       "status": "fail",
       "failures": [
-        "no requirements found (searched: nothing); cannot trace 4 telemetry channel(s)"
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer/docs/sdd.md); cannot trace 4 telemetry channel(s)"
       ],
       "detail": "4 telemetry channel(s) traced against 0 requirement(s)"
     },
@@ -97,7 +97,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer",
       "status": "fail",
       "failures": [
-        "no requirements found (searched: nothing); cannot trace 11 event(s)"
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer/docs/sdd.md); cannot trace 11 event(s)"
       ],
       "detail": "11 event(s) traced against 0 requirement(s)"
     },
@@ -126,7 +126,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer",
       "status": "fail",
       "failures": [
-        "no requirements found (searched: nothing); cannot trace 1 port(s)"
+        "no requirements found (searched: /home/runner/work/fprime/fprime/Svc/Ccsds/AosDeframer/docs/sdd.md); cannot trace 1 port(s)"
       ],
       "detail": "1 port(s) traced against 0 requirement(s)"
     },

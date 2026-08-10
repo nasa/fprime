@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "2c0ee4e5d455b628fed81fc6163d708407eecc11",
-  "generated_at": "2026-08-10T23:25:41Z",
+  "generated_at": "2026-08-10T23:28:06Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -9410,9 +9410,9 @@
         }
       },
       "checks": {
-        "passed": 0,
-        "failed": 1,
-        "skipped": 15,
+        "passed": 1,
+        "failed": 3,
+        "skipped": 12,
         "tier": "bronze",
         "report": "Svc/Subtopologies/DataProducts/checks/index.html"
       },
@@ -9470,9 +9470,9 @@
         }
       },
       "checks": {
-        "passed": 0,
-        "failed": 1,
-        "skipped": 15,
+        "passed": 1,
+        "failed": 3,
+        "skipped": 12,
         "tier": "bronze",
         "report": "Svc/Subtopologies/DpCompression/checks/index.html"
       },
