@@ -109,9 +109,7 @@ def test_override_survives_reconfigure(CONFIG_BUILD):
     assert overridden.exists(), "Override destination was never produced"
     before = overridden.stat().st_mtime
     contents = overridden.read_bytes()
-    override_source = (
-        CONFIG_BUILD["source"] / "override" / "project" / "DpCfg.hpp"
-    )
+    override_source = CONFIG_BUILD["source"] / "override" / "project" / "DpCfg.hpp"
     assert (
         contents == override_source.read_bytes()
     ), "Destination does not hold the override's content"
@@ -123,6 +121,39 @@ def test_override_survives_reconfigure(CONFIG_BUILD):
     assert (
         overridden.stat().st_mtime == before
     ), "Re-configure rewrote the override, forcing a rebuild of everything using it"
+
+
+def test_override_removal_restores_original(CONFIG_BUILD):
+    """Test that dropping an override puts F Prime's original file back
+
+    Deferring the write makes the destination depend on a map of recorded
+    sources. That map is rebuilt from scratch on every configure, so a
+    destination that is no longer overridden must revert rather than keep the
+    override that is gone.
+    """
+    overridden = CONFIG_BUILD["build"] / "F-Prime" / "default" / "config" / "DpCfg.hpp"
+    original = settings.FRAMEWORK_PATH / "default" / "config" / "DpCfg.hpp"
+    assert (
+        overridden.read_bytes() != original.read_bytes()
+    ), "Override was never applied"
+
+    try:
+        return_code, _, _ = cmake.run_cmake(
+            CONFIG_BUILD["source"],
+            CONFIG_BUILD["build"],
+            {"_TEST_CONFIG_DROP_HEADER_OVERRIDE": "ON"},
+        )
+        assert return_code == 0, "Re-configure without the override failed"
+        assert (
+            overridden.read_bytes() == original.read_bytes()
+        ), "Destination kept the removed override instead of F Prime's original"
+    finally:
+        # Leave the build as the other tests expect to find it
+        cmake.run_cmake(
+            CONFIG_BUILD["source"],
+            CONFIG_BUILD["build"],
+            {"_TEST_CONFIG_DROP_HEADER_OVERRIDE": "OFF"},
+        )
 
 
 def test_library_bad_new_config(CONFIG_FAILED_NEW_FILE_BUILD):
