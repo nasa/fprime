@@ -11,10 +11,10 @@ The component wraps the Linux userspace `spidev` interface (`/dev/spidev<device>
 | Name | Description | Validation |
 |---|---|---|
 | LINUX-SPI-COMP-001 | The LinuxSpiDriver component shall implement the Drv.Spi interface | inspection |
-| LINUX-SPI-COMP-002 | The LinuxSpiDriver component shall support opening a Linux spidev device by bus number and chip select | unit test |
+| LINUX-SPI-COMP-002 | The LinuxSpiDriver component shall support opening a Linux spidev device by bus number and chip select | inspection |
 | LINUX-SPI-COMP-003 | The LinuxSpiDriver component shall support configurable clock frequencies (1, 5, 10, 15, and 20 MHz) | inspection |
 | LINUX-SPI-COMP-004 | The LinuxSpiDriver component shall support the four SPI clock polarity/phase modes | inspection |
-| LINUX-SPI-COMP-005 | The LinuxSpiDriver component shall perform synchronous full-duplex write/read transactions | unit test |
+| LINUX-SPI-COMP-005 | The LinuxSpiDriver component shall perform synchronous full-duplex write/read transactions | inspection |
 | LINUX-SPI-COMP-006 | The LinuxSpiDriver component shall report open, configuration, and transfer errors via events | inspection |
 | LINUX-SPI-COMP-007 | The LinuxSpiDriver component shall report the cumulative number of bytes transferred via telemetry | inspection |
 

@@ -11,11 +11,11 @@ The component wraps the Linux userspace I2C device interface (`/dev/i2c-*`, via 
 | Name | Description | Validation |
 |---|---|---|
 | LINUX-I2C-COMP-001 | The LinuxI2cDriver component shall implement the Drv.I2c interface | inspection |
-| LINUX-I2C-COMP-002 | The LinuxI2cDriver component shall support opening a Linux I2C device by device path | unit test |
-| LINUX-I2C-COMP-003 | The LinuxI2cDriver component shall perform synchronous write transactions to a specified 7-bit slave address | unit test |
-| LINUX-I2C-COMP-004 | The LinuxI2cDriver component shall perform synchronous read transactions from a specified 7-bit slave address | unit test |
-| LINUX-I2C-COMP-005 | The LinuxI2cDriver component shall perform combined write/read transactions without releasing the bus between the write and the read | unit test |
-| LINUX-I2C-COMP-006 | The LinuxI2cDriver component shall return an `I2cStatus` value indicating the result of each transaction | unit test |
+| LINUX-I2C-COMP-002 | The LinuxI2cDriver component shall support opening a Linux I2C device by device path | inspection |
+| LINUX-I2C-COMP-003 | The LinuxI2cDriver component shall perform synchronous write transactions to a specified 7-bit slave address | inspection |
+| LINUX-I2C-COMP-004 | The LinuxI2cDriver component shall perform synchronous read transactions from a specified 7-bit slave address | inspection |
+| LINUX-I2C-COMP-005 | The LinuxI2cDriver component shall perform combined write/read transactions without releasing the bus between the write and the read | inspection |
+| LINUX-I2C-COMP-006 | The LinuxI2cDriver component shall return an `I2cStatus` value indicating the result of each transaction | inspection |
 
 ## 3. Design
 
