@@ -1,0 +1,13 @@
+register_fprime_config(
+    EXCLUDE_FROM_ALL
+    AUTOCODER_INPUTS
+        "${CMAKE_CURRENT_LIST_DIR}/ComCcsdsSdlsConfig.fpp"
+    DEPENDS
+        Fw_Types
+        Svc_Ccsds_ClearTextDecryptor
+        Svc_Ccsds_ClearTextEncryptor
+        Svc_Ccsds_CcsdsSdlsDeframer
+        Svc_Ccsds_CcsdsSdlsFramer
+        Svc_Ccsds_SdlsSaRouter
+        Svc_Ccsds_SdlsFileKeyManager
+)

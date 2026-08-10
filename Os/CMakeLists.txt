@@ -136,7 +136,7 @@ register_fprime_module(
 )
 
 add_named_os_module(Console Fw_Logger)
-add_named_os_module("File;FileSystem;Directory" Utils_Hash)
+add_named_os_module("File;FileSystem;Directory" Utils_Hash Fw_DataStructures)
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
 add_named_os_module("Mutex;Condition")
 add_named_os_module(CountingSemaphore)

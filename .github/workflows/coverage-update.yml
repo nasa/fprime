@@ -32,6 +32,11 @@ concurrency:
 jobs:
   coverage-update:
     name: "Coverage [push]"
+    # Serialize with every other baseline-branch publisher (e.g. the CodeQL
+    # findings publisher) so concurrent writers to coverage/<ref> can't race.
+    concurrency:
+      group: baseline-publish-${{ github.ref }}
+      cancel-in-progress: false
     # ubuntu-24.04 ships gcov-13, which is required: gcov-11 (Ubuntu
     # 22.04 default) has counter-overflow bugs and pathological slowness
     # on heavily-templated test code that can turn a 30 s coverage run

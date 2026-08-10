@@ -7,6 +7,8 @@
 #include <config/FppConstantsAc.hpp>
 #include <csignal>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <list>
 #include "Os/File.hpp"
 #include "Os/Posix/File.hpp"
@@ -139,6 +141,104 @@ std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation() {
 }  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
+
+// ======================================================================
+// Regression tests for the EINTR retry-condition inversion in
+// Os::Posix::PosixFile::read()/write() (Os/Posix/File.cpp).
+//
+// Prior to the fix, a genuine (non-EINTR) errno such as ENOSPC or EBADF
+// took the loop's `continue` branch and busy-retried the identical failing
+// syscall, ultimately falling out of the loop with `status` still OP_OK and
+// a short/zero byte count -- a false success. Downstream, Svc::FileUplink
+// trusts that OP_OK and then FW_ASSERTs on the short count, aborting the
+// flight-software process. These tests drive a real (non-EINTR) I/O error
+// through the public Os::File API and assert it is surfaced as a non-OP_OK
+// status rather than a false success.
+// ======================================================================
+
+//! Force a non-EINTR write error (ENOSPC) using /dev/full, which always
+//! fails writes with ENOSPC on Linux. This is the direct analogue of the
+//! disk-full-during-uplink scenario. Skipped on platforms without /dev/full
+//! (e.g. Darwin).
+TEST(PosixFileErrorHandling, WriteNoSpaceSurfacesError) {
+    if (::access("/dev/full", W_OK) != 0) {
+        GTEST_SKIP() << "/dev/full not available on this platform";
+    }
+    Os::File file;
+    if (file.open("/dev/full", Os::File::OPEN_WRITE) != Os::File::Status::OP_OK) {
+        GTEST_SKIP() << "Could not open /dev/full for writing";
+    }
+
+    U8 buffer[64] = {0};
+    FwSizeType size = sizeof(buffer);
+    Os::File::Status status = file.write(buffer, size, Os::File::WaitType::NO_WAIT);
+
+    // Before the fix: status == OP_OK with size == 0 (false success).
+    EXPECT_NE(status, Os::File::Status::OP_OK);
+    EXPECT_EQ(status, Os::File::Status::NO_SPACE);  // ENOSPC maps to NO_SPACE
+    file.close();
+}
+
+//! Force a non-EINTR write error (EBADF) by closing the descriptor out from
+//! under an open Os::File and then writing. Fully deterministic on any POSIX
+//! platform, so it exercises the inverted condition on Linux and Darwin alike.
+TEST(PosixFileErrorHandling, WriteBadDescriptorSurfacesError) {
+    char path_template[] = "/tmp/fprime-os-file-badfd-write-XXXXXX";
+    int tmp_fd = ::mkstemp(path_template);
+    ASSERT_GE(tmp_fd, 0) << "Failed to create temp file: " << ::strerror(errno);
+    ::close(tmp_fd);  // Os::File opens its own descriptor below
+
+    Os::File file;
+    ASSERT_EQ(file.open(path_template, Os::File::OPEN_WRITE), Os::File::Status::OP_OK);
+
+    // Close the descriptor Os::File is holding so the next ::write() -> EBADF.
+    Os::Posix::File::PosixFileHandle* handle = static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
+    ASSERT_GE(handle->m_file_descriptor, 0);
+    ::close(handle->m_file_descriptor);
+
+    U8 buffer[16] = {0};
+    FwSizeType size = sizeof(buffer);
+    Os::File::Status status = file.write(buffer, size, Os::File::WaitType::NO_WAIT);
+
+    // Before the fix: status == OP_OK with size == 0 (false success).
+    EXPECT_NE(status, Os::File::Status::OP_OK);
+    EXPECT_EQ(status, Os::File::Status::NOT_OPENED);  // EBADF maps to NOT_OPENED
+    EXPECT_LT(size, static_cast<FwSizeType>(sizeof(buffer)));
+
+    // Avoid double-closing a possibly-reused descriptor during teardown.
+    handle->m_file_descriptor = Os::Posix::File::PosixFileHandle::INVALID_FILE_DESCRIPTOR;
+    file.close();
+    ::unlink(path_template);
+}
+
+//! Symmetric coverage for the read() path: force a non-EINTR read error
+//! (EBADF) by closing the descriptor out from under an open Os::File.
+TEST(PosixFileErrorHandling, ReadBadDescriptorSurfacesError) {
+    char path_template[] = "/tmp/fprime-os-file-badfd-read-XXXXXX";
+    int tmp_fd = ::mkstemp(path_template);
+    ASSERT_GE(tmp_fd, 0) << "Failed to create temp file: " << ::strerror(errno);
+    ::close(tmp_fd);
+
+    Os::File file;
+    ASSERT_EQ(file.open(path_template, Os::File::OPEN_READ), Os::File::Status::OP_OK);
+
+    Os::Posix::File::PosixFileHandle* handle = static_cast<Os::Posix::File::PosixFileHandle*>(file.getHandle());
+    ASSERT_GE(handle->m_file_descriptor, 0);
+    ::close(handle->m_file_descriptor);
+
+    U8 buffer[16] = {0};
+    FwSizeType size = sizeof(buffer);
+    Os::File::Status status = file.read(buffer, size, Os::File::WaitType::WAIT);
+
+    // Before the fix: status == OP_OK with size == 0 (false success).
+    EXPECT_NE(status, Os::File::Status::OP_OK);
+    EXPECT_EQ(status, Os::File::Status::NOT_OPENED);  // EBADF maps to NOT_OPENED
+    EXPECT_EQ(size, static_cast<FwSizeType>(0));
+
+    handle->m_file_descriptor = Os::Posix::File::PosixFileHandle::INVALID_FILE_DESCRIPTOR;
+    file.close();
+    ::unlink(path_template);
+}
 
 int main(int argc, char** argv) {
     STest::Random::seed();

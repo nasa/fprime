@@ -41,13 +41,24 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
         BAUD_57600 = 57600,
         BAUD_115K = 115200,
         BAUD_230K = 230400,
-#ifdef TGT_OS_TYPE_LINUX
+#ifdef B460800
         BAUD_460K = 460800,
+#endif
+#ifdef B921600
         BAUD_921K = 921600,
+#endif
+#ifdef B1000000
         BAUD_1000K = 1000000,
+#endif
+#ifdef B1152000
         BAUD_1152K = 1152000,
+#endif
+#ifdef B1500000
         BAUD_1500K = 1500000,
+#endif
+#ifdef B2000000
         BAUD_2000K = 2000000,
+#endif
 #ifdef B2500000
         BAUD_2500K = 2500000,
 #endif
@@ -59,7 +70,6 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
 #endif
 #ifdef B4000000
         BAUD_4000K = 4000000
-#endif
 #endif
     };
 

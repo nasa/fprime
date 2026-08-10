@@ -25,6 +25,7 @@ register_fprime_module(
 register_fprime_ut(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/main.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CRCCheckerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/RateLimiterTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/TokenBucketTester.cpp"
   DEPENDS
@@ -32,6 +33,7 @@ register_fprime_ut(
     Fw_Types
     Fw_Time
     Os
+    Utils_Hash
 )
 set (UT_TARGET_NAME "${FPRIME_CURRENT_MODULE}_ut_exe")
 if (TARGET "${UT_TARGET_NAME}")

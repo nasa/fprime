@@ -42,6 +42,8 @@ In addition to binary event distribution for downlink, F Prime supports human-re
 - **Active Text Logger** — Has its own thread and can optionally write log text to a file in addition to standard output.
 - **Passive Console Text Logger** — Prints text events directly to stdout in the caller's thread.
 
+Both text loggers support configurable per-severity filtering via `setSeverityFilter()`. Each of the six filterable severity levels can be independently enabled or disabled, and FATAL events always pass through regardless of filter configuration. Default filter states are set via configuration headers (`ActiveTextLoggerCfg.hpp` and `PassiveTextLoggerCfg.hpp`). The filtering logic is provided by the shared `Svc::EventSeverityFilter` utility class.
+
 Text logging is primarily used for development and ground testing. It is connected via a separate text event port that carries pre-formatted strings.
 
 ### Fatal Event Handling

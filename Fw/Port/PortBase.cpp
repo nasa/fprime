@@ -81,6 +81,7 @@ const char* PortBase::getToStringFormatString() {
 
 void PortBase::toString(char* buffer, FwSizeType size) {
     FW_ASSERT(size > 0);
+    FW_ASSERT(buffer != nullptr);
     // Get the port-custom format string
     const char* formatString = this->getToStringFormatString();
     // Determine this port object name (or use "UNKNOWN")

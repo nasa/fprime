@@ -188,8 +188,9 @@ void Os::Test::Directory::Tester::ReadAllFiles::action(Os::Test::Directory::Test
     // size can be 0 during testing so ensure at least 1
     const FwSizeType arraySize = std::max<FwSizeType>(state.m_filenames.size(), 1);
     Fw::String outArray[arraySize];
+    Fw::ExternalArray<Fw::String> outFilenames(outArray, arraySize);
     FwSizeType outFileCount = 0;
-    Os::Directory::Status status = state.m_directory.readDirectory(outArray, arraySize, outFileCount);
+    Os::Directory::Status status = state.m_directory.readDirectory(outFilenames, outFileCount);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);
     // Number of files read should be the number of files in the directory minus the original seek position
     ASSERT_EQ(outFileCount, state.m_filenames.size());

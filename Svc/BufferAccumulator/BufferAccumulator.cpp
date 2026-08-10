@@ -12,8 +12,6 @@
 
 #include "Svc/BufferAccumulator/BufferAccumulator.hpp"
 
-#include <sys/time.h>
-
 #include <limits>
 #include "Fw/Types/BasicTypes.hpp"
 

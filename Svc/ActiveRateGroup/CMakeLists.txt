@@ -15,6 +15,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ActiveRateGroup.hpp"
+  DEPENDS
+    Fw_DataStructures
 )
 ### UTs ###
 register_fprime_ut(

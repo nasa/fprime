@@ -15,6 +15,14 @@ query-filters:
       problem.severity:
         - error
         - warning
+  # These recommendation-severity queries fire heavily on autocoded sources,
+  # so they run in jpl-standard-known-autocode-issues.yml with build paths
+  # excluded to guard only hand-written code
+  - exclude:
+      id:
+        - cpp/fprime/magic-numbers
+        - cpp/fprime/public-data-member
+        - cpp/fprime/incomplete-code
   # We are excluding the following query because it overflows the limit of
   # 5000 results that the SARIF upload can handle
   # This sole query is ran in jpl-standard-pack-3.yml

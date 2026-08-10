@@ -17,6 +17,8 @@ register_fprime_module(
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLogger.hpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogFile.hpp"
+  DEPENDS
+    Svc_Types_EventSeverityFilter
 )
 ### UTs ###
 register_fprime_ut(

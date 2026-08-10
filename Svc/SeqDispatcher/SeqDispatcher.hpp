@@ -57,6 +57,8 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     U32 m_errorCount = 0;
     // number of sequencers in state AVAILABLE
     U32 m_sequencersAvailable = SeqDispatcherSequencerPorts;
+    // number of sequences canceled via the CANCEL_NAME command
+    U32 m_canceledCount = 0;
 
     struct DispatchEntry {
         FwOpcodeType opCode;  //!< opcode of entry
@@ -95,6 +97,19 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
                              const Svc::SeqArgs& buffer);      /*!< Arguments to pass to a sequencer*/
 
     void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                               const U32 cmdSeq);         /*!< The command sequence number*/
+
+    //! Implementation for CANCEL_NAME command handler
+    //!
+    void CANCEL_NAME_cmdHandler(const FwOpcodeType opCode,         /*!< The opcode*/
+                                const U32 cmdSeq,                  /*!< The command sequence number*/
+                                const Fw::CmdStringArg& fileName); /*!< The name of the sequence file to cancel*/
+
+    //! Handler implementation for command CANCEL_ALL
+    //!
+    //! Broadcast a cancel to every running sequencer. This does not exclude the caller!
+    //! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+    void CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                const U32 cmdSeq);         /*!< The command sequence number*/
 };
 

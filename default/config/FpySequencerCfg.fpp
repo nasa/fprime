@@ -15,7 +15,7 @@ module Svc {
 
         @ Serial port indices for FpySequencer serialOut port array.
         @ MAX_SERIAL_PORTS must be defined with this exact name for Fpy compiler bounds checking.
-        dictionary enum SerialPortIndex : U8 {
+        dictionary enum SerialPortIndex : FwIndexType {
             @ Example serial port 0 - rename to application-specific name (e.g., TIME_SYNC_PORT)
             EXAMPLE_PORT_0 = 0
             @ Example serial port 1 - rename to application-specific name (e.g., SENSOR_DATA_PORT)

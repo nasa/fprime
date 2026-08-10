@@ -147,9 +147,11 @@ void CmdSequencerTester ::executeCommand4(const char* const fileName) {
     ASSERT_EVENTS_CS_CommandComplete(0, fileName, 3, 6);
     ASSERT_EVENTS_CS_SequenceComplete_SIZE(1);
     // Assert telemetry
-    ASSERT_TLM_SIZE(2);
+    ASSERT_TLM_SIZE(3);
     ASSERT_TLM_CS_SequencesCompleted(0, 1);
     ASSERT_TLM_CS_CommandsExecuted(0, 4);
+    // Current sequence channel is cleared on completion
+    ASSERT_TLM_CS_CurrentSequence(0, this->component.NO_SEQ.toChar());
     // Check for command complete on seqDone
     ASSERT_from_seqDone_SIZE(1);
     ASSERT_from_seqDone(0, 0U, 0U, Fw::CmdResponse(Fw::CmdResponse::OK));

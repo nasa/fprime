@@ -13,6 +13,8 @@ register_fprime_module(
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/PassiveRateGroup.hpp"
+  DEPENDS
+    Fw_DataStructures
 )
 
 # Specifies the sources specifically associated with unit tests in this module

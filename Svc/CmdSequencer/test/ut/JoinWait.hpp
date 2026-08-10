@@ -39,6 +39,10 @@ class CmdSequencerTester : public Svc::CmdSequencerTester {
     void test_join_wait_without_active_seq();
 
     void test_join_wait_with_active_seq();
+
+    void test_join_wait_with_blocking_seq();
+
+    void test_join_wait_with_second_join_wait();
 };
 
 }  // namespace JoinWait

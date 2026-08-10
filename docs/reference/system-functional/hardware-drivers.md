@@ -12,7 +12,7 @@
 - [F Prime Udp SDD](https://github.com/nasa/fprime/blob/devel/Drv/Udp/docs/sdd.md)
 - [F Prime Ip SDD](https://github.com/nasa/fprime/blob/devel/Drv/Ip/docs/sdd.md)
 - [F Prime LinuxUartDriver SDD](https://github.com/nasa/fprime/blob/devel/Drv/LinuxUartDriver/docs/sdd.md)
-- [F Prime LinuxGpioDriver](https://github.com/nasa/fprime/blob/devel/Drv/LinuxGpioDriver)
+- [F Prime LinuxGpioDriver SDD](https://github.com/nasa/fprime/blob/devel/Drv/LinuxGpioDriver/docs/sdd.md)
 - [F Prime LinuxI2cDriver](https://github.com/nasa/fprime/blob/devel/Drv/LinuxI2cDriver)
 - [F Prime LinuxSpiDriver](https://github.com/nasa/fprime/blob/devel/Drv/LinuxSpiDriver)
 

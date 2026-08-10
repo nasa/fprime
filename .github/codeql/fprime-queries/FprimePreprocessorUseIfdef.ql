@@ -11,7 +11,7 @@
 
 import cpp
 
-/**
+/*
  * F Prime refinement of the JPL Rule 20 query (cpp/jpl-c/preprocessor-use-ifdef).
  *
  * The OS abstraction layers (Os/Posix, Os/Linux, Os/Darwin) must probe what

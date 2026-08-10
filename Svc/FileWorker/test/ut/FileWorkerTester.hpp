@@ -54,6 +54,7 @@ class FileWorkerTester final : public FileWorkerGTestBase {
     void testTransfer();
     void testWriting();
     void testWritingOffset();
+    void testWriteZeroLength();
     void testAppending();
     void testTimeout();
 

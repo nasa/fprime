@@ -248,8 +248,8 @@ Fw::SerializeStatus PortStringType::deserializeFrom(Fw::SerialBufferBase& buffer
 PortStringTypes::PortStringTypes() {
     setRandomString(val1);
     setRandomString(val2);
-    setRandomString(val3);
-    setRandomString(val4);
+    setRandomString(val5);
+    setRandomString(val6);
 }
 
 Fw::SerializeStatus PortStringTypes::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
@@ -257,6 +257,8 @@ Fw::SerializeStatus PortStringTypes::serializeTo(Fw::SerialBufferBase& buffer, F
     buffer.serializeFrom(val2, mode);
     buffer.serializeFrom(val3, mode);
     buffer.serializeFrom(val4, mode);
+    buffer.serializeFrom(val5, mode);
+    buffer.serializeFrom(val6, mode);
     return Fw::SerializeStatus::FW_SERIALIZE_OK;
 }
 
@@ -497,8 +499,9 @@ FormalParamStruct getRandomFormalParamStruct() {
 
     Utils::setString(buf, sizeof(buf));
     Fw::StringTemplate<80> str2(buf);
+    Fw::String str0;
 
-    s.set(STest::Pick::any(), str, str2);
+    s.set(STest::Pick::any(), str, str2, str0);
 
     return s;
 }

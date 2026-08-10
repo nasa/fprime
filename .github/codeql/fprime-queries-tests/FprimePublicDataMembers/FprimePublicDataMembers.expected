@@ -1,0 +1,1 @@
+| test.cpp:5:9:5:15 | m_count | Data member m_count of class Telemetry is public; consider making it private or protected. |

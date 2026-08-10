@@ -684,6 +684,8 @@ class FpySequencer : public FpySequencerComponentBase {
     // otherwise, since construction
     U64 m_statementsDispatched;
 
+    const Fw::String NO_SEQ{"<no seq>"};
+
     // the runtime state of the sequence. encapsulates all state
     // needed to run the sequence.
     // this is distinct from the state of the sequencer. the
@@ -882,7 +884,6 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_fsub();
     DirectiveError op_fmul();
     DirectiveError op_fdiv();
-    DirectiveError op_float_floor_div();
     DirectiveError op_fpow();
     DirectiveError op_flog();
     DirectiveError op_fmod();
@@ -895,6 +896,9 @@ class FpySequencer : public FpySequencerComponentBase {
     DirectiveError op_itrunc_64_8();
     DirectiveError op_itrunc_64_16();
     DirectiveError op_itrunc_64_32();
+    DirectiveError op_ffloor();
+    DirectiveError op_iabs();
+    DirectiveError op_fabs();
 
     Signal exit_directiveHandler(const FpySequencer_ExitDirective& directive, DirectiveError& error);
     Signal allocate_directiveHandler(const FpySequencer_AllocateDirective& directive, DirectiveError& error);

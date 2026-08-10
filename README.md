@@ -3,11 +3,9 @@
 <img width="200em" src="docs/img/fprime-logo.svg"><br/>
 </p>
 
-#
 F´ (F Prime) is a component-driven framework that enables rapid development and deployment of spaceflight and other embedded software applications. Originally developed at the [Jet Propulsion Laboratory](https://www.jpl.nasa.gov/), F´ has been successfully deployed on [several space applications](https://fprime.jpl.nasa.gov/overview/projects/). It is tailored but not limited to small-scale spaceflight systems such as CubeSats, SmallSats, and instruments.
 
 **Please Visit the F´ Website:** [https://fprime.jpl.nasa.gov](https://fprime.jpl.nasa.gov/) for more information.
-
 
 ## What does F´ provide
 
@@ -18,7 +16,6 @@ F´ (F Prime) is a component-driven framework that enables rapid development and
 - Testing tools for testing flight software at the unit and integration levels.
 
 Learn more about [F´ key features](https://fprime.jpl.nasa.gov/overview).
-
 
 ## System Requirements
 
@@ -49,6 +46,7 @@ The following system requirements apply to your workstation for developing F´ a
     ```
 
     then build and run it, for example like:
+
     ```bash
     % g++ -o hi hello.cpp
     % ./hi
@@ -57,16 +55,17 @@ The following system requirements apply to your workstation for developing F´ a
 
 </details>
 
-
 ## Getting Started
 
 To get started with F´, install the F´ bootstrapping tool with:
-```
+
+```bash
 pip install fprime-bootstrap
 ```
 
 Then, create a new project with:
-```
+
+```bash
 fprime-bootstrap project
 ```
 
@@ -74,20 +73,22 @@ See the [HelloWorld Tutorial](https://fprime.jpl.nasa.gov/latest/tutorials-hello
 
 New users are encouraged to read through the [User Manual](https://fprime.jpl.nasa.gov/latest/docs/user-manual/) and explore the [other tutorials](https://fprime.jpl.nasa.gov/latest/docs/tutorials/).
 
-
 ## Getting Help
 
 ### Discussions
+
 To ask questions, discuss improvements, and ask for help please use the project's [GitHub Discussions](https://github.com/nasa/fprime/discussions).
 
 ### Bug reports
+
 To report bugs and issues, [open an issue here](https://github.com/nasa/fprime/issues).
 
 ### Community
+
 The [F´ Community](https://github.com/fprime-community) GitHub Organization contains third party contributions, more documentation of flight software development, and additional resources.
 
-
 ## Resources
+
 - [User Manual](https://fprime.jpl.nasa.gov/latest/docs/user-manual/)
 - [Tutorials](https://fprime.jpl.nasa.gov/latest/docs/tutorials/)
 - [Discussions](https://github.com/nasa/fprime/discussions)

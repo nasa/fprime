@@ -17,6 +17,9 @@ module Svc {
 
         output port seqRunOut: [SeqDispatcherSequencerPorts] Svc.CmdSeqIn
 
+        @ Cancels a running sequence on a specific command sequencer
+        output port seqCancelOut: [SeqDispatcherSequencerPorts] Svc.CmdSeqCancel
+
         @ Called by a command sequencer whenever it has finished any sequence
         async input port seqDoneIn: [SeqDispatcherSequencerPorts] Fw.CmdResponse
 
@@ -26,6 +29,8 @@ module Svc {
         match seqRunOut with seqDoneIn
 
         match seqRunOut with seqStartIn
+
+        match seqRunOut with seqCancelOut
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

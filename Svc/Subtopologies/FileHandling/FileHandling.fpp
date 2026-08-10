@@ -32,9 +32,6 @@ module FileHandling {
         stack size FileHandlingConfig.StackSizes.prmDb \
         priority FileHandlingConfig.Priorities.prmDb \
     {
-        phase Fpp.ToCpp.Phases.configComponents """
-            FileHandling::prmDb.configure("PrmDb.dat");
-        """
         phase Fpp.ToCpp.Phases.readParameters """
             FileHandling::prmDb.readParamFile();
         """

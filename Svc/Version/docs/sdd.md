@@ -24,9 +24,10 @@ Tracks versions for framework,project, libraries and user defined project specif
 
 ## Emitting Versions on Start-Up
 
-The version component can emit versions on startup by calling `version.config(true);` during component configuration.
+The version component can emit versions on startup by calling `version.start();` during start tasks.
 
 ## Change Log
 | Date | Description |
 |---|---|
 |---| Initial Draft |
+| 07/30/26 | Added `start()` information |

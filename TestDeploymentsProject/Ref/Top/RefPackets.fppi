@@ -287,4 +287,5 @@ telemetry packets RefPackets {
 
 } omit {
   CdhCore.cmdDisp.CommandErrors
+  cmdSeq.CS_CurrentSequence
 }

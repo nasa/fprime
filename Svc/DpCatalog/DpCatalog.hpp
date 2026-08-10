@@ -10,7 +10,9 @@
 #include "Svc/DpCatalog/DpCatalogComponentAc.hpp"
 #include "Svc/DpCatalog/DpRecordSerializableAc.hpp"
 
+#include <Fw/DataStructures/ExternalArray.hpp>
 #include <Fw/DataStructures/RedBlackTreeSet.hpp>
+#include <Fw/Deprecate.hpp>
 #include <Fw/Types/MemAllocator.hpp>
 
 #include <Fw/Types/FileNameString.hpp>
@@ -38,18 +40,29 @@ class DpCatalog final : public DpCatalogComponentBase {
     ~DpCatalog() = default;
 
     /// @brief Configure the DpCatalog
-    /// @param maxDpFiles The max number of data product files to track
+    /// @param directories array of directories to scan; at most DP_MAX_DIRECTORIES entries
+    /// @param stateFile file to store transmit state. Provide a zero-length string if no state tracking
+    /// @param memId  memory ID for allocator
+    /// @param allocator Allocator to supply memory for catalog.
+    ///        Instance must survive for shutdown to use for reclaiming memory
+    void configure(const Fw::ExternalArray<Fw::FileNameString>& directories,
+                   Fw::FileNameString& stateFile,
+                   FwEnumStoreType memId,
+                   Fw::MemAllocator& allocator);
+
+    /// @brief Configure the DpCatalog
     /// @param directories list of directories to scan
     /// @param numDirs number of supplied directories
     /// @param stateFile file to store transmit state. Provide a zero-length string if no state tracking
     /// @param memId  memory ID for allocator
     /// @param allocator Allocator to supply memory for catalog.
     ///        Instance must survive for shutdown to use for reclaiming memory
-    void configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
-                   FwSizeType numDirs,
-                   Fw::FileNameString& stateFile,
-                   FwEnumStoreType memId,
-                   Fw::MemAllocator& allocator);
+    DEPRECATED(void configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+                              FwSizeType numDirs,
+                              Fw::FileNameString& stateFile,
+                              FwEnumStoreType memId,
+                              Fw::MemAllocator& allocator),
+               "Use configure(const Fw::ExternalArray<Fw::FileNameString>& directories, ...) instead");
 
     // @brief clean up component.
     // Deallocates memory.

@@ -25,12 +25,12 @@ The File Handling subtopology packages the core file-transfer and file-managemen
 - Rate group connections to drive File Downlink's send cycle.
 - Communication stack connections for file packet exchange (wire to a ComFprime or ComCcsds subtopology's file ports).
 - Parameter connections from all components that use parameters.
+- A parameter-file name for `prmDb`: call `FileHandling.prmDb.configure()` during topology setup, before parameters are loaded.
 
 ### Configuration
 
 - Base IDs, queue sizes, stack sizes, and priorities via FileHandlingConfig.
 - The File Downlink send rate is determined by the connected rate group frequency.
-- The Parameter Database file path is configured at deployment time.
 
 ### Limitations
 

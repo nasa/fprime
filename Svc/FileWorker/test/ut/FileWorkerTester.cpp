@@ -391,4 +391,60 @@ void FileWorkerTester ::testTimeout() {
     f.close();
 }
 
+void FileWorkerTester ::testWriteZeroLength() {
+    // Regression: a well-formed writeIn with offsetBytes == buffer.getSize() leaves zero
+    // bytes to write. writeIn_handler's `offsetBytes > buffer.getSize()` check accepts this
+    // boundary, and previously the resulting size == 0 tripped FW_ASSERT(size > 0) in
+    // writeToFile(), aborting the process. It must instead be handled as a successful no-op
+    // that leaves the target file's contents alone.
+    const char* fnameChar = "testwritezero.txt";
+    const U8 preserved[] = "PRESERVE-ME";
+    const FwSizeType preservedSize = sizeof(preserved);
+
+    // Pre-seed the target file with known contents that the no-op write must leave intact.
+    Os::File seed;
+    ASSERT_EQ(seed.open(fnameChar, Os::File::OPEN_WRITE), Os::File::OP_OK);
+    FwSizeType seedSize = preservedSize;
+    ASSERT_EQ(seed.write(preserved, seedSize), Os::File::OP_OK);
+    seed.close();
+
+    // Valid, non-empty buffer with the offset pointing exactly at its end (nothing to write).
+    U8 data[1024];
+    for (FwSizeType i = 0; i < sizeof(data); i++) {
+        data[i] = static_cast<U8>(i % 256);
+    }
+    Fw::Buffer buffer(data, sizeof(data));
+    Fw::String fname = fnameChar;
+    FwSizeType offsetBytes = sizeof(data);  // == buffer.getSize()
+
+    // Drive the request. Pre-fix this aborts the process at FW_ASSERT(size > 0).
+    this->invoke_to_writeIn(0, fname, buffer, offsetBytes, false);
+    this->component.doDispatch();
+
+    // The boundary value is valid input, not an error: no InvalidInput, no write/open errors.
+    ASSERT_EVENTS_InvalidInput_SIZE(0);
+    ASSERT_EVENTS_WriteFileError_SIZE(0);
+    ASSERT_EVENTS_OpenFileError_SIZE(0);
+    ASSERT_EVENTS_WriteValidationError_SIZE(0);
+
+    // Reported as a successful write of zero bytes: the count is bytes actually written, so
+    // it must not report the full buffer size when the offset consumed all of it.
+    ASSERT_from_writeDoneOut_SIZE(1);
+    ASSERT_from_writeDoneOut(0, FW_STATUS_DONE_WRITE, 0);
+    ASSERT_EQ(this->component.m_state, FileWorkerState::FW_STATE_IDLE);
+
+    // The existing file's contents must be intact. Note this alone does not prove the file was
+    // never opened: OPEN_WRITE does not set O_TRUNC, so a stray open would leave a file this
+    // short unchanged. The regression it does catch is the pre-fix FW_ASSERT abort above.
+    Os::File check;
+    ASSERT_EQ(check.open(fnameChar, Os::File::OPEN_READ), Os::File::OP_OK);
+    U8 readback[preservedSize];
+    FwSizeType readSize = preservedSize;
+    ASSERT_EQ(check.read(readback, readSize), Os::File::OP_OK);
+    ASSERT_EQ(readSize, preservedSize);
+    ASSERT_EQ(memcmp(readback, preserved, preservedSize), 0);
+    check.close();
+    (void)::remove(fnameChar);
+}
+
 }  // namespace Svc

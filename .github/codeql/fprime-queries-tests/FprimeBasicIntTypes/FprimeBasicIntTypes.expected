@@ -1,0 +1,2 @@
+| test.cpp:3:5:3:14 | badCounter | badCounter uses the basic integral type int rather than a typedef with size and signedness. |
+| test.cpp:7:6:7:16 | badSmallInt | badSmallInt uses the basic integral type char rather than a typedef with size and signedness. |

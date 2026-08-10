@@ -11,7 +11,7 @@
 
 import cpp
 
-/**
+/*
  * F Prime refinement of the JPL Rule 24 query (cpp/jpl-c/multiple-var-decls-per-line).
  *
  * The stock query was written for C and misfires on C++ range-based for loops
