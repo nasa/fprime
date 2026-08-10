@@ -29,7 +29,8 @@ AsmFramer ::~AsmFramer() {}
 
 void AsmFramer ::configure(const U8* asmPattern, FwSizeType asmSize) {
     FW_ASSERT(asmPattern != nullptr);
-    FW_ASSERT(asmSize > 0 && asmSize <= ASM_MAX_SIZE, static_cast<FwAssertArgType>(asmSize));
+    FW_ASSERT(asmSize > 0, static_cast<FwAssertArgType>(asmSize));
+    FW_ASSERT(asmSize <= ASM_MAX_SIZE, static_cast<FwAssertArgType>(asmSize));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
     (void)::memcpy(this->m_asm, asmPattern, static_cast<size_t>(asmSize));
     this->m_asmSize = asmSize;
