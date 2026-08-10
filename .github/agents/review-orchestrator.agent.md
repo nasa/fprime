@@ -130,6 +130,12 @@ may exist upstream of the changed lines). The diff shows what changed;
 the full file shows what already exists. False positives from
 diff-only analysis waste maintainer time and erode trust in the
 review system.
+
+CROSS-AGENT DE-DUPLICATION: apply review contract §6a. Inventory ALL
+agents' prior inline comments by site-key; if another agent's open
+thread already covers the same underlying issue at the same site-key,
+post one concurrence reply on that thread instead of opening a new
+one, and still count the finding in your own hidden metadata.
 ```
 
 ### Template — security reviewer
@@ -360,6 +366,12 @@ No-Go` and `Merge readiness: No-Go` whenever a CI-safety reviewer
 (security-review or supply-chain-review) FAILED or did not run;
 force `Merge readiness: No-Go` whenever any reviewer FAILED, did
 not run, or has outstanding must-fix findings. No silent fallback.
+
+Run the mandatory de-duplication post-pass per
+review-summary.agent.md §5h before composing the summary: group open
+agent-authored threads by site-key, close each non-canonical
+duplicate with a linking reply plus resolveReviewThread, and report
+the consolidated count.
 
 Run the spam / garbage check per review-summary.agent.md §5e. If
 fired, emit Recommend: Close at the top of the summary, ping the
