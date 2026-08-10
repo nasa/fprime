@@ -148,6 +148,7 @@ topology Flight {
 * **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
+* **Aggregator** — `Aggregator.packetSpanning` enables CCSDS TM packet spanning across transfer frames in the `aggregator` instance (see `Svc.ComAggregator`); disabled (0) by default.
 
 ### 4.2 Buffer Manager Bin Configuration
 

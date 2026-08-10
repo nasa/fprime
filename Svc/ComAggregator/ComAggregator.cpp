@@ -265,7 +265,7 @@ void ComAggregator ::fillResidualWithIdle() {
     } else {
         // Stage a minimum-size idle packet, emit the leading bytes now and span the rest
         U8 staging[MIN_IDLE_PACKET_SIZE];
-        Fw::ExternalSerializeBuffer stager(staging, sizeof staging);
+        Fw::ExternalSerializeBuffer stager(staging, sizeof(staging));
         status = stager.serializeFrom(header);
         FW_ASSERT(status == Fw::SerializeStatus::FW_SERIALIZE_OK);
         staging[Ccsds::SpacePacketHeader::SERIALIZED_SIZE] = IDLE_DATA_PATTERN;
