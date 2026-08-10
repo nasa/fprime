@@ -788,6 +788,7 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
         case WasmSequencer_HostFunction::NONE:
             // Invalid host function
             FW_ASSERT(false);
+            break;
         case WasmSequencer_HostFunction::COMMAND: {
             Fw::ComBuffer cmd;
 

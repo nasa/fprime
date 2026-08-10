@@ -513,7 +513,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         U32 cmdSeq;
 
         PendingCmd() = default;
-        PendingCmd(FwOpcodeType opCode, U32 cmdSeq) : opCode(opCode), cmdSeq(cmdSeq) {}
+        PendingCmd(FwOpcodeType opCode_, U32 cmdSeq_) : opCode(opCode_), cmdSeq(cmdSeq_) {}
     };
 
     //! Commands pending interpreter finish

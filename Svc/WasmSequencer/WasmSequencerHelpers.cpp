@@ -52,7 +52,7 @@ U8* WasmSequencer ::guestAlloc(U32 size, U32 align) {
 
     // Round the current offset up to the requested alignment.
     const FwSizeType a = (align < 1) ? 1 : static_cast<FwSizeType>(align);
-    FwSizeType start = this->m_guest_offset + a - 1 & ~(a - 1);
+    FwSizeType start = (this->m_guest_offset + a - 1) & ~(a - 1);
     if (start + size > Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE) {
         return nullptr;
     }
