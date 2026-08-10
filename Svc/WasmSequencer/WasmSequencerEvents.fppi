@@ -88,6 +88,18 @@ event GuestMemoryError(status: Status) \
     severity warning high \
     format "Guest memory access failed: spacewasm status {}"
 
+@ A command response arrived carrying a context (cmdUid) from a previous
+@ sequence run. Reported (not failed) because a late reply after CANCEL is nominal.
+event CmdResponseFromOldSequence($opcode: FwOpcodeType, response: Fw.CmdResponse, oldSequenceIdx: U16, currentSequenceIdx: U16) \
+    severity warning low \
+    format "Command response (opcode {}, response {}) was from a previous sequence (old idx {}, current idx {})"
+
+@ A command response arrived for the correct opcode from this sequence, but for a
+@ different dispatch instance than the one currently being awaited.
+event WrongCmdResponseIndex($opcode: FwOpcodeType, response: Fw.CmdResponse, actualCmdIdx: U16, expectedCmdIdx: U16) \
+    severity warning high \
+    format "Command response (opcode {}, response {}) was for a different command instance (actual idx {}, expected {})"
+
 # ----------------------------------------------------------------------
 # Guest-emitted events (fprime.event host function). One event per F´
 # severity; the host function switches on the requested severity id to

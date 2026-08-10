@@ -124,6 +124,12 @@ WasmSequencerTester::State WasmSequencerTester ::getState() {
     return this->component.sequencer_getState();
 }
 
+U32 WasmSequencerTester ::lastCmdContext() {
+    const U32 size = this->fromPortHistory_cmdOut->size();
+    EXPECT_GT(size, 0u) << "no cmdOut dispatch recorded";
+    return this->fromPortHistory_cmdOut->at(size - 1).context;
+}
+
 // ----------------------------------------------------------------------
 // Canned telemetry / parameter responses
 // ----------------------------------------------------------------------

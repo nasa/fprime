@@ -138,6 +138,20 @@ void WasmSequencer ::destroyStore() {
     // Clear any pending state.
     this->m_invokeStatus = SPACEWASM_OK;
     this->m_loadStatus = SPACEWASM_OK;
+
+    // Reset the exit disposition so a stale host exit/panic from a previous
+    // program cannot be misread as the outcome of a later genuine trap.
+    this->m_exitReason = ExitReason::INTERPRETER;
+    this->m_exitCode = 0;
+}
+
+U32 WasmSequencer ::makeCmdUid() const {
+    // cmdUid is formatted XXYY, where XX are the low 16 bits of m_sequencesStarted
+    // and YY are the low 16 bits of m_tlmCommandsDispatched. On the way back in via
+    // cmdResponseIn this lets us check A) that the response is from the current
+    // sequence (modulo 2^16) and B) that it is this exact command instance and not
+    // another dispatch of the same opcode.
+    return static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_tlmCommandsDispatched & 0xFFFF));
 }
 
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {

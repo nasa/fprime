@@ -90,6 +90,17 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! Current sequencer state-machine state.
     State getState();
 
+    //! Context (cmdUid) attached to the most recent cmdOut dispatch. Tests echo
+    //! this back as the cmdSeq argument of cmdResponseIn so the component accepts
+    //! the response as belonging to the current command instance.
+    U32 lastCmdContext();
+
+    //! The cmdUid the component would currently generate (current sequence +
+    //! command counters). Used by tests that inject a response tagged with the
+    //! current sequence index without a command actually being dispatched, to
+    //! exercise the "unexpected response" failure paths.
+    U32 currentCmdUid() const { return this->component.makeCmdUid(); }
+
     // ----------------------------------------------------------------------
     // White-box accessors into the component under test
     // ----------------------------------------------------------------------

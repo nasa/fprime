@@ -32,12 +32,12 @@ module Svc {
         @ The Wasm modules can call sync/async variants of this.
         @ If sync variant is called -> serialReply[portNum] MUST NOT be connected.
         @ If async variant is called -> serialReply[portNum] MUST be connected.
-        output port serialOut: [Svc.Wasm.SyncSerialPortIndex.MAX_SERIAL_PORTS] serial
+        output port serialOut: [Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
 
         @ Reply port for [serialOut]. This reply is subject to timeout if configured.
         @ Sequences that send async serial messages will block until this reply is received
         @ on the corresponding port number
-        async input port serialReply: [Svc.Wasm.AsyncSerialPortIndex.MAX_SERIAL_PORTS] serial
+        async input port serialReply: [Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
 
         match serialOut with serialReply
 

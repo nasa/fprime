@@ -24,6 +24,8 @@
 #include "config/FwChanIdTypeAliasAc.h"
 #include "config/FwPrmIdTypeAliasAc.h"
 
+#include <limits>
+
 namespace Svc {
 
 // ----------------------------------------------------------------------
@@ -40,6 +42,8 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingLoad(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
+      m_statementStart(),
+      m_hasStatementStart(false),
       m_breakBeforeNextLine(false),
       m_loadFile(nullptr),
       m_tlmSequencesSucceeded(0),
@@ -47,6 +51,9 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_tlmSequencesCancelled(0),
       m_tlmCommandsDispatched(0),
       m_tlmCommandsFailed(0),
+      m_sequencesStarted(0),
+      m_exitReason(ExitReason::INTERPRETER),
+      m_exitCode(0),
       m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
       m_tlmSequenceName("") {
     getGlobalAllocatorLock()->lock();
@@ -93,28 +100,54 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
                                            FwOpcodeType opCode,
                                            U32 cmdSeq,
                                            const Fw::CmdResponse& response) {
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE) {
-        this->sequencer_sendSignal_stmtUnexpected();
-    } else if (this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::COMMAND) {
-        this->sequencer_sendSignal_stmtUnexpected();
-    } else {
-        this->m_pendingHostFunction.clear();
+    // The CmdDisp echoes back the context we sent, not a real cmdSeq. We packed
+    // our cmdUid into that context (see makeCmdUid); rename for clarity.
+    const U32 cmdUid = cmdSeq;
+    const U16 sequenceIndex = static_cast<U16>((cmdUid & 0xFFFF0000) >> 16);
+    const U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
+    const U16 currentSequenceIndex = static_cast<U16>(this->m_sequencesStarted & 0xFFFF);
+    const U16 currentCmdIndex = static_cast<U16>(this->m_tlmCommandsDispatched & 0xFFFF);
 
-        // Track commands that came back with a non-OK response.
-        if (response != Fw::CmdResponse::OK) {
-            this->m_tlmCommandsFailed++;
-        }
-
-        // Respond to the host command by pushing a value to the Wasm operand stack
-        spacewasm_value_t return_val;
-        return_val.tag = SPACEWASM_I32;
-        return_val.u.i32_ = static_cast<I32>(response.e);
-
-        const auto status = spacewasm_resume_value(this->m_wasm, return_val);
-        FW_ASSERT(status == SPACEWASM_OK, status);
-
-        this->sequencer_sendSignal_stmtSuccess();
+    // If the response is from a previous execution window, treat it as a nominal
+    // late reply (e.g. a command that returned after a CANCEL) and just report it
+    // without failing the current sequence.
+    if (sequenceIndex != currentSequenceIndex) {
+        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
+        return;
     }
+
+    // From here on the response claims to be from the current sequence, so any
+    // inconsistency is a genuine error that should fail the sequence.
+    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE ||
+        this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::COMMAND) {
+        this->sequencer_sendSignal_stmtUnexpected();
+        return;
+    }
+
+    // Awaiting a command response, but was it for this exact dispatch instance, or
+    // an earlier one in this sequence with the same opcode?
+    if (cmdIndex != currentCmdIndex) {
+        this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);
+        this->sequencer_sendSignal_stmtUnexpected();
+        return;
+    }
+
+    this->m_pendingHostFunction.clear();
+
+    // Track commands that came back with a non-OK response.
+    if (response != Fw::CmdResponse::OK) {
+        this->m_tlmCommandsFailed++;
+    }
+
+    // Respond to the host command by pushing a value to the Wasm operand stack
+    spacewasm_value_t return_val;
+    return_val.tag = SPACEWASM_I32;
+    return_val.u.i32_ = static_cast<I32>(response.e);
+
+    const auto status = spacewasm_resume_value(this->m_wasm, return_val);
+    FW_ASSERT(status == SPACEWASM_OK, status);
+
+    this->sequencer_sendSignal_stmtSuccess();
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
@@ -136,11 +169,11 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 
 void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
     // A reply is only expected while blocked on an asynchronous serial port invocation
-    // (mirrors cmdResponseIn_handler). Anything else is unexpected and fails the sequence.
     if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE) {
         this->sequencer_sendSignal_stmtUnexpected();
         return;
     }
+
     if (this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT ||
         static_cast<FwIndexType>(this->m_pendingHostFunction.id) != portNum) {
         this->sequencer_sendSignal_stmtUnexpected();
@@ -360,6 +393,14 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
     // Clear any pending main
     this->m_pendingRun = false;
 
+    // A fresh execution window begins. Reset the exit disposition so a stale.
+    this->m_exitReason = ExitReason::INTERPRETER;
+    this->m_exitCode = 0;
+
+    // Bump the sequence counter so any command response from a previous window
+    // is recognized as late (see makeCmdUid).
+    this->m_sequencesStarted++;
+
     // Store the execution arguments
     this->m_args = value.get_args();
 
@@ -377,6 +418,15 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartO
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
     FW_ASSERT(this->m_wasm != nullptr);
+
+    // A fresh execution window begins. Reset the exit disposition
+    this->m_exitReason = ExitReason::INTERPRETER;
+    this->m_exitCode = 0;
+
+    // The start function is a fresh execution window that can itself dispatch
+    // commands; bump the sequence counter so its cmdUids are distinct (see
+    // makeCmdUid).
+    this->m_sequencesStarted++;
 
     const auto invokeStatus = spacewasm_invoke_start(this->m_wasm, this->m_moduleIndex);
     switch (invokeStatus) {
@@ -521,7 +571,25 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
             this->sequencer_sendSignal_interpreterFinished();
             break;
         case SPACEWASM_RUN_TRAP:
-            this->sequencer_sendSignal_interpreterTrap(WasmSequencer::mapTrapReason(trap));
+            // A host function (wasmExit/wasmPanic) can request a trap purely to
+            // stop execution. Distinguish those from genuine interpreter traps.
+            switch (this->m_exitReason) {
+                case ExitReason::HOST_EXIT:
+                    if (this->m_exitCode == 0) {
+                        // exit(0) is a clean, successful termination.
+                        this->sequencer_sendSignal_interpreterFinished();
+                    } else {
+                        this->sequencer_sendSignal_interpreterExitError();
+                    }
+                    break;
+                case ExitReason::HOST_PANIC:
+                    this->sequencer_sendSignal_interpreterExitError();
+                    break;
+                case ExitReason::INTERPRETER:
+                default:
+                    this->sequencer_sendSignal_interpreterTrap(WasmSequencer::mapTrapReason(trap));
+                    break;
+            }
             break;
         case SPACEWASM_RUN_PAUSE:
             this->sequencer_sendSignal_interpreterPause();
@@ -563,6 +631,27 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTr
     this->m_tlmLastTrapReason = trapReason;
     this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_SequenceTrap(trapReason);
+}
+
+void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqExitError(
+    SmId smId,
+    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
+    this->m_tlmSequencesFailed++;
+
+    switch (this->m_exitReason) {
+        case ExitReason::HOST_EXIT:
+            this->log_WARNING_HI_ProgramExited(this->m_exitCode);
+            break;
+        case ExitReason::HOST_PANIC:
+            this->log_WARNING_HI_PanicOccurred(this->m_exitCode);
+            break;
+        case ExitReason::INTERPRETER:
+        default:
+            // Should not happen: this action is only reached via interpreterExitError,
+            // which the spin action only raises for a host exit/panic.
+            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_exitReason));
+            break;
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqPaused(
@@ -613,7 +702,44 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdRe
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStatementTimeout(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // TODO
+    // Only blocking async host functions that await an external reply are subject
+    // to the statement timeout (COMMAND -> cmdResponseIn, ASYNC_PORT -> serialReply).
+    // Sleeps have their own wake timer (checkShouldWake) and are not "statements".
+    if (!this->m_hasStatementStart) {
+        return;
+    }
+
+    Fw::ParamValid prmValid;
+    const F32 timeoutSecs = this->paramGet_STATEMENT_TIMEOUT_SECS(prmValid);
+
+    // A non-positive or out-of-range timeout disables the check entirely.
+    if (timeoutSecs <= 0.0f || timeoutSecs > static_cast<F32>(std::numeric_limits<U32>::max())) {
+        return;
+    }
+
+    // Deadline = statement start + timeout. Round microseconds up so the timeout
+    // is never reported early.
+    const U32 seconds = static_cast<U32>(timeoutSecs);
+    const U32 useconds = static_cast<U32>((timeoutSecs - static_cast<F32>(seconds)) * 1000000.0f + 0.5f);
+
+    Fw::Time deadline = this->m_statementStart;
+    deadline.add(seconds, useconds);
+
+    const Fw::Time now = this->getTime();
+    switch (Fw::Time::compare(now, deadline)) {
+        case Fw::TimeComparison::LT:
+            // Deadline not yet reached.
+            break;
+        case Fw::TimeComparison::EQ:
+        case Fw::TimeComparison::GT:
+            // Statement timed out waiting for its reply.
+            this->sequencer_sendSignal_stmtTimeout();
+            break;
+        case Fw::TimeComparison::INCOMPARABLE:
+            // Time base / context changed since the statement started.
+            this->sequencer_sendSignal_stmtTimeOpFailed();
+            break;
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
@@ -658,10 +784,6 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_clearPause(
 void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPendingHostFunction(
     SmId smId,
     Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // NOTE: The pending host function is not cleared here. Asynchronous host functions
-    // (COMMAND, ASYNC_PORT) leave it pending while AWAITING_RESPONSE so the reply handler
-    // can match it. The state machine clears it via clearPendingHostFunction once the
-    // statement response has been processed.
     switch (this->m_pendingHostFunction.kind) {
         case WasmSequencer_HostFunction::NONE:
             // Invalid host function
@@ -689,10 +811,17 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
                 serStatus = cmd.moveSerToOffset(this->m_pendingHostFunction.len1 + sizeof(FwPacketDescriptorType));
                 FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
-                // Dispatch command to CmdDisp
-                // TODO(tumbar) Use ctx to keep track of which command was sent?
+                // Dispatch command to CmdDisp. The command context (cmdUid)
+                // encodes the current sequence + command instance so we can
+                // reject late/stale responses in cmdResponseIn_handler.
                 this->m_tlmCommandsDispatched++;
-                this->cmdOut_out(0, cmd, 0);
+
+                // Start the statement-timeout clock: we are about to block in
+                // AWAITING_RESPONSE until the command response comes back in.
+                this->m_statementStart = this->getTime();
+                this->m_hasStatementStart = true;
+
+                this->cmdOut_out(0, cmd, this->makeCmdUid());
             }
 
             break;
@@ -939,7 +1068,8 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
 
             // Invoke the serial output port. The reply port MUST NOT be connected for the
             // synchronous variant, so we resume the interpreter immediately without waiting.
-            (void)this->serialOut_out(portNum, this->m_serialPortBuffer);
+            serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
+            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
             status = spacewasm_resume(this->m_wasm);
             FW_ASSERT(status == SPACEWASM_OK, status);
@@ -964,11 +1094,16 @@ void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPend
             auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.len1);
             FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
 
+            // Start the statement-timeout clock: we are about to block in
+            // AWAITING_RESPONSE until the reply comes back on serialReply[portNum].
+            this->m_statementStart = this->getTime();
+            this->m_hasStatementStart = true;
+
             // Invoke the serial output port and block the interpreter until the reply
-            // comes back on serialReply[portNum] (handled by serialReply_handler), mirroring
-            // the asynchronous COMMAND dispatch. Do not resume or signal here: the pending
-            // host function is retained so the reply handler can match it in AWAITING_RESPONSE.
-            (void)this->serialOut_out(portNum, this->m_serialPortBuffer);
+            // comes back on serialReply[portNum] (handled by serialReply_handler)
+            serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
+            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+
             break;
         }
     }
@@ -979,6 +1114,7 @@ void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingH
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::NONE;
     this->m_pendingHostFunction.caller = nullptr;
     this->m_hasPendingTimer = false;
+    this->m_hasStatementStart = false;
 }
 
 // ----------------------------------------------------------------------

@@ -324,6 +324,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_SequencerStateMachine::Signal signal,  //!< The signal
         const WasmSequencer_TrapReason& trapReason) override;
 
+    //! Implementation for action report_seqExitError of state machine Svc_WasmSequencer_SequencerStateMachine
+    //!
+    //! reports that the guest exited with a non-zero code or panicked
+    void Svc_WasmSequencer_SequencerStateMachine_action_report_seqExitError(
+        SmId smId,                                              //!< The state machine id
+        Svc_WasmSequencer_SequencerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action report_seqPaused of state machine Svc_WasmSequencer_SequencerStateMachine
     //!
     //! reports that execution was paused at a breakpoint
@@ -522,6 +530,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     Fw::Time m_pendingTimer;
     bool m_hasPendingTimer;
 
+    //! Wall-clock time at which the current blocking async host function
+    //! (COMMAND / ASYNC_PORT) began awaiting its reply. Used to enforce
+    //! STATEMENT_TIMEOUT_SECS. Only meaningful while awaiting one of those.
+    Fw::Time m_statementStart;
+    bool m_hasStatementStart;
+
     //! Break-before-next-statement flag, toggled by BREAK/CONTINUE.
     bool m_breakBeforeNextLine;
 
@@ -554,6 +568,18 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Number of commands that failed
     U64 m_tlmCommandsFailed;
+
+    //! Monotonic counter of sequences started (bumped whenever the interpreter
+    //! begins spinning a freshly-invoked program). The low 16 bits form the
+    //! high half of the command context (cmdUid) so we can detect a command
+    //! response that arrives late, after its originating sequence has ended.
+    U32 m_sequencesStarted;
+
+    //! Compose the command context (cmdUid) sent to the command dispatcher from
+    //! the current sequence counter and the m_tlmCommandsDispatched counter. The
+    //! low 16 bits of the latter form the low half of the cmdUid, letting us
+    //! detect a response for a different instance of the same opcode.
+    U32 makeCmdUid() const;
 
     enum class ExitReason {
         INTERPRETER,

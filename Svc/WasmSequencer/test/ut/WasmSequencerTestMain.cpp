@@ -298,33 +298,56 @@ TEST_F(WasmSequencerTester, RunDivZeroTraps) {
     this->removeFile("divzero.wasm");
 }
 
-TEST_F(WasmSequencerTester, RunExitTraps) {
+TEST_F(WasmSequencerTester, RunExitNonZeroFails) {
+    // exit.wasm calls fprime_v1.exit(1). A non-zero exit is a program failure,
+    // surfaced as a ProgramExited event (not a trap) with an EXECUTION_ERROR.
     const Fw::String file = this->copyAsset("exit.wasm");
 
     this->sendCmd_RUN(0, 26, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_SequenceTrap_SIZE(1);
-    // A host function returning SPACEWASM_TRAP surfaces as the HOST trap reason.
-    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_ProgramExited_SIZE(1);
+    ASSERT_EVENTS_ProgramExited(0, 1);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 26, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("exit.wasm");
 }
 
-TEST_F(WasmSequencerTester, RunPanicTraps) {
+TEST_F(WasmSequencerTester, RunPanicFails) {
+    // panic.wasm calls fprime_v1.panic(7). A panic is a program failure, surfaced
+    // as a PanicOccurred event (not a trap).
     const Fw::String file = this->copyAsset("panic.wasm");
 
     this->sendCmd_RUN(0, 27, file, BLOCK, {});
     this->dispatchAll();
 
     ASSERT_EQ(this->getState(), State::IDLE);
-    ASSERT_EVENTS_SequenceTrap_SIZE(1);
-    // fprime.panic returns SPACEWASM_TRAP, surfacing as the HOST trap reason.
-    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::HOST);
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_PanicOccurred_SIZE(1);
+    ASSERT_EVENTS_PanicOccurred(0, 7);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 27, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("panic.wasm");
+}
+
+TEST_F(WasmSequencerTester, RunExitZeroSucceeds) {
+    // exit0.wasm calls fprime_v1.exit(0). A zero exit code is a clean success:
+    // no trap, no ProgramExited event, and an OK response.
+    const Fw::String file = this->copyAsset("exit0.wasm");
+
+    this->sendCmd_RUN(0, 29, file, BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceTrap_SIZE(0);
+    ASSERT_EVENTS_ProgramExited_SIZE(0);
+    ASSERT_EVENTS_PanicOccurred_SIZE(0);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 29, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("exit0.wasm");
 }
 
 TEST_F(WasmSequencerTester, RunStartTrapsToIdle) {
@@ -394,6 +417,39 @@ TEST_F(WasmSequencerTester, InvokeAfterLoad) {
     ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 31, Fw::CmdResponse::OK);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, InvokeTrapAfterExitZeroIsNotMisreported) {
+    // Regression: exit(0) returns the component to READY without resetting the
+    // store, leaving the host exit disposition (HOST_EXIT/0) stale. A subsequent
+    // invoke that genuinely traps must reset that disposition per-invoke so the
+    // trap is reported as a trap, not misread as a clean completion.
+    const Fw::String file = this->copyAsset("exit0_then_trap.wasm");
+
+    this->sendCmd_LOAD(0, 37, file);
+    this->dispatchUntilState(State::READY);
+    ASSERT_EQ(this->getState(), State::READY);
+
+    // First invoke: exit(0) -> clean success -> back to READY (store not reset).
+    this->sendCmd_INVOKE(0, 38, Fw::CmdStringArg(""), BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 38, Fw::CmdResponse::OK);
+
+    // Second invoke on the same store: unreachable -> genuine trap. Without the
+    // per-invoke reset this would surface as another SequenceSucceeded + OK.
+    this->sendCmd_INVOKE(0, 39, Fw::CmdStringArg(""), BLOCK, {});
+    this->dispatchAll();
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_SequenceTrap_SIZE(1);
+    ASSERT_EVENTS_SequenceTrap(0, WasmSequencer_TrapReason::UNREACHABLE);
+    // Still exactly one success (from the first invoke); the trap did not add one.
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(2, OPCODE_INVOKE, 39, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("exit0_then_trap.wasm");
 }
 
 TEST_F(WasmSequencerTester, InvokeNoBlockRespondsImmediately) {
@@ -1082,7 +1138,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandsDispatchedAndFailed) {
     this->sendCmd_RUN(0, 308, file, BLOCK, {});
     this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
 
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::EXECUTION_ERROR);
     this->dispatchUntilState(State::READY);
 
     this->flushTelemetry();
@@ -1100,7 +1156,7 @@ TEST_F(WasmSequencerTester, TelemetryCommandOkDoesNotCountFailed) {
     this->sendCmd_RUN(0, 309, file, BLOCK, {});
     this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
 
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::READY);
 
     this->flushTelemetry();
@@ -1144,7 +1200,7 @@ TEST_F(WasmSequencerTester, CommandByteFidelityAndResume) {
     }
 
     // Feed the command response; the interpreter resumes and finishes.
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -1467,7 +1523,9 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
     this->sendCmd_PAUSE(0, 134);
     this->dispatchUntilState(State::RUNNING_PAUSED);
 
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    // Tag the response with the current sequence's cmdUid so it isn't dismissed as
+    // a late reply from an old sequence; it is unexpected here and fails.
+    this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::IDLE);
 
     ASSERT_EQ(this->getState(), State::IDLE);
@@ -1503,7 +1561,7 @@ TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     ASSERT_from_cmdOut_SIZE(1);
 
     // Feed the response so the sequence finishes cleanly.
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
@@ -1526,10 +1584,139 @@ TEST_F(WasmSequencerTester, CheckTimersWhileAwaitingWithoutTimer) {
     ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
 
     // Response still resumes it to completion.
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::READY);
     ASSERT_EQ(this->getState(), State::READY);
     ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("cmd.wasm");
+}
+
+// ----------------------------------------------------------------------
+// Statement timeout for blocking async host functions
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, StatementTimeoutFailsAwaitingCommand) {
+    // With STATEMENT_TIMEOUT_SECS set, a command that never gets a response times
+    // out on a checkTimers tick past the deadline and fails the sequence.
+    this->paramSet_STATEMENT_TIMEOUT_SECS(5.0f, Fw::ParamValid::VALID);
+    this->component.loadParameters();  // refresh the component's cached parameter value
+    this->setTestTime(Fw::Time(0, 0));
+
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 400, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    // A tick before the deadline keeps it awaiting.
+    this->setTestTime(Fw::Time(3, 0));
+    this->invoke_to_checkTimers(0, 0);
+    this->dispatchAll();
+    ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
+
+    // A tick past the deadline times the statement out.
+    this->setTestTime(Fw::Time(10, 0));
+    this->invoke_to_checkTimers(0, 0);
+    this->dispatchUntilState(State::IDLE);
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 400, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("cmd.wasm");
+}
+
+TEST_F(WasmSequencerTester, StatementTimeoutDisabledByDefault) {
+    // With STATEMENT_TIMEOUT_SECS left at its 0 default, no amount of elapsed time
+    // times out an awaiting command.
+    this->setTestTime(Fw::Time(0, 0));
+
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 401, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    // Advance well past any plausible timeout and tick: still awaiting.
+    this->setTestTime(Fw::Time(100000, 0));
+    this->invoke_to_checkTimers(0, 0);
+    this->dispatchAll();
+    ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
+
+    // The response still resumes it cleanly.
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
+    this->dispatchUntilState(State::READY);
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("cmd.wasm");
+}
+
+TEST_F(WasmSequencerTester, StatementTimeoutFailsAwaitingSerialReply) {
+    // The timeout applies equally to a blocking async serial port awaiting a reply.
+    this->paramSet_STATEMENT_TIMEOUT_SECS(2.0f, Fw::ParamValid::VALID);
+    this->component.loadParameters();  // refresh the component's cached parameter value
+    this->setTestTime(Fw::Time(0, 0));
+
+    const Fw::String file = this->copyAsset("serial_async.wasm");
+    this->sendCmd_RUN(0, 402, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+    ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::ASYNC_PORT);
+
+    this->setTestTime(Fw::Time(30, 0));
+    this->invoke_to_checkTimers(0, 0);
+    this->dispatchUntilState(State::IDLE);
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 402, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("serial_async.wasm");
+}
+
+// ----------------------------------------------------------------------
+// Command context (cmdUid): late-reply and wrong-instance detection
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, LateCmdResponseFromOldSequenceIgnored) {
+    // A response tagged with a previous sequence's cmdUid is a nominal late reply
+    // (e.g. after a CANCEL). It is reported, not failed, and does not disturb the
+    // sequence currently awaiting its own response.
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 410, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    // Craft a cmdUid from an older sequence index (current - 1).
+    const U32 currentUid = this->currentCmdUid();
+    const U16 oldSeq = static_cast<U16>(((currentUid >> 16) & 0xFFFF) - 1);
+    const U32 staleUid = static_cast<U32>((static_cast<U32>(oldSeq) << 16) | (currentUid & 0xFFFF));
+
+    this->invoke_to_cmdResponseIn(0, 0, staleUid, Fw::CmdResponse::OK);
+    this->dispatchAll();
+
+    // Still awaiting; the stale reply was ignored with a warning.
+    ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
+    ASSERT_EVENTS_CmdResponseFromOldSequence_SIZE(1);
+
+    // The correct reply still completes the sequence.
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
+    this->dispatchUntilState(State::READY);
+    ASSERT_EQ(this->getState(), State::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    this->removeFile("cmd.wasm");
+}
+
+TEST_F(WasmSequencerTester, WrongCmdResponseIndexFails) {
+    // A response from the current sequence but a different command instance (wrong
+    // low-half index) is an integrity error and fails the sequence.
+    const Fw::String file = this->copyAsset("cmd.wasm");
+    this->sendCmd_RUN(0, 411, file, BLOCK, {});
+    this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
+
+    // Keep the current sequence index, but perturb the command index.
+    const U32 currentUid = this->currentCmdUid();
+    const U32 wrongUid = static_cast<U32>((currentUid & 0xFFFF0000) | ((currentUid + 1) & 0xFFFF));
+
+    this->invoke_to_cmdResponseIn(0, 0, wrongUid, Fw::CmdResponse::OK);
+    this->dispatchUntilState(State::IDLE);
+
+    ASSERT_EQ(this->getState(), State::IDLE);
+    ASSERT_EVENTS_WrongCmdResponseIndex_SIZE(1);
+    ASSERT_EVENTS_SequenceFailed_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 411, Fw::CmdResponse::EXECUTION_ERROR);
     this->removeFile("cmd.wasm");
 }
 
@@ -1611,8 +1798,9 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileSpinningFails) {
     this->dispatchUntilState(State::RUNNING_SPINNING);
 
     // A cmdResponseIn while spinning (not awaiting a host command) is "unexpected"
-    // and fails the running sequence (stmtUnexpected -> report_seqFailed).
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    // and fails the running sequence (stmtUnexpected -> report_seqFailed). Tag it
+    // with the current sequence's cmdUid so it is not dismissed as a late reply.
+    this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::IDLE);
 
     ASSERT_EQ(this->getState(), State::IDLE);
@@ -1631,7 +1819,10 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhileAwaitingSleepFails) {
     this->dispatchUntilState(State::RUNNING_AWAITING_RESPONSE);
     ASSERT_TRUE(this->hasPendingTimer());
 
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    // Tag with the current sequence's cmdUid so it reaches the "unexpected" path
+    // (the pending host function is a sleep, not a COMMAND) rather than being
+    // dismissed as a late reply.
+    this->invoke_to_cmdResponseIn(0, 0, this->currentCmdUid(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::IDLE);
 
     ASSERT_EQ(this->getState(), State::IDLE);
@@ -1671,7 +1862,7 @@ TEST_F(WasmSequencerTester, PauseWhileAwaitingResponseIsPending) {
     ASSERT_EQ(this->getState(), State::RUNNING_AWAITING_RESPONSE);
 
     // Feeding the response now resolves the pending pause -> RUNNING_PAUSED.
-    this->invoke_to_cmdResponseIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->invoke_to_cmdResponseIn(0, 0, this->lastCmdContext(), Fw::CmdResponse::OK);
     this->dispatchUntilState(State::RUNNING_PAUSED);
     ASSERT_EQ(this->getState(), State::RUNNING_PAUSED);
     ASSERT_EVENTS_SequenceBroken_SIZE(1);

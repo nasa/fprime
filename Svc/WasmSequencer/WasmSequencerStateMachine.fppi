@@ -247,6 +247,9 @@ state machine SequencerStateMachine {
     action report_seqFailed
     @ reports that the interpreter trapped, with the trap reason
     action report_seqTrap: TrapReason
+    @ reports that the guest exited with a non-zero code or panicked, emitting
+    @ the corresponding ProgramExited/PanicOccurred event
+    action report_seqExitError
     @ reports that execution was paused at a breakpoint
     action report_seqPaused
     @ checks if the current statement has timed out
@@ -288,6 +291,11 @@ state machine SequencerStateMachine {
     @ An asynchronous host function has been called and has requested the interpreter pause
     signal interpreterPause
 
+    @ The guest called fprime.exit with a non-zero code, or fprime.panic. The
+    @ program is finished but the outcome is a failure (exit(0) is reported as a
+    @ normal interpreterFinished instead).
+    signal interpreterExitError
+
     @ sequencer is executing the loaded/invoked Wasm program
     state RUNNING {
         initial enter PAUSE_CHECK
@@ -308,6 +316,14 @@ state machine SequencerStateMachine {
 
             on interpreterTrap do {
                 report_seqTrap
+                sendLoadCmdResponse_EXECUTION_ERROR
+                sendRunCmdResponse_EXECUTION_ERROR
+            } enter IDLE
+
+            # The guest requested a non-zero exit or panicked. Report the failure
+            # (with its exit/panic event + code) and unwind like a trap.
+            on interpreterExitError do {
+                report_seqExitError
                 sendLoadCmdResponse_EXECUTION_ERROR
                 sendRunCmdResponse_EXECUTION_ERROR
             } enter IDLE
