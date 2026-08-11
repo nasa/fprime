@@ -92,6 +92,7 @@ jobs:
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
+          ccache-key-suffix: -${{ matrix.name }}
 
       - name: "Build Framework [${{ matrix.name }}]"
         uses: nasa/fprime-actions/build@devel
@@ -130,6 +131,7 @@ jobs:
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
+          ccache-key-suffix: -${{ matrix.name }}
 
       - name: "Run Framework UTs [${{ matrix.name }}]"
         uses: nasa/fprime-actions/run-unit-tests@devel
