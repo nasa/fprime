@@ -6,9 +6,11 @@
  */
 
 #include <Fw/Types/Assert.hpp>
+#include <Fw/Types/StringUtils.hpp>
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
+#include <Os/FilePathUtils.hpp>
 #include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
@@ -52,6 +54,11 @@ PrmDbImpl::~PrmDbImpl() {}
 void PrmDbImpl::configure(const char* file) {
     FW_ASSERT(file != nullptr);
     this->m_fileName = file;
+}
+
+void PrmDbImpl::configureLoadSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    this->m_sandboxDir = directory;
 }
 
 void PrmDbImpl::readParamFile() {
@@ -390,6 +397,30 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(fileName.length() > 0);
 
     Fw::String dbString = getDbString(dbType);
+
+    // Commanded loads (staging) may carry a ground-supplied path; restrict them
+    // to the configured sandbox directory to prevent path traversal
+    if ((dbType == PrmDbType::DB_STAGING) && (this->m_sandboxDir.length() > 0)) {
+        char resolvedPath[Os::FilePathUtils::MAX_PATH_LENGTH];
+        char resolvedDir[Os::FilePathUtils::MAX_PATH_LENGTH];
+        bool contained = (Os::FilePathUtils::resolveFromCwd(fileName.toChar(), resolvedPath, sizeof(resolvedPath)) ==
+                          Os::FilePathUtils::VALID) &&
+                         (Os::FilePathUtils::resolveFromCwd(this->m_sandboxDir.toChar(), resolvedDir,
+                                                            sizeof(resolvedDir)) == Os::FilePathUtils::VALID);
+        if (contained) {
+            // checkContainment requires the directory prefix to end with '/'
+            const FwSizeType dirLen = Fw::StringUtils::string_length(resolvedDir, sizeof(resolvedDir));
+            if ((dirLen > 0) && (resolvedDir[dirLen - 1] != '/') && (dirLen + 2 <= sizeof(resolvedDir))) {
+                resolvedDir[dirLen] = '/';
+                resolvedDir[dirLen + 1] = '\0';
+            }
+            contained = (Os::FilePathUtils::checkContainment(resolvedPath, resolvedDir) == Os::FilePathUtils::VALID);
+        }
+        if (!contained) {
+            this->log_WARNING_HI_PrmFileReadError(PrmReadError::OPEN, 0, Os::File::NO_PERMISSION);
+            return PrmLoadStatus::ERROR;
+        }
+    }
 
     // load file. FIXME: Put more robust file checking, such as a CRC.
     Os::File paramFile;
