@@ -23,7 +23,7 @@ PassiveRateGroup::PassiveRateGroup(const char* compName)
     : PassiveRateGroupComponentBase(compName),
       m_cycles(0),
       m_maxTime(0),
-      m_portDurationHighWaterMarksUsec{},
+      m_portCycleTimeHWMUsec{},  // Zero-initialize atomic array
       m_rawTimeSource(Os::RAWTIME_DEFAULT),
       m_numContexts(0) {}
 
@@ -81,9 +81,14 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
                 U32 cycleTime;
                 (void)portEnd.getDiffUsec(portStart, cycleTime);
                 portTimes[static_cast<FwSizeType>(port)] = cycleTime;
-                // Update high water mark if current cycle time exceeds it
-                if (cycleTime > this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)]) {
-                    this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)] = cycleTime;
+                // Update high water mark if current cycle time exceeds it (lock-free atomic)
+                U32 currentHWM =
+                    this->m_portCycleTimeHWMUsec[static_cast<FwSizeType>(port)].load(std::memory_order_relaxed);
+                while (cycleTime > currentHWM) {
+                    if (this->m_portCycleTimeHWMUsec[static_cast<FwSizeType>(port)].compare_exchange_weak(
+                            currentHWM, cycleTime, std::memory_order_relaxed)) {
+                        break;
+                    }
                 }
             }
         }
@@ -98,23 +103,26 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
     // than capping cycleTime to max value of U32 (which is done in getDiffUsec anyways)
     (void)endTime.getDiffUsec(cycleStart, cycleTime);
 
-    // Lock mutex to protect statistics that can be cleared by CLEAR_STATISTICS command
-    this->m_statisticsMutex.lock();
-
-    // check to see if the time has exceeded the previous maximum
-    if (cycleTime > this->m_maxTime) {
-        this->m_maxTime = cycleTime;
+    // Update max time atomically (lock-free, ISR-safe)
+    U32 currentMax = this->m_maxTime.load(std::memory_order_relaxed);
+    while (cycleTime > currentMax) {
+        if (this->m_maxTime.compare_exchange_weak(currentMax, cycleTime, std::memory_order_relaxed)) {
+            break;
+        }
     }
 
-    U32 maxTime = this->m_maxTime;
+    U32 maxTime = this->m_maxTime.load(std::memory_order_relaxed);
     U32 cycles = ++this->m_cycles;
-    PassiveRateGroup_CycleTime portDurationHighWaterMarks = this->m_portDurationHighWaterMarksUsec;
-
-    this->m_statisticsMutex.unlock();
 
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
-        this->tlmWrite_PortCycleTimeLast(portTimes);
-        this->tlmWrite_PortCycleTimeHWM(portDurationHighWaterMarks);
+        // Copy atomic array to telemetry structure for sending
+        PassiveRateGroup_CycleTime portCycleTimeHWM;
+        for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+            portCycleTimeHWM[static_cast<FwSizeType>(port)] =
+                this->m_portCycleTimeHWMUsec[static_cast<FwSizeType>(port)].load(std::memory_order_relaxed);
+        }
+        this->tlmWrite_PortCycleTime(portTimes);
+        this->tlmWrite_PortCycleTimeHWM(portCycleTimeHWM);
     }
 
     this->tlmWrite_MaxCycleTime(maxTime);
@@ -123,17 +131,14 @@ void PassiveRateGroup::CycleIn_handler(FwIndexType portNum, Os::RawTime& cycleSt
 }
 
 void PassiveRateGroup::CLEAR_STATISTICS_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    // Lock mutex to protect statistics shared with CycleIn handler
-    this->m_statisticsMutex.lock();
-
-    // Clear all port duration high water marks and max cycle time
-    for (FwIndexType port = 0; port < NUM_RATEGROUPMEMBEROUT_OUTPUT_PORTS; port++) {
-        this->m_portDurationHighWaterMarksUsec[static_cast<FwSizeType>(port)] = 0;
-    }
-    this->m_maxTime = 0;
+    // Clear max cycle time (lock-free atomic)
+    this->m_maxTime.store(0, std::memory_order_relaxed);
     // Note: m_cycles is intentionally NOT cleared - it's a running total
 
-    this->m_statisticsMutex.unlock();
+    // Clear all port cycle time high water marks (lock-free atomic)
+    for (FwIndexType port = 0; port < this->getNum_RateGroupMemberOut_OutputPorts(); port++) {
+        this->m_portCycleTimeHWMUsec[static_cast<FwSizeType>(port)].store(0, std::memory_order_relaxed);
+    }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

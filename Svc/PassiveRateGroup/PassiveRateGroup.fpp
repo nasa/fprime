@@ -19,12 +19,12 @@ module Svc {
     telemetry CycleCount: U32
 
     array CycleTime = [PassiveRateGroupOutputPorts] U32 default 0
-    telemetry PortCycleTimeLast: CycleTime update on change
+    telemetry PortCycleTime: CycleTime
 
     @ High water marks for port cycle times
     telemetry PortCycleTimeHWM: CycleTime update on change
 
-    @ Clear port cycle time high water marks and statistics
+    @ Clear max cycle time and port cycle time high water marks (cycle count is not cleared)
     sync command CLEAR_STATISTICS
 
     # Standard ports

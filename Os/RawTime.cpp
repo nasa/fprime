@@ -7,7 +7,8 @@
 
 namespace Os {
 
-RawTime::RawTime(RawTimeSource source) : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, nullptr, source)) {
+RawTime::RawTime(RawTimeSource source)
+    : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, nullptr, source)), m_source(source) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
@@ -19,13 +20,15 @@ RawTime::~RawTime() {
 // m_handle_storage is placement-new storage populated by getDelegate below
 // cppcheck-suppress missingMemberCopy
 RawTime::RawTime(const RawTime& other)
-    : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, RAWTIME_DEFAULT)) {
+    : m_delegate(*RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, other.m_source)),
+      m_source(other.m_source) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
 }
 
 RawTime& RawTime::operator=(const RawTime& other) {
     if (this != &other) {
-        this->m_delegate = *RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, RAWTIME_DEFAULT);
+        this->m_source = other.m_source;
+        this->m_delegate = *RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, other.m_source);
     }
     return *this;
 }
@@ -33,6 +36,10 @@ RawTime& RawTime::operator=(const RawTime& other) {
 RawTimeHandle* RawTime::getHandle() {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
     return this->m_delegate.getHandle();
+}
+
+RawTimeSource RawTime::getSource() const {
+    return this->m_source;
 }
 
 RawTime::Status RawTime::now() {

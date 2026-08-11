@@ -35,7 +35,7 @@ Port Data Type | Name | Direction | Kind | Usage
 -------------- | ---- | --------- | ---- | -----
 Svc::Cycle | CycleIn | Input | synchronous | Receive a call to run one cycle of the rate group
 [`Svc::Sched`](../../Sched/docs/sdd.md) | RateGroupMemberOut | Output | n/a | Rate group ports
-Fw::Cmd | CmdDisp | Input | guarded | Command receive port
+Fw::Cmd | CmdDisp | Input | sync | Command receive port
 Fw::CmdResponse | CmdStatus | Output | n/a | Command response port
 Fw::CmdReg | CmdReg | Output | n/a | Command registration port
 Fw::Tlm | Tlm | Output | n/a | Telemetry port
@@ -54,7 +54,9 @@ The component tracks execution time statistics:
 - Per-port execution times and high water marks (when PassiveRateGroupCfg::PortCycleTime is enabled)
 - Total cycle count
 
-These statistics can be cleared via the `CLEAR_STATISTICS` guarded command, which safely resets all tracked values to zero.
+These statistics can be cleared via the `CLEAR_STATISTICS` sync command, which resets the maximum cycle time and per-port high water marks to zero (the running cycle count is not cleared). All statistics are protected by lock-free atomic operations, making them ISR-safe and eliminating mutex overhead.
+
+**IMPORTANT - RawTimeSource Limitation**: The `RawTimeSource` parameter in `configure()` only affects the *end* timestamp of each cycle. The *start* timestamp (`cycleStart`) comes from the cycle driver (e.g., `RateGroupDriver`, `LinuxTimer`), which constructs its `Os::RawTime` with `RAWTIME_DEFAULT`. If you configure a non-default `RawTimeSource`, the cycle time calculation subtracts timestamps from two different timer sources, producing meaningless results. **This feature is only correct when using `RAWTIME_DEFAULT` (the default), or when the cycle driver is modified to use the same non-default source.** There is currently no API to configure the cycle driver's timer source, so non-default configurations require custom cycle driver implementations.
 
 #### 3.2.1 Commands
 
@@ -62,7 +64,7 @@ The `Svc::PassiveRateGroup` component supports the following commands:
 
 Command | Description
 ------- | -----------
-CLEAR_STATISTICS | Clears port duration high water marks and maximum cycle time. Does NOT reset cycle count, which is a running total. (synchronized via mutex to prevent race conditions with CycleIn handler)
+CLEAR_STATISTICS | Clears port cycle time high water marks and maximum cycle time. Does NOT reset cycle count, which is a running total. Uses lock-free atomic operations for ISR-safe execution.
 
 #### 3.2.2 Telemetry
 
@@ -70,11 +72,11 @@ The `Svc::PassiveRateGroup` component provides the following telemetry channels:
 
 Channel | Type | Description
 ------- | ---- | -----------
-MaxCycleTime | U32 | Maximum execution time of rate group cycle (microseconds). Cleared by CLEAR_STATISTICS command.
-CycleTime | U32 | Execution time of current cycle (microseconds)
-CycleCount | U32 | Running total count of cycles executed. NOT cleared by CLEAR_STATISTICS command.
-PortCycleTimeLast | U32[PassiveRateGroupOutputPorts] | Last execution time for each port (microseconds)
-PortCycleTimeHWM | U32[PassiveRateGroupOutputPorts] | High water mark for each port execution time (microseconds). Cleared by CLEAR_STATISTICS command.   
+MaxCycleTime | U32 | Maximum execution time of rate group cycle (microseconds). Cleared by CLEAR_STATISTICS command. Updated only when maximum increases (update on change).
+CycleTime | U32 | Execution time of current cycle (microseconds). Sent every cycle.
+CycleCount | U32 | Running total count of cycles executed. NOT cleared by CLEAR_STATISTICS command. Sent every cycle.
+PortCycleTime | U32[PassiveRateGroupOutputPorts] | Execution time for each port in the most recent cycle (microseconds). Sent every cycle (only when PassiveRateGroupCfg::PortCycleTime is enabled).
+PortCycleTimeHWM | U32[PassiveRateGroupOutputPorts] | High water mark for each port execution time (microseconds). Cleared by CLEAR_STATISTICS command. Updated only when any high water mark increases (update on change). Only available when PassiveRateGroupCfg::PortCycleTime is enabled.   
 
 ### 3.3 Scenarios
 
@@ -109,7 +111,7 @@ sequenceDiagram
 Date | Description
 ---- | -----------
 2/9/2017 | First Draft
-8/8/2026 | Updated to document CLEAR_STATISTICS command, telemetry channels, and standard ports. Added mutex synchronization to prevent race condition between CycleIn handler and CLEAR_STATISTICS command
+8/8/2026 | Updated to document CLEAR_STATISTICS command, telemetry channels, and standard ports. Added lock-free atomic operations for all statistics (m_maxTime and per-port HWMs) to provide ISR-safe, race-free concurrent access without mutex overhead.
 
 
 

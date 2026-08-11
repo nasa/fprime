@@ -122,19 +122,23 @@ class RawTime final : public RawTimeInterface {
   public:
     //! \brief Constructor with optional timer source selection
     //! \param source Timer source to use (defaults to RAWTIME_DEFAULT)
-    RawTime(RawTimeSource source = RAWTIME_DEFAULT);
+    explicit RawTime(RawTimeSource source = RAWTIME_DEFAULT);
 
     ~RawTime() final;  //!<  Destructor
 
-    //! \brief copy constructor that copies the internal representation
+    //! \brief copy constructor that copies the internal representation and timer source
     RawTime(const RawTime& other);
 
-    //! \brief assignment operator that copies the internal representation
+    //! \brief assignment operator that copies the internal representation and timer source
     RawTime& operator=(const RawTime& other);
 
     //! \brief return the underlying RawTime handle (implementation specific)
     //! \return internal RawTime handle representation
     RawTimeHandle* getHandle() override;
+
+    //! \brief get the timer source used by this RawTime object
+    //! \return RawTimeSource used by this object
+    RawTimeSource getSource() const;
 
     // ------------------------------------------------------------
     // Implementation-specific RawTime member functions
@@ -218,6 +222,7 @@ class RawTime final : public RawTimeInterface {
     //
     alignas(FW_HANDLE_ALIGNMENT) RawTimeHandleStorage m_handle_storage;  //!< RawTime handle storage
     RawTimeInterface& m_delegate;                                        //!< Delegate for the real implementation
+    RawTimeSource m_source;                                              //!< Timer source used by this object
 };
 }  // namespace Os
 
