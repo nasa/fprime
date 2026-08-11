@@ -11,7 +11,12 @@ namespace Os {
 
 class DelegateRawTime final : public RawTimeInterface {
   public:
-    DelegateRawTime();         //!<  Constructor
+    DelegateRawTime();  //!<  Default constructor
+
+    //! \brief Constructor with timer source selection
+    //! \param source Timer source to use (defaults to RAWTIME_DEFAULT)
+    explicit DelegateRawTime(RawTimeSource source);
+
     ~DelegateRawTime() final;  //!<  Destructor
 
     //! \brief copy constructor that copies the internal representation
@@ -106,6 +111,7 @@ class DelegateRawTime final : public RawTimeInterface {
     //
     alignas(FW_HANDLE_ALIGNMENT) RawTimeHandleStorage m_handle_storage;  //!< RawTime handle storage
     RawTimeInterface& m_delegate;                                        //!< Delegate for the real implementation
+    RawTimeSource m_source = RAWTIME_DEFAULT;                            //!< Timer source selection
 };
 }  // namespace Os
 
