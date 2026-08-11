@@ -44,63 +44,97 @@ U32 unpack_u32(const U8* buffer) {
 // Generic multi-producer multi-consumer harness
 // -----------------------------------------------------------------------
 
+//! Maximum distinct priority values tracked by the harness.
+constexpr U32 MAX_PRIORITIES = 8;
+
+//! Per-message priority function: maps a message value to its send priority.
+using PriorityFn = FwQueuePriorityType (*)(U32 value);
+
+FwQueuePriorityType priority_mod8(U32 value) {
+    return static_cast<FwQueuePriorityType>(value % MAX_PRIORITIES);
+}
+
 struct ConcurrentConfig {
-    FwSizeType depth;
-    U32 producers;
-    U32 consumers;
-    U32 messagesPerProducer;
+    FwSizeType depth = 0;
+    U32 producers = 0;
+    U32 consumers = 0;
+    U32 messagesPerProducer = 0;
+    //! Messages sent to the queue before any thread starts (values total..total+prefill-1).
+    U32 prefill = 0;
+    //! Priority assigned to each message; nullptr sends everything at priority 0.
+    PriorityFn priorityOf = nullptr;
+    //! When true, expect the high-water mark to equal depth exactly (requires prefill == depth).
+    bool expectHighMarkEqualsDepth = false;
 };
 
 struct ConcurrentState {
     Os::Queue queue;
-    std::atomic<U32>* received;  // array of size totalMessages
+    std::atomic<U32>* received;  // array of size expectedTotal
+    std::atomic<U32> receivedByPriority[MAX_PRIORITIES];
     std::atomic<U32> consumed;
     std::atomic<bool> producersDone;
-    U32 totalMessages;
+    U32 expectedTotal;
+    PriorityFn priorityOf;
 
-    explicit ConcurrentState(U32 total)
-        : received(new std::atomic<U32>[total]), consumed(0), producersDone(false), totalMessages(total) {
+    ConcurrentState(U32 total, PriorityFn priorityFn)
+        : received(new std::atomic<U32>[total]),
+          consumed(0),
+          producersDone(false),
+          expectedTotal(total),
+          priorityOf(priorityFn) {
         for (U32 i = 0; i < total; i++) {
             received[i].store(0, std::memory_order_relaxed);
         }
+        for (U32 i = 0; i < MAX_PRIORITIES; i++) {
+            receivedByPriority[i].store(0, std::memory_order_relaxed);
+        }
     }
     ~ConcurrentState() { delete[] received; }
+
+    FwQueuePriorityType priorityFor(U32 value) const {
+        return (this->priorityOf != nullptr) ? this->priorityOf(value) : static_cast<FwQueuePriorityType>(0);
+    }
 };
+
+void send_until_ok(ConcurrentState* state, U32 value) {
+    U8 buffer[sizeof(U32)] = {0};
+    pack_u32(value, buffer);
+    const FwQueuePriorityType priority = state->priorityFor(value);
+    Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
+    while (status == Os::QueueInterface::Status::FULL) {
+        status = state->queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING);
+        if (status == Os::QueueInterface::Status::FULL) {
+            std::this_thread::yield();
+        }
+    }
+    ASSERT_EQ(status, Os::QueueInterface::Status::OP_OK);
+}
 
 void concurrent_producer(ConcurrentState* state, U32 producerIndex, U32 messagesPerProducer) {
     for (U32 i = 0; i < messagesPerProducer; i++) {
-        const U32 value = (producerIndex * messagesPerProducer) + i;
-        U8 buffer[sizeof(U32)];
-        pack_u32(value, buffer);
-        const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>(value % 8);
-        Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-        while (status == Os::QueueInterface::Status::FULL) {
-            status = state->queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING);
-            if (status == Os::QueueInterface::Status::FULL) {
-                std::this_thread::yield();
-            }
-        }
-        ASSERT_EQ(status, Os::QueueInterface::Status::OP_OK);
+        send_until_ok(state, (producerIndex * messagesPerProducer) + i);
     }
 }
 
 void concurrent_consumer(ConcurrentState* state) {
-    U8 buffer[sizeof(U32)];
+    U8 buffer[sizeof(U32)] = {0};
     FwSizeType actualSize = 0;
     FwQueuePriorityType priority = 0;
-    while (state->consumed.load(std::memory_order_acquire) < state->totalMessages) {
+    while (state->consumed.load(std::memory_order_acquire) < state->expectedTotal) {
         Os::QueueInterface::Status status = state->queue.receive(
             buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
         if (status == Os::QueueInterface::Status::OP_OK) {
             ASSERT_EQ(actualSize, sizeof(U32));
             const U32 value = unpack_u32(buffer);
-            ASSERT_LT(value, state->totalMessages);
+            ASSERT_LT(value, state->expectedTotal);
+            ASSERT_LT(static_cast<U32>(priority), MAX_PRIORITIES);
             const U32 prior = state->received[value].fetch_add(1, std::memory_order_acq_rel);
             ASSERT_EQ(prior, 0u) << "duplicate delivery of value " << value;
+            state->receivedByPriority[priority].fetch_add(1, std::memory_order_acq_rel);
             state->consumed.fetch_add(1, std::memory_order_acq_rel);
         } else if (status == Os::QueueInterface::Status::EMPTY) {
             if (state->producersDone.load(std::memory_order_acquire) &&
-                state->consumed.load(std::memory_order_acquire) >= state->totalMessages) {
+                state->consumed.load(std::memory_order_acquire) >= state->expectedTotal) {
                 break;
             }
             std::this_thread::yield();
@@ -111,10 +145,21 @@ void concurrent_consumer(ConcurrentState* state) {
 }
 
 void run_concurrent(const ConcurrentConfig& cfg) {
-    const U32 total = cfg.producers * cfg.messagesPerProducer;
-    ConcurrentState state(total);
+    const U32 produced = cfg.producers * cfg.messagesPerProducer;
+    const U32 total = produced + cfg.prefill;
+    ConcurrentState state(total, cfg.priorityOf);
     Fw::String name("tsan-concurrent");
     ASSERT_EQ(state.queue.create(0, name, cfg.depth, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+
+    // Pre-fill before any thread starts (values produced..total-1). When prefill == depth this
+    // deterministically drives the count -- and thus the high-water mark -- to exactly depth.
+    ASSERT_LE(static_cast<FwSizeType>(cfg.prefill), cfg.depth);
+    for (U32 i = 0; i < cfg.prefill; i++) {
+        send_until_ok(&state, produced + i);
+    }
+    if (cfg.prefill > 0) {
+        ASSERT_EQ(state.queue.getMessagesAvailable(), static_cast<FwSizeType>(cfg.prefill));
+    }
 
     // Fixed-size arrays -- sized to the maximum we use in any test (16)
     static constexpr U32 MAX_THREADS = 16;
@@ -142,6 +187,21 @@ void run_concurrent(const ConcurrentConfig& cfg) {
     for (U32 i = 0; i < total; i++) {
         EXPECT_EQ(state.received[i].load(std::memory_order_relaxed), 1u) << "value " << i;
     }
+    if (cfg.priorityOf != nullptr) {
+        // Verify the received per-priority distribution matches what was sent.
+        U32 expectedByPriority[MAX_PRIORITIES] = {0};
+        for (U32 i = 0; i < total; i++) {
+            expectedByPriority[cfg.priorityOf(i)]++;
+        }
+        for (U32 p = 0; p < MAX_PRIORITIES; p++) {
+            EXPECT_EQ(state.receivedByPriority[p].load(std::memory_order_relaxed), expectedByPriority[p])
+                << "priority=" << p;
+        }
+    }
+    if (cfg.expectHighMarkEqualsDepth) {
+        EXPECT_EQ(state.queue.getMessageHighWaterMark(), cfg.depth);
+    }
+    EXPECT_EQ(state.queue.getMessagesAvailable(), 0u);
     state.queue.teardown();
 }
 
@@ -153,7 +213,7 @@ void run_concurrent(const ConcurrentConfig& cfg) {
 // Repeated multiple iterations to exercise different scheduling orders.
 TEST(TsanStress, HighThreadConcurrent) {
     constexpr U32 ITERATIONS = 20;
-    const ConcurrentConfig cfg{32, 8, 8, 5000};
+    const ConcurrentConfig cfg{32, 8, 8, 5000, 0, priority_mod8, false};
     for (U32 iter = 0; iter < ITERATIONS; iter++) {
         run_concurrent(cfg);
     }
@@ -162,7 +222,7 @@ TEST(TsanStress, HighThreadConcurrent) {
 // Extreme contention: many threads fighting over a tiny queue.
 TEST(TsanStress, TinyQueueHighContention) {
     constexpr U32 ITERATIONS = 50;
-    const ConcurrentConfig cfg{4, 8, 8, 500};
+    const ConcurrentConfig cfg{4, 8, 8, 500, 0, priority_mod8, false};
     for (U32 iter = 0; iter < ITERATIONS; iter++) {
         run_concurrent(cfg);
     }
@@ -171,7 +231,7 @@ TEST(TsanStress, TinyQueueHighContention) {
 // Asymmetric: many producers, few consumers -- queue spends time near FULL.
 TEST(TsanStress, ManyProducersFewConsumers) {
     constexpr U32 ITERATIONS = 20;
-    const ConcurrentConfig cfg{16, 12, 2, 1000};
+    const ConcurrentConfig cfg{16, 12, 2, 1000, 0, priority_mod8, false};
     for (U32 iter = 0; iter < ITERATIONS; iter++) {
         run_concurrent(cfg);
     }
@@ -180,7 +240,7 @@ TEST(TsanStress, ManyProducersFewConsumers) {
 // Asymmetric: few producers, many consumers -- queue spends time near EMPTY.
 TEST(TsanStress, FewProducersManyConsumers) {
     constexpr U32 ITERATIONS = 20;
-    const ConcurrentConfig cfg{16, 2, 12, 5000};
+    const ConcurrentConfig cfg{16, 2, 12, 5000, 0, priority_mod8, false};
     for (U32 iter = 0; iter < ITERATIONS; iter++) {
         run_concurrent(cfg);
     }
@@ -194,7 +254,7 @@ TEST(TsanStress, FewProducersManyConsumers) {
 // race for the single slot, exercising the CAS retry logic at its tightest.
 TEST(Adversarial, DepthOnePingPong) {
     constexpr U32 ITERATIONS = 50;
-    const ConcurrentConfig cfg{1, 4, 4, 500};
+    const ConcurrentConfig cfg{1, 4, 4, 500, 0, priority_mod8, false};
     for (U32 iter = 0; iter < ITERATIONS; iter++) {
         run_concurrent(cfg);
     }
@@ -203,93 +263,8 @@ TEST(Adversarial, DepthOnePingPong) {
 // Full-queue storm: pre-fill the queue, then unleash many producers (all get FULL)
 // while consumers drain. Verifies no message is lost during the transition.
 TEST(Adversarial, FullQueueStorm) {
-    constexpr FwSizeType DEPTH = 16;
-    constexpr U32 NUM_THREADS = 8;
-    constexpr U32 MESSAGES_PER_THREAD = 2000;
-    constexpr U32 TOTAL = NUM_THREADS * MESSAGES_PER_THREAD;
-
-    Os::Queue queue;
-    Fw::String name("full-storm");
-    ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
-
-    // Pre-fill the queue
-    for (FwSizeType i = 0; i < DEPTH; i++) {
-        U32 value = static_cast<U32>(i);
-        U8 buffer[sizeof(U32)];
-        pack_u32(value, buffer);
-        ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
-                  Os::QueueInterface::Status::OP_OK);
-    }
-
-    // Now all producers will initially hit FULL.
-    const U32 expectedTotal = TOTAL + static_cast<U32>(DEPTH);
-    std::atomic<U32>* received = new std::atomic<U32>[expectedTotal];
-    for (U32 i = 0; i < expectedTotal; i++) {
-        received[i].store(0, std::memory_order_relaxed);
-    }
-    std::atomic<U32> consumed(0);
-    std::atomic<bool> producersDone(false);
-
-    std::thread producers[NUM_THREADS];
-    std::thread consumers[NUM_THREADS];
-
-    // Producers send values [DEPTH .. DEPTH+TOTAL-1]
-    for (U32 t = 0; t < NUM_THREADS; t++) {
-        producers[t] = std::thread([&queue, t, MESSAGES_PER_THREAD, DEPTH]() {
-            for (U32 i = 0; i < MESSAGES_PER_THREAD; i++) {
-                const U32 value = static_cast<U32>(DEPTH) + (t * MESSAGES_PER_THREAD) + i;
-                U8 buffer[sizeof(U32)];
-                pack_u32(value, buffer);
-                Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-                while (status == Os::QueueInterface::Status::FULL) {
-                    status = queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-                    if (status == Os::QueueInterface::Status::FULL) {
-                        std::this_thread::yield();
-                    }
-                }
-            }
-        });
-    }
-
-    // Consumers drain everything
-    for (U32 t = 0; t < NUM_THREADS; t++) {
-        consumers[t] = std::thread([&queue, &received, &consumed, &producersDone, expectedTotal]() {
-            U8 buffer[sizeof(U32)];
-            FwSizeType actualSize = 0;
-            FwQueuePriorityType priority = 0;
-            while (consumed.load(std::memory_order_acquire) < expectedTotal) {
-                Os::QueueInterface::Status status = queue.receive(
-                    buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-                if (status == Os::QueueInterface::Status::OP_OK) {
-                    const U32 value = unpack_u32(buffer);
-                    ASSERT_LT(value, expectedTotal);
-                    received[value].fetch_add(1, std::memory_order_acq_rel);
-                    consumed.fetch_add(1, std::memory_order_acq_rel);
-                } else {
-                    if (producersDone.load(std::memory_order_acquire) &&
-                        consumed.load(std::memory_order_acquire) >= expectedTotal) {
-                        break;
-                    }
-                    std::this_thread::yield();
-                }
-            }
-        });
-    }
-
-    for (U32 t = 0; t < NUM_THREADS; t++) {
-        producers[t].join();
-    }
-    producersDone.store(true, std::memory_order_release);
-    for (U32 t = 0; t < NUM_THREADS; t++) {
-        consumers[t].join();
-    }
-
-    EXPECT_EQ(consumed.load(), expectedTotal);
-    for (U32 i = 0; i < expectedTotal; i++) {
-        EXPECT_EQ(received[i].load(std::memory_order_relaxed), 1u) << "value " << i;
-    }
-    delete[] received;
-    queue.teardown();
+    const ConcurrentConfig cfg{16, 8, 8, 2000, 16, nullptr, false};
+    run_concurrent(cfg);
 }
 
 // Single-slot ping-pong: one producer, one consumer, depth=1. The tightest
@@ -344,155 +319,18 @@ TEST(Adversarial, SingleSlotPingPong) {
 // before any consumer starts, so the mark must equal DEPTH; the count invariant (increment
 // before READY, decrement before FREE) guarantees it can never exceed DEPTH.
 TEST(Adversarial, HighWaterMarkAccuracy) {
-    constexpr FwSizeType DEPTH = 16;
-    constexpr U32 PRODUCERS = 8;
-    constexpr U32 MESSAGES_PER = 2000;
-    constexpr U32 PREFILL = static_cast<U32>(DEPTH);
-    constexpr U32 TOTAL = (PRODUCERS * MESSAGES_PER) + PREFILL;
-
-    Os::Queue queue;
-    Fw::String name("high-water-mark-test");
-    ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
-
-    // Pre-fill the queue to capacity before any consumer runs, guaranteeing the
-    // high-water mark reaches DEPTH deterministically.
-    for (U32 i = 0; i < PREFILL; i++) {
-        U8 buffer[sizeof(U32)] = {0};
-        pack_u32((PRODUCERS * MESSAGES_PER) + i, buffer);
-        ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
-                  Os::QueueInterface::Status::OP_OK);
-    }
-    ASSERT_EQ(queue.getMessagesAvailable(), static_cast<FwSizeType>(DEPTH));
-
-    std::atomic<U32> consumed(0);
-    std::atomic<bool> producersDone(false);
-
-    std::thread producers[PRODUCERS];
-    for (U32 t = 0; t < PRODUCERS; t++) {
-        producers[t] = std::thread([&queue, t, MESSAGES_PER]() {
-            for (U32 i = 0; i < MESSAGES_PER; i++) {
-                const U32 value = (t * MESSAGES_PER) + i;
-                U8 buffer[sizeof(U32)];
-                pack_u32(value, buffer);
-                Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-                while (status == Os::QueueInterface::Status::FULL) {
-                    status = queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-                    if (status == Os::QueueInterface::Status::FULL) {
-                        std::this_thread::yield();
-                    }
-                }
-            }
-        });
-    }
-
-    std::thread consumer([&queue, &consumed, &producersDone, TOTAL]() {
-        U8 buffer[sizeof(U32)];
-        FwSizeType actualSize = 0;
-        FwQueuePriorityType priority = 0;
-        while (consumed.load(std::memory_order_acquire) < TOTAL) {
-            Os::QueueInterface::Status status =
-                queue.receive(buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-            if (status == Os::QueueInterface::Status::OP_OK) {
-                consumed.fetch_add(1, std::memory_order_acq_rel);
-            } else {
-                if (producersDone.load(std::memory_order_acquire) &&
-                    consumed.load(std::memory_order_acquire) >= TOTAL) {
-                    break;
-                }
-                std::this_thread::yield();
-            }
-        }
-    });
-
-    for (U32 t = 0; t < PRODUCERS; t++) {
-        producers[t].join();
-    }
-    producersDone.store(true, std::memory_order_release);
-    consumer.join();
-
-    EXPECT_EQ(consumed.load(), TOTAL);
-    // The pre-fill drove the count to exactly DEPTH, and the count can never exceed DEPTH.
-    EXPECT_EQ(queue.getMessageHighWaterMark(), static_cast<FwSizeType>(DEPTH));
-    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
-    queue.teardown();
+    const ConcurrentConfig cfg{16, 8, 1, 2000, 16, nullptr, true};
+    run_concurrent(cfg);
 }
 
 // Create-teardown-recreate: verify the queue is fully functional after
-// a teardown + create cycle. Tests internal state cleanup.
+// a teardown + create cycle. Tests internal state cleanup. Each
+// run_concurrent invocation performs a full create/use/teardown cycle.
 TEST(Adversarial, CreateTeardownRecreate) {
-    constexpr FwSizeType DEPTH = 8;
-    constexpr U32 MESSAGES = 1000;
     constexpr U32 CYCLES = 5;
-
+    const ConcurrentConfig cfg{8, 4, 4, 250, 0, nullptr, false};
     for (U32 cycle = 0; cycle < CYCLES; cycle++) {
-        Os::Queue queue;
-        Fw::String name("recycle-test");
-        ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
-
-        std::atomic<U32> localConsumed(0);
-        std::atomic<bool> localDone(false);
-        std::atomic<U32> localReceived[MESSAGES];
-        for (U32 i = 0; i < MESSAGES; i++) {
-            localReceived[i].store(0, std::memory_order_relaxed);
-        }
-
-        std::thread producers[4];
-        std::thread consumers[4];
-
-        for (U32 t = 0; t < 4; t++) {
-            producers[t] = std::thread([&queue, t, MESSAGES]() {
-                for (U32 i = 0; i < MESSAGES / 4; i++) {
-                    const U32 value = (t * (MESSAGES / 4)) + i;
-                    U8 buffer[sizeof(U32)];
-                    pack_u32(value, buffer);
-                    Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-                    while (status == Os::QueueInterface::Status::FULL) {
-                        status = queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-                        if (status == Os::QueueInterface::Status::FULL) {
-                            std::this_thread::yield();
-                        }
-                    }
-                }
-            });
-        }
-
-        for (U32 t = 0; t < 4; t++) {
-            consumers[t] = std::thread([&queue, &localConsumed, &localDone, &localReceived, MESSAGES]() {
-                U8 buffer[sizeof(U32)];
-                FwSizeType actualSize = 0;
-                FwQueuePriorityType priority = 0;
-                while (localConsumed.load(std::memory_order_acquire) < MESSAGES) {
-                    Os::QueueInterface::Status status = queue.receive(
-                        buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-                    if (status == Os::QueueInterface::Status::OP_OK) {
-                        const U32 value = unpack_u32(buffer);
-                        ASSERT_LT(value, MESSAGES);
-                        localReceived[value].fetch_add(1, std::memory_order_acq_rel);
-                        localConsumed.fetch_add(1, std::memory_order_acq_rel);
-                    } else {
-                        if (localDone.load(std::memory_order_acquire) &&
-                            localConsumed.load(std::memory_order_acquire) >= MESSAGES) {
-                            break;
-                        }
-                        std::this_thread::yield();
-                    }
-                }
-            });
-        }
-
-        for (U32 t = 0; t < 4; t++) {
-            producers[t].join();
-        }
-        localDone.store(true, std::memory_order_release);
-        for (U32 t = 0; t < 4; t++) {
-            consumers[t].join();
-        }
-
-        EXPECT_EQ(localConsumed.load(), MESSAGES);
-        for (U32 i = 0; i < MESSAGES; i++) {
-            EXPECT_EQ(localReceived[i].load(std::memory_order_relaxed), 1u) << "cycle=" << cycle << " value=" << i;
-        }
-        queue.teardown();
+        run_concurrent(cfg);
     }
 }
 
@@ -533,91 +371,23 @@ TEST(Adversarial, SequenceWrapComparison) {
 }
 
 // Mixed priority under contention: producers send messages with varying
-// priorities. Verify that each consumer always receives in non-increasing
-// priority order (within messages it individually receives). Under true
-// concurrency, global priority order across consumers is not guaranteed,
-// but each consumer's local stream must be non-increasing.
+// priorities. The concurrent phase verifies exactly-once delivery and
+// per-priority distribution; the deterministic phase verifies strict
+// highest-priority-first selection with FIFO tie-breaking.
 TEST(Adversarial, MixedPriorityContention) {
     constexpr FwSizeType DEPTH = 32;
-    constexpr U32 PRODUCERS = 4;
-    constexpr U32 CONSUMERS = 4;
-    constexpr U32 MESSAGES_PER_PRODUCER = 2000;
-    constexpr U32 TOTAL = PRODUCERS * MESSAGES_PER_PRODUCER;
-    constexpr U32 NUM_PRIORITIES = 8;
+    constexpr U32 NUM_PRIORITIES = MAX_PRIORITIES;
 
-    Os::Queue queue;
-    Fw::String name("mixed-prio");
-    ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
-
-    std::atomic<U32> consumed(0);
-    std::atomic<bool> producersDone(false);
-    std::atomic<U32> receivedCount[NUM_PRIORITIES];
-    for (U32 i = 0; i < NUM_PRIORITIES; i++) {
-        receivedCount[i].store(0, std::memory_order_relaxed);
-    }
-
-    std::thread producers[PRODUCERS];
-    for (U32 t = 0; t < PRODUCERS; t++) {
-        producers[t] = std::thread([&queue, t, MESSAGES_PER_PRODUCER, NUM_PRIORITIES]() {
-            for (U32 i = 0; i < MESSAGES_PER_PRODUCER; i++) {
-                const U32 value = (t * MESSAGES_PER_PRODUCER) + i;
-                U8 buffer[sizeof(U32)];
-                pack_u32(value, buffer);
-                const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>(value % NUM_PRIORITIES);
-                Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-                while (status == Os::QueueInterface::Status::FULL) {
-                    status = queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING);
-                    if (status == Os::QueueInterface::Status::FULL) {
-                        std::this_thread::yield();
-                    }
-                }
-            }
-        });
-    }
-
-    std::thread consumers[CONSUMERS];
-    for (U32 t = 0; t < CONSUMERS; t++) {
-        consumers[t] = std::thread([&queue, &consumed, &producersDone, &receivedCount, TOTAL, NUM_PRIORITIES]() {
-            U8 buffer[sizeof(U32)];
-            FwSizeType actualSize = 0;
-            FwQueuePriorityType priority = 0;
-            while (consumed.load(std::memory_order_acquire) < TOTAL) {
-                Os::QueueInterface::Status status = queue.receive(
-                    buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-                if (status == Os::QueueInterface::Status::OP_OK) {
-                    ASSERT_LT(static_cast<U32>(priority), NUM_PRIORITIES);
-                    receivedCount[priority].fetch_add(1, std::memory_order_acq_rel);
-                    consumed.fetch_add(1, std::memory_order_acq_rel);
-                } else {
-                    if (producersDone.load(std::memory_order_acquire) &&
-                        consumed.load(std::memory_order_acquire) >= TOTAL) {
-                        break;
-                    }
-                    std::this_thread::yield();
-                }
-            }
-        });
-    }
-
-    for (U32 t = 0; t < PRODUCERS; t++) {
-        producers[t].join();
-    }
-    producersDone.store(true, std::memory_order_release);
-    for (U32 t = 0; t < CONSUMERS; t++) {
-        consumers[t].join();
-    }
-
-    // Verify all messages were consumed
-    EXPECT_EQ(consumed.load(), TOTAL);
-    // Verify priority distribution matches what was sent: producers send value % NUM_PRIORITIES,
-    // so exactly TOTAL / NUM_PRIORITIES messages exist per priority.
-    for (U32 p = 0; p < NUM_PRIORITIES; p++) {
-        EXPECT_EQ(receivedCount[p].load(std::memory_order_relaxed), TOTAL / NUM_PRIORITIES) << "priority=" << p;
-    }
+    // Concurrent phase: exactly-once delivery and per-priority distribution under contention.
+    const ConcurrentConfig cfg{DEPTH, 4, 4, 2000, 0, priority_mod8, false};
+    run_concurrent(cfg);
 
     // Deterministic phase: with no concurrent senders, fill the queue with a shuffled mix of
     // priorities and verify a single-threaded drain returns strictly highest-priority-first,
     // FIFO within equal priorities.
+    Os::Queue queue;
+    Fw::String name("mixed-prio");
+    ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
     for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
         U8 buffer[sizeof(U32)] = {0};
         pack_u32(i, buffer);
@@ -650,72 +420,98 @@ TEST(Adversarial, MixedPriorityContention) {
 }
 
 // Rapid teardown after drain: multiple consumers race to drain the queue,
-// then teardown() is called immediately. Verifies no use-after-free.
+// then teardown() is called immediately (by the harness, right after the
+// joins). Verifies no use-after-free.
 TEST(Adversarial, RapidDrainThenTeardown) {
-    constexpr FwSizeType DEPTH = 64;
-    constexpr U32 MESSAGES = 10000;
-    constexpr U32 CONSUMERS = 8;
+    const ConcurrentConfig cfg{64, 1, 8, 9936, 64, nullptr, false};
+    run_concurrent(cfg);
+}
+
+// Batched priority selection under contention: publish a full batch of mixed
+// priorities with no consumer running, release all consumers through a
+// barrier, and drain concurrently. Because the batch only shrinks during the
+// drain, the highest available priority is non-increasing over time, so each
+// consumer's own receive sequence must be non-increasing if every receive
+// selects the highest priority available at its claim instant. The combined
+// per-priority counts must also match the batch exactly.
+TEST(Adversarial, BatchedPriorityDrain) {
+    constexpr FwSizeType DEPTH = 32;
+    constexpr U32 CONSUMERS = 4;
+    constexpr U32 BATCHES = 200;
+    constexpr U32 NUM_PRIORITIES = MAX_PRIORITIES;
 
     Os::Queue queue;
-    Fw::String name("drain-teardown");
+    Fw::String name("batched-prio");
     ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
 
-    // Fill the queue up to depth
-    for (FwSizeType i = 0; i < DEPTH; i++) {
-        U8 buffer[sizeof(U32)];
-        pack_u32(static_cast<U32>(i), buffer);
-        ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
-                  Os::QueueInterface::Status::OP_OK);
-    }
-
-    // Single producer sends the rest
-    std::atomic<U32> consumed(0);
-    std::atomic<bool> producerDone(false);
-
-    std::thread producer([&queue, &producerDone, DEPTH, MESSAGES]() {
-        for (U32 i = static_cast<U32>(DEPTH); i < MESSAGES; i++) {
-            U8 buffer[sizeof(U32)];
+    for (U32 batch = 0; batch < BATCHES; batch++) {
+        // Publish a full batch of shuffled priorities with no consumer running.
+        U32 sentByPriority[NUM_PRIORITIES] = {0};
+        for (U32 i = 0; i < static_cast<U32>(DEPTH); i++) {
+            U8 buffer[sizeof(U32)] = {0};
             pack_u32(i, buffer);
-            Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
-            while (status == Os::QueueInterface::Status::FULL) {
-                status = queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING);
-                if (status == Os::QueueInterface::Status::FULL) {
-                    std::this_thread::yield();
-                }
-            }
+            const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>(((i * 5) + batch) % NUM_PRIORITIES);
+            sentByPriority[priority]++;
+            ASSERT_EQ(queue.send(buffer, sizeof(U32), priority, Os::QueueInterface::BlockingType::NONBLOCKING),
+                      Os::QueueInterface::Status::OP_OK);
         }
-        producerDone.store(true, std::memory_order_release);
-    });
 
-    std::thread consumers[CONSUMERS];
-    for (U32 t = 0; t < CONSUMERS; t++) {
-        consumers[t] = std::thread([&queue, &consumed, &producerDone, MESSAGES]() {
-            U8 buffer[sizeof(U32)];
-            FwSizeType actualSize = 0;
-            FwQueuePriorityType priority = 0;
-            while (consumed.load(std::memory_order_acquire) < MESSAGES) {
-                Os::QueueInterface::Status status = queue.receive(
-                    buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
-                if (status == Os::QueueInterface::Status::OP_OK) {
-                    consumed.fetch_add(1, std::memory_order_acq_rel);
-                } else {
-                    if (producerDone.load(std::memory_order_acquire) &&
-                        consumed.load(std::memory_order_acquire) >= MESSAGES) {
-                        break;
-                    }
+        std::atomic<U32> claimed(0);
+        std::atomic<U32> receivedByPriority[NUM_PRIORITIES];
+        for (U32 i = 0; i < NUM_PRIORITIES; i++) {
+            receivedByPriority[i].store(0, std::memory_order_relaxed);
+        }
+        std::atomic<U32> readyCount(0);
+        std::atomic<bool> go(false);
+
+        std::thread consumers[CONSUMERS];
+        for (U32 t = 0; t < CONSUMERS; t++) {
+            consumers[t] = std::thread([&queue, &claimed, &receivedByPriority, &readyCount, &go, batch, DEPTH]() {
+                // Barrier: wait until every consumer is ready so the drain is contended.
+                readyCount.fetch_add(1, std::memory_order_acq_rel);
+                while (!go.load(std::memory_order_acquire)) {
                     std::this_thread::yield();
                 }
-            }
-        });
-    }
+                U8 buffer[sizeof(U32)] = {0};
+                FwSizeType actualSize = 0;
+                FwQueuePriorityType priority = 0;
+                FwQueuePriorityType lastPriority = 0;
+                bool havePrevious = false;
+                while (claimed.load(std::memory_order_acquire) < static_cast<U32>(DEPTH)) {
+                    Os::QueueInterface::Status status = queue.receive(
+                        buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
+                    if (status == Os::QueueInterface::Status::OP_OK) {
+                        // The drained set only shrinks, so this consumer's own receive
+                        // sequence must be non-increasing in priority.
+                        if (havePrevious) {
+                            ASSERT_LE(priority, lastPriority) << "batch=" << batch;
+                        }
+                        lastPriority = priority;
+                        havePrevious = true;
+                        receivedByPriority[priority].fetch_add(1, std::memory_order_acq_rel);
+                        claimed.fetch_add(1, std::memory_order_acq_rel);
+                    } else {
+                        std::this_thread::yield();
+                    }
+                }
+            });
+        }
 
-    producer.join();
-    for (U32 t = 0; t < CONSUMERS; t++) {
-        consumers[t].join();
-    }
+        while (readyCount.load(std::memory_order_acquire) < CONSUMERS) {
+            std::this_thread::yield();
+        }
+        go.store(true, std::memory_order_release);
+        for (U32 t = 0; t < CONSUMERS; t++) {
+            consumers[t].join();
+        }
 
-    EXPECT_EQ(consumed.load(), MESSAGES);
-    // Immediate teardown after all threads complete
+        ASSERT_EQ(claimed.load(std::memory_order_acquire), static_cast<U32>(DEPTH));
+        for (U32 p = 0; p < NUM_PRIORITIES; p++) {
+            EXPECT_EQ(receivedByPriority[p].load(std::memory_order_relaxed), sentByPriority[p])
+                << "batch=" << batch << " priority=" << p;
+        }
+        ASSERT_EQ(queue.getMessagesAvailable(), 0u);
+    }
     queue.teardown();
 }
 

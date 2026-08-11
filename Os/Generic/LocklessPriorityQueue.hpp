@@ -40,8 +40,9 @@ struct LocklessSlot {
 
     //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations. The 28-bit
     //! tag increments on every transition; a stale CAS is defeated unless a thread stalls
-    //! between its scan and CAS across an exact multiple of 2^28 transitions of one slot (see
-    //! SDD sections 4 and 15).
+    //! between its scan and CAS across an exact multiple of 2^28 transitions of one slot. In
+    //! that case the consumer dequeues a valid message out of priority order — never corrupted,
+    //! lost, or duplicated (see SDD sections 4 and 15).
     std::atomic<U32> m_stateTag;
     //! Sequence number assigned at publication time. Used as a FIFO tiebreaker when priorities
     //! are equal. Atomic because consumers read it during the scan phase without ownership.

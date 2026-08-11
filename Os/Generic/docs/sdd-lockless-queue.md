@@ -86,6 +86,18 @@ thread stalls between its scan and its CAS while other threads drive that
 same slot through an exact multiple of `2^28` transitions (≥ `2^26` complete
 message cycles) and the slot returns to the same state — a scenario requiring
 a thread to remain preempted across tens of millions of queue operations.
+
+**Consequence of a wrapped-tag stale CAS.** If this coincidence occurs, the
+consequence is bounded: the stale CAS can only succeed against a slot that is
+once again `READY`, so the consumer claims a *valid, complete* message — just
+not necessarily the one it selected during its scan. The claimed message is
+delivered intact and exactly once; no memory corruption, message loss, or
+duplication is possible. The observable effect is a single dequeue that may
+violate the strict priority/FIFO selection order (a one-time priority
+inversion). The tag is kept within a 32-bit word (rather than widened to 64
+bits) so the state word remains a single `std::atomic<U32>`, which is
+lock-free on all supported flight targets — a prerequisite for the ISR-safety
+guarantee that `std::atomic<U64>` does not meet on all 32-bit platforms.
 This residual window is documented in §15.
 
 The slot's `m_size` field is written by the producer while the slot is in `WRITING` and read
@@ -381,6 +393,8 @@ tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`).
   contention (§5, §6).
 - The ABA epoch tag is 28 bits wide; a stale CAS is defeated unless a thread
   stalls between scan and CAS across an exact multiple of `2^28` transitions
-  of one slot (§4).
+  of one slot. Should that coincidence occur, the effect is a single
+  out-of-priority-order dequeue of a valid message — never corruption, loss,
+  or duplication (§4).
 - FIFO tie-breaking among equal-priority messages assumes no message remains
   queued across `2^31` intervening sends (§7).
