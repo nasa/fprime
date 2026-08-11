@@ -126,6 +126,14 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \return status success (True) / failure(False)
     PrmLoadStatus readParamFileImpl(const Fw::StringBase& fileName, PrmDbType dbType);
 
+    //!  \brief Read parameter file contents through an open-capable file object
+    //!
+    //!  \param paramFile file object (Os::File or Os::SandboxedFile) to read through
+    //!  \param fileName file where parameters are stored
+    //!  \param dbType database to store the parameters in
+    template <typename FileType>
+    PrmLoadStatus readParamFileWork(FileType& paramFile, const Fw::StringBase& fileName, PrmDbType dbType);
+
     //!  \brief PrmDb parameter get handler
     //!
     //!  This function retrieves a parameter value from the loaded set of stored parameters

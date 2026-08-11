@@ -66,6 +66,16 @@ TEST(TlmChanTest, ProcGuardTest) {
     tester.runProcGuard();
 }
 
+TEST(TlmChanTest, BucketPoolExhaustionTest) {
+    TEST_CASE(107.3.2, "Off-nominal hash-bucket pool exhaustion");
+    COMMENT("Verify a new channel arriving with no free buckets is dropped with a warning event, not an assert.");
+
+    Svc::TlmChanTester tester;
+
+    // run test
+    tester.runBucketPoolExhaustion();
+}
+
 // ============================================================================
 // doHash() cyber-security tests  (107.4.x)
 //
