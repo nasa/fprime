@@ -13,6 +13,7 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
 #include <Utils/Hash/Hash.hpp>
+#include <config/CommandDispatcherImplCfg.hpp>
 
 namespace Svc {
 
@@ -233,7 +234,7 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
     } else {
         m_join_waiting = true;
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
-        this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, m_opCode);
+        this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, CmdDispatcherCfg::getEventOpcode(m_opCode));
         m_cmdSeq = cmdSeq;
         m_opCode = opCode;
     }
@@ -296,7 +297,7 @@ void CmdSequencerComponentImpl ::cmdResponseIn_handler(FwIndexType portNum,
                                                        const Fw::CmdResponse& response) {
     if (this->m_runMode == STOPPED) {
         // Sequencer is not running
-        this->log_WARNING_HI_CS_UnexpectedCompletion(opcode);
+        this->log_WARNING_HI_CS_UnexpectedCompletion(CmdDispatcherCfg::getEventOpcode(opcode));
     } else {
         // clear command timeout
         this->m_cmdTimeoutTimer.clear();
@@ -419,7 +420,8 @@ bool CmdSequencerComponentImpl::requireRunMode(RunMode mode) {
 }
 
 void CmdSequencerComponentImpl ::commandError(const U32 number, const FwOpcodeType opCode, const U32 error) {
-    this->log_WARNING_HI_CS_CommandError(this->m_sequence->getLogFileName(), number, opCode, error);
+    this->log_WARNING_HI_CS_CommandError(this->m_sequence->getLogFileName(), number,
+                                         CmdDispatcherCfg::getEventOpcode(opCode), error);
     this->error();
 }
 
@@ -470,7 +472,8 @@ void CmdSequencerComponentImpl::sequenceComplete() {
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
-    this->log_ACTIVITY_LO_CS_CommandComplete(this->m_sequence->getLogFileName(), this->m_executedCount, opcode);
+    this->log_ACTIVITY_LO_CS_CommandComplete(this->m_sequence->getLogFileName(), this->m_executedCount,
+                                             CmdDispatcherCfg::getEventOpcode(opcode));
     ++this->m_executedCount;
     ++this->m_totalExecutedCount;
     this->tlmWrite_CS_CommandsExecuted(this->m_totalExecutedCount);

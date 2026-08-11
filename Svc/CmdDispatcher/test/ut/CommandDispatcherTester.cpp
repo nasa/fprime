@@ -9,6 +9,7 @@
 #include <Fw/Com/ComPacket.hpp>
 #include <Os/IntervalTimer.hpp>
 #include <Svc/CmdDispatcher/test/ut/CommandDispatcherTester.hpp>
+#include <config/CommandDispatcherImplCfg.hpp>
 
 #include <cstdio>
 
@@ -17,6 +18,12 @@
 
 static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32>::max(),
               "Unit test depends on CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 within range of U32");
+
+namespace {
+constexpr FwOpcodeType getExpectedEventOpcode(const FwOpcodeType opcode) {
+    return Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents ? opcode : std::numeric_limits<FwOpcodeType>::max();
+}
+}  // namespace
 
 namespace Svc {
 CommandDispatcherTester::CommandDispatcherTester(Svc::CommandDispatcherImpl& inst)
@@ -76,10 +83,10 @@ void CommandDispatcherTester::registerBuiltinCommands() {
     // verify event
     ASSERT_EVENTS_SIZE(4);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(4);
-    ASSERT_EVENTS_OpCodeRegistered(0, CommandDispatcherImpl::OPCODE_CMD_NO_OP, 1, 0);
-    ASSERT_EVENTS_OpCodeRegistered(1, CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING, 1, 1);
-    ASSERT_EVENTS_OpCodeRegistered(2, CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1, 1, 2);
-    ASSERT_EVENTS_OpCodeRegistered(3, CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING, 1, 3);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP), 1, 0);
+    ASSERT_EVENTS_OpCodeRegistered(1, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_NO_OP_STRING), 1, 1);
+    ASSERT_EVENTS_OpCodeRegistered(2, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_TEST_CMD_1), 1, 2);
+    ASSERT_EVENTS_OpCodeRegistered(3, getExpectedEventOpcode(CommandDispatcherImpl::OPCODE_CMD_CLEAR_TRACKING), 1, 3);
 }
 
 void CommandDispatcherTester::runNominalDispatch() {
@@ -309,7 +316,7 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     // verify registration event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_OpCodeRegistered_SIZE(1);
-    ASSERT_EVENTS_OpCodeRegistered(0, testOpCode, 0, 4);
+    ASSERT_EVENTS_OpCodeRegistered(0, getExpectedEventOpcode(testOpCode), 0, 4);
 
     // dispatch a test command with a bad opcode
     U32 testCmdArg = 100;
@@ -328,7 +335,7 @@ void CommandDispatcherTester::runInvalidOpcodeDispatch() {
     // verify dispatch event
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_InvalidCommand_SIZE(1);
-    ASSERT_EVENTS_InvalidCommand(0u, testOpCode + 1);
+    ASSERT_EVENTS_InvalidCommand(0u, getExpectedEventOpcode(testOpCode + 1));
 
     // Verify status passed back to port
 
