@@ -320,6 +320,8 @@ static bound, and the poll-with-backoff design is the price of keeping the
 implementation free of OS synchronization primitives. Note that every idle
 `BLOCKING` caller wakes once per backoff period, so deployments that select
 this queue for their active components trade idle CPU for ISR safety.
+`MAX_RETRY_PASSES` is likewise configurable as
+`LOCKLESS_QUEUE_MAX_RETRY_PASSES` in `config/LocklessQueueCfg.hpp` (default 4).
 
 ## 12. Memory Allocation
 
@@ -390,9 +392,9 @@ lockless-specific tests, including:
 - `LocklessConcurrent.PriorityOrderSingleProducer`: 200 batches of 16
   increasing-priority messages are sent and drained; the receive order must
   be strictly non-increasing in priority.
-- Four `LocklessLifetime` tests covering destruct-without-create,
-  create/teardown/destruct ordering, teardown idempotency, and oversized-send
-  rejection.
+- `LocklessLifetime` tests covering destruct-without-create,
+  create/teardown/destruct ordering, teardown idempotency, oversized-send
+  rejection (wrapper and delegate level), and zero-size message round-trip.
 
 All tests are compiled with AddressSanitizer, UndefinedBehaviorSanitizer, and
 LeakSanitizer enabled, and pass under those sanitizers. ThreadSanitizer stress
@@ -405,9 +407,10 @@ workflow on Linux and macOS.
 - `receive` is O(`depth`) because it scans the slot array. For the
   flight-typical depths of tens of slots this is preferable to the dynamic
   bookkeeping required by an O(log n) lock-free priority queue.
-- The blocking variants poll with a fixed backoff rather than blocking on an
-  OS primitive: an idle blocking receiver wakes every
-  `LOCKLESS_BLOCKING_BACKOFF_US` (100 µs) instead of sleeping until a message
+- The blocking variants poll with a configurable backoff rather than blocking
+  on an OS primitive: an idle blocking receiver wakes every
+  `LOCKLESS_QUEUE_BLOCKING_BACKOFF_US` (default 100 µs, see
+  `config/LocklessQueueCfg.hpp`) instead of sleeping until a message
   arrives, and each message may see up to one backoff period of added
   latency. Deployments whose components idle on blocking receives should
   prefer the condition-variable-based `Os::Generic::PriorityQueue` unless

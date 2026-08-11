@@ -40,6 +40,8 @@ static_assert(LocklessStateTagLockFree<sizeof(LocklessStateTagType)>::value,
               "std::atomic<LocklessStateTagType> is not guaranteed lock-free on this platform; "
               "configure a narrower type in config/LocklessQueueCfg.hpp");
 
+static_assert(LOCKLESS_QUEUE_MAX_RETRY_PASSES >= 1, "LOCKLESS_QUEUE_MAX_RETRY_PASSES must be at least 1");
+
 //! \brief slot lifecycle states for the lockless priority queue
 //!
 //! Each slot in the queue moves through a four-state state machine. Producers transition slots
@@ -256,8 +258,9 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! \warning `BLOCKING` calls must not be invoked from ISR context.
     //!
     //! \param destination: destination for message data; must be non-null
-    //! \param capacity: maximum size of message data the destination can hold; must be at least
-    //! the configured message size (asserted)
+    //! \param capacity: maximum size of message data the destination can hold; asserted to be
+    //! at least the size of the dequeued message. Supplying the configured message size is
+    //! always sufficient.
     //! \param blockType: BLOCKING to spin for a message; NONBLOCKING to fail fast
     //! \param actualSize: (output) actual size of the message read on success
     //! \param priority: (output) priority of the message read on success
