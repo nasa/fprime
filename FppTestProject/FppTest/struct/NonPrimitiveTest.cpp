@@ -283,10 +283,14 @@ TEST_F(NonPrimitiveTest, ToString) {
     NonPrimitive s(testString, testEnum, testArray, testArray, testStruct, testStruct, testU32Arr, testStructArr);
     std::stringstream buf1, buf2;
 
+    // 1. Test operator<< output (truncates to default Fw::String capacity)
+    buf1 << s;
+
+    // 2. Test s.toString() output (uses full buffer capacity)
     Fw::StringTemplate<1024> str;
     s.toString(str);
-    buf1 << str;
 
+    // Build the expected full string representation
     buf2 << "( "
          << "mString = " << testString << ", "
          << "mEnum = " << testEnum << ", "
@@ -298,9 +302,13 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ]"
          << ")";
 
-    // Use a large buffer capacity to prevent string truncation
-    Fw::StringTemplate<1024> s2(buf2.str().c_str());
-    ASSERT_STREQ(buf1.str().c_str(), s2.toChar());
+    // Verify truncated operator<< output against standard Fw::String
+    Fw::String sTruncated(buf2.str().c_str());
+    ASSERT_STREQ(buf1.str().c_str(), sTruncated.toChar());
+
+    // Verify full s.toString() output against large capacity buffer
+    Fw::StringTemplate<1024> sFull(buf2.str().c_str());
+    ASSERT_STREQ(str.toChar(), sFull.toChar());
 }
 
 }  // namespace Struct
