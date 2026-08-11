@@ -1,8 +1,9 @@
+#include <config/CommandDispatcherImplCfg.hpp>
 #include <new>
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Time/Time.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-#include <config/CommandDispatcherImplCfg.hpp>
+
 namespace Svc {
 
 // returns the index of the current statement
