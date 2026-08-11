@@ -141,5 +141,5 @@ jobs:
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
           working-directory: "TestDeploymentsProject"
-          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF ${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
+          generate-args: "${{ matrix.generate-args }} ${{ github.event.inputs.extra-cmake-args }}"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
