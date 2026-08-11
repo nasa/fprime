@@ -127,7 +127,7 @@ class CircularBuffer {
      * \param offset: offset from head to the start of the slot. Default: 0
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
      */
-    Fw::SerializeStatus peek(Fw::Serializable& serializable, FwSizeType size, FwSizeType offset = 0);
+    Fw::SerializeStatus peek(Fw::Serializable& serializable, FwSizeType size, FwSizeType offset = 0) const;
 
     /**
      * Deserialize linear buffer contents (length token followed by data) from the `size`-byte
@@ -138,7 +138,7 @@ class CircularBuffer {
      * \param offset: offset from head to the start of the slot. Default: 0
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
      */
-    Fw::SerializeStatus peek(Fw::LinearBufferBase& buffer, FwSizeType size, FwSizeType offset = 0);
+    Fw::SerializeStatus peek(Fw::LinearBufferBase& buffer, FwSizeType size, FwSizeType offset = 0) const;
 
     /**
      * Rotate the head index, deleting data from the circular buffer and making
@@ -186,6 +186,25 @@ class CircularBuffer {
     void clear_high_water_mark();
 
   private:
+    /**
+     * Common implementation for the serializable-object serialize overloads.
+     * \param serializable: object to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    template <typename T>
+    Fw::SerializeStatus serialize_impl(const T& serializable, const FwSizeType size);
+
+    /**
+     * Common implementation for the serializable-object peek overloads.
+     * \param serializable: object to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    template <typename T>
+    Fw::SerializeStatus peek_impl(T& serializable, FwSizeType size, FwSizeType offset) const;
+
     /**
      * Returns a wrap-advanced index into the store.
      * \param idx: index to advance and wrap.

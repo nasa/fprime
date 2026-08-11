@@ -231,6 +231,7 @@ class ComQueue final : public ComQueueComponentBase {
     );
 
     //! Handles overflow events, throttling, and queue processing after an enqueue attempt
+    //! \return true when the message was accepted onto the queue, false otherwise
     //!
     bool handleEnqueueStatus(const FwIndexType queueNum,       //!< Index of the queue enqueued to
                              QueueType queueType,              //!< Type of the queue and message data

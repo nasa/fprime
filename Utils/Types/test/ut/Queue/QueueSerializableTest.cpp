@@ -12,6 +12,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <cstring>
 
 namespace {
 
@@ -185,6 +186,18 @@ TEST(QueueSerializable, ComBufferWrapAroundStress) {
         ASSERT_EQ(expected.getSize(), out.getSize());
         EXPECT_EQ(0, memcmp(expected.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(expected.getSize())));
     }
+}
+
+// An object whose serialized size exceeds the configured message size is rejected
+TEST(QueueSerializable, OversizeMessageRejected) {
+    // Slot size too small to hold a serialized Fw::Buffer
+    constexpr FwSizeType SMALL_MSG_SIZE = Fw::Buffer::SERIALIZED_SIZE - 1;
+    U8 storage[SMALL_MSG_SIZE * QUEUE_DEPTH];
+    Types::Queue queue;
+    queue.setup(storage, sizeof storage, QUEUE_DEPTH, SMALL_MSG_SIZE);
+
+    ASSERT_EQ(Fw::FW_SERIALIZE_NO_ROOM_LEFT, queue.enqueue(makeBuffer(1)));
+    ASSERT_EQ(0, queue.getQueueSize());
 }
 
 // A full-capacity ComBuffer round-trips (serialized size exactly equals the slot size)

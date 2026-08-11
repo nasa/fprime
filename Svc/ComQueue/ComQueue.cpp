@@ -425,13 +425,12 @@ void ComQueue::drainQueue(FwIndexType index) {
     const FwSizeType available = queue.getQueueSize();
     for (FwSizeType i = 0; (i < available) && (status == Fw::FW_SERIALIZE_OK); i++) {
         if (index < COM_PORT_COUNT) {
-            // Dequeueing is reading the whole persisted Fw::ComBuffer object from the queue's storage.
-            // thus it takes an address to the object to fill and the size of the actual object
+            // Dequeueing deserializes the persisted Fw::ComBuffer from the queue's storage
             Fw::ComBuffer comBuffer;
             status = queue.dequeue(comBuffer);
         } else {
             // For buffer queues, if the buffer requires ownership return, return it via the bufferReturnOut port
-            // Dequeueing is reading the whole persisted Fw::Buffer object from the queue's storage.
+            // Dequeueing deserializes the persisted Fw::Buffer from the queue's storage
             Fw::Buffer buffer;
             status = queue.dequeue(buffer);
             this->bufferReturnOut_out(static_cast<FwIndexType>(index - COM_PORT_COUNT), buffer);
@@ -458,8 +457,7 @@ void ComQueue::processQueue() {
 
         // Send out the message based on the type
         if (entry.index < COM_PORT_COUNT) {
-            // Dequeue is reading the whole persisted Fw::ComBuffer object from the queue's storage.
-            // thus it takes an address to the object to fill and the size of the actual object.
+            // Dequeue deserializes the persisted Fw::ComBuffer from the queue's storage
             FW_ASSERT(this->m_buffer_state.load() == OWNED);
             auto dequeue_status = queue.dequeue(this->m_dequeued_com_buffer);
             FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,

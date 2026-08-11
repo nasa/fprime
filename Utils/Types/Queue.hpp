@@ -90,7 +90,7 @@ class Queue {
      * size. Overflow behavior is identical to the raw-byte enqueue.
      *
      * \param message: serializable object to enqueue
-     * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
+     * \return: Fw::FW_SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
      * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
      */
     Fw::SerializeStatus enqueue(const Fw::Serializable& message);
@@ -104,7 +104,7 @@ class Queue {
      * enqueue.
      *
      * \param message: linear buffer whose contents to enqueue
-     * \return: Fw::SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
+     * \return: Fw::FW_SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
      * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
      */
     Fw::SerializeStatus enqueue(const Fw::LinearBufferBase& message);
@@ -136,7 +136,7 @@ class Queue {
      * exactly as the raw-byte dequeue.
      *
      * \param message: serializable object to fill from the dequeued message
-     * \return: Fw::SERIALIZE_OK on success, something else on failure
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
      */
     Fw::SerializeStatus dequeue(Fw::Serializable& message);
 
@@ -148,7 +148,7 @@ class Queue {
      * exactly as the raw-byte dequeue.
      *
      * \param message: linear buffer to fill from the dequeued message
-     * \return: Fw::SERIALIZE_OK on success, something else on failure
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
      */
     Fw::SerializeStatus dequeue(Fw::LinearBufferBase& message);
 
@@ -173,7 +173,7 @@ class Queue {
      * the queue regardless of queue mode.
      *
      * \param message: serializable object to fill from the oldest message
-     * \return: Fw::SERIALIZE_OK on success, something else on failure
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
      */
     Fw::SerializeStatus popFront(Fw::Serializable& message);
 
@@ -184,7 +184,7 @@ class Queue {
      * queue regardless of queue mode.
      *
      * \param message: linear buffer to fill from the oldest message
-     * \return: Fw::SERIALIZE_OK on success, something else on failure
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
      */
     Fw::SerializeStatus popFront(Fw::LinearBufferBase& message);
 
@@ -201,6 +201,18 @@ class Queue {
     FwSizeType getQueueSize() const;
 
   private:
+    //! Common implementation for the serializable-object enqueue overloads
+    template <typename T>
+    Fw::SerializeStatus enqueue_impl(const T& message);
+
+    //! Common implementation for the serializable-object dequeue overloads
+    template <typename T>
+    Fw::SerializeStatus dequeue_impl(T& message);
+
+    //! Common implementation for the serializable-object popFront overloads
+    template <typename T>
+    Fw::SerializeStatus popFront_impl(T& message);
+
     CircularBuffer m_internal;
     FwSizeType m_message_size;
     QueueMode m_mode;
