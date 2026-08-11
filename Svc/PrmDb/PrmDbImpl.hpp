@@ -57,6 +57,14 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param file file where parameters are stored.
     void configure(const char* file);
 
+    //!  \brief PrmDb load sandbox configure method
+    //!
+    //!  Restricts the directory from which PRM_LOAD_FILE may read parameter
+    //!  files. If never called, any path is allowed (legacy behavior).
+    //!
+    //!  \param directory directory that ground-commanded parameter file loads are restricted to.
+    void configureLoadSandbox(const char* directory);
+
     //!  \brief PrmDb file read function
     //!
     //!  The readFile function reads the set of parameters from the file passed in to
@@ -84,7 +92,8 @@ class PrmDbImpl final : public PrmDbComponentBase {
 
   protected:
   private:
-    Fw::String m_fileName;  //!< filename for parameter storage
+    Fw::String m_fileName;    //!< filename for parameter storage
+    Fw::String m_sandboxDir;  //!< directory restriction for commanded file loads (empty = unrestricted)
 
     PrmDbFileLoadState m_state;  // Current file load state of the parameter database
 
@@ -116,6 +125,14 @@ class PrmDbImpl final : public PrmDbComponentBase {
     //!  \param dbType The type of database to read into  (active or staging)
     //!  \return status success (True) / failure(False)
     PrmLoadStatus readParamFileImpl(const Fw::StringBase& fileName, PrmDbType dbType);
+
+    //!  \brief Read parameter file contents through an open-capable file object
+    //!
+    //!  \param paramFile file object (Os::File or Os::SandboxedFile) to read through
+    //!  \param fileName file where parameters are stored
+    //!  \param dbType database to store the parameters in
+    template <typename FileType>
+    PrmLoadStatus readParamFileWork(FileType& paramFile, const Fw::StringBase& fileName, PrmDbType dbType);
 
     //!  \brief PrmDb parameter get handler
     //!
