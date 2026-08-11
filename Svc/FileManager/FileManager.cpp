@@ -154,6 +154,7 @@ void FileManager ::ListDirectory_cmdHandler(const FwOpcodeType opCode,
     // Check if we're already listing a directory
     if (m_listState == LISTING_IN_PROGRESS) {
         this->log_WARNING_HI_ListDirectoryError(dirName, static_cast<U32>(Os::Directory::OTHER_ERROR));
+        this->emitTelemetry(Os::FileSystem::OTHER_ERROR);
         this->sendCommandResponse(opCode, cmdSeq, Os::FileSystem::OTHER_ERROR);
         return;
     }

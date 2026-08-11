@@ -102,6 +102,10 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
         // about is done, the sequencer is available again (which is its current
         // state in our internal entry table already)
         this->log_WARNING_LO_UnknownSequenceFinished(static_cast<U16>(portNum));
+        // sequencer was already counted available; don't increment again
+        this->m_entryTable[portNum].state = SeqDispatcher_CmdSequencerState::AVAILABLE;
+        this->m_entryTable[portNum].sequenceRunning = "<no seq>";
+        return;
     } else {
         // ok, a sequence has finished that we knew about
         if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK) {

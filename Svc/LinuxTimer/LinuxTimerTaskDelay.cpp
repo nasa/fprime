@@ -11,6 +11,7 @@
 // ======================================================================
 
 #include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Logger/Logger.hpp>
 #include <Os/Task.hpp>
 #include <Svc/LinuxTimer/LinuxTimer.hpp>
 
@@ -25,7 +26,10 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
         if (quit) {
             return;
         }
-        this->m_rawTime.now();
+        Os::RawTime::Status status = this->m_rawTime.now();
+        if (status != Os::RawTime::OP_OK) {
+            Fw::Logger::log("[ERROR] LinuxTimer failed to read raw time: %d\n", static_cast<I32>(status));
+        }
         this->CycleOut_out(0, this->m_rawTime);
     }
 }

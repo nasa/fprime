@@ -41,7 +41,7 @@ def parse_args():
 def main():
     """Main function to handle command line arguments and write properties."""
     args = parse_args()
-    format_string = SET if args.directive == "SET" else DEFINE
+    format_string = {"SET": SET, "APPEND": APPEND}.get(args.directive, DEFINE)
     print(format_string.format(" ".join(args.values)), file=args.file)
 
 
