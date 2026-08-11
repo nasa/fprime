@@ -5,6 +5,7 @@
  *      Author: tcanham
  */
 
+#include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
 #include <Svc/EventManager/EventManager.hpp>
@@ -68,7 +69,14 @@ void EventManager::loqQueue_internalInterfaceHandler(FwEventIdType id,
     this->m_logPacket.setLogBuffer(args);
     this->m_comBuffer.resetSer();
     Fw::SerializeStatus stat = this->m_logPacket.serializeTo(this->m_comBuffer);
-    FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
+    // A maximum-size LogBuffer plus the packet header can exceed the com buffer capacity.
+    // Drop the event rather than asserting, since the arguments may arrive from
+    // external sources (e.g. a hub bridging another address space).
+    if (Fw::FW_SERIALIZE_OK != stat) {
+        Fw::Logger::log("[ERROR] EventManager: dropping event 0x%x (serialize status %d)\n", static_cast<U32>(id),
+                        static_cast<I32>(stat));
+        return;
+    }
 
     if (this->isConnected_PktSend_OutputPort(0)) {
         this->PktSend_out(0, this->m_comBuffer, 0);

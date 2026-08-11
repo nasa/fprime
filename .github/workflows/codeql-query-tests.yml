@@ -6,8 +6,10 @@
 name: "Code Scan: JPL Coding Standard Query Tests"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
     paths:
       - '.github/codeql/**'
       - '.github/workflows/codeql-query-tests.yml'

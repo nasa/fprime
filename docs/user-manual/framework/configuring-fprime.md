@@ -373,6 +373,10 @@ for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
 
+`CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
+`false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
+`FwOpcodeType` value before downlink.
+
 ## Conclusion
 
 The user should now have a very detailed understanding of how to configure F´. Although there are some automatic checks

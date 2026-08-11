@@ -506,10 +506,8 @@ void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
     // Check type is correct
     FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
     // Wrap the buffer around our indexed memory.
-    buffer.setData(this->m_memoryStore[type]);
-    buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
-    // Set a known ID to look for later
-    buffer.setContext(m_lastBufferId);
+    // Set a known ID (context) to look for later
+    buffer.set(this->m_memoryStore[type], FILEDOWNLINK_INTERNAL_BUFFER_SIZE, m_lastBufferId);
     m_lastBufferId++;
 }
 }  // end namespace Svc

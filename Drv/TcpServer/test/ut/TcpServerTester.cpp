@@ -157,7 +157,7 @@ bool TcpServerTester::wait_on_started(bool open, U32 iterations) {
 TcpServerTester ::TcpServerTester()
     : TcpServerGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TcpServer"),
-      m_data_buffer(m_data_storage, 0),
+      m_data_buffer(m_data_storage, sizeof(m_data_storage)),
       m_spinner(true) {
     this->initComponents();
     this->connectPorts();
