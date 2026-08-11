@@ -245,11 +245,9 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     // Assert the next few serialization operations will stay within the
                     // data that has been read so far
-                    FW_ASSERT(deser_loc >=
-                                  (uncompressed_size +
-                                   2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
-                              static_cast<FwAssertArgType>(deser_loc), uncompressed_size,
-                              CompressionMetadata::SERIALIZED_SIZE, compressed_size);
+                    FW_ASSERT(deser_loc >= (uncompressed_size + 2 * compression_header_size + compressed_size),
+                              static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(uncompressed_size),
+                              static_cast<FwAssertArgType>(compressed_size));
                     (void)std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
                                        uncompressed_size);
 
@@ -285,11 +283,11 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     // Assert the next few serialization operations will stay within the
                     // data that has been read so far
-                    FW_ASSERT(deser_loc >=
-                                  (data_reser.getSize() + uncompressed_size +
-                                   2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
-                              static_cast<FwAssertArgType>(deser_loc),
-                              static_cast<FwAssertArgType>(data_reser.getSize()), uncompressed_size, compressed_size);
+                    FW_ASSERT(
+                        deser_loc >=
+                            (data_reser.getSize() + uncompressed_size + 2 * compression_header_size + compressed_size),
+                        static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(data_reser.getSize()),
+                        static_cast<FwAssertArgType>(uncompressed_size), static_cast<FwAssertArgType>(compressed_size));
                     serializeCompressionHeader(data_reser, uncompressed_size,
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 

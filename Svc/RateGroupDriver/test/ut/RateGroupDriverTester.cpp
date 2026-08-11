@@ -54,9 +54,15 @@ TEST(RateGroupDriverTest, ReconfigureSchedule) {
         dividersSet.dividers[i] = {static_cast<FwSizeType>(i + 1), static_cast<FwSizeType>(i % 2)};
     }
 
+    // First configure with different (larger) divisors, then reconfigure: the second
+    // configure must fully replace the first (rollover resets, no product carryover)
+    Svc::RateGroupDriver::DividerSet firstSet{};
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++) {
+        firstSet.dividers[i] = {static_cast<FwSizeType>(2 * (i + 1)), 0};
+    }
+
     Svc::RateGroupDriver impl("RateGroupDriver");
-    // Configure twice: the second configure must fully replace the first (rollover resets)
-    impl.configure(dividersSet);
+    impl.configure(firstSet);
     impl.configure(dividersSet);
 
     Svc::RateGroupDriverImplTester tester(impl);
