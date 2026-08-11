@@ -6,11 +6,37 @@
 #define OS_GENERIC_LOCKLESSPRIORITYQUEUE_HPP
 
 #include <atomic>
+#include <limits>
+#include <type_traits>
 #include "Fw/FPrimeBasicTypes.hpp"
 #include "Os/Queue.hpp"
+#include "config/LocklessQueueCfg.hpp"
 
 namespace Os {
 namespace Generic {
+
+static_assert(std::is_integral<LocklessStateTagType>::value && std::is_unsigned<LocklessStateTagType>::value,
+              "LocklessStateTagType must be an unsigned integral type");
+
+//! \brief compile-time lock-free guarantee for the configured state-tag type, by width
+//!
+//! C++14 lacks `std::atomic<T>::is_always_lock_free` (C++17), so the guarantee is derived from
+//! the standard `ATOMIC_*_LOCK_FREE` macros (2 = always lock-free) selected by type width. A
+//! runtime `is_lock_free()` FW_ASSERT in create() remains the authoritative gate.
+template <FwSizeType WIDTH>
+struct LocklessStateTagLockFree {};
+template <>
+struct LocklessStateTagLockFree<4> {
+    static constexpr bool value = (ATOMIC_INT_LOCK_FREE == 2);
+};
+template <>
+struct LocklessStateTagLockFree<8> {
+    static constexpr bool value = (ATOMIC_LLONG_LOCK_FREE == 2);
+};
+
+static_assert(LocklessStateTagLockFree<sizeof(LocklessStateTagType)>::value,
+              "std::atomic<LocklessStateTagType> is not guaranteed lock-free on this platform; "
+              "configure a narrower type in config/LocklessQueueCfg.hpp");
 
 //! \brief slot lifecycle states for the lockless priority queue
 //!
@@ -36,14 +62,17 @@ struct LocklessSlot {
     //! Number of low bits used for the state value within `m_stateTag`.
     static constexpr U32 STATE_BITS = 4;
     //! Mask for the state portion of `m_stateTag`.
-    static constexpr U32 STATE_MASK = (static_cast<U32>(1) << STATE_BITS) - static_cast<U32>(1);
+    static constexpr LocklessStateTagType STATE_MASK =
+        (static_cast<LocklessStateTagType>(1) << STATE_BITS) - static_cast<LocklessStateTagType>(1);
+    //! Number of bits available for the ABA epoch tag (60 with the default U64 word).
+    static constexpr U32 TAG_BITS = static_cast<U32>(std::numeric_limits<LocklessStateTagType>::digits) - STATE_BITS;
 
-    //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations. The 28-bit
+    //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations. The TAG_BITS
     //! tag increments on every transition; a stale CAS is defeated unless a thread stalls
-    //! between its scan and CAS across an exact multiple of 2^28 transitions of one slot. In
-    //! that case the consumer dequeues a valid message out of priority order — never corrupted,
-    //! lost, or duplicated (see SDD sections 4 and 15).
-    std::atomic<U32> m_stateTag;
+    //! between its scan and CAS across an exact multiple of 2^TAG_BITS transitions of one slot.
+    //! In that case the consumer dequeues a valid message out of priority order — never
+    //! corrupted, lost, or duplicated (see SDD sections 4 and 15).
+    std::atomic<LocklessStateTagType> m_stateTag;
     //! Sequence number assigned at publication time. Used as a FIFO tiebreaker when priorities
     //! are equal. Atomic because consumers read it during the scan phase without ownership.
     std::atomic<U32> m_sequence;

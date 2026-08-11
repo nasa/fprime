@@ -25,17 +25,17 @@ namespace {
 constexpr U32 LOCKLESS_BLOCKING_BACKOFF_US = 100;
 
 //! Extract the state portion of a packed state-tag word.
-constexpr U32 stateOf(U32 packed) {
+constexpr LocklessStateTagType stateOf(LocklessStateTagType packed) {
     return packed & LocklessSlot::STATE_MASK;
 }
 
 //! Extract the tag portion of a packed state-tag word.
-constexpr U32 tagOf(U32 packed) {
+constexpr LocklessStateTagType tagOf(LocklessStateTagType packed) {
     return packed >> LocklessSlot::STATE_BITS;
 }
 
 //! Pack a (state, tag) pair into a single word.
-constexpr U32 packStateTag(U32 state, U32 tag) {
+constexpr LocklessStateTagType packStateTag(LocklessStateTagType state, LocklessStateTagType tag) {
     return (tag << LocklessSlot::STATE_BITS) | (state & LocklessSlot::STATE_MASK);
 }
 
@@ -91,9 +91,10 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
     FW_ASSERT(this->m_handle.m_data == nullptr);
 
     // The state-tag word relies on the underlying atomic being lock-free for ISR safety. The
-    // check is runtime because constexpr `is_always_lock_free` is C++17 and this code targets
-    // C++14. On every supported flight target the atomic is in fact lock-free.
-    std::atomic<U32> probe(0);
+    // static_assert in the header covers platforms with a compile-time guarantee; this runtime
+    // check is the authoritative gate (`is_always_lock_free` is C++17 and this code targets
+    // C++14).
+    std::atomic<LocklessStateTagType> probe(0);
     FW_ASSERT(probe.is_lock_free());
     std::atomic<FwQueuePriorityType> priorityProbe(0);
     FW_ASSERT(priorityProbe.is_lock_free());
@@ -205,11 +206,11 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
     for (FwSizeType pass = 0; !nonBlocking || pass < MAX_RETRY_PASSES; pass++) {
         for (FwSizeType i = 0; i < depth; i++) {
             LocklessSlot& slot = this->m_handle.m_slots[i];
-            U32 packed = slot.m_stateTag.load(std::memory_order_acquire);
+            LocklessStateTagType packed = slot.m_stateTag.load(std::memory_order_acquire);
             if (stateOf(packed) != LOCKLESS_SLOT_FREE) {
                 continue;
             }
-            const U32 desired = packStateTag(LOCKLESS_SLOT_WRITING, tagOf(packed) + 1);
+            const LocklessStateTagType desired = packStateTag(LOCKLESS_SLOT_WRITING, tagOf(packed) + 1);
             if (slot.m_stateTag.compare_exchange_strong(packed, desired, std::memory_order_acq_rel,
                                                         std::memory_order_relaxed)) {
                 if (size > 0) {
@@ -265,17 +266,17 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
         FwSizeType bestIndex = depth;
         FwQueuePriorityType bestPriority = FwQueuePriorityType();
         U32 bestSequence = 0;
-        U32 bestPacked = 0;
+        LocklessStateTagType bestPacked = 0;
 
         for (FwSizeType i = 0; i < depth; i++) {
             LocklessSlot& slot = this->m_handle.m_slots[i];
-            U32 packed = slot.m_stateTag.load(std::memory_order_acquire);
+            LocklessStateTagType packed = slot.m_stateTag.load(std::memory_order_acquire);
             if (stateOf(packed) != LOCKLESS_SLOT_READY) {
                 continue;
             }
             const FwQueuePriorityType candidatePriority = slot.m_priority.load(std::memory_order_relaxed);
             const U32 candidateSequence = slot.m_sequence.load(std::memory_order_relaxed);
-            const U32 packedRecheck = slot.m_stateTag.load(std::memory_order_acquire);
+            const LocklessStateTagType packedRecheck = slot.m_stateTag.load(std::memory_order_acquire);
             if (packed != packedRecheck) {
                 continue;
             }
@@ -295,7 +296,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
             continue;
         }
 
-        const U32 desired = packStateTag(LOCKLESS_SLOT_READING, tagOf(bestPacked) + 1);
+        const LocklessStateTagType desired = packStateTag(LOCKLESS_SLOT_READING, tagOf(bestPacked) + 1);
         if (this->m_handle.m_slots[bestIndex].m_stateTag.compare_exchange_strong(
                 bestPacked, desired, std::memory_order_acq_rel, std::memory_order_relaxed)) {
             LocklessSlot& slot = this->m_handle.m_slots[bestIndex];

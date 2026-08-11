@@ -72,20 +72,24 @@ Each slot has a four-state lifecycle:
     +-----(consumer release)------  READING  <--(consumer CAS)-----+
 ```
 
-State values are stored in the low `STATE_BITS` of an `std::atomic<U32>` named
-`m_stateTag`. The remaining high bits hold a per-slot epoch tag that is
+State values are stored in the low `STATE_BITS` of an atomic word named
+`m_stateTag`, whose unsigned integral type `LocklessStateTagType` is
+configurable in `config/LocklessQueueCfg.hpp` (default `U64`). The remaining
+high bits hold a per-slot epoch tag that is
 incremented on **every** transition. The epoch tag prevents ABA hazards: a
 consumer that observes `(READY, tag=T)`, performs a non-atomic read of the
 slot's priority and sequence, and then attempts to CAS to
 `(READING, tag=T+1)` is guaranteed to fail if any other thread completed even
 one round-trip on this slot in the meantime.
 
-The tag occupies `32 - STATE_BITS = 28` bits and wraps after `2^28`
-transitions of a single slot. A stale CAS could therefore succeed only if a
-thread stalls between its scan and its CAS while other threads drive that
-same slot through an exact multiple of `2^28` transitions (≥ `2^26` complete
-message cycles) and the slot returns to the same state — a scenario requiring
-a thread to remain preempted across tens of millions of queue operations.
+The tag occupies `TAG_BITS = bits(LocklessStateTagType) - STATE_BITS` bits
+(60 with the default `U64` word) and wraps after `2^TAG_BITS` transitions of
+a single slot. A stale CAS could therefore succeed only if a thread stalls
+between its scan and its CAS while other threads drive that same slot through
+an exact multiple of `2^TAG_BITS` transitions and the slot returns to the
+same state. With the default 60-bit tag this requires a thread to remain
+preempted across ~10^18 queue operations on one slot; with a `U32` word
+(28-bit tag) the bound drops to tens of millions of operations.
 
 **Consequence of a wrapped-tag stale CAS.** If this coincidence occurs, the
 consequence is bounded: the stale CAS can only succeed against a slot that is
@@ -94,11 +98,12 @@ not necessarily the one it selected during its scan. The claimed message is
 delivered intact and exactly once; no memory corruption, message loss, or
 duplication is possible. The observable effect is a single dequeue that may
 violate the strict priority/FIFO selection order (a one-time priority
-inversion). The tag is kept within a 32-bit word (rather than widened to 64
-bits) so the state word remains a single `std::atomic<U32>`, which is
-lock-free on all supported flight targets — a prerequisite for the ISR-safety
-guarantee that `std::atomic<U64>` does not meet on all 32-bit platforms.
-This residual window is documented in §15.
+inversion). Lock-freedom of `std::atomic<LocklessStateTagType>` is a
+prerequisite for the ISR-safety guarantee: it is statically asserted from the
+`ATOMIC_*_LOCK_FREE` macros where the platform guarantees it, and
+runtime-asserted in `create()`. Platforms without lock-free 64-bit atomics
+(some 32-bit targets) must configure `U32` in `config/LocklessQueueCfg.hpp`,
+accepting the narrower 28-bit tag. This residual window is documented in §15.
 
 The slot's `m_size` field is written by the producer while the slot is in `WRITING` and read
 by the consumer while the slot is in `READING`; it is only ever accessed under exclusive
@@ -391,10 +396,11 @@ tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`).
   callers. ISR callers must use `BlockingType::NONBLOCKING`.
 - Non-blocking `send`/`receive` may return spurious `FULL`/`EMPTY` under
   contention (§5, §6).
-- The ABA epoch tag is 28 bits wide; a stale CAS is defeated unless a thread
-  stalls between scan and CAS across an exact multiple of `2^28` transitions
-  of one slot. Should that coincidence occur, the effect is a single
-  out-of-priority-order dequeue of a valid message — never corruption, loss,
-  or duplication (§4).
+- The ABA epoch tag is `TAG_BITS` wide (60 by default; 28 when
+  `LocklessStateTagType` is configured to `U32`); a stale CAS is defeated
+  unless a thread stalls between scan and CAS across an exact multiple of
+  `2^TAG_BITS` transitions of one slot. Should that coincidence occur, the
+  effect is a single out-of-priority-order dequeue of a valid message —
+  never corruption, loss, or duplication (§4).
 - FIFO tie-breaking among equal-priority messages assumes no message remains
   queued across `2^31` intervening sends (§7).
