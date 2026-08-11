@@ -81,8 +81,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
-    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET,
-                           fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE);
+    // Bound the data region by the container's data size, not the buffer capacity
+    if (container.getDataSize() > fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(), static_cast<U32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH));
+        return;
+    }
+    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET, container.getDataSize());
     FW_ASSERT(data_buffer.getSize() > 0, static_cast<FwAssertArgType>(data_buffer.getSize()));
 
     auto data_deser = data_buffer.getDeserializer();
@@ -282,8 +286,10 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
-                    ser_stat =
-                        data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
+                    // Source and destination regions may overlap; move then skip
+                    (void)std::memmove(data_buffer.getData() + data_reser.getSize(), uncompressed_head,
+                                       uncompressed_size);
+                    ser_stat = data_reser.serializeSkip(uncompressed_size);
                     FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));

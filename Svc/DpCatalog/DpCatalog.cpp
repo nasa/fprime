@@ -284,7 +284,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     }
 
     // buffer for writing entries
-    BYTE buffer[sizeof(entry.dir) + sizeof(entry.record)];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
     // reset the buffer for serializing the entry
     entryBuffer.resetSer();
@@ -464,8 +464,9 @@ FwSizeType DpCatalog::determineDirectory(const Fw::String& fullFile) {
         // StringUtils::substring_find will return zero if both paths agree
         // memory safe since both are fixed width strings
         // and loc is before the fixed width
-        if (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
-                                            static_cast<FwSizeType>(loc)) == 0) {
+        if ((dir_string.length() == static_cast<FwSizeType>(loc)) &&
+            (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
+                                             static_cast<FwSizeType>(loc)) == 0)) {
             return dir;
         }
     }
@@ -584,6 +585,12 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
 
     // check the state file to see if there is transmit state
     this->getFileState(entry);
+
+    // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
+    if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
+        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        return ProcessFileStatus::FAILED;
+    }
 
     // insert entry into sorted catalog. if can't insert, quit
     bool inserted = this->insertEntry(entry);
@@ -772,8 +779,11 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         return;
     }
 
-    // Catalog cleared while this file was sent
+    // Catalog cleared while this file was sent; clear xmit state and answer any waited command
     if (!this->m_catalogBuilt) {
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
