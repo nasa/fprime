@@ -125,6 +125,11 @@ class DpWriterTester : public DpWriterGTestBase {
     //! Get the EVENTID_INVALIDHEADER_THROTTLE value
     static FwSizeType getInvalidHeaderThrottle() { return DpWriterComponentBase::EVENTID_INVALIDHEADER_THROTTLE; }
 
+    //! Get the EVENTID_FILENAMEFORMATERROR_THROTTLE value
+    static FwSizeType getFileNameFormatErrorThrottle() {
+        return DpWriterComponentBase::EVENTID_FILENAMEFORMATERROR_THROTTLE;
+    }
+
     //! Get the EVENTID_FILEOPENERROR_THROTTLE value
     static FwSizeType getFileOpenErrorThrottle() { return DpWriterComponentBase::EVENTID_FILEOPENERROR_THROTTLE; }
 
