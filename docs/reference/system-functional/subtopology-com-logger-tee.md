@@ -3,7 +3,7 @@
 
 ## References
 
-- [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/README.md)
+- [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md)
 - [F Prime ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp)
 
 ## Overview

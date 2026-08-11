@@ -134,7 +134,10 @@ bool UdpTester::wait_on_change(Drv::IpSocket& socket, bool open, U32 iterations)
 }
 
 UdpTester ::UdpTester()
-    : UdpGTestBase("Tester", MAX_HISTORY_SIZE), component("Udp"), m_data_buffer(m_data_storage, 0), m_spinner(true) {
+    : UdpGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("Udp"),
+      m_data_buffer(m_data_storage, sizeof(m_data_storage)),
+      m_spinner(true) {
     this->initComponents();
     this->connectPorts();
     ::memset(m_data_storage, 0, sizeof(m_data_storage));

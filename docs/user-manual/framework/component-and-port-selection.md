@@ -12,7 +12,7 @@ This guide assumes you have a basic understanding of the different component and
 
 **Table of Contents**
 - [Types of Work in F Prime Systems](#types-of-work-in-f-prime-systems)
-- [Component Selection for Cyclic Work](#component-selection-for-cyclic-work)
+- [Cyclic Work](#cyclic-work)
   - [Passive Components for Cyclic Work](#passive-components-for-cyclic-work)
   - [Queued Components for Cyclic Work](#queued-components-for-cyclic-work)
 - [Event-Driven Work](#event-driven-work)
@@ -38,7 +38,7 @@ Two other relevant terms are synchronous and asynchronous invocations (i.e. how 
 
 Understanding the type of work your component will perform is the first step to selecting the appropriate component and port kinds. We will discuss component selection for each type of work.
 
-## Component Selection for Cyclic Work
+## Cyclic Work
 
 When performing cyclic work, it is crucial to know whether all work in the cycle will complete before the cycle repeats, because this 'slip' indicates a failure to meet the cycle’s hard deadline. For example, a 10 Hz control update must happen every 100 ms. If one iteration takes longer than 100 ms, the cycle has slipped and system control has been compromised because it did not keep up with the expected control rate. For this reason, cyclic work is almost always performed via synchronous invocations and therefore uses a sync port. Asynchronous invocations are not used because this work would be run outside the rate group cycling context and thus slips and failure to reach deadlines would be hidden in another thread.
 
@@ -80,7 +80,7 @@ sequenceDiagram
 
 When a component performing cyclic work also needs to accept some Event-Driven work, we require a queue to handle the asynchronous invocations, but adding a queue processing thread may disrupt the critical synchronous invocations of the core cyclic work of the component.  For this exact reason, we use a `queued` component. A `queued` component allows asynchronous events to be accepted while keeping a synchronous core.  In this model, the component dispatches the queue as part of the primary synchronous invocation (i.e. `Svc.Sched` handler) thereby moving the asynchronous work into the cycle.
 
-We do not typically used `sync` commands in this context because a synchronous command would block the command dispatch while executing, and also requires mutex protection to access shared data. These mutex accesses can disrupt the critical cyclic work by occurring at anytime whereas the queue is processed at a specific point in the cycle.
+We do not typically use `sync` commands in this context because a synchronous command would block the command dispatch while executing, and also requires mutex protection to access shared data. These mutex accesses can disrupt the critical cyclic work by occurring at anytime whereas the queue is processed at a specific point in the cycle.
 
 Adding a thread to handle the asynchronous work would either mean the cyclic work is moved to this thread (again hiding slips and failures to meet deadlines) or the component thread and rate group thread would need concurrency protection that causes disruption.
 
@@ -261,5 +261,4 @@ The following table maps the key patterns in this document to concrete examples 
 | Active Anchor Pattern | One active "anchor" plus passive helper components | `ComCcsds.FramingSubtopology` (`Svc.ComQueue` with passive helpers like `Svc.Ccsds.TmFramer`) |
 | Passive Adapter Pattern | `passive` adapter/converter called inline with existing flow | `Drv.ByteStreamBufferAdapter` |
 
-> [!NOTE]
-> * The core F Prime codebase does not deal with any hard deadlines and thus does not have a canonical example of a purely cyclic component.
+> \*Note: The core F Prime codebase does not deal with any hard deadlines and thus does not have a canonical example of a purely cyclic component.

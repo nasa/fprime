@@ -241,6 +241,13 @@ event ArgSizeMismatch(
     severity warning high \
     format "Expected {} bytes of arguments, but received {} in sequence file {}"
 
+event ArgSizeExceedsCapacity(
+    actual: FwSizeType
+    capacity: FwSizeType
+) \
+    severity warning high \
+    format "Argument size {} exceeds the {} byte argument buffer"
+
 event ArgTotalSizeExceedsStackLimit(
     argSize: Fpy.StackSizeType
 ) \

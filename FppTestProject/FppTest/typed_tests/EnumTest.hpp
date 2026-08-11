@@ -83,14 +83,24 @@ TYPED_TEST_P(EnumTest, Default) {
 // Test enum constructors
 TYPED_TEST_P(EnumTest, Constructors) {
     typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType serialVal = static_cast<typename TypeParam::SerialType>(validVal);
+    typename TypeParam::SerialType invalidSerialVal =
+        static_cast<typename TypeParam::SerialType>(FppTest::Enum::getInvalidValue<TypeParam>());
 
     // Raw enum value constructor
     TypeParam e1(validVal);
     ASSERT_EQ(e1.e, validVal);
 
-    // Copy constructor
-    TypeParam e2(e1);
+    // Serial representation value constructor
+    TypeParam e2(serialVal);
     ASSERT_EQ(e2.e, validVal);
+
+    // Copy constructor
+    TypeParam e3(e1);
+    ASSERT_EQ(e3.e, validVal);
+
+    // Invalid serial representation value constructor
+    ASSERT_DEATH_IF_SUPPORTED(static_cast<void>(TypeParam{invalidSerialVal}), "");
 }
 
 // Test enum assignment operator
@@ -99,14 +109,24 @@ TYPED_TEST_P(EnumTest, AssignmentOp) {
     TypeParam e2;
 
     typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType serialVal = static_cast<typename TypeParam::SerialType>(validVal);
+    typename TypeParam::SerialType invalidSerialVal =
+        static_cast<typename TypeParam::SerialType>(FppTest::Enum::getInvalidValue<TypeParam>());
 
     // Raw enum value assignment
     e1 = validVal;
     ASSERT_EQ(e1.e, validVal);
 
+    // Serial representation value assignment
+    e1 = serialVal;
+    ASSERT_EQ(e1.e, validVal);
+
     // Object assignment
     e2 = e1;
     ASSERT_EQ(e2.e, validVal);
+
+    // Invalid serial representation value assignment
+    ASSERT_DEATH_IF_SUPPORTED(e1 = invalidSerialVal, "");
 }
 
 // Test enum equality and inequality operator

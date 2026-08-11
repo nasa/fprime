@@ -43,6 +43,9 @@ module ComCfg {
         INVALID_UNINITIALIZED    = 0x0800  @< Anything equal or higher value is invalid and should not be used
     } default INVALID_UNINITIALIZED
 
+    @ Reserved SA index sentinel meaning "unset"; SA index 0xFFFF cannot be selected via context
+    constant SaIndexUnset = 0xFFFF
+
     @ Type used to pass context info between components during framing/deframing
     struct FrameContext {
         comQueueIndex: FwIndexType  @< Queue Index used by the ComQueue, other components shall not modify
@@ -53,7 +56,7 @@ module ComCfg {
         vcId: U8                    @< 6 bit Virtual Channel ID - used for AOS, TC, and TM Protocols
         pvn: Pvn                    @< Packet Version Number - used for AOS deframing to identify packet type
         sendNow: bool               @< Flag to AOS Framer that the Frame this packet goes into should be sent ASAP
-
+        saIndex: U16                @< Security Association Index - set by SDLS deframers, read by SDLS framers
     } default {
         comQueueIndex = 0
         apid = Apid.FW_PACKET_UNKNOWN
@@ -63,6 +66,7 @@ module ComCfg {
         vcId = 1
         pvn = Pvn.INVALID_UNINITIALIZED
         sendNow = false
+        saIndex = SaIndexUnset
     }
 
 }

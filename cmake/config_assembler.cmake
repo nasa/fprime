@@ -30,26 +30,27 @@ include_guard()
 function(fprime__internal_process_configuration_sources MODULE_NAME SOURCES AUTOCODER_INPUTS HEADERS OVERRIDES DEPENDS)
     # Process source files and update INTERNAL_SOURCES in caller and track new dependencies
     fprime__internal_process_configuration_source_set(
-        "${MODULE_NAME}" "${SOURCES}" FALSE
+        "${MODULE_NAME}" "${SOURCES}" FALSE TRUE
     )
     set(INTERNAL_SOURCES "${PROCESSED_SOURCES}" PARENT_SCOPE)
     set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
     # Process source files and update INTERNAL_AUTOCODER_INPUTS in caller and track new dependencies
+    # Autocoder inputs are consumed via absolute paths, thus include path conflicts are not checked
     fprime__internal_process_configuration_source_set(
-        "${MODULE_NAME}" "${AUTOCODER_INPUTS}" FALSE
+        "${MODULE_NAME}" "${AUTOCODER_INPUTS}" FALSE FALSE
     )
     set(INTERNAL_AUTOCODER_INPUTS "${PROCESSED_SOURCES}" PARENT_SCOPE)
     set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
     # Process header files and update INTERNAL_HEADERS in caller and track new dependencies
     fprime__internal_process_configuration_source_set(
-        "${MODULE_NAME}" "${HEADERS}" FALSE
+        "${MODULE_NAME}" "${HEADERS}" FALSE TRUE
     )
     set(INTERNAL_HEADERS "${PROCESSED_SOURCES}" PARENT_SCOPE)
     set(DEPENDS ${DEPENDS} ${NEW_DEPENDS})
     # Process configuration overrides. Since these are already in a module, they need not be updated in caller.
     # New dependencies are tracked.
     fprime__internal_process_configuration_source_set(
-        "${MODULE_NAME}" "${OVERRIDES}" TRUE
+        "${MODULE_NAME}" "${OVERRIDES}" TRUE FALSE
     )
     set(INTERNAL_DEPENDS ${DEPENDS} ${NEW_DEPENDS} PARENT_SCOPE)
 endfunction()
@@ -63,12 +64,13 @@ endfunction()
 # - `MODULE_NAME`: the name of the module being processed
 # - `SOURCE_SET`: list of sources to process
 # - `EXPECT_OVERRIDE`: if true, the source must exist and will be overridden, false if it must not exist
+# - `CHECK_INCLUDE_CONFLICTS`: if true, check new sources for include path conflicts with the build cache
 #
 # Returns:
 # - `PROCESSED_SOURCES`: list (set in caller)
 # - `NEW_DEPENDS`: list of new dependencies (set in caller)
 ####
-function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SET EXPECT_OVERRIDE)
+function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SET EXPECT_OVERRIDE CHECK_INCLUDE_CONFLICTS)
     list(REMOVE_DUPLICATES SOURCE_SET)
     set(RETURNED_SOURCES)
     set(NEW_DEPENDS)
@@ -94,6 +96,9 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
             set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${SOURCE}")
         # If the source is new, move it to the binary directory
         else()
+            if (CHECK_INCLUDE_CONFLICTS)
+                fprime__internal_check_configuration_include_path("${MODULE_NAME}" "${SOURCE}")
+            endif()
             fprime_cmake_debug_message("[config] Initial config ${DESTINATION} from ${SOURCE}")
             list(APPEND RETURNED_SOURCES "${DESTINATION}")
             file(MAKE_DIRECTORY "${DESTINATION_DIRECTORY}")
@@ -103,6 +108,49 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
     endforeach()
     set(PROCESSED_SOURCES "${RETURNED_SOURCES}" PARENT_SCOPE)
     set(NEW_DEPENDS "${NEW_DEPENDS}" PARENT_SCOPE)
+endfunction()
+
+####
+# Function `fprime__internal_check_configuration_include_path`:
+#
+# Configuration files are copied into the build cache and are included via the configuration
+# include root: the parent of the module's directory in the build cache. This function ensures
+# that the original source file cannot be found at that same include path via any source include
+# root (project root, framework path, and library locations). If it can, the source tree file and
+# the build cache copy conflict over the include path and a FATAL_ERROR is raised. Configuration
+# files living directly at a source include root conflict in the same way and are also fatal.
+#
+# For example, a config module registered at ROOT/config with a file ROOT/config/my.h would be
+# copied to <build cache>/config/my.h and included as "config/my.h" via the configuration include
+# root. Since ROOT is also an include root, "config/my.h" would resolve to both files.
+#
+# Arguments:
+# - `MODULE_NAME`: the name of the module being processed
+# - `SOURCE`: absolute path to the configuration source file being processed
+####
+function(fprime__internal_check_configuration_include_path MODULE_NAME SOURCE)
+    get_filename_component(SOURCE_NAME "${SOURCE}" NAME)
+    get_filename_component(MODULE_DIRECTORY_NAME "${CMAKE_CURRENT_BINARY_DIR}" NAME)
+    # Include path at which the build cache copy will be found via the configuration include root
+    # (the parent of the module's binary directory)
+    cmake_path(SET CONFIG_INCLUDE_PATH NORMALIZE "${MODULE_DIRECTORY_NAME}/${SOURCE_NAME}")
+    # Check the source file's include path with respect to each source include root
+    get_property(SOURCE_LOCATIONS TARGET "${FPRIME_GLOBAL_INTERFACE_TARGET}" PROPERTY FPRIME_SOURCE_LOCATIONS)
+    foreach(SOURCE_LOCATION IN LISTS SOURCE_LOCATIONS)
+        cmake_path(IS_PREFIX SOURCE_LOCATION "${SOURCE}" NORMALIZE IS_UNDER_LOCATION)
+        if (NOT IS_UNDER_LOCATION)
+            continue()
+        endif()
+        cmake_path(RELATIVE_PATH SOURCE BASE_DIRECTORY "${SOURCE_LOCATION}" OUTPUT_VARIABLE SOURCE_INCLUDE_PATH)
+        if (SOURCE_INCLUDE_PATH STREQUAL CONFIG_INCLUDE_PATH OR SOURCE_INCLUDE_PATH STREQUAL SOURCE_NAME)
+            fprime_cmake_fatal_error(
+                "Configuration file '${SOURCE}' of module '${MODULE_NAME}' is available as"
+                "'${SOURCE_INCLUDE_PATH}' via include root '${SOURCE_LOCATION}'. This conflicts with the"
+                "copy at the same path within the build cache. Move the configuration files or the"
+                "register_fprime_config() call such that the paths differ."
+            )
+        endif()
+    endforeach()
 endfunction()
 
 ####

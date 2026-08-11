@@ -57,6 +57,10 @@ F32 SignalGen::generateSample(U32 ticks) {
     // Samples per period
     F32 samplesPerPeriod = static_cast<F32>(this->sampleFrequency) / static_cast<F32>(this->signalFrequency);
     U32 halfSamplesPerPeriod = samplesPerPeriod / 2;
+    // Guard against divide/modulo-by-zero for degenerate frequency settings
+    if (halfSamplesPerPeriod == 0) {
+        return val;
+    }
     /* Signals courtesy of the open source Aquila DSP Library */
     switch (this->sigType.e) {
         case SignalType::TRIANGLE: {
@@ -152,6 +156,14 @@ void SignalGen::Settings_cmdHandler(FwOpcodeType opCode, /*!< The opcode*/
                                     F32 Amplitude,
                                     F32 Phase,
                                     const Ref::SignalType& SigType) {
+    // Reject frequencies that would produce a divide- or modulo-by-zero in
+    // generateSample: a zero frequency, or one high enough that
+    // halfSamplesPerPeriod truncates to zero
+    if ((Frequency == 0) ||
+        (static_cast<U32>((static_cast<F32>(this->sampleFrequency) / static_cast<F32>(Frequency)) / 2) == 0)) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
+    }
     this->signalFrequency = Frequency;
     this->signalAmplitude = Amplitude;
     this->signalPhase = Phase;

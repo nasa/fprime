@@ -1,0 +1,191 @@
+// ======================================================================
+// \title  NakPdu.cpp
+// \author Brian Campuzano
+// \brief  cpp file for CFDP NAK (Negative Acknowledge) PDU
+// ======================================================================
+
+#include <Fw/Types/Assert.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/NakPdu.hpp>
+
+namespace Svc {
+namespace Ccsds {
+namespace Cfdp {
+
+void NakPdu::initialize(PduDirection direction,
+                        Cfdp::Class::T txmMode,
+                        EntityId sourceEid,
+                        TransactionSeq transactionSeq,
+                        EntityId destEid,
+                        FileSize scopeStart,
+                        FileSize scopeEnd) {
+    // Initialize header with PduTypeEnum::NEGATIVE_ACK type
+    this->m_header.initialize(PduTypeEnum::NEGATIVE_ACK, direction, txmMode, sourceEid, transactionSeq, destEid);
+
+    this->m_scopeStart = scopeStart;
+    this->m_scopeEnd = scopeEnd;
+    this->m_numSegments = 0;
+}
+
+bool NakPdu::addSegment(FileSize offsetStart, FileSize offsetEnd) {
+    if (this->m_numSegments >= NakMaxSegments) {
+        return false;
+    }
+    this->m_segments[this->m_numSegments].offsetStart = offsetStart;
+    this->m_segments[this->m_numSegments].offsetEnd = offsetEnd;
+    this->m_numSegments++;
+    return true;
+}
+
+void NakPdu::clearSegments() {
+    this->m_numSegments = 0;
+}
+
+U32 NakPdu::getBufferSize() const {
+    U32 size = this->m_header.getBufferSize();
+
+    // Directive code: 1 byte (FileDirective::FILE_DIRECTIVE_NAK)
+    // Scope start: sizeof(FileSize) bytes
+    // Scope end: sizeof(FileSize) bytes
+    // Segment requests: m_numSegments * (2 * sizeof(FileSize)) bytes
+    size += static_cast<U32>(sizeof(U8) + sizeof(FileSize) + sizeof(FileSize));
+    size += static_cast<U32>(this->m_numSegments * (sizeof(FileSize) + sizeof(FileSize)));
+
+    return size;
+}
+
+Fw::SerializeStatus NakPdu::serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const {
+    return this->toSerialBuffer(buffer);
+}
+
+Fw::SerializeStatus NakPdu::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) {
+    // Deserialize header first
+    Fw::SerializeStatus status = this->m_header.fromSerialBuffer(buffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Validate this is a directive PDU (not file data)
+    if (this->m_header.m_pduType != PduType::PDU_TYPE_DIRECTIVE) {
+        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+    }
+
+    // Validate directive code
+    U8 directiveCode;
+    status = buffer.deserializeTo(directiveCode);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    if (directiveCode != static_cast<U8>(FileDirective::FILE_DIRECTIVE_NAK)) {
+        return Fw::FW_DESERIALIZE_TYPE_MISMATCH;
+    }
+
+    // Now set the type to PduTypeEnum::NEGATIVE_ACK since we've validated it
+    this->m_header.m_type = PduTypeEnum::NEGATIVE_ACK;
+
+    // Deserialize the NAK body
+    return this->fromSerialBuffer(buffer);
+}
+
+Fw::SerializeStatus NakPdu::toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const {
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::NEGATIVE_ACK);
+
+    // Calculate PDU data length (everything after header)
+    U32 dataLength = this->getBufferSize() - this->m_header.getBufferSize();
+
+    // Update header with data length
+    PduHeader headerCopy = this->m_header;
+    headerCopy.setPduDataLength(static_cast<U16>(dataLength));
+
+    // Serialize header
+    Fw::SerializeStatus status = headerCopy.toSerialBuffer(serialBuffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Directive code (NAK = 8)
+    U8 directiveCodeByte = static_cast<U8>(FileDirective::FILE_DIRECTIVE_NAK);
+    status = serialBuffer.serializeFrom(directiveCodeByte);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Scope start (file offset)
+    status = serialBuffer.serializeFrom(this->m_scopeStart);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Scope end (file offset)
+    status = serialBuffer.serializeFrom(this->m_scopeEnd);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Serialize segment requests
+    for (U8 i = 0; i < this->m_numSegments; i++) {
+        // Segment start offset
+        status = serialBuffer.serializeFrom(this->m_segments[i].offsetStart);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+
+        // Segment end offset
+        status = serialBuffer.serializeFrom(this->m_segments[i].offsetEnd);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+    }
+
+    return Fw::FW_SERIALIZE_OK;
+}
+
+Fw::SerializeStatus NakPdu::fromSerialBuffer(Fw::SerialBufferBase& serialBuffer) {
+    FW_ASSERT(this->m_header.m_type == PduTypeEnum::NEGATIVE_ACK);
+
+    // Directive code already read by fromBuffer()
+
+    // Scope start (file offset)
+    Fw::SerializeStatus status = serialBuffer.deserializeTo(this->m_scopeStart);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Scope end (file offset)
+    status = serialBuffer.deserializeTo(this->m_scopeEnd);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    // Calculate number of segment requests from remaining buffer size
+    // Each segment is 2 * sizeof(FileSize) bytes
+    Fw::Serializable::SizeType remainingBytes = serialBuffer.getDeserializeSizeLeft();
+    U32 segmentSize = static_cast<U32>(sizeof(FileSize) + sizeof(FileSize));
+    U32 numSegsCalculated = static_cast<U32>(remainingBytes / segmentSize);
+    this->m_numSegments = static_cast<U8>(numSegsCalculated);
+
+    // Limit to max segments
+    if (this->m_numSegments > NakMaxSegments) {
+        this->m_numSegments = NakMaxSegments;
+    }
+
+    // Deserialize segment requests
+    for (U8 i = 0; i < this->m_numSegments; i++) {
+        // Segment start offset
+        status = serialBuffer.deserializeTo(this->m_segments[i].offsetStart);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+
+        // Segment end offset
+        status = serialBuffer.deserializeTo(this->m_segments[i].offsetEnd);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            return status;
+        }
+    }
+
+    return Fw::FW_SERIALIZE_OK;
+}
+
+}  // namespace Cfdp
+}  // namespace Ccsds
+}  // namespace Svc

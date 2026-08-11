@@ -120,7 +120,7 @@ void FileDownlinkTester ::fileOpenError() {
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
-    //    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+    ASSERT_EVENTS_FileOpenError(0, sourceFileName);
 }
 
 void FileDownlinkTester ::sourceOutOfSandbox() {
@@ -323,8 +323,7 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     this->buffers[buffers_index] = data;  // NOLINT(clang-analyzer-security.ArrayBound)
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
-    Fw::Buffer buffer_new = buffer;
-    buffer_new.setData(data);
+    Fw::Buffer buffer_new(data, buffer.getSize(), buffer.getContext());
     pushFromPortEntry_bufferSendOut(buffer_new);
     invoke_to_bufferReturn(0, buffer);
 }
@@ -540,6 +539,9 @@ void FileDownlinkTester ::validateCancelPacket(const Fw::Buffer& buffer, const U
     const Fw::FilePacket::Header& header = filePacket.asHeader();
     ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
     ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.m_type);
+    // Cancel buffers must advertise exact payload size (same contract as Start/Data/End).
+    // Full-size internal buffers break strict fromBuffer() consumers (#5347).
+    ASSERT_EQ(filePacket.bufferSize() + sizeof(FwPacketDescriptorType), static_cast<U32>(buffer.getSize()));
 }
 
 }  // namespace Svc

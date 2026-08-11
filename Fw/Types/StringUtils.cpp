@@ -47,8 +47,8 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
     FW_ASSERT(source_string != nullptr);
     FW_ASSERT(sub_string != nullptr);
 
-    // zero size sub-strings should always match
-    if ((source_size > 0) && (0 == sub_size)) {
+    // zero size sub-strings should always match, including in an empty source
+    if (0 == sub_size) {
         return 0;
     }
 

@@ -138,10 +138,11 @@ The FpySequencer supports certain boolean flags which control the behavior of th
 | Name | Description |
 |-----|-----|
 | RUN | Loads, validates and runs a sequence |
+| RUN_ARGS | Loads, validates and runs a sequence, passing arguments to it |
 | VALIDATE | Loads and validates a sequence. Mutually exclusive with RUN |
+| VALIDATE_ARGS | Loads and validates a sequence with arguments. Mutually exclusive with RUN |
 | RUN_VALIDATED | Must be called after VALIDATE. Runs the sequence that was validated. |
 | CANCEL | Cancels a running or validated sequence. After running CANCEL, the sequencer should return to IDLE |
-| SET_FLAG | Sets the value of a flag |
 
 ## Debugging Commands
 The FpySequencer has a set of debugging commands which can be used to pause and step through sequences. They should not be necessary for nominal use cases.

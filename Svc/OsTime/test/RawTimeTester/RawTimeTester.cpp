@@ -17,4 +17,5 @@ RawTimeInterface* RawTimeInterface::getDelegate(RawTimeHandleStorage& aligned_ne
 
 namespace Svc {
 Fw::Time RawTimeTester::s_now_time = Fw::Time();
-}
+Os::RawTimeInterface::Status RawTimeTester::s_now_status = Os::RawTimeInterface::OP_OK;
+}  // namespace Svc
