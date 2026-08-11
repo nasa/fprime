@@ -74,6 +74,48 @@ Fw::SerializeStatus CircularBuffer ::serialize(const U8* const buffer, const FwS
     return Fw::FW_SERIALIZE_OK;
 }
 
+Fw::SerializeStatus CircularBuffer ::serialize(const Fw::Serializable& serializable, const FwSizeType size) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
+    // Check there is sufficient space
+    if (size > get_free_size()) {
+        return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
+    }
+    const FwSizeType idx = advance_idx(m_head_idx, m_allocated_size);
+    // The slot must be a linear (non-wrapping) region of the store
+    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
+              static_cast<FwAssertArgType>(m_store_size));
+    Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
+    const Fw::SerializeStatus status = slot.serializeFrom(serializable);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    m_allocated_size += size;
+    FW_ASSERT(m_allocated_size <= this->get_capacity(), static_cast<FwAssertArgType>(m_allocated_size));
+    m_high_water_mark = (m_high_water_mark > m_allocated_size) ? m_high_water_mark : m_allocated_size;
+    return Fw::FW_SERIALIZE_OK;
+}
+
+Fw::SerializeStatus CircularBuffer ::serialize(const Fw::LinearBufferBase& buffer, const FwSizeType size) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
+    // Check there is sufficient space
+    if (size > get_free_size()) {
+        return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
+    }
+    const FwSizeType idx = advance_idx(m_head_idx, m_allocated_size);
+    // The slot must be a linear (non-wrapping) region of the store
+    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
+              static_cast<FwAssertArgType>(m_store_size));
+    Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
+    const Fw::SerializeStatus status = slot.serializeFrom(buffer);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
+    m_allocated_size += size;
+    FW_ASSERT(m_allocated_size <= this->get_capacity(), static_cast<FwAssertArgType>(m_allocated_size));
+    m_high_water_mark = (m_high_water_mark > m_allocated_size) ? m_high_water_mark : m_allocated_size;
+    return Fw::FW_SERIALIZE_OK;
+}
+
 Fw::SerializeStatus CircularBuffer ::peek(char& value, FwSizeType offset) const {
     FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
     return peek(reinterpret_cast<U8&>(value), offset);
@@ -124,6 +166,38 @@ Fw::SerializeStatus CircularBuffer ::peek(U8* buffer, FwSizeType size, FwSizeTyp
         idx = advance_idx(idx);
     }
     return Fw::FW_SERIALIZE_OK;
+}
+
+Fw::SerializeStatus CircularBuffer ::peek(Fw::Serializable& serializable, FwSizeType size, FwSizeType offset) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
+    // Check there is sufficient data
+    if ((size + offset) > m_allocated_size) {
+        return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
+    }
+    const FwSizeType idx = advance_idx(m_head_idx, offset);
+    // The slot must be a linear (non-wrapping) region of the store
+    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
+              static_cast<FwAssertArgType>(m_store_size));
+    Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
+    Fw::SerializeStatus status = slot.setBuffLen(size);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    return slot.deserializeTo(serializable);
+}
+
+Fw::SerializeStatus CircularBuffer ::peek(Fw::LinearBufferBase& buffer, FwSizeType size, FwSizeType offset) {
+    FW_ASSERT(m_store != nullptr && m_store_size != 0);  // setup method was called
+    // Check there is sufficient data
+    if ((size + offset) > m_allocated_size) {
+        return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
+    }
+    const FwSizeType idx = advance_idx(m_head_idx, offset);
+    // The slot must be a linear (non-wrapping) region of the store
+    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
+              static_cast<FwAssertArgType>(m_store_size));
+    Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
+    Fw::SerializeStatus status = slot.setBuffLen(size);
+    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+    return slot.deserializeTo(buffer);
 }
 
 Fw::SerializeStatus CircularBuffer ::rotate(FwSizeType amount) {

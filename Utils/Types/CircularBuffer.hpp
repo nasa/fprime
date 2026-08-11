@@ -67,6 +67,27 @@ class CircularBuffer {
     Fw::SerializeStatus serialize(const U8* const buffer, const FwSizeType size);
 
     /**
+     * Serialize a serializable object into the next `size`-byte slot of this circular buffer using
+     * F Prime serialization. The slot is required to be a linear (non-wrapping) region of the
+     * backing store; this is asserted. Will not accept more data than space available.
+     * \param serializable: object to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus serialize(const Fw::Serializable& serializable, const FwSizeType size);
+
+    /**
+     * Serialize the contents of a linear buffer (length token followed by data) into the next
+     * `size`-byte slot of this circular buffer using F Prime serialization. The slot is required
+     * to be a linear (non-wrapping) region of the backing store; this is asserted. Will not
+     * accept more data than space available.
+     * \param buffer: linear buffer whose contents to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus serialize(const Fw::LinearBufferBase& buffer, const FwSizeType size);
+
+    /**
      * Deserialize data into the given variable without moving the head index
      * \param value: value to fill
      * \param offset: offset from head to start peak. Default: 0
@@ -96,6 +117,28 @@ class CircularBuffer {
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
      */
     Fw::SerializeStatus peek(U8* buffer, FwSizeType size, FwSizeType offset = 0) const;
+
+    /**
+     * Deserialize a serializable object from the `size`-byte slot at `offset` without moving the
+     * head index. The slot is required to be a linear (non-wrapping) region of the backing store;
+     * this is asserted.
+     * \param serializable: object to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot. Default: 0
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus peek(Fw::Serializable& serializable, FwSizeType size, FwSizeType offset = 0);
+
+    /**
+     * Deserialize linear buffer contents (length token followed by data) from the `size`-byte
+     * slot at `offset` without moving the head index. The slot is required to be a linear
+     * (non-wrapping) region of the backing store; this is asserted.
+     * \param buffer: linear buffer to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot. Default: 0
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus peek(Fw::LinearBufferBase& buffer, FwSizeType size, FwSizeType offset = 0);
 
     /**
      * Rotate the head index, deleting data from the circular buffer and making
