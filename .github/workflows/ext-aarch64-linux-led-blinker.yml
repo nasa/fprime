@@ -55,6 +55,7 @@ jobs:
           submodules: true
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
+          filter: blob:none
       - uses: ./lib/fprime/.github/actions/setup
         with:
           location: ${{ env.FPRIME_LOCATION }}

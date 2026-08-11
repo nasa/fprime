@@ -60,6 +60,7 @@ jobs:
             .github/actions/cookiecutter-check/bootstrap.expect
           sparse-checkout-cone-mode: false
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -84,6 +85,7 @@ jobs:
           submodules: true
           path: ./my-project/lib/fprime
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Update dependencies and install fprime-tools"
         run: |

@@ -48,6 +48,7 @@ jobs:
           path: lib/fprime
           submodules: true
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Setup F´ toolchain"
         uses: ./lib/fprime/.github/actions/setup
