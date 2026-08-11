@@ -18,8 +18,8 @@ namespace Os {
 //! path-traversal attacks (e.g., `../../etc/shadow`) from components that accept externally
 //! supplied file paths (such as FileUplink or CFDP receivers).
 //!
-//! The sandbox is unconfigured by default; `open()` returns OUTSIDE_SANDBOX until
-//! `configure()` is called with the allowed directory.
+//! By default, the sandbox is set to `/` (root), which allows any absolute path.
+//! Call `configure()` to restrict to a specific directory.
 //!
 //! Threat model assumption: untrusted actors cannot create symlinks inside the sandbox.
 //! Path validation is purely textual (no `realpath()` calls) — it does not follow symlinks.
@@ -43,9 +43,9 @@ class SandboxedFile {
     SandboxedFile(const SandboxedFile&) = delete;             //!< Non-copyable (owns file handle)
     SandboxedFile& operator=(const SandboxedFile&) = delete;  //!< Non-copy-assignable
 
-    //! \brief Construct an unconfigured SandboxedFile
+    //! \brief Construct a SandboxedFile with default sandbox of `/`
     //!
-    //! `open()` fails with OUTSIDE_SANDBOX until `configure()` is called.
+    //! The default allows any absolute path. Call `configure()` to restrict.
     //!
     SandboxedFile();
 

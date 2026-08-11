@@ -75,6 +75,12 @@ The assert can be configured in the following ways:
         Some developers prefer this once the code has been tested to
         regain some processing performance.
 
+        > [!WARNING]
+        > `FW_NO_ASSERT` discards the results of these checks, many of
+        > which guard against serious errors (out-of-bounds accesses,
+        > invalid states). Failures that would have been trapped go
+        > undetected, so use this setting with caution.
+
       - FW\_FILEID\_ASSERT Identifies an integer value for the file
         where the assert occurs (as opposed to \_\_FILE\_\_). It saves
         code space since no file name is stored.

@@ -518,8 +518,9 @@ bool FpySequencer::isRunningState(State state) {
     // TODO ask Rob if there's a better way to check if we're in a superstate. I don't want to have
     // to update this every time I add a new substate to the RUNNING state.
 
-    return state == State::RUNNING_AWAITING_STATEMENT_RESPONSE || state == State::RUNNING_DISPATCH_STATEMENT ||
-           state == State::RUNNING_PAUSED || state == State::RUNNING_SLEEPING;
+    return this->sequencer_getState() == State::RUNNING_AWAITING_STATEMENT_RESPONSE ||
+           this->sequencer_getState() == State::RUNNING_DISPATCH_STATEMENT ||
+           this->sequencer_getState() == State::RUNNING_PAUSED || this->sequencer_getState() == State::RUNNING_SLEEPING;
 }
 
 }  // namespace Svc

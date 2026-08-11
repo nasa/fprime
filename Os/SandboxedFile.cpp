@@ -9,7 +9,7 @@
 
 namespace Os {
 
-SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory("/"), m_configured(false) {}
+SandboxedFile::SandboxedFile() : m_file(), m_allowedDirectory("/"), m_configured(true) {}
 
 SandboxedFile::~SandboxedFile() {
     if (m_file.isOpen()) {
