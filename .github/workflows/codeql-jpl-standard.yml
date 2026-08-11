@@ -4,8 +4,10 @@
 name: "Code Scan: JPL Coding Standard"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -97,7 +99,7 @@ jobs:
     # regressions are caught, but results are not uploaded, preventing stale
     # branches from accumulating alerts.
     - name: Upload SARIF
-      if: github.event_name == 'push' && github.ref == 'refs/heads/devel'
+      if: (github.event_name == 'push' || github.event_name == 'schedule') && github.ref == 'refs/heads/devel'
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: sarif-results/cpp.sarif
@@ -107,12 +109,12 @@ jobs:
     # writes cpp.sarif, so rename to the config name for a unique file when
     # the artifacts are merged.
     - name: Rename SARIF for publishing
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' || github.event_name == 'schedule'
       env:
         CONFIG_FILE: ${{ matrix.config-file }}
       run: cp sarif-results/cpp.sarif "sarif-results/${CONFIG_FILE%.yml}.sarif"
     - name: Upload SARIF artifact for publishing
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' || github.event_name == 'schedule'
       uses: actions/upload-artifact@v4
       with:
         name: codeql-jpl-sarif-${{ matrix.config-file }}
@@ -128,7 +130,7 @@ jobs:
   publish-findings:
     name: Publish per-module findings
     needs: analyze
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-22.04
     permissions:
       contents: write

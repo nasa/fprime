@@ -3,8 +3,10 @@
 name: "Framework"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     branches: [ devel, release/** ]
     paths-ignore:

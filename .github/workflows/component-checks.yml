@@ -13,8 +13,10 @@
 name: "Component Checks"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
     tags:     [ 'v*' ]
   workflow_dispatch:
 
