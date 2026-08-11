@@ -120,8 +120,13 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
     state = INIT;
 
-    FwSizeStoreType uncompressed_size = 0;
+    // Largest payload representable in a record size field, leaving room for the metadata added by
+    // serializeCompressionHeader
+    const FwSizeType max_record_payload =
+        std::numeric_limits<FwSizeStoreType>::max() - CompressionMetadata::SERIALIZED_SIZE;
+    FwSizeType uncompressed_size = 0;
     U8* uncompressed_head = nullptr;
+    bool compression_bypassed = false;
     Fw::SerializeStatus ser_stat = Fw::FW_SERIALIZE_OK;
 
     while (data_deser.getDeserializeSizeLeft() > 0) {
@@ -152,7 +157,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         // 4 times the header size. Sizes below 3 times the header
         // size could trigger negative sizes in the min_compression
         // calculation
-        if (chunk_size > 4 * compression_header_size) {
+        if ((chunk_size > 4 * compression_header_size) && (!compression_bypassed)) {
             switch (state) {
                 case INIT:
                     // Need room for two headers.
@@ -244,13 +249,13 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     FW_ASSERT(deser_loc >=
                                   (uncompressed_size +
                                    2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
-                              static_cast<FwAssertArgType>(deser_loc), uncompressed_size,
+                              static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(uncompressed_size),
                               CompressionMetadata::SERIALIZED_SIZE, compressed_size);
                     (void)std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
                                        uncompressed_size);
 
                     // Serialize the header bytes to the front of the data
-                    serializeCompressionHeader(data_reser, uncompressed_size,
+                    serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     // Move the serializer past the uncompressed chunk manually
@@ -278,7 +283,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Serialize uncompressed data
                     // 3. Write header for compressed data at data_reser location
                     // 4. Serialize compressed data
-                    serializeCompressionHeader(data_reser, uncompressed_size,
+                    serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
@@ -326,14 +331,33 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     break;
                 case LAST_UNCOMPRESSED:
                     // Case D - Continued sequence of incompressible chunks
-                    // No work. Keep increasing track of uncompressed_size
+                    // If adding this chunk would overflow the record size field,
+                    // flush the pending segment and start a new one at this chunk
+                    if ((uncompressed_size + chunk_size) > max_record_payload) {
+                        serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
+                                                   CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
+
+                        FW_ASSERT(uncompressed_head != nullptr);
+                        ser_stat = data_reser.serializeFrom(uncompressed_head, uncompressed_size,
+                                                            Fw::Serialization::OMIT_LENGTH);
+                        FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
+
+                        uncompressed_head = compression_buffer.getData();
+                        uncompressed_size = 0;
+                    }
                     state = LAST_UNCOMPRESSED;
                     break;
                 default:
                     FW_ASSERT(false, state);
                     break;
             }
-            uncompressed_size = static_cast<FwSizeStoreType>(uncompressed_size + chunk_size);
+            uncompressed_size += chunk_size;
+
+            // A pre-commit run too large for the record size field cannot be represented
+            // as a single uncompressed record: emit the container unchanged
+            if ((state == PRE_COMMIT) && (uncompressed_size > max_record_payload)) {
+                compression_bypassed = true;
+            }
         }
 
         // Confirm that the serialized location has not jumped ahead of the deserialize location
@@ -353,7 +377,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
             // 1. Write header for uncompressed data.
             //    data_reser has been kept at this location
             // 2. Serialize uncompressed data
-            serializeCompressionHeader(data_reser, uncompressed_size,
+            serializeCompressionHeader(data_reser, static_cast<FwSizeStoreType>(uncompressed_size),
                                        CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
             FW_ASSERT(uncompressed_head != nullptr);
