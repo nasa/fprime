@@ -100,8 +100,10 @@ A fix applied later to one copy will be missed in the others.
 (Repetitive *test* structure is `test-quality-review.agent.md`'s
 category 11, not this agent's. General-purpose logic that belongs
 in a shared utility is CPP-33, `fprime-code-review.agent.md`'s
-scope; this category covers verbatim duplication regardless of
-whether a framework utility exists.)
+scope; reimplementation of an *existing* framework facility is
+`design-review.agent.md`'s `design-missed-reuse`; this category
+covers verbatim duplication regardless of whether a framework
+utility exists.)
 
 **Finding-class:** `maint-code-duplication`.
 
