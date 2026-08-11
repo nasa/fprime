@@ -23,6 +23,15 @@ namespace Generic {
 //! narrowing the ABA tag (see SDD sections 4 and 15 for the wrap consequence).
 using LocklessStateTagType = U64;
 
+//! Backoff (microseconds) between bounded scans on the BLOCKING send/receive paths. Shorter
+//! values lower message latency; longer values lower idle CPU use of blocked threads.
+constexpr U32 LOCKLESS_QUEUE_BLOCKING_BACKOFF_US = 100;
+
+//! Retry passes through the slot array before a NONBLOCKING operation returns FULL/EMPTY.
+//! Larger values reduce spurious FULL/EMPTY under contention at the cost of a larger bound
+//! on non-blocking call time (`depth * passes`).
+constexpr FwSizeType LOCKLESS_QUEUE_MAX_RETRY_PASSES = 4;
+
 }  // namespace Generic
 }  // namespace Os
 

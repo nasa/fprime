@@ -90,6 +90,7 @@ register_fprime_module(
   DEPENDS
     Fw_Types
     Fw_Time
+    Os
 )
 register_fprime_implementation(
     Os_Generic_LocklessPriorityQueue

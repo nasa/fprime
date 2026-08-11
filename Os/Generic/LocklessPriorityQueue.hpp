@@ -24,7 +24,9 @@ static_assert(std::is_integral<LocklessStateTagType>::value && std::is_unsigned<
 //! the standard `ATOMIC_*_LOCK_FREE` macros (2 = always lock-free) selected by type width. A
 //! runtime `is_lock_free()` FW_ASSERT in create() remains the authoritative gate.
 template <FwSizeType WIDTH>
-struct LocklessStateTagLockFree {};
+struct LocklessStateTagLockFree {
+    static constexpr bool value = false;  // unsupported width: fails the static_assert below
+};
 template <>
 struct LocklessStateTagLockFree<4> {
     static constexpr bool value = (ATOMIC_INT_LOCK_FREE == 2);
@@ -152,9 +154,10 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
 class LocklessPriorityQueue final : public Os::QueueInterface {
   public:
     //! Maximum number of retry passes through the slot array before a non-blocking operation
-    //! gives up. Each pass scans up to the configured queue depth; the worst-case work per
-    //! non-blocking call is therefore `depth * MAX_RETRY_PASSES`.
-    static constexpr FwSizeType MAX_RETRY_PASSES = 4;
+    //! gives up (configurable in config/LocklessQueueCfg.hpp). Each pass scans up to the
+    //! configured queue depth; the worst-case work per non-blocking call is therefore
+    //! `depth * MAX_RETRY_PASSES`.
+    static constexpr FwSizeType MAX_RETRY_PASSES = LOCKLESS_QUEUE_MAX_RETRY_PASSES;
 
     //! \brief decide whether a candidate (priority, sequence) is preferred over the current best
     //!
@@ -184,7 +187,7 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! when `MemAllocator::deallocate` is invoked through its v-table.
     ~LocklessPriorityQueue() override;
 
-    //! \brief copy constructor is forbidden
+    //! \brief constructing from a base reference is forbidden
     LocklessPriorityQueue(const QueueInterface& other) = delete;
 
     //! \brief constructing from a pointer is forbidden
@@ -214,6 +217,9 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //!
     //! Returns memory acquired in `create` to the configured memory allocator. Safe to call
     //! repeatedly; only the first call returns memory.
+    //!
+    //! \warning not thread-safe: the caller must guarantee no concurrent `send`, `receive`,
+    //! or `teardown` (including from ISR context) is in flight when this is invoked.
     void teardown() override;
 
     //! \brief send a message into the queue
@@ -226,6 +232,10 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! becomes available.
     //!
     //! \warning `BLOCKING` calls must not be invoked from ISR context.
+    //!
+    //! \warning A spurious `FULL` triggers overflow handling on async ports (including
+    //! `assert`-on-overflow ports). Size queues with margin or select the mutex-based
+    //! `Os::Generic::PriorityQueue` where that is unacceptable.
     //!
     //! \param buffer: message data; must be non-null
     //! \param size: size of message data; must be no greater than the configured message size
@@ -246,7 +256,8 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
     //! \warning `BLOCKING` calls must not be invoked from ISR context.
     //!
     //! \param destination: destination for message data; must be non-null
-    //! \param capacity: maximum size of message data the destination can hold
+    //! \param capacity: maximum size of message data the destination can hold; must be at least
+    //! the configured message size (asserted)
     //! \param blockType: BLOCKING to spin for a message; NONBLOCKING to fail fast
     //! \param actualSize: (output) actual size of the message read on success
     //! \param priority: (output) priority of the message read on success

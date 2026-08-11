@@ -19,10 +19,8 @@ namespace Generic {
 
 namespace {
 
-//! Sleep duration used by the BLOCKING send/receive paths when an entire bounded scan made no
-//! progress. The value is short enough that latency-sensitive consumers see negligible delay
-//! and long enough that an idle thread relinquishes its CPU instead of busy-spinning.
-constexpr U32 LOCKLESS_BLOCKING_BACKOFF_US = 100;
+//! Sleep between unproductive bounded scans on the BLOCKING paths (see LocklessQueueCfg.hpp).
+constexpr U32 LOCKLESS_BLOCKING_BACKOFF_US = LOCKLESS_QUEUE_BLOCKING_BACKOFF_US;
 
 //! Extract the state portion of a packed state-tag word.
 constexpr LocklessStateTagType stateOf(LocklessStateTagType packed) {
@@ -59,7 +57,7 @@ bool LocklessPriorityQueue::isCandidatePreferred(FwQueuePriorityType candidatePr
 }
 
 LocklessSlot::LocklessSlot()
-    : m_stateTag(packStateTag(LOCKLESS_SLOT_FREE, 0)), m_sequence(0), m_size(0), m_priority() {}
+    : m_stateTag(packStateTag(LOCKLESS_SLOT_FREE, 0)), m_sequence(0), m_size(0), m_priority(0) {}
 
 LocklessPriorityQueueHandle::LocklessPriorityQueueHandle()
     : QueueHandle(),
@@ -98,6 +96,8 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
     FW_ASSERT(probe.is_lock_free());
     std::atomic<FwQueuePriorityType> priorityProbe(0);
     FW_ASSERT(priorityProbe.is_lock_free());
+    std::atomic<U32> counterProbe(0);
+    FW_ASSERT(counterProbe.is_lock_free());
     FW_ASSERT(depth > 0);
     FW_ASSERT(messageSize > 0);
 
@@ -200,10 +200,10 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
     }
 
     const FwSizeType depth = this->m_handle.m_depth;
-    const bool nonBlocking = (blockType == QueueInterface::BlockingType::NONBLOCKING);
+    const bool blocking = (blockType == QueueInterface::BlockingType::BLOCKING);
 
     // Bounded for non-blocking, unbounded for blocking (explicit user contract).
-    for (FwSizeType pass = 0; !nonBlocking || pass < MAX_RETRY_PASSES; pass++) {
+    for (FwSizeType pass = 0; blocking || (pass < MAX_RETRY_PASSES); pass++) {
         for (FwSizeType i = 0; i < depth; i++) {
             LocklessSlot& slot = this->m_handle.m_slots[i];
             LocklessStateTagType packed = slot.m_stateTag.load(std::memory_order_acquire);
@@ -241,7 +241,7 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
             }
         }
         // No free slot found this pass. Blocking callers back off; non-blocking callers retry.
-        if (!nonBlocking) {
+        if (blocking) {
             static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_BLOCKING_BACKOFF_US)));
         }
     }
@@ -259,10 +259,10 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
     FW_ASSERT(destination != nullptr);
 
     const FwSizeType depth = this->m_handle.m_depth;
-    const bool nonBlocking = (blockType == QueueInterface::BlockingType::NONBLOCKING);
+    const bool blocking = (blockType == QueueInterface::BlockingType::BLOCKING);
 
     // Bounded for non-blocking, unbounded for blocking (explicit user contract).
-    for (FwSizeType pass = 0; !nonBlocking || pass < MAX_RETRY_PASSES; pass++) {
+    for (FwSizeType pass = 0; blocking || (pass < MAX_RETRY_PASSES); pass++) {
         FwSizeType bestIndex = depth;
         FwQueuePriorityType bestPriority = FwQueuePriorityType();
         U32 bestSequence = 0;
@@ -276,6 +276,8 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
             }
             const FwQueuePriorityType candidatePriority = slot.m_priority.load(std::memory_order_relaxed);
             const U32 candidateSequence = slot.m_sequence.load(std::memory_order_relaxed);
+            // Recheck: if the state-tag changed, the relaxed priority/sequence reads above may
+            // belong to a recycled slot; discard the candidate and keep scanning.
             const LocklessStateTagType packedRecheck = slot.m_stateTag.load(std::memory_order_acquire);
             if (packed != packedRecheck) {
                 continue;
@@ -290,7 +292,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
         }
 
         if (bestIndex == depth) {
-            if (!nonBlocking) {
+            if (blocking) {
                 static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_BLOCKING_BACKOFF_US)));
             }
             continue;
@@ -317,7 +319,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
             return QueueInterface::Status::OP_OK;
         }
         // CAS failed — another consumer claimed this slot; yield and rescan.
-        if (!nonBlocking) {
+        if (blocking) {
             static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, 0)));
         }
     }

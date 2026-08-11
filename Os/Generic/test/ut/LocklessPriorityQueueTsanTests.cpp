@@ -116,14 +116,19 @@ void concurrent_producer(ConcurrentState* state, U32 producerIndex, U32 messages
     }
 }
 
+//! Consumer worker. Exits after a bounded number of consecutive empty polls once producers
+//! finish so a lost message reports as a count shortfall instead of a hang.
 void concurrent_consumer(ConcurrentState* state) {
+    constexpr U32 EMPTY_POLL_LIMIT = 100000;
     U8 buffer[sizeof(U32)] = {0};
     FwSizeType actualSize = 0;
     FwQueuePriorityType priority = 0;
+    U32 emptyPolls = 0;
     while (state->consumed.load(std::memory_order_acquire) < state->expectedTotal) {
         Os::QueueInterface::Status status = state->queue.receive(
             buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
         if (status == Os::QueueInterface::Status::OP_OK) {
+            emptyPolls = 0;
             ASSERT_EQ(actualSize, sizeof(U32));
             const U32 value = unpack_u32(buffer);
             ASSERT_LT(value, state->expectedTotal);
@@ -133,9 +138,8 @@ void concurrent_consumer(ConcurrentState* state) {
             state->receivedByPriority[priority].fetch_add(1, std::memory_order_acq_rel);
             state->consumed.fetch_add(1, std::memory_order_acq_rel);
         } else if (status == Os::QueueInterface::Status::EMPTY) {
-            if (state->producersDone.load(std::memory_order_acquire) &&
-                state->consumed.load(std::memory_order_acquire) >= state->expectedTotal) {
-                break;
+            if (state->producersDone.load(std::memory_order_acquire) && (++emptyPolls > EMPTY_POLL_LIMIT)) {
+                break;  // main thread reports the shortfall with diagnostics
             }
             std::this_thread::yield();
         } else {
@@ -201,6 +205,8 @@ void run_concurrent(const ConcurrentConfig& cfg) {
     if (cfg.expectHighMarkEqualsDepth) {
         EXPECT_EQ(state.queue.getMessageHighWaterMark(), cfg.depth);
     }
+    // The high-water mark must never exceed depth (count invariant, SDD section 8).
+    EXPECT_LE(state.queue.getMessageHighWaterMark(), cfg.depth);
     EXPECT_EQ(state.queue.getMessagesAvailable(), 0u);
     state.queue.teardown();
 }
@@ -279,7 +285,7 @@ TEST(Adversarial, SingleSlotPingPong) {
 
     std::thread producer([&queue, MESSAGES]() {
         for (U32 i = 0; i < MESSAGES; i++) {
-            U8 buffer[sizeof(U32)];
+            U8 buffer[sizeof(U32)] = {0};
             pack_u32(i, buffer);
             Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
             while (status == Os::QueueInterface::Status::FULL) {
@@ -294,7 +300,7 @@ TEST(Adversarial, SingleSlotPingPong) {
     std::thread consumer([&queue, MESSAGES]() {
         U32 expected = 0;
         while (expected < MESSAGES) {
-            U8 buffer[sizeof(U32)];
+            U8 buffer[sizeof(U32)] = {0};
             FwSizeType actualSize = 0;
             FwQueuePriorityType priority = 0;
             Os::QueueInterface::Status status =
@@ -321,6 +327,90 @@ TEST(Adversarial, SingleSlotPingPong) {
 TEST(Adversarial, HighWaterMarkAccuracy) {
     const ConcurrentConfig cfg{16, 8, 1, 2000, 16, nullptr, true};
     run_concurrent(cfg);
+}
+
+// Deterministic high-water mark: send 3, drain, send 1 -- the mark must be exactly 3.
+TEST(Adversarial, HighWaterMarkIntermediate) {
+    Os::Queue queue;
+    Fw::String name("high-mark-intermediate");
+    ASSERT_EQ(queue.create(0, name, 8, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+    U8 buffer[sizeof(U32)] = {0};
+    for (U32 i = 0; i < 3; i++) {
+        pack_u32(i, buffer);
+        ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+                  Os::QueueInterface::Status::OP_OK);
+    }
+    FwSizeType actualSize = 0;
+    FwQueuePriorityType priority = 0;
+    for (U32 i = 0; i < 3; i++) {
+        ASSERT_EQ(
+            queue.receive(buffer, sizeof(U32), Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority),
+            Os::QueueInterface::Status::OP_OK);
+    }
+    pack_u32(0, buffer);
+    ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+              Os::QueueInterface::Status::OP_OK);
+    EXPECT_EQ(queue.getMessageHighWaterMark(), 3u);
+    queue.teardown();
+}
+
+// Blocking-path stress: producers use BLOCKING sends into a small queue while consumers use
+// BLOCKING receives, exercising the backoff/delay control flow under TSan.
+TEST(Adversarial, BlockingPathStress) {
+    static constexpr FwSizeType DEPTH = 4;
+    static constexpr U32 THREADS = 4;
+    static constexpr U32 MESSAGES_PER_PRODUCER = 1000;
+    static constexpr U32 TOTAL = THREADS * MESSAGES_PER_PRODUCER;
+
+    Os::Queue queue;
+    Fw::String name("blocking-stress");
+    ASSERT_EQ(queue.create(0, name, DEPTH, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+
+    std::atomic<U32> received[TOTAL];
+    for (U32 i = 0; i < TOTAL; i++) {
+        received[i].store(0, std::memory_order_relaxed);
+    }
+
+    std::thread producers[THREADS];
+    for (U32 t = 0; t < THREADS; t++) {
+        producers[t] = std::thread([&queue, t]() {
+            for (U32 i = 0; i < MESSAGES_PER_PRODUCER; i++) {
+                U8 buffer[sizeof(U32)] = {0};
+                pack_u32((t * MESSAGES_PER_PRODUCER) + i, buffer);
+                ASSERT_EQ(queue.send(buffer, sizeof(U32), 0, Os::QueueInterface::BlockingType::BLOCKING),
+                          Os::QueueInterface::Status::OP_OK);
+            }
+        });
+    }
+
+    std::thread consumers[THREADS];
+    for (U32 t = 0; t < THREADS; t++) {
+        consumers[t] = std::thread([&queue, &received]() {
+            for (U32 i = 0; i < MESSAGES_PER_PRODUCER; i++) {
+                U8 buffer[sizeof(U32)] = {0};
+                FwSizeType actualSize = 0;
+                FwQueuePriorityType priority = 0;
+                ASSERT_EQ(queue.receive(buffer, sizeof(U32), Os::QueueInterface::BlockingType::BLOCKING, actualSize,
+                                        priority),
+                          Os::QueueInterface::Status::OP_OK);
+                const U32 value = unpack_u32(buffer);
+                ASSERT_LT(value, TOTAL);
+                received[value].fetch_add(1, std::memory_order_acq_rel);
+            }
+        });
+    }
+
+    for (U32 t = 0; t < THREADS; t++) {
+        producers[t].join();
+    }
+    for (U32 t = 0; t < THREADS; t++) {
+        consumers[t].join();
+    }
+    for (U32 i = 0; i < TOTAL; i++) {
+        EXPECT_EQ(received[i].load(std::memory_order_relaxed), 1u) << "value " << i;
+    }
+    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
+    queue.teardown();
 }
 
 // Create-teardown-recreate: verify the queue is fully functional after

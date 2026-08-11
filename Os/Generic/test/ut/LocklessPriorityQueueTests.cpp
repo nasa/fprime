@@ -54,7 +54,7 @@ U32 unpack_value(const U8* buffer) {
 void producer_worker(ConcurrentTestState* state, U32 producerIndex) {
     for (U32 messageIndex = 0; messageIndex < CONCURRENT_MESSAGES_PER_PRODUCER; messageIndex++) {
         const U32 value = (producerIndex * CONCURRENT_MESSAGES_PER_PRODUCER) + messageIndex;
-        U8 buffer[CONCURRENT_MESSAGE_SIZE];
+        U8 buffer[CONCURRENT_MESSAGE_SIZE] = {0};
         pack_value(value, buffer);
         const FwQueuePriorityType priority = static_cast<FwQueuePriorityType>(value & 0x7u);
         Os::QueueInterface::Status status = Os::QueueInterface::Status::FULL;
@@ -69,15 +69,20 @@ void producer_worker(ConcurrentTestState* state, U32 producerIndex) {
 }
 
 //! Consumer worker: receive messages until the producers are done and the consumed count
-//! reaches the total. Asserts each value is delivered exactly once.
+//! reaches the total. Asserts each value is delivered exactly once. Exits after a bounded
+//! number of consecutive empty polls once producers finish so a lost message reports as a
+//! count shortfall instead of a hang.
 void consumer_worker(ConcurrentTestState* state) {
-    U8 buffer[CONCURRENT_MESSAGE_SIZE];
+    constexpr U32 EMPTY_POLL_LIMIT = 100000;
+    U8 buffer[CONCURRENT_MESSAGE_SIZE] = {0};
     FwSizeType actualSize = 0;
     FwQueuePriorityType priority = 0;
+    U32 emptyPolls = 0;
     while (state->consumed.load(std::memory_order_acquire) < CONCURRENT_TOTAL_MESSAGES) {
         Os::QueueInterface::Status status = state->queue.receive(
             buffer, CONCURRENT_MESSAGE_SIZE, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority);
         if (status == Os::QueueInterface::Status::OP_OK) {
+            emptyPolls = 0;
             ASSERT_EQ(actualSize, CONCURRENT_MESSAGE_SIZE);
             const U32 value = unpack_value(buffer);
             ASSERT_LT(value, CONCURRENT_TOTAL_MESSAGES);
@@ -85,9 +90,8 @@ void consumer_worker(ConcurrentTestState* state) {
             ASSERT_EQ(priorCount, 0u) << "duplicate delivery of value " << value;
             state->consumed.fetch_add(1, std::memory_order_acq_rel);
         } else if (status == Os::QueueInterface::Status::EMPTY) {
-            if (state->producers_done.load(std::memory_order_acquire) &&
-                state->consumed.load(std::memory_order_acquire) >= CONCURRENT_TOTAL_MESSAGES) {
-                break;
+            if (state->producers_done.load(std::memory_order_acquire) && (++emptyPolls > EMPTY_POLL_LIMIT)) {
+                break;  // main thread reports the shortfall with diagnostics
             }
             std::this_thread::yield();
         } else {
@@ -131,8 +135,9 @@ TEST(LocklessConcurrent, MultiProducerMultiConsumer) {
     state.queue.teardown();
 }
 
-//! Validate that two consumers always receive in priority order even when they are draining
-//! concurrently. With a single producer at a time the FIFO-within-priority property must hold.
+//! Validate single-threaded strict priority ordering: batches of distinct-priority messages
+//! must drain in non-increasing priority order. (Concurrent-drain and FIFO-tiebreak coverage
+//! live in the TSan adversarial suite.)
 TEST(LocklessConcurrent, PriorityOrderSingleProducer) {
     constexpr FwSizeType DEPTH = 32;
     constexpr FwSizeType MESSAGE_SIZE = sizeof(U32);
@@ -218,6 +223,37 @@ TEST(LocklessLifetime, OversizedSendRejected) {
     ASSERT_EQ(queue.send(buffer, sizeof buffer, 0, Os::QueueInterface::BlockingType::NONBLOCKING),
               Os::QueueInterface::Status::SIZE_MISMATCH);
     EXPECT_EQ(queue.getMessagesAvailable(), 0u);
+    queue.teardown();
+}
+
+//! Validate the delegate-level oversized-send check directly (the Os::Queue wrapper performs
+//! its own size check before delegating, so this path is otherwise unreachable).
+TEST(LocklessLifetime, OversizedSendRejectedAtDelegate) {
+    Os::Generic::LocklessPriorityQueue queue;
+    Fw::String name("oversize-delegate-test");
+    ASSERT_EQ(queue.create(0, name, 4, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+    U8 buffer[sizeof(U32) + 1] = {0};
+    ASSERT_EQ(queue.send(buffer, sizeof buffer, 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+              Os::QueueInterface::Status::SIZE_MISMATCH);
+    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
+    queue.teardown();
+}
+
+//! Validate that a zero-size message round-trips: no payload copy, size 0 and priority intact.
+TEST(LocklessLifetime, ZeroSizeMessage) {
+    Os::Generic::LocklessPriorityQueue queue;
+    Fw::String name("zero-size-test");
+    ASSERT_EQ(queue.create(0, name, 4, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+    U8 dummy = 0;
+    ASSERT_EQ(queue.send(&dummy, 0, 1, Os::QueueInterface::BlockingType::NONBLOCKING),
+              Os::QueueInterface::Status::OP_OK);
+    U8 out[sizeof(U32)] = {0};
+    FwSizeType actualSize = 99;
+    FwQueuePriorityType priority = 0;
+    ASSERT_EQ(queue.receive(out, sizeof out, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority),
+              Os::QueueInterface::Status::OP_OK);
+    ASSERT_EQ(actualSize, 0u);
+    ASSERT_EQ(priority, 1);
     queue.teardown();
 }
 

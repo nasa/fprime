@@ -7,7 +7,10 @@ that provides ISR-safe, lockless message passing with strict-priority delivery.
 It is intended for flight-software contexts where a producer or consumer may run
 in interrupt context and therefore cannot block on an OS-level mutex or
 condition variable, but where the existing priority semantics of
-`Os::Generic::PriorityQueue` must still be preserved.
+`Os::Generic::PriorityQueue` must still be preserved. Unlike the existing
+ISR-safe `Os::Generic::PriorityMemQueue`, this implementation supports the
+full `FwQueuePriorityType` priority domain with no per-priority configuration
+and uses no OS primitive (semaphore) on any nonblocking path.
 
 ## 2. Requirements
 
@@ -266,13 +269,19 @@ The queue uses standard `std::atomic` operations with explicit memory orders:
 Non-blocking `send` and `receive` use only:
 
 - Lock-free atomic loads, stores, fetch-add, fetch-sub, and CAS on
-  `std::atomic<U32>`.
+  `std::atomic<LocklessStateTagType>` (the per-slot state-tag word, default
+  `U64`; see `config/LocklessQueueCfg.hpp`), `std::atomic<U32>` (sequence,
+  count, high-water mark), and `std::atomic<FwQueuePriorityType>` (per-slot
+  priority).
 - `memcpy` over a region of size `m_messageSize`.
 
-A runtime assertion in `create` rejects platforms where `std::atomic<U32>` is
-not lock-free. (The check is runtime rather than `static_assert` because the
-`is_always_lock_free` constexpr is C++17 and the project targets C++14. On
-every supported flight target the atomic is in fact lock-free.)
+Runtime assertions in `create` reject platforms where
+`std::atomic<LocklessStateTagType>`, `std::atomic<U32>`, or
+`std::atomic<FwQueuePriorityType>` is not lock-free. (The check is runtime rather than `static_assert` because the
+`is_always_lock_free` constexpr is C++17 and the project targets C++14; a
+best-effort `static_assert` derived from the `ATOMIC_*_LOCK_FREE` macros
+covers platforms with a compile-time guarantee. On every supported flight
+target the atomics are in fact lock-free.)
 
 There are no system calls, no OS-level synchronization primitives, and no
 allocations on these paths. Both calls therefore satisfy the ISR-safety
@@ -303,8 +312,14 @@ cannot make forward progress while preempting the threads they are waiting on.
 
 The unbounded blocking loop terminates only when the caller's condition is
 satisfied, which is the explicit `BlockingType::BLOCKING` contract; unlike
-`Os::Generic::PriorityQueue` it polls with a fixed backoff rather than
-blocking on a condition variable (see §15).
+`Os::Generic::PriorityQueue` it polls with a configurable backoff
+(`LOCKLESS_QUEUE_BLOCKING_BACKOFF_US` in `config/LocklessQueueCfg.hpp`) rather
+than blocking on a condition variable (see §15). This is a deliberate
+deviation from the JPL fixed-loop-bound rule: the blocking contract has no
+static bound, and the poll-with-backoff design is the price of keeping the
+implementation free of OS synchronization primitives. Note that every idle
+`BLOCKING` caller wakes once per backoff period, so deployments that select
+this queue for their active components trade idle CPU for ISR safety.
 
 ## 12. Memory Allocation
 
@@ -366,8 +381,8 @@ The implementation is covered by the same shared queue tests used by
   interleaves all queue operations and validates against a reference shadow
   queue.
 
-In addition, `Os/Generic/test/ut/LocklessPriorityQueueTests.cpp` adds two
-lockless-specific tests:
+In addition, `Os/Generic/test/ut/LocklessPriorityQueueTests.cpp` adds
+lockless-specific tests, including:
 
 - `LocklessConcurrent.MultiProducerMultiConsumer`: four producer threads and
   four consumer threads exchange 4,000 messages through a 64-slot queue. Every
@@ -375,10 +390,15 @@ lockless-specific tests:
 - `LocklessConcurrent.PriorityOrderSingleProducer`: 200 batches of 16
   increasing-priority messages are sent and drained; the receive order must
   be strictly non-increasing in priority.
+- Four `LocklessLifetime` tests covering destruct-without-create,
+  create/teardown/destruct ordering, teardown idempotency, and oversized-send
+  rejection.
 
 All tests are compiled with AddressSanitizer, UndefinedBehaviorSanitizer, and
 LeakSanitizer enabled, and pass under those sanitizers. ThreadSanitizer stress
-tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`).
+tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`),
+run in CI by the dedicated `.github/workflows/tsan-lockless-queue.yml`
+workflow on Linux and macOS.
 
 ## 15. Limitations
 
