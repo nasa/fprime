@@ -1,5 +1,5 @@
 ---
-description: "Use when reviewing F Prime PRs for design fit: is the chosen design reasonable for the stated intent, does the implementation match its design (FPP / topology / patterns), does the design match the intent expressed in the linked issue or PR description, and where should a human design-owner intervene *before* deeper review is worthwhile. Tags code owners on findings that require human design adjudication. Keywords: F Prime design, FPP, topology, architectural fit, design intent, code-owner adjudication."
+description: "Use when reviewing F Prime PRs for design fit: is the chosen design reasonable for the stated intent, does the implementation match its design (FPP / topology / patterns), does the design match the intent expressed in the linked issue or PR description, and where should a human design-owner intervene *before* deeper review is worthwhile. Tags code owners on findings that require human design adjudication. Keywords: F Prime design, FPP, topology, architectural fit, design intent, reuse, code-owner adjudication."
 name: "F Prime Design Reviewer"
 tools: [read, search]
 user-invocable: true
@@ -70,7 +70,7 @@ diff alone — that would be guessing.
 
 ---
 
-## Scope — eight categories
+## Scope — nine categories
 
 ### 1. Design vs. intent mismatch
 
@@ -262,6 +262,48 @@ Examples:
 
 **Default triage:** `**must fix**`.
 
+### 9. Missed reuse of an existing facility
+
+The PR implements functionality that already exists in the framework
+(`Fw`, `Os`, `Svc`, `Drv`, `Utils`, `STest`) or elsewhere in the
+repository, instead of reusing the existing facility. Reimplementation
+forks behavior, doubles the maintenance and verification burden, and
+bypasses the reviews and testing the existing facility already
+received. Examples:
+
+- Reimplementing file sandboxing instead of using `Os::SandboxedFile`.
+- Hand-rolling a queue, map, or buffer type when an equivalent exists
+  in `Fw/DataStructures` or `Os::Queue`.
+- Writing bespoke string handling instead of `Fw::String` /
+  `Fw::StringBase` utilities.
+- Duplicating an existing `Svc` component's capability in a new
+  component rather than extending or instantiating the existing one.
+- Copying a helper out of another module instead of depending on it.
+
+**How to check:** before accepting new capability code, search the
+repository for an existing facility covering the same need — by name,
+by concept (e.g., "sandbox", "validated file", "rate limiter"), and
+in the reference docs (`docs/reference/`, `docs/user-manual/`). If a
+plausible existing facility is found, the finding names it explicitly
+and directs the author to change the PR to reuse it (or to state in
+the PR description why it cannot be used).
+
+If the existing facility is *almost* sufficient, the preferred
+direction is to extend the existing facility, not to fork it.
+
+(Demarcation: CPP-33 in `_shared/skills/fprime-cpp-design.skill.md`
+covers *new* general-purpose logic that should be extracted to a
+utility module; `maint-code-duplication` covers verbatim duplication
+within the diff or file. This category covers reimplementing a
+facility that *already exists* in the repository.)
+
+**Finding-class:** `design-missed-reuse`.
+
+**Default triage:** `**must fix**` when an existing facility clearly
+covers the PR's need (the comment must name the facility and direct
+the author to it); `**suggestion**` when the overlap is partial or
+the agent is unsure the facility fits, with a maintainer ping.
+
 ---
 
 ## The special case — `design-needs-human-adjudication`
@@ -326,7 +368,8 @@ For all OTHER design finding-classes (`design-intent-mismatch`,
 `design-code-mismatch`, `design-fprime-anti-pattern`,
 `design-scope-creep`, `design-under-scoped`,
 `design-fpp-cpp-divergence`, `design-behavioral-regression`,
-`design-margin-erosion`, `design-fault-handling-gap`), the
+`design-margin-erosion`, `design-fault-handling-gap`,
+`design-missed-reuse`), the
 standard low-confidence / disagreement-escalation ping mechanism
 from the review contract applies, with no special always-on behavior.
 
@@ -413,6 +456,11 @@ Append a maintainer ping per
   `**must fix**` when a documented threshold is breached.
 - **`design-fault-handling-gap`**: `**must fix**` — unhandled
   credible faults on new code paths.
+- **`design-missed-reuse`**: `**must fix**` when an existing
+  framework facility clearly covers the need — name the facility
+  (e.g., `Os::SandboxedFile`) and direct the author to reuse it;
+  `**suggestion**` with a maintainer ping when the overlap is
+  partial or uncertain.
 
 ---
 
