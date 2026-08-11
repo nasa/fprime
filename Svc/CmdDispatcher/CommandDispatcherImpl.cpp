@@ -28,12 +28,12 @@ void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType
     if (this->m_entryTable.find(opCode, existingPort) == Fw::Success::SUCCESS) {
         // Opcode already present — must be the same port (re-registration)
         FW_ASSERT(existingPort == portNum, static_cast<FwAssertArgType>(opCode));
-        this->log_DIAGNOSTIC_OpCodeReregistered(opCode, portNum);
+        this->log_DIAGNOSTIC_OpCodeReregistered(CmdDispatcherCfg::getEventOpcode(opCode), portNum);
     } else {
         const I32 slot = static_cast<I32>(this->m_entryTable.getSize());
         const Fw::Success status = this->m_entryTable.insert(opCode, portNum);
         FW_ASSERT(status == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(opCode));
-        this->log_DIAGNOSTIC_OpCodeRegistered(opCode, portNum, slot);
+        this->log_DIAGNOSTIC_OpCodeRegistered(CmdDispatcherCfg::getEventOpcode(opCode), portNum, slot);
     }
 }
 
@@ -43,11 +43,11 @@ void CommandDispatcherImpl::compCmdStat_handler(FwIndexType portNum,
                                                 const Fw::CmdResponse& response) {
     // check response and log
     if (Fw::CmdResponse::OK == response.e) {
-        this->log_COMMAND_OpCodeCompleted(opCode);
+        this->log_COMMAND_OpCodeCompleted(CmdDispatcherCfg::getEventOpcode(opCode));
     } else {
         this->m_numCmdErrors++;
         FW_ASSERT(response.e != Fw::CmdResponse::OK);
-        this->log_COMMAND_OpCodeError(opCode, response);
+        this->log_COMMAND_OpCodeError(CmdDispatcherCfg::getEventOpcode(opCode), response);
     }
     // look for command source
     SequenceTrackerEntry trackedCmd;
@@ -96,7 +96,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
 
             // if we couldn't find a slot to track the command, quit
             if (pendingInsertStatus != Fw::Success::SUCCESS) {
-                this->log_WARNING_HI_TooManyCommands(cmdPkt.getOpCode());
+                this->log_WARNING_HI_TooManyCommands(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
                 if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
                     this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::EXECUTION_ERROR);
                 }
@@ -106,12 +106,12 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         // pass arguments to argument buffer
         this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
         // log dispatched command
-        this->log_COMMAND_OpCodeDispatched(cmdPkt.getOpCode(), entryPort);
+        this->log_COMMAND_OpCodeDispatched(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()), entryPort);
 
         // increment command count
         this->m_numCmdsDispatched++;
     } else {
-        this->log_WARNING_HI_InvalidCommand(cmdPkt.getOpCode());
+        this->log_WARNING_HI_InvalidCommand(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()));
         this->m_numCmdErrors++;
         // Fail command back to port, if connected
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
@@ -160,18 +160,18 @@ void CommandDispatcherImpl::pingIn_handler(FwIndexType portNum, U32 key) {
 }
 
 void CommandDispatcherImpl::seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
-    // Extract command opcode
-    Fw::CmdPacket cmdPkt;
-    Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
     FwOpcodeType opcode = 0;  // Note: 0 = Reserved opcode
-
-    if (stat == Fw::FW_SERIALIZE_OK) {
-        opcode = cmdPkt.getOpCode();
+    if (CmdDispatcherCfg::IncludeCommandOpcodesInEvents) {
+        Fw::CmdPacket cmdPkt;
+        const Fw::SerializeStatus stat = cmdPkt.deserializeFrom(data);
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            opcode = cmdPkt.getOpCode();
+        }
     }
 
-    // Log Cmd Buffer Overflow and increment CommandsDroppedBufOverflow counter
+    this->log_WARNING_HI_CommandDroppedQueueOverflow(CmdDispatcherCfg::getEventOpcode(opcode), context);
+    // Increment CommandsDroppedBufOverflow counter
     this->m_numCmdsDropped++;
-    this->log_WARNING_HI_CommandDroppedQueueOverflow(opcode, context);
 }
 
 }  // namespace Svc

@@ -130,4 +130,43 @@ void OsTimeTester ::updateEpochTest() {
     ASSERT_EQ(time_600ms, Fw::Time(TimeBase::TB_WORKSTATION_TIME, 7, 1234, 400 * 1000));
 }
 
+void OsTimeTester ::setCurrentTimeTest() {
+    Svc::RawTimeTester::setNowStatus(Os::RawTime::OP_OK);
+    Svc::RawTimeTester::setNowTime(Fw::Time(0, 0));
+
+    this->sendCmd_SetCurrentTime(0, 0, 5000);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OsTime::OPCODE_SETCURRENTTIME, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_SIZE(0);
+
+    // The epoch is now seconds_now at the current raw time
+    Fw::Time time_now;
+    invoke_to_timeGetPort(0, time_now);
+    ASSERT_EQ(time_now, Fw::Time(5000, 0));
+
+    // 200 ms later
+    Svc::RawTimeTester::setNowTime(Fw::Time(0, 200 * 1000));
+    Fw::Time time_200ms;
+    invoke_to_timeGetPort(0, time_200ms);
+    ASSERT_EQ(time_200ms, Fw::Time(5000, 200 * 1000));
+}
+
+void OsTimeTester ::setCurrentTimeErrorTest() {
+    Svc::RawTimeTester::setNowTime(Fw::Time(0, 0));
+    Svc::RawTimeTester::setNowStatus(Os::RawTime::OTHER_ERROR);
+
+    this->sendCmd_SetCurrentTime(0, 0, 5000);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, OsTime::OPCODE_SETCURRENTTIME, 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_SIZE(1);
+    ASSERT_EVENTS_SetCurrentTimeError_SIZE(1);
+    ASSERT_EVENTS_SetCurrentTimeError(0, Os::RawTime::OTHER_ERROR);
+
+    // A failed command must not establish an epoch
+    Svc::RawTimeTester::setNowStatus(Os::RawTime::OP_OK);
+    Fw::Time time_now;
+    invoke_to_timeGetPort(0, time_now);
+    ASSERT_EQ(time_now, Fw::ZERO_TIME);
+}
+
 }  // namespace Svc

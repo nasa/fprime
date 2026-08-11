@@ -285,6 +285,34 @@ void TlmChanTester::runProcGuard() {
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
 
+void TlmChanTester::runBucketPoolExhaustion() {
+    Fw::TlmBuffer buff;
+    Fw::Time timeTag;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buff.serializeFrom(static_cast<U32>(0xABCD)));
+
+    // Fill every bucket in the active buffer with unique channel IDs
+    for (U32 n = 0; n < TLMCHAN_HASH_BUCKETS; n++) {
+        this->invoke_to_TlmRecv(0, static_cast<FwChanIdType>(0x5000u + n), timeTag, buff);
+    }
+    ASSERT_EVENTS_TlmChanBucketPoolExhausted_SIZE(0);
+
+    // One more unique ID must be dropped with a warning event, not an assert
+    const FwChanIdType overflowId = static_cast<FwChanIdType>(0x5000u + TLMCHAN_HASH_BUCKETS);
+    this->invoke_to_TlmRecv(0, overflowId, timeTag, buff);
+    ASSERT_EVENTS_TlmChanBucketPoolExhausted_SIZE(1);
+    ASSERT_EVENTS_TlmChanBucketPoolExhausted(0, overflowId);
+
+    // The dropped channel must not be readable
+    Fw::TlmBuffer readBack;
+    Fw::TlmValid valid = this->invoke_to_TlmGet(0, overflowId, timeTag, readBack);
+    ASSERT_EQ(valid, Fw::TlmValid::INVALID);
+
+    // Existing channels must still update normally
+    this->clearEvents();
+    this->invoke_to_TlmRecv(0, static_cast<FwChanIdType>(0x5000u), timeTag, buff);
+    ASSERT_EVENTS_TlmChanBucketPoolExhausted_SIZE(0);
+}
+
 void TlmChanTester ::from_PktSend_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     if (this->m_packetSendGateArmed.tryWait() == Os::CountingSemaphore::Status::OP_OK) {
         (void)this->m_packetSendEntered.post();

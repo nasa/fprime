@@ -246,8 +246,12 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
                     entryToUse = entryToUse->next;
                 }
             } else {
-                // Make sure that we haven't run out of buckets
-                FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
+                // Out of buckets: drop the new channel rather than asserting, since
+                // telemetry IDs may arrive from external sources (e.g. a hub)
+                if (this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free >= TLMCHAN_HASH_BUCKETS) {
+                    this->log_WARNING_HI_TlmChanBucketPoolExhausted(id);
+                    return;
+                }
                 // add new bucket from free list
                 entryToUse = &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
                                   .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];
@@ -258,7 +262,12 @@ void TlmChan::TlmRecv_handler(FwIndexType portNum, FwChanIdType id, Fw::Time& ti
             }
         }
     } else {
-        FW_ASSERT(this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free < TLMCHAN_HASH_BUCKETS);
+        // Out of buckets: drop the new channel rather than asserting, since
+        // telemetry IDs may arrive from external sources (e.g. a hub)
+        if (this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free >= TLMCHAN_HASH_BUCKETS) {
+            this->log_WARNING_HI_TlmChanBucketPoolExhausted(id);
+            return;
+        }
         this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].slots[index] =
             &this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)]
                  .buckets[this->m_tlmEntries[static_cast<U8>(this->m_activeBuffer)].free++];

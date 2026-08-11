@@ -17,8 +17,10 @@
 name: "Coverage Update"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
     tags:     [ 'v*' ]
   workflow_dispatch:
 
@@ -49,6 +51,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel
