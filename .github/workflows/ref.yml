@@ -112,7 +112,7 @@ jobs:
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
-          gds-working-directory: "TestDeploymentsProject/Ref"
+          gds-working-directory: "TestDeploymentsProject/Ref" # NOTE: must be the directory containing fprime-gds.yml
           test-working-directory: "TestDeploymentsProject/Ref"
           binary: "../build-artifacts/*/Ref/bin/Ref"
           gds-args: "--dictionary ../build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
