@@ -79,7 +79,7 @@ LinearBufferBase& LinearBufferBase::operator=(const LinearBufferBase& src) {  //
 
 // serialization routines
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U8 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(U8 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -92,12 +92,12 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U8
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(I8 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(I8 val, Endianness mode) {
     return serializeFrom(static_cast<U8>(val), mode);
 }
 
 #if FW_HAS_16_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U16 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(U16 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -123,12 +123,12 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U1
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(I16 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(I16 val, Endianness mode) {
     return serializeFrom(static_cast<U16>(val), mode);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U32 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(U32 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -158,13 +158,13 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U3
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(I32 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(I32 val, Endianness mode) {
     return serializeFrom(static_cast<U32>(val), mode);
 }
 #endif
 
 #if FW_HAS_64_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U64 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(U64 val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(val)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -202,26 +202,26 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(U6
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(I64 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(I64 val, Endianness mode) {
     return serializeFrom(static_cast<U64>(val), mode);
 }
 #endif
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(F64 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(F64 val, Endianness mode) {
     // floating point values need to be byte-swapped as well, so copy to U64 and use that routine
     U64 u64Val;
     (void)memcpy(&u64Val, &val, sizeof(val));
     return this->serializeFrom(u64Val, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(F32 val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(F32 val, Endianness mode) {
     // floating point values need to be byte-swapped as well, so copy to U32 and use that routine
     U32 u32Val;
     (void)memcpy(&u32Val, &val, sizeof(val));
     return this->serializeFrom(u32Val, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(bool val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(U8)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -239,7 +239,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(bo
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const void* val, Endianness mode) {
     if (this->m_serLoc + static_cast<Serializable::SizeType>(sizeof(void*)) - 1 >= this->m_capacity) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
@@ -247,13 +247,13 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(co
     return this->serializeFrom(reinterpret_cast<PlatformPointerCastType>(val), mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const U8* buff,
                                                                               Serializable::SizeType length,
                                                                               Endianness endianMode) {
     return this->serializeFrom(buff, static_cast<FwSizeType>(length), Serialization::INCLUDE_LENGTH, endianMode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus
 LinearBufferBase::serializeFrom(const U8* buff,
                                 FwSizeType length,
                                 Serialization::t lengthMode,
@@ -284,12 +284,12 @@ LinearBufferBase::serializeFrom(const U8* buff,
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(const Serializable& val,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const Serializable& val,
                                                                               Endianness mode) {
     return val.serializeTo(*this, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeFrom(const LinearBufferBase& val,
                                                                               Endianness mode) {
     Serializable::SizeType size = val.getSize();
     if (this->m_serLoc + size + static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) > this->m_capacity) {
@@ -314,7 +314,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeFrom(co
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeSize(const FwSizeType size, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeSize(const FwSizeType size, Endianness mode) {
     SerializeStatus status = FW_SERIALIZE_OK;
     if ((size < std::numeric_limits<FwSizeStoreType>::min()) || (size > std::numeric_limits<FwSizeStoreType>::max())) {
         status = FW_SERIALIZE_FORMAT_ERROR;
@@ -327,36 +327,32 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeSize(co
 
 // deserialization routines
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8& val, Endianness mode) {
     // check for room
+    const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     val = buffAddr[this->m_deserLoc + 0];
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I8& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(I8& val, Endianness mode) {
     // check for room
+    const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     val = static_cast<I8>(buffAddr[this->m_deserLoc + 0]);
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
@@ -364,18 +360,16 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I8
 }
 
 #if FW_HAS_16_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
     // check for room
+    const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
@@ -394,7 +388,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U1
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I16& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(I16& val, Endianness mode) {
     U16 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
@@ -404,18 +398,16 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I1
 }
 #endif
 #if FW_HAS_32_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
     // check for room
+    const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(val))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
@@ -440,7 +432,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U3
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I32& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(I32& val, Endianness mode) {
     U32 unsignVal = 0;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
@@ -452,10 +444,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I3
 
 #if FW_HAS_64_BIT == 1
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U64& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(this->m_serLoc >= this->m_deserLoc, static_cast<FwAssertArgType>(this->m_serLoc),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U64& val, Endianness mode) {
     // check for room
     if (this->m_serLoc == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
@@ -463,6 +452,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U6
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
@@ -495,7 +485,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U6
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I64& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(I64& val, Endianness mode) {
     U64 unsignVal;
     SerializeStatus res = deserializeTo(unsignVal, mode);
     if (res == SerializeStatus::FW_SERIALIZE_OK) {
@@ -505,7 +495,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I6
 }
 #endif
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(F64& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(F64& val, Endianness mode) {
     // deserialize as 64-bit int to handle endianness
     U64 tempVal;
     SerializeStatus stat = this->deserializeTo(tempVal, mode);
@@ -518,18 +508,16 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(F6
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(bool& val, Endianness mode) {
-    U8* buffAddr = this->m_buffAddr;
-    const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(this->m_deserLoc));
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(bool& val, Endianness mode) {
     // check for room
+    const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
         return FW_DESERIALIZE_BUFFER_EMPTY;
     } else if (size - this->m_deserLoc < static_cast<Serializable::SizeType>(sizeof(U8))) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    U8* buffAddr = this->m_buffAddr;
     FW_ASSERT(buffAddr != nullptr);
     const U8 byteVal = buffAddr[this->m_deserLoc + 0];
     if (FW_SERIALIZE_TRUE_VALUE == byteVal) {
@@ -544,7 +532,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(bo
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(void*& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(void*& val, Endianness mode) {
     // Deserialize as pointer cast, then convert to void*
     PlatformPointerCastType pointerCastVal = 0;
     const SerializeStatus stat = this->deserializeTo(pointerCastVal, mode);
@@ -554,7 +542,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(vo
     return stat;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(F32& val, Endianness mode) {
     // deserialize as 64-bit int to handle endianness
     U32 tempVal = 0;
     SerializeStatus stat = this->deserializeTo(tempVal, mode);
@@ -566,7 +554,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(F3
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                                               Serializable::SizeType& length,
                                                                               Endianness endianMode) {
     FwSizeType length_in_out = static_cast<FwSizeType>(length);
@@ -575,7 +563,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8
     return status;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8* buff,
                                                                               Serializable::SizeType& length,
                                                                               Serialization::t lengthMode,
                                                                               Endianness endianMode) {
@@ -619,11 +607,11 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(Serializable& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(Serializable& val, Endianness mode) {
     return val.deserializeFrom(*this, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(LinearBufferBase& val, Endianness mode) {
     U8* valBuffAddr = val.getBuffAddr();
     FW_ASSERT(valBuffAddr != nullptr);
     SerializeStatus stat = FW_SERIALIZE_OK;
@@ -657,7 +645,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(Li
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeSize(FwSizeType& size, Endianness mode) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeSize(FwSizeType& size, Endianness mode) {
     FwSizeStoreType storedSize = 0;
     Fw::SerializeStatus status = this->deserializeTo(storedSize, mode);
     if (status == FW_SERIALIZE_OK) {
@@ -675,7 +663,7 @@ void LinearBufferBase::resetDeser() {
     this->m_deserLoc = 0;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeSkip(FwSizeType numBytesToSkip) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serializeSkip(FwSizeType numBytesToSkip) {
     Fw::SerializeStatus status = FW_SERIALIZE_OK;
     // compute new deser loc
     const FwSizeType newSerLoc = this->m_serLoc + numBytesToSkip;
@@ -689,7 +677,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeSkip(Fw
     return status;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeSkip(FwSizeType numBytesToSkip) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeSkip(FwSizeType numBytesToSkip) {
     // check for room
     const Serializable::SizeType size = this->m_serLoc;
     if (size == this->m_deserLoc) {
@@ -702,13 +690,13 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeSkip(
     return FW_SERIALIZE_OK;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::moveSerToOffset(FwSizeType offset) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::moveSerToOffset(FwSizeType offset) {
     // Reset serialization
     this->resetSer();
     // Advance to offset
     return this->serializeSkip(offset);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::moveDeserToOffset(FwSizeType offset) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::moveDeserToOffset(FwSizeType offset) {
     // Reset deserialization
     this->resetDeser();
     // Advance to offset
@@ -719,7 +707,7 @@ Serializable::SizeType LinearBufferBase::getSize() const {
     return this->m_serLoc;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::setBuff(const U8* src, Serializable::SizeType length) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::setBuff(const U8* src, Serializable::SizeType length) {
     if (this->m_capacity < length) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     } else {
@@ -733,7 +721,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::setBuff(const U8
     }
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::setBuffLen(Serializable::SizeType length) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::setBuffLen(Serializable::SizeType length) {
     if (this->m_capacity < length) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     } else {
@@ -755,7 +743,7 @@ Serializable::SizeType LinearBufferBase::getSerializeSizeLeft() const {
     return this->m_capacity - this->m_serLoc;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::copyRaw(SerialBufferBase& dest,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::copyRaw(SerialBufferBase& dest,
                                                                         Serializable::SizeType size) {
     // make sure there is sufficient size in destination
     if (dest.getCapacity() < size) {
@@ -777,7 +765,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::copyRaw(SerialBu
     return stat;
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::copyRawOffset(SerialBufferBase& dest,
                                                                               Serializable::SizeType size) {
     // make sure there is sufficient size in destination
     const Serializable::SizeType destCapacity = dest.getCapacity();
@@ -883,137 +871,137 @@ Serializable::SizeType LinearBufferBase::getBuffLeft() {
     return this->getDeserializeSizeLeft();
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(U8 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(U8 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(I8 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(I8 val) {
     return this->serializeFrom(val);
 }
 #if FW_HAS_16_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(U16 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(U16 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(I16 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(I16 val) {
     return this->serializeFrom(val);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(U32 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(U32 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(I32 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(I32 val) {
     return this->serializeFrom(val);
 }
 #endif
 #if FW_HAS_64_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(U64 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(U64 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(I64 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(I64 val) {
     return this->serializeFrom(val);
 }
 #endif
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(F32 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(F32 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(F64 val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(F64 val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(bool val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(bool val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const void* val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const void* val) {
     return this->serializeFrom(val);
 }
 
 // Deprecated method for backward compatibility
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const U8* buff,
                                                                           FwSizeType length,
                                                                           bool noLength) {
     const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
     return this->serializeFrom(buff, length, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const U8* buff, FwSizeType length) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const U8* buff, FwSizeType length) {
     return this->serializeFrom(buff, length);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const U8* buff,
                                                                           FwSizeType length,
                                                                           Serialization::t mode) {
     return this->serializeFrom(buff, length, mode);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const Serializable& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const Serializable& val) {
     return this->serializeFrom(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serialize(const LinearBufferBase& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::serialize(const LinearBufferBase& val) {
     return this->serializeFrom(val);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U8& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U8& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(I8& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(I8& val) {
     return this->deserializeTo(val);
 }
 #if FW_HAS_16_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U16& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U16& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(I16& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(I16& val) {
     return this->deserializeTo(val);
 }
 #endif
 #if FW_HAS_32_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U32& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U32& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(I32& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(I32& val) {
     return this->deserializeTo(val);
 }
 #endif
 #if FW_HAS_64_BIT == 1
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U64& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U64& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(I64& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(I64& val) {
     return this->deserializeTo(val);
 }
 #endif
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(F32& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(F32& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(F64& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(F64& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(bool& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(bool& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(void*& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(void*& val) {
     return this->deserializeTo(val);
 }
 
 // Deprecated method for backward compatibility
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U8* buff,
                                                                             FwSizeType& length,
                                                                             bool noLength) {
     const Serialization::t mode = noLength ? Serialization::OMIT_LENGTH : Serialization::INCLUDE_LENGTH;
     return this->deserializeTo(buff, length, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U8* buff, FwSizeType& length) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U8* buff, FwSizeType& length) {
     return this->deserializeTo(buff, length, Serialization::INCLUDE_LENGTH);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(U8* buff,
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(U8* buff,
                                                                             FwSizeType& length,
                                                                             Serialization::t mode) {
     return this->deserializeTo(buff, length, mode);
 }
 
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(Serializable& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(Serializable& val) {
     return this->deserializeTo(val);
 }
-FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserialize(LinearBufferBase& val) {
+FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(LinearBufferBase& val) {
     return this->deserializeTo(val);
 }
 
