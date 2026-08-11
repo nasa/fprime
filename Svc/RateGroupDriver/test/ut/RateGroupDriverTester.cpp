@@ -48,6 +48,27 @@ TEST(RateGroupDriverTest, NominalSchedule) {
     tester.runSchedNominal(dividersSet, FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
 }
 
+TEST(RateGroupDriverTest, ReconfigureSchedule) {
+    Svc::RateGroupDriver::DividerSet dividersSet{};
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++) {
+        dividersSet.dividers[i] = {static_cast<FwSizeType>(i + 1), static_cast<FwSizeType>(i % 2)};
+    }
+
+    Svc::RateGroupDriver impl("RateGroupDriver");
+    // Configure twice: the second configure must fully replace the first (rollover resets)
+    impl.configure(dividersSet);
+    impl.configure(dividersSet);
+
+    Svc::RateGroupDriverImplTester tester(impl);
+
+    tester.init();
+    impl.init();
+
+    connectPorts(impl, tester);
+
+    tester.runSchedNominal(dividersSet, FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

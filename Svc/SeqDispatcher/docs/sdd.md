@@ -30,7 +30,7 @@ Dispatches command sequences to available command sequencers, allowing the space
 | Name | Description |
 |InvalidSequencer|The given sequencer index is invalid for an unspecified reason|
 |NoAvailableSequencers|There are no available sequencers to dispatch a sequence to|
-|UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call|
+|UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call. The dispatcher recovers by marking the sequencer available and clearing its tracked sequence|
 |UnexpectedSequenceStarted|We received a call to seqStartIn but we didn't receive a call to seqDoneIn before that|
 |ConflictingSequenceStarted|A sequencer started a new sequence while still marked as running another|
 |LogSequencerStatus|Shows the current state and sequence filename for a particular sequencer. Produced by the LOG_STATUS command|

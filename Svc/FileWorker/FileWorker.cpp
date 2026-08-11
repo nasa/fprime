@@ -516,10 +516,12 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
     }
     U64 timeout = numChunks * TIMEOUT_MS;
 
-    // Write loop
+    // Write loop: legal short writes make progress but consume an iteration, so
+    // allow extra iterations beyond the chunk count before giving up
+    const FwSizeType maxIterations = numChunks + MAX_LOOP_ITERATIONS;
     FwSizeType bytesWritten = 0;
     Fw::Time start = this->getTime();
-    for (FwSizeType i = 0; i < numChunks; i++) {
+    for (FwSizeType i = 0; (i < maxIterations) && (bytesWritten < size); i++) {
         FwSizeType writeAmt = FW_MIN(size - bytesWritten, this->m_chunkSize);
         Os::File::Status ret = file.write(data + bytesWritten, writeAmt);
 
@@ -551,10 +553,6 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
         }
 
         bytesWritten += writeAmt;
-        if (bytesWritten >= size) {
-            // Finished, break out
-            break;
-        }
     }
 
     return bytesWritten;

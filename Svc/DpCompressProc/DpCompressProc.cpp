@@ -282,6 +282,14 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Serialize uncompressed data
                     // 3. Write header for compressed data at data_reser location
                     // 4. Serialize compressed data
+
+                    // Assert the next few serialization operations will stay within the
+                    // data that has been read so far
+                    FW_ASSERT(deser_loc >=
+                                  (data_reser.getSize() + uncompressed_size +
+                                   2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
+                              static_cast<FwAssertArgType>(deser_loc),
+                              static_cast<FwAssertArgType>(data_reser.getSize()), uncompressed_size, compressed_size);
                     serializeCompressionHeader(data_reser, uncompressed_size,
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 

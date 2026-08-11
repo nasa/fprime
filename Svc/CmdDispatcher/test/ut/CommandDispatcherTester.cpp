@@ -20,7 +20,7 @@ static_assert(CMD_DISPATCHER_SEQUENCER_TABLE_SIZE + 1 <= std::numeric_limits<U32
 
 namespace Svc {
 CommandDispatcherTester::CommandDispatcherTester(Svc::CommandDispatcherImpl& inst)
-    : CommandDispatcherGTestBase("testerbase", 100), m_impl(inst) {}
+    : CommandDispatcherGTestBase("testerbase", 100), m_impl(inst), m_cmdSendPortNum(0), m_seqStatusPortNum(0) {}
 
 CommandDispatcherTester::~CommandDispatcherTester() {
     this->m_impl.deinit();

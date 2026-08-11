@@ -6,5 +6,5 @@ if len(sys.argv) < 2:
     sys.exit(1)
 with open(sys.argv[1], "r") as file_handle:
     args = sys.argv[2:] + [line.strip() for line in file_handle.readlines()]
-with open(sys.argv[1], "w") as file_handle:
-    sys.exit(subprocess.run(args, stdout=file_handle).returncode)
+# Discard tool stdout: argv[1] is a dependency cache and must not be overwritten
+sys.exit(subprocess.run(args, stdout=subprocess.DEVNULL).returncode)
