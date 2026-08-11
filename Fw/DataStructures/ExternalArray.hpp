@@ -82,10 +82,8 @@ class ExternalArray final {
     //! \return *this
     ExternalArray<T>& operator=(const ExternalArray<T>& a) {
         if (&a != this) {
-            this->releaseStorage();
             this->m_elements = a.m_elements;
             this->m_size = a.m_size;
-            this->m_destroyElementsOnRelease = false;
         }
         return *this;
     }
