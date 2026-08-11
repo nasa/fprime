@@ -1,29 +1,55 @@
-# Verify that F' builds and passes unit tests under the "minimal" configuration
-# profile from ci/config-profiles.json.  The remainder of the profile matrix
-# runs in the nightly "Config Test Nightly" workflow.
+# Verify the build system: CMake test suite plus F' build and unit tests
+# under the "minimal" configuration profile from ci/config-profiles.json.
+# The remainder of the profile matrix runs in the nightly "Config Test
+# Nightly" workflow.
+#
+# These checks run only when build-system files change; the nightly
+# workflow provides unconditional coverage on devel.
 
 name: "Config Test"
 
 on:
-  push:
-    branches: [ devel, release/** ]
   pull_request:
     branches: [ devel, release/** ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/agents/**'
+    paths:
+      - 'cmake/**'
+      - '**/*.cmake'
+      - '**/CMakeLists.txt'
+      - 'config/**'
+      - 'ci/config-profiles.json'
+      - '.github/workflows/config-test.yml'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/') }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # CMake build-system test suite (formerly the "CMake Test" workflow)
+  # ---------------------------------------------------------------------------
+  cmake:
+    name: "CMake Tests"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: CMake Tests
+        working-directory: ./cmake/test
+        shell: bash
+        run: |
+          export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
+          export PATH="${CMAKE_INSTALL_DIRECTORY}/bin:${PATH}"
+          cmake --version
+          pytest -s
+
   # ---------------------------------------------------------------------------
   # Generate the build matrix from ci/config-profiles.json (minimal profile only)
   # ---------------------------------------------------------------------------

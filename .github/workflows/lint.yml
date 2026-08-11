@@ -1,0 +1,81 @@
+# Formatting and documentation checks for the F' framework.
+#
+# Consolidates the former "Code Format Check", "Format Python", and "Check
+# Markdown links" workflows: the format checks share a single checkout and
+# tool setup as sequential steps; the markdown link check (which requires a
+# full Doxygen generation) runs nightly only.
+
+name: "Lint"
+
+on:
+  pull_request:
+    branches: [ devel, release/** ]
+  schedule:
+    - cron: "0 10 * * *"  # 2:00 AM Pacific (PST)
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: "Format Checks"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - uses: ./.github/actions/setup
+      - name: "Check C++ Formatting"
+        env:
+          # Svc is currently listing all but Svc/FpySequencer
+          CHECKED_DIRS: >-
+            CFDP
+            default
+            Drv
+            FppTestProject
+            Fw
+            Os
+            Ref
+            Svc
+            TestUtils
+            Utils
+        run: |
+          fprime-util format --check --dirs $CHECKED_DIRS
+        shell: bash
+      - name: "Check Python Formatting"
+        if: always()
+        run: |
+          pip install click==8.0.4 black==21.6b0
+          black --check --diff ./
+        shell: bash
+
+  markdown-link-check:
+    name: "Markdown Link Check"
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: 'Generate Doxygen and CMake docs'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen
+          ./docs/doxygen/generate_docs.bash
+
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          config-file: ./.github/actions/markdown-check/mlc-config.json

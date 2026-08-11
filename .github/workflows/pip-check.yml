@@ -24,8 +24,9 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
-        # Purposefully test on both ARM and Intel macOS (macos-latest is ARM)
-        runner: [macos-15-intel, macos-latest, ubuntu-22.04, ubuntu-latest]
+        # macos-latest is ARM; Intel macOS and the older Ubuntu LTS were
+        # dropped to reduce runner load
+        runner: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}

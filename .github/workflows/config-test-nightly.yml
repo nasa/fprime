@@ -40,6 +40,29 @@ permissions:
 
 jobs:
   # ---------------------------------------------------------------------------
+  # CMake build-system test suite (unconditional nightly coverage; the PR
+  # "Config Test" workflow runs it only when build-system files change)
+  # ---------------------------------------------------------------------------
+  cmake:
+    name: "CMake Tests"
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-22.04' }}
+    steps:
+      - name: "Checkout F´ Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: CMake Tests
+        working-directory: ./cmake/test
+        shell: bash
+        run: |
+          export CMAKE_INSTALL_DIRECTORY="${GITHUB_WORKSPACE}/tools-override"
+          export PATH="${CMAKE_INSTALL_DIRECTORY}/bin:${PATH}"
+          cmake --version
+          pytest -s
+
+  # ---------------------------------------------------------------------------
   # Generate the build matrix from ci/config-profiles.json
   # ---------------------------------------------------------------------------
   generate-matrix:

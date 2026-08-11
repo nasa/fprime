@@ -189,7 +189,7 @@ the doc covers the now-changed behavior.
 
 - Spelling, grammar, and prose-style fixes — left to human reviewers.
   The doc agent flags content staleness, not wording.
-- Markdown link integrity — handled by `markdown-link-check.yml` in
+- Markdown link integrity — handled by the markdown link check in `lint.yml` in
   CI. The doc agent does not duplicate that check.
 - SDD content quality / completeness beyond "does it reflect the new
   behavior?" — deep design-quality review is the design agent's

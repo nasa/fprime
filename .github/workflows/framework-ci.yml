@@ -1,0 +1,239 @@
+# Build, unit test, FPP, and RHEL8 verification for the F' framework.
+#
+# Consolidates the former Framework, FppTest, fpp-to-json, and CI [RHEL8]
+# workflows into a single workflow whose jobs share setup via sequential
+# steps.
+#
+# Scheduling policy:
+#   - pull_request: Linux jobs only (build+UT, FPP, RHEL8 build)
+#   - push to devel/release: a single fast smoke job (Linux build + UT)
+#   - nightly cron (2:00 AM Pacific): full suite incl. macOS, TSan, RHEL8 UTs
+
+name: "Framework CI"
+
+on:
+  push:
+    branches: [ devel, release/** ]
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+  schedule:
+    - cron: "0 10 * * *"  # 2:00 AM Pacific (PST)
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: ""
+      jobs:
+        description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # Linux build + unit tests. Runs on every trigger, including the push
+  # smoke run, so a bad merge to devel is caught quickly.
+  build-and-test:
+    name: "Build & UTs [Linux]"
+    timeout-minutes: 60
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-22.04' }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Framework"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+
+  # FPP verification: FppTest UTs (standard + direct port calls) and the
+  # fpp-to-json check, sharing a single checkout and tool setup.
+  fpp:
+    name: "FPP Tests"
+    if: github.event_name != 'push'
+    timeout-minutes: 60
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: "Generate FppTest UT build cache"
+        working-directory: ./FppTestProject
+        run: fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+        shell: bash
+      - name: "Build FppTest UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: fprime-util build --ut -j4
+        shell: bash
+      - name: "Run FppTest UTs"
+        working-directory: ./FppTestProject/FppTest
+        run: fprime-util check --pass-through --output-on-failure
+        shell: bash
+      - name: "Regenerate FppTest UT build cache (Direct Port Calls)"
+        if: always()
+        working-directory: ./FppTestProject
+        run: |
+          fprime-util purge --force
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+        shell: bash
+      - name: "Build FppTest UTs (Direct Port Calls)"
+        if: always()
+        working-directory: ./FppTestProject/FppTest
+        run: fprime-util build --ut -j4
+        shell: bash
+      - name: "Run FppTest UTs (Direct Port Calls)"
+        if: always()
+        working-directory: ./FppTestProject/FppTest
+        run: fprime-util check --pass-through --output-on-failure
+        shell: bash
+      - name: "Generate Ref Deployment"
+        if: always()
+        working-directory: ./TestDeploymentsProject
+        run: fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+        shell: bash
+      - name: "Run fpp-to-json on Ref topology"
+        if: always()
+        working-directory: ./TestDeploymentsProject/Ref/Top
+        run: |
+          DEPENDENCIES=$(fpp-depend ../../build-fprime-automatic-native/locs.fpp *.fpp)
+          fpp-to-json ${DEPENDENCIES} *.fpp
+        shell: bash
+      - name: "Archive Logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: FppTest-Logs
+          path: ./FppTestProject/build-fprime-automatic-native-ut/Testing/Temporary/*.log
+          retention-days: 5
+
+  # RHEL8 container verification: framework and Ref builds share one
+  # container and one setup. UTs run nightly only (they duplicate the
+  # Linux UTs above except for the RHEL8 libc/toolchain).
+  rhel8:
+    name: "RHEL8"
+    if: github.event_name != 'push'
+    timeout-minutes: 90
+    runs-on: ubuntu-latest
+    container:
+      image: redhat/ubi8:8.10
+    steps:
+      - name: "Install dependencies"
+        run: |
+          dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
+          git config --global --add safe.directory ${GITHUB_WORKSPACE}
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - uses: ./.github/actions/setup
+      - name: Build Framework
+        run: |
+          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util build --all -j4
+      - name: Build Ref
+        run: |
+          cd TestDeploymentsProject
+          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util build -j4
+      # Some UTs require a non-root user to run properly due to using file permissions in tests
+      # This issue shows up on RHEL8 containers
+      - name: Setup test environment for permission tests
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          useradd -m -u 1001 -s /bin/bash test-user
+          chown -R test-user:test-user .
+      - name: UT Build and Run
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          su test-user -c "
+            fprime-util generate --ut &&
+            fprime-util build --all --ut -j4 &&
+            fprime-util check --all -j4 --pass-through --output-on-failure
+          "
+
+  # macOS build + unit tests: nightly only (macOS runners are the queue
+  # bottleneck; Linux coverage gates PRs).
+  build-and-test-macos:
+    name: "Build & UTs [macOS]"
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 60
+    runs-on: macos-latest
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Framework"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          build-all: "true"
+          jobs: "2"
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          jobs: "2"
+
+  tsan:
+    name: "TSan UTs"
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Run Unit Tests (TSan)"
+        uses: nasa/fprime-actions/run-tsan-tests@devel
+        with:
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+          tsan-options: "halt_on_error=1 history_size=5 suppressions=${{ github.workspace }}/.github/tsan-suppressions.txt"
+
+  timing-check:
+    name: "Timing Check"
+    runs-on: ubuntu-latest
+    needs: [build-and-test, fpp, rhel8, build-and-test-macos, tsan]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: "Check Job Timings"
+        uses: nasa/fprime-actions/timing-check@devel

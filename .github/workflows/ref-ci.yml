@@ -1,0 +1,138 @@
+# Build, unit test, and integration test verification for the F' Ref
+# deployment (TestDeploymentsProject).
+#
+# Consolidates the former Ref workflow's build / UT / integration jobs into a
+# single job that shares one checkout and tool setup, building the binary in
+# place instead of shuttling artifacts between jobs.
+#
+# Scheduling policy:
+#   - pull_request: Linux job only
+#   - nightly cron (2:00 AM Pacific): Linux + macOS
+
+name: "Ref CI"
+
+on:
+  pull_request:
+    branches: [ devel, release/** ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '.github/actions/spelling/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
+  schedule:
+    - cron: "0 10 * * *"  # 2:00 AM Pacific (PST)
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: "Runner label (e.g. ubuntu-22.04, macos-latest)"
+        required: false
+        default: ""
+      jobs:
+        description: "Parallel job count: a number, 'random' (1-32), or empty to omit -j"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  ref:
+    name: "Build, UTs & Integration [Linux]"
+    timeout-minutes: 90
+    runs-on: ${{ github.event.inputs.runner || 'ubuntu-22.04' }}
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Ref"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Install valgrind"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y valgrind
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "TestDeploymentsProject"
+          test-working-directory: "TestDeploymentsProject"
+          binary: "build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          valgrind: "true"
+
+  ref-macos:
+    name: "Build, UTs & Integration [macOS]"
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    timeout-minutes: 90
+    runs-on: macos-latest
+    steps:
+      - name: "Checkout F' Repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: "Setup F' Tools"
+        uses: nasa/fprime-actions/setup@devel
+        with:
+          location: ${{ github.workspace }}
+      - name: "Build Ref"
+        uses: nasa/fprime-actions/build@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          jobs: "2"
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          jobs: "2"
+      - name: "Install coreutils (macOS)"
+        run: brew install coreutils
+      - name: "Integration Tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          gds-working-directory: "TestDeploymentsProject"
+          test-working-directory: "TestDeploymentsProject"
+          binary: "build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          valgrind: "false"
+
+  timing-check:
+    name: "Timing Check"
+    runs-on: ubuntu-latest
+    needs: [ref, ref-macos]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: "Check Job Timings"
+        uses: nasa/fprime-actions/timing-check@devel
