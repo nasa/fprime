@@ -160,6 +160,18 @@ void GenericHubTester ::test_command_dispatch() {
     ASSERT_from_cmdDispOut_SIZE(1);
     ASSERT_from_cmdDispOut(0, buffer, 279);
     clearFromPortHistory();
+
+    // A maximum-size command payload must round-trip without overflow
+    buffer.resetSer();
+    for (U32 i = 0; i < FW_COM_BUFFER_MAX_SIZE; i++) {
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U8>(STest::Pick::any())));
+    }
+    invoke_to_cmdDispIn(0, buffer, 280);
+
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_cmdDispOut_SIZE(1);
+    ASSERT_from_cmdDispOut(0, buffer, 280);
+    clearFromPortHistory();
 }
 
 void GenericHubTester ::test_command_response() {

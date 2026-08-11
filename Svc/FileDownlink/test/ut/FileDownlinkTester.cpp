@@ -323,8 +323,7 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     this->buffers[buffers_index] = data;  // NOLINT(clang-analyzer-security.ArrayBound)
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
-    Fw::Buffer buffer_new = buffer;
-    buffer_new.setData(data);
+    Fw::Buffer buffer_new(data, buffer.getSize(), buffer.getContext());
     pushFromPortEntry_bufferSendOut(buffer_new);
     invoke_to_bufferReturn(0, buffer);
 }

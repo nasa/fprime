@@ -84,11 +84,10 @@ void FprimeFramerTester ::testNominalFraming() {
 
 Fw::Buffer FprimeFramerTester::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
-    this->m_buffer.setData(this->m_buffer_slot);
     // When m_useOversizedAlloc is set, simulate a pool allocator returning
     // a larger block than requested — the component must trim it before sending
     FwSizeType allocatedSize = this->m_useOversizedAlloc ? sizeof(this->m_buffer_slot) : size;
-    this->m_buffer.setSize(allocatedSize);
+    this->m_buffer.set(this->m_buffer_slot, allocatedSize);
     ::memset(this->m_buffer.getData(), 0, allocatedSize);
     return this->m_buffer;
 }
