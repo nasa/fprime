@@ -16,7 +16,7 @@ Drv/Ip/IpSocket.hpp                            1       1   100%
 Drv/Ip/SocketComponentHelper.cpp             218     199    91%   62,74-75,114,132-134,141,192,234-235,289,311-313,353,368-369,372
 Drv/Ip/TcpClientSocket.cpp                    30      23    76%   55,70-71,75-76,81-82
 Drv/Ip/TcpServerSocket.cpp                    57      42    73%   53,66-67,71-72,77-78,84-85,90-91,113,119,123-124
-Drv/Ip/UdpSocket.cpp                         120      93    77%   49,57-58,85,92-93,106,112,123,138,146-147,164-166,170-171,183-184,192,254,256-257,260-262,264
+Drv/Ip/UdpSocket.cpp                         122      93    76%   49,57-58,85,92-93,106,112,123,138,146-147,164-166,170-171,183-184,192,218-219,260,262-263,266-268,270
 Drv/LinuxGpioDriver/LinuxGpioDriver.cpp      203       0     0%   28-51,53,58-59,61,64-72,74,80-81,83-84,86-91,93,97-101,103,106-120,122,125-127,129,135,140,142-145,147-150,152-157,159,162,166,168-171,173-181,183,186,190-193,197-200,203-210,213-217,219-226,231-232,234,236-237,239,242-246,249-251,253-255,257-258,260-267,269-270,273-274,276-284,286,289-290,292,304,307,309-311,313,315-323,325-326,329,334-335,338
 Drv/LinuxGpioDriver/LinuxGpioDriverCommon.cpp
                                               35       0     0%   22,24,28-31,33-42,44-46,48-51,53-55,57-61,63-66
@@ -40,7 +40,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           56      56   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -142,7 +142,7 @@ googletest/googletest/include/gtest/internal/gtest-port.h
                                               15       8    53%   904,910-911,967,1065-1066,2102
 Os/Condition.cpp                              25      24    96%   14
 Os/Condition.hpp                               2       2   100%
-Os/Console.cpp                                40      34    85%   39-41,52-54
+Os/Console.cpp                                42      36    85%   39-41,52-54
 Os/Console.hpp                                 2       2   100%
 Os/CountingSemaphore.cpp                      20      17    85%   32-34
 Os/CountingSemaphore.hpp                       2       2   100%
@@ -152,18 +152,18 @@ Os/Delegate.hpp                               12      12   100%
 Os/DelegateRawTime.cpp                        58      55    94%   79,91-92
 Os/Directory.cpp                              91      76    83%   26-28,85,89,102,108,117,121,134,140,146,149-151
 Os/Directory.hpp                               2       2   100%
-Os/File.cpp                                  207     178    86%   52-53,81-83,108,130,162-166,168-169,283-284,286-287,292-294,305-307,311-312,330-332
+Os/File.cpp                                  211     182    86%   59-60,88-90,115,137,169-173,175-176,290-291,293-294,299-301,312-314,318-319,337-339
 Os/File.hpp                                    1       1   100%
 Os/FilePathUtils.cpp                         104      96    92%   33,36,40,44,83,168,186,192
 Os/FileSystem.cpp                            194     163    84%   133,159,163,169,184,193,201,217-219,221,235,248-253,267-272,276-280,306,310
 Os/FileSystem.hpp                              2       2   100%
 Os/Generic/DefaultPriorityMemQueue.cpp         3       0     0%   16-18
 Os/Generic/DefaultPriorityQueue.cpp            3       3   100%
-Os/Generic/PriorityMemQueue.cpp              345     312    90%   79-80,109-110,122-123,189-191,195-196,212,218-219,222-223,227-229,231,234-235,237,245,423,433-434,459,484,525-526,595,752
+Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,123-124,190-192,196-197,213,219-220,223-224,228-230,232,235-236,238,246,424,434-435,460,485,531-532,601,767
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     157    92%   21-26,28,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -192,7 +192,7 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      82    46%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
@@ -243,7 +243,7 @@ Os/Task.cpp                                  137     129    94%   84,91-93,182-1
 Os/Task.hpp                                    4       4   100%
 Os/TaskString.hpp                             16      16   100%
 Os/ValidatedFile.cpp                          21      13    61%   31-34,44-45,52-53
-Os/ValidateFileCommon.cpp                    141     101    71%   23,38,69,77,80,104,107,121-122,125-136,138,141-142,145-146,149-156,158-160,163,180,187
+Os/ValidateFileCommon.cpp                    141     100    70%   23,38,53,71,79,82,106,109,123-124,127-138,140,143-144,147-148,151-158,160-162,165,182,189
 Svc/ActivePhaser/ActivePhaser.cpp             96      96   100%
 Svc/ActiveRateGroup/ActiveRateGroup.cpp       55      46    83%   43-45,48-50,52-53,79
 Svc/ActiveTextLogger/ActiveTextLogger.cpp
@@ -254,7 +254,7 @@ Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.cpp
 Svc/BufferAccumulator/ArrayFIFOBuffer.cpp
                                               36      32    88%   45,65,89-90
 Svc/BufferAccumulator/BufferAccumulator.cpp
-                                             116     102    87%   115-116,118,151-153,162,164-166,172-175
+                                             117     103    88%   117-118,120,153-155,164,166-168,174-177
 Svc/BufferLogger/BufferLogger.cpp             43      35    81%   62,64,89-92,94,96
 Svc/BufferLogger/BufferLoggerFile.cpp        113     108    95%   60,117-118,188,190
 Svc/BufferManager/BufferManagerComponentImpl.cpp
@@ -315,7 +315,7 @@ Svc/Ccsds/SdlsSaRouter/SdlsSaRouter.cpp       50      50   100%
 Svc/Ccsds/SpacePacketDeframer/SpacePacketDeframer.cpp
                                               56      51    91%   67-69,71-72
 Svc/Ccsds/SpacePacketFramer/SpacePacketFramer.cpp
-                                              38      37    97%   57
+                                              44      38    86%   41-43,45-46,66
 Svc/Ccsds/TcDeframer/TcDeframer.cpp           59      56    94%   55-57
 Svc/Ccsds/TestUtils/main.cpp                   2       2   100%
 Svc/Ccsds/TestUtils/TestUtils.cpp             15      15   100%
@@ -334,7 +334,7 @@ Svc/CmdSequencer/Sequence.cpp                 43      41    95%   70-71
 Svc/CmdSplitter/CmdSplitter.cpp               19      19   100%
 Svc/ComAggregator/ComAggregator.cpp           70      67    95%   112,114-115
 Svc/ComLogger/ComLogger.cpp                  117     114    97%   119,121-122
-Svc/ComQueue/ComQueue.cpp                    244     239    98%   151-152,258-260
+Svc/ComQueue/ComQueue.cpp                    245     240    98%   153-154,260-262
 Svc/ComRetry/ComRetry.cpp                     50      50   100%
 Svc/ComSplitter/ComSplitter.cpp               12      12   100%
 Svc/ComStub/ComStub.cpp                       68      67    98%   34
@@ -362,9 +362,9 @@ Svc/FileUplink/File.cpp                       25      23    92%   25,48
 Svc/FileUplink/FileUplink.cpp                131     118    90%   46-48,58-60,69,85-87,93,95-96
 Svc/FileUplink/FileUplink.hpp                 16      16   100%
 Svc/FileUplink/Warnings.cpp                   29      29   100%
-Svc/FileWorker/FileWorker.cpp                318     288    90%   75-78,167-170,260,263-265,267-269,271-273,324,335,429,475,494-497,544-547
+Svc/FileWorker/FileWorker.cpp                321     288    89%   75-78,167-170,260,263-265,267-269,271,274-275,277-279,330,341,435,481,500-503,550-553
 Svc/FprimeDeframer/FprimeDeframer.cpp         54      54   100%
-Svc/FprimeFramer/FprimeFramer.cpp             31      31   100%
+Svc/FprimeFramer/FprimeFramer.cpp             37      32    86%   41-43,45-46
 Svc/FprimeRouter/FprimeRouter.cpp             57      55    96%   48,68
 Svc/FpySequencer/FpySequencer.cpp            250     201    80%   265-267,336-339,437,439-445,448,450-452,454-461,464,466-472,475-482,492-495,508-509
 Svc/FpySequencer/FpySequencer.hpp              2       2   100%
@@ -421,5 +421,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      22886   19153    83%
+TOTAL                                      22918   19166    83%
 ------------------------------------------------------------------------------
