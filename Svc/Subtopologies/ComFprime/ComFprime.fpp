@@ -43,6 +43,7 @@ module ComFprime {
     phase Fpp.ToCpp.Phases.configObjects """
         Svc::FrameDetectors::FprimeFrameDetector frameDetector;
         """
+
     phase Fpp.ToCpp.Phases.configComponents """
         ComFprime::frameAccumulator.configure(
             ConfigObjects::ComFprime_frameAccumulator::frameDetector,
@@ -61,6 +62,7 @@ module ComFprime {
     phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;
         """
+
     phase Fpp.ToCpp.Phases.configComponents """
         memset(&ConfigObjects::ComFprime_commsBufferManager::bins, 0, sizeof(ConfigObjects::ComFprime_commsBufferManager::bins));
         ConfigObjects::ComFprime_commsBufferManager::bins.bins[0].bufferSize = ComFprimeConfig::BuffMgr::commsBuffSize;
@@ -158,6 +160,7 @@ module ComFprime {
     # ----------------------------------------------------------------------
     # Topology ports
     # ----------------------------------------------------------------------
+
     # Command routing
     @ Output port sending routed command packets to the command dispatcher
     port commandOut = fprimeRouter.commandOut

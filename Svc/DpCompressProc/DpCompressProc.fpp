@@ -7,6 +7,7 @@ module Svc {
 
     @ Chunk size to use when passing data to the compression backend
     param CHUNK_SIZE: FwSizeStoreType default 32 * 1024
+
     @ Number of bytes to use in a compression chunk
     param ENABLE: Fw.Enabled default Fw.Enabled.ENABLED
 

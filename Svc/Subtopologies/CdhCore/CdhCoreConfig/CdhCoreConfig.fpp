@@ -1,6 +1,7 @@
 module CdhCoreConfig {
   #Base ID for the CdhCore Subtopology, all components are offsets from this base ID
   constant BASE_ID = 0x01000000
+
   module QueueSizes {
     constant cmdDisp = 10
     constant events  = 10

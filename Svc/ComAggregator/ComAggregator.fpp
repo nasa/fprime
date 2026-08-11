@@ -63,6 +63,7 @@ module Svc {
     choice IS_GOOD_STATUS {
       if isGood do { doClear } enter FILL else enter WAIT_STATUS
     }
+
     @ Wait for com status from downstream
     state WAIT_STATUS {
       # ASSERT: fill cannot happen before initial 'status'

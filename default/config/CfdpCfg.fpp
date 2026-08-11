@@ -11,6 +11,7 @@ module Svc {
 
       @ File path size used for CFDP file system operations
       constant MaxFilePathSize = 200
+
       @ @brief Entity id size
       @
       @ @par Description:

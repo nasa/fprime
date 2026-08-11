@@ -2,6 +2,7 @@ module DataProducts {
   # ----------------------------------------------------------------------
   # Active Components
   # ----------------------------------------------------------------------
+
   instance dpCat: Svc.DpCatalog base id DataProductsConfig.BASE_ID + 0x00000 \
     queue size DataProductsConfig.QueueSizes.dpCat \
     stack size DataProductsConfig.StackSizes.dpCat \
@@ -45,9 +46,11 @@ module DataProducts {
             DataProducts::dpBufferAccumulator.deallocateQueue(DataProducts::Allocation::memAllocator);
         """
     }
+
   # ----------------------------------------------------------------------
   # Passive Components
   # ----------------------------------------------------------------------
+
   instance dpBufferManager: Svc.BufferManager base id DataProductsConfig.BASE_ID + 0x03000 {
     phase Fpp.ToCpp.Phases.configObjects """
         Svc::BufferManager::BufferBins bins;

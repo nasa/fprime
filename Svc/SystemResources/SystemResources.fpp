@@ -7,6 +7,7 @@ module Svc {
   passive component SystemResources {
     @ Run port
     guarded input port run: [1] Svc.Sched
+
     # ----------------------------------------------------------------------
     # Special ports
     # ----------------------------------------------------------------------

@@ -1,10 +1,12 @@
 module ComCcsdsConfig {
   #Base ID for the ComCcsds Subtopology, all components are offsets from this base ID
   constant BASE_ID = 0x02000000
+
   module QueueSizes {
     constant comQueue   = 50
     constant aggregator = 10
   }
+
   module StackSizes {
     constant comQueue   = 64 * 1024
     constant aggregator = 64 * 1024

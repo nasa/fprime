@@ -4,6 +4,7 @@ module Svc {
     # ----------------------------------------------------------------------
     # Types
     # ----------------------------------------------------------------------
+
     struct GroupConfig {
       enabled: Fw.Enabled      @< Enable / Disable Telemetry Output
       forceEnabled: Fw.Enabled @< Force Enable / Disable Telemetry Output
@@ -68,6 +69,7 @@ module Svc {
 
     @ Time get
     time get port timeGetOut
+
     @ Parameter get port
     param get port paramGetOut
 
@@ -105,6 +107,7 @@ module Svc {
       enable: Fw.Enabled        @< Section enabled or disabled
     ) \
       opcode 3
+
     @ Force telemetering a group on a section, even if disabled
     async command FORCE_GROUP(
       section: TelemetrySection @< Section grouping
@@ -181,6 +184,7 @@ module Svc {
       severity warning low \
       id 5 \
       format "Section {} is unconfigurable and cannot be set to {}"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------

@@ -4,6 +4,7 @@ module Svc {
     DISABLED = 0 @< verbosity disabled
     ENABLED  = 1 @< verbosity enabled
   }
+
   @ An enumeration for Version Type
   enum VersionType: U8 {
     PROJECT   = 0 @< project version
@@ -24,11 +25,13 @@ module Svc {
     ##############################################################################
     #### Customizing version component ####
     ##############################################################################
+
     @ Mutexed Port to get values
     guarded input port getVersion: Svc.Version
 
     @ Mutexed Port to set values
     guarded input port setVersion: Svc.Version
+
     @ A command to enable or disable Event verbosity and Telemetry
     guarded command ENABLE(
       enable: VersionEnabled @< whether or not Version telemetry is enabled
@@ -64,6 +67,7 @@ module Svc {
       severity activity low \
       id 2 \
       format "Library Versions: [{}]"
+
     @ Version of the git repository.
     event CustomVersions(
       version_enum: VersionCfg.VersionEnum @< The enum to access
