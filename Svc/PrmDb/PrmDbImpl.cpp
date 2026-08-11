@@ -412,7 +412,6 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
                                                       PrmDbType dbType) {
     Fw::String dbString = getDbString(dbType);
 
-    // load file. FIXME: Put more robust file checking, such as a CRC.
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::OPEN, 0, stat);
