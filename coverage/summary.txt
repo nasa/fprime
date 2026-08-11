@@ -30,7 +30,7 @@ Drv/Ports/DataTypes/DataBuffer.cpp            24       0     0%   6-9,11,13,17-2
 Drv/TcpClient/TcpClientComponentImpl.cpp      41      33    80%   56,77-79,83-85,88
 Drv/TcpServer/TcpServerComponentImpl.cpp      74      63    85%   62,104-106,129-131,135-137,140
 Drv/Udp/UdpComponentImpl.cpp                  48      33    68%   41-42,63-64,66,85-90,94-96,99
-Fw/Buffer/Buffer.cpp                          97      81    83%   120,124,128,138,144,148,158,160-162,166-171
+Fw/Buffer/Buffer.cpp                         150     130    86%   180,184,188,192,196,206,212,216,220,224,234,236-238,242-247
 Fw/Cmd/CmdPacket.cpp                          24      21    87%   21,23-24
 Fw/Com/ComPacket.cpp                          10      10   100%
 Fw/Comp/ActiveComponentBase.cpp               62       6     9%   11,13,15,30-31,35,39,42,48-52,54-59,61-62,65-66,69-70,72,77,80-83,86-88,90,93-96,98-102,104,106-108,112-113,115,117,119-120,122,127
@@ -40,7 +40,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      38   100%
+Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
 Fw/DataStructures/ExternalArray.hpp           56      56   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -163,7 +163,7 @@ Os/Generic/PriorityMemQueue.cpp              352     319    90%   79-80,110-111,
 Os/Generic/PriorityMemQueue.hpp                7       7   100%
 Os/Generic/PriorityQueue.cpp                 163     136    83%   77,79-80,90-91,93-95,105-107,109-112,122-125,127-131,191,256-257
 Os/Generic/PriorityQueue.hpp                   1       1   100%
-Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,194,248-249,253,318,346
+Os/Generic/Types/AtomicQueue.cpp             169     156    92%   21-26,28,248-249,253,318,343,346
 Os/Generic/Types/AtomicQueue.hpp               4       4   100%
 Os/Generic/Types/MaxHeap.cpp                 107     107   100%
 Os/IntervalTimer.cpp                          15      14    93%   26
@@ -192,14 +192,14 @@ Os/Posix/DefaultTask.cpp                       2       2   100%
 Os/Posix/Directory.cpp                        41      38    92%   20-21,83
 Os/Posix/Directory.hpp                         1       1   100%
 Os/Posix/error.cpp                           176      82    46%   37,39-40,54-56,61,64-68,73-85,87-89,91-98,109-111,115-120,124-126,131-142,144,153-155,159-164,175-183,194-199,207-209,214-219
-Os/Posix/File.cpp                            172     131    76%   62-64,66,113-115,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
+Os/Posix/File.cpp                            172     134    77%   62-64,66,123-125,169-170,182,198-200,202-203,205-207,210-213,215-216,218-219,224,226,238,246,255-256,271,283,312,325,337-338
 Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
 Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            141     108    76%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,265-267,271-272,274
+Os/Posix/Task.cpp                            141     109    77%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,266-267,271-272,274
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      70    90%   66,84,121,139-142
 Os/Queue.hpp                                   4       4   100%
@@ -265,7 +265,7 @@ Svc/Ccsds/AosFramer/AosFramer.cpp            190     190   100%
 Svc/Ccsds/ApidManager/ApidManager.cpp         20      20   100%
 Svc/Ccsds/ApidManager/ApidManager.hpp          1       1   100%
 Svc/Ccsds/CcsdsSdlsDeframer/CcsdsSdlsDeframer.cpp
-                                              30      30   100%
+                                              29      29   100%
 Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.cpp
                                               55      55   100%
 Svc/Ccsds/CfdpManager/CfdpManager.cpp        345     336    97%   30,117-119,223-225,238-239
@@ -347,14 +347,14 @@ Svc/DpZLibCompressor/DpZLibCompressor.cpp
                                               79      74    93%   102-104,125-126
 Svc/DpZLibCompressor/DpZLibCompressor.hpp
                                                2       2   100%
-Svc/EventManager/EventManager.cpp             72      67    93%   91-92,148,150-151
+Svc/EventManager/EventManager.cpp             73      66    90%   74,76,99-100,156,158-159
 Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
                                                3       0     0%   22-23,25
 Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
                                                6       0     0%   26,28-32
 Svc/FileDispatcher/FileDispatcher.cpp         41      41   100%
 Svc/FileDownlink/File.cpp                     33      26    78%   43-44,48-49,59,66,70
-Svc/FileDownlink/FileDownlink.cpp            304     257    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,326-328,365-366,476-478,481
+Svc/FileDownlink/FileDownlink.cpp            302     255    84%   62-64,102-103,123-124,126-127,137,143-145,151,187-188,190-191,201,222-223,225-226,236,257-263,265,269,307-310,312,326-328,365-366,476-478,481
 Svc/FileDownlink/FileDownlink.hpp             33      33   100%
 Svc/FileDownlink/Warnings.cpp                 16       8    50%   20-23,25-28
 Svc/FileManager/FileManager.cpp              167     147    88%   72-75,156-158,200-201,206,208-209,254,268,275-276,278-281
@@ -397,15 +397,15 @@ Svc/PassThroughRouter/PassThroughRouter.cpp
                                                9       9   100%
 Svc/PolyDb/PolyDb.cpp                         17      17   100%
 Svc/PosixTime/PosixTime.cpp                    7       7   100%
-Svc/PrmDb/PrmDbImpl.cpp                      349     322    92%   30,88-90,114,116-117,279-281,287-289,302-304,310-312,339,444-445,569-570,577,605-606
+Svc/PrmDb/PrmDbImpl.cpp                      360     334    92%   31,94-96,120,122-123,285-287,293-295,308-310,316-318,462-463,587-588,595,623-624
 Svc/RateGroupDriver/RateGroupDriver.cpp       22      22   100%
 Svc/RateGroupDriver/RateGroupDriver.hpp        1       1   100%
 Svc/SeqDispatcher/SeqDispatcher.cpp          104      83    79%   56,61-63,65,69-71,78,81-84,86,104,129-130,132-134,137
 Svc/StaticMemory/StaticMemoryComponentImpl.cpp
                                               20      20   100%
 Svc/SystemResources/SystemResources.cpp       76      75    98%   37
-Svc/TlmChan/TlmChan.cpp                      179     144    80%   100,130,132,134,137-141,143,146,150-151,156,159-160,198-200,206-209,211-213,221-223,281,330-331,347,366-367
-Svc/TlmPacketizer/TlmPacketizer.cpp          297     274    92%   151,278,280-281,319,331,403,439-440,474-475,490-491,506-507,524-525,588-589,592,603-604,606
+Svc/TlmChan/TlmChan.cpp                      182     145    79%   100,130,132,134,137-141,143,146,150-151,156,159-160,198-200,206-209,211-213,221-223,268-269,290,339-340,356,375-376
+Svc/TlmPacketizer/TlmPacketizer.cpp          299     276    92%   151,283,285-286,324,336,408,444-445,479-480,495-496,511-512,529-530,593-594,597,608-609,611
 Svc/Types/EventSeverityFilter/EventSeverityFilter.cpp
                                               46      45    97%   41
 Svc/Version/Version.cpp                      157     151    96%   106-108,231,233-234
@@ -421,5 +421,5 @@ Utils/TokenBucket.cpp                         50      50   100%
 Utils/Types/CircularBuffer.cpp                93      93   100%
 Utils/Types/Queue.cpp                         59      56    94%   48,54,87
 ------------------------------------------------------------------------------
-TOTAL                                      22918   19166    83%
+TOTAL                                      22985   19229    83%
 ------------------------------------------------------------------------------
