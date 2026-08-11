@@ -37,6 +37,7 @@ A typical system using data products includes:
     - `Svc.DpWriter` for storing products to disk
     - `Svc.DpCatalog` for tracking products
     - `Svc.FileDownlink` for downlinking products
+    - `Svc.DpCompressProc` with `Svc.DpZLibCompressor` for optional on-board compression
 
 The producer itself is intentionally simple: it requests a container, fills it with records, and sends it off.  To model a producer, we need to define the following for the component:
 
