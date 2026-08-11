@@ -54,19 +54,6 @@ class LinearBufferTemplate final : public LinearBufferBase {
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead") { return this->getCapacity(); }
 
-    //! \brief Repair the internal buffer address to point at this object's own storage
-    //!
-    //! LinearBufferBase stores m_buffAddr as a self-pointer into m_bufferData. Raw byte
-    //! copies of this object (e.g. queue enqueue/dequeue via memcpy) leave m_buffAddr
-    //! pointing at the source object's storage. This restores the invariant that
-    //! m_buffAddr references this instance's m_bufferData; it must be called after any
-    //! such raw relocation before the buffer is used.
-    //! NOTE: This function is DEPRECATED! It is here only as a bridge while ComQueue is being
-    //! fixed and MUST NOT be used in any new code!
-    DEPRECATED(void recomputeBuffAddr(), "Only used after a buffer memcpy, which is anti pattern") {
-        this->setBuff(this->m_bufferData, this->getSize());
-    }
-
   private:
     U8 m_bufferData[MaxSize];
 };

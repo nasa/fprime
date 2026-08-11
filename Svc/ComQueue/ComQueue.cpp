@@ -453,16 +453,16 @@ void ComQueue::processQueue() {
             // Dequeue is reading the whole persisted Fw::ComBuffer object from the queue's storage.
             // thus it takes an address to the object to fill and the size of the actual object.
             FW_ASSERT(this->m_buffer_state.load() == OWNED);
-            auto dequeue_status =
-                queue.dequeue(reinterpret_cast<U8*>(&this->m_dequeued_com_buffer), sizeof(this->m_dequeued_com_buffer));
+
+            // Create a temporary buffer to receive the dequeued data
+            Fw::ComBuffer temp_buffer;
+            auto dequeue_status = queue.dequeue(reinterpret_cast<U8*>(&temp_buffer), sizeof(temp_buffer));
             FW_ASSERT(dequeue_status == Fw::SerializeStatus::FW_SERIALIZE_OK,
                       static_cast<FwAssertArgType>(dequeue_status));
-            // The raw byte copy above leaves the ComBuffer's self-pointer aimed at the source
-            // object's storage; repair it to reference m_dequeued_com_buffer's own buffer.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-            this->m_dequeued_com_buffer.recomputeBuffAddr();
-#pragma GCC diagnostic pop
+
+            // Use assignment operator to properly copy the buffer, which correctly sets m_buffAddr
+            this->m_dequeued_com_buffer = temp_buffer;
+
             this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
             Fw::Buffer buffer;
