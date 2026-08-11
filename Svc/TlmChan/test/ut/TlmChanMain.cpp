@@ -48,6 +48,14 @@ TEST(TlmChanTest, OffNominal) {
     tester.runOffNominal();
 }
 
+TEST(TlmChanTest, UpdatedFlagClearGuarded) {
+    TEST_CASE(107.2.2, "Run guards each post-serialization updated-flag clear");
+    COMMENT("Block Run after PktSend and verify it cannot complete while the guarded-port mutex is held.");
+
+    Svc::TlmChanTester tester;
+    tester.runUpdatedFlagClearGuarded();
+}
+
 TEST(TlmChanTest, ProcGuardTest) {
     TEST_CASE(107.3.1, "Off-nominal Run_handler processing limit (per epoch)");
     COMMENT("Verify Run_handler defers entries beyond TLMCHAN_MAX_ENTRIES_PER_RUN to next epoch.");

@@ -1,0 +1,165 @@
+// ======================================================================
+// \title  PduHeader.hpp
+// \author Brian Campuzano
+// \brief  hpp file for CFDP PDU Header
+// ======================================================================
+
+#ifndef Svc_Ccsds_Cfdp_PduHeader_HPP
+#define Svc_Ccsds_Cfdp_PduHeader_HPP
+
+#include <Fw/Buffer/Buffer.hpp>
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Serializable.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/ClassEnumAc.hpp>
+#include <Svc/Ccsds/CfdpManager/Types/PduTypeEnumEnumAc.hpp>
+#include <config/EntityIdAliasAc.hpp>
+#include <config/TransactionSeqAliasAc.hpp>
+
+namespace Svc {
+namespace Ccsds {
+namespace Cfdp {
+
+// CFDP PDU Type
+enum class PduType : U8 {
+    PDU_TYPE_DIRECTIVE = 0,  // File directive PDU
+    PDU_TYPE_FILE_DATA = 1   // File data PDU
+};
+
+// CFDP PduDirection
+enum class PduDirection : U8 {
+    DIRECTION_TOWARD_RECEIVER = 0,  // Toward file receiver
+    DIRECTION_TOWARD_SENDER = 1     // Toward file sender
+};
+
+// CFDP CRC Flag
+enum class CrcFlag : U8 {
+    CRC_NOT_PRESENT = 0,  // CRC not present
+    CRC_PRESENT = 1       // CRC present
+};
+
+// CFDP Large File Flag
+enum class LargeFileFlag : U8 {
+    LARGE_FILE_32_BIT = 0,  // 32-bit file size
+    LARGE_FILE_64_BIT = 1   // 64-bit file size
+};
+
+//! The type of a PDU header (common to all PDUs)
+class PduHeader {
+  private:
+    //! PDU type (derived from directive code or file data flag)
+    PduTypeEnum::T m_type;
+
+    //! CFDP version (should be 1)
+    U8 m_version;
+
+    //! PDU type
+    PduType m_pduType;
+
+    //! PduDirection
+    PduDirection m_direction;
+
+    //! Transmission mode
+    Cfdp::Class::T m_class;
+
+    //! CRC flag
+    CrcFlag m_crcFlag;
+
+    //! Large file flag
+    LargeFileFlag m_largeFileFlag;
+
+    //! Segmentation control
+    U8 m_segmentationControl;
+
+    //! Segment metadata flag
+    U8 m_segmentMetadataFlag;
+
+    //! PDU data length (excluding header)
+    U16 m_pduDataLength;
+
+    //! Source entity ID
+    EntityId m_sourceEid;
+
+    //! Transaction sequence number
+    TransactionSeq m_transactionSeq;
+
+    //! Destination entity ID
+    EntityId m_destEid;
+
+  public:
+    //! Header size (variable due to EID/TSN lengths)
+    enum { MIN_HEADERSIZE = 7 };  // Minimum fixed portion
+
+    //! Initialize a PDU header
+    void initialize(PduTypeEnum::T type,
+                    PduDirection direction,
+                    Cfdp::Class::T txmMode,
+                    EntityId sourceEid,
+                    TransactionSeq transactionSeq,
+                    EntityId destEid);
+
+    //! Compute the buffer size needed to hold this Header
+    U32 getBufferSize() const;
+
+    //! Calculate the number of bytes needed to encode a value
+    //! @param value The value to encode
+    //! @return Number of bytes needed (1, 2, 4, or 8)
+    static U8 getValueEncodedSize(U64 value);
+
+    //! Initialize this Header from a SerialBufferBase
+    Fw::SerializeStatus fromSerialBuffer(Fw::SerialBufferBase& serialBuffer);
+
+    //! Write this Header to a SerialBufferBase
+    Fw::SerializeStatus toSerialBuffer(Fw::SerialBufferBase& serialBuffer) const;
+
+    //! Get the PDU type
+    PduTypeEnum::T getType() const { return this->m_type; }
+
+    //! Get the direction
+    PduDirection getDirection() const { return this->m_direction; }
+
+    //! Get the transmission mode
+    Cfdp::Class::T getTxmMode() const { return this->m_class; }
+
+    //! Get the source entity ID
+    EntityId getSourceEid() const { return this->m_sourceEid; }
+
+    //! Get the transaction sequence number
+    TransactionSeq getTransactionSeq() const { return this->m_transactionSeq; }
+
+    //! Get the destination entity ID
+    EntityId getDestEid() const { return this->m_destEid; }
+
+    //! Get PDU data length
+    U16 getPduDataLength() const { return this->m_pduDataLength; }
+
+    //! Set PDU data length (used during encoding)
+    void setPduDataLength(U16 length) { this->m_pduDataLength = length; }
+
+    //! Get the large file flag
+    LargeFileFlag getLargeFileFlag() const { return this->m_largeFileFlag; }
+
+    //! Check if segment metadata is present
+    bool hasSegmentMetadata() const { return this->m_segmentMetadataFlag != 0; }
+
+    //! Set the large file flag (used for testing and configuration)
+    void setLargeFileFlag(LargeFileFlag flag) { this->m_largeFileFlag = flag; }
+
+    //! Allow PDU classes to access private members
+    friend class MetadataPdu;
+    friend class FileDataPdu;
+    friend class EofPdu;
+    friend class FinPdu;
+    friend class AckPdu;
+    friend class NakPdu;
+};
+
+//! Peek at the PDU type from a buffer without consuming it
+//! @param buffer The buffer containing the PDU
+//! @return The PDU type, or NONE if the buffer is invalid
+PduTypeEnum::T peekPduType(const Fw::Buffer& buffer);
+
+}  // namespace Cfdp
+}  // namespace Ccsds
+}  // namespace Svc
+
+#endif  // Svc_Ccsds_Cfdp_PduHeader_HPP

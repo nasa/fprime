@@ -301,6 +301,9 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
         read = current_chunk_size;
         status = this->read(buffer + i, read, wait);
         if (status != File::Status::OP_OK) {
+            // Contract: on error, seek back to the original location
+            size = 0;
+            (void)this->seek_absolute(original_location);
             return status;
         }
         // EOF break out now
@@ -323,6 +326,9 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
         }
     }
     // Failed to find newline within data available
+    // Contract: on error, seek back to the original location
+    size = 0;
+    (void)this->seek_absolute(original_location);
     return Os::File::Status::OTHER_ERROR;
 }
 }  // namespace Os

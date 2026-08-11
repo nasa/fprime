@@ -47,8 +47,11 @@ void DpCatalog::configure(const Fw::ExternalArray<Fw::FileNameString>& directori
 
     // Initialize if there is enough room for at least one record and memory was allocated
     if ((this->m_memSize >= slotSize) and (this->m_memPtr != nullptr)) {
-        // set the number of available record slots based on how much memory we actually got
-        this->m_numDpSlots = this->m_memSize / slotSize;
+        // set the number of available record slots based on how much memory we actually got,
+        // never exceeding the DP_MAX_FILES working arrays even if the allocator returned more
+        // memory than was requested
+        const FwSizeType allocatedSlots = this->m_memSize / slotSize;
+        this->m_numDpSlots = (allocatedSlots < DP_MAX_FILES) ? allocatedSlots : DP_MAX_FILES;
         // Initialize the catalog
         this->resetCatalog();
         // assign pointer for the state file storage
@@ -120,6 +123,11 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
     // open the state file
     Os::File stateFile;
     Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_READ);
+    if (stat == Os::File::DOESNT_EXIST) {
+        // A missing state file is expected on first boot and is not an error
+        this->log_WARNING_LO_NoStateFile(this->m_stateFile);
+        return Fw::CmdResponse::OK;
+    }
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -321,8 +329,13 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset state file data
     this->resetStateFileData();
 
-    // load state data from file
+    // load state data from file; proceeding on a failed load would later
+    // overwrite the state file and destroy the transmit state it records
     Fw::CmdResponse response = this->loadStateFile();
+    if (response != Fw::CmdResponse::OK) {
+        this->resetStateFileData();
+        return response;
+    }
 
     // reset catalog
     this->resetCatalog();
@@ -684,15 +697,23 @@ void DpCatalog::sendNextEntry() {
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
         this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName,
                                                  static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        // No send is in flight, so no fileDone will arrive: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
                                          entry.record.get_priority());
     Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
-        // warn, but keep going since it may be an issue with this file but others could
-        // make it
         this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
+        // A rejected send produces no fileDone callback: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
     }
 }  // end sendNextEntry()
 
@@ -851,23 +872,26 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::Wait& wait,
                                                bool remainActive) {
-    Fw::CmdResponse resp = this->doCatalogXmit();
-    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
     this->m_remainActive = remainActive;
 
+    // Arm the waited response before starting: an empty catalog completes the
+    // transmit inside doCatalogXmit and must still answer a waited command
+    if (Fw::Wait::WAIT == wait) {
+        this->m_xmitCmdWait = true;
+        this->m_xmitOpCode = opCode;
+        this->m_xmitCmdSeq = cmdSeq;
+    }
+
+    Fw::CmdResponse resp = this->doCatalogXmit();
+    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
+
     if (resp != Fw::CmdResponse::OK) {
+        this->m_xmitCmdWait = false;
+        this->m_xmitOpCode = 0;
+        this->m_xmitCmdSeq = 0;
         this->cmdResponse_out(opCode, cmdSeq, resp);
-    } else {
-        if (Fw::Wait::NO_WAIT == wait) {
-            this->cmdResponse_out(opCode, cmdSeq, resp);
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        } else {
-            this->m_xmitCmdWait = true;
-            this->m_xmitOpCode = opCode;
-            this->m_xmitCmdSeq = cmdSeq;
-        }
+    } else if (Fw::Wait::NO_WAIT == wait) {
+        this->cmdResponse_out(opCode, cmdSeq, resp);
     }
 }
 

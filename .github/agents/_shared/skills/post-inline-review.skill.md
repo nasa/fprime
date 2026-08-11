@@ -133,6 +133,19 @@ Replies are used for:
   the improper-resolution body shape in the review contract §9).
 - The **Disagreement — escalating.** reply when contributor pushback
   meets the escalation criteria (review contract §11).
+- The **Concur** reply a reviewer posts on another agent's thread
+  that already covers the same issue at the same site-key (review
+  contract §6a / §9, `reply-kind: concurrence`).
+- The **Duplicate** reply the aggregator posts on a non-canonical
+  duplicate thread during its de-duplication post-pass
+  (review-summary.agent.md §5h, `reply-kind: duplicate-close`),
+  followed by `resolveReviewThread` on that thread:
+
+  ```
+  [Summary] **Duplicate** — consolidated into <link to canonical thread>.
+
+  <!-- fprime-review-summary; site-key: <skey>; v2; reply-kind: duplicate-close -->
+  ```
 
 ---
 

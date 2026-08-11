@@ -32,6 +32,14 @@ module Svc {
             format "Received buffer of size {}; deserialization of container header failed with error code {}" \
             throttle 10
 
+        @ Received buffer is too small to hold a data product packet
+        event BufferTooSmallForPacket(buffer_size: FwSizeType @< The incoming buffer size
+                                      min_size: FwSizeType @< The minimum required size
+                                      ) \
+            severity warning high \
+            format "Received buffer has size {}; minimum required size is {}" \
+            throttle 10
+
         @ Record ID used to mark compressed records in a data product
         product record CompressionRecord: U8 array
 

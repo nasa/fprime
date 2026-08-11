@@ -40,6 +40,7 @@ class HealthTester : public HealthGTestBase {
     void nominalTlm();
     void warningTlm();
     void faultTlm();
+    void equalWarnFatalCycles();
     void disableAllMonitoring();
     void disableOneMonitoring();
     void updatePingTimeout();
