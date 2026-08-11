@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-10 23:21:04</td>
+      <td>2026-08-11 01:23:30</td>
     </tr>
   </table>
 </div>
@@ -70,12 +70,12 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l19">Svc::Ccsds::Cfdp::Timer::Timer() (line 19)</a></td><td>called 26460 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l32">Svc::Ccsds::Cfdp::Timer::disableTimer() (line 32)</a></td><td>called 25251 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l37">Svc::Ccsds::Cfdp::Timer::getStatus() (line 37)</a></td><td>called 338 times</td><td>80.0%</td></tr>
-    <tr><td><a href="#l41">Svc::Ccsds::Cfdp::Timer::run() (line 41)</a></td><td>called 184 times</td><td>89.0%</td></tr>
-    <tr><td><a href="#l27">Svc::Ccsds::Cfdp::Timer::setTimer(unsigned int) (line 27)</a></td><td>called 266 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l21">Svc::Ccsds::Cfdp::Timer::~Timer() (line 21)</a></td><td>called 26460 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l19">Svc::Ccsds::Cfdp::Timer::Timer() (line 19)</a></td><td>called 26880 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l32">Svc::Ccsds::Cfdp::Timer::disableTimer() (line 32)</a></td><td>called 25651 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l37">Svc::Ccsds::Cfdp::Timer::getStatus() (line 37)</a></td><td>called 346 times</td><td>80.0%</td></tr>
+    <tr><td><a href="#l41">Svc::Ccsds::Cfdp::Timer::run() (line 41)</a></td><td>called 189 times</td><td>89.0%</td></tr>
+    <tr><td><a href="#l27">Svc::Ccsds::Cfdp::Timer::setTimer(unsigned int) (line 27)</a></td><td>called 272 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l21">Svc::Ccsds::Cfdp::Timer::~Timer() (line 21)</a></td><td>called 26880 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -219,7 +219,7 @@
       <td class="lineno"><a id="l19" href="#l19">19</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">26460</td>
+      <td class="linecount coveredLine">26880</td>
       <td class="src coveredLine"><span class="n">Timer</span><span class="w"> </span><span class="nf">::Timer</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">timerStatus</span><span class="p">(</span><span class="n">UNINITIALIZED</span><span class="p">),</span><span class="w"> </span><span class="n">secondsRemaining</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -233,7 +233,7 @@
       <td class="lineno"><a id="l21" href="#l21">21</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">26460</td>
+      <td class="linecount coveredLine">26880</td>
       <td class="src coveredLine"><span class="n">Timer</span><span class="w"> </span><span class="o">::~</span><span class="n">Timer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -275,28 +275,28 @@
       <td class="lineno"><a id="l27" href="#l27">27</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">266</td>
+      <td class="linecount coveredLine">272</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="o">::</span><span class="n">setTimer</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">timerDuration</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">266</td>
+      <td class="linecount coveredLine">272</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timerStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RUNNING</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">266</td>
+      <td class="linecount coveredLine">272</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">secondsRemaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">timerDuration</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">266</td>
+      <td class="linecount coveredLine">272</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -310,28 +310,28 @@
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25251</td>
+      <td class="linecount coveredLine">25651</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="o">::</span><span class="n">disableTimer</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25251</td>
+      <td class="linecount coveredLine">25651</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timerStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXPIRED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25251</td>
+      <td class="linecount coveredLine">25651</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">secondsRemaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25251</td>
+      <td class="linecount coveredLine">25651</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -345,7 +345,7 @@
       <td class="lineno"><a id="l37" href="#l37">37</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">338</td>
+      <td class="linecount coveredLine">346</td>
       <td class="src coveredLine"><span class="n">Timer</span><span class="o">::</span><span class="n">Status</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="o">::</span><span class="n">getStatus</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -355,11 +355,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 338 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 346 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">338</td>
+      <td class="linecount partialCoveredLine">346</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timerStatus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -380,7 +380,7 @@
       <td class="lineno"><a id="l41" href="#l41">41</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">189</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">Timer</span><span class="w"> </span><span class="o">::</span><span class="n">run</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -390,27 +390,27 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
-            <div class="takenBranch">&check; Branch 2 taken 184 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 184 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 189 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 189 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">184</td>
+      <td class="linecount partialCoveredLine">189</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timerStatus</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">RUNNING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">189</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">secondsRemaining</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">189</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">secondsRemaining</span><span class="o">--</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -426,19 +426,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 41 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 143 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 42 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 147 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">189</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">secondsRemaining</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">41</td>
+      <td class="linecount coveredLine">42</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">timerStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXPIRED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -459,7 +459,7 @@
       <td class="lineno"><a id="l50" href="#l50">50</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">184</td>
+      <td class="linecount coveredLine">189</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

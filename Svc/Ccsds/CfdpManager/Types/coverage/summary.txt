@@ -9,7 +9,7 @@ Svc/Ccsds/CfdpManager/Types/AckPdu.hpp        10      10   100%
 Svc/Ccsds/CfdpManager/Types/EofPdu.cpp        71      57    80%   56,61,68,71,94,101,109,115,121,127,143,151,157,163
 Svc/Ccsds/CfdpManager/Types/EofPdu.hpp         8       8   100%
 Svc/Ccsds/CfdpManager/Types/FileDataPdu.cpp
-                                              83      49    59%   36,45-46,49-50,52,55,58-62,64-65,67,69-70,73-75,79-80,84,87-88,103,109-110,117,124,145,155,163,183
+                                              85      50    58%   36,45-46,49-50,52,55,58-62,64-65,67,69-70,73-75,79-80,84,87-88,103,109-110,117,124,139,148,158,166,186
 Svc/Ccsds/CfdpManager/Types/FileDataPdu.hpp
                                                5       5   100%
 Svc/Ccsds/CfdpManager/Types/FinPdu.cpp        67      57    85%   54,59,66,69,92,99,114,120,135,154
@@ -27,5 +27,5 @@ Svc/Ccsds/CfdpManager/Types/PduHeader.hpp
                                                8       8   100%
 Svc/Ccsds/CfdpManager/Types/Tlv.cpp          120     107    89%   88,95,104,112,127,135,144,154,171,226,245-246,249
 ------------------------------------------------------------------------------
-TOTAL                                        825     659    79%
+TOTAL                                        827     660    79%
 ------------------------------------------------------------------------------

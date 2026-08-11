@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-10 23:23:26</td>
+      <td>2026-08-11 01:25:45</td>
     </tr>
   </table>
 </div>
@@ -71,12 +71,12 @@
       <th>Block coverage</th>
     </tr>
     <tr><td><a href="#l105">Svc::Ccsds::Cfdp::FindTransactionBySequenceNumberImpl(Svc::Ccsds::Cfdp::CListNode*, void*) (line 105)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l43">Svc::Ccsds::Cfdp::GetTxnStatus(Svc::Ccsds::Cfdp::Transaction*) (line 43)</a></td><td>called 224 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l43">Svc::Ccsds::Cfdp::GetTxnStatus(Svc::Ccsds::Cfdp::Transaction*) (line 43)</a></td><td>called 228 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l109">Svc::Ccsds::Cfdp::PrioSearch(Svc::Ccsds::Cfdp::CListNode*, void*) (line 109)</a></td><td>not called</td><td>0.0%</td></tr>
-    <tr><td><a href="#l74">Svc::Ccsds::Cfdp::Transaction::findBySequenceNumberCallback(Svc::Ccsds::Cfdp::CListNode*, void*) (line 74)</a></td><td>called 1342 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l74">Svc::Ccsds::Cfdp::Transaction::findBySequenceNumberCallback(Svc::Ccsds::Cfdp::CListNode*, void*) (line 74)</a></td><td>called 1343 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l89">Svc::Ccsds::Cfdp::Transaction::prioritySearchCallback(Svc::Ccsds::Cfdp::CListNode*, void*) (line 89)</a></td><td>called 2 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l113">Svc::Ccsds::Cfdp::TxnStatusIsError(Svc::Ccsds::Cfdp::TxnStatus) (line 113)</a></td><td>called 182 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l120">Svc::Ccsds::Cfdp::TxnStatusToConditionCode(Svc::Ccsds::Cfdp::TxnStatus) (line 120)</a></td><td>called 47 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l113">Svc::Ccsds::Cfdp::TxnStatusIsError(Svc::Ccsds::Cfdp::TxnStatus) (line 113)</a></td><td>called 191 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l120">Svc::Ccsds::Cfdp::TxnStatusToConditionCode(Svc::Ccsds::Cfdp::TxnStatus) (line 120)</a></td><td>called 48 times</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -388,7 +388,7 @@
       <td class="lineno"><a id="l43" href="#l43">43</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">224</td>
+      <td class="linecount coveredLine">228</td>
       <td class="src coveredLine"><span class="n">AckTxnStatus</span><span class="w"> </span><span class="nf">GetTxnStatus</span><span class="p">(</span><span class="n">Transaction</span><span class="o">*</span><span class="w"> </span><span class="n">txn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -433,11 +433,11 @@
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 0 taken 1 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 223 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 227 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">224</td>
+      <td class="linecount coveredLine">228</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">txn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -460,20 +460,20 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">3/3</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 152 times.</div>
-            <div class="takenBranch">&check; Branch 3 taken 70 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 154 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 72 times.</div>
             <div class="takenBranch">&check; Branch 4 taken 1 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">223</td>
+      <td class="linecount coveredLine">227</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">txn</span><span class="o">-&gt;</span><span class="n">getState</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">152</td>
+      <td class="linecount coveredLine">154</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">TxnState</span><span class="o">::</span><span class="no">TXN_STATE_S1</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -501,14 +501,14 @@
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">152</td>
+      <td class="linecount coveredLine">154</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">LocalStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AckTxnStatus</span><span class="o">::</span><span class="n">ACK_TXN_STATUS_ACTIVE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">152</td>
+      <td class="linecount coveredLine">154</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -522,7 +522,7 @@
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">70</td>
+      <td class="linecount coveredLine">72</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="no">TxnState</span><span class="o">::</span><span class="no">TXN_STATE_DROP</span><span class="p">:</span></td>
     </tr>
     <tr class="source-line">
@@ -536,14 +536,14 @@
       <td class="lineno"><a id="l62" href="#l62">62</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">70</td>
+      <td class="linecount coveredLine">72</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">LocalStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AckTxnStatus</span><span class="o">::</span><span class="n">ACK_TXN_STATUS_TERMINATED</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l63" href="#l63">63</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">70</td>
+      <td class="linecount coveredLine">72</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">break</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -592,7 +592,7 @@
       <td class="lineno"><a id="l70" href="#l70">70</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">224</td>
+      <td class="linecount coveredLine">228</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">LocalStatus</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -620,28 +620,28 @@
       <td class="lineno"><a id="l74" href="#l74">74</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="n">CListTraverseStatus</span><span class="w"> </span><span class="nf">Transaction::findBySequenceNumberCallback</span><span class="p">(</span><span class="n">CListNode</span><span class="o">*</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l75" href="#l75">75</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Transaction</span><span class="o">*</span><span class="w"> </span><span class="n">txn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">container_of_cpp</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Transaction</span><span class="o">::</span><span class="n">m_cl_node</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l76" href="#l76">76</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">CListTraverseStatus</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CLIST_TRAVERSE_CONTINUE</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l77" href="#l77">77</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">CfdpTraverseTransSeqArg</span><span class="o">*</span><span class="w"> </span><span class="n">seqContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">CfdpTraverseTransSeqArg</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -657,14 +657,14 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 1342 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 1343 times.</div>
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 10 taken 1342 times.</div>
+            <div class="takenBranch">&check; Branch 10 taken 1343 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">1342</td>
+      <td class="linecount partialCoveredLine">1343</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">txn</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">txn</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">seqContext</span><span class="o">-&gt;</span><span class="n">src_eid</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span></td>
     </tr>
     <tr class="source-line">
@@ -673,26 +673,26 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 66 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 67 times.</div>
             <div class="takenBranch">&check; Branch 6 taken 1276 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">(</span><span class="n">txn</span><span class="o">-&gt;</span><span class="n">m_history</span><span class="o">-&gt;</span><span class="n">seq_num</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">seqContext</span><span class="o">-&gt;</span><span class="n">transaction_sequence_number</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">seqContext</span><span class="o">-&gt;</span><span class="n">txn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">txn</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">66</td>
+      <td class="linecount coveredLine">67</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CLIST_TRAVERSE_EXIT</span><span class="p">;</span><span class="w">  </span><span class="c1">// exit early</span></td>
     </tr>
     <tr class="source-line">
@@ -713,7 +713,7 @@
       <td class="lineno"><a id="l85" href="#l85">85</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1342</td>
+      <td class="linecount coveredLine">1343</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ret</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -916,7 +916,7 @@
       <td class="lineno"><a id="l113" href="#l113">113</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">182</td>
+      <td class="linecount coveredLine">191</td>
       <td class="src coveredLine"><span class="kt">bool</span><span class="w"> </span><span class="nf">TxnStatusIsError</span><span class="p">(</span><span class="n">TxnStatus</span><span class="w"> </span><span class="n">txn_stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -944,7 +944,7 @@
       <td class="lineno"><a id="l117" href="#l117">117</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">182</td>
+      <td class="linecount coveredLine">191</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">txn_stat</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TxnStatus</span><span class="o">::</span><span class="n">TXN_STATUS_NO_ERROR</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -965,7 +965,7 @@
       <td class="lineno"><a id="l120" href="#l120">120</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">47</td>
+      <td class="linecount coveredLine">48</td>
       <td class="src coveredLine"><span class="n">ConditionCode</span><span class="w"> </span><span class="nf">TxnStatusToConditionCode</span><span class="p">(</span><span class="n">TxnStatus</span><span class="w"> </span><span class="n">txn_stat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -988,12 +988,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 21 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 22 times.</div>
             <div class="takenBranch">&check; Branch 2 taken 26 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">47</td>
+      <td class="linecount coveredLine">48</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">TxnStatusIsError</span><span class="p">(</span><span class="n">txn_stat</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1021,7 +1021,7 @@
       <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">21</td>
+      <td class="linecount coveredLine">22</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ConditionCode</span><span class="o">::</span><span class="n">CONDITION_CODE_NO_ERROR</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1330,7 +1330,7 @@
       <td class="lineno"><a id="l170" href="#l170">170</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">47</td>
+      <td class="linecount coveredLine">48</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
