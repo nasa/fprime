@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include <Svc/FpySequencer/FpySequencer.hpp>
+#include <config/CommandDispatcherImplCfg.hpp>
 #include <new>
 
 namespace Svc {
@@ -294,10 +295,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
         // must be a coding error from an outside component (off nom), or due to CANCEL while running a command (nom).
         // because we can't be sure that it wasn't a nominal sequence of events leading to this, don't fail the
         // sequence, just report it
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_LO_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()), opCode,
-                                                                response);
-#endif
+        this->log_WARNING_LO_CmdResponseWhileNotRunningSequence(static_cast<I32>(this->sequencer_getState()),
+                                                                CmdDispatcherCfg::getEventOpcode(opCode), response);
         return;
     }
 
@@ -318,9 +317,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     // if it was from a different sequence:
     if (sequenceIndex != currentSequenceIndex) {
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_LO_CmdResponseFromOldSequence(opCode, response, sequenceIndex, currentSequenceIndex);
-#endif
+        this->log_WARNING_LO_CmdResponseFromOldSequence(CmdDispatcherCfg::getEventOpcode(opCode), response,
+                                                        sequenceIndex, currentSequenceIndex);
         return;
     }
 
@@ -329,9 +327,7 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     // first, make sure we're actually awaiting a statement response
     if (this->sequencer_getState() != State::RUNNING_AWAITING_STATEMENT_RESPONSE) {
         // okay, crap. something from this sequence responded, and we weren't awaiting anything. end it all
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_HI_CmdResponseWhileNotAwaiting(opCode, response);
-#endif
+        this->log_WARNING_HI_CmdResponseWhileNotAwaiting(CmdDispatcherCfg::getEventOpcode(opCode), response);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -339,10 +335,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::CONST_CMD &&
         this->m_runtime.currentStatementOpcode != Fpy::DirectiveId::STACK_CMD) {
         // we were not awaiting a cmd response, we were waiting for a directive
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(opCode, response,
+        this->log_WARNING_HI_CmdResponseWhileAwaitingDirective(CmdDispatcherCfg::getEventOpcode(opCode), response,
                                                                this->m_runtime.currentStatementOpcode);
-#endif
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -351,9 +345,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
     if (opCode != this->m_runtime.currentCmdOpcode) {
         // we were not awaiting this opcode. coding error, likely on the part of the responding component or cmd
         // dispatcher
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_HI_WrongCmdResponseOpcode(opCode, response, this->m_runtime.currentCmdOpcode);
-#endif
+        this->log_WARNING_HI_WrongCmdResponseOpcode(CmdDispatcherCfg::getEventOpcode(opCode), response,
+                                                    CmdDispatcherCfg::getEventOpcode(this->m_runtime.currentCmdOpcode));
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }
@@ -370,9 +363,8 @@ void FpySequencer::cmdResponseIn_handler(FwIndexType portNum,             //!< T
 
     if (cmdIndex != currentCmdIndex) {
         // we were not awaiting this exact statement, it was a different one with the same opcode. coding error
-#if FW_ENABLE_COMMAND_OPCODE_EVENTS == 1
-        this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);
-#endif
+        this->log_WARNING_HI_WrongCmdResponseIndex(CmdDispatcherCfg::getEventOpcode(opCode), response, cmdIndex,
+                                                   currentCmdIndex);
         this->sequencer_sendSignal_stmtResponse_unexpected();
         return;
     }

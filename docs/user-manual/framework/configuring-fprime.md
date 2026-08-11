@@ -348,7 +348,6 @@ Table 47 describes other user settings.
 | Macro                       | Definition                                              | Default | Valid Values     |
 | --------------------------- | --------------------------------------------------------|---------|------------------|
 | FW_CMD_CHECK_RESIDUAL       | Enables command serialization extra bytes check         | 1 (on)  | 0 (off) 1 (on)   |
-| FW_ENABLE_COMMAND_OPCODE_EVENTS | Enables events containing command opcodes           | 1 (on)  | 0 (off) 1 (on)   |
 | FW_AMPCS_COMPATIBLE         | Adds argument sizes to event argument serialization     | 0 (off) | 0 (off) 1 (on)   |
 
 > [!NOTE]
@@ -373,6 +372,10 @@ Some components allow users to turn on and off features. If a component does not
 for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
+
+`CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
+`false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
+`FwOpcodeType` value before downlink.
 
 ## Conclusion
 
