@@ -39,11 +39,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-22.04
-            jobs: "random"
-          - runner: macos-latest
-            jobs: "2"
+        # macOS runs only on the nightly schedule
+        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -75,9 +72,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-22.04
-          - runner: macos-latest
+        # macOS runs only on the nightly schedule
+        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04"},{"runner":"macos-latest"}]') || fromJSON('[{"runner":"ubuntu-22.04"}]') }}
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -128,11 +124,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-22.04
-            jobs: "random"
-          - runner: macos-latest
-            jobs: "2"
+        # macOS runs only on the nightly schedule
+        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -150,7 +143,6 @@ jobs:
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
           working-directory: "TestDeploymentsProject"
-          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
           jobs: ${{ github.event.inputs.jobs || matrix.jobs }}
 
   timing-check:
