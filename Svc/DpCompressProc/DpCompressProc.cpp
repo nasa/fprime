@@ -81,8 +81,12 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
-    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET,
-                           fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE);
+    // Bound the data region by the container's data size, not the buffer capacity
+    if (container.getDataSize() > fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(), static_cast<U32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH));
+        return;
+    }
+    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET, container.getDataSize());
     FW_ASSERT(data_buffer.getSize() > 0, static_cast<FwAssertArgType>(data_buffer.getSize()));
 
     auto data_deser = data_buffer.getDeserializer();
@@ -241,11 +245,9 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
 
                     // Assert the next few serialization operations will stay within the
                     // data that has been read so far
-                    FW_ASSERT(deser_loc >=
-                                  (uncompressed_size +
-                                   2 * static_cast<FwSizeType>(CompressionMetadata::SERIALIZED_SIZE) + compressed_size),
-                              static_cast<FwAssertArgType>(deser_loc), uncompressed_size,
-                              CompressionMetadata::SERIALIZED_SIZE, compressed_size);
+                    FW_ASSERT(deser_loc >= (uncompressed_size + 2 * compression_header_size + compressed_size),
+                              static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(uncompressed_size),
+                              static_cast<FwAssertArgType>(compressed_size));
                     (void)std::memmove(data_buffer.getData() + compression_header_size, data_buffer.getData(),
                                        uncompressed_size);
 
@@ -278,12 +280,22 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 2. Serialize uncompressed data
                     // 3. Write header for compressed data at data_reser location
                     // 4. Serialize compressed data
+
+                    // Assert the next few serialization operations will stay within the
+                    // data that has been read so far
+                    FW_ASSERT(
+                        deser_loc >=
+                            (data_reser.getSize() + uncompressed_size + 2 * compression_header_size + compressed_size),
+                        static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(data_reser.getSize()),
+                        static_cast<FwAssertArgType>(uncompressed_size), static_cast<FwAssertArgType>(compressed_size));
                     serializeCompressionHeader(data_reser, uncompressed_size,
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
-                    ser_stat =
-                        data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
+                    // Source and destination regions may overlap; move then skip
+                    (void)std::memmove(data_buffer.getData() + data_reser.getSize(), uncompressed_head,
+                                       uncompressed_size);
+                    ser_stat = data_reser.serializeSkip(uncompressed_size);
                     FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));
