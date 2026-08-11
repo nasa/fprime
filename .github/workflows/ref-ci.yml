@@ -60,12 +60,6 @@ jobs:
         with:
           working-directory: "TestDeploymentsProject"
           jobs: ${{ github.event.inputs.jobs || 'random' }}
-      - name: "Run Unit Tests"
-        uses: nasa/fprime-actions/run-unit-tests@devel
-        with:
-          working-directory: "TestDeploymentsProject"
-          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
-          jobs: ${{ github.event.inputs.jobs || 'random' }}
       # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
       - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
         if: github.event_name == 'pull_request'
@@ -86,6 +80,14 @@ jobs:
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
           pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: "true"
+      # UTs run after integration tests: the UT build enables sanitizers,
+      # which overwrite the plain Ref binary needed for the valgrind run
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          jobs: ${{ github.event.inputs.jobs || 'random' }}
 
   ref-macos:
     name: "Build, UTs & Integration [macOS]"
@@ -107,12 +109,6 @@ jobs:
         with:
           working-directory: "TestDeploymentsProject"
           jobs: "2"
-      - name: "Run Unit Tests"
-        uses: nasa/fprime-actions/run-unit-tests@devel
-        with:
-          working-directory: "TestDeploymentsProject"
-          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
-          jobs: "2"
       - name: "Install coreutils (macOS)"
         run: brew install coreutils
       - name: "Integration Tests"
@@ -124,6 +120,14 @@ jobs:
           gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
           pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: "false"
+      # UTs run after integration tests: the UT build enables sanitizers,
+      # which overwrite the plain Ref binary used for the integration run
+      - name: "Run Unit Tests"
+        uses: nasa/fprime-actions/run-unit-tests@devel
+        with:
+          working-directory: "TestDeploymentsProject"
+          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF"
+          jobs: "2"
 
   timing-check:
     name: "Timing Check"
