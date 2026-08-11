@@ -166,6 +166,8 @@ class CfdpChunkList {
      * @param opaque     Opaque pointer passed through to callback
      *
      * @returns Number of gaps computed (may be less than maxGaps if fewer gaps exist)
+     *
+     * @note A total of 0 (zero-length file) yields no gaps
      */
     U32 computeGaps(ChunkIdx maxGaps, FileSize total, FileSize start, GapComputeCallback callback, void* opaque) const;
 
