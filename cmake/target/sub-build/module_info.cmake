@@ -44,10 +44,18 @@ endfunction(module_info_add_global_target)
 ####
 # Function `module_info_add_deployment_target`:
 #
-# Just calls `module_info_add_module_target`.
+# Calls `module_info_add_module_target` and additionally records that this module is a deployment. The
+# marker is emitted into the outer build cache so the main build can distinguish deployment modules from
+# regular modules regardless of their registration order. It is used to prevent implicit
+# deployment-to-deployment FPP dependencies (see autocoder/fpp.cmake).
 ####
 function(module_info_add_deployment_target BUILD_MODULE_NAME CUSTOM_TARGET_NAME SOURCES DEPENDENCIES FULL_DEPENDENCIES)
     module_info_add_module_target("${BUILD_MODULE_NAME}" "${CUSTOM_TARGET_NAME}" "${SOURCES}" "${DEPENDENCIES}")
+
+    set(DEPLOYMENT_SNIPPET "${CMAKE_CURRENT_BINARY_DIR}/deployment-snippet-${BUILD_MODULE_NAME}.cmake")
+    file(WRITE "${DEPLOYMENT_SNIPPET}"
+        "set_property(GLOBAL PROPERTY \"FPRIME_${BUILD_MODULE_NAME}_IS_DEPLOYMENT\" TRUE)\n")
+    append_list_property("${DEPLOYMENT_SNIPPET}" TARGET "${CUSTOM_TARGET_NAME}" PROPERTY FPRIME_CONCATENATED_FILES)
 endfunction(module_info_add_deployment_target)
 
 ####

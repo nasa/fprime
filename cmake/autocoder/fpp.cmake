@@ -73,6 +73,25 @@ function(fpp_is_supported AC_INPUT_FILE)
 endfunction(fpp_is_supported)
 
 ####
+# Function `fpp_is_deployment_module`:
+#
+# Sets OUTPUT_VAR to TRUE if MODULE_NAME is a deployment module. This reads the global
+# `FPRIME_<module>_IS_DEPLOYMENT` property emitted by the sub-build (see target/sub-build/module_info.cmake),
+# which is populated for every deployment regardless of registration order.
+#
+# MODULE_NAME: module name to test
+# OUTPUT_VAR: variable set in parent scope with the boolean result
+####
+function(fpp_is_deployment_module MODULE_NAME OUTPUT_VAR)
+    get_property(IS_DEPLOYMENT GLOBAL PROPERTY "FPRIME_${MODULE_NAME}_IS_DEPLOYMENT")
+    if (IS_DEPLOYMENT)
+        set("${OUTPUT_VAR}" TRUE PARENT_SCOPE)
+    else()
+        set("${OUTPUT_VAR}" FALSE PARENT_SCOPE)
+    endif()
+endfunction(fpp_is_deployment_module)
+
+####
 # Function `fpp_get_framework_dependency_helper`:
 #
 # Helps detect framework dependencies. Either, it calculates specific dependencies *or* if the Fw roll-up target exists,
@@ -180,12 +199,27 @@ function(fpp_info MODULE_NAME AC_INPUT_FILES)
     set(FILE_DEPENDENCIES ${AC_INPUT_FILES} ${STDOUT} ${INCLUDED})
     list(REMOVE_DUPLICATES FILE_DEPENDENCIES)
 
+    # Drop FPP imports owned by *other* deployments. Symbols declared in a deployment topology (e.g. a
+    # `dictionary constant`) must not leak into sibling deployments' generated sources or dictionaries.
+    # Files from the current module, non-deployment modules, and explicitly-depended deployments are kept.
+    set(FILTERED_FPP_IMPORTS)
+    foreach(FPP_FILE IN LISTS STDOUT)
+        get_property(FILE_MODULE GLOBAL PROPERTY "FPRIME_${FPP_FILE}_MODULE")
+        fpp_is_deployment_module("${FILE_MODULE}" FILE_IS_DEPLOYMENT)
+        if (FILE_IS_DEPLOYMENT AND
+            NOT FILE_MODULE STREQUAL MODULE_NAME AND
+            NOT FILE_MODULE IN_LIST MODULE_DEPENDENCIES)
+            continue()
+        endif()
+        list(APPEND FILTERED_FPP_IMPORTS "${FPP_FILE}")
+    endforeach()
+
     # Should have been inherited from previous call to `get_generated_files`
     set(GENERATED_FILES "${GENERATED_FILES}" PARENT_SCOPE)
     set(UNITTEST_FILES "${UNITTEST_FILES}" PARENT_SCOPE)
     set(MODULE_DEPENDENCIES "${MODULE_DEPENDENCIES}" PARENT_SCOPE)
     set(FILE_DEPENDENCIES "${FILE_DEPENDENCIES}" PARENT_SCOPE)
-    set(FPP_IMPORTS "${STDOUT}" PARENT_SCOPE)
+    set(FPP_IMPORTS "${FILTERED_FPP_IMPORTS}" PARENT_SCOPE)
 endfunction(fpp_info)
 
 function(fpp_autocoder_variables FPP_IMPORTS)
@@ -288,14 +322,33 @@ endfunction(fpp_setup_autocode)
 ####
 function(fpp_to_modules CURRENT_MODULE FILE_LIST OUTPUT_VAR)
     init_variables(OUTPUT_DATA)
+
+    # Explicit dependencies (DEPENDS/MOD_DEPS) are needed to allow opt-in deployment-to-deployment deps
+    set(EXPLICIT_DEPS "")
+    if (TARGET "${CURRENT_MODULE}")
+        get_target_property(EXPLICIT_DEPS "${CURRENT_MODULE}" SUPPLIED_DEPENDENCIES)
+        if (NOT EXPLICIT_DEPS OR EXPLICIT_DEPS STREQUAL "EXPLICIT_DEPS-NOTFOUND")
+            set(EXPLICIT_DEPS "")
+        endif()
+    endif()
+
     foreach(INCLUDE IN LISTS FILE_LIST)
         get_property(MODULE_OF_INCLUDE GLOBAL PROPERTY "FPRIME_${INCLUDE}_MODULE")
         fprime_cmake_ASSERT("File module not set in sub-build: ${INCLUDE}"
             NOT "${MODULE_OF_INCLUDE}" STREQUAL "NOTFOUND")
+
         # Do not add current module
         if (CURRENT_MODULE STREQUAL MODULE_OF_INCLUDE)
             continue() # Skip adding to module list
         endif()
+
+        # Drop implicit dependencies on other deployments. DeploymentA may only depend on DeploymentB
+        # when DeploymentB is explicitly listed in DEPENDS/MOD_DEPS.
+        fpp_is_deployment_module("${MODULE_OF_INCLUDE}" INCLUDE_IS_DEPLOYMENT)
+        if (INCLUDE_IS_DEPLOYMENT AND NOT MODULE_OF_INCLUDE IN_LIST EXPLICIT_DEPS)
+            continue()
+        endif()
+
         list(APPEND OUTPUT_DATA "${MODULE_OF_INCLUDE}")
         list(REMOVE_DUPLICATES OUTPUT_DATA)
     endforeach()
