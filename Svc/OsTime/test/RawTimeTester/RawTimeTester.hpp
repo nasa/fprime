@@ -34,6 +34,9 @@ class RawTimeTester : public Os::RawTimeInterface {
     Os::RawTimeHandle* getHandle() override { return reinterpret_cast<Os::RawTimeHandle*>(&m_handle); }
 
     Status now() override {
+        if (s_now_status != OP_OK) {
+            return s_now_status;
+        }
         m_handle.t = s_now_time;
         return OP_OK;
     }
@@ -88,8 +91,11 @@ class RawTimeTester : public Os::RawTimeInterface {
 
     static void setNowTime(const Fw::Time&& t) { s_now_time = t; }
 
+    static void setNowStatus(Status status) { s_now_status = status; }
+
   private:
     static Fw::Time s_now_time;
+    static Status s_now_status;
 
     //! Handle for RawTimeTester
     RawTimeTesterHandle m_handle;
