@@ -25,6 +25,13 @@ TEST(BufferSendIn, BufferTooSmallForPacket) {
     tester.BufferTooSmallForPacket();
 }
 
+TEST(BufferSendIn, FileNameFormatError) {
+    COMMENT("Invoke bufferSendIn with a file name format error and verify the event throttle.");
+    REQUIREMENT("SVC-DPMANAGER-001");
+    BufferSendIn::Tester tester;
+    tester.FileNameFormatError();
+}
+
 TEST(BufferSendIn, FileOpenError) {
     COMMENT("Invoke bufferSendIn with a file open error.");
     REQUIREMENT("SVC-DPMANAGER-001");
