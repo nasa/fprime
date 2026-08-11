@@ -52,6 +52,12 @@ class OsTimeTester : public OsTimeGTestBase {
     //! Update Epoch
     void updateEpochTest();
 
+    //! SetCurrentTime command, nominal
+    void setCurrentTimeTest();
+
+    //! SetCurrentTime command, RawTime failure
+    void setCurrentTimeErrorTest();
+
   private:
     // ----------------------------------------------------------------------
     // Helper functions

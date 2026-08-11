@@ -120,7 +120,7 @@ void FileDownlinkTester ::fileOpenError() {
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
-    //    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+    ASSERT_EVENTS_FileOpenError(0, sourceFileName);
 }
 
 void FileDownlinkTester ::sourceOutOfSandbox() {
