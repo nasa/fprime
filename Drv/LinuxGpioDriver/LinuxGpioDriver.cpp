@@ -193,7 +193,7 @@ Os::File::Status LinuxGpioDriver ::setupLineRequestV2(const int chip_descriptor,
     }
     return status;
 #else
-    // Headers do not provide the v2 uAPI: report unsupported to trigger the v1 fallback
+    // Headers do not provide the v2 uAPI: report unsupported (v2 is never selected in this build)
     return Os::File::Status::NOT_SUPPORTED;
 #endif
 }
@@ -282,7 +282,9 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         return status;
     }
     Fw::String pin_message("Unknown");
-    bool has_pin_info = false;
+    // The v2 line-info ioctl doubles as a probe for v2 uAPI support: it only succeeds when the kernel
+    // (and this chip) support the v2 uAPI, so its result selects which uAPI version to request below.
+    bool supports_v2 = false;
 #ifdef GPIO_V2_GET_LINEINFO_IOCTL
     struct gpio_v2_line_info pin_info_v2;
     (void)::memset(&pin_info_v2, 0, sizeof pin_info_v2);
@@ -292,10 +294,10 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         const bool has_consumer = pin_info_v2.consumer[0] != '\0';
         (void)pin_message.format("%s%s%s", pin_info_v2.name, has_consumer ? " with current consumer " : "",
                                  has_consumer ? pin_info_v2.consumer : "");
-        has_pin_info = true;
+        supports_v2 = true;
     }
 #endif
-    if (not has_pin_info) {
+    if (not supports_v2) {
         struct gpioline_info pin_info;
         (void)::memset(&pin_info, 0, sizeof pin_info);
         pin_info.line_offset = gpio;
@@ -307,13 +309,14 @@ Os::File::Status LinuxGpioDriver ::open(const char* device,
         }
     }
 
-    // Set up pin and set file descriptor for it. The v2 uAPI is attempted first and the deprecated v1 uAPI is
-    // used as a fallback for kernels without v2 support.
+    // Set up pin and set file descriptor for it. The v2 uAPI is used when the probe above detected support;
+    // otherwise the deprecated v1 uAPI is used. Real v2 request errors are reported, not retried on v1.
     int pin_fd = -1;
-    ApiVersion api_version = ApiVersion::API_V2;
-    status = this->setupLineRequestV2(chip_descriptor, gpio, configuration, default_state, pin_fd);
-    if (status != Os::File::Status::OP_OK) {
-        api_version = ApiVersion::API_V1;
+    ApiVersion api_version = ApiVersion::API_V1;
+    if (supports_v2) {
+        api_version = ApiVersion::API_V2;
+        status = this->setupLineRequestV2(chip_descriptor, gpio, configuration, default_state, pin_fd);
+    } else {
         switch (configuration) {
             // Cascade intended
             case GPIO_OUTPUT:

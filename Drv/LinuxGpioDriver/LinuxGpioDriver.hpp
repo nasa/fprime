@@ -59,8 +59,8 @@ class LinuxGpioDriver final : public LinuxGpioDriverComponentBase {
     //!
     //! This function opens and configures a GPIO pin. User must supply the device path and the gpio pin registered to
     //! that device. Pin configuration is also accepted and supports: input, output, and interrupts on either edge.
-    //! The version 2 GPIO character device uAPI is attempted first, falling back to the deprecated version 1 uAPI
-    //! when the kernel does not support version 2.
+    //! The version 2 GPIO character device uAPI is used when the kernel supports it (detected via a v2 line-info
+    //! probe); otherwise the deprecated version 1 uAPI is used. Errors from the selected uAPI are reported as-is.
     //!
     //! If the user selects output, a default state can be set with the default_state flag.
     //!
