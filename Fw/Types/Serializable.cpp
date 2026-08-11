@@ -834,7 +834,9 @@ ExternalSerializeBuffer::ExternalSerializeBuffer() : LinearBufferBase(nullptr, 0
 }
 
 void ExternalSerializeBuffer::setExtBuffer(U8* buffPtr, Serializable::SizeType size) {
-    FW_ASSERT(buffPtr != nullptr);
+    // Allow setting buffer with null pointer and zero size (for initialization/reset)
+    // but reject null pointer with non-zero size
+    FW_ASSERT((buffPtr != nullptr) || (size == 0), static_cast<FwAssertArgType>(size));
     this->clear();
     this->setBuffAddrInternal(buffPtr);
     this->setCapacityInternal(size);
