@@ -57,6 +57,9 @@ void configureTopology() {
     // Restrict uplinked files to a sandbox directory to prevent path-traversal writes
     FileHandling::fileUplink.configure("/tmp/uplink/");
 
+    // Downlink reads are unrestricted for this reference deployment
+    FileHandling::fileDownlink.configure("/");
+
     // PrmDb file name must be supplied by the using topology
     FileHandling::prmDb.configure("PrmDb.dat");
 }
