@@ -34,6 +34,8 @@ class LinearBufferTemplate final : public LinearBufferBase {
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
+    // m_bufferData contents are copied via setBuff below
+    // cppcheck-suppress missingMemberCopy
     LinearBufferTemplate(const LinearBufferTemplate& other) : LinearBufferBase(m_bufferData, MaxSize) {
         const SerializeStatus stat = this->setBuff(other.m_bufferData, other.m_serLoc);
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
