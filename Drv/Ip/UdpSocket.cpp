@@ -211,7 +211,7 @@ FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescripto
                                          const FwSizeType size) {
     FW_ASSERT(this->m_addr_send.sin_family != 0);  // Make sure the address was previously setup
     FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
-    FW_ASSERT(data != nullptr);                    // Data pointer should not be null
+    FW_ASSERT((size == 0) || (data != nullptr));   // Data pointer should not be null for nonzero sizes
 
     return static_cast<FwSignedSizeType>(
         ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,
