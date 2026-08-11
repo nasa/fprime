@@ -143,6 +143,13 @@ bool BufferLogger::File ::writeBuffer(const U8* const data, const FwSizeType siz
 
 bool BufferLogger::File ::writeSize(const FwSizeType size) {
     FW_ASSERT(this->m_sizeOfSize <= sizeof(FwSizeType));
+    // Reject sizes that do not fit in sizeOfSize bytes; writing the low bytes would corrupt the log
+    if ((this->m_sizeOfSize < sizeof(FwSizeType)) && ((size >> (8 * this->m_sizeOfSize)) != 0)) {
+        Fw::LogStringArg string(this->m_name.toChar());
+        this->m_bufferLogger.log_WARNING_HI_BL_LogFileWriteError(Os::File::INVALID_ARGUMENT, 0, static_cast<U32>(size),
+                                                                 string);
+        return false;
+    }
     U8 sizeBuffer[sizeof(FwSizeType)];
     FwSizeType sizeRegister = size;
     for (U8 i = 0; i < this->m_sizeOfSize; ++i) {
