@@ -268,8 +268,14 @@ Svc ::FileWorkerReadStatus FileWorker ::readFile(Fw::Buffer& buffer,
             this->log_WARNING_HI_ReadTimeout(bytesRead, size, fileNameStr, timeout);
             break;
 
+        case FW_READ_UNKNOWN:
+            // The read loop ran out of iterations: a read larger than
+            // MAX_LOOP_ITERATIONS * BLOCK_SIZE_BYTES cannot complete
+            this->log_WARNING_HI_ReadError(bytesRead, size, fileNameStr);
+            break;
+
         default:
-            FW_ASSERT(false);  // Should not get here
+            FW_ASSERT(false, static_cast<FwAssertArgType>(readStat));
             break;
     }
 

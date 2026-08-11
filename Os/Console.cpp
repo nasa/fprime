@@ -60,7 +60,13 @@ void Console::init() {
 
 Console& Console::getSingleton() {
     static Console s_singleton;
-    Fw::Logger::registerLogger(&s_singleton);
+    // Registration happens once: re-registering on every access would silently replace a
+    // logger the project registered after the console singleton was first used
+    static bool s_registered = false;
+    if (not s_registered) {
+        s_registered = true;
+        Fw::Logger::registerLogger(&s_singleton);
+    }
     return s_singleton;
 }
 }  // namespace Os
