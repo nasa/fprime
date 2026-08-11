@@ -330,7 +330,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::serializeSize(co
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
     const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(buffAddr != nullptr && size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (size == this->m_deserLoc) {
@@ -339,6 +339,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     val = buffAddr[this->m_deserLoc + 0];
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
     return FW_SERIALIZE_OK;
@@ -347,7 +348,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U8
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I8& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
     const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(buffAddr != nullptr && size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (size == this->m_deserLoc) {
@@ -356,6 +357,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I8
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     val = static_cast<I8>(buffAddr[this->m_deserLoc + 0]);
     this->m_deserLoc += static_cast<Serializable::SizeType>(sizeof(val));
     return FW_SERIALIZE_OK;
@@ -365,7 +367,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I8
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U16& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
     const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(buffAddr != nullptr && size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (size == this->m_deserLoc) {
@@ -374,6 +376,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U1
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
@@ -404,7 +407,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I1
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U32& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
     const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(buffAddr != nullptr && size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (size == this->m_deserLoc) {
@@ -413,6 +416,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U3
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
@@ -450,7 +454,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(I3
 
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U64& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(buffAddr != nullptr && this->m_serLoc >= this->m_deserLoc, static_cast<FwAssertArgType>(this->m_serLoc),
+    FW_ASSERT(this->m_serLoc >= this->m_deserLoc, static_cast<FwAssertArgType>(this->m_serLoc),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (this->m_serLoc == this->m_deserLoc) {
@@ -459,6 +463,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(U6
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     switch (mode) {
         case Endianness::BIG:
             // MSB first
@@ -516,7 +521,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(F6
 FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(bool& val, Endianness mode) {
     U8* buffAddr = this->m_buffAddr;
     const Serializable::SizeType size = this->m_serLoc;
-    FW_ASSERT(buffAddr != nullptr && size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
+    FW_ASSERT(size >= this->m_deserLoc, static_cast<FwAssertArgType>(size),
               static_cast<FwAssertArgType>(this->m_deserLoc));
     // check for room
     if (size == this->m_deserLoc) {
@@ -525,6 +530,7 @@ FW_SERIALIZE_FORCE_INLINE_LLB SerializeStatus LinearBufferBase::deserializeTo(bo
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
     // read from current location
+    FW_ASSERT(buffAddr != nullptr);
     const U8 byteVal = buffAddr[this->m_deserLoc + 0];
     if (FW_SERIALIZE_TRUE_VALUE == byteVal) {
         val = true;
