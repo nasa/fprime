@@ -282,8 +282,7 @@ Fw::SerializeStatus CmdSequencerComponentImpl::FPrimeSequence ::deserializeRecor
         // Not enough data left
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    if (status == Fw::FW_SERIALIZE_OK and
-        recordSize + sizeof(FwPacketDescriptorType) > Fw::ComBuffer::SERIALIZED_SIZE) {
+    if (status == Fw::FW_SERIALIZE_OK and recordSize + sizeof(FwPacketDescriptorType) > FW_COM_BUFFER_MAX_SIZE) {
         // Record size is too big for com buffer
         status = Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }

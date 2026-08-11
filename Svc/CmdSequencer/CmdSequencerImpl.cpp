@@ -144,6 +144,12 @@ void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
 
 //! Handler for input port seqRunIn
 void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
+    if (MANUAL == this->m_stepMode) {
+        // In MANUAL mode nothing executes until CS_STEP, so a port-driven run would wedge
+        this->log_WARNING_HI_CS_InvalidMode();
+        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
     if (!this->requireRunMode(STOPPED)) {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
         return;
