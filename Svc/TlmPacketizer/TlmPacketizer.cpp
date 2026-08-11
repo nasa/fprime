@@ -192,7 +192,7 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
     // fill buffer. Values may arrive from external sources (e.g. a hub bridging
     // another address space), so reject rather than assert.
     if (val.getSize() > entry.channelSize) {
-        this->log_WARNING_HI_OversizedChannel(id, static_cast<U32>(val.getSize()), static_cast<U32>(entry.channelSize));
+        this->log_WARNING_HI_OversizedChannel(id, val.getSize(), entry.channelSize);
         return;
     }
 

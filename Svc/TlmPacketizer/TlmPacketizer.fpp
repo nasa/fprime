@@ -186,8 +186,8 @@ module Svc {
     @ Telemetry value larger than the configured channel size
     event OversizedChannel(
                             Id: FwChanIdType @< The telemetry ID
-                            valSize: U32 @< The received value size
-                            expected: U32 @< The configured channel size
+                            valSize: FwSizeType @< The received value size
+                            expected: FwSizeType @< The configured channel size
                           ) \
       severity warning high \
       id 6 \
