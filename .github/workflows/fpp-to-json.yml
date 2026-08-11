@@ -29,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - uses: ./.github/actions/setup
       - name: "Generate Ref Deployment"
