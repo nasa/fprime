@@ -18,7 +18,7 @@ StatementArgBuffer::~StatementArgBuffer() {}
 // cppcheck-suppress missingMemberCopy
 StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other)
     : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
-    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
+    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -27,7 +27,7 @@ StatementArgBuffer& StatementArgBuffer::operator=(const StatementArgBuffer& othe
         return *this;
     }
 
-    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
+    SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
@@ -37,7 +37,7 @@ Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
 }
 
 bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {
-    if (this->getSize() != other.m_serLoc) {
+    if (this->getSize() != other.getSize()) {
         return false;
     }
 

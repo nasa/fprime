@@ -37,7 +37,7 @@ class LinearBufferTemplate final : public LinearBufferBase {
     // m_bufferData contents are copied via setBuff below
     // cppcheck-suppress missingMemberCopy
     LinearBufferTemplate(const LinearBufferTemplate& other) : LinearBufferBase(m_bufferData, MaxSize) {
-        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.m_serLoc);
+        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.getSize());
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     }
 
@@ -47,7 +47,7 @@ class LinearBufferTemplate final : public LinearBufferBase {
         if (this == &other) {
             return *this;
         }
-        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.m_serLoc);
+        const SerializeStatus stat = this->setBuff(other.m_bufferData, other.getSize());
         FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
         return *this;
     }
@@ -61,7 +61,11 @@ class LinearBufferTemplate final : public LinearBufferBase {
     //! pointing at the source object's storage. This restores the invariant that
     //! m_buffAddr references this instance's m_bufferData; it must be called after any
     //! such raw relocation before the buffer is used.
-    void recomputeBuffAddr() { this->m_buffAddr = this->m_bufferData; }
+    //! NOTE: This function is DEPRECATED! It is here only as a bridge while ComQueue is being
+    //! fixed and MUST NOT be used in any new code!
+    DEPRECATED(void recomputeBuffAddr(), "Only used after a buffer memcpy, which is anti pattern") {
+        this->setBuff(this->m_bufferData, this->getSize());
+    }
 
   private:
     U8 m_bufferData[MaxSize];

@@ -22,7 +22,7 @@ FwSizeType SerialBuffer ::getBuffCapacity() const {
 }
 
 void SerialBuffer ::fill() {
-    const SerializeStatus status = this->setBuffLen(this->m_capacity);
+    const SerializeStatus status = this->setBuffLen(this->getCapacity());
     FW_ASSERT(status == FW_SERIALIZE_OK);
 }
 

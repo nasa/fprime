@@ -15,7 +15,7 @@ DataBuffer::~DataBuffer() {}
 // m_data contents are copied via setBuff below
 // cppcheck-suppress missingMemberCopy
 DataBuffer::DataBuffer(const DataBuffer& other) : Fw::LinearBufferBase(m_data, sizeof(m_data)) {
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.m_serLoc);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -24,7 +24,7 @@ DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.m_serLoc);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }

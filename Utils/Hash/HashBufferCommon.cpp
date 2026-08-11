@@ -17,7 +17,7 @@ HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase(m
 HashBuffer::~HashBuffer() = default;
 
 HashBuffer::HashBuffer(const HashBuffer& other) : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -26,13 +26,13 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.m_serLoc);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
 bool HashBuffer::operator==(const HashBuffer& other) const {
-    if ((this->getSize() == other.m_serLoc) &&
+    if ((this->getSize() == other.getSize()) &&
         (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
         return false;
     }

@@ -45,18 +45,6 @@ LinearBufferBase::LinearBufferBase(U8* buffAddr, Serializable::SizeType capacity
 
 LinearBufferBase::~LinearBufferBase() {}
 
-U8* LinearBufferBase::getBuffAddr() {
-    return this->m_buffAddr;
-}
-
-const U8* LinearBufferBase::getBuffAddr() const {
-    return this->m_buffAddr;
-}
-
-Serializable::SizeType LinearBufferBase::getCapacity() const {
-    return this->m_capacity;
-}
-
 void LinearBufferBase::copyFrom(const LinearBufferBase& src) {
     this->m_serLoc = src.m_serLoc;
     this->m_deserLoc = src.m_deserLoc;
@@ -848,15 +836,15 @@ ExternalSerializeBuffer::ExternalSerializeBuffer() : LinearBufferBase(nullptr, 0
 void ExternalSerializeBuffer::setExtBuffer(U8* buffPtr, Serializable::SizeType size) {
     FW_ASSERT(buffPtr != nullptr);
     this->clear();
-    this->m_buffAddr = buffPtr;
-    this->m_capacity = size;
+    this->setBuffAddrInternal(buffPtr);
+    this->setCapacityInternal(size);
 }
 
 void ExternalSerializeBuffer::clear() {
     this->resetSer();
     this->resetDeser();
-    this->m_buffAddr = nullptr;
-    this->m_capacity = 0;
+    this->setBuffAddrInternal(nullptr);
+    this->setCapacityInternal(0);
 }
 
 // ----------------------------------------------------------------------
@@ -1006,7 +994,7 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserialize(Line
 }
 
 Serializable::SizeType ExternalSerializeBuffer::getBuffCapacity() const {
-    return this->m_capacity;
+    return this->getCapacity();
 }
 
 }  // namespace Fw

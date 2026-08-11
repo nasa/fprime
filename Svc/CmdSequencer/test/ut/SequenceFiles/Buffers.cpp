@@ -22,7 +22,7 @@ namespace Buffers {
 FileBuffer::FileBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
 FileBuffer::FileBuffer(const FileBuffer& other) : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {
-    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_buff, other.m_serLoc);
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.getBuffAddr(), other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 

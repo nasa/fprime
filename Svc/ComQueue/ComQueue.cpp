@@ -459,7 +459,10 @@ void ComQueue::processQueue() {
                       static_cast<FwAssertArgType>(dequeue_status));
             // The raw byte copy above leaves the ComBuffer's self-pointer aimed at the source
             // object's storage; repair it to reference m_dequeued_com_buffer's own buffer.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
             this->m_dequeued_com_buffer.recomputeBuffAddr();
+#pragma GCC diagnostic pop
             this->sendComBuffer(this->m_dequeued_com_buffer, entry.index);
         } else {
             Fw::Buffer buffer;
