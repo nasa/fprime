@@ -214,25 +214,34 @@ class FileManagerTester : public FileManagerGTestBase {
     void resetDpState();
 
     //! Backing store for the data product container handed to the component
-    U8 m_dpContainerData[FW_COM_BUFFER_MAX_SIZE];
+    U8 m_dpContainerData[FW_COM_BUFFER_MAX_SIZE] = {};
 
     //! Buffer wrapping m_dpContainerData
     Fw::Buffer m_dpContainerBuffer;
 
     //! Number of containers sent by the component
-    U32 m_dpSendCount;
+    U32 m_dpSendCount = 0;
 
     //! Total number of data bytes observed across sent containers
-    FwSizeType m_dpBytesSent;
+    FwSizeType m_dpBytesSent = 0;
 
     //! Whether the get port should fail, for testing the failure path
-    bool m_dpGetShouldFail;
+    bool m_dpGetShouldFail = false;
 
     //! Whether the get port should hand out a buffer too small for a chunk
-    bool m_dpGetUndersizedBuffer;
+    bool m_dpGetUndersizedBuffer = false;
 
     //! Priority carried by the most recently sent container
-    FwDpPriorityType m_dpLastPriority;
+    FwDpPriorityType m_dpLastPriority = 0;
+
+    //! Total data-product payload bytes observed across all sent containers,
+    //! i.e. the sum of each container's data size (header + data records)
+    FwSizeType m_dpPayloadBytes = 0;
+
+    //! Smallest container data size seen, used to confirm every chunk carried
+    //! a real (non-empty) header-plus-data payload
+    FwSizeType m_dpMinPayloadBytes = 0;
+
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/

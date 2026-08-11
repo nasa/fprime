@@ -381,10 +381,18 @@ void FileManagerTester ::productSend_handler(FwDpIdType id, const Fw::Buffer& bu
     this->m_dpSendCount++;
     this->m_dpBytesSent += buffer.getSize();
 
-    // Recover the priority from the serialized container header
+    // Recover the priority and payload size from the serialized container.
+    // Each container holds one chunk: a FileChunkHeaderRecord followed by a
+    // FileChunkDataRecord, so a non-zero data size confirms the chunk actually
+    // carried header-plus-data content rather than an empty container.
     Fw::DpContainer container(id, buffer);
     if (container.deserializeHeader() == Fw::FW_SERIALIZE_OK) {
         this->m_dpLastPriority = container.getPriority();
+        const FwSizeType dataSize = container.getDataSize();
+        this->m_dpPayloadBytes += dataSize;
+        if ((this->m_dpMinPayloadBytes == 0) || (dataSize < this->m_dpMinPayloadBytes)) {
+            this->m_dpMinPayloadBytes = dataSize;
+        }
     }
 }
 
@@ -407,6 +415,7 @@ void FileManagerTester ::generateDpSucceed() {
 
     // Only the start event so far; the response is deferred
     ASSERT_EVENTS_GenerateDpStarted_SIZE(1);
+    ASSERT_EVENTS_GenerateDpStarted(0, fileName, 100);
     ASSERT_CMD_RESPONSE_SIZE(0);
 
     // Drive the rate group until the file is fully packaged
@@ -418,6 +427,12 @@ void FileManagerTester ::generateDpSucceed() {
     ASSERT_EVENTS_GenerateDpComplete(0, fileName, 4);
     ASSERT_EQ(4u, this->m_dpSendCount);
 
+    // Every container carried a real header-plus-data payload (none empty), and
+    // the total payload exceeds the 100 file bytes by the per-chunk record
+    // overhead, confirming the chunks hold actual content and not just headers
+    ASSERT_GT(this->m_dpMinPayloadBytes, 0u);
+    ASSERT_GT(this->m_dpPayloadBytes, 100u);
+
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_test_file");
 #endif
@@ -426,13 +441,23 @@ void FileManagerTester ::generateDpSucceed() {
 void FileManagerTester ::generateDpFileNotFound() {
     this->resetDpState();
 
-    Fw::CmdStringArg cmdStringFile("no_such_dp_file");
+    const char* const missingName = "no_such_dp_file";
+
+    // Recover the exact open status the component will observe for the missing
+    // file, so the assertion checks the real value rather than a hardcoded one
+    Os::File probeFile;
+    const Os::File::Status openStatus = probeFile.open(missingName, Os::File::OPEN_READ);
+    ASSERT_NE(Os::File::OP_OK, openStatus);
+    probeFile.close();
+
+    Fw::CmdStringArg cmdStringFile(missingName);
     this->sendCmd_GenerateDp(INSTANCE, CMD_SEQ, cmdStringFile, 32, 0, 0, 0, FileManager_GenerateDpMode::PACED);
     this->component.doDispatch();
 
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpFailed(0, missingName, FileManager_GenerateDpStage::OPEN, static_cast<U32>(openStatus));
     ASSERT_EQ(0u, this->m_dpSendCount);
 }
 
@@ -538,6 +563,7 @@ void FileManagerTester ::generateDpInvalidRange() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpInvalidRange_SIZE(1);
+    ASSERT_EVENTS_GenerateDpInvalidRange(0, fileName, 60, 20, 100);
     ASSERT_EQ(0u, this->m_dpSendCount);
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -566,6 +592,7 @@ void FileManagerTester ::generateDpBufferFailure() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpBufferFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpBufferFailed(0, fileName);
     ASSERT_EQ(0u, this->m_dpSendCount);
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -597,9 +624,16 @@ void FileManagerTester ::generateDpWhileBusy() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    ASSERT_EVENTS_GenerateDpFailed(0, fileName, FileManager_GenerateDpStage::BUSY, 0);
 
-    // Let the first generation finish so the component returns to idle
+    // Let the first generation finish so the component returns to idle, and
+    // confirm the busy rejection did not corrupt the in-progress generation
     this->runRateGroupCycles(10);
+
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(1, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GenerateDpComplete_SIZE(1);
+    ASSERT_EVENTS_GenerateDpComplete(0, fileName, 7);
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_busy_file");
@@ -627,6 +661,10 @@ void FileManagerTester ::generateDpSerializationFailure() {
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, FileManager::OPCODE_GENERATEDP, CMD_SEQ, Fw::CmdResponse::OK);
     ASSERT_EVENTS_GenerateDpFailed_SIZE(1);
+    // The undersized buffer leaves no room to serialize the chunk, so the
+    // failure status is the serialize error the handler forwards
+    ASSERT_EVENTS_GenerateDpFailed(0, fileName, FileManager_GenerateDpStage::SERIALIZE,
+                                   static_cast<U32>(Fw::FW_SERIALIZE_NO_ROOM_LEFT));
 
 #if defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
     this->system("rm -f dp_serialize_fail_file");
