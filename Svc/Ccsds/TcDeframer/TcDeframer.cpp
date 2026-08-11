@@ -111,7 +111,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
     }
 
     // Point to the start of the data field and set appropriate size
-    data.setData(data.getData() + TCHeader::SERIALIZED_SIZE);
+    data.advance(TCHeader::SERIALIZED_SIZE);
     // Shrink size to that of the encapsulated data field ( header | data | trailer )
     data.setSize(total_frame_length - TCHeader::SERIALIZED_SIZE - TCTrailer::SERIALIZED_SIZE);
 
