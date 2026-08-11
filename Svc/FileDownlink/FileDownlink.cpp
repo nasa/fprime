@@ -351,13 +351,8 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
 Os::File::Status FileDownlink ::sendDataPacket(U32& byteOffset) {
     const U32 maxDataSize =
         FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType);
-    // The caller is required to maintain byteOffset < m_endOffset. Check it explicitly rather than
-    // relying on FW_ASSERT alone: assertions are permitted to return (see Fw/Types/Assert.hpp) and
-    // are compiled out entirely under NDEBUG, so a violated invariant must not be able to fall
-    // through into the read below with an underflowed dataSize.
+    // The caller is required to maintain byteOffset < m_endOffset.
     if (byteOffset >= this->m_endOffset) {
-        FW_ASSERT(byteOffset < this->m_endOffset, static_cast<FwAssertArgType>(byteOffset),
-                  static_cast<FwAssertArgType>(this->m_endOffset));
         return Os::File::INVALID_ARGUMENT;
     }
     // Subtraction cannot underflow given the check above; comparing the remainder against
