@@ -445,6 +445,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     U32 recordNumTotal = 0;
     U32 recordNumAdded = 0;
     U32 recordNumUpdated = 0;
+    U32 recordNumDropped = 0;
 
     for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
         U8 delimiter;
@@ -453,8 +454,9 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
         // read delimiter
         Os::File::Status fStat = paramFile.read(&delimiter, readSize, Os::File::WaitType::WAIT);
 
-        // check for end of file (read size 0)
-        if (0 == readSize) {
+        // check for end of file (successful read of size 0); a failed read can
+        // also yield size 0 and must not be mistaken for a clean EOF
+        if ((Os::File::OP_OK == fStat) && (0 == readSize)) {
             break;
         }
 
@@ -561,8 +563,14 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         if (updateStatus == NO_SLOTS) {
             this->log_WARNING_HI_PrmDbFull(parameterId);
+            recordNumDropped++;
         }
         recordNumTotal++;
+    }
+
+    // Dropped records mean the database does not reflect the file: report an error
+    if (recordNumDropped > 0) {
+        return PrmLoadStatus::ERROR;
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);
