@@ -37,7 +37,14 @@ class AbstractState {
     //! Construct an AbstractState object
     AbstractState() { param_enabled_ = true; }
 
-    enum Compressible { UNCOMPRESSED = 'U', COMPRESSED = 'C', MINIMAL_COMPRESSED = 'M', MAXIMAL_COMPRESSED = 'X' };
+    enum Compressible {
+        UNCOMPRESSED = 'U',
+        COMPRESSED = 'C',
+        MINIMAL_COMPRESSED = 'M',
+        MAXIMAL_COMPRESSED = 'X',
+        // Full min_compression payload written after write_offset reserved bytes
+        OFFSET_COMPRESSED = 'O'
+    };
 
     struct Chunk {
         Compressible compressible;

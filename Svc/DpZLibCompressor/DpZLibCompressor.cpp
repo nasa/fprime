@@ -62,15 +62,7 @@ Svc::CompressionAlgorithm DpZLibCompressor ::compressChunk_handler(FwIndexType p
     ctx.zlib_stream.zfree = DpZLibCompressor::zlib_free_fn;
     ctx.zlib_stream.opaque = &ctx;
 
-    CompressionAlgorithm alg = zlibCompressionHelper(ctx, buffer);
-
-    // The caller requires the final size (compressed data plus write_offset) to fit within
-    // min_compression; a marginal result that does not must degrade to UNCOMPRESSED
-    if ((alg != CompressionAlgorithm::UNCOMPRESSED) &&
-        (ctx.compression_buffer.getSize() + write_offset > min_compression)) {
-        log_DIAGNOSTIC_ZLibNoCompression(buffer.getSize(), ctx.compression_buffer.getSize());
-        alg = CompressionAlgorithm::UNCOMPRESSED;
-    }
+    const CompressionAlgorithm alg = zlibCompressionHelper(ctx, buffer);
 
     if (alg != CompressionAlgorithm::UNCOMPRESSED) {
         // Compression completed and the size is <= min size
