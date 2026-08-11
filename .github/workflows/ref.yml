@@ -112,11 +112,11 @@ jobs:
       - name: "Integration Tests"
         uses: nasa/fprime-actions/run-integration-tests@devel
         with:
-          gds-working-directory: "TestDeploymentsProject"
-          test-working-directory: "TestDeploymentsProject"
-          binary: "build-artifacts/*/Ref/bin/Ref"
-          gds-args: "--dictionary build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
-          pytest-args: "Ref --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
+          gds-working-directory: "TestDeploymentsProject/Ref"
+          test-working-directory: "TestDeploymentsProject/Ref"
+          binary: "../build-artifacts/*/Ref/bin/Ref"
+          gds-args: "--dictionary ../build-artifacts/*/Ref/dict/RefTopologyDictionary.json"
+          pytest-args: ". --deployment-config ${{ github.workspace }}/TestDeploymentsProject/Ref/test/int/int_config.json"
           valgrind: ${{ runner.os == 'Linux' && 'true' || 'false' }}
 
   unit-tests:
