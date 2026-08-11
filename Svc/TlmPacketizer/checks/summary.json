@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-11T17:44:54Z",
+  "generated_at": "2026-08-11T18:43:46Z",
   "ref": "devel",
-  "commit": "7a208777dc0195f265cf92812adac276f6307551",
+  "commit": "17aab488cb7ab06e500cf601c88e7ab73ab292a7",
   "passed": 3,
   "failed": 9,
   "skipped": 4,
@@ -123,9 +123,10 @@
         "event 'MaxLevelExceed' has no requirement referencing it (add a requirement mentioning 'MaxLevelExceed')",
         "event 'PacketSent' has no requirement referencing it (add a requirement mentioning 'PacketSent')",
         "event 'PacketNotFound' has no requirement referencing it (add a requirement mentioning 'PacketNotFound')",
-        "event 'SectionUnconfigurable' has no requirement referencing it (add a requirement mentioning 'SectionUnconfigurable')"
+        "event 'SectionUnconfigurable' has no requirement referencing it (add a requirement mentioning 'SectionUnconfigurable')",
+        "event 'OversizedChannel' has no requirement referencing it (add a requirement mentioning 'OversizedChannel')"
       ],
-      "detail": "6 event(s) traced against 6 requirement(s)"
+      "detail": "7 event(s) traced against 6 requirement(s)"
     },
     {
       "id": "R4",
