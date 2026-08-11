@@ -219,10 +219,10 @@ event RxFileDataOutOfBounds(
     seqNum: U32 @< Transaction sequence number
     offset: U32 @< File data offset from PDU
     dataSize: U32 @< File data size from PDU
-    fileSize: U32 @< Declared file size from metadata
+    fileSize: U32 @< Bound applied: declared file size from metadata, or 2^32-1 if no metadata received yet
 ) \
     severity warning low \
-    format "RX class {} transaction {}:{} file data [{}, +{}] exceeds declared file size {}, PDU rejected"
+    format "RX class {} transaction {}:{} file data [{}, +{}] exceeds file size bound {}, PDU rejected"
 
 event RxFileSizeMismatch(
     cfdpClass: Cfdp.Class @< CFDP class

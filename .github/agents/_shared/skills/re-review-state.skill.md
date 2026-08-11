@@ -28,11 +28,20 @@ Paginate via the `Link` header until exhausted. For each comment,
 parse the trailing HTML footer:
 
 ```
-<!-- fprime-agent: <agent-name>; finding-key: <hex>; v1[; reply-kind: <kind>] -->
+<!-- fprime-agent: <agent-name>; finding-key: <hex>; site-key: <hex>; v2[; reply-kind: <kind>] -->
 ```
 
-Filter to comments where `<agent-name>` matches `<self>`. The
-matching set is the agent's prior comments on this PR.
+(Legacy `v1` footers omit `site-key`; parse both forms.)
+
+Keep **all** agent-authored comments (any `fprime-agent:` footer):
+
+- Comments where `<agent-name>` matches `<self>` are the agent's
+  prior comments on this PR (drive phases C–D as before).
+- ALL agent-authored comments — own and others' — are additionally
+  indexed by `site-key` for the cross-agent concurrence check
+  (review contract §6a). For `v1` comments without a site-key,
+  recompute it best-effort from the comment's path and anchor
+  context.
 
 ### 1b. Fetch each thread's resolution status and reply chain
 
@@ -47,13 +56,24 @@ prior comment, retrieve:
 - The `thread.comments[]` list (drives disagreement detection: the
   agent looks for any comment authored by a user other than itself).
 
-### 1c. Index by finding-key
+### 1c. Index by finding-key and site-key
 
-Build a dictionary keyed by `finding-key` whose value is `{ comment_id,
-thread_id, path, line, is_resolved, has_contributor_replies,
-has_prior_disagreement_reply }`. `has_prior_disagreement_reply` is
-true iff a comment in the thread carries
-`reply-kind: disagreement` in its HTML footer.
+Build a dictionary keyed by `finding-key` (own comments only) whose
+value is `{ comment_id, thread_id, path, line, is_resolved,
+has_contributor_replies, has_prior_disagreement_reply }`.
+`has_prior_disagreement_reply` is true iff a comment in the thread
+carries `reply-kind: disagreement` in its HTML footer.
+
+Build a second dictionary keyed by `site-key` (ALL agent-authored
+comments) whose value is a list of `{ agent_name, comment_id,
+thread_id, path, is_resolved, tag, body,
+has_own_concurrence_reply, closed_as_duplicate }`.
+`has_own_concurrence_reply` is true iff the thread carries a
+`reply-kind: concurrence` reply from `<self>`. `closed_as_duplicate`
+is true iff the thread carries a `reply-kind: duplicate-close` reply
+from the aggregator (`fprime-review-summary` footer); such threads
+are not concurrence targets — follow the link to the canonical
+thread instead.
 
 ---
 
@@ -72,6 +92,13 @@ finding-key = sha256(
     anchor     + "|" +
     finding_class
 )
+```
+
+The agent-agnostic `site-key` (review contract §6a) reuses the same
+inputs minus the agent and class:
+
+```
+site-key = sha256(file_path + "|" + anchor)
 ```
 
 Where:
@@ -188,6 +215,24 @@ For each `k` in `new`:
   `newly added` (an incorrect-fix follow-up is also a newly-added
   comment).
 
+- Otherwise, run the **cross-agent concurrence check** (review
+  contract §6a): look up `new.site-key` in the all-agents site-key
+  index. If another agent has an OPEN thread (not resolved, not
+  `closed_as_duplicate`) at the same site-key describing the **same
+  underlying issue**:
+
+  - Do NOT open a new thread. POST one concurrence reply on that
+    thread per the concurrence body shape (review contract §9),
+    unless `has_own_concurrence_reply` is already true (one
+    concurrence per agent per thread).
+  - Still count the finding in the agent's own metadata (tag column,
+    `outstanding`, `newly added`) at the agent's own severity.
+  - On later runs, the agent's Phase C tracks this finding on the
+    shared thread (resolve semantics per review contract §6a).
+
+  If the site-key matches but the issue is genuinely different, post
+  normally — the site-key alone never suppresses a distinct finding.
+
 - Otherwise: **brand-new finding.** POST a new inline comment per
   the fresh-finding body shape. Increment `newly added` in
   Since-last-run.
@@ -240,6 +285,12 @@ defined in the review contract §2.
   (the de-dup key is the `reply-kind: disagreement` HTML attribute).
 - **Never decrement** a tag column. Resolution affects only
   `outstanding`.
+- **Never open a new thread** at a site-key where another agent's
+  open thread already describes the same issue — concur instead
+  (review contract §6a).
+- **Never un-resolve** a thread carrying a `reply-kind:
+  duplicate-close` reply from the aggregator; the linked canonical
+  thread is the live home of the finding.
 
 ---
 
