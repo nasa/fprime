@@ -147,7 +147,7 @@ void PassiveRateGroupTester::runPortCycleTimeTest() {
             this->tlmHistory_PortCycleTimeHWM->at(this->tlmHistory_PortCycleTimeHWM->size() - 1).arg;
 
         // Verify HWM >= each cycle time for all three cycles
-        for (int cycleIdx = 0; cycleIdx < 3; cycleIdx++) {
+        for (U32 cycleIdx = 0; cycleIdx < 3; cycleIdx++) {
             PassiveRateGroup_CycleTime cycleTime = this->tlmHistory_PortCycleTime->at(cycleIdx).arg;
             for (FwSizeType portIdx = 0; portIdx < Svc::PassiveRateGroup::CONNECTION_COUNT_MAX; portIdx++) {
                 // HWM must be >= the cycle time from each cycle (it's the max across all cycles)
@@ -158,7 +158,7 @@ void PassiveRateGroupTester::runPortCycleTimeTest() {
         }
 
         // Also verify HWM >= the most recent cycle time
-        PassiveRateGroup_CycleTime lastCycleTime = this->tlmHistory_PortCycleTime->at(2).arg;
+        PassiveRateGroup_CycleTime lastCycleTime = this->tlmHistory_PortCycleTime->at(2U).arg;
         for (FwSizeType portIdx = 0; portIdx < Svc::PassiveRateGroup::CONNECTION_COUNT_MAX; portIdx++) {
             ASSERT_GE(latestHWM[portIdx], lastCycleTime[portIdx])
                 << "HWM must be >= most recent cycle time for port " << portIdx;
@@ -234,7 +234,7 @@ void PassiveRateGroupTester::runClearStatisticsTest() {
     // Verify we have non-zero statistics
     ASSERT_GT(this->tlmHistory_MaxCycleTime->at(this->tlmHistory_MaxCycleTime->size() - 1).arg, 0);
     U32 cycleCountBeforeClear = this->tlmHistory_CycleCount->at(this->tlmHistory_CycleCount->size() - 1).arg;
-    ASSERT_EQ(cycleCountBeforeClear, 5);
+    ASSERT_EQ(cycleCountBeforeClear, 5U);
 
     // Save the pre-clear HWM values if PortCycleTime is enabled
     PassiveRateGroup_CycleTime preClClearHWM;
@@ -277,7 +277,7 @@ void PassiveRateGroupTester::runClearStatisticsTest() {
 
     // Verify cycle count was NOT reset - it should be 6 (5 before + 1 after)
     ASSERT_TLM_CycleCount_SIZE(1);
-    ASSERT_EQ(this->tlmHistory_CycleCount->at(0).arg, 6);
+    ASSERT_EQ(this->tlmHistory_CycleCount->at(0).arg, 6U);
 
     // Verify per-port HWMs were cleared (FPRIME-PRG-005 primary effect)
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
