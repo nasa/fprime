@@ -35,8 +35,6 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
-      - name: "Make Space"
-        uses: nasa/fprime-actions/make-space@devel
       - name: "Set up target repository"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
