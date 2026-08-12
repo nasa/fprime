@@ -35,6 +35,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -64,10 +66,12 @@ jobs:
           pr-branch-only: true
 
       - name: "Generate"
-        run: fprime-util generate
+        run: fprime-util generate 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Build"
-        run: fprime-util build -j8
+        run: fprime-util build -j8 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Set up runtime config variables"
         shell: bash

@@ -41,6 +41,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -61,11 +63,13 @@ jobs:
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
         run: |
-          fprime-util generate raspberrypi
+          fprime-util generate raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Build RPI"
         run: |
           cd LedBlinker/LedBlinkerDeployment
-          fprime-util build raspberrypi
+          fprime-util build raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Prepare artifacts"
         run: |
           mkdir -p rpi-artifacts

@@ -37,6 +37,8 @@ jobs:
         language: [ 'cpp', 'python' ]
 
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -54,8 +56,9 @@ jobs:
           . ./fprime-venv/bin/activate
           pip install -U setuptools setuptools_scm wheel pip
           pip install -r ./requirements.txt
-          fprime-util generate
-          fprime-util build --all
+          fprime-util generate 2>&1 | output-cleaner
+          fprime-util build --all 2>&1 | output-cleaner
+      shell: bash
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

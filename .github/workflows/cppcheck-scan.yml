@@ -30,6 +30,8 @@ jobs:
       security-events: write
 
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
@@ -49,13 +51,14 @@ jobs:
       # compile definitions based on how the source is actually compiled. See https://cppcheck.sourceforge.io/manual.html
       - name: Generate & build F´
         run: |
-          fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-          fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
+          fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 2>&1 | output-cleaner
+          fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
 
           # Add EXCLUDE_FROM_ALL targets as we need to explicitly build them
-          fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)"
-          fprime-util build --target Svc_GenericHub --jobs "$(nproc || printf '%s\n' 1)"
+          fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
+          fprime-util build --target Svc_GenericHub --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
           echo CPPCHECK_OPTS=--project="$GITHUB_WORKSPACE/build-fprime-automatic-native/compile_commands.json" >> $GITHUB_ENV
+        shell: bash
 
       - name: Run cppcheck
         run: cppcheck --force --relative-paths=$(pwd) --inline-suppr --std=c++11 -j "$(nproc || printf '%s\n' 1)" --max-ctu-depth=16 --enable=warning,performance,portability --suppress=variableScope --inconclusive --xml $CPPCHECK_OPTS 2> cppcheck_err.xml
