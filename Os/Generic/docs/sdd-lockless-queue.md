@@ -105,8 +105,9 @@ inversion). Lock-freedom of `std::atomic<LocklessStateTagType>` is a
 prerequisite for the ISR-safety guarantee: it is statically asserted from the
 `ATOMIC_*_LOCK_FREE` macros where the platform guarantees it, and
 runtime-asserted in `create()`. Platforms without lock-free 64-bit atomics
-(some 32-bit targets) must configure `U32` in `config/LocklessQueueCfg.hpp`,
-accepting the narrower 28-bit tag. This residual window is documented in §15.
+(some 32-bit targets) must configure a narrower type in
+`config/LocklessQueueCfg.hpp` (`U32`, `U16`, or `U8`, with 28-, 12-, or 4-bit
+tags respectively). This residual window is documented in §15.
 
 The slot's `m_size` field is written by the producer while the slot is in `WRITING` and read
 by the consumer while the slot is in `READING`; it is only ever accessed under exclusive
@@ -278,9 +279,9 @@ Non-blocking `send` and `receive` use only:
 Runtime assertions in `create` reject platforms where
 `std::atomic<LocklessStateTagType>`, `std::atomic<U32>`, or
 `std::atomic<FwQueuePriorityType>` is not lock-free. (The check is runtime rather than `static_assert` because the
-`is_always_lock_free` constexpr is C++17 and the project targets C++14; a
-best-effort `static_assert` derived from the `ATOMIC_*_LOCK_FREE` macros
-covers platforms with a compile-time guarantee. On every supported flight
+`is_always_lock_free` constexpr is C++17 and the project targets C++14;
+`static_assert`s derived from the width-matched `ATOMIC_*_LOCK_FREE` macros
+cover all three types on platforms with a compile-time guarantee. On every supported flight
 target the atomics are in fact lock-free.)
 
 There are no system calls, no OS-level synchronization primitives, and no
