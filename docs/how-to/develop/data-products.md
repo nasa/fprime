@@ -145,6 +145,8 @@ Container allocation requires an explicit data size (think: just like an `Fw::Bu
 * `SIZE_OF_<RecordName>_RECORD` for records holding a single value
 * `SIZE_OF_<RecordName>_RECORD(<elementCount>)` for array records, where `elementCount` is the number of array elements
 
+These constants are specified in the [Data Products user manual](../../user-manual/framework/data-products.md#33-autocoded-c).
+
 Our example intends to store `RECORD_COUNT` sine and cosine records per container:
 
 ```cpp
