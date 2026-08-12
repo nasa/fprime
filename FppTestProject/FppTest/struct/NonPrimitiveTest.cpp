@@ -300,7 +300,7 @@ TEST_F(NonPrimitiveTest, ToString) {
          << "mAliasStruct = " << testStruct << ", "
          << "mU32Arr = [ " << testU32Arr[0] << ", " << testU32Arr[1] << ", " << testU32Arr[2] << " ], "
          << "mStructArr = [ " << testStructArr[0] << ", " << testStructArr[1] << ", " << testStructArr[2] << " ]"
-         << ")";
+         << " )";
 
     // Verify truncated operator<< output against standard Fw::String
     Fw::String sTruncated(buf2.str().c_str());
