@@ -62,7 +62,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: examples-build-artifacts
-          path: build-artifacts
+          path: .
 
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
