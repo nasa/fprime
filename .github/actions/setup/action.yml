@@ -3,7 +3,7 @@ description: 'Setup the F´ repository and tools'
 inputs:
   location:
     required: true
-    default: $GITHUB_WORKSPACE
+    default: ${{ github.workspace }}
 runs:
   using: "composite"
   steps:
