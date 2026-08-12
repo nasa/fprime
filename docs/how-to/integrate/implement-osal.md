@@ -276,7 +276,11 @@ MutexInterface* MutexInterface::getDelegate(MutexHandleStorage& aligned_new_memo
 - `alignof(MyOsMutex)` is compatible with `FW_HANDLE_ALIGNMENT`
 
 > [!NOTE]
-> Some interfaces (such `FileInterface`) require a copy-constructor-supporting `getDelegate` signature that takes an additional `const FileInterface* to_copy` parameter, also supported by `makeDelegate`. Check each interface header for the exact `getDelegate` signature required.
+> Some interfaces require additional parameters in their `getDelegate` signature:
+> - `FileInterface` takes an optional `const FileInterface* to_copy` parameter for copy construction
+> - `RawTimeInterface` takes optional `const RawTimeInterface* to_copy` and `RawTimeSource source` parameters to support both copy construction and selectable timer sources
+> 
+> The `makeDelegate` helper supports all these signatures. Check each interface header for the exact `getDelegate` signature required.
 
 ---
 
@@ -345,7 +349,7 @@ The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can
 | **FileSystem** | `FileSystemInterface` | `rename()`, `remove()`, `stat()` |
 | **Directory** | `DirectoryInterface` | `open()`, `read()`, `close()` |
 | **Console** | `ConsoleInterface` | `write()` |
-| **RawTime** | `RawTimeInterface` | `now()`, `getTimeInterval()` |
+| **RawTime** | `RawTimeInterface` | `now()`, `getTimeInterval()` (getDelegate takes `RawTimeSource`) |
 | **Cpu** | `CpuInterface` | `getCount()`, `getTicks()` |
 | **Memory** | `MemoryInterface` | `getUsage()` |
 

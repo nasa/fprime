@@ -10,6 +10,7 @@
 #include <Fw/Types/Serializable.hpp>
 #include <Os/Os.hpp>
 #include "config/OsDelegateRawTime.hpp"
+#include "config/RawTimeSource.hpp"
 
 namespace Os {
 
@@ -39,8 +40,13 @@ class RawTimeInterface : public Fw::Serializable {
     virtual RawTimeHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a RawTime delegate object
+    //! \param aligned_new_memory: aligned memory to fill
+    //! \param to_copy: pointer to copy-constructor input
+    //! \param source: timer source selection (defaults to RAWTIME_DEFAULT)
+    //! \return: pointer to delegate
     static RawTimeInterface* getDelegate(RawTimeHandleStorage& aligned_new_memory,
-                                         const RawTimeInterface* to_copy = nullptr);
+                                         const RawTimeInterface* to_copy = nullptr,
+                                         RawTimeSource source = RAWTIME_DEFAULT);
 
     // ------------------------------------------------------------------
     // RawTime operations to be implemented by an OSAL implementation

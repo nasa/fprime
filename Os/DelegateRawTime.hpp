@@ -11,7 +11,12 @@ namespace Os {
 
 class DelegateRawTime final : public RawTimeInterface {
   public:
-    DelegateRawTime();         //!<  Constructor
+    DelegateRawTime();  //!<  Default constructor
+
+    //! \brief Constructor with timer source selection
+    //! \param source Timer source to use (defaults to RAWTIME_DEFAULT)
+    explicit DelegateRawTime(RawTimeSource source);
+
     ~DelegateRawTime() final;  //!<  Destructor
 
     //! \brief copy constructor that copies the internal representation
@@ -99,6 +104,10 @@ class DelegateRawTime final : public RawTimeInterface {
     //! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)
     bool operator==(const RawTime& other) const override;
 
+    //! \brief Get the timer source used by this RawTime instance
+    //! \return The RawTimeSource value configured for this instance
+    RawTimeSource getSource() const;
+
   private:
     // This section is used to store the implementation-defined RawTime handle. To Os::RawTime and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store the handle in
@@ -106,6 +115,7 @@ class DelegateRawTime final : public RawTimeInterface {
     //
     alignas(FW_HANDLE_ALIGNMENT) RawTimeHandleStorage m_handle_storage;  //!< RawTime handle storage
     RawTimeInterface& m_delegate;                                        //!< Delegate for the real implementation
+    RawTimeSource m_source = RAWTIME_DEFAULT;                            //!< Timer source selection
 };
 }  // namespace Os
 
