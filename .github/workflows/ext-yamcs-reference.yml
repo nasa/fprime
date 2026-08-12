@@ -26,8 +26,16 @@ permissions:
   contents: read
 
 jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-yamcs-reference
+      default_target_ref: main
+
   build:
     name: "Build"
+    needs: get-branch
     runs-on: ubuntu-22.04
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
@@ -38,7 +46,7 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
 
       - name: "Build deployment"
         run: |
@@ -57,7 +65,7 @@ jobs:
   test:
     name: "Test"
     runs-on: ubuntu-22.04
-    needs: build
+    needs: [get-branch, build]
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
@@ -65,7 +73,7 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
 
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
