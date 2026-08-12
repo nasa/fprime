@@ -361,18 +361,20 @@ void FileManagerTester ::resetDpState() {
     this->m_dpGetShouldFail = false;
     this->m_dpGetUndersizedBuffer = false;
     this->m_dpLastPriority = 0;
-    this->m_dpContainerBuffer.setData(this->m_dpContainerData);
-    this->m_dpContainerBuffer.setSize(sizeof this->m_dpContainerData);
+    // Construct the buffer over the backing store: setData adjusts an existing
+    // allocation rather than establishing one, so it cannot initialize a
+    // default-constructed buffer
+    this->m_dpContainerBuffer = Fw::Buffer(this->m_dpContainerData, sizeof this->m_dpContainerData);
 }
 
 Fw::Success::T FileManagerTester ::productGet_handler(FwDpIdType id, FwSizeType size, Fw::Buffer& buffer) {
     if (this->m_dpGetShouldFail || (size > sizeof this->m_dpContainerData)) {
         return Fw::Success::FAILURE;
     }
-    this->m_dpContainerBuffer.setData(this->m_dpContainerData);
     // An undersized buffer lets the serialization failure path be exercised
-    this->m_dpContainerBuffer.setSize(this->m_dpGetUndersizedBuffer ? Fw::DpContainer::MIN_PACKET_SIZE
-                                                                    : sizeof this->m_dpContainerData);
+    const FwSizeType bufferSize =
+        this->m_dpGetUndersizedBuffer ? Fw::DpContainer::MIN_PACKET_SIZE : sizeof this->m_dpContainerData;
+    this->m_dpContainerBuffer = Fw::Buffer(this->m_dpContainerData, bufferSize);
     buffer = this->m_dpContainerBuffer;
     return Fw::Success::SUCCESS;
 }
