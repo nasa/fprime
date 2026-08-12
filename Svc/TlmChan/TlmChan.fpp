@@ -12,6 +12,13 @@ module Svc {
     ) severity warning high \
     format "TlmChan epoch processing cap reached: {} entries deferred (cumulative: {})"
 
+    @ Hash bucket pool is exhausted; the new telemetry channel was dropped
+    event TlmChanBucketPoolExhausted(
+        Id: FwChanIdType @< The telemetry ID that could not be stored
+    ) severity warning high \
+    format "TlmChan bucket pool exhausted: dropping new telemetry ID 0x{x}" \
+    throttle 10
+
 #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 #Ports
 #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

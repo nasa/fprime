@@ -51,7 +51,7 @@ Name | Type | Kind | Purpose
 ---- | ---- | ---- | ----
 `bufferSendIn` | [`Fw::BufferSend`](../../../Fw/Buffer/docs/sdd.md) | guarded input | Receives buffers for deallocation
 `bufferGetCallee` | [`Fw::BufferGet`](../../../Fw/Buffer/docs/sdd.md) | guarded input (callee) | Receives requests for allocated buffers and returns the buffers
-`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | sync input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
+`schedIn` | [`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | guarded input (callee) | writes telemetry values (optional, if the user doesn't need BufferManager telemetry)
 
 ### 3.4 Constants
 

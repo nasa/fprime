@@ -40,7 +40,7 @@ class DpContainer {
         //! The offset for the id field
         static constexpr FwSizeType ID_OFFSET = PACKET_DESCRIPTOR_OFFSET + sizeof(FwPacketDescriptorType);
         //! The offset for the priority field
-        static constexpr FwDpPriorityType PRIORITY_OFFSET = ID_OFFSET + sizeof(FwDpIdType);
+        static constexpr FwSizeType PRIORITY_OFFSET = ID_OFFSET + sizeof(FwDpIdType);
         //! The offset for the time tag field
         static constexpr FwSizeType TIME_TAG_OFFSET = PRIORITY_OFFSET + sizeof(FwDpPriorityType);
         //! The offset for the processing types field

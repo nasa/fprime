@@ -31,7 +31,9 @@ GenericHubTester ::GenericHubTester()
       m_buffer_in(0),
       m_comm_out(0),
       m_buffer_out(0),
-      m_current_port(0) {
+      m_current_port(0),
+      m_cmdDispOutPort(0),
+      m_cmdRespOutPort(0) {
     this->initComponents();
     this->connectPorts();
 }
@@ -160,6 +162,18 @@ void GenericHubTester ::test_command_dispatch() {
     ASSERT_from_cmdDispOut_SIZE(1);
     ASSERT_from_cmdDispOut(0, buffer, 279);
     clearFromPortHistory();
+
+    // A maximum-size command payload must round-trip without overflow
+    buffer.resetSer();
+    for (U32 i = 0; i < FW_COM_BUFFER_MAX_SIZE; i++) {
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(static_cast<U8>(STest::Pick::any())));
+    }
+    invoke_to_cmdDispIn(0, buffer, 280);
+
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_cmdDispOut_SIZE(1);
+    ASSERT_from_cmdDispOut(0, buffer, 280);
+    clearFromPortHistory();
 }
 
 void GenericHubTester ::test_command_response() {
@@ -178,6 +192,29 @@ void GenericHubTester ::test_commands() {
     this->test_command_dispatch();
 
     this->test_command_response();
+}
+
+void GenericHubTester ::test_commands_nonzero_port() {
+    const FwIndexType port = 1;
+    Fw::ComBuffer buffer;
+    clearFromPortHistory();
+    random_fill(buffer, FW_TLM_BUFFER_MAX_SIZE);
+
+    invoke_to_cmdDispIn(port, buffer, 279);
+
+    // **must** return buffer and forward on the same nonzero port index
+    ASSERT_from_fromBufferDriverReturn_SIZE(1);
+    ASSERT_from_cmdDispOut_SIZE(1);
+    ASSERT_from_cmdDispOut(0, buffer, 279);
+    ASSERT_EQ(m_cmdDispOutPort, port);
+    clearFromPortHistory();
+
+    invoke_to_cmdRespIn(port, 0x3A56BF8C, 825, Fw::CmdResponse::VALIDATION_ERROR);
+
+    ASSERT_from_cmdRespOut_SIZE(1);
+    ASSERT_from_cmdRespOut(0, 0x3A56BF8C, 825, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EQ(m_cmdRespOutPort, port);
+    clearFromPortHistory();
 }
 
 void GenericHubTester ::send_from_driver_packet(U32 type,
@@ -286,6 +323,19 @@ void GenericHubTester ::from_tlmOut_handler(const FwIndexType portNum,
     this->pushFromPortEntry_tlmOut(id, timeTag, val);
 }
 
+void GenericHubTester ::from_cmdDispOut_handler(const FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
+    this->m_cmdDispOutPort = portNum;
+    this->pushFromPortEntry_cmdDispOut(data, context);
+}
+
+void GenericHubTester ::from_cmdRespOut_handler(const FwIndexType portNum,
+                                                FwOpcodeType opCode,
+                                                U32 cmdSeq,
+                                                const Fw::CmdResponse& response) {
+    this->m_cmdRespOutPort = portNum;
+    this->pushFromPortEntry_cmdRespOut(opCode, cmdSeq, response);
+}
+
 void GenericHubTester ::from_toBufferDriver_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     ASSERT_NE(fwBuffer.getData(), nullptr) << "Empty buffer to deallocate";
     ASSERT_GE(fwBuffer.getData(), m_data_for_allocation) << "Incorrect data pointer deallocated";
@@ -371,10 +421,14 @@ void GenericHubTester ::connectPorts() {
     this->connect_to_tlmIn(0, this->componentIn.get_tlmIn_InputPort(0));
 
     // cmdDispIn
-    this->connect_to_cmdDispIn(0, this->componentIn.get_cmdDispIn_InputPort(0));
+    for (FwIndexType i = 0; i < this->componentIn.getNum_cmdDispIn_InputPorts(); i++) {
+        this->connect_to_cmdDispIn(i, this->componentIn.get_cmdDispIn_InputPort(i));
+    }
 
     // cmdRespIn
-    this->connect_to_cmdRespIn(0, this->componentIn.get_cmdRespIn_InputPort(0));
+    for (FwIndexType i = 0; i < this->componentIn.getNum_cmdRespIn_InputPorts(); i++) {
+        this->connect_to_cmdRespIn(i, this->componentIn.get_cmdRespIn_InputPort(i));
+    }
 
     // fromBufferDriver
     this->connect_to_fromBufferDriver(0, this->componentOut.get_fromBufferDriver_InputPort(0));
@@ -391,10 +445,14 @@ void GenericHubTester ::connectPorts() {
     this->componentOut.set_tlmOut_OutputPort(0, this->get_from_tlmOut(0));
 
     // cmdDispOut
-    this->componentOut.set_cmdDispOut_OutputPort(0, this->get_from_cmdDispOut(0));
+    for (FwIndexType i = 0; i < this->componentOut.getNum_cmdDispOut_OutputPorts(); i++) {
+        this->componentOut.set_cmdDispOut_OutputPort(i, this->get_from_cmdDispOut(i));
+    }
 
     // cmdRespOut
-    this->componentOut.set_cmdRespOut_OutputPort(0, this->get_from_cmdRespOut(0));
+    for (FwIndexType i = 0; i < this->componentOut.getNum_cmdRespOut_OutputPorts(); i++) {
+        this->componentOut.set_cmdRespOut_OutputPort(i, this->get_from_cmdRespOut(i));
+    }
 
     // toBufferDriver
     this->componentIn.set_toBufferDriver_OutputPort(0, this->get_from_toBufferDriver(0));

@@ -42,6 +42,8 @@ on:
         required: false
         type: string
         default: "ubuntu-22.04"
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: ${{ inputs.runs_on }}
@@ -60,7 +62,7 @@ jobs:
           stage: build
       - name: "Build Binary"
         run: |
-          CCACHE_DISABLE=1 fprime-ci -c ${CI_CONFIG_FILE} --add-stage build
+          fprime-ci -c ${CI_CONFIG_FILE} --add-stage build
       - name: Archive Results
         uses: actions/upload-artifact@v7
         with:

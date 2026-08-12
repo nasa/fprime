@@ -82,6 +82,8 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
             FW_ASSERT(queueConfig.entries[entryIndex].priority < TOTAL_PORT_COUNT,
                       static_cast<FwAssertArgType>(queueConfig.entries[entryIndex].priority),
                       static_cast<FwAssertArgType>(TOTAL_PORT_COUNT), static_cast<FwAssertArgType>(entryIndex));
+            // A zero depth is the default-constructed value and divides by zero in the overflow check below
+            FW_ASSERT(queueConfig.entries[entryIndex].depth > 0, static_cast<FwAssertArgType>(entryIndex));
 
             if (currentPriority == queueConfig.entries[entryIndex].priority) {
                 // Set up the queue metadata object in order to track priority, depth, index into the queue list of the
@@ -107,7 +109,11 @@ void ComQueue::configure(const QueueConfigurationTable& queueConfig,
     }
     // Allocate a single chunk of memory from the memory allocator. Memory recover is neither needed nor used.
     bool recoverable = false;
-    this->m_allocation = this->m_allocator->allocate(this->m_allocationId, totalAllocation, recoverable);
+    FwSizeType actualAllocation = totalAllocation;
+    this->m_allocation = this->m_allocator->allocate(this->m_allocationId, actualAllocation, recoverable);
+    FW_ASSERT(this->m_allocation != nullptr);
+    FW_ASSERT(actualAllocation >= totalAllocation, static_cast<FwAssertArgType>(actualAllocation),
+              static_cast<FwAssertArgType>(totalAllocation));
 
     // Each of the backing queue objects must be supplied memory to store the queued messages. These data regions are
     // sub-portions of the total allocated data. This memory is passed out by looping through each queue in prioritized

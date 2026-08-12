@@ -5,8 +5,10 @@ name: CI [RHEL8]
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -38,6 +40,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     - name: Build Framework
@@ -58,6 +61,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     - name: Build Ref
@@ -79,6 +83,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     # Some UTs require a non-root user to run properly due to using file permissions in tests

@@ -9,6 +9,7 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
@@ -52,6 +53,11 @@ PrmDbImpl::~PrmDbImpl() {}
 void PrmDbImpl::configure(const char* file) {
     FW_ASSERT(file != nullptr);
     this->m_fileName = file;
+}
+
+void PrmDbImpl::configureLoadSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    this->m_sandboxDir = directory;
 }
 
 void PrmDbImpl::readParamFile() {
@@ -389,10 +395,22 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     FW_ASSERT(fileName.length() > 0);
 
-    Fw::String dbString = getDbString(dbType);
-
-    // load file. FIXME: Put more robust file checking, such as a CRC.
+    // Commanded loads (staging) may carry a ground-supplied path; restrict them
+    // to the configured sandbox directory to prevent path traversal
+    if ((dbType == PrmDbType::DB_STAGING) && (this->m_sandboxDir.length() > 0)) {
+        Os::SandboxedFile paramFile;
+        paramFile.configure(this->m_sandboxDir.toChar());
+        return this->readParamFileWork(paramFile, fileName, dbType);
+    }
     Os::File paramFile;
+    return this->readParamFileWork(paramFile, fileName, dbType);
+}
+
+template <typename FileType>
+PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
+                                                      const Fw::StringBase& fileName,
+                                                      PrmDbType dbType) {
+    Fw::String dbString = getDbString(dbType);
 
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
@@ -508,7 +526,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or (recordSize < sizeof(FwPrmIdType))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;

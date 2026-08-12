@@ -1,8 +1,10 @@
 name: "External Repo: Cookiecutters Tests"
 
 on:
+ schedule:
+   - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
  push:
-   branches: [ devel, release/** ]
+   branches: [ release/** ]
  pull_request:
    # The branches below must be a subset of the branches above
    branches: [ devel, release/** ]
@@ -58,6 +60,7 @@ jobs:
             .github/actions/cookiecutter-check/bootstrap.expect
           sparse-checkout-cone-mode: false
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Setup Python"
         uses: actions/setup-python@v5
@@ -82,6 +85,7 @@ jobs:
           submodules: true
           path: ./my-project/lib/fprime
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Update dependencies and install fprime-tools"
         run: |

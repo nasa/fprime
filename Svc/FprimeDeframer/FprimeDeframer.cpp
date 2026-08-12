@@ -102,11 +102,10 @@ void FprimeDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, cons
     }
 
     // ---------------- Extract payload from frame ----------------
-    // Shift data pointer to effectively remove the header
-    data.setData(data.getData() + FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
-    // Shrink size to effectively remove the trailer (also removes the header)
-    data.setSize(data.getSize() - FprimeProtocol::FrameHeader::SERIALIZED_SIZE -
-                 FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
+    // Advance past the header (adjusts size accordingly)
+    data.advance(FprimeProtocol::FrameHeader::SERIALIZED_SIZE);
+    // Shrink size to effectively remove the trailer
+    data.setSize(data.getSize() - FprimeProtocol::FrameTrailer::SERIALIZED_SIZE);
     // Emit the deframed data
     this->dataOut_out(0, data, contextCopy);
 }

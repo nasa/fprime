@@ -45,6 +45,10 @@ class TlmChanTester : public TlmChanGTestBase {
     //! m_procCapCount increments cumulatively across successive capped invocations.
     void runProcGuard();
 
+    //! Verify that exhausting the hash-bucket pool drops the new channel with a
+    //! TlmChanBucketPoolExhausted WARNING_HI event instead of asserting.
+    void runBucketPoolExhaustion();
+
     // ----------------------------------------------------------------------
     // doHash() cyber-security tests
     //

@@ -33,9 +33,8 @@ Fw::Buffer DpManagerTester::from_bufferGetOut_handler(const FwIndexType portNum,
     switch (this->abstractState.bufferGetStatus) {
         case AbstractState::BufferGetStatus::VALID:
             // Construct a valid buffer
-            buffer.setData(this->abstractState.bufferData);
             FW_ASSERT(size <= AbstractState::MAX_BUFFER_SIZE);
-            buffer.setSize(size);
+            buffer.set(this->abstractState.bufferData, size);
             break;
         case AbstractState::BufferGetStatus::INVALID:
             // Leave buffer in invalid state

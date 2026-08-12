@@ -158,8 +158,8 @@ Os::Task::Status PosixTask::create(const Os::Task::Arguments& arguments,
     pthread_attr_t attributes;
     (void)memset(&attributes, 0, sizeof(attributes));
     pthread_status = pthread_attr_init(&attributes);
-    if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (expect_permission) &&
-        (pthread_status == PosixTaskHandle::SUCCESS)) {
+    // Setting the stack size requires no special permission
+    if ((arguments.m_stackSize != Os::Task::TASK_DEFAULT) && (pthread_status == PosixTaskHandle::SUCCESS)) {
         pthread_status = set_stack_size(attributes, arguments);
     }
     if ((arguments.m_priority != Os::Task::TASK_PRIORITY_DEFAULT) && (expect_permission) &&

@@ -102,6 +102,11 @@ void SystemResources::Cpu() {
         Os::Cpu::Status status = Os::Cpu::getTicks(m_cpu[i], i);
         // Best-effort calculations and telemetry
         if (status == Os::Generic::OP_OK) {
+            // Skip the sample if the counters went backwards (e.g. counter reset)
+            if ((m_cpu[i].used < m_cpu_prev[i].used) || (m_cpu[i].total < m_cpu_prev[i].total)) {
+                m_cpu_prev[i] = m_cpu[i];
+                continue;
+            }
             F32 cpuUtil = compCpuUtil(m_cpu[i], m_cpu_prev[i]);
             cpuAvg += cpuUtil;
 

@@ -3,8 +3,10 @@
 name: "Framework"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     branches: [ devel, release/** ]
     paths-ignore:
@@ -37,11 +39,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-22.04
-            jobs: "random"
-          - runner: macos-latest
-            jobs: "2"
+        # macOS runs only on the nightly schedule
+        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -49,6 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel
@@ -65,11 +65,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-22.04
-            jobs: "random"
-          - runner: macos-latest
-            jobs: "2"
+        # macOS runs only on the nightly schedule
+        include: ${{ github.event_name == 'schedule' && fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"},{"runner":"macos-latest","jobs":"2"}]') || fromJSON('[{"runner":"ubuntu-22.04","jobs":"random"}]') }}
     timeout-minutes: 30
     runs-on: ${{ github.event.inputs.runner || matrix.runner }}
     steps:
@@ -77,6 +74,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel
@@ -96,6 +94,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel
@@ -116,6 +115,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Setup F' Tools"
         uses: nasa/fprime-actions/setup@devel
