@@ -104,6 +104,10 @@ class DelegateRawTime final : public RawTimeInterface {
     //! \brief Compare whether two RawTime objects are the same (i.e. refer to the same microsecond)
     bool operator==(const RawTime& other) const override;
 
+    //! \brief Get the timer source used by this RawTime instance
+    //! \return The RawTimeSource value configured for this instance
+    RawTimeSource getSource() const;
+
   private:
     // This section is used to store the implementation-defined RawTime handle. To Os::RawTime and fprime, this type is
     // opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store the handle in

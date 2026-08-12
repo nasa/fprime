@@ -73,6 +73,10 @@ bool DelegateRawTime::operator==(const RawTime& other) const {
     return this->m_delegate == other;
 }
 
+RawTimeSource DelegateRawTime::getSource() const {
+    return this->m_source;
+}
+
 // ------------------------------------------------------------
 // RawTimeInterface default implementations
 // Built on pure virtual methods. Located here (not RawTimeInterface.cpp)
