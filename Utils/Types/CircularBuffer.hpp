@@ -68,8 +68,8 @@ class CircularBuffer {
 
     /**
      * Serialize a serializable object into the next `size`-byte slot of this circular buffer using
-     * F Prime serialization. The slot is required to be a linear (non-wrapping) region of the
-     * backing store; this is asserted. Will not accept more data than space available.
+     * F Prime serialization. A slot wrapping the end of the backing store is staged through a
+     * temporary stack buffer. Will not accept more data than space available.
      * \param serializable: object to serialize into the slot
      * \param size: size of the slot in bytes
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
@@ -78,9 +78,9 @@ class CircularBuffer {
 
     /**
      * Serialize the contents of a linear buffer (length token followed by data) into the next
-     * `size`-byte slot of this circular buffer using F Prime serialization. The slot is required
-     * to be a linear (non-wrapping) region of the backing store; this is asserted. Will not
-     * accept more data than space available.
+     * `size`-byte slot of this circular buffer using F Prime serialization. A slot wrapping the
+     * end of the backing store is staged through a temporary stack buffer. Will not accept more
+     * data than space available.
      * \param buffer: linear buffer whose contents to serialize into the slot
      * \param size: size of the slot in bytes
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
@@ -120,8 +120,8 @@ class CircularBuffer {
 
     /**
      * Deserialize a serializable object from the `size`-byte slot at `offset` without moving the
-     * head index. The slot is required to be a linear (non-wrapping) region of the backing store;
-     * this is asserted.
+     * head index. A slot wrapping the end of the backing store is staged through a temporary
+     * stack buffer.
      * \param serializable: object to fill from the slot
      * \param size: size of the slot in bytes
      * \param offset: offset from head to the start of the slot. Default: 0
@@ -131,8 +131,8 @@ class CircularBuffer {
 
     /**
      * Deserialize linear buffer contents (length token followed by data) from the `size`-byte
-     * slot at `offset` without moving the head index. The slot is required to be a linear
-     * (non-wrapping) region of the backing store; this is asserted.
+     * slot at `offset` without moving the head index. A slot wrapping the end of the backing
+     * store is staged through a temporary stack buffer.
      * \param buffer: linear buffer to fill from the slot
      * \param size: size of the slot in bytes
      * \param offset: offset from head to the start of the slot. Default: 0
@@ -186,6 +186,11 @@ class CircularBuffer {
     void clear_high_water_mark();
 
   private:
+    //! Stack staging buffer size for object (de)serialization across the wrap boundary.
+    //! Sized to hold the largest framework buffer (a serialized Fw::ComBuffer).
+    static constexpr FwSizeType STAGING_BUFFER_SIZE =
+        static_cast<FwSizeType>(FW_COM_BUFFER_MAX_SIZE) + static_cast<FwSizeType>(sizeof(FwSizeStoreType));
+
     /**
      * Common implementation for the serializable-object serialize overloads.
      * \param serializable: object to serialize into the slot

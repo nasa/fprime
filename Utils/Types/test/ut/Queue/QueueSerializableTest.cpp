@@ -4,7 +4,8 @@
 //
 // Tests the Fw::Serializable and Fw::LinearBufferBase overloads of
 // Types::Queue, which store messages via F Prime serialization into
-// fixed-size, linear (non-wrapping) circular buffer slots.
+// fixed-size circular buffer slots, and the wrap-around handling of
+// the underlying Types::CircularBuffer object overloads.
 // ======================================================================
 
 #include <gtest/gtest.h>
@@ -151,9 +152,8 @@ TEST(QueueSerializable, PopFrontLifo) {
     ASSERT_EQ(Fw::FW_DESERIALIZE_BUFFER_EMPTY, queue.popFront(out));
 }
 
-// Exercise ring wrap-around across many alternating enqueue/dequeue cycles.
-// Each slot access asserts the linear (non-wrapping) slot invariant; this test
-// walks the head index through every multiple of the message size in the store.
+// Exercise ring wrap-around across many alternating enqueue/dequeue cycles,
+// walking the head index through every multiple of the message size in the store.
 TEST(QueueSerializable, WrapAroundStress) {
     U8 storage[BUFFER_MSG_SIZE * QUEUE_DEPTH];
     Types::Queue queue;
@@ -212,4 +212,41 @@ TEST(QueueSerializable, ComBufferFullCapacity) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, queue.dequeue(out));
     ASSERT_EQ(com.getSize(), out.getSize());
     EXPECT_EQ(0, memcmp(com.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(com.getSize())));
+}
+
+// A serializable slot spanning the end of the circular buffer store round-trips
+TEST(QueueSerializable, CircularBufferWrappingSlot) {
+    constexpr FwSizeType PAD = 8;
+    U8 storage[BUFFER_MSG_SIZE + PAD];
+    Types::CircularBuffer circular(storage, sizeof storage);
+
+    // Advance the head so the next slot wraps the end of the store
+    const U8 pad[PAD] = {};
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(pad, PAD));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.rotate(PAD));
+
+    const Fw::Buffer in = makeBuffer(42);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::Serializable&>(in), BUFFER_MSG_SIZE));
+    Fw::Buffer out;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::Serializable&>(out), BUFFER_MSG_SIZE));
+    expectBufferEq(in, out);
+}
+
+// A ComBuffer slot spanning the end of the circular buffer store round-trips
+TEST(QueueSerializable, CircularBufferWrappingComBufferSlot) {
+    constexpr FwSizeType PAD = 8;
+    U8 storage[COM_MSG_SIZE + PAD];
+    Types::CircularBuffer circular(storage, sizeof storage);
+
+    // Advance the head so the next slot wraps the end of the store
+    const U8 pad[PAD] = {};
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(pad, PAD));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.rotate(PAD));
+
+    Fw::ComBuffer in = makeComBuffer(3, 25);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::LinearBufferBase&>(in), COM_MSG_SIZE));
+    Fw::ComBuffer out;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::LinearBufferBase&>(out), COM_MSG_SIZE));
+    ASSERT_EQ(in.getSize(), out.getSize());
+    EXPECT_EQ(0, memcmp(in.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(in.getSize())));
 }

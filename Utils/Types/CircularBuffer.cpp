@@ -82,9 +82,19 @@ Fw::SerializeStatus CircularBuffer ::serialize_impl(const T& serializable, const
         return Fw::FW_SERIALIZE_NO_ROOM_LEFT;
     }
     const FwSizeType idx = advance_idx(m_head_idx, m_allocated_size);
-    // The slot must be a linear (non-wrapping) region of the store
-    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(m_store_size));
+    // Wrapping slot: serialize into a stack staging buffer, then byte-copy in with wrap-around
+    if ((idx + size) > m_store_size) {
+        FW_ASSERT(size <= STAGING_BUFFER_SIZE, static_cast<FwAssertArgType>(size),
+                  static_cast<FwAssertArgType>(STAGING_BUFFER_SIZE));
+        U8 staging[STAGING_BUFFER_SIZE] = {};
+        Fw::ExternalSerializeBuffer stagingBuffer(staging, size);
+        const Fw::SerializeStatus stagingStatus = stagingBuffer.serializeFrom(serializable);
+        if (stagingStatus != Fw::FW_SERIALIZE_OK) {
+            return stagingStatus;
+        }
+        return this->serialize(staging, size);
+    }
+    // Linear slot: serialize directly into the store
     Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
     const Fw::SerializeStatus status = slot.serializeFrom(serializable);
     if (status != Fw::FW_SERIALIZE_OK) {
@@ -164,9 +174,21 @@ Fw::SerializeStatus CircularBuffer ::peek_impl(T& serializable, FwSizeType size,
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     const FwSizeType idx = advance_idx(m_head_idx, offset);
-    // The slot must be a linear (non-wrapping) region of the store
-    FW_ASSERT((idx + size) <= m_store_size, static_cast<FwAssertArgType>(idx), static_cast<FwAssertArgType>(size),
-              static_cast<FwAssertArgType>(m_store_size));
+    // Wrapping slot: byte-copy out with wrap-around into a stack staging buffer, then deserialize
+    if ((idx + size) > m_store_size) {
+        FW_ASSERT(size <= STAGING_BUFFER_SIZE, static_cast<FwAssertArgType>(size),
+                  static_cast<FwAssertArgType>(STAGING_BUFFER_SIZE));
+        U8 staging[STAGING_BUFFER_SIZE];
+        const Fw::SerializeStatus peekStatus = this->peek(staging, size, offset);
+        if (peekStatus != Fw::FW_SERIALIZE_OK) {
+            return peekStatus;
+        }
+        Fw::ExternalSerializeBuffer stagingBuffer(staging, size);
+        const Fw::SerializeStatus status = stagingBuffer.setBuffLen(size);
+        FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
+        return stagingBuffer.deserializeTo(serializable);
+    }
+    // Linear slot: deserialize directly from the store
     Fw::ExternalSerializeBuffer slot(&m_store[idx], size);
     Fw::SerializeStatus status = slot.setBuffLen(size);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(status));
