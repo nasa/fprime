@@ -4,6 +4,9 @@
 # ======================================================================
 
 module Os {
+@ Sentinel for default task parameters: casts to Os::Task::TASK_DEFAULT
+constant TASK_DEFAULT = -1
+
 @ FPP shadow-enum representing Os::Task::Status
 enum TaskStatus : U8 {
     OP_OK,             @< message sent/received okay
