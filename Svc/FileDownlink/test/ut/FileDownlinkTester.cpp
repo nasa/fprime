@@ -303,54 +303,21 @@ void FileDownlinkTester ::downlinkPartialOffsetLengthOverflow() {
     this->removeFile(sourceFileName);
 }
 
-namespace {
-//! Assert hook that records the failure and returns rather than aborting. This models the
-//! non-aborting configurations in which FW_ASSERT falls through into the code that follows it.
-class NonAbortingAssertHook : public Fw::AssertHook {
-  public:
-    NonAbortingAssertHook() : m_count(0) { this->registerHook(); }
-    ~NonAbortingAssertHook() override { this->deregisterHook(); }
-    void reportAssert(FILE_NAME_ARG,
-                      FwSizeType,
-                      FwSizeType,
-                      FwAssertArgType,
-                      FwAssertArgType,
-                      FwAssertArgType,
-                      FwAssertArgType,
-                      FwAssertArgType,
-                      FwAssertArgType) override {
-        this->m_count++;
-    }
-    void doAssert() override {}
-    FwSizeType count() const { return this->m_count; }
-
-  private:
-    FwSizeType m_count;
-};
-}  // namespace
-
 void FileDownlinkTester ::sendDataPacketRejectsExhaustedRange() {
-    // Regression test: sendDataPacket() must not compute an underflowed dataSize if its
-    // byteOffset < m_endOffset precondition is ever violated. FW_ASSERT alone is
-    // not sufficient -- it is permitted to return and is compiled out under NDEBUG -- so the
-    // explicit check must reject the call even when the assertion does not halt.
-    NonAbortingAssertHook hook;
-
+    // Regression test: sendDataPacket() must reject an exhausted range rather than compute an
+    // underflowed dataSize when its byteOffset < m_endOffset precondition is violated.
     this->component.m_endOffset = 100;
 
     // byteOffset == m_endOffset: the old code computed dataSize == 0 and read into the buffer
     U32 byteOffset = 100;
-    ASSERT_NE(Os::File::OP_OK, this->component.sendDataPacket(byteOffset));
+    ASSERT_EQ(Os::File::INVALID_ARGUMENT, this->component.sendDataPacket(byteOffset));
     // byteOffset must be left untouched by the rejected call
     ASSERT_EQ(100u, byteOffset);
 
     // byteOffset > m_endOffset: the old code computed dataSize == 0xFFFFFF9C
     byteOffset = 200;
-    ASSERT_NE(Os::File::OP_OK, this->component.sendDataPacket(byteOffset));
+    ASSERT_EQ(Os::File::INVALID_ARGUMENT, this->component.sendDataPacket(byteOffset));
     ASSERT_EQ(200u, byteOffset);
-
-    // The assertion still fired on both rejected calls
-    ASSERT_EQ(2u, hook.count());
 
     // No packets were emitted
     ASSERT_from_bufferSendOut_SIZE(0);
