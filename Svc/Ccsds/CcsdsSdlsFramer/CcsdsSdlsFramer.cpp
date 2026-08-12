@@ -6,6 +6,8 @@
 
 #include "Svc/Ccsds/CcsdsSdlsFramer/CcsdsSdlsFramer.hpp"
 
+#include <Fw/Prm/ParamValid.hpp>
+
 namespace Svc {
 
 namespace Ccsds {
@@ -42,8 +44,7 @@ void CcsdsSdlsFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, con
     if (saIndex == unsetSaIndex) {
         Fw::ParamValid valid = Fw::ParamValid::INVALID;
         saIndex = this->paramGet_SA_INDEX(valid);
-        FW_ASSERT((valid == Fw::ParamValid::VALID) || (valid == Fw::ParamValid::DEFAULT),
-                  static_cast<FwAssertArgType>(valid.e));
+        FW_ASSERT(FW_PARAM_OK(valid), static_cast<FwAssertArgType>(valid.e));
     }
 
     // Copy context and record the security association index used for encryption
