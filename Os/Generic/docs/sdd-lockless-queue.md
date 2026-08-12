@@ -102,9 +102,9 @@ delivered intact and exactly once; no memory corruption, message loss, or
 duplication is possible. The observable effect is a single dequeue that may
 violate the strict priority/FIFO selection order (a one-time priority
 inversion). Lock-freedom of `std::atomic<LocklessStateTagType>` is a
-prerequisite for the ISR-safety guarantee: it is statically asserted from the
-`ATOMIC_*_LOCK_FREE` macros where the platform guarantees it, and
-runtime-asserted in `create()`. Platforms without lock-free 64-bit atomics
+prerequisite for the ISR-safety guarantee: widths that are never lock-free
+are rejected at compile time via the `ATOMIC_*_LOCK_FREE` macros, and the
+authoritative `is_lock_free()` check is runtime-asserted in `create()`. Platforms without lock-free 64-bit atomics
 (some 32-bit targets) must configure a narrower type in
 `config/LocklessQueueCfg.hpp` (`U32`, `U16`, or `U8`, with 28-, 12-, or 4-bit
 tags respectively). This residual window is documented in §15.
@@ -281,8 +281,9 @@ Runtime assertions in `create` reject platforms where
 `std::atomic<FwQueuePriorityType>` is not lock-free. (The check is runtime rather than `static_assert` because the
 `is_always_lock_free` constexpr is C++17 and the project targets C++14;
 `static_assert`s derived from the width-matched `ATOMIC_*_LOCK_FREE` macros
-cover all three types on platforms with a compile-time guarantee. On every supported flight
-target the atomics are in fact lock-free.)
+reject never-lock-free widths for all three types at compile time, leaving
+the runtime check authoritative on sometimes-lock-free platforms. On every
+supported flight target the atomics are in fact lock-free.)
 
 There are no system calls, no OS-level synchronization primitives, and no
 allocations on these paths. Both calls therefore satisfy the ISR-safety

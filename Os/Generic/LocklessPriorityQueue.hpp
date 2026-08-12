@@ -18,29 +18,29 @@ namespace Generic {
 static_assert(std::is_integral<LocklessStateTagType>::value && std::is_unsigned<LocklessStateTagType>::value,
               "LocklessStateTagType must be an unsigned integral type");
 
-//! \brief compile-time lock-free guarantee for an atomic of unsigned integral width WIDTH
+//! \brief compile-time lock-free possibility for an atomic of unsigned integral width WIDTH
 //!
-//! C++14 lacks `std::atomic<T>::is_always_lock_free` (C++17), so the guarantee is derived from
-//! the standard `ATOMIC_*_LOCK_FREE` macros (2 = always lock-free). The macro is selected by
-//! matching the width of the corresponding builtin type, so no particular ABI (e.g.
-//! `sizeof(int) == 4`) is assumed, and any width from 1 to 8 bytes is supported. A runtime
-//! `is_lock_free()` FW_ASSERT in create() remains the authoritative gate.
+//! C++14 lacks `std::atomic<T>::is_always_lock_free` (C++17), so this is derived from the
+//! standard `ATOMIC_*_LOCK_FREE` macros (0 = never, 1 = sometimes, 2 = always lock-free),
+//! selected by matching the width of the corresponding builtin type so no particular ABI
+//! (e.g. `sizeof(int) == 4`) is assumed. Rejects only never-lock-free (value 0) widths at
+//! compile time; on sometimes-lock-free (value 1) platforms the runtime `is_lock_free()`
+//! FW_ASSERT in create() is the authoritative gate.
 template <FwSizeType WIDTH>
 struct LocklessAtomicLockFree {
-    static constexpr bool value = ((sizeof(unsigned char) == WIDTH) && (ATOMIC_CHAR_LOCK_FREE == 2)) ||
-                                  ((sizeof(unsigned short) == WIDTH) && (ATOMIC_SHORT_LOCK_FREE == 2)) ||
-                                  ((sizeof(unsigned int) == WIDTH) && (ATOMIC_INT_LOCK_FREE == 2)) ||
-                                  ((sizeof(unsigned long) == WIDTH) && (ATOMIC_LONG_LOCK_FREE == 2)) ||
-                                  ((sizeof(unsigned long long) == WIDTH) && (ATOMIC_LLONG_LOCK_FREE == 2));
+    static constexpr bool value = ((sizeof(unsigned char) == WIDTH) && (ATOMIC_CHAR_LOCK_FREE != 0)) ||
+                                  ((sizeof(unsigned short) == WIDTH) && (ATOMIC_SHORT_LOCK_FREE != 0)) ||
+                                  ((sizeof(unsigned int) == WIDTH) && (ATOMIC_INT_LOCK_FREE != 0)) ||
+                                  ((sizeof(unsigned long) == WIDTH) && (ATOMIC_LONG_LOCK_FREE != 0)) ||
+                                  ((sizeof(unsigned long long) == WIDTH) && (ATOMIC_LLONG_LOCK_FREE != 0));
 };
 
 static_assert(LocklessAtomicLockFree<sizeof(LocklessStateTagType)>::value,
-              "std::atomic<LocklessStateTagType> is not guaranteed lock-free on this platform; "
+              "std::atomic<LocklessStateTagType> is never lock-free on this platform; "
               "configure a narrower type in config/LocklessQueueCfg.hpp");
-static_assert(LocklessAtomicLockFree<sizeof(U32)>::value,
-              "std::atomic<U32> is not guaranteed lock-free on this platform");
+static_assert(LocklessAtomicLockFree<sizeof(U32)>::value, "std::atomic<U32> is never lock-free on this platform");
 static_assert(LocklessAtomicLockFree<sizeof(FwQueuePriorityType)>::value,
-              "std::atomic<FwQueuePriorityType> is not guaranteed lock-free on this platform");
+              "std::atomic<FwQueuePriorityType> is never lock-free on this platform");
 
 static_assert(LOCKLESS_QUEUE_MAX_RETRY_PASSES >= 1, "LOCKLESS_QUEUE_MAX_RETRY_PASSES must be at least 1");
 
