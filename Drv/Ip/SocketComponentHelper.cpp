@@ -183,8 +183,11 @@ void SocketComponentHelper::readLoop() {
             if (status == SOCK_AUTO_CONNECT_DISABLED) {
                 break;
             }
-            // If the reconnection failed in any other way, warn, wait, and retry
+            // If the reconnection failed in any other way, warn, wait, and retry, or break if no longer running
             else if (status != SOCK_SUCCESS) {
+                if (not this->running()) {
+                    break;
+                }
                 Fw::Logger::log("[WARNING] Failed to open port with status %d and errno %d\n", status, errno);
                 (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
                 continue;
