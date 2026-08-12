@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-11 20:56:38</td>
+      <td>2026-08-12 21:27:20</td>
     </tr>
   </table>
 </div>
@@ -40,14 +40,14 @@
     </tr>
     <tr>
       <th scope="row">Lines:</th>
-      <td>12</td>
-      <td>12</td>
+      <td>19</td>
+      <td>19</td>
       <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
       <th scope="row">Functions:</th>
-      <td>4</td>
-      <td>4</td>
+      <td>13</td>
+      <td>13</td>
       <td class="coverage-high">100.0%</td>
     </tr>
     <tr>
@@ -70,10 +70,19 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l1419">Fw::ExternalSerializeBuffer::~ExternalSerializeBuffer() (line 1419)</a></td><td>called 5 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1564">Fw::ExternalSerializeBufferWithMemberCopy::ExternalSerializeBufferWithMemberCopy(unsigned char*, unsigned long) (line 1564)</a></td><td>called 2 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1599">Fw::ExternalSerializeBufferWithMemberCopy::operator=(Fw::ExternalSerializeBufferWithMemberCopy const&amp;) (line 1599)</a></td><td>called 1 time</td><td>100.0%</td></tr>
-    <tr><td><a href="#l1576">Fw::ExternalSerializeBufferWithMemberCopy::~ExternalSerializeBufferWithMemberCopy() (line 1576)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1440">Fw::ExternalSerializeBuffer::~ExternalSerializeBuffer() (line 1440)</a></td><td>called 5 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1553">Fw::ExternalSerializeBufferWithMemberCopy::ExternalSerializeBufferWithMemberCopy(unsigned char*, unsigned long) (line 1553)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1588">Fw::ExternalSerializeBufferWithMemberCopy::operator=(Fw::ExternalSerializeBufferWithMemberCopy const&amp;) (line 1588)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1565">Fw::ExternalSerializeBufferWithMemberCopy::~ExternalSerializeBufferWithMemberCopy() (line 1565)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1201">Fw::LinearBufferBase::getBuffAddr() (line 1201)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1210">Fw::LinearBufferBase::getBuffAddr() const (line 1210)</a></td><td>called 2 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1164">Fw::LinearBufferBase::getCapacity() const (line 1164)</a></td><td>called 13 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1390">Fw::LinearBufferBase::getDeserLoc() const (line 1390)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1389">Fw::LinearBufferBase::getSerLoc() const (line 1389)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1396">Fw::LinearBufferBase::setBuffAddrInternal(unsigned char*) (line 1396)</a></td><td>called 15 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1397">Fw::LinearBufferBase::setCapacityInternal(unsigned long) (line 1397)</a></td><td>called 15 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1392">Fw::LinearBufferBase::setDeserLoc(unsigned long) (line 1392)</a></td><td>called 1 time</td><td>100.0%</td></tr>
+    <tr><td><a href="#l1391">Fw::LinearBufferBase::setSerLoc(unsigned long) (line 1391)</a></td><td>called 1 time</td><td>100.0%</td></tr>
   </table>
 </details>
 
@@ -8232,8 +8241,8 @@
       <td class="lineno"><a id="l1164" href="#l1164">1164</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">13</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1165" href="#l1165">1165</a></td>
@@ -8491,8 +8500,8 @@
       <td class="lineno"><a id="l1201" href="#l1201">1201</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffAddr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1202" href="#l1202">1202</a></td>
@@ -8554,8 +8563,8 @@
       <td class="lineno"><a id="l1210" href="#l1210">1210</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="linecount coveredLine">2</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffAddr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1211" href="#l1211">1211</a></td>
@@ -9570,217 +9579,217 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! There is no default constructor: every derived class must supply its</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1356" href="#l1356">1356</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! storage during construction</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1357" href="#l1357">1357</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Initializes a LinearBufferBase instance with default values.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">LinearBufferBase</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1358" href="#l1358">1358</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Sets the serialization and deserialization locations to zero.</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1359" href="#l1359">1359</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">LinearBufferBase</span><span class="p">();</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Storage constructor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1360" href="#l1360">1360</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1361" href="#l1361">1361</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy constructor (protected)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Initializes a LinearBufferBase instance with the buffer storage that the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1362" href="#l1362">1362</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! derived class provides. Using the constructor makes it a</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1363" href="#l1363">1363</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates a copy of another LinearBufferBase instance. This constructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! compile-time error for a derived class to forget to setup its storage.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1364" href="#l1364">1364</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! is protected and intended for use only by derived classes or internal</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1365" href="#l1365">1365</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! implementation details.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffAddr Pointer to the buffer address (may be nullptr)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1366" href="#l1366">1366</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param capacity Capacity of the buffer storage in bytes</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1367" href="#l1367">1367</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source LinearBufferBase to copy from</span></td>
+      <td class="src "><span class="w">    </span><span class="n">LinearBufferBase</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffAddr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">capacity</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1368" href="#l1368">1368</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">LinearBufferBase</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1369" href="#l1369">1369</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy constructor (protected)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1370" href="#l1370">1370</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy data from source buffer</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1371" href="#l1371">1371</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates a copy of another LinearBufferBase instance. This constructor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1372" href="#l1372">1372</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Copies the contents from another LinearBufferBase instance to this one.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! is protected and intended for use only by derived classes or internal</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1373" href="#l1373">1373</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This includes copying the buffer data, serialization location, and</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! implementation details.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1374" href="#l1374">1374</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! deserialization location.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1375" href="#l1375">1375</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source LinearBufferBase to copy from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1376" href="#l1376">1376</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source LinearBufferBase to copy data from</span></td>
+      <td class="src "><span class="w">    </span><span class="n">LinearBufferBase</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1377" href="#l1377">1377</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">copyFrom</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1378" href="#l1378">1378</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy data from source buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1379" href="#l1379">1379</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_serLoc</span><span class="p">;</span><span class="w">    </span><span class="c1">//!&lt; current offset in buffer of serialized data</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1380" href="#l1380">1380</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_deserLoc</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; current offset for deserialization</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Copies the contents from another LinearBufferBase instance to this one.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1381" href="#l1381">1381</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This includes copying the buffer data, serialization location, and</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1382" href="#l1382">1382</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! deserialization location.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1383" href="#l1383">1383</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1384" href="#l1384">1384</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source LinearBufferBase to copy data from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1385" href="#l1385">1385</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">// Helper classes for building buffers with external storage</span></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">copyFrom</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1386" href="#l1386">1386</a></td>
@@ -9794,854 +9803,854 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \brief External serialize buffer with no copy semantics</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Protected accessors for serialization/deserialization location</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1388" href="#l1388">1388</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// These are needed by ExternalSerializeBufferWithMemberCopy</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1389" href="#l1389">1389</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getSerLoc</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_serLoc</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1390" href="#l1390">1390</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! without copying data. It is designed for scenarios where you want to avoid</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getDeserLoc</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_deserLoc</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1391" href="#l1391">1391</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! data copying for performance reasons and are willing to manage the buffer</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setSerLoc</span><span class="p">(</span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">loc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_serLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loc</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1392" href="#l1392">1392</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! lifetime manually.</span></td>
+      <td class="linecount coveredLine">1</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setDeserLoc</span><span class="p">(</span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">loc</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_deserLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loc</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1393" href="#l1393">1393</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1394" href="#l1394">1394</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \note The external buffer must remain valid for the lifetime of the</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Protected setters for buffer address and capacity</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1395" href="#l1395">1395</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! ExternalSerializeBuffer instance. The class does not take ownership of</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// These are needed by ExternalSerializeBuffer::setExtBuffer() and clear()</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1396" href="#l1396">1396</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! the buffer or copy its contents.</span></td>
+      <td class="linecount coveredLine">15</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBuffAddrInternal</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">addr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffAddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1397" href="#l1397">1397</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBuffer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="linecount coveredLine">15</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setCapacityInternal</span><span class="p">(</span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">capacity</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_capacity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">capacity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1398" href="#l1398">1398</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1399" href="#l1399">1399</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Construct with external buffer</span></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1400" href="#l1400">1400</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">m_buffAddr</span><span class="p">;</span><span class="w">                     </span><span class="c1">//!&lt; pointer to buffer storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1401" href="#l1401">1401</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBuffer instance that uses the provided</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_capacity</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; capacity of buffer storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1402" href="#l1402">1402</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must remain valid for the lifetime of</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_serLoc</span><span class="p">;</span><span class="w">    </span><span class="c1">//!&lt; current offset in buffer of serialized data</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1403" href="#l1403">1403</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! this instance.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_deserLoc</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; current offset for deserialization</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1404" href="#l1404">1404</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1405" href="#l1405">1405</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the external buffer</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1406" href="#l1406">1406</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the external buffer in bytes</span></td>
+      <td class="src "><span class="c1">// Helper classes for building buffers with external storage</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1407" href="#l1407">1407</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1408" href="#l1408">1408</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">//! \brief External serialize buffer with no copy semantics</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1409" href="#l1409">1409</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+      <td class="src "><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1410" href="#l1410">1410</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1411" href="#l1411">1411</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBuffer instance without an external buffer.</span></td>
+      <td class="src "><span class="c1">//! without copying data. It is designed for scenarios where you want to avoid</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1412" href="#l1412">1412</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! The buffer must be set later using setExtBuffer().</span></td>
+      <td class="src "><span class="c1">//! data copying for performance reasons and are willing to manage the buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1413" href="#l1413">1413</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">();</span></td>
+      <td class="src "><span class="c1">//! lifetime manually.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1414" href="#l1414">1414</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1415" href="#l1415">1415</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+      <td class="src "><span class="c1">//! \note The external buffer must remain valid for the lifetime of the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1416" href="#l1416">1416</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="c1">//! ExternalSerializeBuffer instance. The class does not take ownership of</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1417" href="#l1417">1417</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBuffer instance. Note that this does</span></td>
+      <td class="src "><span class="c1">//! the buffer or copy its contents.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1418" href="#l1418">1418</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! not free the external buffer if one was set.</span></td>
+      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBuffer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1419" href="#l1419">1419</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">10</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1420" href="#l1420">1420</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1421" href="#l1421">1421</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Set the external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1422" href="#l1422">1422</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1423" href="#l1423">1423</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Sets a new external buffer for this instance. This action also resets</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1424" href="#l1424">1424</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the serialization and deserialization pointers to the beginning of</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1425" href="#l1425">1425</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the new buffer.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1426" href="#l1426">1426</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1427" href="#l1427">1427</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the new external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1428" href="#l1428">1428</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the new external buffer in bytes</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1429" href="#l1429">1429</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">setExtBuffer</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1430" href="#l1430">1430</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1431" href="#l1431">1431</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Clear external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1432" href="#l1432">1432</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1433" href="#l1433">1433</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Clears the external buffer reference. After calling this method,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1434" href="#l1434">1434</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the buffer is effectively empty and cannot be used for serialization</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1435" href="#l1435">1435</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! or deserialization until a new buffer is set.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1436" href="#l1436">1436</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1437" href="#l1437">1437</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1438" href="#l1438">1438</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy constructor</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1439" href="#l1439">1439</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1440" href="#l1440">1440</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! The copy constructor is deleted to prevent copying instances of</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1441" href="#l1441">1441</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBuffer, as this could lead to issues with buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1442" href="#l1442">1442</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! management.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1443" href="#l1443">1443</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1444" href="#l1444">1444</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1445" href="#l1445">1445</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">DEPRECATED</span><span class="p">(</span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">getBuffCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Use getCapacity() instead&quot;</span><span class="p">);</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1446" href="#l1446">1446</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1447" href="#l1447">1447</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get buffer capacity</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1448" href="#l1448">1448</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1449" href="#l1449">1449</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This method returns the total capacity of the buffer, which is the maximum</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1450" href="#l1450">1450</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! amount of data that can be stored in the buffer. This is not the same as</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1451" href="#l1451">1451</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the current size, which indicates how much data is currently in the buffer.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1452" href="#l1452">1452</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1453" href="#l1453">1453</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return The capacity of the buffer in bytes</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1454" href="#l1454">1454</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="nf">getCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1455" href="#l1455">1455</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1456" href="#l1456">1456</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get buffer address for data filling (non-const version)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1457" href="#l1457">1457</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1458" href="#l1458">1458</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This method returns a pointer to the buffer&#39;s data area where data can</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1459" href="#l1459">1459</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! be written. This is the non-const version of the method, allowing the</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1460" href="#l1460">1460</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! buffer contents to be modified.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1461" href="#l1461">1461</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1462" href="#l1462">1462</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Pointer to the buffer&#39;s data area</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1463" href="#l1463">1463</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">();</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1464" href="#l1464">1464</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1465" href="#l1465">1465</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Get buffer address for data reading (const version)</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1466" href="#l1466">1466</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1467" href="#l1467">1467</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This method returns a const pointer to the buffer&#39;s data area where data</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1468" href="#l1468">1468</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! can be read. This is the const version of the method, preventing modification</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1469" href="#l1469">1469</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! of the buffer contents.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1470" href="#l1470">1470</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1471" href="#l1471">1471</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Const pointer to the buffer&#39;s data area</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1472" href="#l1472">1472</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="nf">getBuffAddr</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1473" href="#l1473">1473</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1474" href="#l1474">1474</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy assignment operator</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1475" href="#l1475">1475</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1476" href="#l1476">1476</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! The copy assignment operator is deleted to prevent copying instances of</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1477" href="#l1477">1477</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBuffer, as this could lead to issues with buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1478" href="#l1478">1478</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! management.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1479" href="#l1479">1479</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1480" href="#l1480">1480</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1481" href="#l1481">1481</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">protected</span><span class="o">:</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1482" href="#l1482">1482</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// data members</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1483" href="#l1483">1483</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">m_buff</span><span class="p">;</span><span class="w">                         </span><span class="c1">//!&lt; pointer to external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1484" href="#l1484">1484</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">m_buffSize</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; size of external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1485" href="#l1485">1485</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1486" href="#l1486">1486</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1487" href="#l1487">1487</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \brief External serialize buffer with data copy semantics</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1488" href="#l1488">1488</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1489" href="#l1489">1489</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1490" href="#l1490">1490</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! and performs data copying during assignment operations. It is designed</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1491" href="#l1491">1491</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! for scenarios where you want to ensure that the buffer always contains</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1492" href="#l1492">1492</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! valid data and are willing to pay the performance cost of copying.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1493" href="#l1493">1493</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1494" href="#l1494">1494</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \note This class should be used when the object on the left-hand side of</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1495" href="#l1495">1495</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! an assignment (esb = sbb) is guaranteed to have a valid buffer.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1496" href="#l1496">1496</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1497" href="#l1497">1497</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \see ExternalSerializeBuffer for a version without data copying</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1498" href="#l1498">1498</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBufferWithDataCopy</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1499" href="#l1499">1499</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1500" href="#l1500">1500</a></td>
+      <td class="lineno"><a id="l1420" href="#l1420">1420</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//! \brief Construct with external buffer</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1501" href="#l1501">1501</a></td>
+      <td class="lineno"><a id="l1421" href="#l1421">1421</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1502" href="#l1502">1502</a></td>
+      <td class="lineno"><a id="l1422" href="#l1422">1422</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithDataCopy instance that uses the</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBuffer instance that uses the provided</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1503" href="#l1503">1503</a></td>
+      <td class="lineno"><a id="l1423" href="#l1423">1423</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! provided external buffer.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must remain valid for the lifetime of</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1504" href="#l1504">1504</a></td>
+      <td class="lineno"><a id="l1424" href="#l1424">1424</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! this instance.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1425" href="#l1425">1425</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1505" href="#l1505">1505</a></td>
+      <td class="lineno"><a id="l1426" href="#l1426">1426</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the external buffer</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1506" href="#l1506">1506</a></td>
+      <td class="lineno"><a id="l1427" href="#l1427">1427</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the external buffer in bytes</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1507" href="#l1507">1507</a></td>
+      <td class="lineno"><a id="l1428" href="#l1428">1428</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1429" href="#l1429">1429</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1430" href="#l1430">1430</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1431" href="#l1431">1431</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1432" href="#l1432">1432</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBuffer instance without an external buffer.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1433" href="#l1433">1433</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! The buffer must be set later using setExtBuffer().</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1434" href="#l1434">1434</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1435" href="#l1435">1435</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1436" href="#l1436">1436</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1437" href="#l1437">1437</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1438" href="#l1438">1438</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBuffer instance. Note that this does</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1439" href="#l1439">1439</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! not free the external buffer if one was set.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1440" href="#l1440">1440</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">10</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1441" href="#l1441">1441</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1442" href="#l1442">1442</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Set the external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1443" href="#l1443">1443</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1444" href="#l1444">1444</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Sets a new external buffer for this instance. This action also resets</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1445" href="#l1445">1445</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the serialization and deserialization pointers to the beginning of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1446" href="#l1446">1446</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the new buffer.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1447" href="#l1447">1447</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1448" href="#l1448">1448</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the new external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1449" href="#l1449">1449</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the new external buffer in bytes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1450" href="#l1450">1450</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">setExtBuffer</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1451" href="#l1451">1451</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1452" href="#l1452">1452</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Clear external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1453" href="#l1453">1453</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1454" href="#l1454">1454</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Clears the external buffer reference. After calling this method,</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1455" href="#l1455">1455</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the buffer is effectively empty and cannot be used for serialization</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1456" href="#l1456">1456</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! or deserialization until a new buffer is set.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1457" href="#l1457">1457</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear</span><span class="p">();</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1458" href="#l1458">1458</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1459" href="#l1459">1459</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1460" href="#l1460">1460</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1461" href="#l1461">1461</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! The copy constructor is deleted to prevent copying instances of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1462" href="#l1462">1462</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBuffer, as this could lead to issues with buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1463" href="#l1463">1463</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! management.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1464" href="#l1464">1464</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1465" href="#l1465">1465</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1466" href="#l1466">1466</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">DEPRECATED</span><span class="p">(</span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">getBuffCapacity</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Use getCapacity() instead&quot;</span><span class="p">);</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1467" href="#l1467">1467</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1468" href="#l1468">1468</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy assignment operator</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1469" href="#l1469">1469</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1470" href="#l1470">1470</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! The copy assignment operator is deleted to prevent copying instances of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1471" href="#l1471">1471</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBuffer, as this could lead to issues with buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1472" href="#l1472">1472</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! management.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1473" href="#l1473">1473</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBuffer</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1474" href="#l1474">1474</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">};</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1475" href="#l1475">1475</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1476" href="#l1476">1476</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \brief External serialize buffer with data copy semantics</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1477" href="#l1477">1477</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1478" href="#l1478">1478</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1479" href="#l1479">1479</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! and performs data copying during assignment operations. It is designed</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1480" href="#l1480">1480</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! for scenarios where you want to ensure that the buffer always contains</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1481" href="#l1481">1481</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! valid data and are willing to pay the performance cost of copying.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1482" href="#l1482">1482</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1483" href="#l1483">1483</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \note This class should be used when the object on the left-hand side of</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1484" href="#l1484">1484</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! an assignment (esb = sbb) is guaranteed to have a valid buffer.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1485" href="#l1485">1485</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1486" href="#l1486">1486</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="c1">//! \see ExternalSerializeBuffer for a version without data copying</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1487" href="#l1487">1487</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBufferWithDataCopy</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="p">{</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1488" href="#l1488">1488</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1489" href="#l1489">1489</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Construct with external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1490" href="#l1490">1490</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1491" href="#l1491">1491</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithDataCopy instance that uses the</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1492" href="#l1492">1492</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! provided external buffer.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1493" href="#l1493">1493</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1494" href="#l1494">1494</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the external buffer</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1495" href="#l1495">1495</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the external buffer in bytes</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1496" href="#l1496">1496</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1508" href="#l1508">1508</a></td>
+      <td class="lineno"><a id="l1497" href="#l1497">1497</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1498" href="#l1498">1498</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1499" href="#l1499">1499</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1500" href="#l1500">1500</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1501" href="#l1501">1501</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithDataCopy instance without an</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1502" href="#l1502">1502</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must be set later using setExtBuffer().</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1503" href="#l1503">1503</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1504" href="#l1504">1504</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1505" href="#l1505">1505</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1506" href="#l1506">1506</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1507" href="#l1507">1507</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBufferWithDataCopy instance.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1508" href="#l1508">1508</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1509" href="#l1509">1509</a></td>
@@ -10655,7 +10664,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy constructor</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1511" href="#l1511">1511</a></td>
@@ -10669,70 +10678,70 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithDataCopy instance without an</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! The copy constructor is deleted to prevent copying instances of</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1513" href="#l1513">1513</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must be set later using setExtBuffer().</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBufferWithDataCopy, as this could lead to issues</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1514" href="#l1514">1514</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! with buffer management.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1515" href="#l1515">1515</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1516" href="#l1516">1516</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1517" href="#l1517">1517</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy assignment operator with data copying</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1518" href="#l1518">1518</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBufferWithDataCopy instance.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1519" href="#l1519">1519</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This assignment operator copies data from the source buffer to the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1520" href="#l1520">1520</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! destination buffer. It ensures that the destination buffer always</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1521" href="#l1521">1521</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Deleted copy constructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! contains valid data after the assignment.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1522" href="#l1522">1522</a></td>
@@ -10746,301 +10755,301 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! The copy constructor is deleted to prevent copying instances of</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source buffer to copy data from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1524" href="#l1524">1524</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! ExternalSerializeBufferWithDataCopy, as this could lead to issues</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Reference to this instance</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1525" href="#l1525">1525</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! with buffer management.</span></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1526" href="#l1526">1526</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">delete</span><span class="p">;</span></td>
+      <td class="src "><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">LinearBufferBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1527" href="#l1527">1527</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1528" href="#l1528">1528</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy assignment operator with data copying</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1529" href="#l1529">1529</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1530" href="#l1530">1530</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This assignment operator copies data from the source buffer to the</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1531" href="#l1531">1531</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! destination buffer. It ensures that the destination buffer always</span></td>
+      <td class="src "><span class="c1">//! \brief External serialize buffer with member copy semantics</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1532" href="#l1532">1532</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! contains valid data after the assignment.</span></td>
+      <td class="src "><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1533" href="#l1533">1533</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1534" href="#l1534">1534</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source buffer to copy data from</span></td>
+      <td class="src "><span class="c1">//! and performs member copying during assignment operations. It is designed</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1535" href="#l1535">1535</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Reference to this instance</span></td>
+      <td class="src "><span class="c1">//! for scenarios where you want to move data between buffers efficiently.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1536" href="#l1536">1536</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithDataCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">LinearBufferBase</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1537" href="#l1537">1537</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">LinearBufferBase</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">src</span><span class="p">);</span></td>
+      <td class="src "><span class="c1">//! \note This class should be used when the object on the left-hand side of</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1538" href="#l1538">1538</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
+      <td class="src "><span class="c1">//! an assignment (esb1 = esb2) has an invalid buffer, and you want to move</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1539" href="#l1539">1539</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      <td class="src "><span class="c1">//! the buffer of esb2 into it. In this case, there should usually be no more</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1540" href="#l1540">1540</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "><span class="c1">//! uses of esb2 after the assignment.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1541" href="#l1541">1541</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1542" href="#l1542">1542</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \brief External serialize buffer with member copy semantics</span></td>
+      <td class="src "><span class="c1">//! \see ExternalSerializeBuffer for a version without data copying</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1543" href="#l1543">1543</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
+      <td class="src "><span class="c1">//! \see ExternalSerializeBufferWithDataCopy for a version with data copying</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1544" href="#l1544">1544</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! This class provides a serialization buffer that uses an external buffer</span></td>
+      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBufferWithMemberCopy</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1545" href="#l1545">1545</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! and performs member copying during assignment operations. It is designed</span></td>
+      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1546" href="#l1546">1546</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! for scenarios where you want to move data between buffers efficiently.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Construct with external buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1547" href="#l1547">1547</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1548" href="#l1548">1548</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \note This class should be used when the object on the left-hand side of</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithMemberCopy instance that uses the</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1549" href="#l1549">1549</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! an assignment (esb1 = esb2) has an invalid buffer, and you want to move</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! provided external buffer.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1550" href="#l1550">1550</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! the buffer of esb2 into it. In this case, there should usually be no more</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1551" href="#l1551">1551</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//! uses of esb2 after the assignment.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the external buffer</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1552" href="#l1552">1552</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1553" href="#l1553">1553</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \see ExternalSerializeBuffer for a version without data copying</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1554" href="#l1554">1554</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="c1">//! \see ExternalSerializeBufferWithDataCopy for a version with data copying</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1555" href="#l1555">1555</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="k">class</span><span class="w"> </span><span class="nc">ExternalSerializeBufferWithMemberCopy</span><span class="w"> </span><span class="k">final</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="w"> </span><span class="p">{</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1556" href="#l1556">1556</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1557" href="#l1557">1557</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Construct with external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1558" href="#l1558">1558</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1559" href="#l1559">1559</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithMemberCopy instance that uses the</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1560" href="#l1560">1560</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! provided external buffer.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1561" href="#l1561">1561</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1562" href="#l1562">1562</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param buffPtr Pointer to the external buffer</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1563" href="#l1563">1563</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//! \param size Size of the external buffer in bytes</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1564" href="#l1564">1564</a></td>
+      <td class="lineno"><a id="l1553" href="#l1553">1553</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">(</span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Serializable</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1565" href="#l1565">1565</a></td>
+      <td class="lineno"><a id="l1554" href="#l1554">1554</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">2</td>
       <td class="src coveredLine"><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="n">buffPtr</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1555" href="#l1555">1555</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1556" href="#l1556">1556</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1557" href="#l1557">1557</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1558" href="#l1558">1558</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithMemberCopy instance without an</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1559" href="#l1559">1559</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must be set later using setExtBuffer().</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1560" href="#l1560">1560</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1561" href="#l1561">1561</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1562" href="#l1562">1562</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1563" href="#l1563">1563</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1564" href="#l1564">1564</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBufferWithMemberCopy instance.</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l1565" href="#l1565">1565</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount coveredLine">4</td>
+      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1566" href="#l1566">1566</a></td>
@@ -11054,7 +11063,7 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Default constructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy constructor with member copying</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1568" href="#l1568">1568</a></td>
@@ -11068,227 +11077,150 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Creates an ExternalSerializeBufferWithMemberCopy instance without an</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This constructor copies members from the source instance, including</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1570" href="#l1570">1570</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! external buffer. The buffer must be set later using setExtBuffer().</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! the buffer pointer, size, serialization location, and deserialization</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1571" href="#l1571">1571</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! location.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1572" href="#l1572">1572</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1573" href="#l1573">1573</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Destructor</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source instance to copy from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1574" href="#l1574">1574</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1575" href="#l1575">1575</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Destroys the ExternalSerializeBufferWithMemberCopy instance.</span></td>
+      <td class="src "><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">()),</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">getCapacity</span><span class="p">())</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1576" href="#l1576">1576</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">4</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="o">~</span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span></td>
+      <td class="linecount "></td>
+      <td class="src "><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setSerLoc</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getSerLoc</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1577" href="#l1577">1577</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setDeserLoc</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getDeserLoc</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1578" href="#l1578">1578</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy constructor with member copying</span></td>
+      <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1579" href="#l1579">1579</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1580" href="#l1580">1580</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This constructor copies members from the source instance, including</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy assignment operator with member copying</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1581" href="#l1581">1581</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! the buffer pointer, size, serialization location, and deserialization</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1582" href="#l1582">1582</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! location.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! This assignment operator copies members from the source instance,</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1583" href="#l1583">1583</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! including the buffer pointer, size, serialization location, and</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1584" href="#l1584">1584</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source instance to copy from</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! deserialization location. It guards against self-assignment.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1585" href="#l1585">1585</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1586" href="#l1586">1586</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">ExternalSerializeBuffer</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">m_buff</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_buffSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source instance to copy from</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l1587" href="#l1587">1587</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_serLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_serLoc</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1588" href="#l1588">1588</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_deserLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_deserLoc</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1589" href="#l1589">1589</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">}</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1590" href="#l1590">1590</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1591" href="#l1591">1591</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \brief Copy assignment operator with member copying</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1592" href="#l1592">1592</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1593" href="#l1593">1593</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! This assignment operator copies members from the source instance,</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1594" href="#l1594">1594</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! including the buffer pointer, size, serialization location, and</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1595" href="#l1595">1595</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! deserialization location. It guards against self-assignment.</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1596" href="#l1596">1596</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1597" href="#l1597">1597</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param src Reference to the source instance to copy from</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1598" href="#l1598">1598</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="c1">//! \return Reference to this instance</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1599" href="#l1599">1599</a></td>
+      <td class="lineno"><a id="l1588" href="#l1588">1588</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ExternalSerializeBufferWithMemberCopy</span><span class="o">&amp;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1600" href="#l1600">1600</a></td>
+      <td class="lineno"><a id="l1589" href="#l1589">1589</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="c1">// Ward against self-assignment</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1601" href="#l1601">1601</a></td>
+      <td class="lineno"><a id="l1590" href="#l1590">1590</a></td>
       <td class="linebranch">
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/2</summary>
@@ -11302,91 +11234,77 @@
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1602" href="#l1602">1602</a></td>
+      <td class="lineno"><a id="l1591" href="#l1591">1591</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">clear</span><span class="p">();</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setExtBuffer</span><span class="p">(</span><span class="k">const_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getBuffAddr</span><span class="p">()),</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">getCapacity</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1603" href="#l1603">1603</a></td>
+      <td class="lineno"><a id="l1592" href="#l1592">1592</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_buff</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setSerLoc</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getSerLoc</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1604" href="#l1604">1604</a></td>
+      <td class="lineno"><a id="l1593" href="#l1593">1593</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_buffSize</span><span class="p">;</span></td>
+      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">setDeserLoc</span><span class="p">(</span><span class="n">src</span><span class="p">.</span><span class="n">getDeserLoc</span><span class="p">());</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1605" href="#l1605">1605</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_serLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_serLoc</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1606" href="#l1606">1606</a></td>
-      <td class="linebranch">
-      </td>
-      <td class="linecount coveredLine">1</td>
-      <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_deserLoc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">.</span><span class="n">m_deserLoc</span><span class="p">;</span></td>
-    </tr>
-    <tr class="source-line">
-      <td class="lineno"><a id="l1607" href="#l1607">1607</a></td>
+      <td class="lineno"><a id="l1594" href="#l1594">1594</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1608" href="#l1608">1608</a></td>
+      <td class="lineno"><a id="l1595" href="#l1595">1595</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">1</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1609" href="#l1609">1609</a></td>
+      <td class="lineno"><a id="l1596" href="#l1596">1596</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="w">    </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1610" href="#l1610">1610</a></td>
+      <td class="lineno"><a id="l1597" href="#l1597">1597</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1611" href="#l1611">1611</a></td>
+      <td class="lineno"><a id="l1598" href="#l1598">1598</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1612" href="#l1612">1612</a></td>
+      <td class="lineno"><a id="l1599" href="#l1599">1599</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Fw</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1613" href="#l1613">1613</a></td>
+      <td class="lineno"><a id="l1600" href="#l1600">1600</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
       <td class="src "><span class="cp">#endif</span></td>
     </tr>
     <tr class="source-line">
-      <td class="lineno"><a id="l1614" href="#l1614">1614</a></td>
+      <td class="lineno"><a id="l1601" href="#l1601">1601</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>

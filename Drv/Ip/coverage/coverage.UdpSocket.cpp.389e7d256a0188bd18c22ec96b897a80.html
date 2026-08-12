@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-11 20:56:05</td>
+      <td>2026-08-12 21:26:47</td>
     </tr>
   </table>
 </div>
@@ -80,7 +80,7 @@
     <tr><td><a href="#l121">Drv::UdpSocket::openProtocol(Drv::SocketDescriptor&amp;) (line 121)</a></td><td>called 611 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l227">Drv::UdpSocket::recvProtocol(Drv::SocketDescriptor const&amp;, unsigned char*, unsigned long) (line 227)</a></td><td>called 407 times</td><td>88.0%</td></tr>
     <tr><td><a href="#l251">Drv::UdpSocket::send(Drv::SocketDescriptor const&amp;, unsigned char const*, unsigned long) (line 251)</a></td><td>called 407 times</td><td>51.0%</td></tr>
-    <tr><td><a href="#l209">Drv::UdpSocket::sendProtocol(Drv::SocketDescriptor const&amp;, unsigned char const*, unsigned long) (line 209)</a></td><td>called 407 times</td><td>78.0%</td></tr>
+    <tr><td><a href="#l209">Drv::UdpSocket::sendProtocol(Drv::SocketDescriptor const&amp;, unsigned char const*, unsigned long) (line 209)</a></td><td>called 407 times</td><td>79.0%</td></tr>
     <tr><td><a href="#l47">Drv::UdpSocket::~UdpSocket() (line 47)</a></td><td>called 611 times</td><td>100.0%</td></tr>
   </table>
 </details>
@@ -1752,14 +1752,14 @@
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">407</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">socketDescriptor</span><span class="p">.</span><span class="n">fd</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">  </span><span class="c1">// File descriptor should be valid</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">socketDescriptor</span><span class="p">.</span><span class="n">fd</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">          </span><span class="c1">// File descriptor should be valid</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l213" href="#l213">213</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount coveredLine">407</td>
-      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span><span class="w">           </span><span class="c1">// Data pointer should not be null</span></td>
+      <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">((</span><span class="n">size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">));</span><span class="w">  </span><span class="c1">// Data pointer should not be null for nonzero sizes</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l214" href="#l214">214</a></td>

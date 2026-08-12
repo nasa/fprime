@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-11 20:55:23</td>
+      <td>2026-08-12 21:26:05</td>
     </tr>
   </table>
 </div>
@@ -70,7 +70,7 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l51">Svc::Ccsds::Cfdp::CfdpChunkList::CfdpChunkList(unsigned short, Svc::Ccsds::Cfdp::Chunk*) (line 51)</a></td><td>called 25601 times</td><td>83.0%</td></tr>
+    <tr><td><a href="#l51">Svc::Ccsds::Cfdp::CfdpChunkList::CfdpChunkList(unsigned short, Svc::Ccsds::Cfdp::Chunk*) (line 51)</a></td><td>called 26001 times</td><td>83.0%</td></tr>
     <tr><td><a href="#l63">Svc::Ccsds::Cfdp::CfdpChunkList::add(unsigned int, unsigned int) (line 63)</a></td><td>called 29 times</td><td>82.0%</td></tr>
     <tr><td><a href="#l206">Svc::Ccsds::Cfdp::CfdpChunkList::combineNext(unsigned short, Svc::Ccsds::Cfdp::Chunk const*) (line 206)</a></td><td>called 29 times</td><td>95.0%</td></tr>
     <tr><td><a href="#l240">Svc::Ccsds::Cfdp::CfdpChunkList::combinePrevious(unsigned short, Svc::Ccsds::Cfdp::Chunk const*) (line 240)</a></td><td>called 29 times</td><td>88.0%</td></tr>
@@ -83,7 +83,7 @@
     <tr><td><a href="#l267">Svc::Ccsds::Cfdp::CfdpChunkList::insert(unsigned short, Svc::Ccsds::Cfdp::Chunk const*) (line 267)</a></td><td>called 29 times</td><td>57.0%</td></tr>
     <tr><td><a href="#l154">Svc::Ccsds::Cfdp::CfdpChunkList::insertChunk(unsigned short, Svc::Ccsds::Cfdp::Chunk const*) (line 154)</a></td><td>called 14 times</td><td>50.0%</td></tr>
     <tr><td><a href="#l79">Svc::Ccsds::Cfdp::CfdpChunkList::removeFromFirst(unsigned int) (line 79)</a></td><td>called 4 times</td><td>71.0%</td></tr>
-    <tr><td><a href="#l58">Svc::Ccsds::Cfdp::CfdpChunkList::reset() (line 58)</a></td><td>called 25619 times</td><td>88.0%</td></tr>
+    <tr><td><a href="#l58">Svc::Ccsds::Cfdp::CfdpChunkList::reset() (line 58)</a></td><td>called 26019 times</td><td>88.0%</td></tr>
   </table>
 </details>
 
@@ -451,42 +451,42 @@
       <td class="lineno"><a id="l51" href="#l51">51</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="n">CfdpChunkList</span><span class="o">::</span><span class="n">CfdpChunkList</span><span class="p">(</span><span class="n">ChunkIdx</span><span class="w"> </span><span class="n">maxChunks</span><span class="p">,</span><span class="w"> </span><span class="n">Chunk</span><span class="o">*</span><span class="w"> </span><span class="n">chunkMem</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l52" href="#l52">52</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">m_count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">m_maxChunks</span><span class="p">(</span><span class="n">maxChunks</span><span class="p">),</span><span class="w"> </span><span class="n">m_chunks</span><span class="p">(</span><span class="n">chunkMem</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">maxChunks</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l54" href="#l54">54</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">chunkMem</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">reset</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l56" href="#l56">56</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25601</td>
+      <td class="linecount coveredLine">26001</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -500,14 +500,14 @@
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25619</td>
+      <td class="linecount coveredLine">26019</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">CfdpChunkList</span><span class="o">::</span><span class="n">reset</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l59" href="#l59">59</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25619</td>
+      <td class="linecount coveredLine">26019</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">m_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -517,18 +517,18 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 25619 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 26019 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">25619</td>
+      <td class="linecount partialCoveredLine">26019</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="n">memset</span><span class="p">(</span><span class="n">m_chunks</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">m_chunks</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_maxChunks</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l61" href="#l61">61</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">25619</td>
+      <td class="linecount coveredLine">26019</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">

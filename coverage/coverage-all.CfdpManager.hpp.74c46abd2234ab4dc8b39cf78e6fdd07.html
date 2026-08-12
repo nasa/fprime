@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-11 20:55:23</td>
+      <td>2026-08-12 21:26:05</td>
     </tr>
   </table>
 </div>
@@ -74,7 +74,7 @@
     <tr><td><a href="#l140">Svc::Ccsds::Cfdp::CfdpManager::addRecvNakSegmentRequests(unsigned char, unsigned int) (line 140)</a></td><td>called 3 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l166">Svc::Ccsds::Cfdp::CfdpManager::addSentFileDataBytes(unsigned char, unsigned int) (line 166)</a></td><td>called 37 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l159">Svc::Ccsds::Cfdp::CfdpManager::addSentNakSegmentRequests(unsigned char, unsigned int) (line 159)</a></td><td>called 1 time</td><td>96.0%</td></tr>
-    <tr><td><a href="#l263">Svc::Ccsds::Cfdp::CfdpManager::getChannelTelemetryRef(unsigned char) (line 263)</a></td><td>called 7823 times</td><td>91.0%</td></tr>
+    <tr><td><a href="#l263">Svc::Ccsds::Cfdp::CfdpManager::getChannelTelemetryRef(unsigned char) (line 263)</a></td><td>called 7839 times</td><td>91.0%</td></tr>
     <tr><td><a href="#l184">Svc::Ccsds::Cfdp::CfdpManager::incrementFaultAckLimit(unsigned char) (line 184)</a></td><td>called 2 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l202">Svc::Ccsds::Cfdp::CfdpManager::incrementFaultCrcMismatch(unsigned char) (line 202)</a></td><td>called 1 time</td><td>96.0%</td></tr>
     <tr><td><a href="#l245">Svc::Ccsds::Cfdp::CfdpManager::incrementFaultDirectoryRead(unsigned char) (line 245)</a></td><td>called 2 times</td><td>96.0%</td></tr>
@@ -1946,21 +1946,21 @@
       <td class="lineno"><a id="l263" href="#l263">263</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7823</td>
+      <td class="linecount coveredLine">7839</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">ChannelTelemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getChannelTelemetryRef</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">chanId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l264" href="#l264">264</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7823</td>
+      <td class="linecount coveredLine">7839</td>
       <td class="src coveredLine"><span class="w">        </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">chanId</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">NumChannels</span><span class="p">,</span><span class="w"> </span><span class="n">chanId</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l265" href="#l265">265</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7823</td>
+      <td class="linecount coveredLine">7839</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">m_channelTelemetry</span><span class="p">[</span><span class="n">chanId</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">
@@ -3102,735 +3102,735 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Checks if the requested poll interval is valid (non-zero), and emits an EVR if not</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l429" href="#l429">429</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">CmdResponse</span><span class="o">::</span><span class="n">T</span><span class="w"> </span><span class="nf">checkCommandPollInterval</span><span class="p">(</span><span class="n">U32</span><span class="w"> </span><span class="n">interval</span><span class="w">  </span><span class="c1">//!&lt; The poll interval to check</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l430" href="#l430">430</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Parameter helpers used by the CFDP engine</span></td>
+      <td class="src "><span class="w">    </span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l431" href="#l431">431</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l432" href="#l432">432</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">  </span><span class="k">public</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l433" href="#l433">433</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the local entity ID parameter</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l434" href="#l434">434</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Parameter helpers used by the CFDP engine</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l435" href="#l435">435</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return The local CFDP entity ID</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l436" href="#l436">436</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">getLocalEidParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l437" href="#l437">437</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the local entity ID parameter</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l438" href="#l438">438</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the outgoing file chunk size parameter</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l439" href="#l439">439</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return The local CFDP entity ID</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l440" href="#l440">440</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum size in bytes for file data segments in outgoing PDUs</span></td>
+      <td class="src "><span class="w">    </span><span class="n">EntityId</span><span class="w"> </span><span class="n">getLocalEidParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l441" href="#l441">441</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getOutgoingFileChunkSizeParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l442" href="#l442">442</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the outgoing file chunk size parameter</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l443" href="#l443">443</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the RX CRC calculation bytes per scheduler cycle parameter</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l444" href="#l444">444</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum size in bytes for file data segments in outgoing PDUs</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l445" href="#l445">445</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Number of bytes to process per cycle when calculating received file CRC</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getOutgoingFileChunkSizeParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l446" href="#l446">446</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getRxCrcCalcBytesPerCycleParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l447" href="#l447">447</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the RX CRC calculation bytes per scheduler cycle parameter</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l448" href="#l448">448</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the post-inactivity terminal-send retry budget parameter</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l449" href="#l449">449</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Number of bytes to process per cycle when calculating received file CRC</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l450" href="#l450">450</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Number of extra cycles a pending terminal send is retried after inactivity fires</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getRxCrcCalcBytesPerCycleParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l451" href="#l451">451</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getPostInactivitySendRetriesParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l452" href="#l452">452</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the post-inactivity terminal-send retry budget parameter</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l453" href="#l453">453</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the temporary directory parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l454" href="#l454">454</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Number of extra cycles a pending terminal send is retried after inactivity fires</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l455" href="#l455">455</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getPostInactivitySendRetriesParam</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l456" href="#l456">456</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to temporary directory for in-progress file transfers</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l457" href="#l457">457</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getTmpDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the temporary directory parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l458" href="#l458">458</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l459" href="#l459">459</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the failure directory parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l460" href="#l460">460</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to temporary directory for in-progress file transfers</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l461" href="#l461">461</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getTmpDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l462" href="#l462">462</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to directory where failed transfers are moved</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l463" href="#l463">463</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getFailDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the failure directory parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l464" href="#l464">464</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l465" href="#l465">465</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the ACK limit parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l466" href="#l466">466</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to directory where failed transfers are moved</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l467" href="#l467">467</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getFailDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l468" href="#l468">468</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of times to retry sending an ACK PDU</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l469" href="#l469">469</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getAckLimitParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the ACK limit parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l470" href="#l470">470</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l471" href="#l471">471</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the NAK limit parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l472" href="#l472">472</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of times to retry sending an ACK PDU</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l473" href="#l473">473</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getAckLimitParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l474" href="#l474">474</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of times to retry sending a NAK PDU</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l475" href="#l475">475</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getNackLimitParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the NAK limit parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l476" href="#l476">476</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l477" href="#l477">477</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the ACK timer parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l478" href="#l478">478</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of times to retry sending a NAK PDU</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l479" href="#l479">479</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U8</span><span class="w"> </span><span class="nf">getNackLimitParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l480" href="#l480">480</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return ACK timeout value in seconds</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l481" href="#l481">481</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getAckTimerParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the ACK timer parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l482" href="#l482">482</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l483" href="#l483">483</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the inactivity timer parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l484" href="#l484">484</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return ACK timeout value in seconds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l485" href="#l485">485</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getAckTimerParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l486" href="#l486">486</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Inactivity timeout value in seconds</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l487" href="#l487">487</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getInactivityTimerParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the inactivity timer parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l488" href="#l488">488</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l489" href="#l489">489</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the dequeue enabled parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l490" href="#l490">490</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Inactivity timeout value in seconds</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l491" href="#l491">491</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getInactivityTimerParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l492" href="#l492">492</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Whether the channel is enabled for dequeuing transactions</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l493" href="#l493">493</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="w"> </span><span class="nf">getDequeueEnabledParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the dequeue enabled parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l494" href="#l494">494</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l495" href="#l495">495</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the move directory parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l496" href="#l496">496</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Whether the channel is enabled for dequeuing transactions</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l497" href="#l497">497</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Enabled</span><span class="w"> </span><span class="nf">getDequeueEnabledParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l498" href="#l498">498</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to directory where completed transfers are moved</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l499" href="#l499">499</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getMoveDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the move directory parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l500" href="#l500">500</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l501" href="#l501">501</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Get the maximum outgoing PDUs per cycle parameter for a channel</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l502" href="#l502">502</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Path to directory where completed transfers are moved</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l503" href="#l503">503</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="nf">getMoveDirParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l504" href="#l504">504</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of PDUs that can be sent per engine cycle</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l505" href="#l505">505</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getMaxOutgoingPdusPerCycleParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Get the maximum outgoing PDUs per cycle parameter for a channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l506" href="#l506">506</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//!</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l507" href="#l507">507</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \param channelIndex [in] Index of the channel</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l508" href="#l508">508</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! \return Maximum number of PDUs that can be sent per engine cycle</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l509" href="#l509">509</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Types</span></td>
+      <td class="src "><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="nf">getMaxOutgoingPdusPerCycleParam</span><span class="p">(</span><span class="n">U8</span><span class="w"> </span><span class="n">channelIndex</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l510" href="#l510">510</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l511" href="#l511">511</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">  </span><span class="k">private</span><span class="o">:</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l512" href="#l512">512</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! A port-initiated file send request, copied into the internal queue by fileIn_handler</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l513" href="#l513">513</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! and consumed on the active thread in run1Hz. Fixed-size and trivially relocatable so it</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Types</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l514" href="#l514">514</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! can be transported through Os::Queue.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l515" href="#l515">515</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">FileInRequest</span><span class="w"> </span><span class="p">{</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l516" href="#l516">516</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">sourceFileName</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; Path of file to send</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! A port-initiated file send request, copied into the internal queue by fileIn_handler</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l517" href="#l517">517</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">destFileName</span><span class="p">;</span><span class="w">    </span><span class="c1">//!&lt; Path to store file at destination</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! and consumed on the active thread in run1Hz. Fixed-size and trivially relocatable so it</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l518" href="#l518">518</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">        </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">;</span><span class="w">                </span><span class="c1">//!&lt; Port number of the originating fileIn request</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! can be transported through Os::Queue.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l519" href="#l519">519</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="p">};</span></td>
+      <td class="src "><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">FileInRequest</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l520" href="#l520">520</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">sourceFileName</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; Path of file to send</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l521" href="#l521">521</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">        </span><span class="n">Fw</span><span class="o">::</span><span class="n">String</span><span class="w"> </span><span class="n">destFileName</span><span class="p">;</span><span class="w">    </span><span class="c1">//!&lt; Path to store file at destination</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l522" href="#l522">522</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// Member variables</span></td>
+      <td class="src "><span class="w">        </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="p">;</span><span class="w">                </span><span class="c1">//!&lt; Port number of the originating fileIn request</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l523" href="#l523">523</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
+      <td class="src "><span class="w">    </span><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l524" href="#l524">524</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">// CFDP Engine - owns all protocol state and operations</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l525" href="#l525">525</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Engine</span><span class="o">*</span><span class="w"> </span><span class="n">m_engine</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l526" href="#l526">526</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">// Member variables</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l527" href="#l527">527</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Queue of accepted port-initiated file send requests, drained on the active thread</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// ----------------------------------------------------------------------</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l528" href="#l528">528</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Queue</span><span class="w"> </span><span class="n">m_fileInQueue</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">// CFDP Engine - owns all protocol state and operations</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l529" href="#l529">529</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">Engine</span><span class="o">*</span><span class="w"> </span><span class="n">m_engine</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l530" href="#l530">530</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Depth of the fileIn request handoff queue, also the max drained per cycle. Set at</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l531" href="#l531">531</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! configure time from the fileQueueDepth argument.</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Queue of accepted port-initiated file send requests, drained on the active thread</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l532" href="#l532">532</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">m_fileInQueueDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Os</span><span class="o">::</span><span class="n">Queue</span><span class="w"> </span><span class="n">m_fileInQueue</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l533" href="#l533">533</a></td>
@@ -3844,77 +3844,77 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Telemetry array for all CFDP channels</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Depth of the fileIn request handoff queue, also the max drained per cycle. Set at</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l535" href="#l535">535</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">ChannelTelemetryArray</span><span class="w"> </span><span class="n">m_channelTelemetry</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! configure time from the fileQueueDepth argument.</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l536" href="#l536">536</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">m_fileInQueueDepth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l537" href="#l537">537</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="c1">//! Stored for cleanup</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l538" href="#l538">538</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">m_allocatorId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Telemetry array for all CFDP channels</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l539" href="#l539">539</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">*</span><span class="w"> </span><span class="n">m_allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Cfdp</span><span class="o">::</span><span class="n">ChannelTelemetryArray</span><span class="w"> </span><span class="n">m_channelTelemetry</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l540" href="#l540">540</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">};</span></td>
+      <td class="src "></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l541" href="#l541">541</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "></td>
+      <td class="src "><span class="w">    </span><span class="c1">//! Stored for cleanup</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l542" href="#l542">542</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
+      <td class="src "><span class="w">    </span><span class="n">FwEnumStoreType</span><span class="w"> </span><span class="n">m_allocatorId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l543" href="#l543">543</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+      <td class="src "><span class="w">    </span><span class="n">Fw</span><span class="o">::</span><span class="n">MemAllocator</span><span class="o">*</span><span class="w"> </span><span class="n">m_allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l544" href="#l544">544</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+      <td class="src "><span class="p">};</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l545" href="#l545">545</a></td>
@@ -3928,10 +3928,38 @@
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
-      <td class="src "><span class="cp">#endif  </span><span class="c1">// CCSDS_CFDPMANAGER_HPP</span></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Cfdp</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l547" href="#l547">547</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Ccsds</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l548" href="#l548">548</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="p">}</span><span class="w">  </span><span class="c1">// namespace Svc</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l549" href="#l549">549</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l550" href="#l550">550</a></td>
+      <td class="linebranch">
+      </td>
+      <td class="linecount "></td>
+      <td class="src "><span class="cp">#endif  </span><span class="c1">// CCSDS_CFDPMANAGER_HPP</span></td>
+    </tr>
+    <tr class="source-line">
+      <td class="lineno"><a id="l551" href="#l551">551</a></td>
       <td class="linebranch">
       </td>
       <td class="linecount "></td>
