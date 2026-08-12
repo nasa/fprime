@@ -91,7 +91,7 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
         # If the source must exist and it was found, overwrite it
         elseif(EXPECT_OVERRIDE)
             fprime_cmake_debug_message("[config] Overriding ${DESTINATION} with ${SOURCE}")
-            file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
+            fprime__internal_record_configuration_write("${SOURCE}" "${DESTINATION}")
             list(APPEND NEW_DEPENDS "${DESTINATION_MODULE}")
             set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${SOURCE}")
         # If the source is new, move it to the binary directory
@@ -102,7 +102,7 @@ function(fprime__internal_process_configuration_source_set MODULE_NAME SOURCE_SE
             fprime_cmake_debug_message("[config] Initial config ${DESTINATION} from ${SOURCE}")
             list(APPEND RETURNED_SOURCES "${DESTINATION}")
             file(MAKE_DIRECTORY "${DESTINATION_DIRECTORY}")
-            file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
+            fprime__internal_record_configuration_write("${SOURCE}" "${DESTINATION}")
             set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${SOURCE}")
         endif()
     endforeach()
@@ -150,6 +150,71 @@ function(fprime__internal_check_configuration_include_path MODULE_NAME SOURCE)
                 "register_fprime_config() call such that the paths differ."
             )
         endif()
+    endforeach()
+endfunction()
+
+####
+# Function `fprime__internal_record_configuration_write`:
+#
+# Records the source that should end up at a configuration destination. The last source recorded for
+# a destination wins, which is the overriding one: a module supplying a CONFIGURATION_OVERRIDE is
+# always processed after the module supplying the file it overrides, since the override is rejected
+# outright when that file has not been registered yet.
+#
+# Copying here rather than at the flush would write an overridden destination twice per CMake run,
+# once with the original and once with the override. Neither write can be skipped by
+# `ONLY_IF_DIFFERENT` because the file holds the other one's content, so the destination's timestamp
+# moves on every configure and everything including it is rebuilt.
+#
+# The destination is still created when it does not exist, because it is handed to CMake as a build
+# input before the deferred flush runs.
+#
+# Arguments:
+# - `SOURCE`: file that should be copied
+# - `DESTINATION`: location it belongs at
+####
+function(fprime__internal_record_configuration_write SOURCE DESTINATION)
+    get_property(RECORDED_DESTINATIONS GLOBAL PROPERTY FPRIME_CONFIG_DESTINATIONS)
+    get_property(RECORDED_SOURCES GLOBAL PROPERTY FPRIME_CONFIG_SOURCES)
+
+    list(FIND RECORDED_DESTINATIONS "${DESTINATION}" DESTINATION_INDEX)
+    if (DESTINATION_INDEX EQUAL -1)
+        list(APPEND RECORDED_DESTINATIONS "${DESTINATION}")
+        list(APPEND RECORDED_SOURCES "${SOURCE}")
+    else()
+        list(REMOVE_AT RECORDED_SOURCES ${DESTINATION_INDEX})
+        list(INSERT RECORDED_SOURCES ${DESTINATION_INDEX} "${SOURCE}")
+    endif()
+    set_property(GLOBAL PROPERTY FPRIME_CONFIG_DESTINATIONS "${RECORDED_DESTINATIONS}")
+    set_property(GLOBAL PROPERTY FPRIME_CONFIG_SOURCES "${RECORDED_SOURCES}")
+
+    if (NOT EXISTS "${DESTINATION}")
+        file(COPY_FILE "${SOURCE}" "${DESTINATION}")
+    endif()
+
+    # Scheduled once. Deferring to the top-level directory means every configuration module has been
+    # processed, and every override therefore known, by the time destinations are written.
+    get_property(FLUSH_SCHEDULED GLOBAL PROPERTY FPRIME_CONFIG_FLUSH_SCHEDULED)
+    if (NOT FLUSH_SCHEDULED)
+        set_property(GLOBAL PROPERTY FPRIME_CONFIG_FLUSH_SCHEDULED TRUE)
+        cmake_language(DEFER DIRECTORY "${CMAKE_SOURCE_DIR}"
+                       CALL fprime__internal_flush_configuration)
+    endif()
+endfunction()
+
+####
+# Function `fprime__internal_flush_configuration`:
+#
+# Writes every recorded configuration destination exactly once, from the source that won it. A
+# destination that already holds the winning content is left alone by `ONLY_IF_DIFFERENT`, which is
+# what keeps its timestamp, and everything including it, stable across configures.
+####
+function(fprime__internal_flush_configuration)
+    get_property(RECORDED_DESTINATIONS GLOBAL PROPERTY FPRIME_CONFIG_DESTINATIONS)
+    get_property(RECORDED_SOURCES GLOBAL PROPERTY FPRIME_CONFIG_SOURCES)
+
+    foreach(DESTINATION SOURCE IN ZIP_LISTS RECORDED_DESTINATIONS RECORDED_SOURCES)
+        file(COPY_FILE "${SOURCE}" "${DESTINATION}" ONLY_IF_DIFFERENT)
     endforeach()
 endfunction()
 
