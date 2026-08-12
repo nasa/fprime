@@ -30,6 +30,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CircularBufferCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCatalogCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.hpp"
