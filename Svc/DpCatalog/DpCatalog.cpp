@@ -101,8 +101,11 @@ namespace Svc {
             (this->m_memSize >= sizeof(DpBtreeNode)) and
             (this->m_memPtr != nullptr)
             ) {
-            // set the number of available record slots based on how much memory we actually got
-            this->m_numDpSlots = this->m_memSize / slotSize; // Step 1.
+            // set the number of available record slots based on how much memory we actually got,
+            // never exceeding the DP_MAX_FILES working arrays even if the allocator returned more
+            // memory than was requested
+            const FwSizeType allocatedSlots = this->m_memSize / slotSize;
+            this->m_numDpSlots = (allocatedSlots < DP_MAX_FILES) ? allocatedSlots : DP_MAX_FILES; // Step 1.
             this->resetBinaryTree(); // Step 2
             // assign pointer for the stack - Step 3
             this->m_traverseStack = reinterpret_cast<DpBtreeNode**>(&this->m_freeListHead[this->m_numDpSlots]);

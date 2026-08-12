@@ -26,6 +26,10 @@ namespace Svc {
 
       /* Create the timer */
       fd = timerfd_create (CLOCK_MONOTONIC, 0);
+      if (fd == -1) {
+          Fw::Logger::log("timer create error: %s\n", strerror(errno));
+          return;
+      }
 
       itval.it_interval.tv_sec = interval/1000;
       itval.it_interval.tv_nsec = (interval*1000000)%1000000000;
@@ -37,8 +41,11 @@ namespace Svc {
       while (true) {
           unsigned long long missed;
           int ret = static_cast<int>(read (fd, &missed, sizeof (missed)));
-          if (-1 == ret) {
+          if ((-1 == ret) && (errno != EINTR)) {
+              // A non-interrupt read error will not clear itself; stop rather than spin on it
               Fw::Logger::log("timer read error: %s\n", strerror(errno));
+              (void)::close(fd);
+              return;
           }
           this->m_mutex.lock();
           bool quit = this->m_quit;
@@ -50,6 +57,7 @@ namespace Svc {
               itval.it_value.tv_nsec = 0;
 
               timerfd_settime (fd, 0, &itval, nullptr);
+              (void)::close(fd);
               return;
           }
           this->m_rawTime.now();

@@ -86,8 +86,6 @@ namespace Drv {
             return false;
         }
 
-        this->m_fd = fd;
-
         // Configure:
         /*
          * SPI Mode 0, 1, 2, 3
@@ -116,12 +114,14 @@ namespace Drv {
         ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
         if (ret == -1) {
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            (void)::close(fd);
             return false;
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
         if (ret == -1) {
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            (void)::close(fd);
             return false;
         }
 
@@ -132,12 +132,14 @@ namespace Drv {
         ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
         if (ret == -1) {
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            (void)::close(fd);
             return false;
         }
 
         ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
         if (ret == -1) {
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            (void)::close(fd);
             return false;
         }
 
@@ -147,14 +149,20 @@ namespace Drv {
         ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
         if (ret == -1) {
             this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+            (void)::close(fd);
             return false;
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &clock);
         if (ret == -1) {
            this->log_WARNING_HI_SPI_ConfigError(device,select,ret);
+           (void)::close(fd);
            return false;
         }
+
+        // The device is only published once it is fully configured, so that a failed configuration
+        // leaves the driver closed rather than pointing at a misconfigured device
+        this->m_fd = fd;
 
         return true;
 
