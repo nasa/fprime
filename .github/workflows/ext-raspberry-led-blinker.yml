@@ -4,8 +4,10 @@
 name: "External Repo: RPI LedBlinker"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel, release/**]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [devel, release/**]
@@ -39,6 +41,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -51,6 +55,7 @@ jobs:
           submodules: true
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
+          filter: blob:none
       - uses: ./lib/fprime/.github/actions/setup
         with:
           location: ${{ env.FPRIME_LOCATION }}
@@ -58,11 +63,13 @@ jobs:
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
         run: |
-          fprime-util generate raspberrypi
+          fprime-util generate raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Build RPI"
         run: |
           cd LedBlinker/LedBlinkerDeployment
-          fprime-util build raspberrypi
+          fprime-util build raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Prepare artifacts"
         run: |
           mkdir -p rpi-artifacts

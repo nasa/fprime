@@ -3,7 +3,7 @@ description: 'Setup the F´ repository and tools'
 inputs:
   location:
     required: true
-    default: $GITHUB_WORKSPACE
+    default: ${{ github.workspace }}
 runs:
   using: "composite"
   steps:
@@ -12,8 +12,10 @@ runs:
   # Python path should be added at a higher level
   - run: pip3 install setuptools_scm wheel urllib3
     shell: bash
-  - run: pip3 install -U -r ${{ inputs.location }}/requirements.txt
+  - run: pip3 install -U -r "${LOCATION}/requirements.txt"
     shell: bash
+    env:
+      LOCATION: ${{ inputs.location }}
   - run: which fprime-util
     shell: bash
   - run: which fprime-gds

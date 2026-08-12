@@ -1,8 +1,10 @@
 name: "External Repo: Generic Hub Reference"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel, release/**]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [devel, release/**]
@@ -33,6 +35,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -46,6 +50,7 @@ jobs:
           path: lib/fprime
           submodules: true
           fetch-depth: 0
+          filter: blob:none
 
       - name: "Setup F´ toolchain"
         uses: ./lib/fprime/.github/actions/setup
@@ -61,10 +66,12 @@ jobs:
           pr-branch-only: true
 
       - name: "Generate"
-        run: fprime-util generate
+        run: fprime-util generate 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Build"
-        run: fprime-util build -j8
+        run: fprime-util build -j8 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Set up runtime config variables"
         shell: bash

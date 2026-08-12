@@ -145,8 +145,11 @@ SocketIpStatus IpSocket::open(SocketDescriptor& socketDescriptor) {
 }
 
 SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8* const data, const FwSizeType size) {
-    FW_ASSERT(data != nullptr);
-    FW_ASSERT(size > 0);
+    FW_ASSERT((size == 0) || (data != nullptr));
+    // Zero-size sends are a no-op
+    if (size == 0) {
+        return SOCK_SUCCESS;
+    }
 
     FwSizeType total = 0;
     FwSignedSizeType sent = 0;

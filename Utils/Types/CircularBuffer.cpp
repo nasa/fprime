@@ -63,7 +63,7 @@ Fw::SerializeStatus CircularBuffer ::serialize(const U8* const buffer, const FwS
     }
     // Copy in all the supplied data
     FwSizeType idx = advance_idx(m_head_idx, m_allocated_size);
-    for (U32 i = 0; i < size; i++) {
+    for (FwSizeType i = 0; i < size; i++) {
         FW_ASSERT(idx < m_store_size, static_cast<FwAssertArgType>(idx));
         m_store[idx] = buffer[i];
         idx = advance_idx(idx);
