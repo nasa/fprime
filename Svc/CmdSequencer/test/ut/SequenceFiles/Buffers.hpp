@@ -26,12 +26,11 @@ class FileBuffer : public Fw::LinearBufferBase {
     enum Constants { CAPACITY = 4096 };
 
   public:
+    FileBuffer();
+    FileBuffer(const FileBuffer& other);
+
+  public:
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-
-    const U8* getBuffAddr() const;
 
   private:
     U8 m_buff[CAPACITY];

@@ -24,11 +24,7 @@ namespace Svc {
 namespace {
 class WorkingBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    WorkingBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     // Set to max of parameter buffer + id

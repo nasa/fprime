@@ -31,16 +31,7 @@
 
 class SerializeTestBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
-        return sizeof(m_testBuff);
-    }
-
-    U8* getBuffAddr() {  // !< gets buffer address for data filling
-        return m_testBuff;
-    }
-    const U8* getBuffAddr() const {  // !< gets buffer address for data reading
-        return m_testBuff;
-    }
+    SerializeTestBuffer() : Fw::LinearBufferBase(m_testBuff, sizeof(m_testBuff)) {}
 
   private:
     U8 m_testBuff[255];
