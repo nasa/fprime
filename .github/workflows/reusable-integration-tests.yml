@@ -105,58 +105,27 @@ jobs:
           pr-branch-only: true
 
       - name: "Prepare deployment"
-        run: |
-          chmod +x ./build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
-          mkdir -p ci-logs
-
-      - name: "Start F´ deployment with YAMCS"
-        if: inputs.ground_system == 'fprime-yamcs'
-        run: |
-          fprime-yamcs --ip-client \
-            -d ${PWD}/build-artifacts/Linux/${DEPLOYMENT} \
-            --logs ${PWD}/ci-logs &
-          sleep 15
-          if ! jobs -r | grep -q fprime-yamcs; then
-            echo "ERROR: YAMCS failed to start"
-            cat ${PWD}/ci-logs/*.log 2>/dev/null || true
-            exit 1
-          fi
-          for i in {1..30}; do
-            python -c "from yamcs.client import YamcsClient; YamcsClient('127.0.0.1:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
-            sleep 2
-          done
-          echo "YAMCS timeout" && exit 1
-
-      - name: "Start F´ deployment with GDS"
-        if: inputs.ground_system == 'fprime-gds'
-        run: |
-          fprime-gds -g none \
-            -d ${PWD}/build-artifacts/Linux/${DEPLOYMENT} \
-            --logs ${PWD}/ci-logs &
-          sleep 15
-          if ! jobs -r | grep -q fprime-gds; then
-            echo "ERROR: GDS failed to start"
-            cat ${PWD}/ci-logs/*.log 2>/dev/null || true
-            exit 1
-          fi
+        run: chmod +x ./build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
 
       - name: "Run integration tests"
-        run: |
-          USE_YAMCS_FLAG=""
-          if [ "${GROUND_SYSTEM}" = "fprime-yamcs" ]; then
-            USE_YAMCS_FLAG="--use-yamcs"
-          fi
-          pytest --dictionary ${DICTIONARY} \
-            --deployment-config ${DEPLOYMENT_CONFIG} \
-            ${USE_YAMCS_FLAG} \
-            -v \
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          ground-system: ${{ inputs.ground_system }}
+          gds-working-directory: "."
+          test-working-directory: "."
+          binary: ./build-artifacts/Linux/${{ inputs.deployment }}/bin/${{ inputs.deployment }}
+          gds-args: -d ./build-artifacts/Linux/${{ inputs.deployment }}
+          pytest-args: >-
+            --dictionary ${{ inputs.dictionary }}
+            --deployment-config ${{ inputs.deployment_config }}
+            ${{ inputs.ground_system == 'fprime-yamcs' && '--use-yamcs' || '' }}
+            -v
             ${{ inputs.test_paths }}
-        shell: bash
 
       - name: "Archive test logs"
         uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-logs-${{ inputs.ground_system }}
-          path: ci-logs
+          path: gds-logs
           retention-days: 5
