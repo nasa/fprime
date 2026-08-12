@@ -19,9 +19,6 @@ namespace Generic {
 
 namespace {
 
-//! Sleep between unproductive bounded scans on the BLOCKING paths (see LocklessQueueCfg.hpp).
-constexpr U32 LOCKLESS_BLOCKING_BACKOFF_US = LOCKLESS_QUEUE_BLOCKING_BACKOFF_US;
-
 //! Extract the state portion of a packed state-tag word.
 constexpr LocklessStateTagType stateOf(LocklessStateTagType packed) {
     return packed & LocklessSlot::STATE_MASK;
@@ -242,7 +239,7 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
         }
         // No free slot found this pass. Blocking callers back off; non-blocking callers retry.
         if (blocking) {
-            static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_BLOCKING_BACKOFF_US)));
+            static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_QUEUE_BLOCKING_BACKOFF_US)));
         }
     }
     return QueueInterface::Status::FULL;
@@ -293,7 +290,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
 
         if (bestIndex == depth) {
             if (blocking) {
-                static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_BLOCKING_BACKOFF_US)));
+                static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_QUEUE_BLOCKING_BACKOFF_US)));
             }
             continue;
         }
