@@ -352,6 +352,27 @@ void AosDeframerTester::testMultiplePacketsInFrame() {
     ASSERT_TLM_PacketsExtracted(2, 3);  // Final count is 3
 }
 
+void AosDeframerTester::testMinimumSizeSppPackets() {
+    this->configureDefault();
+
+    // A 7 byte packet is shorter than the 8 byte header accumulation buffer
+    U8 payload[64];
+    FwSizeType offset = 0;
+    const FwSizeType firstSize = this->createSppPacket(payload + offset, 0x030, 1);
+    offset += firstSize;
+    const FwSizeType secondSize = this->createSppPacket(payload + offset, 0x031, 10);
+    offset += secondSize;
+
+    Fw::Buffer buffer = this->assembleFrameBuffer(payload, offset, 0);
+    ComCfg::FrameContext context;
+
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(2);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).data.getSize(), firstSize);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(1).data.getSize(), secondSize);
+}
+
 // ----------------------------------------------------------------------
 // Tests - Spanning Packets
 // ----------------------------------------------------------------------

@@ -16,7 +16,7 @@ def test_send_health_command(fprime_test_api):
 
      health.HLTH_ENABLE, [disabled/enabled}
      health.HLTH_PING_ENABLE,["FileManager","DISABLED/ENABLED"]
-     health.HLTH_CHNG_PING,["FileManager",1,1]
+     health.HLTH_CHNG_PING,["FileManager",1,100]
     """
     fileuplink_int_dir = (
         Path(__file__).resolve().parents[3] / "FileUplink" / "test" / "int"
@@ -107,7 +107,7 @@ def test_send_health_command(fprime_test_api):
     )
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Health") + "." + "HLTH_CHNG_PING",
-        [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), 1, 1],
+        [fprime_test_api.get_mnemonic("Svc.FileManager").replace(".", "_"), 1, 100],
         timeout=10,
     )
     fprime_test_api.send_and_assert_command(

@@ -320,6 +320,19 @@ FwSizeType AosDeframer::appendToSpanningPacket(AosDeframerVc& vc, U8* data, FwSi
             return 0;
         }
 
+        // A packet may declare fewer bytes than the header buffer holds, so give the surplus back
+        // to the caller as the next packet instead of copying it past the end of this one
+        if (packetSize < vc.spanningPacket.bytesReceived) {
+            const FwSizeType surplus = vc.spanningPacket.bytesReceived - packetSize;
+            // Prior calls left bytesReceived <= packetSize, so the surplus came from this call
+            FW_ASSERT(surplus <= toHeader, static_cast<FwAssertArgType>(surplus),
+                      static_cast<FwAssertArgType>(toHeader));
+            vc.spanningPacket.bytesReceived = packetSize;
+            data -= surplus;
+            size += surplus;
+            seekForward -= surplus;
+        }
+
         // Try to allocate a buffer for the whole packet. If this size is invalid (too large) or if the buffer
         // manager is out of memory, this is handled below.
         vc.spanningPacket.buffer = this->allocate_out(0, packetSize);

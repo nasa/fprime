@@ -39,6 +39,11 @@ on:
         required: false
         type: string
         default: "devel"
+      skip_aarch64_build:
+        description: "Skip ARM64 cross-compilation build"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
 
@@ -84,6 +89,16 @@ jobs:
           fi
           fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
+      - name: "Upload build artifacts"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: examples-build-artifacts
+          path: |
+            ${{ inputs.build_location }}/build-artifacts/
+            build-artifacts/
+          if-no-files-found: ignore
+          retention-days: 1
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
@@ -108,6 +123,7 @@ jobs:
         run: |
           pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
+
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
@@ -129,6 +145,7 @@ jobs:
           fprime-util build --ut -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM}
         shell: bash
       - name: "Run Unit Tests"
+        continue-on-error: false
         working-directory: ${{ inputs.build_location }}
         run: |
           if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
@@ -138,4 +155,12 @@ jobs:
           fi
           fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
+      - name: "Archive test logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-test-logs
+          path: ${{ inputs.build_location }}/build-*/Testing/Temporary/*.log
+          if-no-files-found: ignore
+          retention-days: 5
 

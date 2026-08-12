@@ -11,6 +11,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <atomic>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
@@ -256,7 +257,7 @@ class ComQueue final : public ComQueueComponentBase {
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
     SendState m_state;                                  //!< State of the component
-    BufferState m_buffer_state;                         //!< Ownership state of buffer
+    std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID

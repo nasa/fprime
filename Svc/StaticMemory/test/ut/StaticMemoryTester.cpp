@@ -43,9 +43,9 @@ void StaticMemoryTester ::test_allocate() {
         ASSERT_GE(allocations[i].getSize(), random_size) << "Did not allocate enough";
     }
     for (U32 i = 0; i < StaticMemoryComponentBase::NUM_BUFFERALLOCATE_INPUT_PORTS; i++) {
-        // Set size to zero, and adjust the data pointer to ensure user can modify these values
+        // Advance the data pointer and set size to zero to ensure user can modify these values
+        allocations[i].advance(1);
         allocations[i].setSize(0);
-        allocations[i].setData(allocations[i].getData() + 1);
         invoke_to_bufferDeallocate(i, allocations[i]);
         // Test allocated, correct pointer
         ASSERT_FALSE(component.m_allocated[i]) << "Did not mark buffer as allocated";

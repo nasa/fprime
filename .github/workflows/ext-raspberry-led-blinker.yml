@@ -4,8 +4,10 @@
 name: "External Repo: RPI LedBlinker"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel, release/**]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [devel, release/**]
@@ -51,6 +53,7 @@ jobs:
           submodules: true
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
+          filter: blob:none
       - uses: ./lib/fprime/.github/actions/setup
         with:
           location: ${{ env.FPRIME_LOCATION }}

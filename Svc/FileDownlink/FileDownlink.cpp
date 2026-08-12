@@ -304,6 +304,7 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
     const U32 fileSize = this->m_file.getSize();
 
     if (fileSize == 0) {
+        this->m_file.getOsFile().close();
         this->m_mode.set(Mode::IDLE);
         this->m_warnings.zeroSize();
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
@@ -317,7 +318,9 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
         sendResponse(FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK
                                                             : SendFileStatus::STATUS_INVALID);
         return;
-    } else if (startOffset + length > fileSize) {
+        // startOffset < fileSize here, so the subtraction cannot underflow and, unlike
+        // startOffset + length, cannot wrap
+    } else if (length > fileSize - startOffset) {
         // If the amount to downlink is greater than the file size, emit a Warning and then allow
         // the file to be downlinked anyway
         this->log_WARNING_LO_DownlinkPartialWarning(startOffset, length, fileSize, this->m_file.getSourceName(),
@@ -396,6 +399,10 @@ void FileDownlink ::sendCancelPacket() {
     // Serialize the filePacket content into the buffer
     status = filePacket.toBuffer(offsetBuffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    const U32 bufferSize = filePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
+    FW_ASSERT(buffer.getSize() >= bufferSize, static_cast<FwAssertArgType>(buffer.getSize()),
+              static_cast<FwAssertArgType>(bufferSize));
+    buffer.setSize(bufferSize);
     this->bufferSendOut_out(0, buffer);
     this->m_packetsSent.packetSent();
 }
@@ -499,10 +506,8 @@ void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
     // Check type is correct
     FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
     // Wrap the buffer around our indexed memory.
-    buffer.setData(this->m_memoryStore[type]);
-    buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
-    // Set a known ID to look for later
-    buffer.setContext(m_lastBufferId);
+    // Set a known ID (context) to look for later
+    buffer.set(this->m_memoryStore[type], FILEDOWNLINK_INTERNAL_BUFFER_SIZE, m_lastBufferId);
     m_lastBufferId++;
 }
 }  // end namespace Svc
