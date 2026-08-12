@@ -252,6 +252,11 @@ function(fprime__internal_add_build_target_helper TARGET_NAME TYPE SOURCES AUTOC
     # Add the link libraries safely in both real and INTERFACE libraries
     fprime_target_dependencies("${TARGET_NAME}" PUBLIC ${DEPENDENCIES} ${REQUIRED_IMPLEMENTATIONS})
 
+    # Carry the flags required to build F Prime code. This is deliberately not a
+    # fprime_target_dependencies call: the flags are a usage requirement, not a module, and have no
+    # place in the FPRIME_DEPENDENCIES list that deployments recurse to build their link lines.
+    fprime_target_link_libraries("${TARGET_NAME}" PUBLIC "${FPRIME_REQUIRED_FLAGS_TARGET}")
+
     # Set extra link dependencies when supplied
     set(EXTRA_LINK_DEPENDS "${ARGV9}")
     if (EXTRA_LINK_DEPENDS)
