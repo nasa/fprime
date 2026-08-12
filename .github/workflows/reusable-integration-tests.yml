@@ -115,6 +115,8 @@ jobs:
           test-working-directory: "."
           binary: ./build-artifacts/Linux/${{ inputs.deployment }}/bin/${{ inputs.deployment }}
           gds-args: -d ./build-artifacts/Linux/${{ inputs.deployment }}
+          ready-check: ${{ inputs.ground_system == 'fprime-yamcs' && 'python -c "from yamcs.client import YamcsClient; YamcsClient(''127.0.0.1:8090'')"' || '' }}
+          ready-timeout: "300"
           pytest-args: >-
             --dictionary ${{ inputs.dictionary }}
             --deployment-config ${{ inputs.deployment_config }}
