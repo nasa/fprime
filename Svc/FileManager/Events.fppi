@@ -231,3 +231,44 @@ event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name
   severity activity high \
   id 0x1c \
   format "{} has CRC value 0x{x}"
+@ File data product generation started
+event GenerateDpStarted(fileName: string size FileNameStringSize @< The file being packaged
+                        bytesToWrite: U64 @< The number of file bytes that will be written
+                       ) \
+  severity activity high \
+  id 0x1e \
+  format "Started data product generation for file {} ({} bytes)"
+
+@ File data product generation completed
+event GenerateDpComplete(fileName: string size FileNameStringSize @< The file that was packaged
+                         chunks: U32 @< The number of chunks emitted
+                        ) \
+  severity activity high \
+  id 0x1f \
+  format "Completed data product generation for file {} in {} chunks"
+
+@ File data product generation failed
+event GenerateDpFailed(fileName: string size FileNameStringSize @< The file being packaged
+                       stage: Svc.FileManager.GenerateDpStage @< Where the failure occurred
+                       status: U32 @< The error status
+                      ) \
+  severity warning high \
+  id 0x20 \
+  format "Data product generation failed for file {} at stage {}, status {}"
+
+@ Data product container allocation failed
+event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The file being packaged
+                            ) \
+  severity warning high \
+  id 0x21 \
+  format "Failed to allocate data product buffer for file {}"
+
+@ Invalid offset range requested for data product generation
+event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The file being packaged
+                             beginOffset: U64 @< The requested begin offset
+                             endOffset: U64 @< The requested end offset
+                             fileSize: U64 @< The size of the file
+                            ) \
+  severity warning high \
+  id 0x22 \
+  format "Invalid offset range requested for file {}: [{}, {}) with file size {}"

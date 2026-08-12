@@ -115,7 +115,8 @@ class IpSocket {
      * fails to send all the data. Retries are globally configured in the `IpCfg.hpp` header. Should the
      * socket be unavailable, SOCK_DISCONNECTED is returned and the socket should be reopened using the `open` call.
      * This can happen even when the socket has already been opened should a transmission error/closure be detected.
-     * Unless an error is received, all data will have been transmitted.
+     * Unless an error is received, all data will have been transmitted. A zero-size send is a no-op returning
+     * SOCK_SUCCESS.
      *
      * Note: delegates to `sendProtocol` to send the data
      *

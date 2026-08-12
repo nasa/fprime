@@ -11,6 +11,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
 include(utilities)
 include(options)
 include(sanitizers) # Enable sanitizers if they are requested
+include(flags)
 include(required)
 include(global_interface)
 include(config_assembler)

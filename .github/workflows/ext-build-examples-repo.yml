@@ -4,8 +4,10 @@ name: "External Repo: fprime-examples"
 
 on:
   
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -49,6 +51,8 @@ jobs:
     name: "Run Integration Tests"
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -86,8 +90,9 @@ jobs:
         run: |
           . ../../venv/bin/activate
           fprime-util purge --force
-          fprime-util generate
-          fprime-util build -j8
+          fprime-util generate 2>&1 | output-cleaner
+          fprime-util build -j8 2>&1 | output-cleaner
+        shell: bash
       - name: "Run integration tests"
         continue-on-error: false
         run: |

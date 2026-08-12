@@ -36,6 +36,15 @@ void FprimeFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const 
 
     // Allocate frame buffer
     Fw::Buffer frameBuffer = this->bufferAllocate_out(0, frameSize);
+    // The allocator may return an invalid or smaller-than-requested buffer
+    if ((not frameBuffer.isValid()) || (frameBuffer.getSize() < frameSize)) {
+        this->log_WARNING_HI_NoBufferAvailable();
+        if (frameBuffer.isValid()) {
+            this->bufferDeallocate_out(0, frameBuffer);
+        }
+        this->dataReturnOut_out(0, data, context);
+        return;
+    }
     auto frameSerializer = frameBuffer.getSerializer();
     Fw::SerializeStatus status;
 

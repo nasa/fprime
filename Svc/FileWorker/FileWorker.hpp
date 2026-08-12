@@ -35,6 +35,8 @@ class FileWorker : public FileWorkerComponentBase {
     //! Destroy FileWorker object
     ~FileWorker();
 
+    //! Set the file I/O chunk size. Optional: defaults to BLOCK_SIZE_BYTES.
+    //! Timeouts scale with the chunk count implied by the configured size.
     void configure(U64 chunkSize);
 
   private:

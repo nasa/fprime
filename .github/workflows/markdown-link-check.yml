@@ -1,8 +1,10 @@
 name: Check Markdown links
 
 on: 
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel, docs/new-website]
+    branches: [docs/new-website]
   pull_request:
     branches: [devel]
 # Cancel in-progress runs if a newer run is started on a given PR
@@ -27,7 +29,7 @@ jobs:
         sudo apt-get install -y doxygen
         ./docs/doxygen/generate_docs.bash
 
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1
+    - uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
       with:
           use-quiet-mode: 'yes'
           config-file: ./.github/actions/markdown-check/mlc-config.json

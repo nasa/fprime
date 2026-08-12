@@ -41,44 +41,33 @@ data and handle outgoing data.
 > typically projects use a single driver to handle both input and output, however; two drivers may be used too if differing behavior is needed for uplink and downlink.(e.g. UDP downlink for speed and  Tcp uplink reliability).
 
 All drivers implement an input port receiving data from the framer. The driver should write input data to the hardware
-the driver manages. Drivers implement at least one of two methods to retrieve data from hardware: an input port
-to poll for available data and an output read port for asynchronous data, which often is supported by a read thread.
-Generic drivers implement both such that they can be used in a threaded context or rate group-driven polling context.
-The driver is responsible for reading the data from the hardware in either context.
-
-> [!NOTE]
-> the F´ uplink layer is compatible with both polling and receiving drivers as described in **Uplink** below.
+the driver manages. Drivers deliver incoming data through a `recv` output port, which is typically supported by a read
+thread. Ownership of the received buffer is later returned to the driver through its `recvReturnIn` port.
 
 **Sending Data**
 
 To send data to a driver, an `Fw::Buffer` is passed to the driver's send input port and the data wrapped by the buffer
-will be pushed out to the hardware. Drivers respond to sends with one of the following statuses:
+will be pushed out to the hardware. Synchronous drivers (implementing `Drv.ByteStreamDriver`) return one of the
+following `Drv.ByteStreamStatus` values directly from the send call, and the caller retains ownership of the buffer:
 
-1. SendStatus.OP_OK: indicates the send was successful
-2. SendStatus.SEND_RETRY: indicates subsequent retransmission will likely succeed 
-3. SendStatus.OTHER_ERROR: send failed, the data was not sent, and future success cannot be predicted
+1. ByteStreamStatus.OP_OK: indicates the send was successful
+2. ByteStreamStatus.SEND_RETRY: indicates subsequent retransmission will likely succeed
+3. ByteStreamStatus.OTHER_ERROR: send failed, the data was not sent, and future success cannot be predicted
 
-**Polling Data**
-
-Polling for data allows the system to determine when to look for available data. This often means the driver does not
-need a thread constantly trying to read data. It is used in rate-group-driven baremetal systems to schedule the
-reception of data and remove the need for a task to spin looking for data. To poll data, an `Fw::Buffer` is passed to
-the driver's poll input port where the buffer is filled with available data.  Polling returns the following statuses:
-
-1. PollStatus.POLL_OK: indicates the buffer is filled with valid data
-2. PollStatus.POLL_RETRY: indicates a subsequent retry of the polling call will likely result in valid data
-3. PollStatus.POLL_ERROR: polling failed, the buffer data is invalid, and future success cannot be predicted
+Asynchronous drivers (implementing `Drv.AsyncByteStreamDriver`) take ownership of the buffer on send and return both
+the status and the buffer through their `sendReturnOut` callback port.
 
 **Receiving Data**
 
-Receiving data is to handle asynchronous input of data without the need to poll for it. This typically means the driver
-has an internal task that calls the receive output port when data has been received. Receive ports are passed
-`Fw::Buffer`s and a receive status as described below. Receive RETRY status is not used as the external system has
-nothing to retry.
+The driver typically has an internal task that calls the `recv` output port when data has been received. Receive ports
+are passed an `Fw::Buffer` and a `Drv.ByteStreamStatus` as described below:
 
+1. ByteStreamStatus.OP_OK: receive works as expected and the buffer has valid data
+2. ByteStreamStatus.RECV_NO_DATA: receive worked, but there was no data
+3. ByteStreamStatus.OTHER_ERROR: receive failed and the buffer does not have valid data
 
-1. RecvStatus.OP_OK: receive works as expected and the buffer has valid data
-2. RecvStatus.OTHER_ERROR: receive failed and the buffer does not have valid data
+When the receiving component is done with the buffer, it returns ownership to the driver through the driver's
+`recvReturnIn` port.
 
 ### Uplink
 
@@ -105,21 +94,24 @@ To add custom protocols (e.g. CCSDS, custom telemetry formats, etc), users shoul
 
 ## Adding a Custom Driver 
 
-To be compatible with this ground interface, a driver must implement the
-[byte steam model interface](https://github.com/nasa/fprime/blob/devel/Drv/ByteStreamDriverModel/ByteStreamDriverModel.fpp).
-The driver may add any other ports, events, telemetry, or other F´ constructs as needed but it must define the ports as
-described in the ByteStreamDriverModel.  These ports are called out in the below FPP snippet.
+To be compatible with this ground interface, a driver must implement one of the byte stream driver interfaces defined
+in [Drv/Interfaces](https://github.com/nasa/fprime/blob/devel/Drv/Interfaces): `Drv.ByteStreamDriver` (synchronous
+send) or `Drv.AsyncByteStreamDriver` (asynchronous send). The driver may add any other ports, events, telemetry, or
+other F´ constructs as needed. The synchronous interface defines the following ports:
 
 ```fpp
     output port ready: Drv.ByteStreamReady
-    guarded input port send: Drv.ByteStreamSend
-    
-    output port $recv: Drv.ByteStreamRecv
-    guarded input port poll: Drv.ByteStreamPoll
+    output port $recv: Drv.ByteStreamData
+    guarded input port $send: Drv.ByteStreamSend
+    guarded input port recvReturnIn: Fw.BufferSend
 ```
 
-1. **ready**: (output) drivers call this port without arguments to signal it is ready to receive data via the send port.
-2. **send**: (input) clients call this port passing in an `Fw::Buffer` to send data.
-3. **recv**: (output) drivers operating in asynchronous mode call this port with a RecvStatus and `Fw::Buffer` to
-   provide data.
-4. **poll**: (input) drivers operating in poll mode fill an `Fw::Buffer` and return a PollStatus to provide data.
+1. **ready**: (output) drivers call this port without arguments to signal they are ready to send and receive data.
+2. **recv**: (output) drivers call this port with a `Drv.ByteStreamStatus` and an `Fw::Buffer` to provide received
+   data.
+3. **send**: (input) clients call this port passing in an `Fw::Buffer` to send data; the status is returned
+   synchronously and the caller retains buffer ownership.
+4. **recvReturnIn**: (input) clients return ownership of buffers received on `recv` through this port.
+
+The asynchronous interface replaces the synchronous `$send` with an `async input port $send: Fw.BufferSend` and adds
+an `output port sendReturnOut: Drv.ByteStreamData` through which the send status and buffer ownership are returned.

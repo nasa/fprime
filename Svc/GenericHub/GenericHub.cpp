@@ -61,8 +61,9 @@ void GenericHub::bufferOutReturn_handler(FwIndexType portNum, Fw::Buffer& fwBuff
 
 void GenericHub ::cmdDispIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 context) {
     Fw::SerializeStatus status;
-    // Buffer to send and a buffer used to write to it
-    U8 buffer[Fw::ComBuffer::SERIALIZED_SIZE];
+    // Buffer to send and a buffer used to write to it. Must hold a maximum-size
+    // command buffer (serialized without its length token) plus the context word.
+    U8 buffer[FW_COM_BUFFER_MAX_SIZE + sizeof(U32)];
 
     Fw::ExternalSerializeBuffer serializer(buffer, sizeof(buffer));
     serializer.resetSer();

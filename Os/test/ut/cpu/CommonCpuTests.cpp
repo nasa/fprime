@@ -22,6 +22,7 @@ TEST(Basic, Ticks) {
     for (FwSizeType i = 0; i < count; i++) {
         ASSERT_EQ(Os::Cpu::getTicks(ticks_output, i), Os::Cpu::Status::OP_OK);
         ASSERT_GT(ticks_output.used, 0);
-        ASSERT_GE(ticks_output.total, 0) << "No total on CPU: " << i;
+        ASSERT_GT(ticks_output.total, 0) << "No total on CPU: " << i;
+        ASSERT_GE(ticks_output.total, ticks_output.used) << "Total below used on CPU: " << i;
     }
 }

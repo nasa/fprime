@@ -365,6 +365,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test Class 2 TX file transfer with NAK handling (port-based)
     void testClass2TxPortBasedNack();
 
+    //! Test Class 2 RX of a zero-length file
+    void testClass2RxZeroLengthFile();
+
+    //! Test Class 2 RX rejection of a FileData PDU whose offset and length overflow the offset space
+    void testClass2RxFileDataOffsetOverflow();
+
     //! Test multiple transactions in series
     void testMultipleTransactionsInSeries();
 
@@ -405,6 +411,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
 
     //! Test PollDirectory command when poll slot is busy
     void testPollDirectoryBusy();
+
+    //! Test PollDirectory command rejects a zero polling interval
+    void testPollDirectoryInvalidInterval();
+
+    //! Test that a polling directory fires once its interval timer expires
+    void testPollDirectoryTimerExpiry();
 
     //! Test SetChannelFlow command with valid channel
     void testSetChannelFlowNominal();

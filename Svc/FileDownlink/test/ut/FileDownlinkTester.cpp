@@ -120,7 +120,7 @@ void FileDownlinkTester ::fileOpenError() {
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
-    //    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+    ASSERT_EVENTS_FileOpenError(0, sourceFileName);
 }
 
 void FileDownlinkTester ::sourceOutOfSandbox() {
@@ -323,8 +323,7 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     this->buffers[buffers_index] = data;  // NOLINT(clang-analyzer-security.ArrayBound)
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
-    Fw::Buffer buffer_new = buffer;
-    buffer_new.setData(data);
+    Fw::Buffer buffer_new(data, buffer.getSize(), buffer.getContext());
     pushFromPortEntry_bufferSendOut(buffer_new);
     invoke_to_bufferReturn(0, buffer);
 }

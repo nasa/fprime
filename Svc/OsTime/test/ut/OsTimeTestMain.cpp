@@ -26,6 +26,16 @@ TEST(Nominal, UpdateEpochTest) {
     tester.updateEpochTest();
 }
 
+TEST(Nominal, SetCurrentTimeTest) {
+    Svc::OsTimeTester tester;
+    tester.setCurrentTimeTest();
+}
+
+TEST(OffNominal, SetCurrentTimeErrorTest) {
+    Svc::OsTimeTester tester;
+    tester.setCurrentTimeErrorTest();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

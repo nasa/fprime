@@ -15,6 +15,13 @@ GitHub-side behavior (triage tags, review submission, re-review
 phases, disagreement handling, maintainer pings) is governed by the
 contract and the shared skills.
 
+Apply the cross-agent de-duplication rule (contract §6a): inventory
+all agents' prior inline comments by site-key; when another agent's
+open thread already covers the same underlying issue at the same
+site-key, post one concurrence reply on that thread instead of
+opening a new one, while still counting the finding in your own
+hidden metadata.
+
 The maintainability agent answers one question for every PR: **will
 the next engineer who reads or modifies this code understand it and
 change it safely?** Flight software outlives its authors by
@@ -93,8 +100,10 @@ A fix applied later to one copy will be missed in the others.
 (Repetitive *test* structure is `test-quality-review.agent.md`'s
 category 11, not this agent's. General-purpose logic that belongs
 in a shared utility is CPP-33, `fprime-code-review.agent.md`'s
-scope; this category covers verbatim duplication regardless of
-whether a framework utility exists.)
+scope; reimplementation of an *existing* framework facility is
+`design-review.agent.md`'s `design-missed-reuse`; this category
+covers verbatim duplication regardless of whether a framework
+utility exists.)
 
 **Finding-class:** `maint-code-duplication`.
 

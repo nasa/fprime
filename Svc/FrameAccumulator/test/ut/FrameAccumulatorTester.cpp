@@ -286,7 +286,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 
     U8 data[buffer_max_size];
     U32 buffer_size;
-    Fw::Buffer buffer(data, 0);
+    Fw::Buffer buffer(data, sizeof(data));
     U32 accumulated_size = 0;
     ComCfg::FrameContext context;
 
@@ -321,8 +321,7 @@ Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType port
         this->m_failBufferAllocate = false;
         return Fw::Buffer();
     }
-    this->m_buffer.setData(this->m_buffer_slot);
-    this->m_buffer.setSize(size);
+    this->m_buffer.set(this->m_buffer_slot, size);
     ::memset(this->m_buffer.getData(), 0, size);
     return this->m_buffer;
 }

@@ -2,8 +2,10 @@
 name: "Code Scan: CppCheck"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -28,10 +30,13 @@ jobs:
       security-events: write
 
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - uses: ./.github/actions/setup
 
@@ -39,26 +44,27 @@ jobs:
         run: sudo apt-get update && sudo apt-get install cppcheck xsltproc -y
 
       - name: Install sarif tool
-        run: npm i -g @microsoft/sarif-multitool
+        run: npm i -g @microsoft/sarif-multitool@5.6.0
 
       # With a CMake-based project, we get the list of files by setting up a build with CMAKE_EXPORT_COMPILE_COMMANDS=ON and
       # referencing the compile_commands.json file produced by the tool.  This will capture the correct include paths and
       # compile definitions based on how the source is actually compiled. See https://cppcheck.sourceforge.io/manual.html
       - name: Generate & build F´
         run: |
-          fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-          fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)"
+          fprime-util generate -DCMAKE_EXPORT_COMPILE_COMMANDS=ON 2>&1 | output-cleaner
+          fprime-util build --all --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
 
           # Add EXCLUDE_FROM_ALL targets as we need to explicitly build them
-          fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)"
-          fprime-util build --target Svc_GenericHub --jobs "$(nproc || printf '%s\n' 1)"
+          fprime-util build --target Svc_Subtopologies --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
+          fprime-util build --target Svc_GenericHub --jobs "$(nproc || printf '%s\n' 1)" 2>&1 | output-cleaner
           echo CPPCHECK_OPTS=--project="$GITHUB_WORKSPACE/build-fprime-automatic-native/compile_commands.json" >> $GITHUB_ENV
+        shell: bash
 
       - name: Run cppcheck
         run: cppcheck --force --relative-paths=$(pwd) --inline-suppr --std=c++11 -j "$(nproc || printf '%s\n' 1)" --max-ctu-depth=16 --enable=warning,performance,portability --suppress=variableScope --inconclusive --xml $CPPCHECK_OPTS 2> cppcheck_err.xml
 
       - name: Convert cppcheck results to SARIF
-        run: npx "@microsoft/sarif-multitool" convert "cppcheck_err.xml" --tool "CppCheck" --output "cppcheck_err.sarif"
+        run: npx "@microsoft/sarif-multitool@5.6.0" convert "cppcheck_err.xml" --tool "CppCheck" --output "cppcheck_err.sarif"
 
       - name: Convert cppcheck results to Markdown & Integrate them in the workflow summary
         run: xsltproc .github/scripts/cppcheck-xml2text.xslt cppcheck_err.xml | tee $GITHUB_STEP_SUMMARY cppcheck_err.txt

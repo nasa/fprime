@@ -104,6 +104,9 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
     //! Duplicate channel ID across packets with conflicting size asserts
     void duplicateChannelIdConflictingSizeTest(void);
 
+    //! Oversized channel value is rejected with a warning event
+    void oversizedChannelTest(void);
+
     //! Helper to set the component into a stock-configuration regardless of default config
     //!
     void stockConfiguration();

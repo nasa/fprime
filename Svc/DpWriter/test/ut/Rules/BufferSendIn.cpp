@@ -462,6 +462,32 @@ void TestState ::action__BufferSendIn__FileWriteError() {
     fileData.writeResult = savedWriteResult;
 }
 
+// ----------------------------------------------------------------------
+// Non-rule tests
+// ----------------------------------------------------------------------
+
+void TestState ::testFileNameFormatError() {
+    // Configure a prefix that fills the file name string, forcing a format overflow
+    Fw::FileNameString prefix;
+    const std::string longPrefix(static_cast<size_t>(prefix.getCapacity() - 1), 'A');
+    prefix = longPrefix.c_str();
+    this->component.configure(prefix);
+    const FwSizeType throttle = Svc::DpWriterTester::getFileNameFormatErrorThrottle();
+    for (FwSizeType i = 0; i < throttle + 1; i++) {
+        this->clearHistory();
+        Fw::Buffer buffer = this->abstractState.getDpBuffer();
+        this->invoke_to_bufferSendIn(0, buffer);
+        this->doDispatch();
+        if (i < throttle) {
+            ASSERT_EVENTS_SIZE(1);
+            ASSERT_EVENTS_FileNameFormatError_SIZE(1);
+            ASSERT_EVENTS_FileNameFormatError(0, Fw::StringFormatStatus::OVERFLOWED);
+        } else {
+            ASSERT_EVENTS_SIZE(0);
+        }
+    }
+}
+
 namespace BufferSendIn {
 
 // ----------------------------------------------------------------------
@@ -475,6 +501,11 @@ void Tester::BufferTooSmallForData() {
 
 void Tester::BufferTooSmallForPacket() {
     this->ruleBufferTooSmallForPacket.apply(this->testState);
+    this->testState.printEvents();
+}
+
+void Tester::FileNameFormatError() {
+    this->testState.testFileNameFormatError();
     this->testState.printEvents();
 }
 

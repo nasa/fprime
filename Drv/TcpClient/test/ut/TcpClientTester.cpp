@@ -130,7 +130,7 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
 TcpClientTester ::TcpClientTester()
     : TcpClientGTestBase("Tester", MAX_HISTORY_SIZE),
       component("TcpClient"),
-      m_data_buffer(m_data_storage, 0),
+      m_data_buffer(m_data_storage, sizeof(m_data_storage)),
       m_spinner(true) {
     this->initComponents();
     this->connectPorts();
