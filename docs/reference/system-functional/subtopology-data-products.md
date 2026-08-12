@@ -40,5 +40,5 @@ The subtopology exposes ports for:
 ### Configuration
 
 - Data product directory paths and state file location are configured at setup time.
-- Base IDs, queue sizes, stack sizes, and priorities via DataProductsConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via DataProductsConfig.
 - Buffer Manager bin sizes and counts are configured for the expected data product sizes.

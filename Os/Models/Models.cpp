@@ -12,6 +12,7 @@
 #include "Os/Models/FileModeEnumAc.hpp"
 #include "Os/Models/FileStatusEnumAc.hpp"
 #include "Os/Models/FileSystemStatusEnumAc.hpp"
+#include "Os/Models/FppConstantsAc.hpp"
 #include "Os/Models/GenericStatusEnumAc.hpp"
 #include "Os/Models/MutexStatusEnumAc.hpp"
 #include "Os/Models/QueueBlockingTypeEnumAc.hpp"
@@ -72,6 +73,10 @@ static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_SYNC_WRITE) == O
               "File mode and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_APPEND) == Os::FileMode::T::OPEN_APPEND,
               "File mode and FPP shadow enum do not match");
+
+// Check consistency of the Os::Task::TASK_DEFAULT sentinel with its FPP shadow constant
+static_assert(static_cast<FwSizeType>(Os::TASK_DEFAULT) == Os::Task::TASK_DEFAULT,
+              "Task default and FPP shadow constant do not match");
 
 // Check consistency of every constant in the Os::Task::Status enum
 static_assert(static_cast<FwIndexType>(Os::Task::Status::INVALID_STATE) + 1 ==

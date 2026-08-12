@@ -139,6 +139,7 @@ topology Flight {
 * **Queue sizes** — component queue depths (for active and queued components).
 * **Stack sizes** — task stack allocation (for active).
 * **Priorities** — RTOS scheduling priority (for active).
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 > These govern footprint and responsiveness of: command dispatching, event management, health monitoring, text logging, version reporting, and assert→fatal adaptation. Override to meet platform timing and memory constraints.
 
