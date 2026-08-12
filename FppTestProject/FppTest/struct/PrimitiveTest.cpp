@@ -197,15 +197,27 @@ TYPED_TEST_P(PrimitiveTest, ToString) {
     TypeParam s(this->testBool, this->testU32, this->testI16, this->testF64);
     std::stringstream buf1, buf2;
 
+    // 1. Test operator<< output (truncates to default Fw::String capacity)
     buf1 << s;
 
+    // 2. Test s.toString() output (uses full buffer capacity)
+    Fw::StringTemplate<1024> str;
+    s.toString(str);
+
+    // Build the expected string representation
     buf2 << "( "
          << "mBool = " << this->testBool << ", "
          << "mU32 = " << this->testU32 << ", "
          << "mI16 = " << this->testI16 << ", "
          << "mF64 = " << std::fixed << this->testF64 << " )";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    // Verify operator<< output against standard Fw::String
+    Fw::String sTruncated(buf2.str().c_str());
+    ASSERT_STREQ(buf1.str().c_str(), sTruncated.toChar());
+
+    // Verify full s.toString() output against large capacity buffer
+    Fw::StringTemplate<1024> sFull(buf2.str().c_str());
+    ASSERT_STREQ(str.toChar(), sFull.toChar());
 }
 
 REGISTER_TYPED_TEST_SUITE_P(PrimitiveTest,
