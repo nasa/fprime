@@ -49,6 +49,7 @@ void BufferAccumulator ::allocateQueue(FwEnumStoreType identifier,
 ) {
     this->m_allocatorId = identifier;
     // Overflow protection
+    FW_ASSERT(maxNumBuffers > 0);
     FW_ASSERT((std::numeric_limits<FwSizeType>::max() / maxNumBuffers) >= sizeof(Fw::Buffer));
     FwSizeType memSize = static_cast<FwSizeType>(sizeof(Fw::Buffer) * maxNumBuffers);
     bool recoverable = false;

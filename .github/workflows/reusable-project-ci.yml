@@ -42,6 +42,8 @@ on:
         required: false
         type: string
         default: "ubuntu-22.04"
+permissions:
+  contents: read
 jobs:
   build:
     runs-on: ${{ inputs.runs_on }}

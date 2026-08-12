@@ -44,6 +44,13 @@ SerializeStatus FilePacket::EndPacket ::fromSerialBuffer(SerialBuffer& serialBuf
     FW_ASSERT(this->m_header.m_type == T_END);
 
     const SerializeStatus status = serialBuffer.deserializeTo(this->m_checksumValue);
+    if (status != FW_SERIALIZE_OK) {
+        return status;
+    }
+
+    if (serialBuffer.getDeserializeSizeLeft() != 0) {
+        return FW_DESERIALIZE_SIZE_MISMATCH;
+    }
 
     return status;
 }

@@ -71,8 +71,12 @@ static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_WRITE) == Os::Fi
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_SYNC_WRITE) == Os::FileMode::T::OPEN_SYNC_WRITE,
               "File mode and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileMode::T>(Os::File::Mode::OPEN_APPEND) == Os::FileMode::T::OPEN_APPEND,
-              "File mode and FPP shadow enum do not Mode");
+              "File mode and FPP shadow enum do not match");
 
+// Check consistency of every constant in the Os::Task::Status enum
+static_assert(static_cast<FwIndexType>(Os::Task::Status::INVALID_STATE) + 1 ==
+                  static_cast<FwIndexType>(Os::TaskStatus::NUM_CONSTANTS),
+              "Task status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::OP_OK) == Os::TaskStatus::T::OP_OK,
               "Task status and FPP shadow enum do not match");
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_HANDLE) == Os::TaskStatus::T::INVALID_HANDLE,
@@ -98,6 +102,10 @@ static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::ERROR_PERMISSION)
 static_assert(static_cast<Os::TaskStatus::T>(Os::Task::Status::INVALID_STATE) == Os::TaskStatus::T::INVALID_STATE,
               "Task status and FPP shadow enum do not match");
 
+// Check consistency of every constant in the Os::Mutex::Status enum
+static_assert(static_cast<FwIndexType>(Os::Mutex::Status::ERROR_OTHER) + 1 ==
+                  static_cast<FwIndexType>(Os::MutexStatus::NUM_CONSTANTS),
+              "Mutex status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::OP_OK) == Os::MutexStatus::T::OP_OK,
               "Mutex status and FPP shadow enum do not match");
 static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_BUSY) == Os::MutexStatus::T::ERROR_BUSY,
@@ -108,6 +116,9 @@ static_assert(static_cast<Os::MutexStatus::T>(Os::Mutex::Status::ERROR_OTHER) ==
               "Mutex status and FPP shadow enum do not match");
 
 // Check consistency of every constant in the Os::Directory::Status enum
+static_assert(static_cast<FwIndexType>(Os::Directory::Status::OTHER_ERROR) + 1 ==
+                  static_cast<FwIndexType>(Os::DirectoryStatus::NUM_CONSTANTS),
+              "Directory status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::OP_OK) == Os::DirectoryStatus::T::OP_OK,
               "Directory status and FPP shadow enum do not match");
 static_assert(static_cast<Os::DirectoryStatus::T>(Os::Directory::Status::DOESNT_EXIST) ==
@@ -154,6 +165,9 @@ static_assert(static_cast<Os::DirectoryOpenMode::T>(Os::Directory::OpenMode::CRE
               "Directory mode and FPP shadow enum do not match");
 
 // Check consistency of every constant in the Os::FileSystem::Status enum
+static_assert(static_cast<FwIndexType>(Os::FileSystem::Status::OTHER_ERROR) + 1 ==
+                  static_cast<FwIndexType>(Os::FileSystemStatus::NUM_CONSTANTS),
+              "FileSystem status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OP_OK) == Os::FileSystemStatus::T::OP_OK,
               "FileSystem status and FPP shadow enum do not match");
 static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::ALREADY_EXISTS) ==
@@ -203,6 +217,9 @@ static_assert(static_cast<Os::FileSystemStatus::T>(Os::FileSystem::Status::OTHER
               "FileSystem status and FPP shadow enum do not match");
 
 // Check consistency of every constant in the Os::RawTime::Status enum
+static_assert(static_cast<FwIndexType>(Os::RawTime::Status::OTHER_ERROR) + 1 ==
+                  static_cast<FwIndexType>(Os::RawTimeStatus::NUM_CONSTANTS),
+              "RawTime status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OK) == Os::RawTimeStatus::T::OP_OK,
               "RawTime status enums do not match");
 static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OP_OVERFLOW) == Os::RawTimeStatus::T::OP_OVERFLOW,
@@ -214,6 +231,9 @@ static_assert(static_cast<Os::RawTimeStatus::T>(Os::RawTime::Status::OTHER_ERROR
               "Generic status enums do not match");
 
 // Check consistency of every constant in the Os::Queue::Status enum
+static_assert(static_cast<FwIndexType>(Os::Queue::Status::UNKNOWN_ERROR) + 1 ==
+                  static_cast<FwIndexType>(Os::QueueStatus::NUM_CONSTANTS),
+              "Queue status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::OP_OK) == Os::QueueStatus::T::OP_OK,
               "Queue status enums do not match");
 static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::ALREADY_CREATED) ==
@@ -241,6 +261,9 @@ static_assert(static_cast<Os::QueueStatus::T>(Os::Queue::Status::ALLOCATION_FAIL
               "Queue status enums do not match");
 
 // Check consistency of every constant in the Os::Queue::BlockingType enum
+static_assert(static_cast<FwIndexType>(Os::Queue::BlockingType::NONBLOCKING) + 1 ==
+                  static_cast<FwIndexType>(Os::QueueBlockingType::NUM_CONSTANTS),
+              "Queue BlockingType and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::QueueBlockingType::T>(Os::Queue::BlockingType::BLOCKING) ==
                   Os::QueueBlockingType::T::BLOCKING,
               "Queue BlockingType enums do not match");
@@ -249,12 +272,18 @@ static_assert(static_cast<Os::QueueBlockingType::T>(Os::Queue::BlockingType::NON
               "Queue BlockingType enums do not match");
 
 // Check Generic mappings
+static_assert(static_cast<FwIndexType>(Os::Generic::Status::ERROR) + 1 ==
+                  static_cast<FwIndexType>(Os::GenericStatus::NUM_CONSTANTS),
+              "Generic status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::OP_OK) == Os::GenericStatus::T::OP_OK,
               "Generic status enums do not match");
 static_assert(static_cast<Os::GenericStatus::T>(Os::Generic::Status::ERROR) == Os::GenericStatus::T::ERROR,
               "Generic status enums do not match");
 
 // Check consistency of every constant in the Os::CountingSemaphore::Status enum
+static_assert(static_cast<FwIndexType>(Os::CountingSemaphore::Status::ERROR_OTHER) + 1 ==
+                  static_cast<FwIndexType>(Os::CountingSemaphoreStatus::NUM_CONSTANTS),
+              "CountingSemaphore status and FPP shadow enum have inconsistent number of values");
 static_assert(static_cast<Os::CountingSemaphoreStatus::T>(Os::CountingSemaphore::Status::OP_OK) ==
                   Os::CountingSemaphoreStatus::T::OP_OK,
               "CountingSemaphore status enums do not match");

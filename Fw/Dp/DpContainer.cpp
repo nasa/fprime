@@ -46,7 +46,7 @@ Fw::SerializeStatus DpContainer::deserializeHeader() {
     if (status == Fw::FW_SERIALIZE_OK) {
         FwPacketDescriptorType packetDescriptor;
         status = deserializer.deserializeTo(packetDescriptor);
-        if (packetDescriptor != ComPacketType::FW_PACKET_DP) {
+        if ((status == Fw::FW_SERIALIZE_OK) && (packetDescriptor != ComPacketType::FW_PACKET_DP)) {
             status = Fw::FW_SERIALIZE_FORMAT_ERROR;
         }
     }

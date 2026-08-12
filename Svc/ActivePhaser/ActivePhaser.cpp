@@ -48,7 +48,7 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // Additional checks when there are previous entries
     if (m_state.used > 0) {
         const PhaserStateEntry& previous = m_state.entries[m_state.used - 1];
-        FW_ASSERT((previous.start + previous.length - 1) < start, static_cast<FwAssertArgType>(m_state.used),
+        FW_ASSERT((previous.start + previous.length) <= start, static_cast<FwAssertArgType>(m_state.used),
                   static_cast<FwAssertArgType>(previous.start),
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
         FW_ASSERT(previous.start < start, static_cast<FwAssertArgType>(m_state.used),
@@ -65,7 +65,8 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // Check assertions on the ports
     FW_ASSERT(port < getNum_PhaserMemberOut_OutputPorts(), static_cast<FwAssertArgType>(port));
     FW_ASSERT(isConnected_PhaserMemberOut_OutputPort(port), static_cast<FwAssertArgType>(port));
-    FW_ASSERT((start + length) <= m_cycle, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
+    FW_ASSERT(length <= m_cycle, static_cast<FwAssertArgType>(length), static_cast<FwAssertArgType>(m_cycle));
+    FW_ASSERT(start <= m_cycle - length, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
               static_cast<FwAssertArgType>(m_cycle));
     FW_ASSERT(userContext > m_cycle, static_cast<FwAssertArgType>(userContext), static_cast<FwAssertArgType>(m_cycle));
 

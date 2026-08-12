@@ -95,6 +95,30 @@ TEST(CmdDispTestNominal, ReregisterCommand) {
     tester.runCommandReregister();
 }
 
+TEST(CmdDispTestNominal, NonZeroPortDispatch) {
+    TEST_CASE(102.1.4, "Nonzero Port Index Dispatch");
+    COMMENT("Verify registration and dispatch through a nonzero port index.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    // connect a nonzero port index (index 1 is used internally for local commands)
+    tester.connect_to_compCmdReg(2, impl.get_compCmdReg_InputPort(2));
+    tester.connect_to_seqCmdBuff(2, impl.get_seqCmdBuff_InputPort(2));
+    impl.set_compCmdSend_OutputPort(2, tester.get_from_compCmdSend(2));
+    impl.set_seqCmdStatus_OutputPort(2, tester.get_from_seqCmdStatus(2));
+
+    tester.runNonZeroPortDispatch();
+}
+
 TEST(CmdDispTestOffNominal, InvalidOpcodeDispatch) {
     TEST_CASE(102.2.1, "Off-nominal Dispatch");
     COMMENT("Verify the correct handling of unregistered opcodes.");

@@ -197,7 +197,6 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
     }
 
     // copy telemetry value into active buffers; hasValue written in-place via reference
-    entry.hasValue = true;
     for (FwChanIdType pkt = 0; pkt < MAX_PACKETIZER_PACKETS; pkt++) {
         // check if current packet has this channel
         if (entry.packetOffset[pkt] != -1) {
@@ -208,6 +207,8 @@ void TlmPacketizer ::TlmRecv_handler(const FwIndexType portNum,
             U8* ptr = &this->m_fillBuffers[pkt].buffer.getBuffAddr()[entry.packetOffset[pkt]];
 
             (void)memcpy(ptr, val.getBuffAddr(), static_cast<size_t>(val.getSize()));
+            // set under the lock, after the copy, so TlmGet cannot see a value-less VALID entry
+            entry.hasValue = true;
             this->m_lock.unLock();
         }
     }

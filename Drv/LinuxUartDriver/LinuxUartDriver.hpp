@@ -136,7 +136,7 @@ class LinuxUartDriver final : public LinuxUartDriverComponentBase {
 
     std::atomic<FwSizeType> m_bytesSent;      //!< number of bytes sent
     std::atomic<FwSizeType> m_bytesReceived;  //!< number of bytes received
-    bool m_quitReadThread;                    //!< flag to quit thread
+    std::atomic<bool> m_quitReadThread;       //!< flag to quit thread
 };
 
 }  // end namespace Drv

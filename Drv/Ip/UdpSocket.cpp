@@ -209,8 +209,8 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
                                          const U8* const data,
                                          const FwSizeType size) {
-    FW_ASSERT(socketDescriptor.fd >= 0);  // File descriptor should be valid
-    FW_ASSERT(data != nullptr);           // Data pointer should not be null
+    FW_ASSERT(socketDescriptor.fd >= 0);          // File descriptor should be valid
+    FW_ASSERT((size == 0) || (data != nullptr));  // Data pointer should not be null for nonzero sizes
 
     // In respond-to-sender mode the destination is learned from the first received
     // packet; a send before then has nowhere to go and is a send error, not a bug

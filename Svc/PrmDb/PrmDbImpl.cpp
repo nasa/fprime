@@ -526,7 +526,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or (recordSize < sizeof(FwPrmIdType))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;
