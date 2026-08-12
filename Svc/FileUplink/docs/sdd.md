@@ -151,7 +151,12 @@ to compute the checksum value for the file.
 
     2. Compare the value computed in the previous step against the
 checksum value in the packet.
-If the two values are different, then issue a *BadChecksum* warning.
+If the two values are different, then issue a *BadChecksum* warning,
+increment the *FilesReceivedFailed* telemetry channel, and do **not**
+issue the *FileReceived* event or the `fileAnnounce` output.
+Otherwise (the checksums match) issue the *FileReceived* event and,
+if connected, the `fileAnnounce` output, and increment the
+*FilesReceived* telemetry channel.
 
     c. Close the file.
 
