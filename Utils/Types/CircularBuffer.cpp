@@ -86,7 +86,7 @@ Fw::SerializeStatus CircularBuffer ::serialize_impl(const T& serializable, const
     if ((idx + size) > m_store_size) {
         FW_ASSERT(size <= STAGING_BUFFER_SIZE, static_cast<FwAssertArgType>(size),
                   static_cast<FwAssertArgType>(STAGING_BUFFER_SIZE));
-        U8 staging[STAGING_BUFFER_SIZE] = {};
+        U8 staging[STAGING_BUFFER_SIZE > 0 ? STAGING_BUFFER_SIZE : 1] = {};
         Fw::ExternalSerializeBuffer stagingBuffer(staging, size);
         const Fw::SerializeStatus stagingStatus = stagingBuffer.serializeFrom(serializable);
         if (stagingStatus != Fw::FW_SERIALIZE_OK) {
@@ -178,7 +178,7 @@ Fw::SerializeStatus CircularBuffer ::peek_impl(T& serializable, FwSizeType size,
     if ((idx + size) > m_store_size) {
         FW_ASSERT(size <= STAGING_BUFFER_SIZE, static_cast<FwAssertArgType>(size),
                   static_cast<FwAssertArgType>(STAGING_BUFFER_SIZE));
-        U8 staging[STAGING_BUFFER_SIZE];
+        U8 staging[STAGING_BUFFER_SIZE > 0 ? STAGING_BUFFER_SIZE : 1];
         const Fw::SerializeStatus peekStatus = this->peek(staging, size, offset);
         if (peekStatus != Fw::FW_SERIALIZE_OK) {
             return peekStatus;

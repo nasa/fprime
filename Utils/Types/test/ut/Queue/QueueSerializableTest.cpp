@@ -13,6 +13,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <config/CircularBufferCfg.hpp>
 #include <cstring>
 
 namespace {
@@ -214,10 +215,12 @@ TEST(QueueSerializable, ComBufferFullCapacity) {
     EXPECT_EQ(0, memcmp(com.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(com.getSize())));
 }
 
-// A serializable slot spanning the end of the circular buffer store round-trips
+// A serializable slot spanning the end of the circular buffer store round-trips when the
+// configured staging buffer is large enough, and asserts otherwise
 TEST(QueueSerializable, CircularBufferWrappingSlot) {
     constexpr FwSizeType PAD = 8;
-    U8 storage[BUFFER_MSG_SIZE + PAD];
+    // Store sized so the slot wraps 4 bytes past the end after the head advances by PAD
+    U8 storage[BUFFER_MSG_SIZE + PAD - 4];
     Types::CircularBuffer circular(storage, sizeof storage);
 
     // Advance the head so the next slot wraps the end of the store
@@ -226,16 +229,22 @@ TEST(QueueSerializable, CircularBufferWrappingSlot) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.rotate(PAD));
 
     const Fw::Buffer in = makeBuffer(42);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::Serializable&>(in), BUFFER_MSG_SIZE));
-    Fw::Buffer out;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::Serializable&>(out), BUFFER_MSG_SIZE));
-    expectBufferEq(in, out);
+    if (Types::CircularBufferCfg::STAGING_BUFFER_SIZE >= BUFFER_MSG_SIZE) {
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::Serializable&>(in), BUFFER_MSG_SIZE));
+        Fw::Buffer out;
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::Serializable&>(out), BUFFER_MSG_SIZE));
+        expectBufferEq(in, out);
+    } else {
+        ASSERT_DEATH_IF_SUPPORTED(circular.serialize(static_cast<const Fw::Serializable&>(in), BUFFER_MSG_SIZE), "");
+    }
 }
 
-// A ComBuffer slot spanning the end of the circular buffer store round-trips
+// A ComBuffer slot spanning the end of the circular buffer store round-trips when the
+// configured staging buffer is large enough, and asserts otherwise
 TEST(QueueSerializable, CircularBufferWrappingComBufferSlot) {
     constexpr FwSizeType PAD = 8;
-    U8 storage[COM_MSG_SIZE + PAD];
+    // Store sized so the slot wraps 4 bytes past the end after the head advances by PAD
+    U8 storage[COM_MSG_SIZE + PAD - 4];
     Types::CircularBuffer circular(storage, sizeof storage);
 
     // Advance the head so the next slot wraps the end of the store
@@ -244,9 +253,13 @@ TEST(QueueSerializable, CircularBufferWrappingComBufferSlot) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.rotate(PAD));
 
     Fw::ComBuffer in = makeComBuffer(3, 25);
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::LinearBufferBase&>(in), COM_MSG_SIZE));
-    Fw::ComBuffer out;
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::LinearBufferBase&>(out), COM_MSG_SIZE));
-    ASSERT_EQ(in.getSize(), out.getSize());
-    EXPECT_EQ(0, memcmp(in.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(in.getSize())));
+    if (Types::CircularBufferCfg::STAGING_BUFFER_SIZE >= COM_MSG_SIZE) {
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.serialize(static_cast<const Fw::LinearBufferBase&>(in), COM_MSG_SIZE));
+        Fw::ComBuffer out;
+        ASSERT_EQ(Fw::FW_SERIALIZE_OK, circular.peek(static_cast<Fw::LinearBufferBase&>(out), COM_MSG_SIZE));
+        ASSERT_EQ(in.getSize(), out.getSize());
+        EXPECT_EQ(0, memcmp(in.getBuffAddr(), out.getBuffAddr(), static_cast<size_t>(in.getSize())));
+    } else {
+        ASSERT_DEATH_IF_SUPPORTED(circular.serialize(static_cast<const Fw::LinearBufferBase&>(in), COM_MSG_SIZE), "");
+    }
 }
