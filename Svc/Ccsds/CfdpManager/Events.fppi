@@ -36,9 +36,10 @@ event PlaybackInitiated(
 
 event PollDirInitiated(
     sourceDirectory: string size MaxFilePathSize @< Source directory being sent
+    pollId: U8 @< Channel poll index
 ) \
     severity activity low \
-    format "Successfully initiated directory poll for {}"
+    format "Successfully initiated directory poll for {} (index {})"
 
 event PollDirStopped(
     channelId: U8 @< Channel index stopped
@@ -73,7 +74,13 @@ event InvalidChannelPoll(
     maxPollId: U8 @< Maximum channel index
 ) \
     severity warning low \
-    format "Invalid poll ID {}, maximum poll ID is {}" 
+    format "Invalid poll ID {}, maximum poll ID is {}"
+
+event InvalidPollInterval(
+    interval: U32 @< Requested poll interval in seconds
+) \
+    severity warning low \
+    format "Invalid poll interval {} seconds, must be non-zero"
 
 event FailKeepFileMove(
     srcFile: string size MaxFilePathSize @< Source file being moved

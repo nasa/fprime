@@ -412,6 +412,12 @@ class CfdpManagerTester final : public CfdpManagerGTestBase {
     //! Test PollDirectory command when poll slot is busy
     void testPollDirectoryBusy();
 
+    //! Test PollDirectory command rejects a zero polling interval
+    void testPollDirectoryInvalidInterval();
+
+    //! Test that a polling directory fires once its interval timer expires
+    void testPollDirectoryTimerExpiry();
+
     //! Test SetChannelFlow command with valid channel
     void testSetChannelFlowNominal();
 
