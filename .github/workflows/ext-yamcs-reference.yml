@@ -5,9 +5,11 @@ name: "External Repo: YAMCS Reference"
 on:
   schedule:
     - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
+  push:
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [devel]
+    branches: [devel, release/**]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -15,7 +17,6 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
   workflow_dispatch:
-    branches: [devel]
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
@@ -34,33 +35,15 @@ jobs:
       default_target_ref: main
 
   build:
-    name: "Build"
     needs: get-branch
-    runs-on: ubuntu-22.04
-    env:
-      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
-    steps:
-      - name: "Setup output-cleaner"
-        uses: nasa/fprime-actions/output-cleaner@devel
-      - name: "Setup external repository + overlay F´"
-        uses: nasa/fprime-actions/external-repository-setup@devel
-        with:
-          target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: ${{ needs.get-branch.outputs.target-branch }}
-
-      - name: "Build deployment"
-        run: |
-          cd FprimeYamcsReference/YamcsDeployment
-          fprime-util generate 2>&1 | output-cleaner
-          fprime-util build 2>&1 | output-cleaner
-        shell: bash
-
-      - name: "Upload build artifacts"
-        uses: actions/upload-artifact@v7
-        with:
-          name: yamcs-build-artifacts
-          path: build-artifacts/
-          retention-days: 1
+    name: ""
+    uses: ./.github/workflows/reusable-project-builder.yml
+    with:
+      target_repository: fprime-community/fprime-yamcs-reference
+      build_location: FprimeYamcsReference/YamcsDeployment
+      run_unit_tests: false
+      target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      fprime_location: ./lib/fprime
 
   test:
     name: "Test"
@@ -78,7 +61,7 @@ jobs:
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
         with:
-          name: yamcs-build-artifacts
+          name: examples-build-artifacts
           path: build-artifacts
 
       - name: "Setup Java 17 for YAMCS"
@@ -94,6 +77,14 @@ jobs:
           pip install "fprime-gds==4.2.2a4"
           pip install "fprime-xtce>=0.1.3"
           pip install "fprime-yamcs>=0.1.4"
+
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
 
       - name: "Prepare deployment"
         run: |
