@@ -51,6 +51,8 @@ jobs:
       BOOTSTRAP_BRANCH: ${{ needs.get-bootstrap-branch.outputs.target-branch }}
       TOOLS_BRANCH: ${{ needs.get-tools-branch.outputs.target-branch }}
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       # Checkout only the bootstrap.expect file, since the full F´ repo will be 
       # checked out as part of the fprime-bootstrap process
       - name: "Retrieve bootstrap.expect file"
@@ -104,8 +106,9 @@ jobs:
         run: |  
              cd my-project
              . fprime-venv/bin/activate
-             fprime-util generate
-             fprime-util build -j4
+             fprime-util generate 2>&1 | output-cleaner
+             fprime-util build -j4 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Test New Deployment and Build"
         run: |
@@ -114,7 +117,8 @@ jobs:
              cd MyProject
              expect ../lib/fprime/.github/actions/cookiecutter-check/deployment.expect
              cd MyDeployment
-             fprime-util build -j4
+             fprime-util build -j4 2>&1 | output-cleaner
+        shell: bash
 
       - name: "Test New Component and Build"
         run: |
@@ -123,4 +127,5 @@ jobs:
              cd MyProject
              expect ../lib/fprime/.github/actions/cookiecutter-check/component.expect
              cd MyComponent
-             fprime-util build -j4
+             fprime-util build -j4 2>&1 | output-cleaner
+        shell: bash

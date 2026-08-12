@@ -27,6 +27,8 @@ jobs:
     name: Run FppTest
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
@@ -40,12 +42,12 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util build --ut
+          fprime-util build --ut 2>&1 | output-cleaner
         shell: bash
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest
@@ -64,6 +66,8 @@ jobs:
     name: Run FppTest (Direct Port Calls)
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
@@ -77,12 +81,12 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util build --ut
+          fprime-util build --ut 2>&1 | output-cleaner
         shell: bash
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest

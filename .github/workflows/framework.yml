@@ -111,6 +111,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F' Repository"
         uses: actions/checkout@v4
         with:
@@ -131,10 +133,11 @@ jobs:
           fprime-util generate \
             -DCMAKE_C_COMPILER=gcc-10 \
             -DCMAKE_CXX_COMPILER=g++-10 \
-            -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy"
+            -DCMAKE_CXX_CLANG_TIDY="clang-tidy-12;--config-file=${{ github.workspace }}/release.clang-tidy" \
+            2>&1 | output-cleaner
       - name: "Build (static analysis runs during compilation)"
         shell: bash
-        run: fprime-util build --all
+        run: fprime-util build --all 2>&1 | output-cleaner
 
   timing-check:
     name: "Timing Check"
