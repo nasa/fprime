@@ -7,6 +7,7 @@ module FileHandlingCfdp {
         queue size FileHandlingCfdpConfig.QueueSizes.cfdpManager \
         stack size FileHandlingCfdpConfig.StackSizes.cfdpManager \
         priority FileHandlingCfdpConfig.Priorities.cfdpManager \
+        cpu FileHandlingCfdpConfig.CpuAffinities.cfdpManager \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         FileHandlingCfdp::cfdpManager.configure(FileHandlingCfdp::Allocation::memAllocator);
@@ -19,12 +20,14 @@ module FileHandlingCfdp {
     instance fileManager: Svc.FileManager base id FileHandlingCfdpConfig.BASE_ID + 0x01000 \
         queue size FileHandlingCfdpConfig.QueueSizes.fileManager \
         stack size FileHandlingCfdpConfig.StackSizes.fileManager \
-        priority FileHandlingCfdpConfig.Priorities.fileManager
+        priority FileHandlingCfdpConfig.Priorities.fileManager \
+        cpu FileHandlingCfdpConfig.CpuAffinities.fileManager
 
     instance prmDb: Svc.PrmDb base id FileHandlingCfdpConfig.BASE_ID + 0x02000 \
         queue size FileHandlingCfdpConfig.QueueSizes.prmDb \
         stack size FileHandlingCfdpConfig.StackSizes.prmDb \
         priority FileHandlingCfdpConfig.Priorities.prmDb \
+        cpu FileHandlingCfdpConfig.CpuAffinities.prmDb \
     {
         phase Fpp.ToCpp.Phases.configComponents """
             FileHandlingCfdp::prmDb.configure("PrmDb.dat");

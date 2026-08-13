@@ -34,6 +34,7 @@ module DataProductsConfig {
         constant dpMgr  = Os.TASK_DEFAULT
         constant dpWriter   = Os.TASK_DEFAULT
         constant dpBufferAccumulator = Os.TASK_DEFAULT
+        # dpBufferManager is intentionally omitted because it is passive.
     }
 
     module BufferAccumulator {

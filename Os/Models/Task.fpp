@@ -5,6 +5,7 @@
 
 module Os {
 @ Sentinel for default task parameters: casts to Os::Task::TASK_DEFAULT
+@ CPU affinities must be a valid core index (< CPU_SETSIZE) or TASK_DEFAULT; others assert at startup
 constant TASK_DEFAULT = -1
 
 @ FPP shadow-enum representing Os::Task::Status
