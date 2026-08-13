@@ -17,10 +17,7 @@ class StatementArgBuffer : public LinearBufferBase {
     StatementArgBuffer& operator=(const StatementArgBuffer& other);
 
     DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
-    Serializable::SizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
 
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
     bool operator==(const StatementArgBuffer& other) const;
 
 #if FW_SERIALIZABLE_TO_STRING

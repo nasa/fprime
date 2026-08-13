@@ -44,8 +44,7 @@ void CcsdsSdlsDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, c
         newContext.set_saIndex(saIndex);
 
         // Remove the security association index: the decryption helper receives only the iv/data
-        data.setData(data.getData() + sizeof(U16));
-        data.setSize(data.getSize() - static_cast<Fw::Buffer::SizeType>(sizeof(U16)));
+        data.advance(static_cast<FwSignedSizeType>(sizeof(U16)));
 
         this->decryptOut_out(0, saIndex, data, newContext);
     }

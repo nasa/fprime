@@ -17,10 +17,6 @@ class DataBuffer : public Fw::LinearBufferBase {
     DataBuffer& operator=(const DataBuffer& other);
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
 
   private:
     U8 m_data[DATA_BUFFER_SIZE];  // packet data buffer

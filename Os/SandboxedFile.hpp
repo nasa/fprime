@@ -35,7 +35,7 @@ namespace Os {
 //! Os::File::Status status = file.open("/data/uplink/mission/seq.bin", Os::File::OPEN_WRITE);
 //! // -> OP_OK
 //! status = file.open("/data/uplink/../../etc/shadow", Os::File::OPEN_WRITE);
-//! // -> NO_PERMISSION
+//! // -> OUTSIDE_SANDBOX
 //! ```
 //!
 class SandboxedFile {
@@ -78,7 +78,7 @@ class SandboxedFile {
     //! \brief Open a file, validating the path against the sandbox directory
     //!
     //! Resolves the path against CWD and checks containment before opening.
-    //! Returns `NO_PERMISSION` if the resolved path falls outside the sandbox.
+    //! Returns `OUTSIDE_SANDBOX` if the resolved path falls outside the sandbox.
     //!
     //! \param path: c-string path to open
     //! \param mode: file operation mode

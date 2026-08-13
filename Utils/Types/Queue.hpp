@@ -83,6 +83,33 @@ class Queue {
     Fw::SerializeStatus enqueue(const U8* const message, const FwSizeType size);
 
     /**
+     * \brief pushes a serializable object onto the queue
+     *
+     * Pushes a serializable object onto the queue using F Prime serialization into the queue's
+     * fixed-size message slot. The object's serialized size must fit within the queue's message
+     * size. Overflow behavior is identical to the raw-byte enqueue.
+     *
+     * \param message: serializable object to enqueue
+     * \return: Fw::FW_SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
+     * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
+     */
+    Fw::SerializeStatus enqueue(const Fw::Serializable& message);
+
+    /**
+     * \brief pushes linear buffer contents onto the queue
+     *
+     * Pushes the contents of a linear buffer (length token followed by data) onto the queue using
+     * F Prime serialization into the queue's fixed-size message slot. The buffer's serialized size
+     * must fit within the queue's message size. Overflow behavior is identical to the raw-byte
+     * enqueue.
+     *
+     * \param message: linear buffer whose contents to enqueue
+     * \return: Fw::FW_SERIALIZE_OK on success, FW_SERIALIZE_NO_ROOM_LEFT when full with DROP_NEWEST mode,
+     * FW_SERIALIZE_DISCARDED_EXISTING when full with DROP_OLDEST mode
+     */
+    Fw::SerializeStatus enqueue(const Fw::LinearBufferBase& message);
+
+    /**
      * \brief pops a fixed-size message off the queue
      *
      * Pops a fixed-size message off the queue. This performs a copy of the data into the provided message
@@ -102,6 +129,30 @@ class Queue {
     Fw::SerializeStatus dequeue(U8* const message, const FwSizeType size);
 
     /**
+     * \brief pops a serializable object off the queue
+     *
+     * Pops a serializable object off the queue by deserializing the queue's fixed-size message
+     * slot into the supplied object. Dequeue location depends on the queue mode (FIFO or LIFO)
+     * exactly as the raw-byte dequeue.
+     *
+     * \param message: serializable object to fill from the dequeued message
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
+     */
+    Fw::SerializeStatus dequeue(Fw::Serializable& message);
+
+    /**
+     * \brief pops linear buffer contents off the queue
+     *
+     * Pops linear buffer contents off the queue by deserializing the queue's fixed-size message
+     * slot into the supplied buffer. Dequeue location depends on the queue mode (FIFO or LIFO)
+     * exactly as the raw-byte dequeue.
+     *
+     * \param message: linear buffer to fill from the dequeued message
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
+     */
+    Fw::SerializeStatus dequeue(Fw::LinearBufferBase& message);
+
+    /**
      * \brief removes and returns the oldest (front) message regardless of queue mode
      *
      * Unlike dequeue(), which respects the queue mode (FIFO vs LIFO), this method always
@@ -116,6 +167,28 @@ class Queue {
     Fw::SerializeStatus popFront(U8* const message, const FwSizeType size);
 
     /**
+     * \brief removes and returns the oldest (front) message into a serializable object
+     *
+     * Serializable-object equivalent of the raw-byte popFront: always removes from the front of
+     * the queue regardless of queue mode.
+     *
+     * \param message: serializable object to fill from the oldest message
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
+     */
+    Fw::SerializeStatus popFront(Fw::Serializable& message);
+
+    /**
+     * \brief removes and returns the oldest (front) message into a linear buffer
+     *
+     * Linear-buffer equivalent of the raw-byte popFront: always removes from the front of the
+     * queue regardless of queue mode.
+     *
+     * \param message: linear buffer to fill from the oldest message
+     * \return: Fw::FW_SERIALIZE_OK on success, something else on failure
+     */
+    Fw::SerializeStatus popFront(Fw::LinearBufferBase& message);
+
+    /**
      * Return the largest tracked allocated size
      */
     FwSizeType get_high_water_mark() const;
@@ -128,6 +201,18 @@ class Queue {
     FwSizeType getQueueSize() const;
 
   private:
+    //! Common implementation for the serializable-object enqueue overloads
+    template <typename T>
+    Fw::SerializeStatus enqueue_impl(const T& message);
+
+    //! Common implementation for the serializable-object dequeue overloads
+    template <typename T>
+    Fw::SerializeStatus dequeue_impl(T& message);
+
+    //! Common implementation for the serializable-object popFront overloads
+    template <typename T>
+    Fw::SerializeStatus popFront_impl(T& message);
+
     CircularBuffer m_internal;
     FwSizeType m_message_size;
     QueueMode m_mode;

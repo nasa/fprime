@@ -13,7 +13,8 @@ namespace PassiveRateGroupCfg {
 // Enable runtime measurement of per-output port execution time on the Svc.PassiveRateGroup component
 // This will take an Os::RawTime measurement before and after each RateGroupMemberOut port is invoked
 // and may incure some overall overhead on the execution time of the rate group.
-constexpr bool PortCycleTime = false;
+// Set to true by default to ensure FPRIME-PRG-004 per-port telemetry is tested in CI
+constexpr bool PortCycleTime = true;
 
 }  // namespace PassiveRateGroupCfg
 }  // namespace Svc

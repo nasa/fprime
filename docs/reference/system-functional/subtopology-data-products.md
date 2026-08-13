@@ -6,6 +6,7 @@
 - [F Prime DpManager SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpManager/docs/sdd.md)
 - [F Prime DpWriter SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpWriter/docs/sdd.md)
 - [F Prime DpCatalog SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpCatalog/docs/sdd.md)
+- [F Prime DpZLibCompressor SDD](https://github.com/nasa/fprime/blob/devel/Svc/DpZLibCompressor/docs/sdd.md)
 - [Fw::Dp SDD](https://github.com/nasa/fprime/blob/devel/Fw/Dp/docs/sdd.md)
 
 ## Overview
@@ -39,5 +40,5 @@ The subtopology exposes ports for:
 ### Configuration
 
 - Data product directory paths and state file location are configured at setup time.
-- Base IDs, queue sizes, stack sizes, and priorities via DataProductsConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via DataProductsConfig.
 - Buffer Manager bin sizes and counts are configured for the expected data product sizes.

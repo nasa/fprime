@@ -78,21 +78,24 @@ void BufferAccumulatorTester ::QueueFull() {
         ASSERT_FROM_PORT_HISTORY_SIZE(0);
     }
 
-    // Send another buffer and expect an event
+    // Send another buffer and expect an event; the dropped buffer is returned to its sender
     this->invoke_to_bufferSendInFill(0, buffer);
     this->doDispatch();
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_BA_QueueFull_SIZE(1);
+    ASSERT_from_bufferSendOutReturn_SIZE(1);
+    ASSERT_from_bufferSendOutReturn(0, buffer);
 
-    // Send another buffer and expect no new event
+    // Send another buffer and expect no new event, but the buffer is still returned
     this->invoke_to_bufferSendInFill(0, buffer);
     this->doDispatch();
     ASSERT_EVENTS_SIZE(1);
+    ASSERT_from_bufferSendOutReturn_SIZE(2);
 
     // Drain one buffer
     this->sendCmd_BA_SetMode(0, 0, BufferAccumulator_OpState::DRAIN);
     this->doDispatch();
-    ASSERT_FROM_PORT_HISTORY_SIZE(1);
+    ASSERT_FROM_PORT_HISTORY_SIZE(3);
     ASSERT_from_bufferSendOutDrain_SIZE(1);
     ASSERT_from_bufferSendOutDrain(0, buffer);
 
@@ -105,7 +108,7 @@ void BufferAccumulatorTester ::QueueFull() {
     // Return the original buffer in order to drain one buffer
     this->invoke_to_bufferSendInReturn(0, buffer);
     this->doDispatch();
-    ASSERT_FROM_PORT_HISTORY_SIZE(3);
+    ASSERT_FROM_PORT_HISTORY_SIZE(5);
     ASSERT_from_bufferSendOutDrain_SIZE(2);
     ASSERT_from_bufferSendOutDrain(1, buffer);
 

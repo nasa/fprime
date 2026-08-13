@@ -14,6 +14,10 @@ module ComFprimeConfig {
         constant comQueue   = 29
     }
 
+    module CpuAffinities {
+        constant comQueue   = Os.TASK_DEFAULT
+    }
+
     # Queue configuration constants
     module QueueDepths {
         constant events      = 100            

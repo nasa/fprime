@@ -16,6 +16,7 @@ module ComFprime {
         queue size ComFprimeConfig.QueueSizes.comQueue \
         stack size ComFprimeConfig.StackSizes.comQueue \
         priority ComFprimeConfig.Priorities.comQueue \
+        cpu ComFprimeConfig.CpuAffinities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComFprime;

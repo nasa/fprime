@@ -13,6 +13,8 @@ void RateGroupDriver::configure(const DividerSet& dividerSet) {
     // verify port/table size matches
     static_assert(FW_NUM_ARRAY_ELEMENTS(m_dividers) == NUM_CYCLEOUT_OUTPUT_PORTS,
                   "Divider table size must match the number of cycle output ports");
+    // reset rollover so a reconfigure does not multiply onto the prior product
+    this->m_rollover = 1;
     // copy provided array of dividers
     for (FwIndexType entry = 0; entry < RateGroupDriver::DIVIDER_SIZE; entry++) {
         // A port with an offset equal or bigger than the divisor is not accepted because it would never be called

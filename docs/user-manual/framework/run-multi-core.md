@@ -77,6 +77,23 @@ It is important to understand the division of responsibilities:
 - **F´'s role**: Provides an abstraction layer (`Os::Task`) that lets component developers specify thread properties (priority, stack size, CPU affinity) in a platform-independent way. F´ also provides synchronization primitives (`Os::Mutex`, `Os::Queue`) and the component threading model (active components with message queues).
 - **The OS's role**: Handles the actual thread scheduling, context switching, core assignment, memory protection, and synchronization enforcement. F´ delegates all of these to the underlying OS implementation.
 
+### Setting CPU Affinity from FPP
+
+Affinity does not have to be set through the C++ API: an active instance definition takes a `cpu` specifier
+alongside `priority` and `stack size`, holding either a core index or `Os.TASK_DEFAULT` (no pinning).
+
+```
+instance rng: MyLibrary.RNG base id 0x1000 \
+    queue size 10 \
+    stack size 64 * 1024 \
+    priority 89 \
+    cpu Os.TASK_DEFAULT
+```
+
+The subtopologies shipped with F´ expose this per instance through a `CpuAffinities` module in their config
+file (for example `CdhCoreConfig.CpuAffinities.cmdDisp`), which deployments override like any other
+subtopology configuration. See [Developing Subtopologies](../../how-to/develop/develop-subtopologies.md).
+
 ### Important Considerations
 
 **Synchronization objects** like mutexes are delegated to the OS and are SMP-safe based on the operating system
