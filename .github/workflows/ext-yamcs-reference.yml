@@ -96,8 +96,7 @@ jobs:
           gds-working-directory: "."
           test-working-directory: "."
           binary: ./build-artifacts/Linux/FprimeYamcsReference_YamcsDeployment/bin/FprimeYamcsReference_YamcsDeployment
-          # Absolute: YAMCS passes this on to the events processor, which runs from its
-          # own working directory and cannot resolve a relative path.
+          # Absolute path needed because YAMCS passes this down to a subprocess
           gds-args: -d ${{ github.workspace }}/build-artifacts/Linux/FprimeYamcsReference_YamcsDeployment
           ready-check: python -c "from yamcs.client import YamcsClient; list(YamcsClient('127.0.0.1:8090').list_instances())"
           ready-timeout: "300"
