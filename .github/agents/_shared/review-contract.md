@@ -234,8 +234,8 @@ APPROVE/REQUEST_CHANGES may change between runs).
 ### 6a. Cross-agent de-duplication (site-key + concurrence)
 
 The `finding-key` (§7) hashes in `agent_name`, so it de-duplicates
-only *within* one agent. To prevent nine reviewers from posting the
-same underlying issue as nine separate threads, every inline comment
+only *within* one agent. To prevent ten reviewers from posting the
+same underlying issue as ten separate threads, every inline comment
 also carries an agent-agnostic **site-key**:
 
 ```
@@ -471,7 +471,7 @@ cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
 `<review_label>` is the agent's `review_label` from
 `agent-registry.yml` (e.g., `Security`, `Supply Chain`,
 `C++ Design`, `Documentation`, `Design`, `Test Quality`,
-`Correctness`, `Maintainability`).
+`Correctness`, `Operational`, `Maintainability`).
 
 Total prose ≤ 6 lines. The reviewer-label prefix, suggestion block,
 maintainer-ping line, and HTML footer don't count toward the line

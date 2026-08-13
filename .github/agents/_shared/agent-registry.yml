@@ -152,6 +152,32 @@ agents:
       (that is security-review's scope). Does not contribute to CI
       safety.
 
+  - name: F Prime Operational Consequences Reviewer
+    short_name: operational-consequences-review
+    review_label: Operational
+    role: reviewer
+    path: .github/agents/operational-consequences-review.agent.md
+    invocable_by_humans: true
+    scope_summary: >
+      Operational consequences of documented behavior on a flight
+      system, reviewed from the operator's seat rather than the
+      author's. Five passes — interface-contract tracing (framework
+      call-site assumptions and parameters silently ignored by
+      concrete interface implementations), failure-path blast radius
+      (heuristic / spurious statuses meeting assert-on-overflow or
+      drop-on-full callers), timing and resource budgets (quantified
+      polling wakeup rates, livelock / starvation / priority
+      inversion under strict-priority schedulers, preemption-window
+      visibility), configuration-space extremes (minimum type
+      widths, depth=1, degenerate values, with quantified degraded
+      guarantees), and documentation-versus-reality audits of
+      quantified claims — plus `ops-other` for any other confirmed
+      operational hazard. Findings are ranked by mission impact and
+      quantified; documentation plus configuration guidance is an
+      acceptable remedy. Assumes local correctness
+      (correctness-review's scope). Does not contribute to CI
+      safety.
+
   - name: F Prime Maintainability & Readability Reviewer
     short_name: maintainability-review
     review_label: Maintainability
