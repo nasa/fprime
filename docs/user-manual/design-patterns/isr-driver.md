@@ -319,6 +319,11 @@ void MyDriver::run_handler(FwIndexType portNum, U32 context) {
 }
 ```
 
+## ISRs and F Prime Queuing
+
+Queuing messages in F Prime happens using an implementation of the `Os::Queue` class. When queuing messages, it is imperative that the queue selection does not use mutexes or other forms of locking in its implementation. On some platforms this is a hard-error and on others this can cause deadlock. Some F Prime platforms ship OS supported lock free queues.  F Prime ships with an implementation of a lock free queue:
+
+- [Os::PriorityMemQueue](https://fprime.jpl.nasa.gov/devel/Os/Generic/docs/sdd/#osprioritymemqueue)
 
 ## Resources
 
