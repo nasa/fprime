@@ -42,6 +42,8 @@ When a new parameter value is written to the `setPrm` port, the table in memory 
 
 When the component receives the `PRM_SAVE_FILE` command, it saves the entire table to the file, overwriting the old values. Unless the file is written, any parameter updates will be lost when the software is restarted.
 
+The `PRM_LOAD_FILE` command loads a parameter file from an operator-supplied path into the staging database. **Deployments must call `configureLoadSandbox(directory)` during topology setup to restrict the directory from which `PRM_LOAD_FILE` may read: if it is never called, any path accessible to the process is accepted, permitting arbitrary path access via ground command.** Paths rejected by the sandbox emit a `PrmFileReadError` event with an `OPEN` stage.
+
 The fields for each parameter value as stored in the parameter file are as follows:
 
 Description | Size (in bytes) | Value

@@ -40,8 +40,10 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 4. File access is sandboxed to a directory configured via `configure(directory)`.
    All source paths supplied through `SendFile`/`SendPartial` commands or the
    `SendFile` port are validated against the sandbox directory before reading; rejected paths emit
-   `SourceOutOfSandbox`. Until `configure` is called, all file opens are rejected; configure with
-   `/` to allow all absolute paths. This mirrors `Svc::FileUplink` write-side sandboxing.
+   `SourceOutOfSandbox`. **Deployments must call `configure(directory)` during topology setup to
+   restrict file access: until it is called, the sandbox defaults to `/`, which permits reading any
+   absolute path accessible to the process.** Configure with `/` only when arbitrary path access is
+   intended. This mirrors `Svc::FileUplink` write-side sandboxing.
 
 ### 3.3 Ports
 
