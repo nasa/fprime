@@ -42,6 +42,12 @@ class DpCompressProcTester : public DpCompressProcGTestBase {
 
     void test_chunks_disabled(const FwSizeStoreType chunk_size, std::vector<AbstractState::Chunk> chunks);
 
+    //! Drive procRequest with a buffer shorter than MIN_PACKET_SIZE
+    void test_undersized_buffer();
+
+    //! Drive procRequest with a buffer too large for a record size field
+    void test_oversized_buffer();
+
   public:
     // ----------------------------------------------------------------------
     // Tests

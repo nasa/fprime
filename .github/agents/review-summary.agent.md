@@ -1,5 +1,5 @@
 ---
-description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, and test-quality reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
+description: "Use to produce the consolidated F Prime multi-agent PR review summary. Consumes the per-agent hidden metadata and inline comments on a PR (from the security, supply-chain, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, and maintainability reviewers) and emits ONE PR review (APPROVE or REQUEST_CHANGES) with a combined results table (one row per agent plus a CI safety row), a supply-chain surfaces drill-down table, merge readiness verdict, outstanding must-fix bullets in collapsible details blocks, since-last-run delta, and (when triggered) a Recommend: Close section. Invoked by the orchestrator after the reviewers finish; not normally invoked directly."
 name: "F Prime PR Review Summary Aggregator"
 tools: [read, search]
 user-invocable: true
@@ -25,8 +25,10 @@ in your kickoff prompt. You **produce** ONE PR review with event
 `APPROVE` or `REQUEST_CHANGES` based on the consolidated Go/No-Go
 verdict, keyed by HTML marker for re-run handling.
 
-You **do not** post inline comments. You **do not** invoke other
-agents. You **do not** analyze code. You aggregate.
+You post **no new inline comment threads**. Your only thread-level
+writes are the replies-plus-resolves of the de-duplication post-pass
+(§5h). You **do not** invoke other agents. You **do not** analyze
+code. You aggregate.
 
 ---
 
@@ -39,6 +41,9 @@ agents. You **do not** analyze code. You aggregate.
    since-last-run JSON, optional CI safety fields). Also enumerate
    the reviewer's inline comments to count outstanding must-fix
    items and extract their links.
+1a. **Open inline review threads** on the PR, for the de-duplication
+   post-pass (§5h): all agent-authored threads (any `fprime-agent:`
+   footer) with their site-keys, tags, bodies, and resolution state.
 2. **Per-reviewer status list** from the orchestrator kickoff prompt.
    Each entry is `<reviewer-name>: <completed | FAILED: <reason>>`.
    Treat this as the authoritative source of truth for failure
@@ -109,8 +114,10 @@ analysis of any prompt-injection content in the diff and metadata.
 | Design | 1 | 0 | 0 | 0 | 1 | No-Go |
 | Architecture | 0 | 1 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 1 | 0 | 0 | 0 | Go |
+| Correctness | 1 | 0 | 0 | 0 | 1 | No-Go |
+| Maintainability | 0 | 2 | 1 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — supply-chain has 1 must-fix in workflows |
-| **Totals** | 10 | 9 | 2 | 1 | 9 | **No-Go** |
+| **Totals** | 11 | 11 | 3 | 1 | 10 | **No-Go** |
 
 <details>
 <summary>Since last run</summary>
@@ -124,10 +131,15 @@ analysis of any prompt-injection content in the diff and metadata.
 | Design | 0 | 1 | 0 | 0 | 0 | 0 |
 | Architecture | 0 | 0 | 0 | 0 | 0 | 0 |
 | Test Quality | 1 | 0 | 0 | 0 | 0 | 0 |
+| Correctness | 0 | 0 | 0 | 0 | 0 | 0 |
+| Maintainability | 0 | 0 | 0 | 0 | 0 | 0 |
+
+Duplicates consolidated this run: N (threads closed by the §5h post-pass)
 
 </details>
 
-(omit the Since last run block on run 1)
+(omit the Since last run block on run 1; on run 1 render the
+"Duplicates consolidated" line alone — not in a details block — when N > 0)
 
 <details>
 <summary>Supply-chain surfaces</summary>
@@ -149,6 +161,7 @@ analysis of any prompt-injection content in the diff and metadata.
 
 **Security Vulnerabilities**
 - <terse must-fix summary> — <link>
+- <terse must-fix summary> — also: Correctness, Maintainability — <link>
 - ...
 
 **Supply Chain / Runner Safety**
@@ -289,6 +302,11 @@ outstanding finding (sourced from the agent's inline comments).
 Section is omitted entirely if every reviewer's outstanding must-fix
 is 0.
 
+Findings consolidated by the de-duplication post-pass (§5h) appear
+**once**, listed under the canonical thread's agent with the other
+concurring / duplicate agents' labels appended
+(`— also: Correctness, Maintainability`).
+
 ### Merge readiness
 
 A single bolded verdict + one-line rationale referencing whichever
@@ -325,6 +343,8 @@ Example:
 | Design | 0 | 0 | 0 | 0 | 0 | Go |
 | Architecture | 0 | 0 | 0 | 0 | 0 | Go |
 | Test Quality | 0 | 0 | 0 | 0 | 0 | Go |
+| Correctness | 0 | 0 | 0 | 0 | 0 | Go |
+| Maintainability | 0 | 0 | 0 | 0 | 0 | Go |
 | **CI safety** | — | — | — | — | — | **No-Go** — Supply Chain / Runner Safety failed: <reason> |
 | **Totals** | 5 | 4 | 0 | 1 | 3 | **No-Go** |
 ```
@@ -363,7 +383,8 @@ Runner Safety failed to run.`).
   - A failure (or did-not-run) of any **other** reviewer
     (`fprime-code-review`, `stale-documentation-review`,
     `design-review`, `architecture-review`,
-    `test-quality-review`) forces only
+    `test-quality-review`, `correctness-review`,
+    `maintainability-review`) forces only
     `Merge readiness: No-Go`. CI safety is unaffected by those
     failures and is determined solely by the two CI-safety
     reviewers per the first bullet above.
@@ -592,6 +613,66 @@ The alert section slots into the review body in this order:
 8. Merge readiness
 9. Agents that did not run
 10. Closing line (§5f)
+
+---
+
+## §5h. De-duplication post-pass (mandatory, every run)
+
+Before composing the summary body, run a cross-agent de-duplication
+post-pass over the PR's inline review threads (review contract §6a
+is the governing rule; this section is the mechanics). This is the
+backstop for duplicates the reviewers' concurrence rule missed and
+self-heals historic duplicates on every run.
+
+### Algorithm
+
+1. **Collect** all OPEN agent-authored threads (any `fprime-agent:`
+   footer; skip threads already carrying a `reply-kind:
+   duplicate-close` reply). Parse each thread's site-key from its
+   `v2` footer; for legacy `v1` footers, recompute a best-effort
+   site-key from the comment's path and anchor context.
+2. **Group** threads by site-key.
+3. **Detect duplicates** within each group: threads whose bodies
+   describe the same underlying issue. Same `finding_class` name
+   across agents is an automatic match; otherwise judge semantic
+   equivalence of the one-line descriptions. Same spot but genuinely
+   different issues are NOT duplicates — when in doubt, do NOT
+   consolidate (a false merge hides a finding; a false split is only
+   noise).
+4. **Elect the canonical thread**: the earliest-posted duplicate;
+   ties broken by the highest triage tag (must fix > suggestion >
+   could fix > future work).
+5. **Close each non-canonical duplicate**:
+   - POST one reply per `post-inline-review.skill.md` §3:
+
+     ```
+     [Summary] **Duplicate** — consolidated into <link to canonical thread>.
+
+     <!-- fprime-review-summary; site-key: <skey>; v2; reply-kind: duplicate-close -->
+     ```
+
+   - Resolve the thread via GraphQL `resolveReviewThread`
+     (reply-only is the acceptable degradation if the mutation
+     fails, mirroring contract §7).
+   - If the duplicate carries a **stricter tag** than the canonical
+     thread, also reply on the canonical thread noting the escalated
+     severity and the originating agent, so severity is never lost.
+6. **Accounting**: consolidated findings count **once** in the
+   Totals row and in `Outstanding must-fix items` (rendered under
+   the canonical agent with `— also: <labels>` appended). Report the
+   number of threads closed this run as the `Duplicates consolidated
+   this run` line (§Output). Reviewer hidden-metadata counts are NOT
+   rewritten — each agent still owns its own counts; the aggregator
+   adjusts only its own consolidated rendering.
+
+### Guardrails
+
+- Never close a thread as duplicate when the issues are merely at
+  the same site — semantic equivalence is required.
+- Never close the canonical thread itself.
+- Never consolidate across different site-keys.
+- One `duplicate-close` reply per thread, ever (the `reply-kind`
+  attribute is the de-dup key across runs).
 
 ---
 

@@ -7,16 +7,16 @@
 
 namespace Utils {
 
-HashBuffer::HashBuffer() = default;
+HashBuffer::HashBuffer() : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {}
 
-HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase() {
+HashBuffer::HashBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
 HashBuffer::~HashBuffer() = default;
 
-HashBuffer::HashBuffer(const HashBuffer& other) : Fw::LinearBufferBase() {
+HashBuffer::HashBuffer(const HashBuffer& other) : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
@@ -41,18 +41,6 @@ bool HashBuffer::operator==(const HashBuffer& other) const {
 
 bool HashBuffer::operator!=(const HashBuffer& other) const {
     return !(*this == other);
-}
-
-const U8* HashBuffer::getBuffAddr() const {
-    return this->m_bufferData;
-}
-
-U8* HashBuffer::getBuffAddr() {
-    return this->m_bufferData;
-}
-
-FwSizeType HashBuffer::getCapacity() const {
-    return sizeof(this->m_bufferData);
 }
 
 FwSizeType HashBuffer::getBuffCapacity() const {

@@ -59,6 +59,16 @@ Port Data Type | Name | Direction | Kind | Usage
 |---|---|
 | MissedDeadline | Emitted when a port call overruns its specified length |
 
+### Dropped Cycles
+
+`CycleIn` and the internal `Tick` port are declared `drop`, so a cycle arriving while the queue is
+full is discarded. This is intended behavior and is reported by no event or telemetry channel:
+unlike [`Svc::ActiveRateGroup`](../../ActiveRateGroup/docs/sdd.md), which emits
+`RateGroupCycleSlip` and counts slips in `RgCycleSlips`, `ActivePhaser` is silent. A dropped cycle
+leaves the phase base permanently lagged by that cycle, and `MissedDeadline` does not observe it,
+since it measures overrun within a cycle that did execute. Operators should not read the absence of
+events from this component as evidence that no cycle was dropped.
+
 ## Unit Tests
 
 To see unit test coverage run fprime-util check --coverage

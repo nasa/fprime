@@ -10,7 +10,9 @@
 
 #include <Fw/DataStructures/ArraySet.hpp>
 #include <Fw/Log/LogPacket.hpp>
+#include <Os/Mutex.hpp>
 #include <Svc/EventManager/EventManagerComponentAc.hpp>
+#include <Svc/Types/EventSeverityFilter/EventSeverityFilter.hpp>
 #include <config/EventManagerCfg.hpp>
 
 namespace Svc {
@@ -56,10 +58,8 @@ class EventManager final : public EventManagerComponentBase {
                         U32 key                    /*!< Value to return to pinger*/
     );
 
-    // Filter state
-    struct t_filterState {
-        EventManager_Enabled enabled;  //<! filter is enabled
-    } m_filterState[EventManager_FilterSeverity::NUM_CONSTANTS];
+    // Severity filter state (shared implementation)
+    EventSeverityFilter m_severityFilter;
 
     // Working members
     Fw::LogPacket m_logPacket;  //!< packet buffer for assembling log packets
@@ -67,6 +67,9 @@ class EventManager final : public EventManagerComponentBase {
 
     // Set of filtered event IDs.
     Fw::ArraySet<FwEventIdType, TELEM_ID_FILTER_SIZE> m_filteredIDs;
+
+    // Guards m_filteredIDs: read on the sync LogRecv path, mutated on the command thread
+    Os::Mutex m_idFilterLock;
 };
 
 }  // namespace Svc

@@ -10,7 +10,7 @@ The **FileHandling subtopology** packages the core file-transfer services common
 | SVC-FILEHANDLING-002 | The subtopology shall provide **file downlink functionality** to segment and transmit files to ground.          | Inspection |
 | SVC-FILEHANDLING-003 | The subtopology shall provide **on-board file management functionality** (e.g., list, remove, hash, mkdir).     | Inspection |
 | SVC-FILEHANDLING-004 | The subtopology shall provide **parameter management** via the filesystem.                                      | Inspection |
-| SVC-FILEHANDLING-005 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities). | Inspection |
+| SVC-FILEHANDLING-005 | The subtopology shall support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities). | Inspection |
 | SVC-FILEHANDLING-006 | The subtopology shall expose **rate-group connection points** for any rate-drive components it contains.        | Inspection |
 
 
@@ -27,7 +27,7 @@ The **FileHandling subtopology** packages the core file-transfer services common
 
 ### 2.2 Configuration Hooks inside the Subtopology
 
-* Uses **instance properties** (IDs, queue sizes, stack sizes, priorities) defined in `FileHandlingConfig` for these static instances (see §4).
+* Uses **instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities) defined in `FileHandlingConfig` for these static instances (see §4).
 
 ### 2.3 Required Inputs for Operation
 
@@ -76,6 +76,7 @@ topology Flight {
 * **Queue sizes** — Queue depths for `fileUplink`, `fileDownlink`, `fileManager`.
 * **Stack sizes** — Task stacks for active components (`fileUplink`, `fileDownlink`).
 * **Priorities** — RTOS priorities for the active/queued components as applicable.
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
 

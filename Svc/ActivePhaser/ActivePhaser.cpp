@@ -43,11 +43,12 @@ void ActivePhaser ::configure(U32 cycle_ticks) {
 
 void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32 userContext) {
     FW_ASSERT(m_cycle != 0);
-    FW_ASSERT(m_state.used < 0xFFFF, static_cast<FwAssertArgType>(m_state.used));
+    FW_ASSERT(m_state.used < MAX_CHILDREN, static_cast<FwAssertArgType>(m_state.used),
+              static_cast<FwAssertArgType>(MAX_CHILDREN));
     // Additional checks when there are previous entries
     if (m_state.used > 0) {
         const PhaserStateEntry& previous = m_state.entries[m_state.used - 1];
-        FW_ASSERT((previous.start + previous.length - 1) < start, static_cast<FwAssertArgType>(m_state.used),
+        FW_ASSERT((previous.start + previous.length) <= start, static_cast<FwAssertArgType>(m_state.used),
                   static_cast<FwAssertArgType>(previous.start),
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
         FW_ASSERT(previous.start < start, static_cast<FwAssertArgType>(m_state.used),
@@ -64,7 +65,8 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // Check assertions on the ports
     FW_ASSERT(port < getNum_PhaserMemberOut_OutputPorts(), static_cast<FwAssertArgType>(port));
     FW_ASSERT(isConnected_PhaserMemberOut_OutputPort(port), static_cast<FwAssertArgType>(port));
-    FW_ASSERT((start + length) <= m_cycle, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
+    FW_ASSERT(length <= m_cycle, static_cast<FwAssertArgType>(length), static_cast<FwAssertArgType>(m_cycle));
+    FW_ASSERT(start <= m_cycle - length, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(length),
               static_cast<FwAssertArgType>(m_cycle));
     FW_ASSERT(userContext > m_cycle, static_cast<FwAssertArgType>(userContext), static_cast<FwAssertArgType>(m_cycle));
 
@@ -118,6 +120,7 @@ void ActivePhaser ::Tick_internalInterfaceHandler() {
     if ((this->timeInCycle(full_ticks) >= m_cycle) && (m_state.current == m_state.used)) {
         m_last_cycle_ticks = full_ticks;
         // Increment cycle count modulo some common factor of all contexts
+        FW_ASSERT(m_ticks_rollover != 0);
         m_cycle_count = (m_cycle_count + 1) % m_ticks_rollover;
         m_state.current = 0;  // Back to processing the first task.
     }
@@ -163,11 +166,14 @@ void ActivePhaser ::startChild(U32 full_ticks) {
         return;
     }
     PhaserStateEntry& entry = m_state.entries[(m_state.current % m_state.used)];
-    // If context type is SEQUENTIAL, entry.context stores the number of times a port is called from the beginning of
-    // execution. If context type is COUNT, entry.context stores the number of phaser cycles elapsed within a
-    // user-specified time window.
-    FW_ASSERT((entry.contextType == SEQUENTIAL) || (entry.context != 0), static_cast<FwAssertArgType>(entry.port));
-    U32 context = (entry.contextType == SEQUENTIAL) ? entry.context : m_cycle_count % entry.context;
+    // If context type is SEQUENTIAL, entry.context stores the registration index of this port among the entries
+    // registered to the same port, fixed at registration time. If context type is COUNT, entry.context stores the
+    // number of phaser cycles elapsed within a user-specified time window.
+    U32 context = entry.context;
+    if (entry.contextType != SEQUENTIAL) {
+        FW_ASSERT(entry.context != 0, static_cast<FwAssertArgType>(entry.port));
+        context = m_cycle_count % entry.context;
+    }
     entry.started = true;
     m_last_start_ticks = full_ticks;
     this->PhaserMemberOut_out(entry.port, context);

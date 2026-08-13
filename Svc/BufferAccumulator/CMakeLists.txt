@@ -6,8 +6,6 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-restrict_platforms(Linux Darwin) # Uses sys/time
-
 
 register_fprime_module(
   AUTOCODER_INPUTS

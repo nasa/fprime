@@ -138,6 +138,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
 
+    // Apply the configured timeouts. This socket may send even when no send port was
+    // configured, because a send port of 0 means "reply to the source of the last
+    // datagram received", so the timeout must not be tied to `port != 0` below.
+    status = this->setupTimeouts(socketFd);
+    if (status != SOCK_SUCCESS) {
+        (void)::close(socketFd);
+        return status;
+    }
+
     // May not be sending in all cases
     if (port != 0) {
         // Set up the address port and name
@@ -162,12 +171,6 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
 
-        // Now apply timeouts
-        status = this->setupTimeouts(socketFd);
-        if (status != SOCK_SUCCESS) {
-            (void)::close(socketFd);
-            return status;
-        }
         static_assert(sizeof(m_addr_send) == sizeof(address), "Send address must match the local address structure");
         (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
     }
@@ -206,9 +209,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
                                          const U8* const data,
                                          const FwSizeType size) {
-    FW_ASSERT(this->m_addr_send.sin_family != 0);  // Make sure the address was previously setup
-    FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
-    FW_ASSERT(data != nullptr);                    // Data pointer should not be null
+    FW_ASSERT(socketDescriptor.fd >= 0);          // File descriptor should be valid
+    FW_ASSERT((size == 0) || (data != nullptr));  // Data pointer should not be null for nonzero sizes
+
+    // In respond-to-sender mode the destination is learned from the first received
+    // packet; a send before then has nowhere to go and is a send error, not a bug
+    if (this->m_addr_send.sin_family == 0) {
+        errno = ENOTCONN;
+        return -1;
+    }
 
     return static_cast<FwSignedSizeType>(
         ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,

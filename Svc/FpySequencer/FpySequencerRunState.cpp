@@ -1,7 +1,9 @@
+#include <config/CommandDispatcherImplCfg.hpp>
 #include <new>
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Time/Time.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+
 namespace Svc {
 
 // returns the index of the current statement
@@ -236,7 +238,10 @@ Fw::Success FpySequencer::deserializeDirective(const Fpy::Statement& stmt, Direc
         case Fpy::DirectiveId::ZIEXT_32_64:
         case Fpy::DirectiveId::ITRUNC_64_8:
         case Fpy::DirectiveId::ITRUNC_64_16:
-        case Fpy::DirectiveId::ITRUNC_64_32: {
+        case Fpy::DirectiveId::ITRUNC_64_32:
+        case Fpy::DirectiveId::FFLOOR:
+        case Fpy::DirectiveId::IABS:
+        case Fpy::DirectiveId::FABS: {
             new (&deserializedDirective.stackOp) FpySequencer_StackOpDirective();
             if (argBuf.getDeserializeSizeLeft() != 0) {
                 this->log_WARNING_HI_DirectiveDeserializeError(stmt.get_opCode(), this->currentStatementIdx(),
@@ -583,7 +588,10 @@ void FpySequencer::dispatchDirective(const DirectiveUnion& directive, const Fpy:
         case Fpy::DirectiveId::ZIEXT_32_64:
         case Fpy::DirectiveId::ITRUNC_64_8:
         case Fpy::DirectiveId::ITRUNC_64_16:
-        case Fpy::DirectiveId::ITRUNC_64_32: {
+        case Fpy::DirectiveId::ITRUNC_64_32:
+        case Fpy::DirectiveId::FFLOOR:
+        case Fpy::DirectiveId::IABS:
+        case Fpy::DirectiveId::FABS: {
             this->directive_stackOp_internalInterfaceInvoke(directive.stackOp);
             return;
         }
@@ -744,8 +752,8 @@ Signal FpySequencer::checkStatementTimeout() {
     if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD ||
         this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
         // if we were executing a command, warn that the cmd timed out with its opcode
-        this->log_WARNING_HI_CommandTimedOut(this->m_runtime.currentCmdOpcode, this->currentStatementIdx(),
-                                             this->m_sequenceFilePath);
+        this->log_WARNING_HI_CommandTimedOut(CmdDispatcherCfg::getEventOpcode(this->m_runtime.currentCmdOpcode),
+                                             this->currentStatementIdx(), this->m_sequenceFilePath);
     } else {
         this->log_WARNING_HI_DirectiveTimedOut(this->m_runtime.currentStatementOpcode, this->currentStatementIdx(),
                                                this->m_sequenceFilePath);

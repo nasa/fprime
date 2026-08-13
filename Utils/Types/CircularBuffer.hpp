@@ -19,6 +19,7 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Serializable.hpp>
+#include <config/CircularBufferCfg.hpp>
 
 namespace Types {
 
@@ -67,6 +68,29 @@ class CircularBuffer {
     Fw::SerializeStatus serialize(const U8* const buffer, const FwSizeType size);
 
     /**
+     * Serialize a serializable object into the next `size`-byte slot of this circular buffer using
+     * F Prime serialization. A slot wrapping the end of the backing store is staged through a
+     * temporary stack buffer sized by CircularBufferCfg::STAGING_BUFFER_SIZE; larger wrapping
+     * slots assert. Will not accept more data than space available.
+     * \param serializable: object to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus serialize(const Fw::Serializable& serializable, const FwSizeType size);
+
+    /**
+     * Serialize the contents of a linear buffer (length token followed by data) into the next
+     * `size`-byte slot of this circular buffer using F Prime serialization. A slot wrapping the
+     * end of the backing store is staged through a temporary stack buffer sized by
+     * CircularBufferCfg::STAGING_BUFFER_SIZE; larger wrapping slots assert. Will not accept
+     * more data than space available.
+     * \param buffer: linear buffer whose contents to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus serialize(const Fw::LinearBufferBase& buffer, const FwSizeType size);
+
+    /**
      * Deserialize data into the given variable without moving the head index
      * \param value: value to fill
      * \param offset: offset from head to start peak. Default: 0
@@ -96,6 +120,29 @@ class CircularBuffer {
      * \return Fw::FW_SERIALIZE_OK on success or something else on error
      */
     Fw::SerializeStatus peek(U8* buffer, FwSizeType size, FwSizeType offset = 0) const;
+
+    /**
+     * Deserialize a serializable object from the `size`-byte slot at `offset` without moving the
+     * head index. A slot wrapping the end of the backing store is staged through a temporary
+     * stack buffer sized by CircularBufferCfg::STAGING_BUFFER_SIZE; larger wrapping slots assert.
+     * \param serializable: object to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot. Default: 0
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus peek(Fw::Serializable& serializable, FwSizeType size, FwSizeType offset = 0) const;
+
+    /**
+     * Deserialize linear buffer contents (length token followed by data) from the `size`-byte
+     * slot at `offset` without moving the head index. A slot wrapping the end of the backing
+     * store is staged through a temporary stack buffer sized by
+     * CircularBufferCfg::STAGING_BUFFER_SIZE; larger wrapping slots assert.
+     * \param buffer: linear buffer to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot. Default: 0
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    Fw::SerializeStatus peek(Fw::LinearBufferBase& buffer, FwSizeType size, FwSizeType offset = 0) const;
 
     /**
      * Rotate the head index, deleting data from the circular buffer and making
@@ -143,6 +190,29 @@ class CircularBuffer {
     void clear_high_water_mark();
 
   private:
+    //! Stack staging buffer size for object (de)serialization across the wrap boundary.
+    //! Wrapping slots larger than this size assert; configured via CircularBufferCfg.hpp.
+    static constexpr FwSizeType STAGING_BUFFER_SIZE = CircularBufferCfg::STAGING_BUFFER_SIZE;
+
+    /**
+     * Common implementation for the serializable-object serialize overloads.
+     * \param serializable: object to serialize into the slot
+     * \param size: size of the slot in bytes
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    template <typename T>
+    Fw::SerializeStatus serialize_impl(const T& serializable, const FwSizeType size);
+
+    /**
+     * Common implementation for the serializable-object peek overloads.
+     * \param serializable: object to fill from the slot
+     * \param size: size of the slot in bytes
+     * \param offset: offset from head to the start of the slot
+     * \return Fw::FW_SERIALIZE_OK on success or something else on error
+     */
+    template <typename T>
+    Fw::SerializeStatus peek_impl(T& serializable, FwSizeType size, FwSizeType offset) const;
+
     /**
      * Returns a wrap-advanced index into the store.
      * \param idx: index to advance and wrap.

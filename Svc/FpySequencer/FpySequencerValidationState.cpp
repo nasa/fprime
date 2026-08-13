@@ -106,9 +106,17 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    Fpy::StackSizeType availableSpace = Fpy::MAX_STACK_SIZE - this->m_runtime.stack.size;
+    if (this->m_sequenceArgs.get_size() > Fpy::MAX_STACK_SIZE) {
+        this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(
+            static_cast<Fpy::StackSizeType>(this->m_sequenceArgs.get_size()));
+        return Fw::Success::FAILURE;
+    }
 
-    if (this->m_sequenceArgs.get_size() > availableSpace) {
+    // The argument size arrives separately from the argument buffer, so it can describe more bytes
+    // than that buffer holds. Reject before anything reads the buffer by that size.
+    const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_sequenceArgs.get_buffer()));
+    if (this->m_sequenceArgs.get_size() > argCapacity) {
+        this->log_WARNING_HI_ArgSizeExceedsCapacity(this->m_sequenceArgs.get_size(), argCapacity);
         return Fw::Success::FAILURE;
     }
 

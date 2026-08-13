@@ -14,6 +14,13 @@ GitHub-side behavior (triage tags, review submission, re-review phases,
 disagreement handling, maintainer pings) is governed by the contract
 and the shared skills.
 
+Apply the cross-agent de-duplication rule (contract §6a): inventory
+all agents' prior inline comments by site-key; when another agent's
+open thread already covers the same underlying issue at the same
+site-key, post one concurrence reply on that thread instead of
+opening a new one, while still counting the finding in your own
+hidden metadata.
+
 The C/C++ design rules this agent enforces live in
 `_shared/skills/fprime-cpp-design.skill.md`. That skill is the
 single source of truth for the rule set (CPP-1 through CPP-34) and
@@ -187,8 +194,13 @@ per the review contract §9.
   code where it's built with the flight toolchain config.
 - Design fit (does the FPP / topology / pattern make sense given
   intent) — handled by `design-review.agent.md`.
+- Maintainability / readability (naming clarity, function size,
+  nesting, duplication, dead code, inline-comment accuracy) —
+  handled by `maintainability-review.agent.md`. The C/C++ agent
+  flags only the codified rules (e.g., CPP-30 magic numbers,
+  CPP-33 inlined utilities, CPP-26 style guide).
 
-The seven reviewer agents are designed to partition the review
+The nine reviewer agents are designed to partition the review
 surface. Overlap with the security agent on CPP-4 is intentional
 and documented above; otherwise the agents do not double-flag.
 

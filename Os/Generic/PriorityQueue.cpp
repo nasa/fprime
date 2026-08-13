@@ -14,12 +14,14 @@ namespace Os {
 namespace Generic {
 
 FwSizeType PriorityQueueHandle ::find_index() {
+    FW_ASSERT(this->m_depth > 0);
     FwSizeType index = this->m_indices[this->m_startIndex % this->m_depth];
     this->m_startIndex = (this->m_startIndex + 1) % this->m_depth;
     return index;
 }
 
 void PriorityQueueHandle ::return_index(FwSizeType index) {
+    FW_ASSERT(this->m_depth > 0);
     this->m_indices[this->m_stopIndex % this->m_depth] = index;
     this->m_stopIndex = (this->m_stopIndex + 1) % this->m_depth;
 }
@@ -97,6 +99,8 @@ QueueInterface::Status PriorityQueue::create(FwEnumStoreType id,
     }
     // Allocate data
     if (status == QueueInterface::Status::OP_OK) {
+        // Prevent integer overflow when computing allocation size (depth * messageSize)
+        FW_ASSERT((depth == 0) || (messageSize <= std::numeric_limits<FwSizeType>::max() / depth));
         size = depth * messageSize;
         allocation = allocator.allocate(identifier, size, alignof(U8));
         if (allocation == nullptr) {

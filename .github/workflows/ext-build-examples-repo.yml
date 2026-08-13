@@ -3,8 +3,11 @@
 name: "External Repo: fprime-examples"
 
 on:
+  
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -15,7 +18,9 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.gitignore'
       - '.github/agents/**'
+  workflow_dispatch:
 # Cancel in-progress runs if a newer run is started on a given PR
+  
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
@@ -34,9 +39,84 @@ jobs:
     needs: get-branch
     name: ""
     uses: ./.github/workflows/reusable-project-builder.yml
-    with: 
+    with:
       target_repository: nasa/fprime-examples
       build_location: FlightExamples
-      run_unit_tests: true
+      run_unit_tests: true # unit tests being run through the reusable workflow
       target_ref: ${{ needs.get-branch.outputs.target-branch }}
       fprime_location: ./FlightExamples/lib/fprime
+
+  integration-tests:
+    needs: [run, get-branch]
+    name: "Run Integration Tests"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
+      - name: "Checkout target repository"
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          repository: nasa/fprime-examples
+          ref: ${{ needs.get-branch.outputs.target-branch }}
+      - name: "Overlay current F´ revision"
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          path: ./FlightExamples/lib/fprime
+      - name: "Setup environment"
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r ./FlightExamples/lib/fprime/requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+      - name: "Install build dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zlib1g-dev
+      - name: "Install decaf framing GDS plugin"
+        run: |
+          . venv/bin/activate
+          pip install -e ./GdsExamples/gds-plugins
+      - name: "Build native x86_64 binary for integration tests"
+        working-directory: FlightExamples/ExamplesDeployment
+        run: |
+          . ../../venv/bin/activate
+          fprime-util purge --force
+          fprime-util generate 2>&1 | output-cleaner
+          fprime-util build -j8 2>&1 | output-cleaner
+        shell: bash
+      - name: "Run integration tests"
+        continue-on-error: false
+        run: |
+          DEPLOYMENT=ExamplesDeployment
+          . venv/bin/activate
+
+          chmod +x ./FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
+          mkdir -p ci-logs
+          cd FlightExamples/${DEPLOYMENT}
+          fprime-gds -d ../build-artifacts/Linux/${DEPLOYMENT} --logs ../../ci-logs --framing-selection decaf &
+          sleep 15
+
+          cd ../..
+          pytest --dictionary FlightExamples/build-artifacts/Linux/${DEPLOYMENT}/dict/ExamplesDeploymentTopologyDictionary.json \
+            --deployment-config FlightExamples/ManagerWorker/Subtopology/test/int/int_config.json \
+            --no-zmq \
+            -v \
+            FlightExamples/ManagerWorker/Subtopology/test/int/test_manager_worker.py
+
+          # Archive the outputs
+      - name: 'Archive Logs'
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ci-int-logs
+          path: ci-logs/
+          retention-days: 5

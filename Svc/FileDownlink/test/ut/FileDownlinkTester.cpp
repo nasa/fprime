@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cerrno>
 #include <cstring>
+#include <limits>
 
 #include <Os/FilePathUtils.hpp>
 #include "FileDownlinkTester.hpp"
@@ -120,7 +121,7 @@ void FileDownlinkTester ::fileOpenError() {
     // Assert events
     ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_FileOpenError_SIZE(1);
-    //    ASSERT_EVENTS_FileDownlink_FileOpenError(0, sourceFileName);
+    ASSERT_EVENTS_FileOpenError(0, sourceFileName);
 }
 
 void FileDownlinkTester ::sourceOutOfSandbox() {
@@ -256,6 +257,72 @@ void FileDownlinkTester ::downlinkPartial() {
     this->removeFile(sourceFileName);
 }
 
+void FileDownlinkTester ::downlinkPartialOffsetLengthOverflow() {
+    // Regression test: a startOffset/length pair whose U32 sum wraps must still be clamped to the
+    // end of the file rather than skipping the bounds check.
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    U8 dataSubset[] = {5, 6, 7, 8, 9};
+    const U32 offset = 5;
+    // offset + length wraps to 0 in U32 arithmetic
+    const U32 length = std::numeric_limits<U32>::max() - offset + 1;
+    const U32 clampedLength = static_cast<U32>(sizeof(data)) - offset;
+
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+    FileBuffer fileBufferOutSubset(dataSubset, sizeof(dataSubset));
+
+    // The command must succeed with the length clamped to the remainder of the file, not read
+    // past the end of it
+    this->sendFilePartial(sourceFileName, destFileName, Fw::CmdResponse::OK, offset, length);
+
+    // The clamp must have been reported
+    ASSERT_EVENTS_DownlinkPartialWarning_SIZE(1);
+    ASSERT_EVENTS_DownlinkPartialWarning(0, offset, length, static_cast<U32>(sizeof(data)), sourceFileName,
+                                         destFileName);
+    ASSERT_EVENTS_SendStarted_SIZE(1);
+    ASSERT_EVENTS_SendStarted(0, clampedLength, sourceFileName, destFileName);
+    ASSERT_EVENTS_FileSent_SIZE(1);
+    ASSERT_EVENTS_FileSent(0, sourceFileName, destFileName);
+
+    // Exactly the tail of the file was downlinked
+    History<Fw::FilePacket::DataPacket> dataPackets(MAX_HISTORY_SIZE);
+    CFDP::Checksum checksum;
+    checksum.update(dataSubset, offset, clampedLength);
+    validatePacketHistory(*this->fromPortHistory_bufferSendOut, dataPackets, Fw::FilePacket::T_END, 3, checksum,
+                          offset);
+
+    FileBuffer fileBufferIn(dataPackets);
+    ASSERT_EQ(true, FileBuffer::compare(fileBufferIn, fileBufferOutSubset));
+
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::sendDataPacketRejectsExhaustedRange() {
+    // Regression test: sendDataPacket() must reject an exhausted range rather than compute an
+    // underflowed dataSize when its byteOffset < m_endOffset precondition is violated.
+    this->component.m_endOffset = 100;
+
+    // byteOffset == m_endOffset: the old code computed dataSize == 0 and read into the buffer
+    U32 byteOffset = 100;
+    ASSERT_EQ(Os::File::INVALID_ARGUMENT, this->component.sendDataPacket(byteOffset));
+    // byteOffset must be left untouched by the rejected call
+    ASSERT_EQ(100u, byteOffset);
+
+    // byteOffset > m_endOffset: the old code computed dataSize == 0xFFFFFF9C
+    byteOffset = 200;
+    ASSERT_EQ(Os::File::INVALID_ARGUMENT, this->component.sendDataPacket(byteOffset));
+    ASSERT_EQ(200u, byteOffset);
+
+    // No packets were emitted
+    ASSERT_from_bufferSendOut_SIZE(0);
+}
+
 void FileDownlinkTester ::sendFilePort() {
     // Create a file
     const char* const sourceFileName = "source.bin";
@@ -323,8 +390,7 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     this->buffers[buffers_index] = data;  // NOLINT(clang-analyzer-security.ArrayBound)
     buffers_index++;
     ::memcpy(data, buffer.getData(), buffer.getSize());
-    Fw::Buffer buffer_new = buffer;
-    buffer_new.setData(data);
+    Fw::Buffer buffer_new(data, buffer.getSize(), buffer.getContext());
     pushFromPortEntry_bufferSendOut(buffer_new);
     invoke_to_bufferReturn(0, buffer);
 }
@@ -540,6 +606,9 @@ void FileDownlinkTester ::validateCancelPacket(const Fw::Buffer& buffer, const U
     const Fw::FilePacket::Header& header = filePacket.asHeader();
     ASSERT_EQ(sequenceIndex, header.m_sequenceIndex);
     ASSERT_EQ(Fw::FilePacket::T_CANCEL, header.m_type);
+    // Cancel buffers must advertise exact payload size (same contract as Start/Data/End).
+    // Full-size internal buffers break strict fromBuffer() consumers (#5347).
+    ASSERT_EQ(filePacket.bufferSize() + sizeof(FwPacketDescriptorType), static_cast<U32>(buffer.getSize()));
 }
 
 }  // namespace Svc

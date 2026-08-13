@@ -195,6 +195,7 @@ struct StructTypes : Fw::Serializable {
 // ----------------------------------------------------------------------
 
 using String1 = Fw::StringTemplate<80>;
+using String0 = Fw::String;
 using String2 = Fw::StringTemplate<100>;
 
 struct PortStringType : Fw::Serializable {
@@ -211,8 +212,10 @@ struct PortStringTypes : Fw::Serializable {
 
     String1 val1;
     String1 val2;
-    String2 val3;
-    String2 val4;
+    String0 val3;
+    String0 val4;
+    String2 val5;
+    String2 val6;
 
     Fw::SerializeStatus serializeTo(Fw::SerialBufferBase& buffer, Fw::Endianness mode) const override;
     Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer, Fw::Endianness mode) override;

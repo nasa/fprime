@@ -33,6 +33,8 @@ class ActiveTextLoggerTester : public ActiveTextLoggerGTestBase {
     void runNominalTest();
     void runOffNominalTest();
     void testWorkstationTimestamp();
+    void testSeverityFilter();
+    void testSeverityFilterDiagnosticDisabled();
 
   private:
     // ----------------------------------------------------------------------

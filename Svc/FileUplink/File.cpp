@@ -48,7 +48,10 @@ Os::File::Status FileUplink::File::write(const U8* const data, const U32 byteOff
         return status;
     }
 
-    FW_ASSERT(static_cast<U32>(intLength) == length, static_cast<FwAssertArgType>(intLength));
+    // A short write (e.g. disk full) is an error, not an assertion failure
+    if (static_cast<U32>(intLength) != length) {
+        return Os::File::NO_SPACE;
+    }
     this->m_checksum.update(data, byteOffset, length);
     return Os::File::OP_OK;
 }

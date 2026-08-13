@@ -4,6 +4,8 @@
 // \brief  cpp file for DpCompressProc component test harness implementation class
 // ======================================================================
 
+#include <limits>
+
 #include "DpCompressProcTester.hpp"
 #include "Svc/DpCompressProc/test/ut/AbstractState.hpp"
 
@@ -48,8 +50,9 @@ Svc::CompressionAlgorithm DpCompressProcTester ::from_compressChunk_handler(FwIn
             abstractState.update_compressed_size_state(out_size - write_offset, c);
             return Svc::CompressionAlgorithm::ZLIB_DEFLATE;
         case AbstractState::MINIMAL_COMPRESSED:
-
-            out_size = min_compression;
+            // Compressed payload uses the full min_compression allowance, on top
+            // of the write_offset reserved bytes
+            out_size = min_compression + write_offset;
 
             assert(out_size <= buffer.getSize());
 
@@ -220,6 +223,79 @@ void DpCompressProcTester::test_chunks_helper(const FwSizeStoreType chunk_size,
     }
 
     abstractState.success_ = true;
+}
+
+void DpCompressProcTester::test_undersized_buffer() {
+    // Hand procRequest a view one byte below MIN_PACKET_SIZE into a larger,
+    // well-formed allocation: every header byte is present, only the length is wrong.
+    this->clearHistory();
+    this->component.log_WARNING_HI_BufferTooSmallForPacket_ThrottleClear();
+
+    paramSet_CHUNK_SIZE(4096, Fw::ParamValid::VALID);
+    paramSet_ENABLE(Fw::Enabled::ENABLED, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const FwSizeType backing_size = Fw::DpContainer::MIN_PACKET_SIZE + 1;
+    U8* mem = new U8[backing_size]();
+
+    Fw::Buffer backing_buf(mem, backing_size);
+    Fw::DpContainer container(0, backing_buf);
+    container.setDataSize(1);
+    container.serializeHeader();
+
+    // One byte short of the minimum
+    const FwSizeType short_size = Fw::DpContainer::MIN_PACKET_SIZE - 1;
+    Fw::Buffer short_buf(mem, short_size);
+
+    this->invoke_to_procRequest(0, short_buf);
+
+    // Rejected on size, not mistaken for a header deserialization failure
+    ASSERT_EVENTS_BufferTooSmallForPacket_SIZE(1);
+    ASSERT_EVENTS_BufferTooSmallForPacket(0, short_size, Fw::DpContainer::MIN_PACKET_SIZE);
+    ASSERT_EVENTS_InvalidHeader_SIZE(0);
+
+    // Nothing forwarded downstream, no completion claimed.
+    ASSERT_from_compressChunk_SIZE(0);
+    ASSERT_EVENTS_CompressionComplete_SIZE(0);
+
+    // Buffer left untouched.
+    ASSERT_EQ(short_buf.getSize(), short_size);
+
+    delete[] mem;
+}
+
+void DpCompressProcTester::test_oversized_buffer() {
+    // Hand procRequest a buffer whose size could overflow a record size field
+    this->clearHistory();
+    this->component.log_WARNING_HI_ContainerTooLarge_ThrottleClear();
+
+    paramSet_CHUNK_SIZE(4096, Fw::ParamValid::VALID);
+    paramSet_ENABLE(Fw::Enabled::ENABLED, Fw::ParamValid::VALID);
+    this->component.loadParameters();
+
+    const FwSizeType backing_size = static_cast<FwSizeType>(std::numeric_limits<FwSizeStoreType>::max());
+    U8* mem = new U8[backing_size]();
+
+    Fw::Buffer container_buf(mem, backing_size);
+    Fw::DpContainer container(0, container_buf);
+    container.setDataSize(backing_size - Fw::DpContainer::MIN_PACKET_SIZE);
+    container.serializeHeader();
+
+    this->invoke_to_procRequest(0, container_buf);
+
+    // Rejected on size after a valid header
+    ASSERT_EVENTS_InvalidHeader_SIZE(0);
+    ASSERT_EVENTS_ContainerTooLarge_SIZE(1);
+    ASSERT_EVENTS_ContainerTooLarge(0, container.getId(), backing_size - Fw::DpContainer::MIN_PACKET_SIZE);
+
+    // Nothing forwarded downstream, no completion claimed.
+    ASSERT_from_compressChunk_SIZE(0);
+    ASSERT_EVENTS_CompressionComplete_SIZE(0);
+
+    // Buffer left untouched.
+    ASSERT_EQ(container_buf.getSize(), backing_size);
+
+    delete[] mem;
 }
 
 void DpCompressProcTester::test_chunks_disabled(const FwSizeStoreType chunk_size,

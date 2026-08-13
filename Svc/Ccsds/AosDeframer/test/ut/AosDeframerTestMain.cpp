@@ -77,6 +77,11 @@ TEST(AosDeframer, testMultiplePacketsInFrame) {
 }
 
 // ----------------------------------------------------------------------
+TEST(AosDeframer, testMinimumSizeSppPackets) {
+    Svc::Ccsds::AosDeframerTester tester;
+    tester.testMinimumSizeSppPackets();
+}
+
 // Tests - Spanning Packets
 // ----------------------------------------------------------------------
 

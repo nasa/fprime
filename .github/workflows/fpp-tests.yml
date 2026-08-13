@@ -1,8 +1,10 @@
 name: "FppTest"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -25,10 +27,13 @@ jobs:
     name: Run FppTest
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Install requirements.txt"
         run: |
@@ -37,12 +42,12 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate --ut -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util build --ut
+          fprime-util build --ut 2>&1 | output-cleaner
         shell: bash
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest
@@ -61,10 +66,13 @@ jobs:
     name: Run FppTest (Direct Port Calls)
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - name: "Install requirements.txt"
         run: |
@@ -73,12 +81,12 @@ jobs:
       - name: "Generate UT build cache"
         working-directory: ./FppTestProject
         run: |
-          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate --ut -DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ./FppTestProject/FppTest
         run: |
-          fprime-util build --ut
+          fprime-util build --ut 2>&1 | output-cleaner
         shell: bash
       - name: "Run UTs"
         working-directory: ./FppTestProject/FppTest

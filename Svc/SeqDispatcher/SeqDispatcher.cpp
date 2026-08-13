@@ -102,6 +102,10 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
         // about is done, the sequencer is available again (which is its current
         // state in our internal entry table already)
         this->log_WARNING_LO_UnknownSequenceFinished(static_cast<U16>(portNum));
+        // sequencer was already counted available; don't increment again
+        this->m_entryTable[portNum].state = SeqDispatcher_CmdSequencerState::AVAILABLE;
+        this->m_entryTable[portNum].sequenceRunning = "<no seq>";
+        return;
     } else {
         // ok, a sequence has finished that we knew about
         if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK) {
@@ -212,5 +216,23 @@ void SeqDispatcher::CANCEL_NAME_cmdHandler(
         this->log_WARNING_LO_CancelSequenceNotFound(Fw::LogStringArg(fileName));
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
+}
+
+//! Broadcast a cancel to every running sequencer.
+//! This does not exclude the caller!
+//! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+void SeqDispatcher::CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                          const U32 cmdSeq) {        /*!< The command sequence number*/
+    for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+        const bool running = this->m_entryTable[idx].state != SeqDispatcher_CmdSequencerState::AVAILABLE;
+        if (running && this->isConnected_seqCancelOut_OutputPort(idx)) {
+            this->seqCancelOut_out(idx);
+            // Entry table is cleared via seqDoneIn_handler
+            this->log_ACTIVITY_HI_SequenceCanceled(static_cast<U16>(idx),
+                                                   Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+            this->tlmWrite_canceledCount(++this->m_canceledCount);
+        }
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 }  // namespace Svc

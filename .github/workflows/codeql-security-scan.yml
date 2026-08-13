@@ -4,8 +4,10 @@
 name: "Code Scan: CodeQL Security"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -35,6 +37,8 @@ jobs:
         language: [ 'cpp', 'python' ]
 
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -52,8 +56,9 @@ jobs:
           . ./fprime-venv/bin/activate
           pip install -U setuptools setuptools_scm wheel pip
           pip install -r ./requirements.txt
-          fprime-util generate
-          fprime-util build --all
+          fprime-util generate 2>&1 | output-cleaner
+          fprime-util build --all 2>&1 | output-cleaner
+      shell: bash
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
@@ -73,7 +78,7 @@ jobs:
     # switch structure is dictated by the code generator.
     - if: ${{ matrix.language == 'cpp' }}
       name: Filter CMake-internal and third-party paths out of SARIF
-      uses: advanced-security/filter-sarif@v1.1
+      uses: advanced-security/filter-sarif@2da736ff05ef065cb2894ac6892e47b5eac2c3c0 # v1.1
       with:
         patterns: |
           -**/CMakeFiles/**
@@ -88,7 +93,7 @@ jobs:
     # regressions are caught, but results are not uploaded, preventing stale
     # branches from accumulating alerts.
     - name: Upload SARIF
-      if: github.event_name == 'push' && github.ref == 'refs/heads/devel'
+      if: (github.event_name == 'push' || github.event_name == 'schedule') && github.ref == 'refs/heads/devel'
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: sarif-results/${{ matrix.language }}.sarif
@@ -97,7 +102,7 @@ jobs:
     # Hand the filtered SARIF to the publish-findings job so per-module
     # findings can be published without re-running CodeQL.
     - name: Upload SARIF artifact for publishing
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' || github.event_name == 'schedule'
       uses: actions/upload-artifact@v4
       with:
         name: codeql-sarif-${{ matrix.language }}
@@ -112,7 +117,7 @@ jobs:
   publish-findings:
     name: Publish per-module findings
     needs: analyze
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'schedule'
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -134,6 +139,7 @@ jobs:
       - name: Publish findings to baseline branch
         uses: nasa/fprime-actions/codeql-publish@devel
         with:
+          check-label: "CodeQL Security"
           sarif-files: |
             sarif-results/cpp.sarif
             sarif-results/python.sarif

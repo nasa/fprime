@@ -31,16 +31,7 @@
 
 class SerializeTestBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const {  // !< returns capacity, not current size, of buffer
-        return sizeof(m_testBuff);
-    }
-
-    U8* getBuffAddr() {  // !< gets buffer address for data filling
-        return m_testBuff;
-    }
-    const U8* getBuffAddr() const {  // !< gets buffer address for data reading
-        return m_testBuff;
-    }
+    SerializeTestBuffer() : Fw::LinearBufferBase(m_testBuff, sizeof(m_testBuff)) {}
 
   private:
     U8 m_testBuff[255];
@@ -1852,6 +1843,12 @@ TEST(OffNominal, sub_string_substring_zero_size) {
     const char* source_string = "abc123";
     const char* sub_string = "";
     ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 6, sub_string, 0), 0);
+}
+
+TEST(OffNominal, sub_string_source_and_substring_zero_size) {
+    const char* source_string = "";
+    const char* sub_string = "";
+    ASSERT_EQ(Fw::StringUtils::substring_find(source_string, 0, sub_string, 0), 0);
 }
 
 TEST(OffNominal, sub_string_last_no_match) {

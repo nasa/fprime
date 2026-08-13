@@ -255,6 +255,9 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     DirectiveError tester_op_itrunc_64_8();
     DirectiveError tester_op_itrunc_64_16();
     DirectiveError tester_op_itrunc_64_32();
+    DirectiveError tester_op_ffloor();
+    DirectiveError tester_op_iabs();
+    DirectiveError tester_op_fabs();
     FpySequencer::Runtime* tester_get_m_runtime_ptr();
     Fw::ExternalSerializeBuffer* tester_get_m_sequenceBuffer_ptr();
     void tester_set_m_sequencesStarted(U64 val);
@@ -266,6 +269,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
     Fw::Success tester_validate();
+    bool tester_isRunningState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
     // directly invokes the setSequenceFilePath state machine action, bypassing the

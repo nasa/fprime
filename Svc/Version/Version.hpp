@@ -24,8 +24,11 @@ class Version final : public VersionComponentBase {
     //! Destroy Version object
     ~Version();
 
-    //! configure version's verbosity and startup
+    //! configure version's verbosity
     void config(bool enable);
+
+    //! send initial version tlm and events
+    void start();
 
   private:
     // ----------------------------------------------------------------------
