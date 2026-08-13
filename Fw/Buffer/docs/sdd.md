@@ -64,8 +64,7 @@ The following contractual expectations apply:
 ### 2.2 The Port Fw::BufferGet
 
 As shown in the following diagram, `Fw::BufferGet` has one argument `size` of type `U32`. It returns a value of type
-`Fw::Buffer`. On success, the returned buffer is valid and its size is exactly the requested size. If allocation fails,
-the returned buffer is invalid and empty. Callers must check `isValid()` before using the returned buffer.
+`Fw::Buffer`. The returned `Fw::Buffer` must be checked for validity before using.
 
 ![`Fw::BufferGet` Diagram](img/BufferGetBDD.jpg "Fw::BufferGet Port")
 
@@ -86,10 +85,6 @@ the `m_bufferData` field to `nullptr` and/or set the `m_size` field to zero to i
 A receiver of an `Fw::Buffer` object _B_ must check that _B_ is valid before accessing the
 data stored in _B_.
 To check validity, you can call the interface function `isValid()`.
-
-An implementation of `Fw::BufferGet` must return a buffer whose size is exactly the requested size when allocation
-succeeds, or an invalid buffer when allocation fails. Callers only need to check `isValid()`; they do not need to check
-the returned size.
 
 ### Serializing and Deserializing with `Fw::Buffer`
 

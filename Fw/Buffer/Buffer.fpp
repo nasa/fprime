@@ -10,7 +10,7 @@ module Fw {
                  )
 
   @ Port for getting a buffer
-  @ Returns a buffer of the requested size, or an invalid buffer if allocation fails
+  @ Returns the buffer
   port BufferGet(
                   @ The requested size
                   $size: FwSizeType

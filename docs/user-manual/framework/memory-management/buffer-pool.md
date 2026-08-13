@@ -26,9 +26,9 @@ memory allocation should include two output ports:
 
 This can be done by importing the `Svc.BufferAllocation` FPP interface in the component's FPP definition file as shown in the examples below.
 
-In the case that allocation fails, the `Fw::Buffer` return from the `Fw::BufferGet` port will be marked invalid and have a size of zero.
-This must be checked using the `Fw::Buffer::isValid()` method. On success, the returned buffer's size is exactly the
-requested size.
+When using `Svc.BufferManager`, allocation failure returns an invalid `Fw::Buffer` with a size of zero. This must be
+checked using the `Fw::Buffer::isValid()` method. On success, `Svc.BufferManager` returns a buffer whose size is
+exactly the requested size.
 
 **Example Component Definition**
 
