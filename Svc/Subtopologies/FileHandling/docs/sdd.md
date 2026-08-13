@@ -35,6 +35,20 @@ The **FileHandling subtopology** packages the core file-transfer services common
 * **PrmDb file name**: Call `FileHandling::prmDb.configure(<file name>)` from your topology setup code before parameters are loaded; the subtopology does not set a file name itself, and `PrmDb` asserts if parameters are read or saved without one.
 * **Communication/Framing Stack**: Wire file-packet ports between FileHandling and your COM/framing subtopology (e.g., `ComCcsds`, `ComFprime`, `FramingFprime`, `FramingCcsds`) to complete uplink/downlink paths.
 
+> [!WARNING]
+> **This subtopology is not configured to be secure by default.** For backwards compatibility, it
+> intentionally does **not** configure the file-access sandboxes of its components, leaving them
+> fail-open: `fileUplink` may write, `fileDownlink` may read, and `prmDb` (`PRM_LOAD_FILE`) may
+> load from **any absolute path accessible to the process** via ground command. Security-conscious
+> deployments **must** call the following from topology setup code:
+>
+> * `FileHandling::fileUplink.configure(<directory>)` — restrict uplinked file writes.
+> * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (note: the
+>   `configure(cooldown, cycleTime, fileQueueDepth)` overload called by this subtopology does
+>   **not** set a sandbox).
+> * `FileHandling::prmDb.configureLoadSandbox(<directory>)` — restrict `PRM_LOAD_FILE` reads
+>   (note: `prmDb.configure(<file name>)` sets the store-file name and is **not** a load sandbox).
+
 ### 2.4 Limitations
 
 Focused on **file transfer and on-board file ops** only. It does **not** provide general uplink/downlink routing for non-file traffic, framing/deframing for non-file data, or broader CDH services.
