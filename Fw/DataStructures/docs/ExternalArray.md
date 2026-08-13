@@ -144,7 +144,7 @@ ExternalArray<T>& operator=(const ExternalArray<T>& a)
 
 1. If `&a == this` then do nothing.
 
-1. Otherwise set `m_elements = a.m_elements` and `m_size = a.m_size`.
+1. Otherwise call `setStorage(a.m_elements, a.m_size)`.
 
 _Example:_
 ```c++
@@ -232,9 +232,15 @@ void setStorage(T* elements, FwSizeType size)
 `elements` must point to a primitive array of at least `size`
 elements of type `T`.
 
-1. Call `releaseStorage()`.
+1. If `elements == m_elements` (the incoming pointer aliases the existing storage):
 
-1. Set `m_elements = elements` and `m_size = size` and `m_destroyElementsOnRelease = true`.
+    1. Set `m_size = size`.
+
+1. Otherwise:
+
+    1. Call `releaseStorage()`.
+
+    1. Set `m_elements = elements`, `m_size = size`, and `m_destroyElementsOnRelease = false`.
 
 _Example:_
 ```c++
