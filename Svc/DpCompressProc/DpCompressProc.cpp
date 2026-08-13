@@ -70,7 +70,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     // Record sizes are stored as FwSizeStoreType. Give up on any buffer
     // whose contents could overflow a record size field
     if (fwBuffer.getSize() >= std::numeric_limits<FwSizeStoreType>::max()) {
-        log_ACTIVITY_LO_DidNotCompress(container.getId(), container.getDataSize());
+        this->log_WARNING_HI_ContainerTooLarge(container.getId(), container.getDataSize());
         return;
     }
 

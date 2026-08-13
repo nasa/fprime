@@ -50,18 +50,6 @@ Svc::CompressionAlgorithm DpCompressProcTester ::from_compressChunk_handler(FwIn
             abstractState.update_compressed_size_state(out_size - write_offset, c);
             return Svc::CompressionAlgorithm::ZLIB_DEFLATE;
         case AbstractState::MINIMAL_COMPRESSED:
-
-            out_size = min_compression;
-
-            assert(out_size <= buffer.getSize());
-
-            *(buffer.getData() + write_offset) = c;
-            memset(buffer.getData() + write_offset + 1, sentinel, out_size - 1 - write_offset);
-            buffer.setSize(out_size);
-
-            abstractState.update_compressed_size_state(out_size - write_offset, c);
-            return Svc::CompressionAlgorithm::ZLIB_DEFLATE;
-        case AbstractState::OFFSET_COMPRESSED:
             // Compressed payload uses the full min_compression allowance, on top
             // of the write_offset reserved bytes
             out_size = min_compression + write_offset;
@@ -69,7 +57,7 @@ Svc::CompressionAlgorithm DpCompressProcTester ::from_compressChunk_handler(FwIn
             assert(out_size <= buffer.getSize());
 
             *(buffer.getData() + write_offset) = c;
-            memset(buffer.getData() + write_offset + 1, sentinel, min_compression - 1);
+            memset(buffer.getData() + write_offset + 1, sentinel, out_size - 1 - write_offset);
             buffer.setSize(out_size);
 
             abstractState.update_compressed_size_state(out_size - write_offset, c);
@@ -143,7 +131,7 @@ void DpCompressProcTester::uncompress_data(Fw::Buffer container_buf,
                 const U8* c_raw = data_deser.getBuffAddrLeft();
 
                 if (!(c_raw[0] == AbstractState::COMPRESSED || c_raw[0] == AbstractState::MINIMAL_COMPRESSED ||
-                      c_raw[0] == AbstractState::MAXIMAL_COMPRESSED || c_raw[0] == AbstractState::OFFSET_COMPRESSED)) {
+                      c_raw[0] == AbstractState::MAXIMAL_COMPRESSED)) {
                     ASSERT_TRUE(false) << std::hex << c_raw[0];
                 }
 
@@ -279,7 +267,7 @@ void DpCompressProcTester::test_undersized_buffer() {
 void DpCompressProcTester::test_oversized_buffer() {
     // Hand procRequest a buffer whose size could overflow a record size field
     this->clearHistory();
-    this->component.log_ACTIVITY_LO_DidNotCompress_ThrottleClear();
+    this->component.log_WARNING_HI_ContainerTooLarge_ThrottleClear();
 
     paramSet_CHUNK_SIZE(4096, Fw::ParamValid::VALID);
     paramSet_ENABLE(Fw::Enabled::ENABLED, Fw::ParamValid::VALID);
@@ -297,8 +285,8 @@ void DpCompressProcTester::test_oversized_buffer() {
 
     // Rejected on size after a valid header
     ASSERT_EVENTS_InvalidHeader_SIZE(0);
-    ASSERT_EVENTS_DidNotCompress_SIZE(1);
-    ASSERT_EVENTS_DidNotCompress(0, container.getId(), backing_size - Fw::DpContainer::MIN_PACKET_SIZE);
+    ASSERT_EVENTS_ContainerTooLarge_SIZE(1);
+    ASSERT_EVENTS_ContainerTooLarge(0, container.getId(), backing_size - Fw::DpContainer::MIN_PACKET_SIZE);
 
     // Nothing forwarded downstream, no completion claimed.
     ASSERT_from_compressChunk_SIZE(0);
