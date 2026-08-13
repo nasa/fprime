@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-12 21:26:05</td>
+      <td>2026-08-13 21:24:45</td>
     </tr>
   </table>
 </div>
@@ -73,9 +73,9 @@
     <tr><td><a href="#l149">Svc::FpySequencer::Stack::copy(unsigned int, unsigned int, unsigned int) (line 149)</a></td><td>called 27 times</td><td>74.0%</td></tr>
     <tr><td><a href="#l168">Svc::FpySequencer::Stack::move(unsigned int, unsigned int, unsigned int) (line 168)</a></td><td>called 6 times</td><td>76.0%</td></tr>
     <tr><td><a href="#l116">Svc::FpySequencer::Stack::pop(unsigned char*, unsigned int) (line 116)</a></td><td>called 10 times</td><td>70.0%</td></tr>
-    <tr><td><a href="#l126">Svc::FpySequencer::Stack::push(unsigned char const*, unsigned int) (line 126)</a></td><td>called 72 times</td><td>68.0%</td></tr>
+    <tr><td><a href="#l126">Svc::FpySequencer::Stack::push(unsigned char const*, unsigned int) (line 126)</a></td><td>called 73 times</td><td>68.0%</td></tr>
     <tr><td><a href="#l135">Svc::FpySequencer::Stack::pushZeroes(unsigned int) (line 135)</a></td><td>called 8 times</td><td>73.0%</td></tr>
-    <tr><td><a href="#l142">Svc::FpySequencer::Stack::top() (line 142)</a></td><td>called 1577 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l142">Svc::FpySequencer::Stack::top() (line 142)</a></td><td>called 1578 times</td><td>100.0%</td></tr>
     <tr><td><a href="#l50">double Svc::FpySequencer::Stack::pop&lt;double&gt;() (line 50)</a></td><td>called 133 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l42">float Svc::FpySequencer::Stack::pop&lt;float&gt;() (line 42)</a></td><td>called 3 times</td><td>80.0%</td></tr>
     <tr><td><a href="#l6">int Svc::FpySequencer::Stack::pop&lt;int&gt;() (line 6)</a></td><td>called 19 times</td><td>72.0%</td></tr>
@@ -1064,21 +1064,21 @@
       <td class="lineno"><a id="l126" href="#l126">126</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">FpySequencer</span><span class="o">::</span><span class="n">Stack</span><span class="o">::</span><span class="n">push</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">StackSizeType</span><span class="w"> </span><span class="n">srcSize</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">src</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l128" href="#l128">128</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">srcSize</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">Fpy</span><span class="o">::</span><span class="n">MAX_STACK_SIZE</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -1095,27 +1095,27 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 72 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 73 times.</div>
             <div class="notTakenBranch">&cross; Branch 4 not taken.</div>
-            <div class="takenBranch">&check; Branch 5 taken 72 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 73 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">72</td>
+      <td class="linecount partialCoveredLine">73</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">memcpy</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">top</span><span class="p">(),</span><span class="w"> </span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="n">srcSize</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l131" href="#l131">131</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">size</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">srcSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l132" href="#l132">132</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">72</td>
+      <td class="linecount coveredLine">73</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1192,14 +1192,14 @@
       <td class="lineno"><a id="l142" href="#l142">142</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1577</td>
+      <td class="linecount coveredLine">1578</td>
       <td class="src coveredLine"><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">FpySequencer</span><span class="o">::</span><span class="n">Stack</span><span class="o">::</span><span class="n">top</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l143" href="#l143">143</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">1577</td>
+      <td class="linecount coveredLine">1578</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bytes</span><span class="p">[</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">];</span></td>
     </tr>
     <tr class="source-line">

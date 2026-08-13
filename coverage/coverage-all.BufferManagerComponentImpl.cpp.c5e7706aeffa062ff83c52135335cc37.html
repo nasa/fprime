@@ -26,7 +26,7 @@
     </tr>
     <tr>
       <th scope="row">Date:</th>
-      <td>2026-08-12 21:26:05</td>
+      <td>2026-08-13 21:24:45</td>
     </tr>
   </table>
 </div>
@@ -70,13 +70,13 @@
       <th>Call count</th>
       <th>Block coverage</th>
     </tr>
-    <tr><td><a href="#l26">Svc::BufferManagerComponentImpl::BufferManagerComponentImpl(char const*) (line 26)</a></td><td>called 3 times</td><td>100.0%</td></tr>
-    <tr><td><a href="#l102">Svc::BufferManagerComponentImpl::bufferGetCallee_handler(short, unsigned long) (line 102)</a></td><td>called 27 times</td><td>92.0%</td></tr>
-    <tr><td><a href="#l66">Svc::BufferManagerComponentImpl::bufferSendIn_handler(short, Fw::Buffer&amp;) (line 66)</a></td><td>called 27 times</td><td>77.0%</td></tr>
-    <tr><td><a href="#l46">Svc::BufferManagerComponentImpl::cleanup() (line 46)</a></td><td>called 3 times</td><td>96.0%</td></tr>
+    <tr><td><a href="#l26">Svc::BufferManagerComponentImpl::BufferManagerComponentImpl(char const*) (line 26)</a></td><td>called 4 times</td><td>100.0%</td></tr>
+    <tr><td><a href="#l102">Svc::BufferManagerComponentImpl::bufferGetCallee_handler(short, unsigned long) (line 102)</a></td><td>called 28 times</td><td>92.0%</td></tr>
+    <tr><td><a href="#l66">Svc::BufferManagerComponentImpl::bufferSendIn_handler(short, Fw::Buffer&amp;) (line 66)</a></td><td>called 28 times</td><td>77.0%</td></tr>
+    <tr><td><a href="#l46">Svc::BufferManagerComponentImpl::cleanup() (line 46)</a></td><td>called 4 times</td><td>96.0%</td></tr>
     <tr><td><a href="#l206">Svc::BufferManagerComponentImpl::schedIn_handler(short, unsigned int) (line 206)</a></td><td>called 8 times</td><td>75.0%</td></tr>
-    <tr><td><a href="#l127">Svc::BufferManagerComponentImpl::setup(unsigned short, int, Fw::MemAllocator&amp;, Svc::BufferManagerComponentImpl::BufferBins const&amp;) (line 127)</a></td><td>called 3 times</td><td>93.0%</td></tr>
-    <tr><td><a href="#l40">Svc::BufferManagerComponentImpl::~BufferManagerComponentImpl() (line 40)</a></td><td>called 3 times</td><td>72.0%</td></tr>
+    <tr><td><a href="#l127">Svc::BufferManagerComponentImpl::setup(unsigned short, int, Fw::MemAllocator&amp;, Svc::BufferManagerComponentImpl::BufferBins const&amp;) (line 127)</a></td><td>called 4 times</td><td>93.0%</td></tr>
+    <tr><td><a href="#l40">Svc::BufferManagerComponentImpl::~BufferManagerComponentImpl() (line 40)</a></td><td>called 4 times</td><td>72.0%</td></tr>
   </table>
 </details>
 
@@ -269,7 +269,7 @@
       <td class="lineno"><a id="l26" href="#l26">26</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="n">BufferManagerComponentImpl</span><span class="w"> </span><span class="nf">::BufferManagerComponentImpl</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">compName</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -283,77 +283,77 @@
       <td class="lineno"><a id="l28" href="#l28">28</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_setup</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l29" href="#l29">29</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_cleaned</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l30" href="#l30">30</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_mgrId</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l31" href="#l31">31</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_buffers</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l32" href="#l32">32</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_allocator</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l33" href="#l33">33</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_memId</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l34" href="#l34">34</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_numStructs</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l35" href="#l35">35</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_highWater</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l36" href="#l36">36</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_currBuffs</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l37" href="#l37">37</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_noBuffs</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l38" href="#l38">38</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">      </span><span class="n">m_emptyBuffs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></td>
     </tr>
     <tr class="source-line">
@@ -367,7 +367,7 @@
       <td class="lineno"><a id="l40" href="#l40">40</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="n">BufferManagerComponentImpl</span><span class="w"> </span><span class="o">::~</span><span class="n">BufferManagerComponentImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -377,13 +377,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
             <div class="notTakenBranch">&cross; Branch 5 not taken.</div>
-            <div class="takenBranch">&check; Branch 6 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">6</td>
+      <td class="linecount partialCoveredLine">8</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_setup</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -404,7 +404,7 @@
       <td class="lineno"><a id="l44" href="#l44">44</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">6</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -418,21 +418,21 @@
       <td class="lineno"><a id="l46" href="#l46">46</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">BufferManagerComponentImpl</span><span class="w"> </span><span class="o">::</span><span class="n">cleanup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l47" href="#l47">47</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l48" href="#l48">48</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocator</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -449,13 +449,13 @@
           <summary class="linebranchSummary">2/4</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
-            <div class="takenBranch">&check; Branch 4 taken 3 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 4 times.</div>
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3</td>
+      <td class="linecount partialCoveredLine">4</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cleaned</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -471,19 +471,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 22 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">25</td>
+      <td class="linecount coveredLine">27</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">;</span><span class="w"> </span><span class="n">entry</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l53" href="#l53">53</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">entry</span><span class="p">].</span><span class="n">buff</span><span class="p">.</span><span class="o">~</span><span class="n">Buffer</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
@@ -497,7 +497,7 @@
       <td class="lineno"><a id="l55" href="#l55">55</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_cleaned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -511,14 +511,14 @@
       <td class="lineno"><a id="l57" href="#l57">57</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocator</span><span class="o">-&gt;</span><span class="n">deallocate</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_memId</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l58" href="#l58">58</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_setup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -532,7 +532,7 @@
       <td class="lineno"><a id="l60" href="#l60">60</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -574,7 +574,7 @@
       <td class="lineno"><a id="l66" href="#l66">66</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">BufferManagerComponentImpl</span><span class="w"> </span><span class="o">::</span><span class="n">bufferSendIn_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -588,14 +588,14 @@
       <td class="lineno"><a id="l68" href="#l68">68</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_setup</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l69" href="#l69">69</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">m_buffers</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -633,15 +633,15 @@
           <summary class="linebranchSummary">5/6</summary>
           <div class="linebranchContents">
             <div class="takenBranch">&check; Branch 4 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 5 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 24 times.</div>
             <div class="takenBranch">&check; Branch 10 taken 4 times.</div>
             <div class="notTakenBranch">&cross; Branch 11 not taken.</div>
             <div class="takenBranch">&check; Branch 12 taken 4 times.</div>
-            <div class="takenBranch">&check; Branch 13 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 13 taken 24 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">27</td>
+      <td class="linecount partialCoveredLine">28</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getData</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">nullptr</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -683,21 +683,21 @@
       <td class="lineno"><a id="l80" href="#l80">80</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getContext</span><span class="p">();</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l81" href="#l81">81</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFFFF</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l82" href="#l82">82</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U32</span><span class="w"> </span><span class="n">mgrId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -711,7 +711,7 @@
       <td class="lineno"><a id="l84" href="#l84">84</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -725,7 +725,7 @@
       <td class="lineno"><a id="l86" href="#l86">86</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">mgrId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mgrId</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mgrId</span><span class="p">),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -739,7 +739,7 @@
       <td class="lineno"><a id="l88" href="#l88">88</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="nb">true</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">allocated</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -753,7 +753,7 @@
       <td class="lineno"><a id="l90" href="#l90">90</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getData</span><span class="p">())</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">memory</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -767,7 +767,7 @@
       <td class="lineno"><a id="l92" href="#l92">92</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getData</span><span class="p">())</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">memory</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">size</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -788,7 +788,7 @@
       <td class="lineno"><a id="l95" href="#l95">95</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">fwBuffer</span><span class="p">.</span><span class="n">getSize</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">id</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -809,14 +809,14 @@
       <td class="lineno"><a id="l98" href="#l98">98</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">id</span><span class="p">].</span><span class="n">allocated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l99" href="#l99">99</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_currBuffs</span><span class="o">--</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -837,7 +837,7 @@
       <td class="lineno"><a id="l102" href="#l102">102</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="n">BufferManagerComponentImpl</span><span class="w"> </span><span class="o">::</span><span class="n">bufferGetCallee_handler</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FwIndexType</span><span class="w"> </span><span class="n">portNum</span><span class="p">,</span><span class="w"> </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -851,14 +851,14 @@
       <td class="lineno"><a id="l104" href="#l104">104</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_setup</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l105" href="#l105">105</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">27</td>
+      <td class="linecount coveredLine">28</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">m_buffers</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -874,12 +874,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 4 taken 152 times.</div>
+            <div class="takenBranch">&check; Branch 4 taken 153 times.</div>
             <div class="takenBranch">&check; Branch 5 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">156</td>
+      <td class="linecount coveredLine">157</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">buff</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">buff</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">;</span><span class="w"> </span><span class="n">buff</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -889,29 +889,29 @@
           <summary class="linebranchSummary">5/6</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 6 not taken.</div>
-            <div class="takenBranch">&check; Branch 7 taken 152 times.</div>
-            <div class="takenBranch">&check; Branch 8 taken 63 times.</div>
+            <div class="takenBranch">&check; Branch 7 taken 153 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 64 times.</div>
             <div class="takenBranch">&check; Branch 9 taken 89 times.</div>
-            <div class="takenBranch">&check; Branch 17 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 17 taken 24 times.</div>
             <div class="takenBranch">&check; Branch 18 taken 40 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">152</td>
+      <td class="linecount partialCoveredLine">153</td>
       <td class="src partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="k">not</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">buff</span><span class="p">].</span><span class="n">allocated</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">buff</span><span class="p">].</span><span class="n">size</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l109" href="#l109">109</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">buff</span><span class="p">].</span><span class="n">allocated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l110" href="#l110">110</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_currBuffs</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -920,19 +920,19 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 8 taken 13 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 14 times.</div>
             <div class="takenBranch">&check; Branch 9 taken 10 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_currBuffs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_highWater</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l112" href="#l112">112</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">13</td>
+      <td class="linecount coveredLine">14</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_highWater</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_currBuffs</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -948,11 +948,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 9 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 9 taken 24 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="w"> </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">buff</span><span class="p">].</span><span class="n">buff</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -968,11 +968,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 2 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 2 taken 24 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">copy</span><span class="p">.</span><span class="n">setSize</span><span class="p">(</span><span class="n">size</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -981,18 +981,18 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 1 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 24 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">copy</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l118" href="#l118">118</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">23</td>
+      <td class="linecount coveredLine">24</td>
       <td class="src coveredLine"><span class="w">        </span><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
@@ -1055,7 +1055,7 @@
       <td class="lineno"><a id="l127" href="#l127">127</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="kt">void</span><span class="w"> </span><span class="n">BufferManagerComponentImpl</span><span class="o">::</span><span class="n">setup</span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">mgrId</span><span class="p">,</span><span class="w">                    </span><span class="c1">//!&lt; manager ID</span></td>
     </tr>
     <tr class="source-line">
@@ -1090,21 +1090,21 @@
       <td class="lineno"><a id="l132" href="#l132">132</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mgrId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mgrId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l133" href="#l133">133</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_memId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memId</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l134" href="#l134">134</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_allocator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">allocator</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1121,11 +1121,11 @@
           <summary class="linebranchSummary">1/2</summary>
           <div class="linebranchContents">
             <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
-            <div class="takenBranch">&check; Branch 3 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 3 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">3</td>
+      <td class="linecount partialCoveredLine">4</td>
       <td class="src partialCoveredLine"><span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">memset</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">));</span></td>
     </tr>
     <tr class="source-line">
@@ -1139,7 +1139,7 @@
       <td class="lineno"><a id="l138" href="#l138">138</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bins</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1160,14 +1160,14 @@
       <td class="lineno"><a id="l141" href="#l141">141</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">memorySize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// track needed memory</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l142" href="#l142">142</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">     </span><span class="c1">// size the number of tracking structs</span></td>
     </tr>
     <tr class="source-line">
@@ -1183,12 +1183,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">33</td>
+      <td class="linecount coveredLine">44</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BUFFERMGR_MAX_NUM_BINS</span><span class="p">;</span><span class="w"> </span><span class="n">bin</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1197,26 +1197,26 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 7 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 8 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 32 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">30</td>
+      <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">numBuffers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l146" href="#l146">146</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">memorySize</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">bufferSize</span><span class="w"> </span><span class="o">*</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l147" href="#l147">147</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">                           </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">numBuffers</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">  </span><span class="c1">// allocate each set of buffer memory</span></td>
     </tr>
     <tr class="source-line">
@@ -1244,7 +1244,7 @@
       <td class="lineno"><a id="l151" href="#l151">151</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">            </span><span class="n">FW_ASSERT</span><span class="p">((</span><span class="n">std</span><span class="o">::</span><span class="n">numeric_limits</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;::</span><span class="n">max</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span></td>
     </tr>
     <tr class="source-line">
@@ -1258,7 +1258,7 @@
       <td class="lineno"><a id="l153" href="#l153">153</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">7</td>
+      <td class="linecount coveredLine">8</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U16</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">numBuffers</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1286,14 +1286,14 @@
       <td class="lineno"><a id="l157" href="#l157">157</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FwSizeType</span><span class="w"> </span><span class="n">allocatedSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">memorySize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l158" href="#l158">158</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">recoverable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">  </span><span class="c1">//!&lt; don&#39;t care if it is recoverable since they are a pool of user buffers</span></td>
     </tr>
     <tr class="source-line">
@@ -1316,11 +1316,11 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 6 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">memory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">memId</span><span class="p">,</span><span class="w"> </span><span class="n">allocatedSize</span><span class="p">,</span><span class="w"> </span><span class="n">recoverable</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1334,7 +1334,7 @@
       <td class="lineno"><a id="l163" href="#l163">163</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">memory</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">nullptr</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">memorySize</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">allocatedSize</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mgrId</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -1369,7 +1369,7 @@
       <td class="lineno"><a id="l168" href="#l168">168</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">AllocatedBuffer</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">memory</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1390,7 +1390,7 @@
       <td class="lineno"><a id="l171" href="#l171">171</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="n">bufferMem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">]);</span></td>
     </tr>
     <tr class="source-line">
@@ -1411,7 +1411,7 @@
       <td class="lineno"><a id="l174" href="#l174">174</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U16</span><span class="w"> </span><span class="n">currStruct</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1420,12 +1420,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 0 taken 30 times.</div>
-            <div class="takenBranch">&check; Branch 1 taken 3 times.</div>
+            <div class="takenBranch">&check; Branch 0 taken 40 times.</div>
+            <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">33</td>
+      <td class="linecount coveredLine">44</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">bin</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BUFFERMGR_MAX_NUM_BINS</span><span class="p">;</span><span class="w"> </span><span class="n">bin</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1434,12 +1434,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 7 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 8 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 32 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">30</td>
+      <td class="linecount coveredLine">40</td>
       <td class="src coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">numBuffers</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1448,12 +1448,12 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">2/2</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 5 taken 22 times.</div>
-            <div class="takenBranch">&check; Branch 6 taken 7 times.</div>
+            <div class="takenBranch">&check; Branch 5 taken 23 times.</div>
+            <div class="takenBranch">&check; Branch 6 taken 8 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">29</td>
+      <td class="linecount coveredLine">31</td>
       <td class="src coveredLine"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">U16</span><span class="w"> </span><span class="n">binEntry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">binEntry</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">numBuffers</span><span class="p">;</span><span class="w"> </span><span class="n">binEntry</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></td>
     </tr>
     <tr class="source-line">
@@ -1474,7 +1474,7 @@
       <td class="lineno"><a id="l180" href="#l180">180</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">U32</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_mgrId</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U32</span><span class="o">&gt;</span><span class="p">(</span><span class="n">currStruct</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
@@ -1488,7 +1488,7 @@
           </div>
         </details>
       </td>
-      <td class="linecount partialCoveredLine">22</td>
+      <td class="linecount partialCoveredLine">23</td>
       <td class="src partialCoveredLine"><span class="w">                </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">currStruct</span><span class="p">].</span><span class="n">buff</span><span class="p">)</span></td>
     </tr>
     <tr class="source-line">
@@ -1497,46 +1497,46 @@
         <details class="linebranchDetails">
           <summary class="linebranchSummary">1/1</summary>
           <div class="linebranchContents">
-            <div class="takenBranch">&check; Branch 8 taken 22 times.</div>
+            <div class="takenBranch">&check; Branch 8 taken 23 times.</div>
           </div>
         </details>
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                    </span><span class="n">Fw</span><span class="o">::</span><span class="n">Buffer</span><span class="p">(</span><span class="n">bufferMem</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">bufferSize</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">);</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l183" href="#l183">183</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">currStruct</span><span class="p">].</span><span class="n">allocated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l184" href="#l184">184</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">currStruct</span><span class="p">].</span><span class="n">memory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufferMem</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l185" href="#l185">185</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_buffers</span><span class="p">[</span><span class="n">currStruct</span><span class="p">].</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">bufferSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l186" href="#l186">186</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">bufferMem</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_bufferBins</span><span class="p">.</span><span class="n">bins</span><span class="p">[</span><span class="n">bin</span><span class="p">].</span><span class="n">bufferSize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l187" href="#l187">187</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">22</td>
+      <td class="linecount coveredLine">23</td>
       <td class="src coveredLine"><span class="w">                </span><span class="n">currStruct</span><span class="o">++</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
@@ -1578,21 +1578,21 @@
       <td class="lineno"><a id="l193" href="#l193">193</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">CURR_PTR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bufferMem</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l194" href="#l194">194</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">U8</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">END_PTR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">U8</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">memorySize</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l195" href="#l195">195</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">CURR_PTR</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">END_PTR</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mgrId</span><span class="p">),</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">memId</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -1620,7 +1620,7 @@
       <td class="lineno"><a id="l199" href="#l199">199</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="n">FW_ASSERT</span><span class="p">(</span><span class="n">currStruct</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_numStructs</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">FwAssertArgType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mgrId</span><span class="p">),</span></td>
     </tr>
     <tr class="source-line">
@@ -1648,14 +1648,14 @@
       <td class="lineno"><a id="l203" href="#l203">203</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_setup</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
     </tr>
     <tr class="source-line">
       <td class="lineno"><a id="l204" href="#l204">204</a></td>
       <td class="linebranch">
       </td>
-      <td class="linecount coveredLine">3</td>
+      <td class="linecount coveredLine">4</td>
       <td class="src coveredLine"><span class="p">}</span></td>
     </tr>
     <tr class="source-line">
