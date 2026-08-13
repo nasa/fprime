@@ -67,6 +67,13 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
+    // Consistency check: the header's data size must fit within the buffer
+    if (container.getDataSize() > fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_BufferTooSmallForPacket(fwBuffer.getSize(),
+                                                     Fw::DpContainer::MIN_PACKET_SIZE + container.getDataSize());
+        return;
+    }
+
     FwSizeType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
     FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
 
@@ -81,12 +88,8 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
         return;
     }
 
-    // Bound the data region by the container's data size, not the buffer capacity
-    if (container.getDataSize() > fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE) {
-        this->log_WARNING_HI_InvalidHeader(fwBuffer.getSize(), static_cast<U32>(Fw::FW_DESERIALIZE_SIZE_MISMATCH));
-        return;
-    }
-    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET, container.getDataSize());
+    Fw::Buffer data_buffer(fwBuffer.getData() + Fw::DpContainer::DATA_OFFSET,
+                           fwBuffer.getSize() - Fw::DpContainer::MIN_PACKET_SIZE);
     FW_ASSERT(data_buffer.getSize() > 0, static_cast<FwAssertArgType>(data_buffer.getSize()));
 
     auto data_deser = data_buffer.getDeserializer();
@@ -243,8 +246,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 3. Write a compressed header to the compressed data
                     // 4. Serialize compressed data
 
-                    // Assert the next few serialization operations will stay within the
-                    // data that has been read so far
+                    // Assert that the serialization operations in Case A will stay within deser_loc bounds
                     FW_ASSERT(deser_loc >= (uncompressed_size + 2 * compression_header_size + compressed_size),
                               static_cast<FwAssertArgType>(deser_loc), static_cast<FwAssertArgType>(uncompressed_size),
                               static_cast<FwAssertArgType>(compressed_size));
@@ -281,8 +283,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                     // 3. Write header for compressed data at data_reser location
                     // 4. Serialize compressed data
 
-                    // Assert the next few serialization operations will stay within the
-                    // data that has been read so far
+                    // Assert that the serialization operations in Case E will stay within deser_loc bounds
                     FW_ASSERT(
                         deser_loc >=
                             (data_reser.getSize() + uncompressed_size + 2 * compression_header_size + compressed_size),
@@ -292,7 +293,6 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
-                    // serializeFrom is overlap-safe (uses memmove internally)
                     ser_stat =
                         data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
                     FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
