@@ -22,6 +22,20 @@ agents:
       sequence, then the aggregator. Owns kickoff prompts (with the
       orchestrator->agent thanks convention) and error handling.
 
+  - name: F Prime Full-Codebase Review Orchestrator
+    short_name: full-codebase-review
+    role: batch-orchestrator
+    path: .github/agents/full-codebase-review.agent.md
+    invocable_by_humans: true
+    notes: >
+      Single human entry point for the batch (full-codebase) review.
+      Partitions the repository into review units per
+      `_shared/skills/repo-partitioning.skill.md`, drives every
+      `role: reviewer` entry over every unit under the batch
+      contract (`_shared/review-contract-batch.md`), and maintains
+      the resumable ledger and diffable finding artifacts in a
+      results repository. Not part of the PR review flow.
+
   - name: F Prime Security Vulnerability Reviewer
     short_name: security-review
     review_label: Security
