@@ -294,7 +294,7 @@ void MyDriver::IsrReport_internalInterfaceHandler(U32 interrupts) {
                 stat = serTo.serializeFrom(BUFF_B_FIFO);
             }
             // There should always be room
-            FW_ASSERT(stat = Fw::FW_SERIALIZE_OK,stat);
+            FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, static_cast<FwAssertArgType>(stat));
         }
         // send copied data to user
         this->SendBuffer_out(0,buff);
