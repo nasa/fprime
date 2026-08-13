@@ -698,6 +698,10 @@ Fw::Success FpySequencerTester::tester_validate() {
     return this->cmp.validate();
 }
 
+bool FpySequencerTester::tester_isRunningState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state) {
+    return this->cmp.isRunningState(state);
+}
+
 Svc::Signal FpySequencerTester::tester_checkStatementTimeout() {
     return this->cmp.checkStatementTimeout();
 }

@@ -425,6 +425,10 @@ class CfdpManager final : public CfdpManagerComponentBase {
     Fw::CmdResponse::T checkCommandChannelPollIndex(U8 pollIndex  //!< The poll index to check
     );
 
+    //! Checks if the requested poll interval is valid (non-zero), and emits an EVR if not
+    Fw::CmdResponse::T checkCommandPollInterval(U32 interval  //!< The poll interval to check
+    );
+
   public:
     // ----------------------------------------------------------------------
     // Parameter helpers used by the CFDP engine

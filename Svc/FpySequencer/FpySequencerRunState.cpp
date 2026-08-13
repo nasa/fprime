@@ -1,7 +1,9 @@
+#include <config/CommandDispatcherImplCfg.hpp>
 #include <new>
 #include "Fw/Com/ComPacket.hpp"
 #include "Fw/Time/Time.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
+
 namespace Svc {
 
 // returns the index of the current statement
@@ -750,8 +752,8 @@ Signal FpySequencer::checkStatementTimeout() {
     if (this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::CONST_CMD ||
         this->m_runtime.currentStatementOpcode == Fpy::DirectiveId::STACK_CMD) {
         // if we were executing a command, warn that the cmd timed out with its opcode
-        this->log_WARNING_HI_CommandTimedOut(this->m_runtime.currentCmdOpcode, this->currentStatementIdx(),
-                                             this->m_sequenceFilePath);
+        this->log_WARNING_HI_CommandTimedOut(CmdDispatcherCfg::getEventOpcode(this->m_runtime.currentCmdOpcode),
+                                             this->currentStatementIdx(), this->m_sequenceFilePath);
     } else {
         this->log_WARNING_HI_DirectiveTimedOut(this->m_runtime.currentStatementOpcode, this->currentStatementIdx(),
                                                this->m_sequenceFilePath);

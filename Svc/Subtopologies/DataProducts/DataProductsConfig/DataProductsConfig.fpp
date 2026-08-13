@@ -29,6 +29,14 @@ module DataProductsConfig {
         constant dpBufferManager  = 21
     }
 
+    module CpuAffinities {
+        constant dpCat    = Os.TASK_DEFAULT
+        constant dpMgr  = Os.TASK_DEFAULT
+        constant dpWriter   = Os.TASK_DEFAULT
+        constant dpBufferAccumulator = Os.TASK_DEFAULT
+        # dpBufferManager is intentionally omitted because it is passive.
+    }
+
     module BufferAccumulator {
         constant allocatorId   = 301
         constant maxNumBuffers = 10

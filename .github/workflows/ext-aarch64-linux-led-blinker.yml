@@ -4,8 +4,10 @@
 name: "External Repo: AArch64 Linux LedBlinker"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel, release/**]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [devel, release/**]
@@ -41,6 +43,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -53,6 +57,7 @@ jobs:
           submodules: true
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
+          filter: blob:none
       - uses: ./lib/fprime/.github/actions/setup
         with:
           location: ${{ env.FPRIME_LOCATION }}
@@ -64,10 +69,12 @@ jobs:
           echo "${AARCH64_TOOLCHAIN_DIR}/bin" >> $GITHUB_PATH
       - name: "Generate AArch64 Linux Build Cache"
         run: |
-          fprime-util generate aarch64-linux
+          fprime-util generate aarch64-linux 2>&1 | output-cleaner
+        shell: bash
       - name: "Build AArch64 Linux"
         run: |
-          fprime-util build aarch64-linux
+          fprime-util build aarch64-linux 2>&1 | output-cleaner
+        shell: bash
       - name: "Prepare artifacts"
         run: |
           mkdir -p aarch64-linux-artifacts

@@ -7,6 +7,7 @@
 #ifndef TESTER_HPP
 #define TESTER_HPP
 
+#include <Os/CountingSemaphore.hpp>
 #include "Svc/TlmChan/TlmChan.hpp"
 #include "TlmChanGTestBase.hpp"
 
@@ -34,6 +35,7 @@ class TlmChanTester : public TlmChanGTestBase {
     void runNominalChannel();
     void runMultiChannel();
     void runOffNominal();
+    void runUpdatedFlagClearGuarded();
 
     //! Verify that Run_handler's CPU processing guard fires correctly when the
     //! number of updated telemetry entries exceeds TLMCHAN_MAX_ENTRIES_PER_RUN.
@@ -42,6 +44,10 @@ class TlmChanTester : public TlmChanGTestBase {
     //! guard packet is injected into the downlink stream), and that
     //! m_procCapCount increments cumulatively across successive capped invocations.
     void runProcGuard();
+
+    //! Verify that exhausting the hash-bucket pool drops the new channel with a
+    //! TlmChanBucketPoolExhausted WARNING_HI event instead of asserting.
+    void runBucketPoolExhaustion();
 
     // ----------------------------------------------------------------------
     // doHash() cyber-security tests
@@ -128,6 +134,8 @@ class TlmChanTester : public TlmChanGTestBase {
     //!
     void initComponents();
 
+    static void runTask(void* argument);
+
     void sendBuff(FwChanIdType id, U32 val);
     bool doRun(bool check);
     void checkBuff(FwChanIdType chanNum, FwChanIdType totalChan, FwChanIdType id, U32 val);
@@ -156,6 +164,11 @@ class TlmChanTester : public TlmChanGTestBase {
     FwChanIdType m_numBuffs;
     Fw::ComBuffer m_rcvdBuffer[TLMCHAN_HASH_BUCKETS];
     bool m_bufferRecv;
+
+    Os::CountingSemaphore m_packetSendGateArmed;
+    Os::CountingSemaphore m_packetSendEntered;
+    Os::CountingSemaphore m_packetSendReleased;
+    Os::CountingSemaphore m_runComplete;
 };
 
 }  // end namespace Svc

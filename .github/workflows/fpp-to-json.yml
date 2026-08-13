@@ -1,8 +1,10 @@
 name: "fpp-to-json Test"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -25,16 +27,19 @@ jobs:
     name: Ref Deployment
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - uses: ./.github/actions/setup
       - name: "Generate Ref Deployment"
         working-directory: ./TestDeploymentsProject
         run: |
-          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Run fpp-to-json on Ref topology"
         working-directory: ./TestDeploymentsProject/Ref/Top

@@ -1,27 +1,31 @@
 # Svc FPP Interfaces
 
-The Svc interfaces are a set of `.fppi` files that define FPP interfaces for components to implement. An FPP interface is an FPP file that defines a set of ports. A component that implements an FPP interface must implement handlers for the input ports and has access to the output ports of the interface.
+The Svc interfaces are a set of `.fpp` files that define FPP interfaces for components to implement. An FPP interface is an FPP file that defines a set of ports. A component that implements an FPP interface must implement handlers for the input ports and has access to the output ports of the interface.
 
-## Svc/ComInterface
+## Svc.Com
 
-The `Svc/ComInterface` is an interface for implementing the [Communications Adapter Interface](../../../docs/reference/communication-adapter-interface.md). Components implementing this interface must follow the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol), which defines when `Fw::Success::SUCCESS` and `Fw::Success::FAILURE` may be emitted via `comStatusOut`. [`Svc::ComStub`](../../ComStub/docs/sdd.md) implements this interface and uses a ByteStream driver to send and receive data on a TCP/UDP/UART link, and is often used in development and early testing.
+The `Svc.Com` interface is an interface for implementing the [Communications Adapter Interface](../../../docs/reference/communication-adapter-interface.md). Components implementing this interface must follow the [Communication Adapter Protocol](../../../docs/reference/communication-adapter-interface.md#communication-adapter-protocol), which defines when `Fw::Success::SUCCESS` and `Fw::Success::FAILURE` may be emitted via `comStatusOut`. [`Svc::ComStub`](../../ComStub/docs/sdd.md) implements this interface and uses a ByteStream driver to send and receive data on a TCP/UDP/UART link, and is often used in development and early testing.
 
-## Svc/DeframerInterface
+## Svc.Deframer
 
-The `Svc/DeframerInterface` is an interface for implementing a Deframer component. This interface allows a component to be dropped in the common F´ Uplink stack and implement deframing for a specific communications protocol. The [`Svc::FprimeDeframer`](../../FprimeDeframer/docs/sdd.md) component implements this interface for the [F´ communications protocol](../../FprimeProtocol/docs/sdd.md).
+The `Svc.Deframer` interface is an interface for implementing a Deframer component. This interface allows a component to be dropped in the common F´ Uplink stack and implement deframing for a specific communications protocol. The [`Svc::FprimeDeframer`](../../FprimeDeframer/docs/sdd.md) component implements this interface for the [F´ communications protocol](../../FprimeProtocol/docs/sdd.md).
 
-## Svc/FramerInterface
+## Svc.Framer
 
-The `Svc/FramerInterface` is an interface for implementing the Framer component. This interface allows a component to be dropped in the common F´ Downlink stack and implement framing for a specific communications protocol. The [`Svc::FprimeFramer`](../../FprimeFramer/docs/sdd.md) component implements this interface for the [F´ communications protocol](../../FprimeProtocol/docs/sdd.md).
+The `Svc.Framer` interface is an interface for implementing the Framer component. This interface allows a component to be dropped in the common F´ Downlink stack and implement framing for a specific communications protocol. The [`Svc::FprimeFramer`](../../FprimeFramer/docs/sdd.md) component implements this interface for the [F´ communications protocol](../../FprimeProtocol/docs/sdd.md).
 
-## Svc/RouterInterface
+## Svc.Router
 
-The `Svc/RouterInterface` is an interface for implementing a Router component. This interface allows a component to be dropped in the common F´ Uplink stack and implement routing for a project. The [`Svc::FprimeRouter`](../../FprimeRouter/docs/sdd.md) component implements this interface routing the common F´ packets, as well as passing unknown packets down to another component for further processing.
+The `Svc.Router` interface is an interface for implementing a Router component. This interface allows a component to be dropped in the common F´ Uplink stack and implement routing for a project. The [`Svc::FprimeRouter`](../../FprimeRouter/docs/sdd.md) component implements this interface routing the common F´ packets, as well as passing unknown packets down to another component for further processing.
 
-## Svc/FrameAccumulatorInterface
+## Svc.FrameAccumulator
 
-The `Svc/FrameAccumulatorInterface` is an interface for implementing a Frame Accumulator component. This allows a component to be dropped in the common F´ Uplink stack and implement frame accumulation, using any desirable algorithm. The [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md) component implements this interface by storing the data in a circular buffer and using a `Svc::FrameDetector` to detect frames in the buffer.
+The `Svc.FrameAccumulator` interface is an interface for implementing a Frame Accumulator component. This allows a component to be dropped in the common F´ Uplink stack and implement frame accumulation, using any desirable algorithm. The [`Svc::FrameAccumulator`](../../FrameAccumulator/docs/sdd.md) component implements this interface by storing the data in a circular buffer and using a `Svc::FrameDetector` to detect frames in the buffer.
 
-## Svc/TimeInterface
+## Svc.Time
 
-The `Svc/TimeInterface` is an interface for implementing a Time provider. A time provider must provide a way for other components to get the current time. The [`Svc::PosixTime`](../../PosixTime/docs/sdd.md) component implements this interface, using common Posix functions to retrieve the current time.
+The `Svc.Time` interface is an interface for implementing a Time provider. A time provider must provide a way for other components to get the current time. The [`Svc::PosixTime`](../../PosixTime/docs/sdd.md) component implements this interface, using common Posix functions to retrieve the current time.
+
+## Svc.BufferAllocation
+
+The `Svc.BufferAllocation` interface is an interface for components that allocate and deallocate buffers. It provides an `allocate` output port (`Fw.BufferGet`) for requesting buffers from a buffer manager and a `deallocate` output port (`Fw.BufferSend`) for returning them.

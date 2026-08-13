@@ -37,6 +37,7 @@ A typical system using data products includes:
     - `Svc.DpWriter` for storing products to disk
     - `Svc.DpCatalog` for tracking products
     - `Svc.FileDownlink` for downlinking products
+    - `Svc.DpCompressProc` with `Svc.DpZLibCompressor` for optional on-board compression
 
 The producer itself is intentionally simple: it requests a container, fills it with records, and sends it off.  To model a producer, we need to define the following for the component:
 
@@ -139,18 +140,21 @@ This member variable can be filled by container allocation calls, and set via co
 
 ### Compute Container Size
 
-Container allocation requires an explicit data size (think: just like an `Fw::Buffer` allocation). When serializing records into a container, the record ID is also serialized (of size `sizeof(FwDpIdType)`). Therefore, for precise allocation, users must compute the size of all records to be stored in the container, including record IDs.
+Container allocation requires an explicit data size (think: just like an `Fw::Buffer` allocation). Since the number and types of records in a container are up to the developer, users must compute the size of all records to be stored in the container. For each declared product record, the autocoder generates a size constant that accounts for both the record data and the serialized record ID:
+
+* `SIZE_OF_<RecordName>_RECORD` for records holding a single value
+* `SIZE_OF_<RecordName>_RECORD(<elementCount>)` for array records, where `elementCount` is the number of array elements
+
+These constants are specified in the [Data Products user manual](../../user-manual/framework/data-products.md#33-autocoded-c).
 
 Our example intends to store `RECORD_COUNT` sine and cosine records per container:
 
 ```cpp
-containerSize = 2 * RECORD_COUNT * // times two for both sine and cosine records
-        // each record needs space for data size + size of record ID
-        (SinusoidDataType::SERIALIZED_SIZE + sizeof(FwDpIdType))
+containerSize = RECORD_COUNT * (SIZE_OF_SineRecord_RECORD + SIZE_OF_CosineRecord_RECORD);
 ```
 
-> [!CAUTION]
-> Record ID size is not automatically included in container data size because the number and types of records are up to the developer. The total allocated size is adjusted by the product get call to add the container overhead.
+> [!TIP]
+> The total allocated size is adjusted by the product get call to add the container overhead, so users only account for the records themselves.
 
 Allocation is then performed through an autocoded helper generated from the FPP model of the form `this->dpGet_<ContainerName>`. In our example, this becomes to:
 

@@ -46,6 +46,9 @@ class Tester {
     //! Buffer too small for data
     void BufferTooSmallForData();
 
+    //! File name format error
+    void FileNameFormatError();
+
     //! File open error
     void FileOpenError();
 

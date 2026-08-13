@@ -24,16 +24,21 @@ ConstStringBase::~ConstStringBase() {}
 
 ConstStringBase::SizeType ConstStringBase::length() const {
     SizeType length = 0;
-    if (this->getCapacity() > 0) {
-        length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    SizeType capacity = this->getCapacity();
+    SizeType maxLength = this->maxLength(capacity);
+    if (capacity > 0) {
+        length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), capacity));
     }
-    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
-              static_cast<FwAssertArgType>(this->maxLength()));
+    FW_ASSERT(length <= maxLength, static_cast<FwAssertArgType>(length), static_cast<FwAssertArgType>(maxLength));
     return length;
 }
 
 ConstStringBase::SizeType ConstStringBase::maxLength() const {
     const SizeType capacity = this->getCapacity();
+    return maxLength(capacity);
+}
+
+ConstStringBase::SizeType ConstStringBase::maxLength(SizeType capacity) const {
     return capacity == 0 ? 0 : capacity - 1;
 }
 

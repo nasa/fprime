@@ -102,7 +102,11 @@ U32 CfdpChunkList::computeGaps(ChunkIdx maxGaps,
     FileSize gap_start;
     Chunk chunk;
 
-    FW_ASSERT(total); /* does it make sense to have a 0 byte file? */
+    /* a zero-length file holds no data, and therefore no gaps */
+    if (total == 0) {
+        return 0;
+    }
+
     FW_ASSERT(start < total, static_cast<FwAssertArgType>(start), static_cast<FwAssertArgType>(total));
 
     /* simple case: there is no chunk data, which means there is a single gap of the entire size */

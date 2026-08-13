@@ -21,6 +21,7 @@ Dispatches command sequences to available command sequencers, allowing the space
 ## Commands
 | Name | Description |
 |RUN|Dispatches a sequence to the first available sequencer|
+|RUN_ARGS|Dispatches a sequence with arguments to the first available sequencer|
 |LOG_STATUS|Logs via Events the state of each connected command sequencer|
 |CANCEL_NAME|Cancels any running sequence matching the given file name.|
 |CANCEL_ALL|Cancels every currently running sequence on all connected sequencers. This is a broadcast and does not exclude the caller: a sequence that issues CANCEL_ALL is itself canceled.|
@@ -29,8 +30,9 @@ Dispatches command sequences to available command sequencers, allowing the space
 | Name | Description |
 |InvalidSequencer|The given sequencer index is invalid for an unspecified reason|
 |NoAvailableSequencers|There are no available sequencers to dispatch a sequence to|
-|UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call|
+|UnknownSequenceFinished|We received a call to seqDoneIn that didn't have a corresponding seqStartIn call. The dispatcher recovers by marking the sequencer available and clearing its tracked sequence|
 |UnexpectedSequenceStarted|We received a call to seqStartIn but we didn't receive a call to seqDoneIn before that|
+|ConflictingSequenceStarted|A sequencer started a new sequence while still marked as running another|
 |LogSequencerStatus|Shows the current state and sequence filename for a particular sequencer. Produced by the LOG_STATUS command|
 |SequenceCanceled|A running sequence was canceled on the given sequencer (by CANCEL_NAME or CANCEL_ALL)|
 |CancelSequenceNotFound|No running sequence matched the CANCEL_NAME file name|

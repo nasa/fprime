@@ -21,9 +21,9 @@ The design of `FileUplink` assumes the following:
 1. File uplink occurs by dividing files into packets
 of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 
-2. File access may optionally be sandboxed to a configured directory via `configure(directory)`.
-When configured, all uplinked file paths are validated against the sandbox directory before writing.
-By default (no call to `configure`, or sandbox set to `/`), all absolute paths are allowed.
+2. File access is sandboxed to a directory configured via `configure(directory)`.
+All uplinked file paths are validated against the sandbox directory before writing.
+Until `configure` is called, all file opens are rejected; configure with `/` to allow all absolute paths.
 
 3. In the nominal case of file uplink
 
@@ -151,7 +151,12 @@ to compute the checksum value for the file.
 
     2. Compare the value computed in the previous step against the
 checksum value in the packet.
-If the two values are different, then issue a *BadChecksum* warning.
+If the two values are different, then issue a *BadChecksum* warning,
+increment the *FilesReceivedFailed* telemetry channel, and do **not**
+issue the *FileReceived* event or the `fileAnnounce` output.
+Otherwise (the checksums match) issue the *FileReceived* event and,
+if connected, the `fileAnnounce` output, and increment the
+*FilesReceived* telemetry channel.
 
     c. Close the file.
 

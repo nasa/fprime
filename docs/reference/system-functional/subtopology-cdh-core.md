@@ -40,7 +40,7 @@ The subtopology supports configuration of:
 
 - Base IDs for all component instances
 - Queue sizes for active and queued components
-- Stack sizes and priorities for active component threads
+- Stack sizes, priorities, and CPU affinities for active component threads (CPU affinity defaults to no pinning)
 - Health ping table entries (warning and fatal timeout thresholds per component)
 
 The telemetry sender and fatal handler instances are specified by the deployment, allowing these to be project-specific while reusing the standard CDH core.

@@ -123,6 +123,11 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
     // open the state file
     Os::File stateFile;
     Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_READ);
+    if (stat == Os::File::DOESNT_EXIST) {
+        // A missing state file is expected on first boot and is not an error
+        this->log_WARNING_LO_NoStateFile(this->m_stateFile);
+        return Fw::CmdResponse::OK;
+    }
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -279,7 +284,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     }
 
     // buffer for writing entries
-    BYTE buffer[sizeof(entry.dir) + sizeof(entry.record)];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
     // reset the buffer for serializing the entry
     entryBuffer.resetSer();
@@ -324,8 +329,13 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset state file data
     this->resetStateFileData();
 
-    // load state data from file
+    // load state data from file; proceeding on a failed load would later
+    // overwrite the state file and destroy the transmit state it records
     Fw::CmdResponse response = this->loadStateFile();
+    if (response != Fw::CmdResponse::OK) {
+        this->resetStateFileData();
+        return response;
+    }
 
     // reset catalog
     this->resetCatalog();
@@ -454,8 +464,9 @@ FwSizeType DpCatalog::determineDirectory(const Fw::String& fullFile) {
         // StringUtils::substring_find will return zero if both paths agree
         // memory safe since both are fixed width strings
         // and loc is before the fixed width
-        if (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
-                                            static_cast<FwSizeType>(loc)) == 0) {
+        if ((dir_string.length() == static_cast<FwSizeType>(loc)) &&
+            (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
+                                             static_cast<FwSizeType>(loc)) == 0)) {
             return dir;
         }
     }
@@ -575,6 +586,12 @@ DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, 
     // check the state file to see if there is transmit state
     this->getFileState(entry);
 
+    // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
+    if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
+        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        return ProcessFileStatus::FAILED;
+    }
+
     // insert entry into sorted catalog. if can't insert, quit
     bool inserted = this->insertEntry(entry);
     if (!inserted) {
@@ -687,15 +704,23 @@ void DpCatalog::sendNextEntry() {
     if (formatStatus != Fw::FormatStatus::SUCCESS) {
         this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName,
                                                  static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        // No send is in flight, so no fileDone will arrive: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
     this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
                                          entry.record.get_priority());
     Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
     if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
-        // warn, but keep going since it may be an issue with this file but others could
-        // make it
         this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
+        // A rejected send produces no fileDone callback: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
     }
 }  // end sendNextEntry()
 
@@ -754,8 +779,11 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         return;
     }
 
-    // Catalog cleared while this file was sent
+    // Catalog cleared while this file was sent; clear xmit state and answer any waited command
     if (!this->m_catalogBuilt) {
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
@@ -854,23 +882,26 @@ void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
                                                U32 cmdSeq,
                                                const Fw::Wait& wait,
                                                bool remainActive) {
-    Fw::CmdResponse resp = this->doCatalogXmit();
-    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
     this->m_remainActive = remainActive;
 
+    // Arm the waited response before starting: an empty catalog completes the
+    // transmit inside doCatalogXmit and must still answer a waited command
+    if (Fw::Wait::WAIT == wait) {
+        this->m_xmitCmdWait = true;
+        this->m_xmitOpCode = opCode;
+        this->m_xmitCmdSeq = cmdSeq;
+    }
+
+    Fw::CmdResponse resp = this->doCatalogXmit();
+    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
+
     if (resp != Fw::CmdResponse::OK) {
+        this->m_xmitCmdWait = false;
+        this->m_xmitOpCode = 0;
+        this->m_xmitCmdSeq = 0;
         this->cmdResponse_out(opCode, cmdSeq, resp);
-    } else {
-        if (Fw::Wait::NO_WAIT == wait) {
-            this->cmdResponse_out(opCode, cmdSeq, resp);
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        } else {
-            this->m_xmitCmdWait = true;
-            this->m_xmitOpCode = opCode;
-            this->m_xmitCmdSeq = cmdSeq;
-        }
+    } else if (Fw::Wait::NO_WAIT == wait) {
+        this->cmdResponse_out(opCode, cmdSeq, resp);
     }
 }
 

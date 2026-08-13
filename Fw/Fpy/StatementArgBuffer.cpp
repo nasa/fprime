@@ -4,18 +4,20 @@
 
 namespace Fw {
 
-StatementArgBuffer::StatementArgBuffer(const U8* args, FwSizeType size) {
+StatementArgBuffer::StatementArgBuffer(const U8* args, FwSizeType size)
+    : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     SerializeStatus stat = LinearBufferBase::setBuff(args, size);
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
-StatementArgBuffer::StatementArgBuffer() {}
+StatementArgBuffer::StatementArgBuffer() : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {}
 
 StatementArgBuffer::~StatementArgBuffer() {}
 
 // m_bufferData contents are copied via setBuff below
 // cppcheck-suppress missingMemberCopy
-StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other) : Fw::LinearBufferBase() {
+StatementArgBuffer::StatementArgBuffer(const StatementArgBuffer& other)
+    : Fw::LinearBufferBase(m_bufferData, sizeof(m_bufferData)) {
     SerializeStatus stat = LinearBufferBase::setBuff(other.m_bufferData, other.getSize());
     FW_ASSERT(FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
@@ -30,20 +32,8 @@ StatementArgBuffer& StatementArgBuffer::operator=(const StatementArgBuffer& othe
     return *this;
 }
 
-Serializable::SizeType StatementArgBuffer::getCapacity() const {
-    return sizeof(this->m_bufferData);
-}
-
 Serializable::SizeType StatementArgBuffer::getBuffCapacity() const {
     return this->getCapacity();
-}
-
-const U8* StatementArgBuffer::getBuffAddr() const {
-    return this->m_bufferData;
-}
-
-U8* StatementArgBuffer::getBuffAddr() {
-    return this->m_bufferData;
 }
 
 bool StatementArgBuffer::operator==(const StatementArgBuffer& other) const {

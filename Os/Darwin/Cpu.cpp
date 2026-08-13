@@ -32,7 +32,7 @@ kern_return_t cpu_data_helper(processor_cpu_load_info_t& cpu_load_info,
                               mach_msg_type_number_t& processor_msg_count) {
     static_assert(std::numeric_limits<FwSizeType>::max() >= std::numeric_limits<natural_t>::max(),
                   "FwSizeType cannot hold natural_t values");
-    natural_t cpu_count_natural;
+    natural_t cpu_count_natural = 0;
     kern_return_t stat =
         host_processor_info(mach_host_self(), PROCESSOR_CPU_LOAD_INFO, &cpu_count_natural,
                             reinterpret_cast<processor_info_array_t*>(&cpu_load_info), &processor_msg_count);
