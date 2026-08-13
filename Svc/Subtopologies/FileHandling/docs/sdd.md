@@ -28,6 +28,7 @@ The **FileHandling subtopology** packages the core file-transfer services common
 ### 2.2 Configuration Hooks inside the Subtopology
 
 * Uses **instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities) defined in `FileHandlingConfig` for these static instances (see §4).
+* Configures `fileUplink` and `fileDownlink` with `/` to preserve the subtopology's existing unrestricted file-access behavior. Deployments should replace this with a narrower directory when possible.
 
 ### 2.3 Required Inputs for Operation
 
@@ -79,6 +80,10 @@ topology Flight {
 * **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 > These knobs tailor runtime footprint and scheduling without modifying the subtopology wiring.
+
+### 4.2 Sandboxed file migration
+
+`Os::SandboxedFile` is unconfigured by default and rejects `open()` until `configure()` succeeds. Deployments that instantiate `Svc::FileUplink` or `Svc::FileDownlink` directly must call `configure(<allowed directory>)` during topology setup. To retain the previous unrestricted behavior explicitly, call `configure("/")`.
 
 ---
 

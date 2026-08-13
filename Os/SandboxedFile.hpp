@@ -18,8 +18,8 @@ namespace Os {
 //! path-traversal attacks (e.g., `../../etc/shadow`) from components that accept externally
 //! supplied file paths (such as FileUplink or CFDP receivers).
 //!
-//! By default, the sandbox is set to `/` (root), which allows any absolute path.
-//! Call `configure()` to restrict to a specific directory.
+//! SandboxedFile is unconfigured by default and rejects all calls to `open()` until
+//! `configure()` supplies an allowed directory.
 //!
 //! Threat model assumption: untrusted actors cannot create symlinks inside the sandbox.
 //! Path validation is purely textual (no `realpath()` calls) — it does not follow symlinks.
@@ -43,9 +43,9 @@ class SandboxedFile {
     SandboxedFile(const SandboxedFile&) = delete;             //!< Non-copyable (owns file handle)
     SandboxedFile& operator=(const SandboxedFile&) = delete;  //!< Non-copy-assignable
 
-    //! \brief Construct a SandboxedFile with default sandbox of `/`
+    //! \brief Construct an unconfigured SandboxedFile
     //!
-    //! The default allows any absolute path. Call `configure()` to restrict.
+    //! Calls to `open()` return `OUTSIDE_SANDBOX` until `configure()` succeeds.
     //!
     SandboxedFile();
 
@@ -78,7 +78,8 @@ class SandboxedFile {
     //! \brief Open a file, validating the path against the sandbox directory
     //!
     //! Resolves the path against CWD and checks containment before opening.
-    //! Returns `OUTSIDE_SANDBOX` if the resolved path falls outside the sandbox.
+    //! Returns `OUTSIDE_SANDBOX` if the file is unconfigured or if the resolved path
+    //! falls outside the sandbox.
     //!
     //! \param path: c-string path to open
     //! \param mode: file operation mode
