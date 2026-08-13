@@ -48,7 +48,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_sequencesStarted(0),
       m_exitReason(WasmSequencer_ExitReason::UNKNOWN),
       m_exitCode(0),
-      m_failedHostFunction(WasmSequencer_HostFunction::NONE),
+      m_lastHostFunction(WasmSequencer_HostFunction::NONE),
       m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
       m_tlmSequenceName("") {
     getGlobalAllocatorLock()->lock();

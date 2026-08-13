@@ -400,8 +400,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_TrapReason& value            //!< The value
         ) override;
 
-    //! Implementation for action updateHostFailureReason of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_updateHostFailureReason(
+    //! Implementation for action setLastHostFunction of state machine Svc_WasmSequencer_EngineStateMachine
+    void Svc_WasmSequencer_EngineStateMachine_action_setLastHostFunction(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
@@ -681,8 +681,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Currently stored exit code for non-INTERPRETER exits
     I32 m_exitCode;
 
-    //! Host function that caused the failure
-    WasmSequencer_HostFunction m_failedHostFunction;
+    //! Last run host function that could have caused the error
+    WasmSequencer_HostFunction m_lastHostFunction;
 
     //! Reason last sequence trapped
     WasmSequencer_TrapReason m_tlmLastTrapReason;

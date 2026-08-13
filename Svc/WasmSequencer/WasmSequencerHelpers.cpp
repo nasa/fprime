@@ -148,9 +148,12 @@ spacewasm_status_t WasmSequencer ::validateModuleMain(WasmSequencer_ModuleIdx mo
     auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(moduleIdx), "main", &mainIndex);
 
     if (status == SPACEWASM_OK) {
-        // We only support the [] -> [] and [] -> i32 signatures
+        // We accept both the [] -> [] and [] -> i32 main signatures. Checking
+        // against "" first yields PARAM_LEN_MISMATCH (not BAD_SIGNATURE) for an
+        // i32-returning main -- BAD_SIGNATURE only flags a malformed signature
+        // *string* -- so fall back on any mismatch, not just BAD_SIGNATURE.
         status = spacewasm_check_func_signature(this->m_wasm, static_cast<U32>(moduleIdx), mainIndex, "", "");
-        if (status == SPACEWASM_ERR_BAD_SIGNATURE) {
+        if (status != SPACEWASM_OK) {
             status = spacewasm_check_func_signature(this->m_wasm, static_cast<U32>(moduleIdx), mainIndex, "", "i");
         }
     }

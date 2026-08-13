@@ -82,7 +82,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
         default:
             this->m_tlmSequencesFailed++;
             this->log_WARNING_HI_SequenceFailed(this->m_invokedModule, this->m_exitReason, this->m_exitCode,
-                                                 this->m_tlmLastTrapReason, this->m_failedHostFunction);
+                                                this->m_tlmLastTrapReason, this->m_lastHostFunction);
             break;
     }
 }
@@ -183,6 +183,9 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_Status& value) {
+    // A failed load counts as a failed sequence: the RUN/LOAD attempt did not
+    // reach a runnable module.
+    this->m_tlmSequencesFailed++;
     this->log_WARNING_HI_ModuleLoadFailed(value);
 }
 

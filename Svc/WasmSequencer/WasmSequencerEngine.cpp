@@ -86,7 +86,7 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearExitStatus
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
     this->m_exitReason = WasmSequencer_ExitReason::UNKNOWN;
-    this->m_failedHostFunction = WasmSequencer_HostFunction::NONE;
+    this->m_lastHostFunction = WasmSequencer_HostFunction::NONE;
     this->m_exitCode = 0;
     this->m_tlmLastTrapReason = WasmSequencer_TrapReason::NONE;
 }
@@ -149,12 +149,10 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setTrapReason(
     this->m_tlmLastTrapReason = value;
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_updateHostFailureReason(
+void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setLastHostFunction(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    if (this->m_pendingHostFunction.isPending()) {
-        this->m_failedHostFunction = this->m_pendingHostFunction.kind;
-    }
+    this->m_lastHostFunction = this->m_pendingHostFunction.kind;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_finish(

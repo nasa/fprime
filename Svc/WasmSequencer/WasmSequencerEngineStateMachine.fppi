@@ -44,7 +44,7 @@ enum AllocError: U8 {
   ALLOCATION_FAILED
 }
 
-@ diagram-layout cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=NETWORK_SIMPLEX
+@ diagram-layout engine=elk direction=LR cycleBreaking=GREEDY_MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
 state machine EngineStateMachine {
   initial enter IDLE
 
@@ -102,7 +102,7 @@ state machine EngineStateMachine {
 
   action setExitCode: I32
   action setTrapReason: TrapReason
-  action updateHostFailureReason
+  action setLastHostFunction
 
   @ Send a signal back to the controller state machine that we have finished executing
   @ The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
@@ -222,7 +222,10 @@ state machine EngineStateMachine {
 
     @ a host function paused the interpreter and is awaiting a response
     state AWAITING_RESPONSE {
-      initial do { dispatchPendingHostFunction } enter PICK_AWAIT
+      initial do {
+        setLastHostFunction
+        dispatchPendingHostFunction
+      } enter PICK_AWAIT
       exit do { clearPendingHostFunction }
 
       # Check if we should simple wait or "sleep"
@@ -239,20 +242,13 @@ state machine EngineStateMachine {
 
       on hostResume do { resume } enter PAUSE_CHECK
       on hostResumeI32 do { resumeI32 } enter PAUSE_CHECK
-      on hostResponseFailure do {
-        updateHostFailureReason
-        setExitReason_HOST_FAILURE
-      } enter IDLE
+      on hostResponseFailure do { setExitReason_HOST_FAILURE } enter IDLE
 
       on hostResponseTimeIncomparable do {
-        updateHostFailureReason
         setExitReason_TIMER_INCOMPARABLE
       } enter IDLE
 
-      on hostResponseTimeout do {
-        updateHostFailureReason
-        setExitReason_REPLY_TIMEOUT
-      } enter IDLE
+      on hostResponseTimeout do { setExitReason_REPLY_TIMEOUT } enter IDLE
 
       on checkTimers do { checkTimeout }
     }

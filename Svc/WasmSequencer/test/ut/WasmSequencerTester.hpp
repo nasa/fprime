@@ -33,6 +33,7 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     static const FwOpcodeType OPCODE_LOAD_NAME = WasmSequencer::OPCODE_LOAD_NAME;
     static const FwOpcodeType OPCODE_INVOKE = WasmSequencer::OPCODE_INVOKE;
     static const FwOpcodeType OPCODE_CONTINUE = WasmSequencer::OPCODE_CONTINUE;
+    static const FwOpcodeType OPCODE_CANCEL = WasmSequencer::OPCODE_CANCEL;
 
     //! Convenience aliases for the two cooperating state-machine enums. The
     //! component is driven by a `controller` machine (load / validate /
