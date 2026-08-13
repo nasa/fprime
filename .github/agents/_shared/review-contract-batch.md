@@ -199,11 +199,19 @@ Rules:
 
 ## 8. Repo-wide roll-up
 
-When every unit is `completed` (or terminally `failed`), the roll-up
-pass writes `<repo-short-name>/summary.md`:
+The roll-up pass writes `<repo-short-name>/summary.md`. It is
+regenerated **incrementally after every completed unit** (committed
+alongside that unit's ledger update), so a usable whole-repo table
+exists at any point mid-run; the final regeneration happens when
+every unit is `completed` (or terminally `failed`). Because the
+roll-up is a mechanical, reproducible function of the unit artifacts,
+regenerating it never affects run state — the ledger alone gates
+forward progress. Contents:
 
 - Manifest coverage statement: every tracked file is in exactly one
-  unit, and every unit is accounted for (completed / failed table).
+  unit, and every unit is accounted for (completed / failed /
+  pending table; mid-run regenerations list not-yet-reviewed units
+  as `pending`).
 - Findings matrix: unit × reviewer × tag counts, sorted by unit id.
 - The repo-wide consolidated must-fix list, sorted per §3b.
 - Repo verdict: `Go` iff all units `Go`. Any failed unit or No-Go

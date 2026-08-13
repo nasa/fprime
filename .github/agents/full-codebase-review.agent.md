@@ -66,7 +66,9 @@ roll-ups of their artifacts.
       reviewer.
    c. When all nine reviewers completed, write
       `unit-summary.md` per batch contract §6, mark the unit
-      `completed` in the ledger, commit artifacts + ledger together.
+      `completed` in the ledger, regenerate the incremental
+      repo-wide `summary.md` per batch contract §8, and commit
+      artifacts + ledger + summary together.
    d. If any reviewer FAILED, do not retry the reviewer inline:
       mark the unit `failed` with the reason, increment `attempts`,
       commit, and continue with the next unit. Failed units get a
@@ -81,8 +83,8 @@ roll-ups of their artifacts.
       the ledger never loses state.
 5. **Sweep until stable.** Repeat step 4 over `failed` units until
    every unit is `completed` or has exhausted its 3 attempts.
-6. **Roll-up.** Write `<repo-short-name>/summary.md` per batch
-   contract §8 and commit.
+6. **Roll-up.** Regenerate the final `<repo-short-name>/summary.md`
+   per batch contract §8 and commit.
 7. **Report** one line to the human operator:
    `Full review: <C>/<T> units completed, <F> failed (attempts exhausted). Repo verdict: <Go|No-Go>.`
    plus a link to `summary.md` in the results repo. This is the only
