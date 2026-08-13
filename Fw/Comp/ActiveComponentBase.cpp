@@ -7,12 +7,7 @@ namespace Fw {
 
 class ActiveComponentExitSerializableBuffer : public Fw::LinearBufferBase {
   public:
-    DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    ActiveComponentExitSerializableBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     U8 m_buff[sizeof(ActiveComponentBase::ACTIVE_COMPONENT_EXIT)];

@@ -32,6 +32,8 @@ jobs:
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
         dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
@@ -45,14 +47,17 @@ jobs:
     - uses: ./.github/actions/setup
     - name: Build Framework
       run: |
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
-        fprime-util build --all -j4
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util build --all -j4 2>&1 | output-cleaner
+      shell: bash
 
   Ref:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
         dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
@@ -67,14 +72,17 @@ jobs:
     - name: Build Ref
       run: |
         cd TestDeploymentsProject
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
-        fprime-util build -j4
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util build -j4 2>&1 | output-cleaner
+      shell: bash
 
   UTs:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
         dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
@@ -95,7 +103,9 @@ jobs:
     - name: UT Build and Run
       run: |
         su test-user -c "
-          fprime-util generate --ut &&
-          fprime-util build --all --ut -j4 &&
+          set -o pipefail &&
+          fprime-util generate --ut 2>&1 | output-cleaner &&
+          fprime-util build --all --ut -j4 2>&1 | output-cleaner &&
           fprime-util check --all -j4 --pass-through --output-on-failure
         "
+      shell: bash

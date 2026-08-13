@@ -58,12 +58,6 @@ class HashBuffer : public Fw::LinearBufferBase {
     //! Get the total buffer length of a hash buffer
     //!
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const override;  // !< returns capacity, not current size, of buffer
-
-    //! Get a pointer to the buffer within the hash buffer
-    //!
-    U8* getBuffAddr() override;
-    const U8* getBuffAddr() const override;
 
     //! Convert bytes 0 through 3 of the hash data to a big-Endian U32 value
     U32 asBigEndianU32() const;

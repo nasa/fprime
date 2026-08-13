@@ -32,12 +32,12 @@ class RedBlackTreeSetOrMapImplTester {
 
     using Nodes = typename Impl::Nodes;
 
-    RedBlackTreeSetOrMapImplTester<KE, VN>(const Impl& impl) : m_impl(impl) {
+    RedBlackTreeSetOrMapImplTester(const Impl& impl) : m_impl(impl) {
         const auto capacity = this->m_impl.getCapacity();
         this->blackHeights.setStorage(new FwSizeType[capacity], capacity);
     }
 
-    ~RedBlackTreeSetOrMapImplTester<KE, VN>() {
+    ~RedBlackTreeSetOrMapImplTester() {
         auto* const elements = this->blackHeights.getElements();
         if (elements != nullptr) {
             delete[] elements;

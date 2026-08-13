@@ -349,11 +349,18 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
 }
 
 Os::File::Status FileDownlink ::sendDataPacket(U32& byteOffset) {
-    FW_ASSERT(byteOffset < this->m_endOffset);
     const U32 maxDataSize =
         FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType);
-    const U32 dataSize =
-        (byteOffset + maxDataSize > this->m_endOffset) ? (this->m_endOffset - byteOffset) : maxDataSize;
+    // The caller is required to maintain byteOffset < m_endOffset.
+    if (byteOffset >= this->m_endOffset) {
+        return Os::File::INVALID_ARGUMENT;
+    }
+    // Subtraction cannot underflow given the check above; comparing the remainder against
+    // maxDataSize (rather than byteOffset + maxDataSize against m_endOffset) also avoids an
+    // addition that could wrap when byteOffset is near the top of the U32 range. dataSize is
+    // therefore always <= maxDataSize, i.e. never larger than the buffer below.
+    const U32 remaining = this->m_endOffset - byteOffset;
+    const U32 dataSize = (remaining < maxDataSize) ? remaining : maxDataSize;
     U8 buffer[maxDataSize];
     // This will be last data packet sent
     if (dataSize + byteOffset == this->m_endOffset) {

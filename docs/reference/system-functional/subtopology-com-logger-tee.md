@@ -21,7 +21,7 @@ When inserted into the communication path, the splitter receives outgoing data, 
 
 ### Configuration
 
-- Base IDs, queue sizes, stack sizes, and priorities are configurable via ComLoggerTeeConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities are configurable via ComLoggerTeeConfig.
 - The communication logger's file path prefix and maximum file size are configured at setup time.
 
 ### Required Inputs

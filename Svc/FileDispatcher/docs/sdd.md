@@ -68,6 +68,7 @@ No parameters
 |---|---|
 |`FileDispatchState`|Sent when a dispatch type is enabled or disabled|
 |`FileDispatched`|Sent when a dispatch type is matched and dispatched|
+|`FileDispatchPortNotConnected`|Sent (throttled) when a file matches a dispatch entry whose output port is not connected|
 
 ## Telemetry
 

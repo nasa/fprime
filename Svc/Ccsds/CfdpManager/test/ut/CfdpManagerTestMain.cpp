@@ -151,6 +151,16 @@ TEST(Command, PollDirectoryBusy) {
     tester.testPollDirectoryBusy();
 }
 
+TEST(Command, PollDirectoryInvalidInterval) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollDirectoryInvalidInterval();
+}
+
+TEST(Command, PollDirectoryTimerExpiry) {
+    Svc::Ccsds::Cfdp::CfdpManagerTester tester;
+    tester.testPollDirectoryTimerExpiry();
+}
+
 TEST(Command, SetChannelFlowNominal) {
     Svc::Ccsds::Cfdp::CfdpManagerTester tester;
     tester.testSetChannelFlowNominal();

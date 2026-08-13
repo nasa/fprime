@@ -213,6 +213,23 @@ The transmission throttling mechanism works in conjunction with buffer allocatio
 
 Unlike transmit operations that are driven by the periodic `run1Hz` scheduler port, receive operations in CfdpManager are driven by the `dataIn` async input port. Incoming CFDP PDUs arrive via this port and are processed immediately by the component's thread when the port handler is invoked, without per-cycle limits. Receive throttling was implemented in NASA's CF (CFDP) application because CF processes received PDUs during scheduled execution cycles. In contrast, CfdpManager processes incoming PDUs asynchronously as they arrive, so there is no architectural reason to throttle incoming PDUs.
 
+### Directory Playback and Polling
+
+CfdpManager supports two related mechanisms for transferring the contents of a directory:
+
+- **Directory playback** (`PlaybackDirectory` command): a one-shot operation that sends every file currently in the source directory as individual CFDP transactions and completes when the directory has been fully processed.
+- **Directory polling** (`PollDirectory` command): a recurring operation that re-checks the source directory on a fixed interval and automatically sends any new files found. Each channel supports up to `MaxPollingDirPerChan` independent polling slots, identified by a poll index. The file is deleted from the directory after a successful transfer.
+
+**Poll cycle behavior:**
+
+Each polling slot owns an interval timer that is evaluated once per `run1Hz` cycle:
+
+1. A poll slot is armed by the `PollDirectory` command with a non-zero interval (in seconds). A zero interval is rejected at command validation with an `InvalidPollInterval` event.
+2. The interval timer only counts down while the slot's playback is **not** busy. While a directory playback triggered by a previous poll is still in progress (transactions pending or active), the timer is held so polls do not stack up.
+3. When the timer expires, the slot initiates a playback of the source directory and re-arms the timer for the next interval. Re-arming happens regardless of whether the playback started successfully — `playbackDirInitiate` emits its own event on failure, and re-arming ensures the poll retries on the next interval rather than stalling.
+
+Polling continues until stopped with the `StopPollDirectory` command. Stopping is only honored for a slot that is currently enabled; stopping an inactive slot produces a `PollDirNotActive` event.
+
 ## Sequence Diagrams
 
 The following sequence diagrams illustrate the external protocol exchanges between spacecraft and ground systems during CFDP transactions. These diagrams focus on the PDU-level interactions and do not depict the internal state machine transitions or detailed transaction processing logic within the CfdpManager component.
@@ -457,11 +474,12 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 | UnsupportedSendFileArguments | warning low | Invalid send file port request with offset and length |
 | InvalidChannel | warning low | Invalid channel ID, maximum channel ID is specified |
 | PlaybackInitiated | activity low | Successfully initiated directory playback for source directory |
-| PollDirInitiated | activity low | Successfully initiated directory poll for source directory |
+| PollDirInitiated | activity low | Successfully initiated directory poll for source directory (identified by channel poll index) |
 | PollDirStopped | activity low | Successfully stopped directory poll for channel and poll index |
 | PollDirBusy | warning low | Cannot start directory poll - channel poll already in use |
 | PollDirNotActive | warning low | Cannot stop directory poll - channel poll is not active |
 | InvalidChannelPoll | warning low | Invalid poll ID, maximum poll ID is specified |
+| InvalidPollInterval | warning low | Invalid poll interval requested (must be non-zero) |
 | SetFlowState | activity low | Set channel to specified flow state |
 | ResetCounters | activity high | Reset telemetry counters for channel (0xFF indicates all channels) |
 
@@ -564,7 +582,7 @@ The CFDP Manager provides comprehensive event reporting covering all aspects of 
 |---|---|
 | SendFile | Initiates a CFDP file transaction to send a file to a remote entity. Specifies channel, destination entity ID, CFDP class (1 or 2), file retention policy, priority, source filename, and destination filename. |
 | PlaybackDirectory | Starts a directory playback operation to send all files from a source directory to a destination directory on a remote entity. Files are sent sequentially as individual CFDP transactions. Completes when all files in the directory have been processed. |
-| PollDirectory | Establishes a recurring directory poll that periodically checks a source directory for new files and automatically sends them to a destination directory on a remote entity. Poll interval is configurable in seconds. |
+| PollDirectory | Establishes a recurring directory poll that periodically checks a source directory for new files and automatically sends them to a destination directory on a remote entity. Poll interval is configurable in seconds and must be non-zero (a zero interval is rejected with a `VALIDATION_ERROR` response and an `InvalidPollInterval` event). |
 | StopPollDirectory | Stops an active directory poll operation identified by channel ID and poll ID. |
 | SetChannelFlow | Sets the flow control state for a specific CFDP channel. Can freeze (pause) or resume PDU transmission on the channel. |
 | SuspendResumeTransaction | Suspend or resume a transaction. When suspended, the transaction remains in memory but stops making progress (no PDUs sent or processed, no timers tick). Useful during critical spacecraft operations. Takes an action parameter (SUSPEND or RESUME). Transactions are identified by channel ID, transaction sequence number, and entity ID. |

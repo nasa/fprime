@@ -34,6 +34,11 @@ TEST(Nominal, TestCommands) {
     tester.test_commands();
 }
 
+TEST(Nominal, TestCommandsNonZeroPort) {
+    Svc::GenericHubTester tester;
+    tester.test_commands_nonzero_port();
+}
+
 TEST(Invalid, TestDeserializationGuards) {
     Svc::GenericHubTester tester;
     tester.test_invalid_deserialization_paths();

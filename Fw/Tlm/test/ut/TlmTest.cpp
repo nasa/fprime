@@ -34,6 +34,26 @@ TEST(FwTlmTest, TlmPacketSerializeSingle) {
     ASSERT_EQ(valOut, 12u);
 }
 
+TEST(FwTlmTest, TlmPacketDeserializeOversizeRejected) {
+    // A payload larger than the telemetry buffer capacity must be rejected, not copied
+    Fw::TlmPacket pktIn;
+    Fw::TlmBuffer buffIn;
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffIn.serializeFrom(static_cast<U32>(12)));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pktIn.resetPktSer());
+    Fw::Time timeIn(TimeBase::TB_WORKSTATION_TIME, 10, 11);
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pktIn.addValue(10, timeIn, buffIn));
+
+    U8 data[FW_COM_BUFFER_MAX_SIZE + 128];
+    Fw::ExternalSerializeBuffer bigBuff(data, sizeof(data));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, bigBuff.serializeFrom(pktIn));
+    // Append filler so the remaining payload exceeds the TlmBuffer capacity
+    U8 filler[FW_TLM_BUFFER_MAX_SIZE] = {};
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, bigBuff.serializeFrom(filler, sizeof(filler), Fw::Serialization::OMIT_LENGTH));
+
+    Fw::TlmPacket pktOut;
+    ASSERT_EQ(Fw::FW_DESERIALIZE_SIZE_MISMATCH, bigBuff.deserializeTo(pktOut));
+}
+
 TEST(FwTlmTest, TlmPacketSerializeFill) {
     // compute a single entry size assuming for the test that the value of the telemetry channel
     // is a U32

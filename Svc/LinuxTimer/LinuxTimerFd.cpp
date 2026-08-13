@@ -66,7 +66,9 @@ void LinuxTimer::startTimer(const Fw::TimeInterval& interval) {
             return;
         }
         Os::RawTime::Status rawTimeStatus = this->m_rawTime.now();
-        if (rawTimeStatus != Os::RawTime::Status::OP_OK) {
+        if ((rawTimeStatus != Os::RawTime::Status::OP_OK) && !this->m_rawTimeErrorLogged) {
+            // Latch the report so a persistent failure does not flood the console at the timer rate
+            this->m_rawTimeErrorLogged = true;
             Fw::Logger::log("timer raw time error: %d\n", static_cast<I32>(rawTimeStatus));
         }
         this->CycleOut_out(0, this->m_rawTime);

@@ -54,6 +54,7 @@ class FileUplink final : public FileUplinkComponentBase {
         Os::File::Status open(const Fw::FilePacket::StartPacket& startPacket);
 
         //! Write bytes into the OS file and update the checksum
+        //! \return OP_OK on success, NO_SPACE on a short write, or the OS status on failure
         Os::File::Status write(const U8* const data, const U32 byteOffset, const U32 length);
 
         //! Get the checksum

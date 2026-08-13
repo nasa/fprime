@@ -1161,7 +1161,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! the current size, which indicates how much data is currently in the buffer.
     //!
     //! \return The capacity of the buffer in bytes
-    Serializable::SizeType getCapacity() const override = 0;
+    Serializable::SizeType getCapacity() const override { return this->m_capacity; }
 
     //! \brief Get current buffer size
     //!
@@ -1198,7 +1198,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! buffer contents to be modified.
     //!
     //! \return Pointer to the buffer's data area
-    virtual U8* getBuffAddr() = 0;
+    U8* getBuffAddr() { return this->m_buffAddr; }
 
     //! \brief Get buffer address for data reading (const version)
     //!
@@ -1207,7 +1207,7 @@ class LinearBufferBase : public SerialBufferBase {
     //! of the buffer contents.
     //!
     //! \return Const pointer to the buffer's data area
-    virtual const U8* getBuffAddr() const = 0;
+    const U8* getBuffAddr() const { return this->m_buffAddr; }
 
     //! \brief Get address of remaining non-deserialized data
     //!
@@ -1352,11 +1352,19 @@ class LinearBufferBase : public SerialBufferBase {
 #endif
 
   protected:
-    //! \brief Default constructor
+    //! There is no default constructor: every derived class must supply its
+    //! storage during construction
+    LinearBufferBase() = delete;
+
+    //! \brief Storage constructor
     //!
-    //! Initializes a LinearBufferBase instance with default values.
-    //! Sets the serialization and deserialization locations to zero.
-    LinearBufferBase();
+    //! Initializes a LinearBufferBase instance with the buffer storage that the
+    //! derived class provides. Using the constructor makes it a
+    //! compile-time error for a derived class to forget to setup its storage.
+    //!
+    //! \param buffAddr Pointer to the buffer address (may be nullptr)
+    //! \param capacity Capacity of the buffer storage in bytes
+    LinearBufferBase(U8* buffAddr, Serializable::SizeType capacity);
 
     //! \brief Copy constructor (protected)
     //!
@@ -1376,10 +1384,23 @@ class LinearBufferBase : public SerialBufferBase {
     //! \param src Reference to the source LinearBufferBase to copy data from
     void copyFrom(const LinearBufferBase& src);
 
-    Serializable::SizeType m_serLoc;    //!< current offset in buffer of serialized data
-    Serializable::SizeType m_deserLoc;  //!< current offset for deserialization
+    // Protected accessors for serialization/deserialization location
+    // These are needed by ExternalSerializeBufferWithMemberCopy
+    Serializable::SizeType getSerLoc() const { return this->m_serLoc; }
+    Serializable::SizeType getDeserLoc() const { return this->m_deserLoc; }
+    void setSerLoc(Serializable::SizeType loc) { this->m_serLoc = loc; }
+    void setDeserLoc(Serializable::SizeType loc) { this->m_deserLoc = loc; }
+
+    // Protected setters for buffer address and capacity
+    // These are needed by ExternalSerializeBuffer::setExtBuffer() and clear()
+    void setBuffAddrInternal(U8* addr) { this->m_buffAddr = addr; }
+    void setCapacityInternal(Serializable::SizeType capacity) { this->m_capacity = capacity; }
 
   private:
+    U8* m_buffAddr;                     //!< pointer to buffer storage
+    Serializable::SizeType m_capacity;  //!< capacity of buffer storage
+    Serializable::SizeType m_serLoc;    //!< current offset in buffer of serialized data
+    Serializable::SizeType m_deserLoc;  //!< current offset for deserialization
 };
 
 // Helper classes for building buffers with external storage
@@ -1444,44 +1465,12 @@ class ExternalSerializeBuffer : public LinearBufferBase {
 
     DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
 
-    //! \brief Get buffer capacity
-    //!
-    //! This method returns the total capacity of the buffer, which is the maximum
-    //! amount of data that can be stored in the buffer. This is not the same as
-    //! the current size, which indicates how much data is currently in the buffer.
-    //!
-    //! \return The capacity of the buffer in bytes
-    Serializable::SizeType getCapacity() const;
-
-    //! \brief Get buffer address for data filling (non-const version)
-    //!
-    //! This method returns a pointer to the buffer's data area where data can
-    //! be written. This is the non-const version of the method, allowing the
-    //! buffer contents to be modified.
-    //!
-    //! \return Pointer to the buffer's data area
-    U8* getBuffAddr();
-
-    //! \brief Get buffer address for data reading (const version)
-    //!
-    //! This method returns a const pointer to the buffer's data area where data
-    //! can be read. This is the const version of the method, preventing modification
-    //! of the buffer contents.
-    //!
-    //! \return Const pointer to the buffer's data area
-    const U8* getBuffAddr() const;
-
     //! \brief Deleted copy assignment operator
     //!
     //! The copy assignment operator is deleted to prevent copying instances of
     //! ExternalSerializeBuffer, as this could lead to issues with buffer
     //! management.
     ExternalSerializeBuffer& operator=(const LinearBufferBase& src) = delete;
-
-  protected:
-    // data members
-    U8* m_buff;                         //!< pointer to external buffer
-    Serializable::SizeType m_buffSize;  //!< size of external buffer
 };
 
 //! \brief External serialize buffer with data copy semantics
@@ -1583,9 +1572,9 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
     //!
     //! \param src Reference to the source instance to copy from
     ExternalSerializeBufferWithMemberCopy(const ExternalSerializeBufferWithMemberCopy& src)
-        : ExternalSerializeBuffer(src.m_buff, src.m_buffSize) {
-        this->m_serLoc = src.m_serLoc;
-        this->m_deserLoc = src.m_deserLoc;
+        : ExternalSerializeBuffer(const_cast<U8*>(src.getBuffAddr()), src.getCapacity()) {
+        this->setSerLoc(src.getSerLoc());
+        this->setDeserLoc(src.getDeserLoc());
     }
 
     //! \brief Copy assignment operator with member copying
@@ -1599,11 +1588,9 @@ class ExternalSerializeBufferWithMemberCopy final : public ExternalSerializeBuff
     ExternalSerializeBufferWithMemberCopy& operator=(const ExternalSerializeBufferWithMemberCopy& src) {
         // Ward against self-assignment
         if (this != &src) {
-            this->clear();
-            this->m_buff = src.m_buff;
-            this->m_buffSize = src.m_buffSize;
-            this->m_serLoc = src.m_serLoc;
-            this->m_deserLoc = src.m_deserLoc;
+            this->setExtBuffer(const_cast<U8*>(src.getBuffAddr()), src.getCapacity());
+            this->setSerLoc(src.getSerLoc());
+            this->setDeserLoc(src.getDeserLoc());
         }
         return *this;
     }

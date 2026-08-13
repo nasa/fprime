@@ -41,7 +41,9 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
     }
 
     // check ID filters
+    this->m_idFilterLock.lock();
     Fw::Success findStatus = m_filteredIDs.find(id);
+    this->m_idFilterLock.unLock();
     if ((findStatus == Fw::Success::SUCCESS) && (severity != Fw::LogSeverity::FATAL)) {
         return;
     }
@@ -109,7 +111,10 @@ void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcod
                                             const Enabled& idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
-        if (m_filteredIDs.insert(ID) == Fw::Success::SUCCESS) {
+        this->m_idFilterLock.lock();
+        const Fw::Success insertStatus = m_filteredIDs.insert(ID);
+        this->m_idFilterLock.unLock();
+        if (insertStatus == Fw::Success::SUCCESS) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
         } else {
@@ -118,7 +123,10 @@ void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcod
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     } else {  // remove ID
-        if (m_filteredIDs.remove(ID) == Fw::Success::SUCCESS) {
+        this->m_idFilterLock.lock();
+        const Fw::Success removeStatus = m_filteredIDs.remove(ID);
+        this->m_idFilterLock.unLock();
+        if (removeStatus == Fw::Success::SUCCESS) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
         } else {
@@ -141,9 +149,19 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
         this->log_ACTIVITY_LO_SEVERITY_FILTER_STATE(filterState, this->m_severityFilter.isEnabled(logSeverity));
     }
 
-    // iterate through ID filter
+    // Snapshot the ID filter under the lock; log after release since LogRecv is
+    // a sync input that may re-enter this component and take the same lock
+    FwEventIdType filteredIDs[TELEM_ID_FILTER_SIZE];
+    FwSizeType numFilteredIDs = 0;
+    this->m_idFilterLock.lock();
     for (FwEventIdType ID : m_filteredIDs) {
-        this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
+        FW_ASSERT(numFilteredIDs < TELEM_ID_FILTER_SIZE, static_cast<FwAssertArgType>(numFilteredIDs));
+        filteredIDs[numFilteredIDs] = ID;
+        numFilteredIDs++;
+    }
+    this->m_idFilterLock.unLock();
+    for (FwSizeType i = 0; i < numFilteredIDs; i++) {
+        this->log_ACTIVITY_HI_ID_FILTER_ENABLED(filteredIDs[i]);
     }
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

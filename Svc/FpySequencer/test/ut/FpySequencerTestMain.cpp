@@ -2587,6 +2587,55 @@ TEST_F(FpySequencerTester, cmd_RUN_ARGS_oversized) {
     removeFile("test.bin");
 }
 
+TEST_F(FpySequencerTester, cmd_RUN_ARGS_residual_stack) {
+    allocMem();
+    addArgumentSpec("arg1", "U32", sizeof(U32));
+    add_DISCARD(sizeof(U32));
+    writeToFile("test.bin");
+
+    Svc::SeqArgs args{0, 0};
+    Fw::ExternalSerializeBuffer argBuf(args.get_buffer(), SequenceArgumentsMaxSize);
+    U32 arg1 = 10;
+    ASSERT_EQ(argBuf.serializeFrom(arg1), Fw::FW_SERIALIZE_OK);
+    args.set_size(argBuf.getSize());
+
+    // leave a residual stack from a previous run; validation must check the
+    // args against the full stack limit, not the leftover runtime state
+    tester_get_m_runtime_ptr()->stack.size = Fpy::MAX_STACK_SIZE;
+
+    sendCmd_RUN_ARGS(0, 0, Fw::String("test.bin"), BlockState::BLOCK, args);
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::RUNNING_AWAITING_STATEMENT_RESPONSE);
+
+    // runtime was reset on RUNNING entry, then args were pushed
+    ASSERT_EQ(tester_get_m_runtime_ptr()->stack.size, static_cast<Fpy::StackSizeType>(sizeof(U32)));
+
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_RUN_ARGS(), 0, Fw::CmdResponse::OK);
+    ASSERT_from_seqDoneOut_SIZE(1);
+    ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_ArgTotalSizeExceedsStackLimit_SIZE(0);
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, isRunningState) {
+    // must evaluate the state argument, not the sequencer's current state
+    this->tester_setState(State::IDLE);
+    ASSERT_TRUE(tester_isRunningState(State::RUNNING_AWAITING_STATEMENT_RESPONSE));
+    ASSERT_TRUE(tester_isRunningState(State::RUNNING_DISPATCH_STATEMENT));
+    ASSERT_TRUE(tester_isRunningState(State::RUNNING_PAUSED));
+    ASSERT_TRUE(tester_isRunningState(State::RUNNING_SLEEPING));
+    ASSERT_FALSE(tester_isRunningState(State::IDLE));
+    ASSERT_FALSE(tester_isRunningState(State::VALIDATING));
+
+    this->tester_setState(State::RUNNING_DISPATCH_STATEMENT);
+    ASSERT_FALSE(tester_isRunningState(State::IDLE));
+    ASSERT_FALSE(tester_isRunningState(State::VALIDATING));
+    ASSERT_TRUE(tester_isRunningState(State::RUNNING_SLEEPING));
+}
+
 TEST_F(FpySequencerTester, cmd_VALIDATE) {
     sendCmd_VALIDATE(0, 0, Fw::String("invalid seq"));
     // should try validating, then go to idle cuz it failed
@@ -2737,6 +2786,26 @@ TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_oversized) {
     ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_from_seqDoneOut_SIZE(1);
     ASSERT_from_seqDoneOut(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+    removeFile("test.bin");
+}
+
+TEST_F(FpySequencerTester, cmd_VALIDATE_ARGS_spec_exceeds_stack_limit) {
+    allocMem();
+    // arg specs whose total size exceeds the stack limit
+    addArgumentSpec("arg1", "bytes", Fpy::MAX_STACK_SIZE / 2 + 1);
+    addArgumentSpec("arg2", "bytes", Fpy::MAX_STACK_SIZE / 2 + 1);
+    add_NO_OP();
+    writeToFile("test.bin");
+
+    Svc::SeqArgs args{0, 0};
+    sendCmd_VALIDATE_ARGS(0, 0, Fw::String("test.bin"), args);
+    dispatchUntilState(State::VALIDATING);
+    dispatchUntilState(State::IDLE);
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, Svc::FpySequencerTester::get_OPCODE_VALIDATE_ARGS(), 0, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_ArgTotalSizeExceedsStackLimit_SIZE(1);
+    ASSERT_EVENTS_ArgTotalSizeExceedsStackLimit(0, static_cast<Fpy::StackSizeType>(Fpy::MAX_STACK_SIZE / 2 + 1) * 2);
 
     removeFile("test.bin");
 }

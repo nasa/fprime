@@ -13,7 +13,10 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FileWorker ::FileWorker(const char* const compName)
-    : FileWorkerComponentBase(compName), m_state(FileWorkerState::FW_STATE_IDLE), m_abort(false), m_chunkSize(0) {}
+    : FileWorkerComponentBase(compName),
+      m_state(FileWorkerState::FW_STATE_IDLE),
+      m_abort(false),
+      m_chunkSize(BLOCK_SIZE_BYTES) {}
 
 void FileWorker ::configure(U64 chunkSize) {
     FW_ASSERT(chunkSize > 0);
@@ -82,7 +85,7 @@ void FileWorker ::readIn_handler(FwIndexType portNum, const Fw::StringBase& path
     FileWorkerStatus workerStat = this->readBufferFromFile(buffer, fileName);
 
     // Report 0 bytes on a failed or aborted read so readDoneOut does not imply success.
-    this->readDoneOut_out(0, workerStat, (workerStat == FW_STATUS_DONE_READ) ? fileSize : 0);
+    this->readDoneOut_out(0, workerStat, (workerStat == FW_STATUS_DONE_READ) ? buffer.getSize() : 0);
     this->m_state = FW_STATE_IDLE;
 }
 
@@ -107,7 +110,7 @@ void FileWorker ::verifyIn_handler(FwIndexType portNum, const Fw::StringBase& pa
         workerStat = FW_STATUS_FAILED_CRC;
     }
 
-    if (crc != crcFromFile) {
+    if (crc != crcCalculated) {
         workerStat = FW_STATUS_FAILED_CRC;
         this->log_WARNING_LO_CrcVerificationError(crc, crcCalculated);
     }
@@ -259,9 +262,9 @@ Svc ::FileWorkerReadStatus FileWorker ::readFile(Fw::Buffer& buffer,
 
         case FW_READ_TIMEOUT:
             // Determine true timeout
-            static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-            numChunks = (size / BLOCK_SIZE_BYTES);
-            if (size % BLOCK_SIZE_BYTES > 0) {
+            FW_ASSERT(this->m_chunkSize > 0);
+            numChunks = (size / this->m_chunkSize);
+            if (size % this->m_chunkSize > 0) {
                 numChunks += 1;
             }
             timeout = numChunks * TIMEOUT_MS;
@@ -290,9 +293,9 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
     FW_ASSERT(size > 0);
 
     // Determine true timeout
-    static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-    FwSizeType numChunks = (size / BLOCK_SIZE_BYTES);
-    if (size % BLOCK_SIZE_BYTES > 0) {
+    FW_ASSERT(this->m_chunkSize > 0);
+    FwSizeType numChunks = (size / this->m_chunkSize);
+    if (size % this->m_chunkSize > 0) {
         numChunks += 1;
     }
     U64 timeout = numChunks * TIMEOUT_MS;
@@ -301,8 +304,8 @@ Svc ::FileWorkerReadStatus FileWorker ::readFileBytes(Fw::Buffer& buffer,
     bytesRead = 0;
     Fw::Time start = this->getTime();
 
-    for (U32 i = 0; i < MAX_LOOP_ITERATIONS; i++) {
-        FwSizeType readAmt = FW_MIN(size - bytesRead, BLOCK_SIZE_BYTES);
+    for (FwSizeType i = 0; i < numChunks; i++) {
+        FwSizeType readAmt = FW_MIN(size - bytesRead, this->m_chunkSize);
         FwSizeType readAmtActual = readAmt;
         Os::File::Status ret = file.read(buffer.getData() + bytesRead, readAmtActual);
 
@@ -512,18 +515,20 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
     FW_ASSERT(fileName != nullptr);
 
     // Determine true timeout
-    static_assert(BLOCK_SIZE_BYTES > 0, "Divide by 0 error");
-    FwSizeType numChunks = (size / BLOCK_SIZE_BYTES);
-    if (size % BLOCK_SIZE_BYTES > 0) {
+    FW_ASSERT(this->m_chunkSize > 0);
+    FwSizeType numChunks = (size / this->m_chunkSize);
+    if (size % this->m_chunkSize > 0) {
         numChunks += 1;
     }
     U64 timeout = numChunks * TIMEOUT_MS;
 
-    // Write loop
+    // Write loop: legal short writes make progress but consume an iteration, so
+    // allow extra iterations beyond the chunk count before giving up
+    const FwSizeType maxIterations = numChunks + MAX_LOOP_ITERATIONS;
     FwSizeType bytesWritten = 0;
     Fw::Time start = this->getTime();
-    for (U32 i = 0; i < MAX_LOOP_ITERATIONS; i++) {
-        FwSizeType writeAmt = FW_MIN(size - bytesWritten, BLOCK_SIZE_BYTES);
+    for (FwSizeType i = 0; (i < maxIterations) && (bytesWritten < size); i++) {
+        FwSizeType writeAmt = FW_MIN(size - bytesWritten, this->m_chunkSize);
         Os::File::Status ret = file.write(data + bytesWritten, writeAmt);
 
         if (Os::File::OP_OK != ret || writeAmt == 0) {
@@ -554,10 +559,6 @@ FwSizeType FileWorker ::writeToFile(const U8* data, FwSizeType size, Os::File& f
         }
 
         bytesWritten += writeAmt;
-        if (bytesWritten >= size) {
-            // Finished, break out
-            break;
-        }
     }
 
     return bytesWritten;
