@@ -292,10 +292,9 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
                                                CompressionMetadata(CompressionAlgorithm::UNCOMPRESSED));
 
                     FW_ASSERT(uncompressed_head != nullptr);
-                    // Source and destination regions may overlap; move then skip
-                    (void)std::memmove(data_buffer.getData() + data_reser.getSize(), uncompressed_head,
-                                       uncompressed_size);
-                    ser_stat = data_reser.serializeSkip(uncompressed_size);
+                    // serializeFrom is overlap-safe (uses memmove internally)
+                    ser_stat =
+                        data_reser.serializeFrom(uncompressed_head, uncompressed_size, Fw::Serialization::OMIT_LENGTH);
                     FW_ASSERT(ser_stat == Fw::FW_SERIALIZE_OK, ser_stat);
 
                     serializeCompressionHeader(data_reser, compressed_size, CompressionMetadata(alg));
