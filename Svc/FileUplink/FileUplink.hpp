@@ -169,6 +169,7 @@ class FileUplink final : public FileUplinkComponentBase {
     //! Configure the allowed uplink directory
     //!
     //! Restricts all file writes to the given directory.
+    //! Fail-open: until called, the sandbox defaults to `/` (any writable path is allowed).
     //! Must be called before any files are received.
     //! The directory must be an absolute path ending with `/`.
     //!
