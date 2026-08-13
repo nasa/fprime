@@ -76,7 +76,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t* caller,
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
 
-    this->m_exitReason = ExitReason::HOST_EXIT;
+    this->m_exitReason = WasmSequencer_ExitReason::HOST_EXIT;
     this->m_exitCode = params[0].u.i32_;
 
     return SPACEWASM_TRAP;
@@ -92,7 +92,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t* caller,
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
 
-    this->m_exitReason = ExitReason::HOST_PANIC;
+    this->m_exitReason = WasmSequencer_ExitReason::HOST_PANIC;
     this->m_exitCode = params[0].u.i32_;
 
     return SPACEWASM_TRAP;

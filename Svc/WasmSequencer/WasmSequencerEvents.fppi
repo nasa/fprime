@@ -1,118 +1,159 @@
 @ The interpreter store was allocated with capacity for the given number of modules
 event StoreAllocationSucceeded(moduleCount: U16) \
-    severity diagnostic \
-    format "Successfully allocated store with {} modules"
+  severity diagnostic \
+  format "Successfully allocated store with {} modules"
 
 @ A command was issued in a state where it is not valid
-event InvalidCommand($state: SequencerStateMachine.State) \
-    severity warning low \
-    format "Command not valid in state {}"
+event InvalidCommand($state: ControllerStateMachine.State) \
+  severity warning low \
+  format "Command not valid in state {}"
 
 @ A command was issued in a state where it is not valid
 event ModuleNotFound(module_name: string size 16) \
-    severity warning low \
-    format "Failed to invoke main on module with name {}"
+  severity warning low \
+  format "Failed to invoke main on module with name {}"
 
 @ Failed to open the requested Wasm module file
 event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
-    severity warning high \
-    format "Failed to open Wasm module file {}: status {}"
+  severity warning high \
+  format "Failed to open Wasm module file {}: status {}"
 
 @ The SEQ_BASE_DIR base directory joined with the requested sequence file path
 @ exceeds the file-path buffer; the load will fail to open the truncated path.
-event SequenceFilePathTooLong(baseDir: string size FileNameStringSize, fileName: string size FileNameStringSize) \
-    severity warning high \
-    format "Sequence file path too long: base dir {} + file {}"
+event SequenceFilePathTooLong(
+  baseDir: string size FileNameStringSize
+  fileName: string size FileNameStringSize
+) \
+  severity warning high \
+  format "Sequence file path too long: base dir {} + file {}"
 
 @ A module failed to decode/validate while loading
 event ModuleLoadFailed(status: Status) \
-    severity warning high \
-    format "Module load failed: {}"
+  severity warning high \
+  format "Module load failed: {}"
 
-@ A module failed to invoke a function
-event ModuleInvokeFailed(status: Status) \
-    severity warning high \
-    format "Module main invoke failed: {}"
+@ Failed to invoke a module's main entrypoint
+event ModuleMainInvokeFailed(status: Status) \
+  severity warning high \
+  format "Module main invoke failed: {}"
+
+@ Failed to invoke a module's start function
+event ModuleStartInvokeFailed(status: Status) \
+  severity warning high \
+  format "Module start invoke failed: {}"
 
 @ A blocking command could not be queued because too many commands are already
 @ waiting on the sequencer to finish
 event TooManyBlockingCommands \
-    severity warning high \
-    format "Too many commands blocking on sequencer finish"
-
-@ The interpreter ran a program to completion
-event SequenceSucceeded() \
-    severity activity high \
-    format "Wasm program completed successfully"
+  severity warning high \
+  format "Too many commands blocking on sequencer finish"
 
 @ A guest host function supplied a buffer larger than the host maximum for that call
 event BufferTooLarge(host_function: HostFunction, $size: U32, maxSize: U32) \
-    severity warning high \
-    format "Host function {} buffer payload size {} larger than host maximum size {}"
+  severity warning high \
+  format "Host function {} buffer payload size {} larger than host maximum size {}"
 
 @ A guest host function supplied a buffer too small to hold the host value being returned
 event BufferTooSmall(host_function: HostFunction, $size: U32, valueSize: U32) \
-    severity warning high \
-    format "Host function {} buffer payload size {} smaller than host value size {}"
+  severity warning high \
+  format "Host function {} buffer payload size {} smaller than host value size {}"
 
 event HostFunctionInvalidPointer(host_function: HostFunction, code: Status) \
-    severity warning high \
-    format "Failed to read guest pointer in host function {}: {}"
+  severity warning high \
+  format "Failed to read guest pointer in host function {}: {}"
 
 @ A guest serial port host function requested a port index outside the configured range
-event HostFunctionInvalidPort(host_function: HostFunction, index: I32, numPorts: U32) \
-    severity warning high \
-    format "Host function {} requested invalid serial port index {} (have {} ports)"
+event HostFunctionInvalidPort(
+  host_function: HostFunction
+  index: I32
+  numPorts: U32
+) \
+  severity warning high \
+  format "Host function {} requested invalid serial port index {} (have {} ports)"
 
 @ The guest requested an event at a severity that is not permitted for guest
 @ programs (an out-of-range id, or FATAL/COMMAND which are reserved for the
 @ host). The guest message is preserved and reported here at WARNING_HI.
 event HostFunctionInvalidSeverity(raw: I32, msg: string size 128) \
-    severity warning high \
-    format "Guest event at invalid/forbidden severity '{}': {}"
+  severity warning high \
+  format "Guest event at invalid/forbidden severity '{}': {}"
+
+@ The interpreter ran a program to completion
+event SequenceSucceeded(index: ModuleIdx) \
+  severity activity high \
+  format "Sequence at index {} finished successfully"
 
 @ The sequence was cancelled
-event SequenceCancelled() severity activity high format "Wasm program cancelled"
+event SequenceCancelled(index: ModuleIdx) \
+  severity activity high \
+  format "Sequence at index {} was cancelled"
 
-@ The sequence failed to execute successfully
-event SequenceFailed() severity warning high format "Wasm program failed"
+enum ExitReason: U8 {
+  UNKNOWN              @< We did not explicitely set the exit reason, bug?
+  INTERPRETER_FINISHED @< The interpreter exited normally and set m_exitCode
+  INTERPRETER_TRAP     @< The interpreter ran into a byte-code trap
+  HOST_EXIT            @< The interpreter exited via HOST_TRAP but a host function indicated it was a standard exit()
+  HOST_PANIC           @< The interpreter exited via HOST_TRAP and we indicated HOST_PANIC in the host function
+  REPLY_TIMEOUT        @< An async reply timeout overran while waiting for a host function reply
+  HOST_FAILURE         @< An async host function replied with an error
+  UNEXPECTED_REPLY     @< We got an unexpected async reply which caused us to abort
+  CANCEL               @< A cancel signal was sent and we exited the interpreter
+  TIMER_INCOMPARABLE   @< A sleep/statement timer became incomparable (time base changed) and could not be evaluated
+}
 
-@ The interpreter trapped
-event SequenceTrap(reason: TrapReason) \
-    severity warning high \
-    format "Wasm program trapped: {}"
+@ The sequence failed to execute
+event SequenceFailed(
+  index: ModuleIdx
+  exitReason: ExitReason
+  exitCode: I32
+  trapReason: TrapReason
+) \
+  severity warning high \
+  format "Sequence at index {} failed with reason={} code={} trap={}"
 
 @ Execution was paused at a breakpoint
-event SequenceBroken() \
-    severity activity high \
-    format "Wasm program paused at breakpoint"
+event SequencePaused() severity activity high format "Sequence execution paused"
 
 @ The guest program called fprime.exit with a non-zero code
-event ProgramExited(code: I32) \
-    severity warning high \
-    format "Wasm program exited with code {}"
+event SequenceExited(code: I32) \
+  severity warning high \
+  format "Sequence exited with code {}"
 
 @ The guest program called fprime.panic, or the interpreter itself panicked
-event PanicOccurred(code: I32) \
-    severity warning high \
-    format "Wasm program panicked: code {}"
+event SequencePanic(code: I32) \
+  severity warning high \
+  format "Wasm program panicked: code {}"
 
 @ A guest host function could not access guest linear memory
 event GuestMemoryError(status: Status) \
-    severity warning high \
-    format "Guest memory access failed: spacewasm status {}"
+  severity warning high \
+  format "Guest memory access failed: spacewasm status {}"
 
 @ A command response arrived carrying a context (cmdUid) from a previous
 @ sequence run. Reported (not failed) because a late reply after CANCEL is nominal.
-event CmdResponseFromOldSequence($opcode: FwOpcodeType, response: Fw.CmdResponse, oldSequenceIdx: U16, currentSequenceIdx: U16) \
-    severity warning low \
-    format "Command response (opcode {}, response {}) was from a previous sequence (old idx {}, current idx {})"
+event CmdResponseFromOldSequence(
+  $opcode: FwOpcodeType
+  response: Fw.CmdResponse
+  oldSequenceIdx: U16
+  currentSequenceIdx: U16
+) \
+  severity warning low \
+  format "Command response (opcode {}, response {}) was from a previous sequence (old idx {}, current idx {})"
 
 @ A command response arrived for the correct opcode from this sequence, but for a
 @ different dispatch instance than the one currently being awaited.
-event WrongCmdResponseIndex($opcode: FwOpcodeType, response: Fw.CmdResponse, actualCmdIdx: U16, expectedCmdIdx: U16) \
-    severity warning high \
-    format "Command response (opcode {}, response {}) was for a different command instance (actual idx {}, expected {})"
+event WrongCmdResponseIndex(
+  $opcode: FwOpcodeType
+  response: Fw.CmdResponse
+  actualCmdIdx: U16
+  expectedCmdIdx: U16
+) \
+  severity warning high \
+  format "Command response (opcode {}, response {}) was for a different command instance (actual idx {}, expected {})"
+
+event InvalidModuleEntrypoint(moduleIdx: ModuleIdx, status: Status) \
+  severity warning high \
+  format "Module at index {} does not have a valid 'main' entrypoint: {}"
 
 # ----------------------------------------------------------------------
 # Guest-emitted events (fprime.event host function). One event per guest-

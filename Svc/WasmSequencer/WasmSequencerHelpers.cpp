@@ -137,12 +137,22 @@ void WasmSequencer ::destroyStore() {
 
     // Clear any pending state.
     this->m_invokeStatus = SPACEWASM_OK;
-    this->m_loadStatus = SPACEWASM_OK;
-
-    // Reset the exit disposition so a stale host exit/panic from a previous
-    // program cannot be misread as the outcome of a later genuine trap.
-    this->m_exitReason = ExitReason::INTERPRETER;
+    this->m_exitReason = WasmSequencer_ExitReason::UNKNOWN;
     this->m_exitCode = 0;
+}
+
+spacewasm_status_t WasmSequencer ::validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const {
+    FW_ASSERT(this->m_wasm != nullptr);
+
+    U32 mainIndex;
+    auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(moduleIdx), "main", &mainIndex);
+
+    if (status == SPACEWASM_OK) {
+        // We only support the [] -> i32 signature
+        status = spacewasm_check_func_signature(this->m_wasm, static_cast<U32>(moduleIdx), mainIndex, "", "i");
+    }
+
+    return status;
 }
 
 U32 WasmSequencer ::makeCmdUid() const {

@@ -7,24 +7,18 @@
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 
 #include "Fw/Cmd/CmdResponseEnumAc.hpp"
-#include "Fw/Com/ComPacket.hpp"
 #include "Fw/Types/Assert.hpp"
-#include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/Serializable.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
-#include "Os/File.hpp"
 #include "Os/Mutex.hpp"
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_ControllerStateMachine_StateEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_SequencerStateMachine_StateEnumAc.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_ModuleLoadSerializableAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FwAssertArgTypeAliasAc.h"
-#include "config/FwChanIdTypeAliasAc.h"
-#include "config/FwPrmIdTypeAliasAc.h"
-
-#include <limits>
 
 namespace Svc {
 
@@ -37,16 +31,12 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_page_used_mask(0),
       m_guest_offset(0),
       m_wasm(nullptr),
-      m_moduleIndex(0),
       m_hasPendingLoadCmd(false),
-      m_hasPendingLoad(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_statementStart(),
       m_hasStatementStart(false),
       m_invokeStatus(SPACEWASM_OK),
-      m_loadStatus(SPACEWASM_OK),
-      m_pendingRun(false),
       m_pendingPause(false),
       m_loadFile(nullptr),
       m_tlmSequencesSucceeded(0),
@@ -55,7 +45,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_tlmCommandsDispatched(0),
       m_tlmCommandsFailed(0),
       m_sequencesStarted(0),
-      m_exitReason(ExitReason::INTERPRETER),
+      m_exitReason(WasmSequencer_ExitReason::UNKNOWN),
       m_exitCode(0),
       m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
       m_tlmSequenceName("") {
@@ -96,7 +86,7 @@ WasmSequencer ::~WasmSequencer() {
 
 void WasmSequencer ::checkTimers_handler(FwIndexType portNum, U32 context) {
     // Drive the sleep-wake / statement-timeout checks in the state machine.
-    this->sequencer_sendSignal_checkTimersIn();
+    this->interpreter_sendSignal_checkTimers();
 }
 
 void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
@@ -121,9 +111,9 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 
     // From here on the response claims to be from the current sequence, so any
     // inconsistency is a genuine error that should fail the sequence.
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE ||
+    if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
         this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::COMMAND) {
-        this->sequencer_sendSignal_stmtUnexpected();
+        this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::COMMAND);
         return;
     }
 
@@ -131,7 +121,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     // an earlier one in this sequence with the same opcode?
     if (cmdIndex != currentCmdIndex) {
         this->log_WARNING_HI_WrongCmdResponseIndex(opCode, response, cmdIndex, currentCmdIndex);
-        this->sequencer_sendSignal_stmtUnexpected();
+        this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::COMMAND);
         return;
     }
 
@@ -142,25 +132,14 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
         this->m_tlmCommandsFailed++;
     }
 
-    // Respond to the host command by pushing a value to the Wasm operand stack.
-    // Fw::CmdResponse ordinals 0..5 (OK, INVALID_OPCODE, VALIDATION_ERROR,
-    // FORMAT_ERROR, EXECUTION_ERROR, BUSY) coincide with the guest's
-    // FprimeCmdResponse enum (see fprime.h), so the ordinal is passed through
-    // directly. Keep the two enums in sync if either is reordered.
-    spacewasm_value_t return_val;
-    return_val.tag = SPACEWASM_I32;
-    return_val.u.i32_ = static_cast<I32>(response.e);
-
-    const auto status = spacewasm_resume_value(this->m_wasm, return_val);
-    FW_ASSERT(status == SPACEWASM_OK, status);
-
-    this->sequencer_sendSignal_stmtSuccess();
+    this->interpreter_sendSignal_hostResumeI32(static_cast<I32>(response.e));
 }
 
 void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
     auto now = this->getTime();
 
-    this->tlmWrite_State(this->sequencer_getState(), now);
+    this->tlmWrite_ControllerState(this->controller_getState(), now);
+    this->tlmWrite_EngineState(this->interpreter_getState(), now);
     this->tlmWrite_SequencesSucceeded(this->m_tlmSequencesSucceeded, now);
     this->tlmWrite_SequencesFailed(this->m_tlmSequencesFailed, now);
     this->tlmWrite_SequencesCancelled(this->m_tlmSequencesCancelled, now);
@@ -176,14 +155,9 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 
 void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
     // A reply is only expected while blocked on an asynchronous serial port invocation
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE) {
-        this->sequencer_sendSignal_stmtUnexpected();
-        return;
-    }
-
-    if (this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT ||
-        static_cast<FwIndexType>(this->m_pendingHostFunction.id) != portNum) {
-        this->sequencer_sendSignal_stmtUnexpected();
+    if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
+        this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT) {
+        this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::ASYNC_PORT);
         return;
     }
 
@@ -191,7 +165,7 @@ void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBa
     if (buffer.getSize() > this->m_pendingHostFunction.len2) {
         this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ASYNC_PORT, this->m_pendingHostFunction.len2,
                                             static_cast<U32>(buffer.getSize()));
-        this->sequencer_sendSignal_stmtFailure();
+        this->interpreter_sendSignal_hostResponseFailure();
         return;
     }
 
@@ -201,19 +175,11 @@ void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBa
     if (status != SPACEWASM_OK) {
         this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
                                                         static_cast<WasmSequencer_Status::T>(status));
-        this->sequencer_sendSignal_stmtFailure();
+        this->interpreter_sendSignal_hostResponseFailure();
         return;
     }
 
-    // Resume the interpreter, returning the number of bytes written to the guest's
-    // return buffer (the reply payload was delivered via the return pointer above).
-    spacewasm_value_t return_val;
-    return_val.tag = SPACEWASM_I32;
-    return_val.u.i32_ = static_cast<I32>(buffer.getSize());
-    const auto resumeStatus = spacewasm_resume_value(this->m_wasm, return_val);
-    FW_ASSERT(resumeStatus == SPACEWASM_OK, resumeStatus);
-
-    this->sequencer_sendSignal_stmtSuccess();
+    this->interpreter_sendSignal_hostResumeI32(static_cast<I32>(buffer.getSize()));
 }
 
 // ----------------------------------------------------------------------
@@ -226,9 +192,9 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     const Svc::BlockState& block,
                                     const SeqArgs& seqArgs) {
     // RUN is only valid from IDLE or READY.
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
-        this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
-        this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+    if (this->controller_getState() != WasmSequencer_ControllerStateMachine_State::IDLE &&
+        this->controller_getState() != WasmSequencer_ControllerStateMachine_State::READY) {
+        this->log_WARNING_LO_InvalidCommand(this->controller_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -252,13 +218,15 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, static_cast<FwAssertArgType>(block));
     }
 
-    this->sequencer_sendSignal_cmd_RUN(Svc::WasmSequencer_SequenceRun(fileName, seqArgs));
+    this->m_args = seqArgs;
+    Fw::String runModuleName = "";
+    this->controller_sendSignal_cmd_RUN(WasmSequencer_ModuleLoad(fileName, runModuleName));
 }
 
 void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    switch (this->sequencer_getState()) {
-        case WasmSequencer_SequencerStateMachine_State::IDLE:
-        case WasmSequencer_SequencerStateMachine_State::READY:
+    switch (this->controller_getState()) {
+        case WasmSequencer_ControllerStateMachine_State::IDLE:
+        case WasmSequencer_ControllerStateMachine_State::READY:
             // Nothing is executing, respond immediately
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
@@ -282,9 +250,9 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
                                           const Fw::CmdStringArg& fileName,
                                           const Fw::CmdStringArg& name) {
     // Loading is only valid from IDLE or READY.
-    if (this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::IDLE &&
-        this->sequencer_getState() != WasmSequencer_SequencerStateMachine_State::READY) {
-        this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+    if (this->controller_getState() != WasmSequencer_ControllerStateMachine_State::IDLE &&
+        this->controller_getState() != WasmSequencer_ControllerStateMachine_State::READY) {
+        this->log_WARNING_LO_InvalidCommand(this->controller_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -292,7 +260,7 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
     FW_ASSERT(!this->m_hasPendingLoadCmd);
     this->m_pendingLoadCmd = PendingCmd(opCode, cmdSeq);
     this->m_hasPendingLoadCmd = true;
-    this->sequencer_sendSignal_cmd_LOAD(Svc::WasmSequencer_ModuleLoad(fileName, name));
+    this->controller_sendSignal_cmd_LOAD(Svc::WasmSequencer_ModuleLoad(fileName, name));
 }
 
 void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
@@ -301,8 +269,8 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        const Svc::BlockState& block,
                                        const Svc::SeqArgs& seqArgs) {
     // INVOKE is only valid from READY (a module must already be loaded).
-    if (this->sequencer_getState() != Svc_WasmSequencer_SequencerStateMachine::State::READY) {
-        this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+    if (this->controller_getState() != WasmSequencer_ControllerStateMachine_State::READY) {
+        this->log_WARNING_LO_InvalidCommand(this->controller_getState());
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -332,870 +300,38 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, static_cast<FwAssertArgType>(block));
     }
 
-    this->sequencer_sendSignal_cmd_INVOKE(
-        WasmSequencer_SequenceInvoke(static_cast<Svc::WasmSequencer_ModuleIdx>(moduleIdx), seqArgs));
+    this->m_args = seqArgs;
+    this->controller_sendSignal_cmd_INVOKE(static_cast<Svc::WasmSequencer_ModuleIdx>(moduleIdx));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->sequencer_sendSignal_cmd_CANCEL();
+    this->controller_sendSignal_cmd_CANCEL();
+    this->interpreter_sendSignal_cmd_CANCEL();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void WasmSequencer ::PAUSE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->sequencer_sendSignal_cmd_PAUSE();
+    this->interpreter_sendSignal_cmd_PAUSE();
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    switch (this->sequencer_getState()) {
-        case WasmSequencer_SequencerStateMachine_State::RUNNING_AWAITING_RESPONSE:
-        case WasmSequencer_SequencerStateMachine_State::RUNNING_SPINNING:
+    switch (this->interpreter_getState()) {
+        case WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_SLEEPING:
+        case WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING:
+        case WasmSequencer_EngineStateMachine_State::RUNNING_SPINNING:
             // Already running
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
-        case WasmSequencer_SequencerStateMachine_State::RUNNING_PAUSED:
-            this->sequencer_sendSignal_cmd_CONTINUE();
+        case WasmSequencer_EngineStateMachine_State::RUNNING_PAUSED:
+            this->interpreter_sendSignal_cmd_CONTINUE();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
         default:
-            this->log_WARNING_LO_InvalidCommand(this->sequencer_getState());
+            this->log_WARNING_LO_InvalidCommand(this->controller_getState());
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             break;
     }
-}
-
-// ----------------------------------------------------------------------
-// Implementations for internal state machine actions
-// ----------------------------------------------------------------------
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_signalEntered(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->sequencer_sendSignal_entered();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_resetStore(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->createStore();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMainOfLastModule(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // Invoke main on the loaded module index
-    this->Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
-        smId, signal,
-        Svc::WasmSequencer_SequenceInvoke(static_cast<Svc::WasmSequencer_ModuleIdx>(this->m_moduleIndex),
-                                          this->m_args));
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeMain(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const Svc::WasmSequencer_SequenceInvoke& value) {
-    FW_ASSERT(this->m_wasm != nullptr);
-
-    // Clear any pending main
-    this->m_pendingRun = false;
-
-    // A fresh execution window begins. Reset the exit disposition so a stale
-    // host exit/panic from a previous program is not misread as this window's outcome.
-    this->m_exitReason = ExitReason::INTERPRETER;
-    this->m_exitCode = 0;
-
-    // Bump the sequence counter so any command response from a previous window
-    // is recognized as late (see makeCmdUid).
-    this->m_sequencesStarted++;
-
-    // Store the execution arguments
-    this->m_args = value.get_args();
-
-    // Resolve the exported function in the most-recently-loaded module.
-    U32 funcIndex = 0;
-    this->m_invokeStatus = spacewasm_find_export_func(this->m_wasm, value.get_moduleIdx(), "main", &funcIndex);
-
-    if (this->m_invokeStatus == SPACEWASM_OK) {
-        // Attempt to invoke the main function
-        this->m_invokeStatus = spacewasm_invoke(this->m_wasm, value.get_moduleIdx(), funcIndex, nullptr, 0);
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_invokeStartOfLastModule(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    FW_ASSERT(this->m_wasm != nullptr);
-
-    // A fresh execution window begins. Reset the exit disposition
-    this->m_exitReason = ExitReason::INTERPRETER;
-    this->m_exitCode = 0;
-
-    // The start function is a fresh execution window that can itself dispatch
-    // commands; bump the sequence counter so its cmdUids are distinct (see
-    // makeCmdUid).
-    this->m_sequencesStarted++;
-
-    const auto invokeStatus = spacewasm_invoke_start(this->m_wasm, this->m_moduleIndex);
-    switch (invokeStatus) {
-        case SPACEWASM_RUN_OUT_OF_FUEL:
-            this->sequencer_sendSignal_startInvoked();
-            break;
-        case SPACEWASM_RUN_PAUSE:
-            // Not possible to trigger this branch. This can only occur if the start function
-            // is mapped directly to a host function which requests a pause. Currently there are
-            // no host functions [] -> [], and therefore it's not possible to do this
-            FW_ASSERT(false);
-            break;
-        case SPACEWASM_RUN_FINISHED:
-            this->sequencer_sendSignal_startFinished();
-            break;
-        case SPACEWASM_RUN_TRAP:
-            this->sequencer_sendSignal_startError();
-            break;
-        default:
-            FW_ASSERT(false, invokeStatus);
-            break;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendRun(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const Svc::WasmSequencer_SequenceRun& value) {
-    // RUN == load the file (unnamed) then invoke its "main".
-    this->m_pendingLoad = Svc::WasmSequencer_ModuleLoad(value.get_filePath(), Fw::String(""));
-    this->m_hasPendingLoad = true;
-    this->m_pendingRun = true;
-    this->m_args = value.get_args();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendLoad(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleLoad& value) {
-    FW_ASSERT(!this->m_hasPendingLoad);
-    this->m_pendingLoad = value;
-    this->m_hasPendingLoad = true;
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportLoadFailure(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesFailed++;
-    this->log_WARNING_HI_ModuleLoadFailed(static_cast<WasmSequencer_Status::T>(this->m_loadStatus));
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_reportInvokeFailure(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesFailed++;
-    this->log_WARNING_HI_ModuleInvokeFailed(static_cast<WasmSequencer_Status::T>(this->m_invokeStatus));
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_load(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    FW_ASSERT(this->m_wasm != nullptr);
-    FW_ASSERT(this->m_hasPendingLoad);
-
-    const Fw::String requestedPath(this->m_pendingLoad.get_fileName());
-    const Fw::String moduleName(this->m_pendingLoad.get_moduleName());
-
-    // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
-    // base dir (the default) means paths are used verbatim; otherwise a single
-    // '/' is inserted between the base dir and the requested path, matching the
-    // parameter's documented contract.
-    Fw::ParamValid baseDirValid;
-    const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
-    Fw::String filePath;
-    if (baseDir.length() == 0) {
-        filePath = requestedPath;
-    } else {
-        // The result is truncated to filePath's capacity on overflow; a
-        // truncated path will then fail to open and report FileOpenError.
-        const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), requestedPath.toChar());
-        if (fmtStatus != Fw::FormatStatus::SUCCESS) {
-            FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
-            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, requestedPath);
-        }
-    }
-
-    // Record the sequence name for telemetry (module name, or filename stem).
-    this->setSequenceName(filePath, moduleName);
-
-    // Acknowledge the pending load
-    this->m_hasPendingLoad = false;
-
-    Os::File file;
-    const Os::File::Status openStatus = file.open(filePath.toChar(), Os::File::OPEN_READ);
-    if (openStatus != Os::File::Status::OP_OK) {
-        this->log_WARNING_HI_FileOpenError(filePath, openStatus);
-        this->m_loadStatus = SPACEWASM_ERR_READER_ERROR;
-        return;
-    }
-
-    // Expose the open file to the streaming read trampoline for the duration of
-    // this decode.
-    this->m_loadFile = &file;
-
-    this->takeAllocatorLock();
-
-    // A per-load guest linear-memory allocator. Backed by m_guest_pool; released
-    // immediately after load (the module retains its own reference).
-    spacewasm_allocator_t* alloc = spacewasm_allocator_new(
-        /* alloc */
-        [](void* userdata, const size_t size, const size_t align) -> U8* {
-            FW_ASSERT(userdata != nullptr);
-            return static_cast<WasmSequencer*>(userdata)->guestAlloc(static_cast<U32>(size), static_cast<U32>(align));
-        },
-        /* realloc */
-        [](void* userdata, uint8_t* ptr, size_t old_size, size_t new_size, size_t align) -> U8* {
-            (void)userdata;
-            (void)ptr;
-            (void)old_size;
-            (void)new_size;
-            (void)align;
-
-            // We turn off memory.grow so this should never be called!
-            // This nullptr will bubble as a reallocation failure
-            return nullptr;
-        },
-        /* dealloc */
-        [](void* userdata, U8* ptr, size_t size, size_t align) {
-            FW_ASSERT(userdata != nullptr);
-            (void)align;
-            static_cast<WasmSequencer*>(userdata)->guestDealloc(ptr, static_cast<U32>(size));
-        },
-        /* userdata */ this);
-
-    this->m_loadStatus = spacewasm_load_module(
-        this->m_wasm, moduleName.toChar(),
-        [](void* userdata, const U8** outBuf, std::size_t* outLen) -> spacewasm_read_result_t {
-            FW_ASSERT(userdata != nullptr);
-            return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
-        },
-        this, alloc, &this->m_moduleIndex);
-
-    spacewasm_allocator_destroy(alloc);
-
-    this->releaseAllocatorLock();
-
-    this->m_loadFile = nullptr;
-    file.close();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_spin(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    FW_ASSERT(this->m_wasm);
-
-    Fw::ParamValid prmValid;
-    const auto fuel = this->paramGet_INSTRUCTION_FUEL(prmValid);
-
-    spacewasm_trap_t trap = SPACEWASM_TRAP_NONE;
-    const spacewasm_run_status_t runStatus = spacewasm_run(this->m_wasm, fuel, &trap);
-
-    switch (runStatus) {
-        case SPACEWASM_RUN_FINISHED:
-            this->sequencer_sendSignal_interpreterFinished();
-            break;
-        case SPACEWASM_RUN_TRAP:
-            // A host function (wasmExit/wasmPanic) can request a trap purely to
-            // stop execution. Distinguish those from genuine interpreter traps.
-            switch (this->m_exitReason) {
-                case ExitReason::HOST_EXIT:
-                    if (this->m_exitCode == 0) {
-                        // exit(0) is a clean, successful termination.
-                        this->sequencer_sendSignal_interpreterFinished();
-                    } else {
-                        this->sequencer_sendSignal_interpreterExitError();
-                    }
-                    break;
-                case ExitReason::HOST_PANIC:
-                    this->sequencer_sendSignal_interpreterExitError();
-                    break;
-                case ExitReason::INTERPRETER:
-                default:
-                    this->sequencer_sendSignal_interpreterTrap(WasmSequencer::mapTrapReason(trap));
-                    break;
-            }
-            break;
-        case SPACEWASM_RUN_PAUSE:
-            this->sequencer_sendSignal_interpreterPause();
-            break;
-        case SPACEWASM_RUN_OUT_OF_FUEL:
-            this->sequencer_sendSignal_interpreterOutOfFuel();
-            break;
-        default:
-            FW_ASSERT(false, runStatus);
-            break;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqSucceeded(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesSucceeded++;
-    this->log_ACTIVITY_HI_SequenceSucceeded();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqCancelled(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesCancelled++;
-    this->log_ACTIVITY_HI_SequenceCancelled();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqFailed(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesFailed++;
-    this->log_WARNING_HI_SequenceFailed();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqTrap(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal,
-    const WasmSequencer_TrapReason& trapReason) {
-    this->m_tlmLastTrapReason = trapReason;
-    this->m_tlmSequencesFailed++;
-    this->log_WARNING_HI_SequenceTrap(trapReason);
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqExitError(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_tlmSequencesFailed++;
-
-    switch (this->m_exitReason) {
-        case ExitReason::HOST_EXIT:
-            this->log_WARNING_HI_ProgramExited(this->m_exitCode);
-            break;
-        case ExitReason::HOST_PANIC:
-            this->log_WARNING_HI_PanicOccurred(this->m_exitCode);
-            break;
-        case ExitReason::INTERPRETER:
-        default:
-            // Should not happen: this action is only reached via interpreterExitError,
-            // which the spin action only raises for a host exit/panic.
-            FW_ASSERT(false, static_cast<FwAssertArgType>(this->m_exitReason));
-            break;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_report_seqPaused(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->log_ACTIVITY_HI_SequenceBroken();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendLoadCmdResponse_OK(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    if (this->m_hasPendingLoadCmd) {
-        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq, Fw::CmdResponse::OK);
-        this->m_hasPendingLoadCmd = false;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendLoadCmdResponse_EXECUTION_ERROR(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    if (this->m_hasPendingLoadCmd) {
-        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq,
-                              Fw::CmdResponse::EXECUTION_ERROR);
-        this->m_hasPendingLoadCmd = false;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdResponse_OK(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // Respond to every command blocked on interpreter finish.
-    PendingCmd cmd{};
-    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
-        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::OK);
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_sendRunCmdResponse_EXECUTION_ERROR(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // Respond to every command blocked on interpreter finish.
-    PendingCmd cmd{};
-    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
-        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkStatementTimeout(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // Only blocking async host functions that await an external reply are subject
-    // to the statement timeout (COMMAND -> cmdResponseIn, ASYNC_PORT -> serialReply).
-    // Sleeps have their own wake timer (checkShouldWake) and are not "statements".
-    if (!this->m_hasStatementStart) {
-        return;
-    }
-
-    Fw::ParamValid prmValid;
-    const F32 timeoutSecs = this->paramGet_STATEMENT_TIMEOUT_SECS(prmValid);
-
-    // A non-positive or out-of-range timeout disables the check entirely.
-    if (timeoutSecs <= 0.0f || timeoutSecs > static_cast<F32>(std::numeric_limits<U32>::max())) {
-        return;
-    }
-
-    // Deadline = statement start + timeout. Round microseconds up so the timeout
-    // is never reported early.
-    U32 seconds = static_cast<U32>(timeoutSecs);
-    U32 useconds = static_cast<U32>((timeoutSecs - static_cast<F32>(seconds)) * 1000000.0f + 0.5f);
-
-    // Rounding up can push the microsecond field to 1000000; carry it into
-    // seconds so Fw::Time::add() always receives a normalized (< 1e6) value.
-    if (useconds >= 1000000u) {
-        seconds += useconds / 1000000u;
-        useconds %= 1000000u;
-    }
-
-    Fw::Time deadline = this->m_statementStart;
-    deadline.add(seconds, useconds);
-
-    const Fw::Time now = this->getTime();
-    switch (Fw::Time::compare(now, deadline)) {
-        case Fw::TimeComparison::LT:
-            // Deadline not yet reached.
-            break;
-        case Fw::TimeComparison::EQ:
-        case Fw::TimeComparison::GT:
-            // Statement timed out waiting for its reply.
-            this->sequencer_sendSignal_stmtTimeout();
-            break;
-        case Fw::TimeComparison::INCOMPARABLE:
-            // Time base / context changed since the statement started.
-            this->sequencer_sendSignal_stmtTimeOpFailed();
-            break;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_checkShouldWake(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    // Check if we have overrun the timer
-    FW_ASSERT(this->m_hasPendingTimer);
-
-    const Fw::Time now = this->getTime();
-    switch (Fw::Time::compare(now, this->m_pendingTimer)) {
-        case Fw::TimeComparison::LT:
-            // No timer overrun
-            break;
-        case Fw::TimeComparison::EQ:
-        case Fw::TimeComparison::GT: {
-            // Timeout!
-            const auto status = spacewasm_resume(this->m_wasm);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case Fw::TimeComparison::INCOMPARABLE:
-            // Time base / context changed since we set the timer
-            this->sequencer_sendSignal_stmtTimeOpFailed();
-            break;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_pendPause(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_pendingPause = true;
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_clearPause(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_pendingPause = false;
-}
-
-void WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_action_dispatchPendingHostFunction(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    switch (this->m_pendingHostFunction.kind) {
-        case WasmSequencer_HostFunction::NONE:
-            // Invalid host function
-            FW_ASSERT(false);
-            break;
-        case WasmSequencer_HostFunction::COMMAND: {
-            Fw::ComBuffer cmd;
-
-            // Write the CMD descriptor to the ComBuffer
-            auto serStatus =
-                cmd.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_COMMAND));
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Copy the com buffer from the guest memory into our memory
-            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                             cmd.getBuffAddr() + sizeof(FwPacketDescriptorType),
-                                             this->m_pendingHostFunction.len1);
-
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::COMMAND,
-                                                                static_cast<WasmSequencer_Status::T>(status));
-
-                this->sequencer_sendSignal_stmtFailure();
-            } else {
-                // Memory read succeeded, update the ComBuffer to hold the encoded command
-                serStatus = cmd.moveSerToOffset(this->m_pendingHostFunction.len1 + sizeof(FwPacketDescriptorType));
-                FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-                // Dispatch command to CmdDisp. The command context (cmdUid)
-                // encodes the current sequence + command instance so we can
-                // reject late/stale responses in cmdResponseIn_handler.
-                this->m_tlmCommandsDispatched++;
-
-                // Start the statement-timeout clock: we are about to block in
-                // AWAITING_RESPONSE until the command response comes back in.
-                this->m_statementStart = this->getTime();
-                this->m_hasStatementStart = true;
-
-                this->cmdOut_out(0, cmd, this->makeCmdUid());
-            }
-
-            break;
-        }
-        case WasmSequencer_HostFunction::TELEMETRY: {
-            Fw::Time time;
-            Fw::TlmBuffer tlmBuffer;
-
-            auto valid =
-                this->getTlmChan_out(0, static_cast<FwChanIdType>(this->m_pendingHostFunction.id), time, tlmBuffer);
-
-            // Write the response into guest memory
-            FW_ASSERT(this->m_pendingHostFunction.len1 == Fw::Time::SERIALIZED_SIZE,
-                      static_cast<FwAssertArgType>(this->m_pendingHostFunction.len1), Fw::Time::SERIALIZED_SIZE);
-            Fw::LinearBufferTemplate<Fw::Time::SERIALIZED_SIZE> timeBuf;
-
-            auto serStatus = time.serializeTo(timeBuf);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Write the time
-            spacewasm_status_t status;
-            status = spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                         timeBuf.getBuffAddr(), this->m_pendingHostFunction.len1);
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::TELEMETRY,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            if (tlmBuffer.getSize() > this->m_pendingHostFunction.len2) {
-                this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::TELEMETRY,
-                                                    this->m_pendingHostFunction.len2,
-                                                    static_cast<U32>(tlmBuffer.getSize()));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            // Write the value
-            status = spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr2,
-                                         tlmBuffer.getBuffAddr(), tlmBuffer.getSize());
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::TELEMETRY,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            // Resume the interpreter
-            spacewasm_value_t return_val;
-            return_val.tag = SPACEWASM_I32;
-            return_val.u.i32_ = static_cast<I32>(valid.e);
-            status = spacewasm_resume_value(this->m_wasm, return_val);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            // Wake up the state machine
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case WasmSequencer_HostFunction::PARAMETER: {
-            Fw::ParamBuffer prmBuf;
-            auto prmStatus = this->getParam_out(0, static_cast<FwPrmIdType>(this->m_pendingHostFunction.id), prmBuf);
-
-            if (prmBuf.getSize() > this->m_pendingHostFunction.len1) {
-                this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::PARAMETER,
-                                                    this->m_pendingHostFunction.len1,
-                                                    static_cast<U32>(prmBuf.getSize()));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            // Write the parameter to linear memory
-            spacewasm_status_t status =
-                spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                    prmBuf.getBuffAddr(), prmBuf.getSize());
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::PARAMETER,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            // Resume the interpreter
-            spacewasm_value_t return_val;
-            return_val.tag = SPACEWASM_I32;
-            return_val.u.i32_ = static_cast<I32>(prmStatus.e);
-            status = spacewasm_resume_value(this->m_wasm, return_val);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            // Wake up the state machine
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case WasmSequencer_HostFunction::EVENT: {
-            U8 stringStorage[FW_LOG_STRING_MAX_SIZE + 1];
-            FW_ASSERT(this->m_pendingHostFunction.len1 <= FW_LOG_STRING_MAX_SIZE,
-                      static_cast<FwAssertArgType>(this->m_pendingHostFunction.len1), FW_LOG_STRING_MAX_SIZE);
-            const Fw::ExternalString msg(reinterpret_cast<char*>(stringStorage), FW_LOG_STRING_MAX_SIZE + 1);
-
-            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                             stringStorage, this->m_pendingHostFunction.len1);
-            stringStorage[this->m_pendingHostFunction.len1] = 0;
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::EVENT,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-            } else {
-                // Emit the event at the guest-requested severity. FATAL and
-                // COMMAND are forbidden for guest programs (FATAL would let
-                // untrusted code trigger the FatalHandler; COMMAND is reserved
-                // for the command dispatcher). A forbidden or out-of-range
-                // severity is reported via HostFunctionInvalidSeverity, carrying
-                // the raw id and the guest message, and the guest continues.
-                const I32 rawSeverity = static_cast<I32>(this->m_pendingHostFunction.id);
-                switch (static_cast<Fw::LogSeverity::T>(rawSeverity)) {
-                    case Fw::LogSeverity::WARNING_HI:
-                        this->log_WARNING_HI_LogWarningHi(msg);
-                        break;
-                    case Fw::LogSeverity::WARNING_LO:
-                        this->log_WARNING_LO_LogWarningLo(msg);
-                        break;
-                    case Fw::LogSeverity::ACTIVITY_HI:
-                        this->log_ACTIVITY_HI_LogActivityHi(msg);
-                        break;
-                    case Fw::LogSeverity::ACTIVITY_LO:
-                        this->log_ACTIVITY_LO_LogActivityLo(msg);
-                        break;
-                    case Fw::LogSeverity::DIAGNOSTIC:
-                        this->log_DIAGNOSTIC_LogDiagnostic(msg);
-                        break;
-                    case Fw::LogSeverity::FATAL:
-                    case Fw::LogSeverity::COMMAND:
-                    default:
-                        this->log_WARNING_HI_HostFunctionInvalidSeverity(rawSeverity, msg);
-                        break;
-                }
-
-                status = spacewasm_resume(this->m_wasm);
-                FW_ASSERT(status == SPACEWASM_OK, status);
-
-                this->sequencer_sendSignal_stmtSuccess();
-            }
-
-            break;
-        }
-        case WasmSequencer_HostFunction::RSLEEP: {
-            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.time_us / 1000000);
-            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.time_us % 1000000);
-
-            // Relative sleep from now
-            Fw::Time timer = this->getTime();
-            timer.add(seconds, useconds);
-
-            this->m_pendingTimer = timer;
-            this->m_hasPendingTimer = true;
-            break;
-        }
-        case WasmSequencer_HostFunction::ASLEEP: {
-            U32 seconds = static_cast<U32>(this->m_pendingHostFunction.time_us / 1000000);
-            U32 useconds = static_cast<U32>(this->m_pendingHostFunction.time_us % 1000000);
-
-            // Absolute is relative to epoch, we still need to get the time for base/context
-            Fw::Time timer = this->getTime();
-            timer.set(seconds, useconds);
-
-            this->m_pendingTimer = timer;
-            this->m_hasPendingTimer = true;
-            break;
-        }
-        case WasmSequencer_HostFunction::ARGS: {
-            if (this->m_args.get_size() > this->m_pendingHostFunction.len1) {
-                // Too many param bytes and we are going to leak data into the guest memory
-                this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ARGS, this->m_pendingHostFunction.len1,
-                                                    static_cast<U32>(this->m_args.get_size()));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            // Write the parameter to linear memory
-            spacewasm_status_t status =
-                spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                    this->m_args.get_buffer(), this->m_args.get_size());
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::ARGS,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            spacewasm_value_t return_val;
-            return_val.tag = SPACEWASM_I32;
-            return_val.u.i32_ = static_cast<I32>(this->m_args.get_size());
-            status = spacewasm_resume_value(this->m_wasm, return_val);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            // Wake up the state machine
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case WasmSequencer_HostFunction::TIME: {
-            auto time = this->getTime();
-
-            FW_ASSERT(this->m_pendingHostFunction.len1 == Fw::Time::SERIALIZED_SIZE,
-                      static_cast<FwAssertArgType>(this->m_pendingHostFunction.len1), Fw::Time::SERIALIZED_SIZE);
-            Fw::LinearBufferTemplate<Fw::Time::SERIALIZED_SIZE> timeBuf;
-
-            auto serStatus = time.serializeTo(timeBuf);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Write the time
-            spacewasm_status_t status;
-            status = spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                         timeBuf.getBuffAddr(), this->m_pendingHostFunction.len1);
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(
-                    Svc::WasmSequencer_HostFunction::TIME,
-                    Svc::WasmSequencer_Status(static_cast<WasmSequencer_Status::T>(status)));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            status = spacewasm_resume(this->m_wasm);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            // Wake up the state machine
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case WasmSequencer_HostFunction::SYNC_PORT: {
-            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.id);
-
-            // Copy the payload out of guest memory into our own buffer
-            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                             this->m_serialPortBuffer.getBuffAddr(), this->m_pendingHostFunction.len1);
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::SYNC_PORT,
-                                                                static_cast<WasmSequencer_Status::T>(status));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.len1);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Invoke the serial output port. The reply port MUST NOT be connected for the
-            // synchronous variant, so we resume the interpreter immediately without waiting.
-            serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            status = spacewasm_resume(this->m_wasm);
-            FW_ASSERT(status == SPACEWASM_OK, status);
-
-            // Wake up the state machine
-            this->sequencer_sendSignal_stmtSuccess();
-            break;
-        }
-        case WasmSequencer_HostFunction::ASYNC_PORT: {
-            const FwIndexType portNum = static_cast<FwIndexType>(this->m_pendingHostFunction.id);
-
-            // Copy the payload out of guest memory into our own buffer
-            auto status = spacewasm_mem_read(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr1,
-                                             this->m_serialPortBuffer.getBuffAddr(), this->m_pendingHostFunction.len1);
-            if (status != SPACEWASM_OK) {
-                this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
-                                                                static_cast<WasmSequencer_Status::T>(status));
-                this->sequencer_sendSignal_stmtFailure();
-                break;
-            }
-
-            auto serStatus = this->m_serialPortBuffer.setBuffLen(this->m_pendingHostFunction.len1);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            // Start the statement-timeout clock: we are about to block in
-            // AWAITING_RESPONSE until the reply comes back on serialReply[portNum].
-            this->m_statementStart = this->getTime();
-            this->m_hasStatementStart = true;
-
-            // Invoke the serial output port and block the interpreter until the reply
-            // comes back on serialReply[portNum] (handled by serialReply_handler)
-            serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
-
-            break;
-        }
-    }
-}
-void WasmSequencer::Svc_WasmSequencer_SequencerStateMachine_action_clearPendingHostFunction(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) {
-    this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::NONE;
-    this->m_pendingHostFunction.caller = nullptr;
-    this->m_hasPendingTimer = false;
-    this->m_hasStatementStart = false;
-}
-
-// ----------------------------------------------------------------------
-// Implementations for internal state machine guards
-// ----------------------------------------------------------------------
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingRun(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_pendingRun;
-}
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_invokeFailed(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_invokeStatus != SPACEWASM_OK;
-}
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingPause(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_pendingPause;
-}
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingHostFunction(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_pendingHostFunction.isPending();
-}
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_pendingTimer(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_hasPendingTimer;
-}
-
-bool WasmSequencer ::Svc_WasmSequencer_SequencerStateMachine_guard_moduleLoadSucceeded(
-    SmId smId,
-    Svc_WasmSequencer_SequencerStateMachine::Signal signal) const {
-    return this->m_loadStatus == SPACEWASM_OK;
 }
 
 void WasmSequencer ::takeAllocatorLock() {

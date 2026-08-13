@@ -17,4 +17,4 @@ param INSTRUCTION_FUEL: FwSizeType default 1000
 @ sequence file path before resolution occurs following the rules of
 @ Os::File::open.
 param SEQ_BASE_DIR: string size FileNameStringSize \
-    default Wasm.DEFAULT_SEQ_BASE_DIR
+  default Wasm.DEFAULT_SEQ_BASE_DIR

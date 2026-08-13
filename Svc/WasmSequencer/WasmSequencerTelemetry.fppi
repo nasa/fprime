@@ -1,5 +1,8 @@
-@ Current executing state of the sequencer
-telemetry State: SequencerStateMachine.State update on change
+@ Current executing state of the sequencer controller
+telemetry ControllerState: ControllerStateMachine.State update on change
+
+@ Current executing state of the WebAssembly interpreter engine
+telemetry EngineState: EngineStateMachine.State update on change
 
 @ Sequences successfully completed
 telemetry SequencesSucceeded: U64 update on change

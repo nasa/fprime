@@ -6,11 +6,9 @@
 #ifndef SPACEWASM_H
 #define SPACEWASM_H
 
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 /*
  Operation status returned by most `spacewasm_*` functions.
@@ -72,6 +70,7 @@ enum spacewasm_status_t
     SPACEWASM_ERR_MEMORY_TOO_LARGE = 92,
     SPACEWASM_ERR_MEMORY_IMPORT_TOO_LARGE = 93,
     SPACEWASM_ERR_MEM_ALIGN_TOO_LARGE = 94,
+    SPACEWASM_ERR_TABLE_TOO_LARGE = 95,
     SPACEWASM_ERR_CONTROL_FLOW_TOO_DEEP = 96,
     SPACEWASM_ERR_STACK_UNDERFLOW = 97,
     SPACEWASM_ERR_STACK_TOO_LARGE = 98,
@@ -120,6 +119,7 @@ enum spacewasm_status_t
     SPACEWASM_ERR_GLOBAL_TYPE_MISMATCH = 164,
     SPACEWASM_ERR_ALIGNMENT_LARGER_THAN_TYPE = 165,
     SPACEWASM_ERR_INVALID_START_FUNCTION_SIGNATURE = 166,
+    SPACEWASM_ERR_INVALID_HOST_START_FUNCTION = 167,
     SPACEWASM_ERR_CONST_ALREADY_HAS_VALUE = 176,
     SPACEWASM_ERR_CONST_NO_VALUE = 177,
     SPACEWASM_ERR_CONST_INVALID_GLOBAL = 178,
@@ -516,7 +516,8 @@ spacewasm_status_t spacewasm_add_host_function(struct spacewasm_host_t* host,
  Load a guest module named `name` onto an existing engine by streaming its
  bytes through the `read` callback. The callback owns the buffer backing each
  chunk (see [`spacewasm_read_fn_t`]). This does not run the module's start
- function; use [`spacewasm_invoke_start`] for that. `allocator` supplies the
+ function; resolve it with [`spacewasm_module_start`] and invoke it with
+ [`spacewasm_invoke`] for that. `allocator` supplies the
  guest linear memory (see [`spacewasm_allocator_new`]). Writes the new module's
  index to `out_module_idx` (if non-null). May be called repeatedly to load
  several modules onto the same engine.
@@ -583,18 +584,55 @@ spacewasm_status_t spacewasm_find_export_func(struct spacewasm_t* engine,
                                               uint32_t* out_index);
 
 /*
- Invoke the start function of a module.
+ Look up the start function of module `module_idx` and write its location to
+ `out_module_idx` and `out_func_index`.
 
- If there is no start function, return [`spacewasm_run_status_t::SPACEWASM_RUN_FINISHED`]
- If there is a start function, return [`spacewasm_run_status_t::SPACEWASM_RUN_OUT_OF_FUEL`]
+ Start functions are never host functions (that is rejected at load time), so
+ the result is always a directly-invokable Wasm function. The written indices
+ can be passed straight to [`spacewasm_invoke`] followed by [`spacewasm_run`],
+ exactly as you would an exported function. Note that `out_module_idx` may
+ differ from `module_idx` when the start is an imported (cross-module)
+ function.
 
- If there are any bad arguments or the start function is a host function that traps,
- return [`spacewasm_run_status_t::SPACEWASM_RUN_TRAP`]
+ Returns [`spacewasm_status_t::SPACEWASM_OK`] and populates the outputs when
+ the module declares a start function. Returns
+ [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`] when `module_idx` is out of
+ range or the module has no start function, in which case there is nothing to
+ invoke.
 
  # Safety
- `engine` must be live
+ `engine` must be live; `out_module_idx` and `out_func_index` valid.
  */
-spacewasm_run_status_t spacewasm_invoke_start(struct spacewasm_t* engine, uint32_t module_idx);
+spacewasm_status_t spacewasm_module_start(struct spacewasm_t* engine,
+                                          uint32_t module_idx,
+                                          uint32_t* out_module_idx,
+                                          uint32_t* out_func_index);
+
+/*
+ Check that function `func_index` of module `module_idx` has the signature
+ described by `params_sig` and `returns_sig`.
+
+ Signatures use the same alphabet as [`spacewasm_add_host_function`]:
+ `i` (i32), `I` (i64), `f` (f32), `d` (f64). For example, a function
+ `(i32, i32) -> i32` matches `params_sig = "ii"`, `returns_sig = "i"`.
+
+ Returns [`spacewasm_status_t::SPACEWASM_OK`] when the signature matches.
+ Returns [`spacewasm_status_t::SPACEWASM_ERR_PARAM_LEN_MISMATCH`] when the
+ parameter or return count differs, and
+ [`spacewasm_status_t::SPACEWASM_ERR_PARAM_TYPE_MISMATCH`] when a type at some
+ position differs. Returns [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`]
+ when `module_idx` or `func_index` is out of range, and
+ [`spacewasm_status_t::SPACEWASM_ERR_BAD_SIGNATURE`] when a signature string
+ contains a character other than `iIfd` or is too long.
+
+ # Safety
+ `engine` must be live; all C strings valid and NUL-terminated.
+ */
+spacewasm_status_t spacewasm_check_func_signature(struct spacewasm_t* engine,
+                                                  uint32_t module_idx,
+                                                  uint32_t func_index,
+                                                  const char* params_sig,
+                                                  const char* returns_sig);
 
 /*
  Set up a call to exported function `func_index` of module `module_idx` with
@@ -636,6 +674,18 @@ spacewasm_status_t spacewasm_resume(struct spacewasm_t* engine);
  `engine` must be live.
  */
 spacewasm_status_t spacewasm_resume_value(struct spacewasm_t* engine, struct spacewasm_value_t resume_value);
+
+/*
+ Reset the engine back to an idle state, discarding any in-progress or
+ completed call: the program counter, stack pointers, and pending result are
+ cleared, and guest linear memory and the table are reset to their zero
+ state. Loaded modules remain loaded. Use this to abandon a paused or
+ out-of-fuel call, or to run a fresh invocation from a clean slate.
+
+ # Safety
+ `engine` must be a live handle.
+ */
+spacewasm_status_t spacewasm_reset(struct spacewasm_t* engine);
 
 /*
  Fetch the result of the last completed call, coerced to `expected`, into
