@@ -182,9 +182,10 @@ void DpWriter::performProcessing(Fw::DpContainer& container) {
         Fw::SerializeStatus stat = container.deserializeHeader();
         FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, stat);
 
-        // Check that the buffer size is compatible with the data size in
+        // Check that the buffer size is compatible with the packet size in
         // the container header
-        FW_ASSERT(container.getDataSize() <= buffer.getSize(), static_cast<FwAssertArgType>(container.getDataSize()),
+        FW_ASSERT(container.getPacketSize() <= buffer.getSize(),
+                  static_cast<FwAssertArgType>(container.getPacketSize()),
                   static_cast<FwAssertArgType>(buffer.getSize()));
 
         // Re-compute and serialize the container header into the buffer
