@@ -46,6 +46,10 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runCmd_OK(
     while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
         this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::OK);
     }
+
+    // Report the run completion to internal callers (no-op if this completion did
+    // not originate from a RUN). runCmd_OK fires on every RUN success path.
+    this->reportSeqDone(Fw::CmdResponse::OK);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runCmd_ERROR(
@@ -57,6 +61,24 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runCmd_ERRO
     while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
         this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
+
+    // Report the run completion to internal callers (no-op if this completion did
+    // not originate from a RUN). runCmd_ERROR fires on every RUN failure/cancel path.
+    this->reportSeqDone(Fw::CmdResponse::EXECUTION_ERROR);
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportSeqStarted(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_ModuleLoad& value) {
+    // A RUN has been accepted (the cmd_RUN transition). Mark the run active so its
+    // terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut exactly
+    // once, and echo the start to internal callers. The args were stored in m_args
+    // by the RUN command / seqRunIn port handler before the signal was sent.
+    this->m_seqRunActive = true;
+    if (this->isConnected_seqStartOut_OutputPort(0)) {
+        this->seqStartOut_out(0, value.get_fileName(), this->m_args);
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(
@@ -64,7 +86,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
     // Reached only when a module's main function ran to completion successfully.
     // A successful load/start alone does not count as a sequence success.
-    this->m_tlmSequencesSucceeded++;
+    this->m_tlm.sequencesSucceeded++;
     this->log_ACTIVITY_HI_SequenceSucceeded(this->m_invokedModule);
 }
 
@@ -74,15 +96,15 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     // Reached on any engine-completion failure, whether the engine was running a
     // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
     // so the right counter is bumped.
-    switch (this->m_exitReason) {
+    switch (this->m_exit.reason) {
         case WasmSequencer_ExitReason::CANCEL:
-            this->m_tlmSequencesCancelled++;
+            this->m_tlm.sequencesCancelled++;
             this->log_ACTIVITY_HI_SequenceCancelled(this->m_invokedModule);
             break;
         default:
-            this->m_tlmSequencesFailed++;
-            this->log_WARNING_HI_SequenceFailed(this->m_invokedModule, this->m_exitReason, this->m_exitCode,
-                                                this->m_tlmLastTrapReason, this->m_lastHostFunction);
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequenceFailed(this->m_invokedModule, this->m_exit.reason, this->m_exit.code,
+                                                this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
             break;
     }
 }
@@ -185,7 +207,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     const Svc::WasmSequencer_Status& value) {
     // A failed load counts as a failed sequence: the RUN/LOAD attempt did not
     // reach a runnable module.
-    this->m_tlmSequencesFailed++;
+    this->m_tlm.sequencesFailed++;
     this->log_WARNING_HI_ModuleLoadFailed(value);
 }
 
@@ -239,7 +261,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_ModuleIdx& value) {
     // A module that cannot be run (no valid main) counts as a failed sequence.
-    this->m_tlmSequencesFailed++;
+    this->m_tlm.sequencesFailed++;
     auto problemStatus = this->validateModuleMain(value);
     this->log_WARNING_HI_InvalidModuleEntrypoint(value, WasmSequencer_Status(problemStatus));
 }
@@ -308,16 +330,16 @@ bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_invokeSuccee
 bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_interpreterSucceeded(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal) const {
-    // The engine sets m_exitReason before signalling engineFinished. A run
+    // The engine sets m_exit.reason before signalling engineFinished. A run
     // succeeds when the interpreter finished normally, or when the guest called
     // fprime.exit(0) (a clean, explicit termination). Every other exit reason
     // (trap, non-zero exit, panic, timeout, host failure, unexpected reply,
     // cancel) is a failure.
-    switch (this->m_exitReason) {
+    switch (this->m_exit.reason) {
         case WasmSequencer_ExitReason::INTERPRETER_FINISHED:
             return true;
         case WasmSequencer_ExitReason::HOST_EXIT:
-            return this->m_exitCode == 0;
+            return this->m_exit.code == 0;
         default:
             return false;
     }

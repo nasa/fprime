@@ -152,6 +152,23 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     //! assert the guest's serial invocation round-tripped verbatim.
     void from_serialOut_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) override;
 
+    //! Handler for seqStartOut: records the run-start report the component emits
+    //! to internal callers. Captured into dedicated members (rather than the
+    //! shared from-port history) so the many ASSERT_FROM_PORT_HISTORY_SIZE(0)
+    //! guards in existing tests keep working; the byte-level round trip is
+    //! asserted through these accessors instead.
+    void from_seqStartOut_handler(FwIndexType portNum,
+                                  const Fw::StringBase& filename,
+                                  const Svc::SeqArgs& args) override;
+
+    //! Handler for seqDoneOut: records the run-done report the component emits to
+    //! internal callers. See from_seqStartOut_handler for why this is captured
+    //! outside the shared from-port history.
+    void from_seqDoneOut_handler(FwIndexType portNum,
+                                 FwOpcodeType opCode,
+                                 U32 cmdSeq,
+                                 const Fw::CmdResponse& response) override;
+
     FwChanIdType nextTlmId;
     Fw::Time nextTlmTime;
     Fw::TlmBuffer nextTlmValue;
@@ -165,6 +182,15 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     FwIndexType lastSerialOutPort;
     U8 lastSerialOutData[Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE];
     FwSizeType lastSerialOutSize;
+
+    //! Number of seqStartOut invocations observed, and the arguments of the last one.
+    U32 seqStartOutCount;
+    Fw::String lastSeqStartFilename;
+    Svc::SeqArgs lastSeqStartArgs;
+
+    //! Number of seqDoneOut invocations observed, and the response of the last one.
+    U32 seqDoneOutCount;
+    Fw::CmdResponse lastSeqDoneResponse;
 
   private:
     // ----------------------------------------------------------------------

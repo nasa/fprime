@@ -10,7 +10,9 @@
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
+#include "config/FwChanIdTypeAliasAc.h"
 #include "config/FwPacketDescriptorTypeAliasAc.h"
+#include "config/FwPrmIdTypeAliasAc.h"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -78,8 +80,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmExit(spacewasm_caller_t* caller,
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
 
-    this->m_exitReason = WasmSequencer_ExitReason::HOST_EXIT;
-    this->m_exitCode = params[0].u.i32_;
+    this->m_exit.reason = WasmSequencer_ExitReason::HOST_EXIT;
+    this->m_exit.code = params[0].u.i32_;
 
     return SPACEWASM_TRAP;
 }
@@ -94,8 +96,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmPanic(spacewasm_caller_t* caller,
 
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I32, params[0].tag);
 
-    this->m_exitReason = WasmSequencer_ExitReason::HOST_PANIC;
-    this->m_exitCode = params[0].u.i32_;
+    this->m_exit.reason = WasmSequencer_ExitReason::HOST_PANIC;
+    this->m_exit.code = params[0].u.i32_;
 
     return SPACEWASM_TRAP;
 }
@@ -116,8 +118,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmArgs(spacewasm_caller_t* caller,
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ARGS;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.ptr1 = ptr;
-    this->m_pendingHostFunction.len1 = size;
+    this->m_pendingHostFunction.u.args.ptr = ptr;
+    this->m_pendingHostFunction.u.args.len = size;
 
     return SPACEWASM_PAUSE;
 }
@@ -147,8 +149,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmTime(spacewasm_caller_t* caller,
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TIME;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.ptr1 = time_ptr;
-        this->m_pendingHostFunction.len1 = time_size;
+        this->m_pendingHostFunction.u.time.ptr = time_ptr;
+        this->m_pendingHostFunction.u.time.len = time_size;
 
         // Always pause the interpreter to allow the state machine to process this request
         return_status = SPACEWASM_PAUSE;
@@ -193,11 +195,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadTelemetry(spacewasm_caller_t*
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::TELEMETRY;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.id = static_cast<U64>(id);
-        this->m_pendingHostFunction.ptr1 = time_ptr;
-        this->m_pendingHostFunction.len1 = time_size;
-        this->m_pendingHostFunction.ptr2 = value_ptr;
-        this->m_pendingHostFunction.len2 = value_size;
+        this->m_pendingHostFunction.u.telemetry.chanId = static_cast<FwChanIdType>(id);
+        this->m_pendingHostFunction.u.telemetry.timePtr = time_ptr;
+        this->m_pendingHostFunction.u.telemetry.timeLen = time_size;
+        this->m_pendingHostFunction.u.telemetry.valuePtr = value_ptr;
+        this->m_pendingHostFunction.u.telemetry.valueLen = value_size;
 
         // Always pause the interpreter to allow the state machine to process this request
         return_status = SPACEWASM_PAUSE;
@@ -226,9 +228,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmReadParameter(spacewasm_caller_t*
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::PARAMETER;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.id = static_cast<U64>(id);
-    this->m_pendingHostFunction.ptr1 = ptr;
-    this->m_pendingHostFunction.len1 = len;
+    this->m_pendingHostFunction.u.parameter.prmId = static_cast<FwPrmIdType>(id);
+    this->m_pendingHostFunction.u.parameter.ptr = ptr;
+    this->m_pendingHostFunction.u.parameter.len = len;
 
     // Always pause the interpreter to allow the state machine to process this request
     return SPACEWASM_PAUSE;
@@ -256,8 +258,8 @@ spacewasm_hostcall_result_t WasmSequencer::wasmCommand(struct spacewasm_caller_t
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::COMMAND;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.ptr1 = ptr;
-        this->m_pendingHostFunction.len1 = len;
+        this->m_pendingHostFunction.u.command.ptr = ptr;
+        this->m_pendingHostFunction.u.command.len = len;
 
         // Always pause the interpreter to allow the state machine to process this request
         return_status = SPACEWASM_PAUSE;
@@ -291,9 +293,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmEvent(spacewasm_caller_t* caller,
     // Pend this event dispatch to be executed by the sequencer state machine
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::EVENT;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.id = static_cast<U64>(static_cast<U32>(params[0].u.i32_));
-    this->m_pendingHostFunction.ptr1 = ptr;
-    this->m_pendingHostFunction.len1 = len;
+    this->m_pendingHostFunction.u.event.rawSeverity = static_cast<U32>(params[0].u.i32_);
+    this->m_pendingHostFunction.u.event.msgPtr = ptr;
+    this->m_pendingHostFunction.u.event.msgLen = len;
 
     return SPACEWASM_PAUSE;
 }
@@ -318,7 +320,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmRsleep(spacewasm_caller_t* caller
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::RSLEEP;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.time_us = us;
+    this->m_pendingHostFunction.u.sleep.us = us;
 
     return SPACEWASM_PAUSE;
 }
@@ -343,7 +345,7 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
 
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASLEEP;
     this->m_pendingHostFunction.caller = caller;
-    this->m_pendingHostFunction.time_us = us;
+    this->m_pendingHostFunction.u.sleep.us = us;
 
     return SPACEWASM_PAUSE;
 }
@@ -377,9 +379,9 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialSync(spacewasm_caller_t* ca
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::SYNC_PORT;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.id = static_cast<U64>(index);
-        this->m_pendingHostFunction.ptr1 = ptr;
-        this->m_pendingHostFunction.len1 = len;
+        this->m_pendingHostFunction.u.syncPort.index = static_cast<U32>(index);
+        this->m_pendingHostFunction.u.syncPort.ptr = ptr;
+        this->m_pendingHostFunction.u.syncPort.len = len;
 
         // Always pause the interpreter to allow the state machine to process this request
         return_status = SPACEWASM_PAUSE;
@@ -421,11 +423,11 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialAsync(spacewasm_caller_t* c
     } else {
         this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASYNC_PORT;
         this->m_pendingHostFunction.caller = caller;
-        this->m_pendingHostFunction.id = static_cast<U64>(index);
-        this->m_pendingHostFunction.ptr1 = ptr;
-        this->m_pendingHostFunction.len1 = len;
-        this->m_pendingHostFunction.ptr2 = return_ptr;
-        this->m_pendingHostFunction.len2 = return_len;
+        this->m_pendingHostFunction.u.asyncPort.index = static_cast<U32>(index);
+        this->m_pendingHostFunction.u.asyncPort.ptr = ptr;
+        this->m_pendingHostFunction.u.asyncPort.len = len;
+        this->m_pendingHostFunction.u.asyncPort.returnPtr = return_ptr;
+        this->m_pendingHostFunction.u.asyncPort.returnLen = return_len;
 
         // Always pause the interpreter to allow the state machine to process this request
         return_status = SPACEWASM_PAUSE;

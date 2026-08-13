@@ -137,8 +137,8 @@ void WasmSequencer ::destroyStore() {
 
     // Clear any pending state.
     this->m_invokeStatus = SPACEWASM_OK;
-    this->m_exitReason = WasmSequencer_ExitReason::UNKNOWN;
-    this->m_exitCode = 0;
+    this->m_exit.reason = WasmSequencer_ExitReason::UNKNOWN;
+    this->m_exit.code = 0;
 }
 
 spacewasm_status_t WasmSequencer ::validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const {
@@ -163,11 +163,24 @@ spacewasm_status_t WasmSequencer ::validateModuleMain(WasmSequencer_ModuleIdx mo
 
 U32 WasmSequencer ::makeCmdUid() const {
     // cmdUid is formatted XXYY, where XX are the low 16 bits of m_sequencesStarted
-    // and YY are the low 16 bits of m_tlmCommandsDispatched. On the way back in via
+    // and YY are the low 16 bits of m_tlm.commandsDispatched. On the way back in via
     // cmdResponseIn this lets us check A) that the response is from the current
     // sequence (modulo 2^16) and B) that it is this exact command instance and not
     // another dispatch of the same opcode.
-    return static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_tlmCommandsDispatched & 0xFFFF));
+    return static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_tlm.commandsDispatched & 0xFFFF));
+}
+
+void WasmSequencer ::reportSeqDone(const Fw::CmdResponse& response) {
+    // Only report a done for a run we reported a start for. This keeps the
+    // seqStart/seqDone pair balanced and avoids emitting a done for a completion
+    // that was not a RUN (e.g. INVOKE / LOAD).
+    if (!this->m_seqRunActive) {
+        return;
+    }
+    this->m_seqRunActive = false;
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        this->seqDoneOut_out(0, 0, 0, response);
+    }
 }
 
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {
@@ -211,7 +224,7 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
 void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName) {
     // LOAD_NAME supplies an explicit module name; use it verbatim.
     if (moduleName.length() > 0) {
-        this->m_tlmSequenceName = moduleName;
+        this->m_tlm.sequenceName = moduleName;
         return;
     }
 
@@ -250,7 +263,7 @@ void WasmSequencer ::setSequenceName(const Fw::StringBase& filePath, const Fw::S
         name[n++] = path[i];
     }
     name[n] = '\0';
-    this->m_tlmSequenceName = name;
+    this->m_tlm.sequenceName = name;
 }
 
 //! Panic hook the spacewasm interpreter calls on a fatal internal error.

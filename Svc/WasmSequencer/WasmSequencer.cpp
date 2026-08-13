@@ -32,6 +32,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_guest_offset(0),
       m_wasm(nullptr),
       m_hasPendingLoadCmd(false),
+      m_seqRunActive(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_statementStart(),
@@ -40,17 +41,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_loadFile(nullptr),
-      m_tlmSequencesSucceeded(0),
-      m_tlmSequencesFailed(0),
-      m_tlmSequencesCancelled(0),
-      m_tlmCommandsDispatched(0),
-      m_tlmCommandsFailed(0),
-      m_sequencesStarted(0),
-      m_exitReason(WasmSequencer_ExitReason::UNKNOWN),
-      m_exitCode(0),
-      m_lastHostFunction(WasmSequencer_HostFunction::NONE),
-      m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
-      m_tlmSequenceName("") {
+      m_sequencesStarted(0) {
     getGlobalAllocatorLock()->lock();
     const auto status = spacewasm_fprime_register_global_allocator(
         [](void* userdata, std::size_t size, std::size_t align) -> U8* {
@@ -101,7 +92,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
     const U16 sequenceIndex = static_cast<U16>((cmdUid & 0xFFFF0000) >> 16);
     const U16 cmdIndex = static_cast<U16>(cmdUid & 0xFFFF);
     const U16 currentSequenceIndex = static_cast<U16>(this->m_sequencesStarted & 0xFFFF);
-    const U16 currentCmdIndex = static_cast<U16>(this->m_tlmCommandsDispatched & 0xFFFF);
+    const U16 currentCmdIndex = static_cast<U16>(this->m_tlm.commandsDispatched & 0xFFFF);
 
     // If the response is from a previous execution window, treat it as a nominal
     // late reply (e.g. a command that returned after a CANCEL) and just report it
@@ -131,7 +122,7 @@ void WasmSequencer ::cmdResponseIn_handler(FwIndexType portNum,
 
     // Track commands that came back with a non-OK response.
     if (response != Fw::CmdResponse::OK) {
-        this->m_tlmCommandsFailed++;
+        this->m_tlm.commandsFailed++;
     }
 
     this->interpreter_sendSignal_hostResumeI32(static_cast<I32>(response.e));
@@ -142,13 +133,45 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 
     this->tlmWrite_ControllerState(this->controller_getState(), now);
     this->tlmWrite_EngineState(this->interpreter_getState(), now);
-    this->tlmWrite_SequencesSucceeded(this->m_tlmSequencesSucceeded, now);
-    this->tlmWrite_SequencesFailed(this->m_tlmSequencesFailed, now);
-    this->tlmWrite_SequencesCancelled(this->m_tlmSequencesCancelled, now);
-    this->tlmWrite_CommandsDispatched(this->m_tlmCommandsDispatched, now);
-    this->tlmWrite_CommandsFailed(this->m_tlmCommandsFailed, now);
-    this->tlmWrite_LastTrapReason(this->m_tlmLastTrapReason, now);
-    this->tlmWrite_SeqName(this->m_tlmSequenceName, now);
+    this->tlmWrite_SequencesSucceeded(this->m_tlm.sequencesSucceeded, now);
+    this->tlmWrite_SequencesFailed(this->m_tlm.sequencesFailed, now);
+    this->tlmWrite_SequencesCancelled(this->m_tlm.sequencesCancelled, now);
+    this->tlmWrite_CommandsDispatched(this->m_tlm.commandsDispatched, now);
+    this->tlmWrite_CommandsFailed(this->m_tlm.commandsFailed, now);
+    this->tlmWrite_LastTrapReason(this->m_exit.lastTrapReason, now);
+    this->tlmWrite_SeqName(this->m_tlm.sequenceName, now);
+}
+
+void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
+    // Port-driven RUN. Only valid from IDLE or READY, same as the RUN command.
+    // Unlike the command there is no command response to send, so a rejected call
+    // just reports a warning and returns.
+    if (this->controller_getState() != WasmSequencer_ControllerStateMachine_State::IDLE &&
+        this->controller_getState() != WasmSequencer_ControllerStateMachine_State::READY) {
+        this->log_WARNING_HI_InvalidSeqRunCall(this->controller_getState());
+        return;
+    }
+
+    // A port RUN is never blocking; there is no command to respond to and no
+    // pending load/finish command is queued. The reportSeqStarted action (run on
+    // the cmd_RUN transition) reports the start and marks the run active; it
+    // echoes m_args, so store the args before signalling.
+    this->m_args = args;
+    Fw::String runModuleName = "";
+    this->controller_sendSignal_cmd_RUN(WasmSequencer_ModuleLoad(filename, runModuleName));
+}
+
+void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
+    // Port-driven CANCEL. The only state a sequence cannot be cancelled from is
+    // IDLE (nothing is running). Mirrors the CANCEL command otherwise, but has no
+    // command response to send.
+    if (this->controller_getState() == WasmSequencer_ControllerStateMachine_State::IDLE) {
+        this->log_WARNING_HI_InvalidSeqCancelCall(this->controller_getState());
+        return;
+    }
+
+    this->controller_sendSignal_cmd_CANCEL();
+    this->interpreter_sendSignal_cmd_CANCEL();
 }
 
 // ----------------------------------------------------------------------
@@ -158,22 +181,24 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
     if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
         this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT ||
-        static_cast<U64>(portNum) != this->m_pendingHostFunction.id) {
+        static_cast<U32>(portNum) != this->m_pendingHostFunction.u.asyncPort.index) {
         this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::ASYNC_PORT);
         return;
     }
 
     // The guest cannot receive more than it allocated for the return buffer
-    if (buffer.getSize() > this->m_pendingHostFunction.len2) {
-        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ASYNC_PORT, this->m_pendingHostFunction.len2,
+    if (buffer.getSize() > this->m_pendingHostFunction.u.asyncPort.returnLen) {
+        this->log_WARNING_HI_BufferTooSmall(WasmSequencer_HostFunction::ASYNC_PORT,
+                                            this->m_pendingHostFunction.u.asyncPort.returnLen,
                                             static_cast<U32>(buffer.getSize()));
         this->interpreter_sendSignal_hostResponseFailure();
         return;
     }
 
     // Write the reply payload back into guest memory
-    const auto status = spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.ptr2,
-                                            buffer.getBuffAddr(), buffer.getSize());
+    const auto status =
+        spacewasm_mem_write(this->m_pendingHostFunction.caller, this->m_pendingHostFunction.u.asyncPort.returnPtr,
+                            buffer.getBuffAddr(), buffer.getSize());
     if (status != SPACEWASM_OK) {
         this->log_WARNING_HI_HostFunctionInvalidPointer(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
                                                         static_cast<WasmSequencer_Status::T>(status));
@@ -220,6 +245,8 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
             FW_ASSERT(false, static_cast<FwAssertArgType>(block));
     }
 
+    // Store the args before signalling: the reportSeqStarted action (run on the
+    // cmd_RUN transition) echoes m_args on seqStartOut.
     this->m_args = seqArgs;
     Fw::String runModuleName = "";
     this->controller_sendSignal_cmd_RUN(WasmSequencer_ModuleLoad(fileName, runModuleName));

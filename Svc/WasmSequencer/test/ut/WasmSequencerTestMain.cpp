@@ -1654,6 +1654,197 @@ TEST_F(WasmSequencerTester, UnexpectedCmdResponseWhilePausedFails) {
     this->removeFile("loop.wasm");
 }
 
+// ----------------------------------------------------------------------
+// seqRunIn / seqCancelIn ports and seqStartOut / seqDoneOut reporting
+// (mirrors the FpySequencer port contract)
+// ----------------------------------------------------------------------
+
+TEST_F(WasmSequencerTester, SeqStartDoneEmittedOnRunCommandSuccess) {
+    // A RUN command that runs to completion reports a start (echoing the file and
+    // args) and then a done with OK to internal callers.
+    const U8 argBytes[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_RUN(0, 200, file, NO_BLOCK, args);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 200, Fw::CmdResponse::OK);
+
+    // Exactly one start (with the run's file + args) and one done with OK.
+    ASSERT_EQ(this->seqStartOutCount, 1u);
+    ASSERT_EQ(this->lastSeqStartFilename, file);
+    ASSERT_EQ(this->lastSeqStartArgs, args);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunFailure) {
+    // A RUN whose module traps reports a start, then a done with EXECUTION_ERROR.
+    const Fw::String file = this->copyAsset("unreachable.wasm");
+    this->sendCmd_RUN(0, 201, file, BLOCK, {});
+    // The run both starts and ends in IDLE (it traps), so pump the whole queue
+    // rather than dispatching "until IDLE" (which would be an immediate no-op).
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 201, Fw::CmdResponse::EXECUTION_ERROR);
+
+    ASSERT_EQ(this->seqStartOutCount, 1u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("unreachable.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqDoneEmittedWithErrorOnRunCancel) {
+    // Cancelling a running RUN reports the start, then a done with EXECUTION_ERROR.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("loop.wasm");
+    this->sendCmd_RUN(0, 202, file, NO_BLOCK, {});
+    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+
+    ASSERT_EQ(this->seqStartOutCount, 1u);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+
+    this->sendCmd_CANCEL(0, 203);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("loop.wasm");
+}
+
+TEST_F(WasmSequencerTester, InvokeDoesNotEmitSeqStartOrDone) {
+    // seqStart/seqDone are RUN-scoped. An INVOKE (which also exercises the engine)
+    // must not report a start or done to internal callers.
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_LOAD(0, 204, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_INVOKE(0, 205, Fw::CmdStringArg(""), BLOCK, {});
+    // INVOKE starts and ends in READY; pump the queue rather than waiting for a
+    // state change that already holds.
+    this->dispatchAll();
+
+    ASSERT_CMD_RESPONSE(1, OPCODE_INVOKE, 205, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->seqStartOutCount, 0u);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqRunInPortRunsSequence) {
+    // The seqRunIn port drives a non-blocking RUN: it reports a start, runs to
+    // completion in READY, and reports a done with OK. There is no command
+    // response because the run was requested from a port, not a command.
+    const U8 argBytes[] = {0x01, 0x02, 0x03};
+    const Svc::SeqArgs args = this->makeSeqArgs(argBytes, sizeof argBytes);
+
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->invoke_to_seqRunIn(0, file, args);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+
+    ASSERT_EQ(this->seqStartOutCount, 1u);
+    ASSERT_EQ(this->lastSeqStartFilename, file);
+    ASSERT_EQ(this->lastSeqStartArgs, args);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
+
+    // No command was involved: nothing on cmdResponse, no stray external calls.
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqRunInFromReadyRuns) {
+    // seqRunIn is valid from READY (a prior LOAD left a store). It resets the
+    // store, loads, and runs the new module.
+    const Fw::String file = this->copyAsset("empty.wasm");
+    this->sendCmd_LOAD(0, 206, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    // A RUN from READY resets the store, loads, runs, and settles back in READY;
+    // pump the queue rather than waiting for a state change that already holds.
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EQ(this->seqStartOutCount, 1u);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::OK);
+    this->removeFile("empty.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
+    // seqRunIn is only valid from IDLE or READY. A run request while already
+    // running is rejected with InvalidSeqRunCall and leaves the run untouched.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("loop.wasm");
+    this->sendCmd_RUN(0, 207, file, NO_BLOCK, {});
+    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+
+    const U32 startsBefore = this->seqStartOutCount;
+
+    // The rejected call is handled asynchronously; dispatch it.
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchAll();
+
+    ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
+    ASSERT_EVENTS_InvalidSeqRunCall(0, ControllerState::RUNNING_MAIN);
+    // No new start was reported; the original run is still active.
+    ASSERT_EQ(this->seqStartOutCount, startsBefore);
+
+    // Clean up: cancel the still-running sequence.
+    this->sendCmd_CANCEL(0, 208);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+    this->removeFile("loop.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqCancelInCancelsRunningSequence) {
+    // The seqCancelIn port cancels a running sequence just like the CANCEL command,
+    // driving it back to IDLE and reporting a done with EXECUTION_ERROR.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("loop.wasm");
+    this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
+    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+
+    this->invoke_to_seqCancelIn(0);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(1);
+    ASSERT_EQ(this->seqDoneOutCount, 1u);
+    ASSERT_EQ(this->lastSeqDoneResponse, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("loop.wasm");
+}
+
+TEST_F(WasmSequencerTester, SeqCancelInFromIdleRejected) {
+    // Cancelling from IDLE (nothing running) is rejected with InvalidSeqCancelCall
+    // and leaves the component in IDLE.
+    this->invoke_to_seqCancelIn(0);
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_EVENTS_InvalidSeqCancelCall_SIZE(1);
+    ASSERT_EVENTS_InvalidSeqCancelCall(0, ControllerState::IDLE);
+    ASSERT_EVENTS_SequenceCancelled_SIZE(0);
+    ASSERT_EQ(this->seqDoneOutCount, 0u);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
 TEST_F(WasmSequencerTester, PauseAtHostFunctionThenContinueResumes) {
     // cmd.wasm reaches the cmd host function on its very first spin. dispatchUntilState
     // stops at RUNNING_SPINNING with the entry `entered` signal still queued (before that

@@ -13,6 +13,16 @@ event ModuleNotFound(module_name: string size 16) \
   severity warning low \
   format "Failed to invoke main on module with name {}"
 
+@ A run was requested on the seqRunIn port from a state where it is not valid
+event InvalidSeqRunCall($state: ControllerStateMachine.State) \
+  severity warning high \
+  format "Cannot run sequence from a port in state {}"
+
+@ A cancel was requested on the seqCancelIn port from a state where it is not valid
+event InvalidSeqCancelCall($state: ControllerStateMachine.State) \
+  severity warning high \
+  format "Cannot cancel sequence from a port in state {}"
+
 @ Failed to open the requested Wasm module file
 event FileOpenError(fileName: string size FileNameStringSize, status: I32) \
   severity warning high \

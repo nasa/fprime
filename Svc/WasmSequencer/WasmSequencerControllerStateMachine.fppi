@@ -5,7 +5,7 @@ struct ModuleLoad {
   moduleName: string size 16
 }
 
-@ diagram-layout engine=elk cycleBreaking=GREEDY_MODEL_ORDER considerModelOrder=PREFER_EDGES nodePlacement=BRANDES_KOEPF
+@ diagram-layout engine=elk direction=TB cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
 state machine ControllerStateMachine {
   initial enter IDLE
 
@@ -38,6 +38,10 @@ state machine ControllerStateMachine {
 
   @ responds to any command waiting on load with EXECUTION_ERROR
   action runCmd_ERROR
+
+  @ report that a RUN has begun on seqStartOut, and mark a run active so its
+  @ terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut
+  action reportSeqStarted: ModuleLoad
 
   ###############
   # Loading     #
@@ -114,14 +118,14 @@ state machine ControllerStateMachine {
     entry do { resetStore }
 
     on cmd_CANCEL enter IDLE
-    on cmd_RUN do { load } enter LOADING_TO_RUN
+    on cmd_RUN do { reportSeqStarted, load } enter LOADING_TO_RUN
     on cmd_LOAD do { load } enter LOADING_TO_READY
   }
 
   @ Interpreter has modules loaded into the store and is ready to execute
   state READY {
     on cmd_CANCEL enter IDLE
-    on cmd_RUN do { resetStore, load } enter LOADING_TO_RUN
+    on cmd_RUN do { reportSeqStarted, resetStore, load } enter LOADING_TO_RUN
     on cmd_LOAD do { load } enter LOADING_TO_READY
     on cmd_INVOKE enter MAIN_CHECK
   }
@@ -179,7 +183,11 @@ state machine ControllerStateMachine {
 
   state LOADING_TO_RUN {
     on loadSucceeded enter MAIN_CHECK_PENDING_START_AND_MAIN
-    on loadFailed do { reportModuleLoadFailed, loadCmd_ERROR, runCmd_ERROR } enter IDLE
+    on loadFailed do {
+      reportModuleLoadFailed
+      loadCmd_ERROR
+      runCmd_ERROR
+    } enter IDLE
   }
 
   @ Make sure the module we want to run has a main function
@@ -189,8 +197,7 @@ state machine ControllerStateMachine {
       runCmd_ERROR
       loadCmd_ERROR
       # The module loaded fine; it just has no runnable main. Stay in READY
-      # (the store is valid) rather than tearing everything down, matching the
-      # INVOKE path.
+      # (the store is valid) rather than tearing everything down
     } enter READY
   }
 

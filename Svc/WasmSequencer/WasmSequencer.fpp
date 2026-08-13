@@ -41,6 +41,20 @@ module Svc {
     @ on the corresponding port number
     async input port serialReply: [Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
 
+    @ port for requests to run sequences
+    # same priority as RUN cmd
+    async input port seqRunIn: Svc.CmdSeqIn assert
+
+    @ port for requesting to cancel the currently running sequence
+    # same priority as CANCEL cmd
+    async input port seqCancelIn: Svc.CmdSeqCancel assert
+
+    @ called when a sequence begins running
+    output port seqStartOut: Svc.CmdSeqIn
+
+    @ called when a sequence finishes running, either successfully or not
+    output port seqDoneOut: Fw.CmdResponse
+
     match serialOut with serialReply
 
     ###############################################################################

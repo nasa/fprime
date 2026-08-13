@@ -44,7 +44,7 @@ enum AllocError: U8 {
   ALLOCATION_FAILED
 }
 
-@ diagram-layout engine=elk direction=LR cycleBreaking=GREEDY_MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
+@ diagram-layout engine=elk direction=RL cycleBreaking=GREEDY_MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF
 state machine EngineStateMachine {
   initial enter IDLE
 

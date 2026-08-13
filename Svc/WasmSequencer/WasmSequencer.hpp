@@ -19,6 +19,8 @@
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FppConstantsAc.hpp"
+#include "config/FwChanIdTypeAliasAc.h"
+#include "config/FwPrmIdTypeAliasAc.h"
 #include "config/FwSizeTypeAliasAc.h"
 #include "config/WasmSequencerConfig.hpp"
 
@@ -71,6 +73,21 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void writeTelemetry_handler(FwIndexType portNum,  //!< The port number
                                 U32 context           //!< The call order
                                 ) override;
+
+    //! Handler implementation for seqRunIn
+    //!
+    //! Port for requests to run sequences (non-blocking). Mirrors a NO_BLOCK RUN
+    //! command but has no command response to send.
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& filename,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Sequence arguments
+                          ) override;
+
+    //! Handler implementation for seqCancelIn
+    //!
+    //! Port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -209,6 +226,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void Svc_WasmSequencer_ControllerStateMachine_action_runCmd_ERROR(
         SmId smId,                                               //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action reportSeqStarted of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! report that a RUN has begun on seqStartOut and mark a run active
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportSeqStarted(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_ModuleLoad& value                //!< The value
         ) override;
 
     //! Implementation for action load of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -409,7 +435,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action finish of state machine Svc_WasmSequencer_EngineStateMachine
     //!
     //! Send a signal back to the controller state machine that we have finished executing
-    //! The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
+    //! The response codes are stored in m_exit.reason, m_exit.code, m_exit.lastTrapReason
     void Svc_WasmSequencer_EngineStateMachine_action_finish(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
@@ -619,6 +645,20 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     PendingCmd m_pendingLoadCmd;
     bool m_hasPendingLoadCmd;
 
+    //! True while a RUN (from the RUN command or the seqRunIn port) is in flight.
+    //! Set by the reportSeqStarted action when seqStartOut is emitted; cleared
+    //! when the run reaches a terminal outcome and seqDoneOut is emitted. Gates
+    //! the seqStart/seqDone pair so a done is reported for exactly one start, and
+    //! so non-RUN completions (e.g. INVOKE, which also flows through
+    //! runCmd_OK / runCmd_ERROR) do not emit a spurious seqDoneOut.
+    bool m_seqRunActive;
+
+    //! Report that the active RUN finished on seqDoneOut (if connected) with the
+    //! given response, and clear the active-run flag. A no-op when no run is
+    //! active, so it is safe to call on every RUN terminal path. Called from the
+    //! runCmd_OK / runCmd_ERROR state-machine actions.
+    void reportSeqDone(const Fw::CmdResponse& response);
+
     //! Pending timer from sleep host function
     Fw::Time m_pendingTimer;
     bool m_hasPendingTimer;
@@ -647,20 +687,29 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Currently loading file handle
     Os::File* m_loadFile;
 
-    //! Sequences successfully completed
-    U64 m_tlmSequencesSucceeded;
+    //! Backing state for the periodically-written telemetry channels (see
+    //! writeTelemetry_handler). Grouped so the counters read as one unit.
+    struct Telemetry {
+        //! Sequences successfully completed
+        U64 sequencesSucceeded{0};
 
-    //! Sequences that failed to validate or execute
-    U64 m_tlmSequencesFailed;
+        //! Sequences that failed to validate or execute
+        U64 sequencesFailed{0};
 
-    //! Sequences that were cancelled
-    U64 m_tlmSequencesCancelled;
+        //! Sequences that were cancelled
+        U64 sequencesCancelled{0};
 
-    //! Commands dispatched total
-    U64 m_tlmCommandsDispatched;
+        //! Commands dispatched total
+        U64 commandsDispatched{0};
 
-    //! Number of commands that failed
-    U64 m_tlmCommandsFailed;
+        //! Number of commands that failed
+        U64 commandsFailed{0};
+
+        //! Currently running sequence name
+        Fw::StringTemplate<FileNameStringSize> sequenceName{""};
+    };
+
+    Telemetry m_tlm;
 
     //! Monotonic counter of sequences started (bumped whenever the interpreter
     //! begins spinning a freshly-invoked program). The low 16 bits form the
@@ -669,30 +718,36 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     U32 m_sequencesStarted;
 
     //! Compose the command context (cmdUid) sent to the command dispatcher from
-    //! the current sequence counter and the m_tlmCommandsDispatched counter. The
+    //! the current sequence counter and the m_tlm.commandsDispatched counter. The
     //! low 16 bits of the latter form the low half of the cmdUid, letting us
     //! detect a response for a different instance of the same opcode.
     U32 makeCmdUid() const;
 
-    //! Reason the current program exited.
-    //! By default this is INTERPRETER but can be overriden from host functions
-    WasmSequencer_ExitReason m_exitReason;
+    //! Why the last sequence ended. Set as the program runs and reported
+    //! together in SequenceFailed (see the controller reportModuleFailed action).
+    struct ExitStatus {
+        //! Reason the current program exited.
+        //! By default this is INTERPRETER but can be overriden from host functions
+        WasmSequencer_ExitReason reason{WasmSequencer_ExitReason::UNKNOWN};
 
-    //! Currently stored exit code for non-INTERPRETER exits
-    I32 m_exitCode;
+        //! Currently stored exit code for non-INTERPRETER exits
+        I32 code{0};
 
-    //! Last run host function that could have caused the error
-    WasmSequencer_HostFunction m_lastHostFunction;
+        //! Last run host function that could have caused the error
+        WasmSequencer_HostFunction lastHostFunction{WasmSequencer_HostFunction::NONE};
 
-    //! Reason last sequence trapped
-    WasmSequencer_TrapReason m_tlmLastTrapReason;
+        //! Reason last sequence trapped
+        WasmSequencer_TrapReason lastTrapReason{WasmSequencer_TrapReason::NONE};
+    };
 
-    //! Currently running sequence name
-    Fw::StringTemplate<FileNameStringSize> m_tlmSequenceName;
+    ExitStatus m_exit;
 
     //! Buffer to hold the serial output port invocation invoked by the guest
     Fw::LinearBufferTemplate<Svc::WasmSequencerConfig::MAX_SERIAL_PORT_SIZE> m_serialPortBuffer;
 
+    //! A host function call the guest requested that is pending dispatch by the
+    //! engine state machine (see dispatchPendingHostFunction). `kind` selects
+    //! which arm of the `u` union carries the call's arguments.
     struct PendingHostFunction {
         PendingHostFunction() = default;
         bool isPending() const { return kind != WasmSequencer_HostFunction::NONE; }
@@ -703,20 +758,72 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         // Handle that holds the Wasm guest memory pointer
         spacewasm_caller_t* caller{nullptr};
 
-        // Port/channel/param id, or (for EVENT) the raw guest-requested
-        // severity id as passed by the guest (may be out of range).
-        U64 id{0};
+        //! Per-kind call arguments. Only the arm matching `kind` is live.
+        union Args {
+            // COMMAND: encoded command payload in guest memory
+            struct {
+                U32 ptr;
+                U32 len;
+            } command;
 
-        // The first pointer/length in one of the host commands
-        U32 ptr1{0};
-        U32 len1{0};
+            // TELEMETRY: channel id plus where to write the serialized time and value
+            struct {
+                FwChanIdType chanId;
+                U32 timePtr;
+                U32 timeLen;
+                U32 valuePtr;
+                U32 valueLen;
+            } telemetry;
 
-        // The second pointer/length in one of the host commands
-        U32 ptr2{0};
-        U32 len2{0};
+            // PARAMETER: parameter id plus where to write the serialized value
+            struct {
+                FwPrmIdType prmId;
+                U32 ptr;
+                U32 len;
+            } parameter;
 
-        // The absolute/relative time for [ar]sleep
-        U64 time_us{0};
+            // EVENT: raw guest-requested severity (may be out of range) plus the message
+            struct {
+                U32 rawSeverity;
+                U32 msgPtr;
+                U32 msgLen;
+            } event;
+
+            // RSLEEP / ASLEEP: absolute/relative sleep duration
+            struct {
+                U64 us;
+            } sleep;
+
+            // ARGS: where to write the stored sequence arguments
+            struct {
+                U32 ptr;
+                U32 len;
+            } args;
+
+            // TIME: where to write the serialized current time
+            struct {
+                U32 ptr;
+                U32 len;
+            } time;
+
+            // SYNC_PORT: serial output port index plus payload in guest memory
+            struct {
+                U32 index;
+                U32 ptr;
+                U32 len;
+            } syncPort;
+
+            // ASYNC_PORT: like SYNC_PORT plus where to write the reply
+            struct {
+                U32 index;
+                U32 ptr;
+                U32 len;
+                U32 returnPtr;
+                U32 returnLen;
+            } asyncPort;
+
+            Args() : command{0, 0} {}
+        } u;
     };
 
     PendingHostFunction m_pendingHostFunction;
