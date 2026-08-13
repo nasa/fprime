@@ -247,6 +247,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
         ) override;
 
+    //! Implementation for action invokeMainPending of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Invoke main on the module whose start function just ran (RUN-with-start path)
+    void Svc_WasmSequencer_ControllerStateMachine_action_invokeMainPending(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action reportModuleInvalidMain of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Emit an event noting that a given module has no [valid] main function
@@ -329,8 +337,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setExitReason_UNKNOWN of state machine Svc_WasmSequencer_EngineStateMachine
-    void Svc_WasmSequencer_EngineStateMachine_action_setExitReason_UNKNOWN(
+    //! Implementation for action clearExitStatus of state machine Svc_WasmSequencer_EngineStateMachine
+    void Svc_WasmSequencer_EngineStateMachine_action_clearExitStatus(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
@@ -624,6 +632,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! The last module index that was invoked
     WasmSequencer_ModuleIdx m_invokedModule;
 
+    //! Module index whose main is still owed after its start function runs (the
+    //! RUN-with-start path). invokeStart overwrites m_invokedModule with the
+    //! start function's owning module, which may differ, so the module we must
+    //! run main on is tracked separately.
+    WasmSequencer_ModuleIdx m_pendingMainModule;
+
     //! Flag indicating a function invocation failed
     spacewasm_status_t m_invokeStatus;
 
@@ -709,6 +723,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Helper function for checking the signature of a modules main function
     spacewasm_status_t validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const;
+
+    //! Resolve and invoke the "main" export of the given module, recording the
+    //! result in m_invokeStatus. Shared by the invokeMain / invokeMainPending
+    //! state-machine actions.
+    void invokeMainOnModule(WasmSequencer_ModuleIdx moduleIdx);
 
     void hostFprimeV1(spacewasm_host_t*);
 

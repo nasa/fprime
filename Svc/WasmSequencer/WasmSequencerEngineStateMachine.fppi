@@ -91,7 +91,7 @@ state machine EngineStateMachine {
   # Responses   #
   ###############
 
-  action setExitReason_UNKNOWN
+  action clearExitStatus
   action setExitReason_INTERPRETER_FINISHED
   action setExitReason_INTERPRETER_TRAP
   action setExitReason_REPLY_TIMEOUT
@@ -187,7 +187,7 @@ state machine EngineStateMachine {
   state RUNNING {
     # Leaving the run state will always reply to the controller
     # We explicitely set the response state to unknown and update it before exiting the state
-    entry do { setExitReason_UNKNOWN }
+    entry do { clearExitStatus }
     exit do { clearPendingHostFunction, clearPause, finish }
 
     initial enter PAUSE_CHECK
@@ -247,7 +247,7 @@ state machine EngineStateMachine {
       on hostResponseTimeIncomparable do {
         updateHostFailureReason
         setExitReason_TIMER_INCOMPARABLE
-      }
+      } enter IDLE
 
       on hostResponseTimeout do {
         updateHostFailureReason

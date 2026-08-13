@@ -107,9 +107,10 @@ event SequenceFailed(
   exitReason: ExitReason
   exitCode: I32
   trapReason: TrapReason
+  hostFunction: HostFunction
 ) \
   severity warning high \
-  format "Sequence at index {} failed with reason={} code={} trap={}"
+  format "Sequence at index {} failed with reason={} code={} trap={} hostFn={}"
 
 @ Execution was paused at a breakpoint
 event SequencePaused() severity activity high format "Sequence execution paused"
@@ -128,6 +129,12 @@ event SequencePanic(code: I32) \
 event GuestMemoryError(status: Status) \
   severity warning high \
   format "Guest memory access failed: spacewasm status {}"
+
+@ The guest requested a sleep whose duration (in microseconds) does not fit the
+@ host timer representation (its whole-seconds part overflows U32)
+event SleepDurationTooLarge(host_function: HostFunction, micros: U64) \
+  severity warning high \
+  format "Host function {} requested a sleep of {} us that overflows the host timer"
 
 @ A command response arrived carrying a context (cmdUid) from a previous
 @ sequence run. Reported (not failed) because a late reply after CANCEL is nominal.

@@ -82,7 +82,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModul
         default:
             this->m_tlmSequencesFailed++;
             this->log_WARNING_HI_SequenceFailed(this->m_invokedModule, this->m_exitReason, this->m_exitCode,
-                                                 this->m_tlmLastTrapReason);
+                                                 this->m_tlmLastTrapReason, this->m_failedHostFunction);
             break;
     }
 }
@@ -190,6 +190,8 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeStart
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_ModuleIdx& value) {
+    this->m_pendingMainModule = value;
+
     U32 start_module_idx;
     U32 start_function_idx;
 
@@ -205,21 +207,36 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeMain(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_ModuleIdx& value) {
+    this->invokeMainOnModule(value);
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeMainPending(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    // Start function has finished; run main on the module we loaded (invokeStart
+    // may have left m_invokedModule pointing at a different module that owned the
+    // start function).
+    this->invokeMainOnModule(this->m_pendingMainModule);
+}
+
+void WasmSequencer ::invokeMainOnModule(WasmSequencer_ModuleIdx moduleIdx) {
     // Resolve the main function of given module index
     U32 funcIndex = 0;
-    auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(value), "main", &funcIndex);
+    auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(moduleIdx), "main", &funcIndex);
 
     // This should always succeed because our state machine is checking whether this module has a main/is-valid
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    this->m_invokedModule = value;
-    this->m_invokeStatus = spacewasm_invoke(this->m_wasm, static_cast<U32>(value), funcIndex, nullptr, 0);
+    this->m_invokedModule = moduleIdx;
+    this->m_invokeStatus = spacewasm_invoke(this->m_wasm, static_cast<U32>(moduleIdx), funcIndex, nullptr, 0);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleInvalidMain(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_ModuleIdx& value) {
+    // A module that cannot be run (no valid main) counts as a failed sequence.
+    this->m_tlmSequencesFailed++;
     auto problemStatus = this->validateModuleMain(value);
     this->log_WARNING_HI_InvalidModuleEntrypoint(value, WasmSequencer_Status(problemStatus));
 }

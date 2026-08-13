@@ -4,6 +4,8 @@
 // \brief  cpp file for WasmSequencer Wasm Host functions
 // ======================================================================
 
+#include <limits>
+
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
@@ -306,6 +308,14 @@ spacewasm_hostcall_result_t WasmSequencer::wasmRsleep(spacewasm_caller_t* caller
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
 
     const U64 us = static_cast<U64>(params[0].u.i64_);
+
+    // The seconds part of the duration must fit the U32 fields of Fw::Time; a
+    // guest value large enough to overflow it would silently truncate. Reject it.
+    if ((us / 1000000u) > static_cast<U64>(std::numeric_limits<U32>::max())) {
+        this->log_WARNING_HI_SleepDurationTooLarge(WasmSequencer_HostFunction::RSLEEP, us);
+        return SPACEWASM_TRAP;
+    }
+
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::RSLEEP;
     this->m_pendingHostFunction.caller = caller;
     this->m_pendingHostFunction.time_us = us;
@@ -323,6 +333,14 @@ spacewasm_hostcall_result_t WasmSequencer::wasmAsleep(spacewasm_caller_t* caller
     FW_ASSERT(params[0].tag == spacewasm_valtype_t::SPACEWASM_I64, params[0].tag);
 
     const U64 us = static_cast<U64>(params[0].u.i64_);
+
+    // The seconds part of the duration must fit the U32 fields of Fw::Time; a
+    // guest value large enough to overflow it would silently truncate. Reject it.
+    if ((us / 1000000u) > static_cast<U64>(std::numeric_limits<U32>::max())) {
+        this->log_WARNING_HI_SleepDurationTooLarge(WasmSequencer_HostFunction::ASLEEP, us);
+        return SPACEWASM_TRAP;
+    }
+
     this->m_pendingHostFunction.kind = WasmSequencer_HostFunction::ASLEEP;
     this->m_pendingHostFunction.caller = caller;
     this->m_pendingHostFunction.time_us = us;
@@ -347,11 +365,6 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialSync(spacewasm_caller_t* ca
     const U32 len = static_cast<U32>(params[2].u.i32_);
 
     spacewasm_hostcall_result_t return_status;
-    // The index must be in range AND the serialOut port at that index must be
-    // connected: dispatchPendingHostFunction calls serialOut_out(index, ...),
-    // whose autocoded body asserts on an unconnected port. Reject a valid-index
-    // but unconnected port here (with a trap) rather than letting a guest force
-    // that assert.
     if (index < 0 || index >= this->getNum_serialOut_OutputPorts() ||
         !this->isConnected_serialOut_OutputPort(static_cast<FwIndexType>(index))) {
         this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::SYNC_PORT, index,
@@ -396,10 +409,6 @@ spacewasm_hostcall_result_t WasmSequencer::wasmSerialAsync(spacewasm_caller_t* c
     const U32 return_len = static_cast<U32>(params[4].u.i32_);
 
     spacewasm_hostcall_result_t return_status;
-    // The async variant dispatches on serialOut (and awaits the reply on
-    // serialReply[index]); validate against the serialOut output array that is
-    // actually invoked, and require it be connected so a guest cannot force the
-    // autocoded unconnected-port assert.
     if (index < 0 || index >= this->getNum_serialOut_OutputPorts() ||
         !this->isConnected_serialOut_OutputPort(static_cast<FwIndexType>(index))) {
         this->log_WARNING_HI_HostFunctionInvalidPort(WasmSequencer_HostFunction::ASYNC_PORT, index,

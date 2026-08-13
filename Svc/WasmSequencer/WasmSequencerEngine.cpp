@@ -8,6 +8,7 @@
 #include "Fw/Types/Assert.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "spacewasm.h"
 
 namespace Svc {
@@ -37,13 +38,26 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_spin(
         case SPACEWASM_RUN_FINISHED: {
             spacewasm_value_t result;
             auto status = spacewasm_get_result(this->m_wasm, spacewasm_valtype_t::SPACEWASM_I32, &result);
-            FW_ASSERT(status == SPACEWASM_OK);
-            FW_ASSERT(result.tag == spacewasm_valtype_t::SPACEWASM_I32);
-            this->interpreter_sendSignal_interpreterFinished(result.u.i32_);
+            if (status == SPACEWASM_ERR_NOT_FOUND) {
+                // Return status code was "void" (success)
+                this->interpreter_sendSignal_interpreterFinished(0);
+            } else {
+                FW_ASSERT(status == SPACEWASM_OK);
+                FW_ASSERT(result.tag == spacewasm_valtype_t::SPACEWASM_I32);
+                this->interpreter_sendSignal_interpreterFinished(result.u.i32_);
+            }
+
             break;
         }
         case SPACEWASM_RUN_TRAP:
-            this->interpreter_sendSignal_interpreterTrap(WasmSequencer::mapTrapReason(trap));
+            // Filter out HOST traps due to exit/panic. These host functions just use trap as a mechanism
+            // to kill the interpreter.
+            if (trap == SPACEWASM_TRAP_HOST && (this->m_exitReason == WasmSequencer_ExitReason::HOST_EXIT ||
+                                                this->m_exitReason == WasmSequencer_ExitReason::HOST_PANIC)) {
+                this->interpreter_sendSignal_interpreterTrap(WasmSequencer_TrapReason::NONE);
+            } else {
+                this->interpreter_sendSignal_interpreterTrap(WasmSequencer::mapTrapReason(trap));
+            }
             break;
         case SPACEWASM_RUN_PAUSE:
             this->interpreter_sendSignal_interpreterPause();
@@ -63,12 +77,18 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_reset(
     FW_ASSERT(this->m_wasm);
     auto status = spacewasm_reset(this->m_wasm);
     FW_ASSERT(status == SPACEWASM_OK);
+
+    // Clear the failed-host-function record so a non-host failure (e.g. a
+    // bytecode trap) in the next run reports NONE rather than a stale value.
 }
 
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_UNKNOWN(
+void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearExitStatus(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
     this->m_exitReason = WasmSequencer_ExitReason::UNKNOWN;
+    this->m_failedHostFunction = WasmSequencer_HostFunction::NONE;
+    this->m_exitCode = 0;
+    this->m_tlmLastTrapReason = WasmSequencer_TrapReason::NONE;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setExitReason_INTERPRETER_FINISHED(
@@ -132,8 +152,9 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setTrapReason(
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_updateHostFailureReason(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    FW_ASSERT(this->m_pendingHostFunction.isPending());
-    this->m_failedHostFunction = this->m_pendingHostFunction.kind;
+    if (this->m_pendingHostFunction.isPending()) {
+        this->m_failedHostFunction = this->m_pendingHostFunction.kind;
+    }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_finish(

@@ -36,6 +36,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_hasPendingTimer(false),
       m_statementStart(),
       m_hasStatementStart(false),
+      m_pendingMainModule(0),
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_loadFile(nullptr),
@@ -47,6 +48,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_sequencesStarted(0),
       m_exitReason(WasmSequencer_ExitReason::UNKNOWN),
       m_exitCode(0),
+      m_failedHostFunction(WasmSequencer_HostFunction::NONE),
       m_tlmLastTrapReason(WasmSequencer_TrapReason::NONE),
       m_tlmSequenceName("") {
     getGlobalAllocatorLock()->lock();
@@ -154,9 +156,9 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 // ----------------------------------------------------------------------
 
 void WasmSequencer ::serialReply_handler(FwIndexType portNum, Fw::LinearBufferBase& buffer) {
-    // A reply is only expected while blocked on an asynchronous serial port invocation
     if (this->interpreter_getState() != WasmSequencer_EngineStateMachine_State::RUNNING_AWAITING_RESPONSE_WAITING ||
-        this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT) {
+        this->m_pendingHostFunction.kind != WasmSequencer_HostFunction::ASYNC_PORT ||
+        static_cast<U64>(portNum) != this->m_pendingHostFunction.id) {
         this->interpreter_sendSignal_hostResponseUnexpected(WasmSequencer_HostFunction::ASYNC_PORT);
         return;
     }

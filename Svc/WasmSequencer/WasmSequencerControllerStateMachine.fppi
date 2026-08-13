@@ -74,6 +74,11 @@ state machine ControllerStateMachine {
   @ Invoke the main function on a module given its index
   action invokeMain: ModuleIdx
 
+  @ Invoke the main function on the module whose start function just ran. Used on
+  @ the RUN-with-start path where the engineFinished signal carries no module
+  @ index, so the index recorded by invokeStart is reused.
+  action invokeMainPending
+
   @ Emit an event noting that a given module has no [valid] main function
   action reportModuleInvalidMain: ModuleIdx
 
@@ -183,7 +188,10 @@ state machine ControllerStateMachine {
       reportModuleInvalidMain
       runCmd_ERROR
       loadCmd_ERROR
-    } enter IDLE
+      # The module loaded fine; it just has no runnable main. Stay in READY
+      # (the store is valid) rather than tearing everything down, matching the
+      # INVOKE path.
+    } enter READY
   }
 
   @ Run the start function (if there is one) before running the main function
@@ -210,10 +218,13 @@ state machine ControllerStateMachine {
 
     on engineFinished enter INTERPRETER_STATUS
 
+    @ Once the start function finishes successfully we still owe the caller a
+    @ main invocation (this is the RUN-with-start path). Chain into invokeMain
+    @ rather than settling in READY.
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {
-        loadCmd_OK
-      } enter READY else do {
+        invokeMainPending
+      } enter MAIN_INVOKE_CHECK else do {
         reportModuleFailed
         loadCmd_ERROR
         runCmd_ERROR
