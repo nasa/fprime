@@ -257,6 +257,32 @@ TEST(LocklessLifetime, ZeroSizeMessage) {
     queue.teardown();
 }
 
+//! Validate the getMessagesAvailable() receivable-count contract: counts track
+//! sends/receives exactly, and the high-water mark reflects peak occupancy.
+TEST(LocklessLifetime, MessagesAvailableTracksReceivableCount) {
+    Os::Generic::LocklessPriorityQueue queue;
+    Fw::String name("available-count-test");
+    ASSERT_EQ(queue.create(0, name, 4, sizeof(U32)), Os::QueueInterface::Status::OP_OK);
+    EXPECT_EQ(queue.getMessagesAvailable(), 0u);
+    U8 buffer[sizeof(U32)] = {0};
+    for (FwSizeType i = 0; i < 3; i++) {
+        ASSERT_EQ(queue.send(buffer, sizeof buffer, 0, Os::QueueInterface::BlockingType::NONBLOCKING),
+                  Os::QueueInterface::Status::OP_OK);
+        EXPECT_EQ(queue.getMessagesAvailable(), i + 1);
+    }
+    EXPECT_EQ(queue.getMessageHighWaterMark(), 3u);
+    FwSizeType actualSize = 0;
+    FwQueuePriorityType priority = 0;
+    for (FwSizeType i = 0; i < 3; i++) {
+        ASSERT_EQ(
+            queue.receive(buffer, sizeof buffer, Os::QueueInterface::BlockingType::NONBLOCKING, actualSize, priority),
+            Os::QueueInterface::Status::OP_OK);
+        EXPECT_EQ(queue.getMessagesAvailable(), 2u - i);
+    }
+    EXPECT_EQ(queue.getMessageHighWaterMark(), 3u);
+    queue.teardown();
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {

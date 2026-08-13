@@ -59,11 +59,13 @@ LocklessSlot::LocklessSlot()
 LocklessPriorityQueueHandle::LocklessPriorityQueueHandle()
     : QueueHandle(),
       m_slots(nullptr),
+      m_slotsAllocation(nullptr),
       m_data(nullptr),
       m_depth(0),
       m_messageSize(0),
       m_sequence(0),
       m_count(0),
+      m_available(0),
       m_highMark(0),
       m_id(0) {}
 
@@ -112,21 +114,28 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
         Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
 
     LocklessSlot* slots = nullptr;
+    void* slotsAllocation = nullptr;
     U8* data = nullptr;
     QueueInterface::Status status = QueueInterface::Status::OP_OK;
 
-    // Allocate the slot array.
-    FwSizeType slotBytesRequested = depth * sizeof(LocklessSlot);
+    // Allocate the slot array. Request padding for manual alignment: allocators are not required
+    // to honor the alignment argument (e.g. Fw::MallocAllocator ignores it).
+    FW_ASSERT(depth * sizeof(LocklessSlot) <= (maxSize - alignof(LocklessSlot)));
+    FwSizeType slotBytesRequested = (depth * sizeof(LocklessSlot)) + alignof(LocklessSlot);
     FwSizeType slotBytesAllocated = slotBytesRequested;
-    void* slotsAllocation = allocator.allocate(id, slotBytesAllocated, alignof(LocklessSlot));
+    slotsAllocation = allocator.allocate(id, slotBytesAllocated, alignof(LocklessSlot));
     if (slotsAllocation == nullptr) {
         status = QueueInterface::Status::ALLOCATION_FAILED;
     } else if (slotBytesAllocated < slotBytesRequested) {
         allocator.deallocate(id, slotsAllocation);
         status = QueueInterface::Status::ALLOCATION_FAILED;
     } else {
+        const PlatformPointerCastType base = reinterpret_cast<PlatformPointerCastType>(slotsAllocation);
+        const PlatformPointerCastType aligned =
+            (base + (alignof(LocklessSlot) - 1)) & ~static_cast<PlatformPointerCastType>(alignof(LocklessSlot) - 1);
+        const FwSizeType offset = static_cast<FwSizeType>(aligned - base);
         slots = Fw::arrayPlacementNew<LocklessSlot>(
-            Fw::ByteArray(static_cast<U8*>(slotsAllocation), slotBytesAllocated), depth);
+            Fw::ByteArray(static_cast<U8*>(slotsAllocation) + offset, slotBytesAllocated - offset), depth);
     }
 
     // Allocate the message-data region.
@@ -136,11 +145,11 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
         void* dataAllocation = allocator.allocate(id, dataBytesAllocated, alignof(U8));
         if (dataAllocation == nullptr) {
             Fw::arrayPlacementDestruct<LocklessSlot>(slots, depth);
-            allocator.deallocate(id, slots);
+            allocator.deallocate(id, slotsAllocation);
             status = QueueInterface::Status::ALLOCATION_FAILED;
         } else if (dataBytesAllocated < dataBytesRequested) {
             Fw::arrayPlacementDestruct<LocklessSlot>(slots, depth);
-            allocator.deallocate(id, slots);
+            allocator.deallocate(id, slotsAllocation);
             allocator.deallocate(id, dataAllocation);
             status = QueueInterface::Status::ALLOCATION_FAILED;
         } else {
@@ -154,9 +163,11 @@ QueueInterface::Status LocklessPriorityQueue::create(FwEnumStoreType id,
         this->m_handle.m_messageSize = messageSize;
         this->m_handle.m_depth = depth;
         this->m_handle.m_slots = slots;
+        this->m_handle.m_slotsAllocation = slotsAllocation;
         this->m_handle.m_data = data;
         this->m_handle.m_sequence.store(0, std::memory_order_relaxed);
         this->m_handle.m_count.store(0, std::memory_order_relaxed);
+        this->m_handle.m_available.store(0, std::memory_order_relaxed);
         this->m_handle.m_highMark.store(0, std::memory_order_relaxed);
     }
     return status;
@@ -167,15 +178,17 @@ void LocklessPriorityQueue::teardown() {
         Fw::MemAllocator& allocator = Fw::MemAllocatorRegistry::getInstance().getAnAllocator(
             Fw::MemoryAllocation::MemoryAllocatorType::OS_GENERIC_PRIORITY_QUEUE);
         Fw::arrayPlacementDestruct<LocklessSlot>(this->m_handle.m_slots, this->m_handle.m_depth);
-        allocator.deallocate(this->m_handle.m_id, this->m_handle.m_slots);
+        allocator.deallocate(this->m_handle.m_id, this->m_handle.m_slotsAllocation);
         if (this->m_handle.m_data != nullptr) {
             allocator.deallocate(this->m_handle.m_id, this->m_handle.m_data);
         }
         this->m_handle.m_slots = nullptr;
+        this->m_handle.m_slotsAllocation = nullptr;
         this->m_handle.m_data = nullptr;
         this->m_handle.m_depth = 0;
         this->m_handle.m_messageSize = 0;
         this->m_handle.m_count.store(0, std::memory_order_relaxed);
+        this->m_handle.m_available.store(0, std::memory_order_relaxed);
         this->m_handle.m_highMark.store(0, std::memory_order_relaxed);
         this->m_handle.m_sequence.store(0, std::memory_order_relaxed);
     }
@@ -219,12 +232,20 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                 slot.m_sequence.store(this->m_handle.m_sequence.fetch_add(1, std::memory_order_relaxed),
                                       std::memory_order_relaxed);
 
-                // Increment the count *before* publishing READY. This guarantees a consumer's
-                // decrement (which can only follow a READY observation) never precedes this
-                // increment, so m_count cannot transiently underflow.
+                // Increment the occupancy count *before* publishing READY. This guarantees a
+                // consumer's decrement (which can only follow a READY observation) never precedes
+                // this increment, so m_count cannot transiently underflow.
                 const U32 nextCount = this->m_handle.m_count.fetch_add(1, std::memory_order_acq_rel) + 1;
-                // Raise the high-water mark: each strong-CAS failure strictly raises prevMark
-                // (mark only increases, capped at depth), so at most depth iterations run.
+
+                slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_READY, tagOf(desired) + 1), std::memory_order_release);
+
+                // Increment the receivable count only after READY is published, so a nonzero
+                // getMessagesAvailable() implies at least one message has been made receivable.
+                static_cast<void>(this->m_handle.m_available.fetch_add(1, std::memory_order_acq_rel));
+
+                // Raise the high-water mark after publication so the message is never invisible
+                // while the producer runs this loop. Each strong-CAS failure strictly raises
+                // prevMark (mark only increases, capped at depth), so at most depth iterations run.
                 U32 prevMark = this->m_handle.m_highMark.load(std::memory_order_relaxed);
                 for (FwSizeType markPass = 0; (markPass < depth) && (nextCount > prevMark); markPass++) {
                     if (this->m_handle.m_highMark.compare_exchange_strong(
@@ -232,8 +253,6 @@ QueueInterface::Status LocklessPriorityQueue::send(const U8* buffer,
                         break;
                     }
                 }
-
-                slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_READY, tagOf(desired) + 1), std::memory_order_release);
                 return QueueInterface::Status::OP_OK;
             }
         }
@@ -260,6 +279,13 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
 
     // Bounded for non-blocking, unbounded for blocking (explicit user contract).
     for (FwSizeType pass = 0; blocking || (pass < MAX_RETRY_PASSES); pass++) {
+        // Fast path: skip the O(depth) scan while no message is receivable.
+        if (this->m_handle.m_available.load(std::memory_order_acquire) == 0) {
+            if (blocking) {
+                static_cast<void>(Os::Task::delay(Fw::TimeInterval(0, LOCKLESS_QUEUE_BLOCKING_BACKOFF_US)));
+            }
+            continue;
+        }
         FwSizeType bestIndex = depth;
         FwQueuePriorityType bestPriority = FwQueuePriorityType();
         U32 bestSequence = 0;
@@ -298,6 +324,9 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
         const LocklessStateTagType desired = packStateTag(LOCKLESS_SLOT_READING, tagOf(bestPacked) + 1);
         if (this->m_handle.m_slots[bestIndex].m_stateTag.compare_exchange_strong(
                 bestPacked, desired, std::memory_order_acq_rel, std::memory_order_relaxed)) {
+            // Decrement the receivable count at the successful READY->READING claim: this
+            // message can no longer complete another receive.
+            static_cast<void>(this->m_handle.m_available.fetch_sub(1, std::memory_order_acq_rel));
             LocklessSlot& slot = this->m_handle.m_slots[bestIndex];
             const FwSizeType storedSize = slot.m_size;
             FW_ASSERT(storedSize <= capacity);
@@ -308,9 +337,10 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
             }
             actualSize = storedSize;
             priority = slot.m_priority.load(std::memory_order_relaxed);
-            // Decrement the count *before* releasing the slot to FREE. This keeps m_count (and
-            // therefore the high-water mark) at or below the queue depth: a producer can only
-            // re-claim and re-count this slot after observing FREE, which follows the decrement.
+            // Decrement the occupancy count *before* releasing the slot to FREE. This keeps
+            // m_count (and therefore the high-water mark) at or below the queue depth: a producer
+            // can only re-claim and re-count this slot after observing FREE, which follows the
+            // decrement.
             static_cast<void>(this->m_handle.m_count.fetch_sub(1, std::memory_order_acq_rel));
             slot.m_stateTag.store(packStateTag(LOCKLESS_SLOT_FREE, tagOf(desired) + 1), std::memory_order_release);
             return QueueInterface::Status::OP_OK;
@@ -324,7 +354,7 @@ QueueInterface::Status LocklessPriorityQueue::receive(U8* destination,
 }
 
 FwSizeType LocklessPriorityQueue::getMessagesAvailable() const {
-    return static_cast<FwSizeType>(this->m_handle.m_count.load(std::memory_order_acquire));
+    return static_cast<FwSizeType>(this->m_handle.m_available.load(std::memory_order_acquire));
 }
 
 FwSizeType LocklessPriorityQueue::getMessageHighWaterMark() const {

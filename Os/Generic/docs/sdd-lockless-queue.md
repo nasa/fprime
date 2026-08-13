@@ -64,6 +64,16 @@ Two separate allocations are made at `create` time:
 Both allocations are released to the same `Fw::MemAllocator` at `teardown`.
 After `create` succeeds, no further allocation occurs.
 
+Each slot is aligned to `LOCKLESS_QUEUE_SLOT_ALIGNMENT` (default 64 bytes,
+configurable in `config/LocklessQueueCfg.hpp`) so adjacent slots do not share
+a cache line, avoiding false sharing between producers and consumers
+contending on neighboring slots. Constrained targets may configure a smaller
+power-of-two alignment to reduce memory use. Because `Fw::MemAllocator`
+implementations are not required to honor the requested alignment (e.g.
+`Fw::MallocAllocator` ignores it), the slot allocation is padded by one
+alignment unit and the slot array is placed at the first aligned address
+within it.
+
 ## 4. Slot State Machine
 
 Each slot has a four-state lifecycle:
@@ -86,13 +96,24 @@ slot's priority and sequence, and then attempts to CAS to
 one round-trip on this slot in the meantime.
 
 The tag occupies `TAG_BITS = bits(LocklessStateTagType) - STATE_BITS` bits
-(60 with the default `U64` word) and wraps after `2^TAG_BITS` transitions of
+(62 with the default `U64` word) and wraps after `2^TAG_BITS` transitions of
 a single slot. A stale CAS could therefore succeed only if a thread stalls
 between its scan and its CAS while other threads drive that same slot through
 an exact multiple of `2^TAG_BITS` transitions and the slot returns to the
-same state. With the default 60-bit tag this requires a thread to remain
+same state. With the default 62-bit tag this requires a thread to remain
 preempted across ~10^18 queue operations on one slot; with a `U32` word
-(28-bit tag) the bound drops to tens of millions of operations.
+(30-bit tag) the bound drops to hundreds of millions of operations.
+
+> [!WARNING]
+> Narrow `LocklessStateTagType` configurations shrink the ABA tag
+> dramatically: `U16` gives a 14-bit tag (~16K transitions, ~4K message
+> cycles of one slot) and `U8` gives only a 6-bit tag (64 transitions, 16
+> message cycles). On such platforms a consumer preempted mid-scan for a
+> handful of cycles of one slot can dequeue out of priority order. The
+> consequence remains bounded to ordering (no corruption, loss, or
+> duplication), but projects that select this queue *for* its ordering
+> guarantee should configure the widest lock-free type the platform
+> supports in `config/LocklessQueueCfg.hpp`.
 
 **Consequence of a wrapped-tag stale CAS.** If this coincidence occurs, the
 consequence is bounded: the stale CAS can only succeed against a slot that is
@@ -106,7 +127,7 @@ prerequisite for the ISR-safety guarantee: widths that are never lock-free
 are rejected at compile time via the `ATOMIC_*_LOCK_FREE` macros, and the
 authoritative `is_lock_free()` check is runtime-asserted in `create()`. Platforms without lock-free 64-bit atomics
 (some 32-bit targets) must configure a narrower type in
-`config/LocklessQueueCfg.hpp` (`U32`, `U16`, or `U8`, with 28-, 12-, or 4-bit
+`config/LocklessQueueCfg.hpp` (`U32`, `U16`, or `U8`, with 30-, 14-, or 6-bit
 tags respectively). This residual window is documented in §15.
 
 The slot's `m_size` field is written by the producer while the slot is in `WRITING` and read
@@ -136,38 +157,51 @@ send(buffer, size, priority, blockType):
               m_slots[i].m_priority = priority
               m_slots[i].m_sequence = m_sequence.fetch_add(1, relaxed)
               count = m_count.fetch_add(1, acq_rel) + 1
-              raise_high_mark_to(count)  // CAS until mark >= count; bounded by depth
               m_slots[i].m_stateTag.store(pack(READY, tag(desired) + 1), release)
+              m_available.fetch_add(1, acq_rel)   // message is now receivable
+              raise_high_mark_to(count)  // CAS until mark >= count; bounded by depth
               return OP_OK
   return FULL
 ```
 
-The count is incremented *before* the `release` store that publishes `READY`.
-A consumer can only decrement after observing `READY`, so the decrement is
-ordered after the increment and `m_count` can never transiently underflow.
-The cost is that `getMessagesAvailable` may briefly over-report by counting a
-message that is not yet receivable, which is benign for an observability
-counter.
+Two counters are maintained. The occupancy count `m_count` is incremented
+*before* the `release` store that publishes `READY`: a consumer can only
+decrement after observing `READY`, so the decrement is ordered after the
+increment, `m_count` never transiently underflows, and the high-water mark
+derived from it never exceeds `depth`. The receivable count `m_available`,
+which backs `getMessagesAvailable`, is incremented only *after* `READY` is
+published, so it never counts a message that a receive cannot yet complete
+(see §8). The high-water CAS loop runs after publication so the message is
+never invisible to consumers (including ISRs) while the producer updates the
+mark.
 
 The outer loop is bounded for non-blocking callers and unbounded for blocking
 callers. The blocking spin is the explicit contract of `BlockingType::BLOCKING`
 and is not safe to call from ISR context.
 
-**Spurious `FULL` under contention.** A slot held mid-operation by a concurrent
-producer (`WRITING`) or consumer (`READING`) is not claimable. A non-blocking
-send that exhausts its pass budget while every unclaimed slot is transiently
-held returns `FULL` even though fewer than `depth` messages are logically
-queued. This differs from the mutex-based `Os::Generic::PriorityQueue`, which
-reports fullness exactly under its lock; it is the price of bounded, lock-free
-progress. Callers for which a spurious `FULL` is unacceptable (e.g. async
-ports configured to assert on overflow) should size the queue with margin or
-select the mutex-based implementation.
+> [!WARNING]
+> **Spurious `FULL` under contention.** A slot held mid-operation by a
+> concurrent producer (`WRITING`) or consumer (`READING`) is not claimable. A
+> non-blocking send that exhausts its pass budget
+> (`LOCKLESS_QUEUE_MAX_RETRY_PASSES` in `config/LocklessQueueCfg.hpp`,
+> default 4) while every unclaimed slot is transiently held returns `FULL`
+> even though fewer than `depth` messages are logically queued. This differs
+> from the mutex-based `Os::Generic::PriorityQueue`, which reports fullness
+> exactly under its lock; it is the price of bounded, lock-free progress. In
+> F´, `FULL` on an async port configured with `assert`-on-overflow semantics
+> triggers `FW_ASSERT`: under this queue that assertion is heuristic, not
+> exact. Callers for which a spurious `FULL` is unacceptable should size the
+> queue depth with margin for the number of concurrent producers/consumers,
+> raise `LOCKLESS_QUEUE_MAX_RETRY_PASSES`, or select the mutex-based
+> implementation.
 
 ## 6. Receive Algorithm
 
 ```
 receive(destination, capacity, blockType, &actualSize, &priority):
   for pass = 0 .. (NONBLOCKING ? MAX_RETRY_PASSES - 1 : infinity):
+      if m_available.load(acquire) == 0:
+          continue  // skip the O(depth) scan; blocking callers back off first
       best = none
       for i = 0 .. depth - 1:
           packed = m_slots[i].m_stateTag.load(acquire)
@@ -187,6 +221,7 @@ receive(destination, capacity, blockType, &actualSize, &priority):
           continue  // returns EMPTY when the NONBLOCKING pass budget is exhausted
       desired = pack(READING, tag(best.packed) + 1)
       if CAS(m_slots[best.i].m_stateTag, best.packed -> desired):
+          m_available.fetch_sub(1, acq_rel)  // message claimed; no longer receivable
           stored_size = m_slots[best.i].m_size
           assert stored_size <= capacity
           memcpy(destination, data + best.i * messageSize, stored_size)
@@ -209,9 +244,26 @@ as the expected operand. Any concurrent transition on the slot — even one that
 returned the slot to `READY` with a different message — increments the tag,
 causing the CAS to fail and the pass to retry.
 
-The count is decremented *before* the `release` store that frees the slot. A
-producer can only re-claim (and re-count) the slot after observing `FREE`, so
-`m_count` — and therefore the high-water mark — never exceeds `depth`.
+The receivable count `m_available` is decremented at the successful
+`READY -> READING` claim, since the claimed message can no longer complete
+another receive. The occupancy count `m_count` is decremented *before* the
+`release` store that frees the slot. A producer can only re-claim (and
+re-count) the slot after observing `FREE`, so `m_count` — and therefore the
+high-water mark — never exceeds `depth`.
+
+Each pass begins with a check of `m_available`: while no message is
+receivable, the O(`depth`) selection scan is skipped entirely, so an idle
+blocking receiver performs one atomic load per wakeup rather than a full
+array scan.
+
+**Priority ordering is inherent, not global.** Strict priority holds only
+against messages that are published (`READY`) before the consumer's scan
+observes their slots. A producer preempted mid-`WRITING` with a
+high-priority message is invisible to consumers until it publishes, so
+lower-priority messages published in the interim are delivered first. This
+is the same window a mutex-based queue has for a sender preempted *before*
+acquiring the lock; the lockless design merely widens it to the duration of
+the `WRITING` state.
 
 **Spurious `EMPTY` under contention.** Symmetrically to send, a non-blocking
 receive can return `EMPTY` while messages are transiently held in `WRITING`
@@ -237,9 +289,22 @@ counter is retained and the window is documented as a limitation (§15).
 
 ## 8. Counters and the High-Water Mark
 
-`m_count` tracks the current number of messages and is updated atomically by
-producers (`fetch_add`) and consumers (`fetch_sub`). It is read atomically by
-`getMessagesAvailable`.
+Two atomic counters are maintained:
+
+- `m_available` is the **receivable** count returned by
+  `getMessagesAvailable`. It is incremented after a slot is published `READY`
+  and decremented at the successful `READY -> READING` claim. A nonzero value
+  therefore means a receive of at least one message can complete; a zero
+  value never counts a message a receive could not obtain. This matches the
+  contract framework control flow depends on (e.g.
+  `ActiveComponentBase::dispatch` uses it as a blocking-receive guard for
+  cooperative tasks, and `QueuedComponentBase::dispatchAvailableMessages`
+  uses it as an iteration bound). Because the increment follows publication,
+  the counter may briefly *under*-report a just-published message; it never
+  over-reports.
+- `m_count` is the **occupancy** count (claimed-or-queued slots), maintained
+  solely to compute the high-water mark. It is incremented before `READY`
+  and decremented before `FREE`, bounding it by `depth`.
 
 `m_highMark` is raised to the post-increment count by producers using a
 compare-exchange loop that runs until the mark reflects the observed count.
@@ -261,9 +326,9 @@ The queue uses standard `std::atomic` operations with explicit memory orders:
   observing `FREE` see the consumed slot as fully released.
 - All scan loads use `acquire`. All CAS operations use `acq_rel` on success and
   `relaxed` on failure.
-- `m_sequence`, `m_count`, and `m_highMark` use `relaxed` or `acq_rel` as
-  appropriate; their values are not used to publish data, only to track
-  counters and break priority ties.
+- `m_sequence`, `m_count`, `m_available`, and `m_highMark` use `relaxed` or
+  `acq_rel` as appropriate; their values are not used to publish data, only
+  to track counters and break priority ties.
 
 ## 10. ISR Safety
 
@@ -319,9 +384,21 @@ satisfied, which is the explicit `BlockingType::BLOCKING` contract; unlike
 than blocking on a condition variable (see §15). This is a deliberate
 deviation from the JPL fixed-loop-bound rule: the blocking contract has no
 static bound, and the poll-with-backoff design is the price of keeping the
-implementation free of OS synchronization primitives. Note that every idle
-`BLOCKING` caller wakes once per backoff period, so deployments that select
-this queue for their active components trade idle CPU for ISR safety.
+implementation free of OS synchronization primitives.
+
+> [!WARNING]
+> Every idle `BLOCKING` caller wakes once per backoff period — at the
+> default `LOCKLESS_QUEUE_BLOCKING_BACKOFF_US = 100` that is 10,000 wakeups
+> per second per blocked thread, versus zero idle cost for the
+> condition-variable-based `Os::Generic::PriorityQueue`. Each wakeup costs
+> one atomic load when the queue is empty (the `m_available == 0` fast path
+> skips the O(`depth`) scan), and each message may see up to one backoff
+> period of added latency. Deployments adopting this queue broadly for
+> active components trade idle CPU/power for ISR safety; tune the backoff
+> accordingly. A zero backoff is rejected at compile time because it could
+> livelock a high-priority blocking caller against a lower-priority thread
+> on a strict-priority scheduler.
+
 `MAX_RETRY_PASSES` is likewise configurable as
 `LOCKLESS_QUEUE_MAX_RETRY_PASSES` in `config/LocklessQueueCfg.hpp` (default 4).
 
@@ -401,8 +478,7 @@ lockless-specific tests, including:
 All tests are compiled with AddressSanitizer, UndefinedBehaviorSanitizer, and
 LeakSanitizer enabled, and pass under those sanitizers. ThreadSanitizer stress
 tests provide additional coverage (see `LocklessPriorityQueueTsanTests.cpp`),
-run in CI by the dedicated `.github/workflows/tsan-lockless-queue.yml`
-workflow on Linux and macOS.
+run in CI by the framework ThreadSanitizer unit-test job.
 
 ## 15. Limitations
 
@@ -421,8 +497,12 @@ workflow on Linux and macOS.
   callers. ISR callers must use `BlockingType::NONBLOCKING`.
 - Non-blocking `send`/`receive` may return spurious `FULL`/`EMPTY` under
   contention (§5, §6).
-- The ABA epoch tag is `TAG_BITS` wide (60 by default; 28 when
-  `LocklessStateTagType` is configured to `U32`); a stale CAS is defeated
+- Strict priority ordering applies only to messages published before the
+  consumer's scan; a producer preempted mid-`WRITING` with a high-priority
+  message lets lower-priority messages pass it (§6).
+- The ABA epoch tag is `TAG_BITS` wide (62 by default; 30 when
+  `LocklessStateTagType` is configured to `U32`, 14 for `U16`, 6 for `U8` —
+  see the WARNING in §4); a stale CAS is defeated
   unless a thread stalls between scan and CAS across an exact multiple of
   `2^TAG_BITS` transitions of one slot. Should that coincidence occur, the
   effect is a single out-of-priority-order dequeue of a valid message —

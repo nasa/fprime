@@ -44,6 +44,13 @@ static_assert(LocklessAtomicLockFree<sizeof(FwQueuePriorityType)>::value,
 
 static_assert(LOCKLESS_QUEUE_MAX_RETRY_PASSES >= 1, "LOCKLESS_QUEUE_MAX_RETRY_PASSES must be at least 1");
 
+// A zero backoff could livelock a high-priority blocking caller against a lower-priority
+// thread on a strict-priority scheduler.
+static_assert(LOCKLESS_QUEUE_BLOCKING_BACKOFF_US > 0, "LOCKLESS_QUEUE_BLOCKING_BACKOFF_US must be greater than 0");
+
+static_assert((LOCKLESS_QUEUE_SLOT_ALIGNMENT & (LOCKLESS_QUEUE_SLOT_ALIGNMENT - 1)) == 0,
+              "LOCKLESS_QUEUE_SLOT_ALIGNMENT must be a power of two");
+
 //! \brief slot lifecycle states for the lockless priority queue
 //!
 //! Each slot in the queue moves through a four-state state machine. Producers transition slots
@@ -64,13 +71,13 @@ enum LocklessSlotState : LocklessStateTagType {
 //! `relaxed` ordering; the happens-before relationship is established through the release/acquire
 //! on `m_stateTag`. The non-atomic `m_size` field is only accessed under exclusive ownership
 //! (`WRITING` by the producer, `READING` by the consumer).
-struct LocklessSlot {
+struct alignas(LOCKLESS_QUEUE_SLOT_ALIGNMENT) LocklessSlot {
     //! Number of low bits used for the state value within `m_stateTag`.
-    static constexpr U32 STATE_BITS = 4;
+    static constexpr U32 STATE_BITS = 2;
     //! Mask for the state portion of `m_stateTag`.
     static constexpr LocklessStateTagType STATE_MASK =
         (static_cast<LocklessStateTagType>(1) << STATE_BITS) - static_cast<LocklessStateTagType>(1);
-    //! Number of bits available for the ABA epoch tag (60 with the default U64 word).
+    //! Number of bits available for the ABA epoch tag (62 with the default U64 word).
     static constexpr U32 TAG_BITS = static_cast<U32>(std::numeric_limits<LocklessStateTagType>::digits) - STATE_BITS;
 
     //! Packed (tag << STATE_BITS) | state word. Updated only via atomic operations. The TAG_BITS
@@ -98,8 +105,10 @@ struct LocklessSlot {
 //! and `m_data` is allocated exactly once during `LocklessPriorityQueue::create` and freed during
 //! `LocklessPriorityQueue::teardown`.
 struct LocklessPriorityQueueHandle : public QueueHandle {
-    //! Pre-allocated array of `m_depth` slots.
+    //! Pre-allocated array of `m_depth` slots, aligned within `m_slotsAllocation`.
     LocklessSlot* m_slots;
+    //! Raw allocation backing `m_slots`; retained because allocators may ignore alignment.
+    void* m_slotsAllocation;
     //! Pre-allocated array of `m_depth * m_messageSize` bytes for message payloads.
     U8* m_data;
     //! Configured queue depth in messages.
@@ -108,8 +117,11 @@ struct LocklessPriorityQueueHandle : public QueueHandle {
     FwSizeType m_messageSize;
     //! Sequence assigned to messages on publication for FIFO tiebreak; may wrap (compared modularly).
     std::atomic<U32> m_sequence;
-    //! Number of messages currently in the queue. Maintained by producers and consumers.
+    //! Occupancy count (claimed-or-queued slots) used only for the high-water mark.
     std::atomic<U32> m_count;
+    //! Receivable message count: incremented after a slot is published READY, decremented at
+    //! the successful READY->READING claim. Backs getMessagesAvailable().
+    std::atomic<U32> m_available;
     //! Maximum value `m_count` has ever held. Updated by producers via a bounded CAS loop.
     std::atomic<U32> m_highMark;
     //! Identifier passed to the memory allocator at create() time and reused at teardown().
@@ -273,9 +285,12 @@ class LocklessPriorityQueue final : public Os::QueueInterface {
                    FwSizeType& actualSize,
                    FwQueuePriorityType& priority) override;
 
-    //! \brief get number of messages currently available
+    //! \brief get number of messages currently receivable
     //!
-    //! \return number of messages currently in the queue
+    //! A message counts only from its READY publication until a consumer claims it, so a
+    //! nonzero return means a receive of at least one message can complete.
+    //!
+    //! \return number of receivable messages currently in the queue
     FwSizeType getMessagesAvailable() const override;
 
     //! \brief get the maximum number of messages that have been queued at once
