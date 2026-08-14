@@ -209,13 +209,25 @@ regenerating it never affects run state — the ledger alone gates
 forward progress. Contents:
 
 - Manifest coverage statement: every tracked file is in exactly one
-  unit, and every unit is accounted for (completed / failed /
-  pending table; mid-run regenerations list not-yet-reviewed units
-  as `pending`).
-- Findings matrix: unit × reviewer × tag counts, sorted by unit id.
-- The repo-wide consolidated must-fix list, sorted per §3b.
+  unit, and every unit is accounted for (mid-run regenerations list
+  not-yet-reviewed units as `pending`).
+- Table of contents: one row per unit, sorted by unit id, with the
+  unit's per-tag totals (one column per triage tag) and its verdict.
+  The unit name is a self-link (relative Markdown anchor) to that
+  unit's section below.
+- Per-unit sections, sorted by unit id: one table per unit mirroring
+  the PR aggregator's layout — rows are the registered reviewers,
+  columns are the triage-tag counts plus the reviewer's verdict
+  (`ERROR: <reason>` rows for missing/failed reviewers, no silent
+  fallback). Each reviewer name links (relative path) to that
+  reviewer's artifact file; the section header links to the unit's
+  `unit-summary.md`.
+- The repo-wide consolidated must-fix list, sorted per §3b, each
+  entry linking to its reviewer artifact and unit section.
 - Repo verdict: `Go` iff all units `Go`. Any failed unit or No-Go
   unit forces repo `No-Go`.
 
-The roll-up contains no narrative not derivable from the artifacts —
+All links are relative anchors or in-repo relative paths, generated
+deterministically, so the roll-up stays diffable across runs. The
+roll-up contains no narrative not derivable from the artifacts —
 it must be reproducible from the unit artifacts alone.
