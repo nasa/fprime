@@ -21,13 +21,14 @@ mode**, this addendum wins. In PR mode this file does not apply.
 | Read scope | Full files touched by diff | Every file in the unit, in full, plus any reachable context |
 | "Introduced by this PR" test | `pr-diff-scoping.skill.md` | Not applicable — every finding is filed as-is |
 | Output | Inline PR review comments | Finding records in a results-repo artifact file |
-| Triage tags | must fix / suggestion / could fix / future work | Same tags, same severity semantics (see §4) |
+| Triage tags | must fix / suggestion / could fix / future work | must fix / suggestion / could fix / **advisory** (see §4) |
 | Aggregation | PR review summary | Per-unit `unit-summary.md` + repo-wide roll-up |
 
-Because there is no diff, **nothing is "preexisting"**: the
-`**future work**` tag is repurposed in batch mode to mean
-"in-scope, real, but low-priority / advisory" (see §4). All other
-tags keep their PR-mode meaning.
+Because there is no diff, **nothing is "preexisting"** — provenance
+and severity are orthogonal, and batch mode has no provenance axis.
+The PR-mode `**future work**` tag is therefore replaced in batch mode
+by `**advisory**`: "in-scope, real, but low-priority" (see §4). All
+other tags keep their PR-mode severity meaning.
 
 ---
 
@@ -71,7 +72,7 @@ between runs shows exactly the new, changed, and resolved findings.
 <!-- repo: <owner/repo> -->
 <!-- commit: <sha> -->
 <!-- unit: <unit-id> -->
-<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N} -->
+<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "advisory": N} -->
 <!-- verdict: Go | No-Go -->
 
 ## Findings
@@ -121,7 +122,7 @@ semantics as `review-contract.md` §2 but scoped to the unit.
 | `**must fix**` | Confirmed in-scope defect that would block a PR introducing it today. | Yes (unit No-Go) |
 | `**suggestion**` | Non-blocking improvement with a concrete fix (fenced suggestion block required). | No |
 | `**could fix**` | Minor in-scope issue worth fixing. | No |
-| `**future work**` | In-scope, real, advisory-priority (batch-mode repurposing; there is no "preexisting" axis). | No |
+| `**advisory**` | In-scope, real, low-priority (replaces PR-mode `future work`; there is no "preexisting" axis). | No |
 
 Severity drives the tag exactly as in PR mode
 (`triage-classifier.skill.md` applies; read "the PR introduces" as
@@ -209,13 +210,34 @@ regenerating it never affects run state — the ledger alone gates
 forward progress. Contents:
 
 - Manifest coverage statement: every tracked file is in exactly one
-  unit, and every unit is accounted for (completed / failed /
-  pending table; mid-run regenerations list not-yet-reviewed units
-  as `pending`).
-- Findings matrix: unit × reviewer × tag counts, sorted by unit id.
-- The repo-wide consolidated must-fix list, sorted per §3b.
+  unit, and every unit is accounted for (mid-run regenerations list
+  not-yet-reviewed units as `pending`).
+- Overview table at the very top: repo verdict, repo-wide totals per
+  triage tag, and counts of Go / No-Go units, followed by a
+  per-reviewer totals table (rows = registered reviewers, columns =
+  triage-tag totals plus count of units where that reviewer voted
+  No-Go) and anchor links to the major sections.
+- Table of contents: one row per unit, sorted by unit id, with the
+  unit's per-tag totals (one column per triage tag) and its verdict.
+  The unit name is a self-link (relative Markdown anchor) to that
+  unit's section below.
+- Per-unit sections, sorted by unit id: one table per unit mirroring
+  the PR aggregator's layout — rows are the registered reviewers,
+  columns are the triage-tag counts plus the reviewer's verdict
+  (`ERROR: <reason>` rows for missing/failed reviewers, no silent
+  fallback). Each reviewer name links (relative path) to that
+  reviewer's artifact file; the section header links to the unit's
+  `unit-summary.md`.
+- The repo-wide consolidated must-fix table, sorted per §3b: one row
+  per finding with the file:line, a short mechanical excerpt of the
+  finding's first sentence, and a link to the detailed finding (the
+  reviewer artifact's heading anchor). Traceability tokens (finding
+  id, finding class) ride in an HTML comment inside the row —
+  invisible when rendered, present in the raw text for diffing.
 - Repo verdict: `Go` iff all units `Go`. Any failed unit or No-Go
   unit forces repo `No-Go`.
 
-The roll-up contains no narrative not derivable from the artifacts —
+All links are relative anchors or in-repo relative paths, generated
+deterministically, so the roll-up stays diffable across runs. The
+roll-up contains no narrative not derivable from the artifacts —
 it must be reproducible from the unit artifacts alone.
