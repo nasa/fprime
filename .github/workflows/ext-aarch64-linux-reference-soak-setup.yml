@@ -30,8 +30,8 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-soak-test-reference
-          # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
-          target_ref: ${{ github.event.release.tag_name || 'devel' }}
+          # Always build this repo's main (it has no release tags / devel branch).
+          target_ref: main
       - name: "Cross compile"
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
       # soak-setup expects integration tests at artifacts/int/. Stage them here.
