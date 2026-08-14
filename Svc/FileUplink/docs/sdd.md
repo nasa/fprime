@@ -23,7 +23,13 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 
 2. File access is sandboxed to a directory configured via `configure(directory)`.
 All uplinked file paths are validated against the sandbox directory before writing.
-Until `configure` is called, all file opens are rejected; configure with `/` to allow all absolute paths.
+
+   > [!WARNING]
+   > The sandbox is **fail-open**: until `configure(directory)` is called, the sandbox defaults to
+   > `/`, which permits writing to any absolute path accessible to the process. This default is
+   > intentionally insecure for backwards compatibility. Security-conscious deployments **must**
+   > call `configure(directory)` during topology setup to restrict file access. Note that the
+   > stock `FileHandling` subtopology does **not** configure a sandbox.
 
 3. In the nominal case of file uplink
 
@@ -151,7 +157,12 @@ to compute the checksum value for the file.
 
     2. Compare the value computed in the previous step against the
 checksum value in the packet.
-If the two values are different, then issue a *BadChecksum* warning.
+If the two values are different, then issue a *BadChecksum* warning,
+increment the *FilesReceivedFailed* telemetry channel, and do **not**
+issue the *FileReceived* event or the `fileAnnounce` output.
+Otherwise (the checksums match) issue the *FileReceived* event and,
+if connected, the `fileAnnounce` output, and increment the
+*FilesReceived* telemetry channel.
 
     c. Close the file.
 

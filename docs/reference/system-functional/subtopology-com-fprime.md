@@ -43,7 +43,7 @@ Two variants are available:
 
 ### Configuration
 
-- Base IDs, queue sizes, stack sizes, and priorities are configurable via ComFprimeConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities are configurable via ComFprimeConfig.
 - The Communication Queue depth and priority levels are configurable.
 
 ### Required Inputs

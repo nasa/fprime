@@ -27,6 +27,7 @@ FileUplink::FileUplink(const char* const name)
       m_lastSequenceIndex(0),
       m_lastPacketWriteStatus(Os::File::MAX_STATUS),
       m_filesReceived(this),
+      m_filesReceivedFailed(this),
       m_packetsReceived(this),
       m_warnings(this) {}
 
@@ -152,12 +153,18 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
 void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
-        this->m_filesReceived.fileReceived();
         this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
-        this->compareChecksums(endPacket);
-        this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
-        if (this->isConnected_fileAnnounce_OutputPort(0)) {
-            this->fileAnnounce_out(0, this->m_file.name);
+        if (this->compareChecksums(endPacket)) {
+            this->m_filesReceived.fileReceived();
+            this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
+            if (this->isConnected_fileAnnounce_OutputPort(0)) {
+                this->fileAnnounce_out(0, this->m_file.name);
+            }
+        } else {
+            // compareChecksums() has already issued the BadChecksum warning. The
+            // file failed its integrity check, so it is not announced or reported
+            // as successfully received; record the failed transfer instead.
+            this->m_filesReceivedFailed.fileReceivedFailed();
         }
     } else {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_END);
@@ -188,14 +195,16 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
     return false;
 }
 
-void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
+bool FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
     CFDP::Checksum computed;
     CFDP::Checksum stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
-    if (computed != stored) {
+    const bool match = (computed == stored);
+    if (!match) {
         this->m_warnings.badChecksum(computed.getValue(), stored.getValue());
     }
+    return match;
 }
 
 void FileUplink::goToStartMode() {

@@ -293,7 +293,7 @@ Adding subtopology configuration is done by adding a new module to the subtopolo
 In our case, there are two pieces that should be configured:
 
 1. The subtopology base ID
-2. Component properties: queue depth, stack size, and priority.
+2. Component properties: queue depth, stack size, priority, and CPU affinity.
 
 This can be done in `MySubtopologyConfig.fpp` as shown below.
 
@@ -317,6 +317,11 @@ module MySubtopologyConfig {
         constant rng       = 89
         constant rateGroup = 90
     }
+
+    module CpuAffinities {
+        constant rng       = Os.TASK_DEFAULT
+        constant rateGroup = Os.TASK_DEFAULT
+    }
 }
 ```
 
@@ -326,12 +331,14 @@ module MySubtopologyConfig {
     instance rng: MyLibrary.RNG base id MySubtopologyConfig.BASE_ID + 0x1000 \
         queue size MySubtopologyConfig.QueueSizes.rng \
         stack size MySubtopologyConfig.StackSizes.rng \
-        priority MySubtopologyConfig.Priorities.rng
+        priority MySubtopologyConfig.Priorities.rng \
+        cpu MySubtopologyConfig.CpuAffinities.rng
 
     instance rateGroup: Svc.ActiveRateGroup base id MySubtopologyConfig.BASE_ID + 0x2000 \
         queue size MySubtopologyConfig.QueueSizes.rateGroup \
         stack size MySubtopologyConfig.StackSizes.rateGroup \
-        priority MySubtopologyConfig.Priorities.rateGroup
+        priority MySubtopologyConfig.Priorities.rateGroup \
+        cpu MySubtopologyConfig.CpuAffinities.rateGroup
 ```
 
 > [!IMPORTANT]

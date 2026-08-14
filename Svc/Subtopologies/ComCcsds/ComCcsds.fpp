@@ -17,6 +17,7 @@ module ComCcsds {
         queue size ComCcsdsConfig.QueueSizes.comQueue \
         stack size ComCcsdsConfig.StackSizes.comQueue \
         priority ComCcsdsConfig.Priorities.comQueue \
+        cpu ComCcsdsConfig.CpuAffinities.comQueue \
     {
         phase Fpp.ToCpp.Phases.configComponents """
         using namespace ComCcsds;
@@ -100,7 +101,8 @@ module ComCcsds {
     instance aggregator: Svc.ComAggregator base id ComCcsdsConfig.BASE_ID + 0x06000 \
         queue size ComCcsdsConfig.QueueSizes.aggregator \
         stack size ComCcsdsConfig.StackSizes.aggregator \
-        priority ComCcsdsConfig.Priorities.aggregator
+        priority ComCcsdsConfig.Priorities.aggregator \
+        cpu ComCcsdsConfig.CpuAffinities.aggregator
 
     # NOTE: name 'framer' is used for the framer that connects to the Com Adapter Interface for better subtopology interoperability
     instance framer: Svc.Ccsds.TmFramer base id ComCcsdsConfig.BASE_ID + 0x07000

@@ -1,5 +1,5 @@
 ---
-description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, and maintainability reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
+description: "Entry point for the F Prime multi-agent PR review. Invokes the security, supply-chain / runner-safety, C/C++ design, stale-documentation, design, architecture, test-quality, correctness, operational-consequences, and maintainability reviewers in sequence, then runs the summary aggregator. Use this when you want a full automated review of a PR."
 name: "F Prime PR Review Orchestrator"
 tools: [read, search]
 user-invocable: true
@@ -42,6 +42,7 @@ For a PR `#N` in repo `owner/repo` at head SHA `<sha>`:
    - `architecture-review` (`architecture-review.agent.md`)
    - `test-quality-review` (`test-quality-review.agent.md`)
    - `correctness-review` (`correctness-review.agent.md`)
+   - `operational-consequences-review` (`operational-consequences-review.agent.md`)
    - `maintainability-review` (`maintainability-review.agent.md`)
 
    Invoke them in the order listed above. Security and supply-chain
@@ -130,6 +131,13 @@ may exist upstream of the changed lines). The diff shows what changed;
 the full file shows what already exists. False positives from
 diff-only analysis waste maintainer time and erode trust in the
 review system.
+
+INTERFACE-CONTRACT TRACING: Before approving, trace every
+public-interface return value and out-parameter added or modified by
+this diff to its actual framework call sites, and read the concrete
+implementations of every abstract interface the diff calls, verifying
+each passed parameter is honored. A diff that is internally
+consistent can still break callers or rely on ignored parameters.
 
 CROSS-AGENT DE-DUPLICATION: apply review contract §6a. Inventory ALL
 agents' prior inline comments by site-key; if another agent's open
@@ -313,6 +321,33 @@ Return when finished. Report `completed` on success, or
 `FAILED: <one-line reason>` if you hit an unrecoverable error.
 ```
 
+### Template — operational-consequences reviewer
+
+```
+Thanks for taking this on. You're the F Prime Operational
+Consequences Reviewer. Please run a full operational-consequences
+review of PR #<N> in <owner>/<repo> at head <sha>. This is run
+<operational-consequences-review-run-ordinal> of your reviews on
+this PR.
+
+Apply the review contract in `_shared/review-contract.md`. Apply
+your scope and finding classes from
+`operational-consequences-review.agent.md`. Review as the operator
+who must fly the system, assuming the code is locally correct:
+trace every public-interface return value and out-parameter to its
+framework call sites and verify concrete interface implementations
+honor every passed parameter; assess failure-path blast radius,
+quantified timing / resource budgets and preemption windows,
+configuration-space extremes, and quantified claims in the docs.
+Quantify findings, rank by mission impact, and label judgment
+calls as such. Post inline review comments per the contract. Your
+review body contains only the hidden metadata block (§2); no
+visible summary table.
+
+Return when finished. Report `completed` on success, or
+`FAILED: <one-line reason>` if you hit an unrecoverable error.
+```
+
 ### Template — maintainability reviewer
 
 ```
@@ -355,6 +390,7 @@ Per-reviewer status from this run:
 - architecture-review: <completed | FAILED: <reason>>
 - test-quality-review: <completed | FAILED: <reason>>
 - correctness-review: <completed | FAILED: <reason>>
+- operational-consequences-review: <completed | FAILED: <reason>>
 - maintainability-review: <completed | FAILED: <reason>>
 
 This is run <aggregator-run-ordinal> of your aggregations on this

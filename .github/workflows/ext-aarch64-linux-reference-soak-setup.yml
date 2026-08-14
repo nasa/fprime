@@ -1,12 +1,12 @@
-# Soak-test setup for the LedBlinker deployment on AArch64 Linux.
+# Soak-test setup for the F´ soak reference deployment on AArch64 Linux.
 #
-# Cross-compiles https://github.com/fprime-community/fprime-workshop-led-blinker and
+# Cross-compiles https://github.com/fprime-community/fprime-soak-test-reference and
 # runs it on the self-hosted runner as persistent flight-software + GDS
 # systemd services.
 #
-# Pairs with ext-aarch64-linux-led-blinker-soak-test.yml.
+# Pairs with ext-aarch64-linux-reference-soak-test.yml.
 
-name: "Soak Setup: AArch64 Linux LedBlinker"
+name: "Soak Setup: AArch64 Linux Reference"
 
 on:
   release:
@@ -15,7 +15,7 @@ on:
 
 # Group shared with soak test workflow, new setup should cancel all old setup and tests
 concurrency:
-  group: soak-ledblinker
+  group: soak-reference-aarch64
   cancel-in-progress: true
 
 permissions:
@@ -29,25 +29,31 @@ jobs:
       - name: "Setup external repository + overlay F´"
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
-          target_repository: fprime-community/fprime-workshop-led-blinker
+          target_repository: fprime-community/fprime-soak-test-reference
           # On release, build the tagged revision; otherwise (workflow_dispatch) build devel.
           target_ref: ${{ github.event.release.tag_name || 'devel' }}
       - name: "Cross compile"
         uses: nasa/fprime-actions/build-with-aarch64-toolchain@devel
       # soak-setup expects integration tests at artifacts/int/. Stage them here.
       - name: "Stage integration tests"
-        run: cp -r LedBlinker/Components/Led/test/int int
+        run: cp -r FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/test/int int
       # soak-setup expects the deployment's fprime-gds.yml at artifacts/fprime-gds.yml
       - name: "Stage fprime-gds.yml"
-        run: cp LedBlinker/LedBlinkerDeployment/fprime-gds.yml fprime-gds.yml
+        run: cp FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/fprime-gds.yml fprime-gds.yml
+      # soak-setup installs GDS deps from artifacts/requirements.txt (pulls in the
+      # space-packet-fprime plugin at ./gds-plugin).
+      - name: "Stage GDS requirements"
+        run: cp FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/gds-requirements.txt requirements.txt
       - name: "Archive soak artifact"
         uses: actions/upload-artifact@v7
         with:
-          name: ledblinker-soak-artifact
+          name: soak-reference-aarch64-artifact
           path: |
             build-artifacts
             int
             fprime-gds.yml
+            requirements.txt
+            gds-plugin
           retention-days: 5
 
   deploy:
@@ -58,11 +64,11 @@ jobs:
       - name: "Download soak artifact"
         uses: actions/download-artifact@v8
         with:
-          name: ledblinker-soak-artifact
+          name: soak-reference-aarch64-artifact
           path: artifacts
       - name: "Deploy FSW + persistent GDS services"
         uses: nasa/fprime-actions/soak-setup@devel
         with:
-          deployment-name: ledblinker
+          deployment-name: soak-reference-aarch64
           platform: linux-remote
           fsw-ip: "192.168.10.2"

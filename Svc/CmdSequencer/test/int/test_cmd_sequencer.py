@@ -80,13 +80,13 @@ def test_generate_file(fprime_test_api):
             )
             + " "
             + '"'
-            + "SEQ WAIT 2 MINS!"
+            + "SEQ WAIT 5 SECS!"
             + '"'
             + "\n"
         )
         f2.write(";\n")
         f2.write(
-            "R00:02:00.050"
+            "R00:00:05.050"
             + " "
             + (
                 fprime_test_api.get_mnemonic("Svc.CommandDispatcher")
@@ -95,7 +95,7 @@ def test_generate_file(fprime_test_api):
             )
             + " "
             + '"'
-            + "SEQ after 2mins!"
+            + "SEQ after 5secs!"
             + '"'
             + "\n"
         )
@@ -320,7 +320,7 @@ def test_send_seq(fprime_test_api):
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.CmdSequencer") + "." + "CS_STEP", max_delay=10
     )
-    time.sleep(130)
+    time.sleep(7)
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.CmdSequencer") + "." + "CS_STEP", max_delay=3
     )

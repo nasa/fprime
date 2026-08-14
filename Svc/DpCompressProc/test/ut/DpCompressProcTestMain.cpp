@@ -13,6 +13,10 @@ TEST(OffNominal, BufferSmallerThanMinPacketSize) {
     Svc::Testers::procRequest.testState.test_undersized_buffer();
 }
 
+TEST(OffNominal, BufferTooLargeForRecordSize) {
+    Svc::Testers::procRequest.testState.test_oversized_buffer();
+}
+
 TEST(Nominal, Compressible) {
     const FwSizeType chunk_size = 4096;
     std::vector<Svc::AbstractState::Chunk> chunks = {Svc::AbstractState::Chunk(Svc::AbstractState::COMPRESSED, 0xA5),
@@ -40,6 +44,19 @@ TEST(Nominal, MinimalCompressible) {
     std::vector<Svc::AbstractState::Chunk> chunks = {
         Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0xA5),
         Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x55),
+        Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x23)};
+    Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
+    Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;
+
+    Svc::Testers::procRequest.CompressTest();
+}
+
+TEST(Nominal, MinimalCompressibleMixed) {
+    const FwSizeType chunk_size = 4096;
+    std::vector<Svc::AbstractState::Chunk> chunks = {
+        Svc::AbstractState::Chunk(Svc::AbstractState::UNCOMPRESSED, 0xA5),
+        Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x55),
+        Svc::AbstractState::Chunk(Svc::AbstractState::UNCOMPRESSED, 0x24),
         Svc::AbstractState::Chunk(Svc::AbstractState::MINIMAL_COMPRESSED, 0x23)};
     Svc::Testers::procRequest.testState.abstractState.set_chunk_state(chunk_size, chunks);
     Svc::Testers::procRequest.testState.abstractState.param_enabled_ = true;

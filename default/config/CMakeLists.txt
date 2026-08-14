@@ -30,6 +30,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/ActiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/BufferManagerComponentImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CfdpCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/CircularBufferCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CommandDispatcherImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCatalogCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/DpCfg.hpp"
@@ -38,6 +39,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/FpConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FPrimeNumericalConfig.h"
         "${CMAKE_CURRENT_LIST_DIR}/IpCfg.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LocklessQueueCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/OsDelegateRawTime.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLoggerCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/PrmDbImplCfg.hpp"
@@ -46,6 +48,7 @@ register_fprime_config(
         "${CMAKE_CURRENT_LIST_DIR}/TlmChanImplCfg.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/CRCCheckerConfig.hpp"
         "${CMAKE_CURRENT_LIST_DIR}/FileManagerConfig.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Os/RawTimeSource.hpp"
     BASE_CONFIG
     DEPENDS
         "${FPRIME_GLOBAL_INTERFACE_TARGET}"

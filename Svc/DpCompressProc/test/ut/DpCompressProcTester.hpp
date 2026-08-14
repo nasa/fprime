@@ -45,6 +45,9 @@ class DpCompressProcTester : public DpCompressProcGTestBase {
     //! Drive procRequest with a buffer shorter than MIN_PACKET_SIZE
     void test_undersized_buffer();
 
+    //! Drive procRequest with a buffer too large for a record size field
+    void test_oversized_buffer();
+
   public:
     // ----------------------------------------------------------------------
     // Tests
