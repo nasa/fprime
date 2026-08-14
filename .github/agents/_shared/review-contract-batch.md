@@ -211,6 +211,9 @@ forward progress. Contents:
 - Manifest coverage statement: every tracked file is in exactly one
   unit, and every unit is accounted for (mid-run regenerations list
   not-yet-reviewed units as `pending`).
+- Overview table at the very top: repo verdict, repo-wide totals per
+  triage tag, and counts of Go / No-Go units, followed by anchor
+  links to the major sections.
 - Table of contents: one row per unit, sorted by unit id, with the
   unit's per-tag totals (one column per triage tag) and its verdict.
   The unit name is a self-link (relative Markdown anchor) to that
@@ -222,8 +225,12 @@ forward progress. Contents:
   fallback). Each reviewer name links (relative path) to that
   reviewer's artifact file; the section header links to the unit's
   `unit-summary.md`.
-- The repo-wide consolidated must-fix list, sorted per §3b, each
-  entry linking to its reviewer artifact and unit section.
+- The repo-wide consolidated must-fix table, sorted per §3b: one row
+  per finding with the file:line, a short mechanical excerpt of the
+  finding's first sentence, and a link to the detailed finding (the
+  reviewer artifact's heading anchor). Traceability tokens (finding
+  id, finding class) ride in an HTML comment inside the row —
+  invisible when rendered, present in the raw text for diffing.
 - Repo verdict: `Go` iff all units `Go`. Any failed unit or No-Go
   unit forces repo `No-Go`.
 
