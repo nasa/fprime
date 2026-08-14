@@ -125,9 +125,9 @@ socket that will listen for incoming connections.  `Drv::TcpServerSocket::startu
 will only close the client connection and does not affect the server from listening for clients, however; it does free
 up the server to accept a new client.
 
-`Drv::TcpServerSocket::shutdown` will close the TCP server from receiving any new clients and effectively releases all
-resources allocated to the server. `Drv::TcpServerSocket::shutdown` implies `Drv::TcpServerSocket::close` and client
-connections will be stopped.
+`Drv::TcpServerSocket::terminate` will shut down and close the TCP server socket, releasing the resources allocated by
+`Drv::TcpServerSocket::startup` and preventing new clients. The shutdown is done first so that a thread waiting in
+`Drv::TcpServerSocket::open` can exit. It does not close an accepted client connection; use `Drv::TcpServerSocket::close`.
 
 ## Example TcpServer Usage
 
@@ -142,10 +142,11 @@ while (chatting) {
     server.send(); // Timeout of 100us
     server.recv(); // Will block
 }
-server.close();
+server.close(); // Close the client connection
 server.open(); // Blocks until a client is available
 ...
-server.shutdown();
+server.close(); // Close the client connection
+server.terminate(); // Shut down and close the server's listening socket
 ```
 
 ## Drv::UdpSocket Class
@@ -200,8 +201,8 @@ in a name, and all arguments to `Os::Task::start` to start the receive and recon
 will determine if this read task will request reconnects to sockets should a disconnect or error occur. Once started, the read task will continue
 until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
 `true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
-wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
-provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
+wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::shutdown`
+on the provided Drv::IpSocket to ensure that any blocking reads exit, freeing the thread to completely stop. Normal usage of
 a Drv::SocketComponentHelper derived class is shown below.
 
 ```c++

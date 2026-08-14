@@ -157,7 +157,7 @@ class IpSocket {
     /**
      * \brief shutdown the socket
      *
-     * Shuts down the socket opened by the open call. In this case of the TcpServer, this does shut down server's
+     * Shuts down the socket opened by the open call. In this case of the TcpServer, this does not shut down server's
      * listening port, but rather shuts down the active client.
      *
      * A shut down begins the termination of communication. The underlying socket will coordinate a clean shutdown, and

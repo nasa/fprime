@@ -47,7 +47,7 @@ bool constructApp(bool dump, U32 port_number, char* ipv4_address) {
     if (ipv4_address != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         // Needed for receiving only, remove if not configuring to receive
-        comm.startSocketTask(name);
+        comm.start(name);
     }
 }
 

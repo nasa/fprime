@@ -156,10 +156,10 @@ class SocketComponentHelper {
     bool runningReconnect();
 
     /**
-     * \brief stop the socket read task and close the associated socket.
+     * \brief stop the socket read task and shut down the associated socket.
      *
      * Called to stop the socket read task. It is an error to call this before the thread has been started using the
-     * startSocketTask call. This will stop the read task and close the client socket.
+     * start call. This will stop the read task and shut down the client socket.
      */
     void stop();
 
