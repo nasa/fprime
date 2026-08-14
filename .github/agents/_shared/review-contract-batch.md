@@ -21,13 +21,14 @@ mode**, this addendum wins. In PR mode this file does not apply.
 | Read scope | Full files touched by diff | Every file in the unit, in full, plus any reachable context |
 | "Introduced by this PR" test | `pr-diff-scoping.skill.md` | Not applicable — every finding is filed as-is |
 | Output | Inline PR review comments | Finding records in a results-repo artifact file |
-| Triage tags | must fix / suggestion / could fix / future work | Same tags, same severity semantics (see §4) |
+| Triage tags | must fix / suggestion / could fix / future work | must fix / suggestion / could fix / **advisory** (see §4) |
 | Aggregation | PR review summary | Per-unit `unit-summary.md` + repo-wide roll-up |
 
-Because there is no diff, **nothing is "preexisting"**: the
-`**future work**` tag is repurposed in batch mode to mean
-"in-scope, real, but low-priority / advisory" (see §4). All other
-tags keep their PR-mode meaning.
+Because there is no diff, **nothing is "preexisting"** — provenance
+and severity are orthogonal, and batch mode has no provenance axis.
+The PR-mode `**future work**` tag is therefore replaced in batch mode
+by `**advisory**`: "in-scope, real, but low-priority" (see §4). All
+other tags keep their PR-mode severity meaning.
 
 ---
 
@@ -71,7 +72,7 @@ between runs shows exactly the new, changed, and resolved findings.
 <!-- repo: <owner/repo> -->
 <!-- commit: <sha> -->
 <!-- unit: <unit-id> -->
-<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "future_work": N} -->
+<!-- counts: {"must_fix": N, "suggestion": N, "could_fix": N, "advisory": N} -->
 <!-- verdict: Go | No-Go -->
 
 ## Findings
@@ -121,7 +122,7 @@ semantics as `review-contract.md` §2 but scoped to the unit.
 | `**must fix**` | Confirmed in-scope defect that would block a PR introducing it today. | Yes (unit No-Go) |
 | `**suggestion**` | Non-blocking improvement with a concrete fix (fenced suggestion block required). | No |
 | `**could fix**` | Minor in-scope issue worth fixing. | No |
-| `**future work**` | In-scope, real, advisory-priority (batch-mode repurposing; there is no "preexisting" axis). | No |
+| `**advisory**` | In-scope, real, low-priority (replaces PR-mode `future work`; there is no "preexisting" axis). | No |
 
 Severity drives the tag exactly as in PR mode
 (`triage-classifier.skill.md` applies; read "the PR introduces" as
