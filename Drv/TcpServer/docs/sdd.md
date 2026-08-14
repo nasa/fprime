@@ -59,7 +59,9 @@ with automatic connection enabled, which will automatically accept the client co
 `configure` must be called before any data is sent or received. `start` must be called for the component to receive data.
 
 
-Users should call `stop` to stop the receive task and `join` to wait for it to exit.
+Users should call `stop` to stop the receive task and `join` to wait for it to exit. For Drv::TcpServerComponentImpl,
+`stop` is equivalent to `terminate`: the receive task blocks in `accept` on the listening socket, so `stop` shuts down and
+closes that socket along with any active client connection.
 
 Users turning off automatic connection must call `open` to open the connection.
 

@@ -166,10 +166,11 @@ In order to start the receiving thread a call to the `Drv::SocketComponentHelper
 in a name, and all arguments to `Os::Task::start` to start the task. An optional parameter, reconnect, will determine if
 this read task will reconnect to sockets should a disconnect or error occur. Once started the read task will continue
 until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
-`true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
-wait until the full task has finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::close` on the
-provided Drv::IpSocket to ensure that any blocking reads exit freeing the thread to completely stop. Normal usage of
-a Drv::SocketComponentHelper derived class is shown below.
+`true`. Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
+wait until the full task has finished. `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::shutdown`
+on the provided Drv::IpSocket to ensure that any blocking reads exit, freeing the thread to completely stop. Classes owning
+a listening socket may override `stop` to release it too; `Drv::TcpServerComponentImpl` does, as a read task blocked in
+`open` will not exit otherwise. Normal usage of a Drv::SocketComponentHelper derived class is shown below.
 
 ```c++
 Os::TaskString name("ReceiveTask");

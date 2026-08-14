@@ -80,6 +80,14 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     /**
      * \brief stop the read task and terminate the server socket
      *
+     * Equivalent to `terminate`. The read task blocks in `accept` on the server socket, which the base
+     * implementation does not close; it is terminated here to allow `join` to return.
+     */
+    void stop() override;
+
+    /**
+     * \brief stop the read task and terminate the server socket
+     *
      * Stops the read task, then shuts down and closes the server socket so that a read task
      * blocked in `accept` can exit.
      *
