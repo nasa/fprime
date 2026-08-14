@@ -141,8 +141,8 @@ class SocketComponentHelper {
     /**
      * \brief stop the socket read task and shut down the associated socket
      *
-     * Called to stop the socket read task. It is an error to call this before the thread has been started using the
-     * start call. This will stop the read task and shut down the client socket.
+     * Called to stop the socket read task and shut down the client socket. Stopping before start is permitted
+     * but only shuts down the client socket.
      *
      * \note Virtual so implementations owning a listening socket may release it here too. Closing the client
      * socket alone will not wake a read task blocked in `accept`.
@@ -153,9 +153,9 @@ class SocketComponentHelper {
      * \brief joins to the stopping read task to wait for it to close
      *
      * Called to join with the read socket task. This will block and return after the task has been stopped with a call
-     * to the stopSocketTask method.
-     * \param value_ptr: a pointer to fill with data. Passed to the Os::Task::join call. NULL to ignore.
-     * \return: Os::Task::Status passed back from the Os::Task::join call.
+     * to the `stop` method.
+     *
+     * \return Os::Task::Status passed back from the Os::Task::join call.
      */
     Os::Task::Status join();
 
