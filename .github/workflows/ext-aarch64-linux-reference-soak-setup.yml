@@ -48,6 +48,7 @@ jobs:
             build-artifacts
             int
             fprime-gds.yml
+            gds-plugin
           retention-days: 5
 
   deploy:
