@@ -213,8 +213,10 @@ forward progress. Contents:
   unit, and every unit is accounted for (mid-run regenerations list
   not-yet-reviewed units as `pending`).
 - Overview table at the very top: repo verdict, repo-wide totals per
-  triage tag, and counts of Go / No-Go units, followed by anchor
-  links to the major sections.
+  triage tag, and counts of Go / No-Go units, followed by a
+  per-reviewer totals table (rows = registered reviewers, columns =
+  triage-tag totals plus count of units where that reviewer voted
+  No-Go) and anchor links to the major sections.
 - Table of contents: one row per unit, sorted by unit id, with the
   unit's per-tag totals (one column per triage tag) and its verdict.
   The unit name is a self-link (relative Markdown anchor) to that
