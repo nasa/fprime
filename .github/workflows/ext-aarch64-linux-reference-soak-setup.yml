@@ -40,6 +40,10 @@ jobs:
       # soak-setup expects the deployment's fprime-gds.yml at artifacts/fprime-gds.yml
       - name: "Stage fprime-gds.yml"
         run: cp FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/fprime-gds.yml fprime-gds.yml
+      # soak-setup installs GDS deps from artifacts/requirements.txt (pulls in the
+      # space-packet-fprime plugin at ./gds-plugin).
+      - name: "Stage GDS requirements"
+        run: cp FprimeSoakTestReference/FprimeSoakTestReferenceDeployment/gds-requirements.txt requirements.txt
       - name: "Archive soak artifact"
         uses: actions/upload-artifact@v7
         with:
@@ -48,6 +52,7 @@ jobs:
             build-artifacts
             int
             fprime-gds.yml
+            requirements.txt
             gds-plugin
           retention-days: 5
 
