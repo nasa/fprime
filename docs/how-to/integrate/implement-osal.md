@@ -334,7 +334,7 @@ The process described above for `Os::Mutex` is the same for every OSAL module. F
 4. Register with `register_os_implementation` in `CMakeLists.txt`.
 
 > [!NOTE]
-> F´ provides `Os_Generic_PriorityQueue`, a platform-independent queue implementation that most platforms use. You do not need to write an OS-specific queue unless the generic one is unsuitable for your target.
+> F´ provides two platform-independent queue implementations: `Os_Generic_PriorityQueue` (mutex-based — the default on most platforms) and `Os_Generic_LocklessPriorityQueue` (lockless, ISR-safe — opt-in for targets that send or receive from interrupt context). You do not need to write an OS-specific queue unless neither generic implementation is suitable for your target.
 
 The full set of [OSAL modules](../../../Os/docs/sdd.md#2-core-services) that can be implemented is:
 

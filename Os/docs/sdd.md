@@ -61,6 +61,7 @@ Generic services are implemented in the `Os::Generic` namespace and are not tied
 | Service | Purpose |
 |---|---|
 | **PriorityQueue** | Heap-based priority queue implementation |
+| **LocklessPriorityQueue** | Lockless ISR-safe priority queue implementation |
 | **FilePathUtils** | Textual path resolution (collapsing `.`/`..`/`//`) and directory-containment checking. No filesystem access; suitable for embedded targets. |
 | **SandboxedFile** | Composition wrapper around `Os::File` that validates all paths on `open()` against a configured allowed directory, preventing path-traversal attacks. |
 

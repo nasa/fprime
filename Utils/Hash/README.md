@@ -11,9 +11,8 @@ digest) can be found in `Utils/Hash/HashBuffer.hpp`. Some common implementation 
 for each class is included in `Utils/Hash/HashCommon.cpp` and `Utils/Hash/HashBufferCommon.cpp`.
 
 Specific implementations of the hashing utility are stored in subdirectories in `Utils/Hash/`.
-Currently, one such implementation exists in `Utils/Hash/openssl/` which provides a SHA256
-hash using the openssl library. Another implementation is also provided which calculates a 
-32-bit CRC32, which depends on no external libraries.
+Currently, one such implementation exists in `Utils/Hash/Crc32/` which calculates a
+32-bit CRC32 and depends on no external libraries.
 
 A specific implementation can be selected by modifying the `HashConfig.hpp` file.
 
@@ -40,14 +39,14 @@ to calculate the hash all at once. The computed hash is returned in `buffer`, wh
 ## Configuring `hash`
 
 To configure the `hash` utility to use a specific hashing implementation, modify `HashConfig.hpp` to include 
-the header file of the implementation you wish to use. For example, to use SHA256 hashing, your `HashConfig.hpp` 
+the header file of the implementation you wish to use. For example, to use CRC32 hashing, your `HashConfig.hpp` 
 should look something like:
 
 ```
 #ifndef UTILS_HASH_CONFIG_HPP
 #define UTILS_HASH_CONFIG_HPP
 
-#include <Utils/Hash/openssl/SHA256.hpp>
+#include <Utils/Hash/Crc32/Crc32.hpp>
 
 #endif
 ```
@@ -55,7 +54,7 @@ should look something like:
 ## Building your own `hash` implementation
 
 The generic interface to `hash` can be implemented using many different hashing algorithms. To construct your own 
-please look at the SHA256 implementation as an example, found in the `openssl` subdirectory. Your implementation
+please look at the CRC32 implementation as an example, found in the `Crc32` subdirectory. Your implementation
 should include a few files:
 
 `YourImplementationHash.hpp` - This file must declare the following `#define` constants: `HASH_HANDLE_TYPE`, the handle type for computing the hash internally, `HASH_DIGEST_LENGTH`, the length of the hash digest in bytes, and `HASH_EXTENSION_STRING`, the file extension you would assign to the hash should it be stored into a file (ie. `.SHA256`).

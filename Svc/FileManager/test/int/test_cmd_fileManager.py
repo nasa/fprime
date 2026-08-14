@@ -10,7 +10,6 @@ Test the command FileManager with basic integration tests.
 
 """
 
-import time
 from pathlib import Path
 
 
@@ -63,7 +62,6 @@ def test_send_fileManager_command(fprime_test_api):
         fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "AppendFile",
         ["/tmp/test_seq.seq", "/tmp/file/test_seq.seq"],
     )
-    time.sleep(10)
     # put back
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.FileManager") + "." + "MoveFile",
