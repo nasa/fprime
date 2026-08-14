@@ -15,7 +15,7 @@ module Ccsds {
     interface SdlsKeyInterfaceClient {
         @ Port for requesting a key: the provided buffer is filled with the key
         output port keyGet: Svc.Ccsds.SdlsKey
-        @ Port to send the key request: fills the provided buffer with the key
+        @ Port to receive a key: the provided buffer contains the key to persist 
         output port keySet: Fw.BufferSend
     }
 

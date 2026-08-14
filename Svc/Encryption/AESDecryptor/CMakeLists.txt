@@ -13,24 +13,25 @@
 # Module names are derived from the path from the nearest project/library/framework
 # root when not specifically overridden by the developer, i.e. the module defined by
 # `MyProj/Some/Path/CMakeLists.txt` will be named `MyProj_Some_Path`.
-
+find_package(OpenSSL REQUIRED)
 register_fprime_library(
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.fpp"
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.cpp"
-#   DEPENDS
-#       MyPackage_MyOtherModule
+   DEPENDS
+        OpenSSL::Crypto
 )
 
 ### Unit Tests ###
-# register_fprime_ut(
-#     AUTOCODER_INPUTS
-#         "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.fpp"
-#     SOURCES
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTestMain.cpp"
-#         "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTester.cpp"
-#     DEPENDS
-#         STest # For rules-based testing
-#     UT_AUTO_HELPERS
-# )
+register_fprime_ut(
+    AUTOCODER_INPUTS
+       "${CMAKE_CURRENT_LIST_DIR}/AESDecryptor.fpp"
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/AESDecryptorTester.cpp"
+    DEPENDS
+        STest # For rules-based testing
+        OpenSSL::Crypto
+    UT_AUTO_HELPERS
+)

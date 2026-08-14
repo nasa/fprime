@@ -2,7 +2,6 @@ module Svc {
 module Ccsds{
     @ Decapsulation of KEM key
     passive component OpensslDecaps {
-        #import Svc.Ccsds.SdlsKeyInterface
         import Svc.Ccsds.SdlsKeyInterfaceClient
 
         @ port for taking in kem message

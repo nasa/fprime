@@ -26,6 +26,8 @@ AESDecryptor ::~AESDecryptor() {}
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
+static constexpr U32 GCM_IV_LEN = 12;
+static constexpr U32 GCM_TAG_LEN = 16;
 
 void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
                                       U16 securityAssociationIndex,
@@ -34,53 +36,69 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
     Svc::Ccsds::SdlsKeyBuffer key;
     Svc::Ccsds::SdlsStatus status = this->keyGet_out(0, key);
 
-    if (status == Svc::Ccsds::SdlsStatus::KEY_ERROR) {
+    if (status != Svc::Ccsds::SdlsStatus::SUCCESS) {
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
 
-    if (data.getSize() < 12 + 16) {
+    if (data.getSize() < GCM_IV_LEN + GCM_TAG_LEN) {
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
 
     U8 *iv = data.getData();
-    U8 *ciphertext = data.getData() + 12;
-    U32 cipherLen = static_cast<U32>(data.getSize()) - 12 - 16;
-    U8 *tag = data.getData() + 12 + cipherLen;
+    U8 *ciphertext = data.getData() + GCM_IV_LEN;
+    U32 cipherLen = static_cast<U32>(data.getSize()) - GCM_IV_LEN - GCM_TAG_LEN;
+    U8 *tag = data.getData() + GCM_IV_LEN + cipherLen;
 
-    U8 outbuf[1024];
+    static U8 outbuf[1024];
     int len = 0, plainLen = 0, finalLen = 0;
 
-    EVP_CIPHER_CTX *ctx;
-    ctx = EVP_CIPHER_CTX_new();
-
-    if (!EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr)) {
-        EVP_CIPHER_CTX_free(ctx);
+    EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
+    if(ctx == nullptr){
+        this->bufferReturnOut_out(portNum, data, context);       
         return;
     }
 
-    if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 12, nullptr)) {
+    if (!EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), nullptr, nullptr, nullptr)) {
         EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
+        return;
+    }
+
+    if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, GCM_IV_LEN, nullptr)) {
+        EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
 
     if (!EVP_DecryptInit_ex(ctx, nullptr, nullptr, key.getBuffAddr(), iv)) {
         EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
+        return;
+    }
+    if (cipherLen > sizeof(outbuf)) {
+        this->decryptOut_out(portNum, Svc::Ccsds::SdlsStatus::KEY_ERROR, data, context);
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
 
     if (!EVP_DecryptUpdate(ctx, outbuf, &len, ciphertext, static_cast<int>(cipherLen))) {
         EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
     plainLen = len;
 
-    if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, tag)) {
+    if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, GCM_TAG_LEN, tag)) {
         EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
 
     if (!EVP_DecryptFinal_ex(ctx, outbuf + plainLen, &finalLen)) {
         EVP_CIPHER_CTX_free(ctx);
+        this->bufferReturnOut_out(portNum, data, context);
         return;
     }
     plainLen += finalLen;
@@ -94,7 +112,7 @@ void AESDecryptor ::decryptIn_handler(FwIndexType portNum,
 void AESDecryptor ::decryptReturnIn_handler(FwIndexType portNum,
                                             Fw::Buffer& data,
                                             const ComCfg::FrameContext& context) {
-    // TODO
+    this->bufferReturnOut_out(portNum, data, context);
 }
 
 }  // namespace Ccsds

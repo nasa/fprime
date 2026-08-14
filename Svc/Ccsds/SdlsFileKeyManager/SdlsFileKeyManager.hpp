@@ -45,7 +45,7 @@ class SdlsFileKeyManager final : public SdlsFileKeyManagerComponentBase {
     
     //! Handler implementation for keySet
     //!
-    //! Port to receive a key request: fills the provided buffer with the key
+    //! Port to receive a key to store: writes the provided buffer contents to the key file
     void keySet_handler(FwIndexType portNum, Fw::Buffer& key) override;
 
 

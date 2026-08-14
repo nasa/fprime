@@ -35,7 +35,7 @@ void OpensslDecaps ::kemMsgIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     const char* algName = "ML-KEM-768";
     Svc::Ccsds::SdlsKeyBuffer privKeyBuf;
     Svc::Ccsds::SdlsStatus status = this->keyGet_out(0, privKeyBuf);
-    if (status == Svc::Ccsds::SdlsStatus::KEY_ERROR) {
+    if (status != Svc::Ccsds::SdlsStatus::SUCCESS) {
         return;
     }
     EVP_PKEY* keypair = EVP_PKEY_new_raw_private_key_ex(nullptr, algName, nullptr, privKeyBuf.getBuffAddr(), privKeyBuf.getSize());
@@ -44,6 +44,7 @@ void OpensslDecaps ::kemMsgIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     }
     EVP_PKEY_CTX *decapsCtx = EVP_PKEY_CTX_new_from_pkey(nullptr, keypair, nullptr);
     if (!decapsCtx) {
+        EVP_PKEY_free(keypair);
         return;
     }
 
@@ -53,17 +54,20 @@ void OpensslDecaps ::kemMsgIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
 
     if (EVP_PKEY_decapsulate_init(decapsCtx, nullptr) <= 0) {
         EVP_PKEY_CTX_free(decapsCtx);
+        EVP_PKEY_free(keypair);
         return;
     }
 
     if (EVP_PKEY_decapsulate(decapsCtx, nullptr, &slen, ciphertext, ctLen) <= 0) {
         EVP_PKEY_CTX_free(decapsCtx);
+        EVP_PKEY_free(keypair);
         return;
     }
 
-    unsigned char* sharedSecret = new unsigned char[slen];
+    U8* sharedSecret = new U8[slen];
     if (EVP_PKEY_decapsulate(decapsCtx, sharedSecret, &slen, ciphertext, ctLen) <= 0) {
         EVP_PKEY_CTX_free(decapsCtx);
+        EVP_PKEY_free(keypair);
         delete[] sharedSecret;
         return;
     }
@@ -83,6 +87,7 @@ void OpensslDecaps ::kemMsgIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
         EVP_PKEY_CTX_add1_hkdf_info(pctx, reinterpret_cast<const unsigned char*>("aes-session-key"), 15) <= 0)
     {
         EVP_PKEY_CTX_free(pctx);
+        OPENSSL_cleanse(sharedSecret, slen);
         delete[] sharedSecret;
         return;
     }
@@ -91,6 +96,7 @@ void OpensslDecaps ::kemMsgIn_handler(FwIndexType portNum, Fw::Buffer& fwBuffer)
     size_t aesKeyLen = sizeof(aesKey);
     if (EVP_PKEY_derive(pctx, aesKey, &aesKeyLen) <= 0) {
         EVP_PKEY_CTX_free(pctx);
+        OPENSSL_cleanse(sharedSecret, slen);
         delete[] sharedSecret;
         return;
     }
