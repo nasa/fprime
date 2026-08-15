@@ -20,6 +20,7 @@
 #define INSTANCE 0
 #define CMD_SEQ 0
 #define QUEUE_DEPTH 10
+#define FILE_QUEUE_DEPTH 10
 
 #define COOLDOWN_MS 500
 #define CYCLE_MS 100
@@ -31,8 +32,13 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 FileDownlinkTester ::FileDownlinkTester()
-    : FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE), component("FileDownlink"), buffers_index(0) {
-    this->component.configure(COOLDOWN_MS, CYCLE_MS, 10);
+    : FileDownlinkGTestBase("Tester", MAX_HISTORY_SIZE),
+      component("FileDownlink"),
+      buffers_index(0),
+      m_returnBuffers(true),
+      m_heldCount(0),
+      m_reenqueueOnFileComplete(false) {
+    this->component.configure(COOLDOWN_MS, CYCLE_MS, FILE_QUEUE_DEPTH);
     this->connectPorts();
     this->initComponents();
     char cwd[Os::FilePathUtils::MAX_PATH_LENGTH] = {};
@@ -189,6 +195,239 @@ void FileDownlinkTester ::cancelInIdleMode() {
     this->cancel(Fw::CmdResponse::OK);
 
     this->component.Run_handler(0, 0);
+    // Assert idle mode
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+}
+
+void FileDownlinkTester ::resetWedgedDownlink() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    // Simulate a downstream component that never returns buffers
+    this->m_returnBuffers = false;
+
+    // Start a downlink; the start packet buffer is sent and never returned
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();       // Dispatch send file command
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+    ASSERT_EQ(1u, this->m_heldCount);
+
+    // With no buffer return the component stays in WAIT indefinitely
+    for (U32 i = 0; i < 5; i++) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+
+    // Cancel follows the flow-control protocol, so it cannot complete either
+    this->sendCmd_Cancel(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch cancel command
+    ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.m_mode.get());
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_CANCEL, CMD_SEQ, Fw::CmdResponse::OK);
+    this->cmdResponseHistory->clear();
+
+    // Reset must recover the component without the outstanding buffer coming back
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch reset command
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+    ASSERT_EQ(2u, this->m_heldCount);  // The cancel packet was sent (and is also never returned)
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_CMD_RESPONSE(1, FileDownlink::OPCODE_RESET, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset(0, 0);
+
+    // Reset must put a cancel packet on the wire, not an end packet: an end packet would tell the
+    // ground that the truncated file completed successfully
+    History<Fw::FilePacket::DataPacket> dataPackets(MAX_HISTORY_SIZE);
+    CFDP::Checksum checksum;
+    validatePacketHistory(*this->fromPortHistory_bufferSendOut, dataPackets, Fw::FilePacket::T_CANCEL, 2, checksum, 0);
+
+    // The wedged buffers finally coming back must be ignored as stale
+    this->returnHeldBuffers();
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+
+    // Ride out the cooldown
+    while (this->component.m_mode.get() == FileDownlink::Mode::COOLDOWN) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    // A new downlink must now succeed, with buffers flowing normally again
+    this->m_returnBuffers = true;
+    this->clearHistory();
+    this->sendFile(sourceFileName, destFileName, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_FileSent_SIZE(1);
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::resetDrainsQueue() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    // Simulate a downstream component that never returns buffers
+    this->m_returnBuffers = false;
+
+    // Start a downlink via the port; the start packet buffer is sent and never returned
+    Fw::String srcFileArg(sourceFileName);
+    Fw::String destFileArg(destFileName);
+    Svc::SendFileResponse resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
+    ASSERT_EQ(SendFileStatus::STATUS_OK, resp.get_status());
+    const U32 activeContext = resp.get_context();
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+
+    // Queue two more requests behind the wedged transfer: one command, one port request
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();  // Dispatch send file command: the request queues with no response yet
+    resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
+    ASSERT_EQ(SendFileStatus::STATUS_OK, resp.get_status());
+    const U32 queuedContext = resp.get_context();
+    ASSERT_CMD_RESPONSE_SIZE(0);
+
+    // Reset: the active transfer is canceled and both queued requests receive responses
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch reset command
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+    ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset(0, 2);
+
+    // The active port request completes with the cancel status, the queued one with an error
+    const SendFileStatus::T queuedStatus =
+        FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR;
+    ASSERT_from_FileComplete_SIZE(2);
+    ASSERT_from_FileComplete(0, Svc::SendFileResponse(SendFileStatus(SendFileStatus::STATUS_OK), activeContext));
+    ASSERT_from_FileComplete(1, Svc::SendFileResponse(SendFileStatus(queuedStatus), queuedContext));
+
+    // The queued command receives an error response; the reset command succeeds
+    const Fw::CmdResponse queuedResp =
+        FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? Fw::CmdResponse::OK : Fw::CmdResponse::EXECUTION_ERROR;
+    ASSERT_CMD_RESPONSE_SIZE(2);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_SENDFILE, CMD_SEQ, queuedResp);
+    ASSERT_CMD_RESPONSE(1, FileDownlink::OPCODE_RESET, CMD_SEQ, Fw::CmdResponse::OK);
+
+    // Ride out the cooldown; the queue is empty so the component stays idle
+    this->returnHeldBuffers();
+    while (this->component.m_mode.get() == FileDownlink::Mode::COOLDOWN) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+    this->component.Run_handler(0, 0);
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::resetWithCancelPacketOutstanding() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    // Simulate a downstream component that never returns buffers
+    this->m_returnBuffers = false;
+
+    // Start a downlink and cancel it while the start packet is outstanding
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();       // Dispatch send file command
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    this->sendCmd_Cancel(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch cancel command
+    ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.m_mode.get());
+
+    // Return the start packet buffer: the cancel packet goes out and is itself never returned
+    this->invoke_to_bufferReturn(0, this->m_heldBuffers[0]);
+    this->component.doDispatch();  // Process return of start packet buffer, send cancel packet
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+    ASSERT_from_bufferSendOut_SIZE(2);  // Start packet and cancel packet
+
+    // Reset must not send a second cancel packet into the memory the downstream still holds
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch reset command
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+    ASSERT_from_bufferSendOut_SIZE(2);
+    ASSERT_EVENTS_DownlinkCanceled_SIZE(1);
+
+    // The outstanding cancel packet buffer finally coming back must be ignored as stale
+    this->invoke_to_bufferReturn(0, this->m_heldBuffers[1]);
+    this->component.doDispatch();
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::resetDrainBounded() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    // Simulate a downstream component that never returns buffers
+    this->m_returnBuffers = false;
+
+    // Start a downlink and queue one port request behind it
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();       // Dispatch send file command
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+    Fw::String srcFileArg(sourceFileName);
+    Fw::String destFileArg(destFileName);
+    Svc::SendFileResponse resp = this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
+    ASSERT_EQ(SendFileStatus::STATUS_OK, resp.get_status());
+
+    // Every drained request's error response enqueues another one. The drain must still terminate,
+    // bounded by the queue depth, rather than following the requests indefinitely.
+    this->m_reenqueueOnFileComplete = true;
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch reset command
+    this->m_reenqueueOnFileComplete = false;
+
+    ASSERT_EQ(FileDownlink::Mode::COOLDOWN, this->component.m_mode.get());
+    ASSERT_EVENTS_DownlinkReset_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset(0, FILE_QUEUE_DEPTH);
+    ASSERT_from_FileComplete_SIZE(FILE_QUEUE_DEPTH);
+
+    this->removeFile(sourceFileName);
+}
+
+void FileDownlinkTester ::resetInIdleMode() {
+    // Assert idle mode
+    ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+
+    // Send a reset command
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, FileDownlink::OPCODE_RESET, CMD_SEQ, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_DownlinkReset_SIZE(1);
+    ASSERT_EVENTS_DownlinkReset(0, 0);
+    ASSERT_EVENTS_DownlinkCanceled_SIZE(0);
+    ASSERT_from_bufferSendOut_SIZE(0);
+
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
 }
@@ -392,7 +631,14 @@ void FileDownlinkTester ::from_bufferSendOut_handler(const FwIndexType portNum, 
     ::memcpy(data, buffer.getData(), buffer.getSize());
     Fw::Buffer buffer_new(data, buffer.getSize(), buffer.getContext());
     pushFromPortEntry_bufferSendOut(buffer_new);
-    invoke_to_bufferReturn(0, buffer);
+    if (this->m_returnBuffers) {
+        invoke_to_bufferReturn(0, buffer);
+    } else {
+        // Simulate a wedged downstream component: hold the buffer for a possible late return
+        ASSERT_LT(this->m_heldCount, FW_NUM_ARRAY_ELEMENTS(this->m_heldBuffers));
+        this->m_heldBuffers[this->m_heldCount] = buffer;
+        this->m_heldCount++;
+    }
 }
 
 void FileDownlinkTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
@@ -402,6 +648,12 @@ void FileDownlinkTester ::from_pingOut_handler(const FwIndexType portNum, U32 ke
 void FileDownlinkTester ::from_FileComplete_handler(const FwIndexType portNum, /*!< The port number*/
                                                     const Svc::SendFileResponse& response) {
     pushFromPortEntry_FileComplete(response);
+    if (this->m_reenqueueOnFileComplete) {
+        // Simulate a client that reacts to every completion by immediately requesting another file
+        Fw::String srcFileArg("source.bin");
+        Fw::String destFileArg("dest.bin");
+        (void)this->invoke_to_SendFile(0, srcFileArg, destFileArg, 0, 0);
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -511,6 +763,14 @@ void FileDownlinkTester ::removeFile(const char* const name) {
         // OK if file is not there
         ASSERT_EQ(ENOENT, errno);
     }
+}
+
+void FileDownlinkTester ::returnHeldBuffers() {
+    for (U32 i = 0; i < this->m_heldCount; i++) {
+        this->invoke_to_bufferReturn(0, this->m_heldBuffers[i]);
+        this->component.doDispatch();
+    }
+    this->m_heldCount = 0;
 }
 
 // ----------------------------------------------------------------------

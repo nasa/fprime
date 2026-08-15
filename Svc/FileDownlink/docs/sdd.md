@@ -22,6 +22,7 @@ FD-001 | `FileDownlink` shall queue up a list of files to downlink | The require
 FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
 FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
 FD-004 | `FileDownlink` shall issue a warning if a file with zero size is encountered | Ensures that operators are aware of invalid file sizes | Test
+FD-005 | `FileDownlink` shall provide a command that force-completes the active downlink and drains the file queue without waiting on outstanding buffer returns | Allows operators to recover the component when a downstream component never returns a buffer | Test
 
 ## 3 Design
 
@@ -131,6 +132,37 @@ failure.
 Cancel is an asynchronous command.
 If *mode* = DOWNLINK or *mode* = WAIT, it sets *mode* to CANCEL.
 Otherwise it does nothing.
+On the return of the outstanding buffer, `FileDownlink` sends a cancel packet; when that cancel
+packet's own buffer is in turn returned, it emits `DownlinkCanceled` and enters COOLDOWN. Cancel therefore follows
+the normal buffer flow-control protocol and cannot complete if the downstream component never
+returns the outstanding buffer. Use Reset to recover from that condition.
+
+#### 3.5.3 Reset
+
+Reset is an asynchronous command that recovers the component when the downstream component
+never returns the outstanding buffer. It force-completes the active downlink, if any, without
+waiting on the buffer return: `FileDownlink` sends a cancel packet, emits `DownlinkCanceled`,
+responds to the originating command or port request, and enters COOLDOWN. It then drains the
+file queue, responding to each queued request with an error, and emits `DownlinkReset` with the
+number of requests dropped. A single Reset drops at most *file queue depth* requests; if
+delivering a drop response causes a client to synchronously submit another request, that request
+may be dropped by the same Reset. As with all downlink failure responses,
+`FILEDOWNLINK_COMMAND_FAILURES_DISABLED` maps these error responses to OK; the `DownlinkReset`
+count is then the only indication that queued requests were dropped. Port clients therefore see
+`SendFileStatus::STATUS_OK` for requests that were dropped without a single packet being sent:
+`Svc::DpCatalog`, for example, will mark the data product TRANSMITTED and remove it from the
+catalog. Deployments that cannot tolerate that must set `FILEDOWNLINK_COMMAND_FAILURES_DISABLED`
+to false, which makes both the drain and the pre-existing failure paths report `STATUS_ERROR`. Late returns of buffers that were outstanding at the time of the
+Reset are ignored.
+
+> [!WARNING]
+> Reset breaks the buffer flow-control protocol: the internal packet buffers are eligible for
+> reuse while a downstream component may still hold references to them. Issue Reset only when
+> the downstream component has been written off. If that component later revives and reads a
+> held buffer, it may emit stale packet data. In particular the file-packet store is re-wrapped
+> by the very next `SendFile` after a Reset, so a downstream component that revives mid-transfer
+> may read bytes `FileDownlink` is concurrently rewriting; nothing in the component delays a
+> follow-on downlink.
 
 ## 4 Checklists
 
