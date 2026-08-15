@@ -31,7 +31,6 @@ FileDownlink ::FileDownlink(const char* const name)
       m_warnings(this),
       m_sequenceIndex(0),
       m_curTimer(0),
-      m_bufferSize(0),
       m_byteOffset(0),
       m_endOffset(0),
       m_lastCompletedType(Fw::FilePacket::T_NONE),
