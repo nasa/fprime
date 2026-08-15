@@ -335,7 +335,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void sendFilePacket(const Fw::FilePacket& filePacket);
 
     // State-helper functions
-    void exitFileTransfer();
     void enterCooldown();
 
     // Function to acquire a buffer internally
@@ -381,9 +380,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
     //! The current sequence index
     U32 m_sequenceIndex;
 
-    //! Timeout threshold (milliseconds) while in WAIT state
-    U32 m_timeout;
-
     //! Cooldown (in ms) between finishing a downlink and starting the next file.
     U32 m_cooldown;
 
@@ -395,9 +391,6 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     ////! Buffer for sending file data
     Fw::Buffer m_buffer;
-
-    //! Buffer size for file data
-    U32 m_bufferSize;
 
     //! Current byte offset in file
     U32 m_byteOffset;
