@@ -7,7 +7,9 @@
 #ifndef Svc_WasmSequencer_HPP
 #define Svc_WasmSequencer_HPP
 
+#include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/DataStructures/FifoQueue.hpp"
+#include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/LinearBufferTemplate.hpp"
 #include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
@@ -16,6 +18,8 @@
 #include "Svc/WasmSequencer/WasmSequencerComponentAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_RequestContextSerializableAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_StatusEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_TrapReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
 #include "config/FppConstantsAc.hpp"
@@ -67,27 +71,26 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                const Fw::CmdResponse& response  //!< The command response argument
                                ) override;
 
+    //! Handler implementation for seqCancelIn
+    //!
+    //! port for requesting to cancel the currently running sequence
+    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
+                             ) override;
+
+    //! Handler implementation for seqRunIn
+    //!
+    //! port for requests to run sequences
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& filename,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Sequence arguments
+                          ) override;
+
     //! Handler implementation for writeTelemetry
     //!
     //! Port to periodically write telemetry channels (optional)
     void writeTelemetry_handler(FwIndexType portNum,  //!< The port number
                                 U32 context           //!< The call order
                                 ) override;
-
-    //! Handler implementation for seqRunIn
-    //!
-    //! Port for requests to run sequences (non-blocking). Mirrors a NO_BLOCK RUN
-    //! command but has no command response to send.
-    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
-                          const Fw::StringBase& filename,  //!< The sequence file
-                          const Svc::SeqArgs& args         //!< Sequence arguments
-                          ) override;
-
-    //! Handler implementation for seqCancelIn
-    //!
-    //! Port for requesting to cancel the currently running sequence
-    void seqCancelIn_handler(FwIndexType portNum  //!< The port number
-                             ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -177,9 +180,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Handler implementation for command PAUSE
     //!
-    //! Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
-    //! until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
-    //! substates of the RUNNING state that are not RUNNING.PAUSED.
+    //! Pauses the execution of the sequencer, just before it is about to start spinning.
+    //! This simply pends a pause flag that will be take before the sequence engine starts
+    //! up again.
+    //!
+    //! This command completes immediately
     void PAUSE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                           U32 cmdSeq            //!< The command sequence number
                           ) override;
@@ -196,63 +201,71 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
-    //! Implementation for action loadCmd_OK of state machine Svc_WasmSequencer_ControllerStateMachine
+    //! Implementation for action respond_noblock_OK of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
-    //! responds to any command waiting on load with OK
-    void Svc_WasmSequencer_ControllerStateMachine_action_loadCmd_OK(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action loadCmd_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! responds to any command waiting on load with EXECUTION_ERROR
-    void Svc_WasmSequencer_ControllerStateMachine_action_loadCmd_ERROR(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action runCmd_OK of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! responds to any command waiting on load with OK
-    void Svc_WasmSequencer_ControllerStateMachine_action_runCmd_OK(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action runCmd_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! responds to any command waiting on load with EXECUTION_ERROR
-    void Svc_WasmSequencer_ControllerStateMachine_action_runCmd_ERROR(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action reportSeqStarted of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! report that a RUN has begun on seqStartOut and mark a run active
-    void Svc_WasmSequencer_ControllerStateMachine_action_reportSeqStarted(
+    //! Responds to $block == NO_BLOCK requests with OK
+    void Svc_WasmSequencer_ControllerStateMachine_action_respond_noblock_OK(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleLoad& value                //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action respond_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to request with EXECUTION_ERROR
+    void Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action respond_NOT_ALLOWED of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to request with EXECUTION_ERROR
+    //! Emit an event to say why we are rejecting this request in the current state
+    void Svc_WasmSequencer_ControllerStateMachine_action_respond_NOT_ALLOWED(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action respond_block_OK of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to $block == BLOCK requests with OK
+    //! Responds to any pending WAIT requests with OK
+    void Svc_WasmSequencer_ControllerStateMachine_action_respond_block_OK(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action respond_block_ERROR of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to $block == BLOCK requests with ERROR.
+    //! Responds to any pending WAIT requests with ERROR
+    void Svc_WasmSequencer_ControllerStateMachine_action_respond_block_ERROR(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action load of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
+    //! report that a RUN has begun on seqStartOut, and mark a run active so its
+    //! terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut
     //! Load a pending module request
     void Svc_WasmSequencer_ControllerStateMachine_action_load(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleLoad& value                //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action reportModuleLoadFailed of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Emit an event to denote failed module load
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleLoadFailed(
-        SmId smId,                                                //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_Status& value                    //!< The value
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
         ) override;
 
     //! Implementation for action invokeStart of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -261,24 +274,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void Svc_WasmSequencer_ControllerStateMachine_action_invokeStart(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action invokeMain of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
-    //! Invoke the main function on a module given its index
+    //! Invoke the main function for module in context
     void Svc_WasmSequencer_ControllerStateMachine_action_invokeMain(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
-        ) override;
-
-    //! Implementation for action invokeMainPending of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Invoke main on the module whose start function just ran (RUN-with-start path)
-    void Svc_WasmSequencer_ControllerStateMachine_action_invokeMainPending(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action reportModuleInvalidMain of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -287,15 +292,16 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleInvalidMain(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action reportModuleMainInvokeFailed of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Emit an event noting why the invocation of a module main failed
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleMainInvokeFailed(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action reportModuleStartInvokeFailed of state machine
@@ -303,8 +309,36 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! Emit an event noting why the invocation of a module start failed
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStartInvokeFailed(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action reportModuleSucceeded of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Emit an event noting a module succeeded during execution. Increment telemetry counters.
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action reportModuleStartFailed of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Emit an event noting a module failed during execution of start. Increment telemetry counters.
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStartFailed(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action reportModuleFailed of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Emit an event noting a module failed during execution. Increment telemetry counters.
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action resetStore of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -315,26 +349,27 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
         ) override;
 
+    //! Implementation for action setContext of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Set the current executing context
+    void Svc_WasmSequencer_ControllerStateMachine_action_setContext(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action clearContext of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Clear the current executing context
+    void Svc_WasmSequencer_ControllerStateMachine_action_clearContext(
+        SmId smId,                                               //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        ) override;
+
     //! Implementation for action runEngine of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Send a signal to the engine state machine to begin running
     void Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action reportModuleSucceeded of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Emit an event noting a module succeeded during execution. Increment telemetry counters
-    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action reportModuleFailed of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Emit an event noting a module failed during execution. Increment telemetry counters
-    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
         SmId smId,                                               //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
         ) override;
@@ -435,7 +470,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Implementation for action finish of state machine Svc_WasmSequencer_EngineStateMachine
     //!
     //! Send a signal back to the controller state machine that we have finished executing
-    //! The response codes are stored in m_exit.reason, m_exit.code, m_exit.lastTrapReason
+    //! The response codes are stored in m_exitReason, m_exitCode, m_tlmLastTrapReason
     void Svc_WasmSequencer_EngineStateMachine_action_finish(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
@@ -445,14 +480,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! reports that execution was paused at a breakpoint
     void Svc_WasmSequencer_EngineStateMachine_action_reportPaused(
-        SmId smId,                                           //!< The state machine id
-        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
-        ) override;
-
-    //! Implementation for action pendPause of state machine Svc_WasmSequencer_EngineStateMachine
-    //!
-    //! sets the pause flag to true
-    void Svc_WasmSequencer_EngineStateMachine_action_pendPause(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
@@ -525,7 +552,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasStart(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
     ) const override;
 
     //! Implementation for guard moduleHasValidMain of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -534,18 +561,21 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     bool Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasValidMain(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_ModuleIdx& value                 //!< The value
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
     ) const override;
 
     //! Implementation for guard invokeSucceeded of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! return true if invokeStatus == SPACEWASM_OK. This flag is set as a result of invokeStart/invokeMain
     bool Svc_WasmSequencer_ControllerStateMachine_guard_invokeSucceeded(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
     ) const override;
 
     //! Implementation for guard interpreterSucceeded of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Check if the last engine execution finished executing successfully
     bool Svc_WasmSequencer_ControllerStateMachine_guard_interpreterSucceeded(
         SmId smId,                                               //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
@@ -621,9 +651,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Current bump offset into `m_guest_pool`.
     FwSizeType m_guest_offset;
 
-    //! Currently stored sequence arguments
-    Svc::SeqArgs m_args;
-
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
     U8 m_readBuf[256];
 
@@ -631,33 +658,31 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     spacewasm_t* m_wasm;
 
     //! Pending command waiting for a response
-    struct PendingCmd {
+    struct WaitingCmd {
         FwOpcodeType opCode;
         U32 cmdSeq;
 
-        PendingCmd() = default;
-        PendingCmd(FwOpcodeType opCode_, U32 cmdSeq_) : opCode(opCode_), cmdSeq(cmdSeq_) {}
+        WaitingCmd() = default;
+        WaitingCmd(FwOpcodeType opCode_, U32 cmdSeq_) : opCode(opCode_), cmdSeq(cmdSeq_) {}
     };
 
-    //! Commands pending interpreter finish
-    Fw::FifoQueue<PendingCmd, 8> m_pendingFinishCmds;
+    //! WAIT commands waiting for sequence completion
+    Fw::FifoQueue<WaitingCmd, 8> m_waiting;
 
-    PendingCmd m_pendingLoadCmd;
-    bool m_hasPendingLoadCmd;
+    struct ModuleLoad {
+        Fw::FileNameString fileName;
+        Fw::StringTemplate<16> moduleName;
+    };
 
-    //! True while a RUN (from the RUN command or the seqRunIn port) is in flight.
-    //! Set by the reportSeqStarted action when seqStartOut is emitted; cleared
-    //! when the run reaches a terminal outcome and seqDoneOut is emitted. Gates
-    //! the seqStart/seqDone pair so a done is reported for exactly one start, and
-    //! so non-RUN completions (e.g. INVOKE, which also flows through
-    //! runCmd_OK / runCmd_ERROR) do not emit a spurious seqDoneOut.
-    bool m_seqRunActive;
+    ModuleLoad m_pendingLoad{};
+    bool m_hasPendingLoad = false;
+    WasmSequencer_Status m_loadFailureStatus = WasmSequencer_Status::OK;
 
-    //! Report that the active RUN finished on seqDoneOut (if connected) with the
-    //! given response, and clear the active-run flag. A no-op when no run is
-    //! active, so it is safe to call on every RUN terminal path. Called from the
-    //! runCmd_OK / runCmd_ERROR state-machine actions.
-    void reportSeqDone(const Fw::CmdResponse& response);
+    //! Currently stored sequence arguments
+    Svc::SeqArgs m_args;
+
+    WasmSequencer_RequestContext m_executingContext;
+    bool m_hasExectingContext;
 
     //! Pending timer from sleep host function
     Fw::Time m_pendingTimer;
@@ -668,15 +693,6 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! STATEMENT_TIMEOUT_SECS. Only meaningful while awaiting one of those.
     Fw::Time m_statementStart;
     bool m_hasStatementStart;
-
-    //! The last module index that was invoked
-    WasmSequencer_ModuleIdx m_invokedModule;
-
-    //! Module index whose main is still owed after its start function runs (the
-    //! RUN-with-start path). invokeStart overwrites m_invokedModule with the
-    //! start function's owning module, which may differ, so the module we must
-    //! run main on is tracked separately.
-    WasmSequencer_ModuleIdx m_pendingMainModule;
 
     //! Flag indicating a function invocation failed
     spacewasm_status_t m_invokeStatus;
@@ -835,6 +851,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! result in m_invokeStatus. Shared by the invokeMain / invokeMainPending
     //! state-machine actions.
     void invokeMainOnModule(WasmSequencer_ModuleIdx moduleIdx);
+
+    //! Respond to a request with certain reply
+    void respondToRequest(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
+
+    //! Send response to all waiting requests
+    void respondToWaiting(const Fw::CmdResponse& response);
 
     void hostFprimeV1(spacewasm_host_t*);
 

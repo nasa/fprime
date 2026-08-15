@@ -55,9 +55,6 @@ state machine EngineStateMachine {
   @ called on CONTINUE cmd. only raised in RUNNING.PAUSED state
   signal cmd_CONTINUE
 
-  @ called on PAUSE cmd. only raised in RUNNING state
-  signal cmd_PAUSE
-
   @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
   signal cmd_CANCEL
 
@@ -119,8 +116,6 @@ state machine EngineStateMachine {
   # Host interactions #
   #####################
 
-  @ sets the pause flag to true
-  action pendPause
   @ sets the pause flag to false
   action clearPause
   @ dispatch a host function port call
@@ -274,6 +269,5 @@ state machine EngineStateMachine {
     ####################
 
     on cmd_CANCEL do { setExitReason_CANCEL } enter IDLE
-    on cmd_PAUSE do { pendPause }
   }
 }

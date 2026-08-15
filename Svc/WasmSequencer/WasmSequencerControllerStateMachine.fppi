@@ -1,8 +1,20 @@
 type ModuleIdx = U8
 
-struct ModuleLoad {
-  fileName: string size FileNameStringSize
-  moduleName: string size 16
+enum SignalSource: U8 {
+  COMMAND_RUN
+  COMMAND_INVOKE
+  PORT_RUN
+  PORT_INVOKE
+}
+
+@ A struct holding information about where an asynchronous request originated
+@ and information about how to reply to the request
+struct RequestContext {
+  source: SignalSource  @< The originating signal source
+  $opcode: FwOpcodeType @< If 'source' == COMMAND, this is the opcode to reply to
+  cmdSeq: U32           @< If 'source' == COMMAND, this is the opcode to reply to
+  $block: BlockState    @< Should we reply after we initialize or block until we finish executing
+  moduleIdx: ModuleIdx  @< Module index to invoke start/main function, filled in for LOAD/RUN
 }
 
 @ diagram-layout engine=elk direction=TB cycleBreaking=MODEL_ORDER considerModelOrder=NODES_AND_EDGES nodePlacement=BRANDES_KOEPF nodeSpacing=60 rankSpacing=60
@@ -15,82 +27,92 @@ state machine ControllerStateMachine {
 
   @ Signal sent from a command to execute a Wasm module
   @ Valid while in the IDLE or READY state
-  signal cmd_RUN: ModuleLoad
+  signal run: RequestContext
 
   @ Signal sent from command to load a Wasm module but not execute it
-  signal cmd_LOAD: ModuleLoad
+  signal load: RequestContext
 
   @ Signal sent from a command to invoke main on an already-loaded module
   @ Only valid while in the READY state
-  signal cmd_INVOKE: ModuleIdx
+  signal invoke: RequestContext
 
   @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
-  signal cmd_CANCEL
+  signal cancel
 
-  @ responds to any command waiting on load with OK
-  action loadCmd_OK
+  @ Responds to $block == NO_BLOCK requests with OK
+  action respond_noblock_OK: RequestContext
 
-  @ responds to any command waiting on load with EXECUTION_ERROR
-  action loadCmd_ERROR
+  @ Responds to request with EXECUTION_ERROR
+  action respond_ERROR: RequestContext
 
-  @ responds to any command waiting on load with OK
-  action runCmd_OK
+  @ Responds to request with EXECUTION_ERROR
+  @ Emit an event to say why we are rejecting this request in the current state
+  action respond_NOT_ALLOWED: RequestContext
 
-  @ responds to any command waiting on load with EXECUTION_ERROR
-  action runCmd_ERROR
+  @ Responds to $block == BLOCK requests with OK
+  @ Responds to any pending WAIT requests with OK
+  action respond_block_OK: RequestContext
+
+  @ Responds to $block == BLOCK requests with ERROR.
+  @ Responds to any pending WAIT requests with ERROR
+  action respond_block_ERROR: RequestContext
 
   @ report that a RUN has begun on seqStartOut, and mark a run active so its
   @ terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut
-  action reportSeqStarted: ModuleLoad
+  # action reportSeqStarted: ModuleLoad
 
   ###############
   # Loading     #
   ###############
 
   @ Load a pending module request
-  action load: ModuleLoad
+  action load: RequestContext
 
   @ Signal emited inside of the load action when a module load succeeds
-  signal loadSucceeded: ModuleIdx
+  signal loadSucceeded: RequestContext
 
   @ Signal emited inside the laod action when module load fails
-  signal loadFailed: Status
+  signal loadFailed: RequestContext
 
   @ Emit an event to denote failed module load
-  action reportModuleLoadFailed: Status
+  action reportModuleLoadFailed
 
   ###############
   # Start       #
   ###############
 
   @ return true if this module has a start function
-  guard moduleHasStart: ModuleIdx
+  guard moduleHasStart: RequestContext
 
   @ Invoke the start function on a loaded module
-  action invokeStart: ModuleIdx
+  action invokeStart: RequestContext
 
   @ return true if this module has a valid main function ([] -> i32)
-  guard moduleHasValidMain: ModuleIdx
+  guard moduleHasValidMain: RequestContext
 
   @ return true if invokeStatus == SPACEWASM_OK. This flag is set as a result of invokeStart/invokeMain
-  guard invokeSucceeded
+  guard invokeSucceeded: RequestContext
 
-  @ Invoke the main function on a module given its index
-  action invokeMain: ModuleIdx
-
-  @ Invoke the main function on the module whose start function just ran. Used on
-  @ the RUN-with-start path where the engineFinished signal carries no module
-  @ index, so the index recorded by invokeStart is reused.
-  action invokeMainPending
+  @ Invoke the main function for module in context
+  action invokeMain: RequestContext
 
   @ Emit an event noting that a given module has no [valid] main function
-  action reportModuleInvalidMain: ModuleIdx
+  action reportModuleInvalidMain: RequestContext
 
   @ Emit an event noting why the invocation of a module main failed
-  action reportModuleMainInvokeFailed
+  action reportModuleMainInvokeFailed: RequestContext
 
   @ Emit an event noting why the invocation of a module start failed
-  action reportModuleStartInvokeFailed
+  action reportModuleStartInvokeFailed: RequestContext
+
+  @ Emit an event noting a module succeeded during execution. Increment telemetry counters.
+  action reportModuleSucceeded: RequestContext
+
+  @ Emit an event noting a module failed during execution of start. Increment telemetry counters.
+  action reportModuleStartFailed: RequestContext
+
+  @ Emit an event noting a module failed during execution. Increment telemetry counters.
+  action reportModuleFailed: RequestContext
 
   ###############
   # Engine      #
@@ -99,103 +121,116 @@ state machine ControllerStateMachine {
   @ Create a new store with N_MODULES (parameter) modules
   action resetStore
 
+  @ Set the current executing context
+  action setContext: RequestContext
+
+  @ Clear the current executing context
+  action clearContext
+
   @ Send a signal to the engine state machine to begin running
   action runEngine
 
-  @ Signal
-  signal engineFinished
+  @ Signal to the controller that the interpreter finished executing
+  @ Request context will be sourced from the last `setContext` call
+  signal engineFinished: RequestContext
 
+  @ Check if the last engine execution finished executing successfully
   guard interpreterSucceeded
-
-  @ Emit an event noting a module succeeded during execution. Increment telemetry counters
-  action reportModuleSucceeded
-
-  @ Emit an event noting a module failed during execution. Increment telemetry counters
-  action reportModuleFailed
 
   @ Interpreter does not have any modules loaded or a store initialized
   state IDLE {
     entry do { resetStore }
 
-    on cmd_CANCEL enter IDLE
-    on cmd_RUN do { reportSeqStarted, load } enter LOADING_TO_RUN
-    on cmd_LOAD do { load } enter LOADING_TO_READY
+    on cancel enter IDLE
+    on run do { load } enter LOADING_TO_RUN
+    on load do { load } enter LOADING_TO_READY
   }
 
   @ Interpreter has modules loaded into the store and is ready to execute
   state READY {
-    on cmd_CANCEL enter IDLE
-    on cmd_RUN do { reportSeqStarted, resetStore, load } enter LOADING_TO_RUN
-    on cmd_LOAD do { load } enter LOADING_TO_READY
-    on cmd_INVOKE enter MAIN_CHECK
+    on cancel enter IDLE
+    on run do { resetStore, load } enter LOADING_TO_RUN
+    on load do { load } enter LOADING_TO_READY
+    on invoke enter MAIN_CHECK
   }
 
   @ Make sure the module we want to run has a main function
   choice MAIN_CHECK {
-    if moduleHasValidMain do { invokeMain } enter MAIN_INVOKE_CHECK else do {
+    if moduleHasValidMain do {
+      invokeMain
+    } enter MAIN_INVOKE_CHECK else do {
       reportModuleInvalidMain
-      loadCmd_ERROR
-      runCmd_ERROR
-      # enter ready since we don't want an `INVOKE` to clear the store
-      # Invoking a module that has no main is harmless
+      respond_ERROR
     } enter READY
   }
 
   choice MAIN_INVOKE_CHECK {
     if invokeSucceeded do {
-      loadCmd_OK
+      respond_noblock_OK
+      setContext
     } enter RUNNING_MAIN else do {
       reportModuleMainInvokeFailed
-      loadCmd_ERROR
-      runCmd_ERROR
+      respond_ERROR
     } enter IDLE
   }
 
   state LOADING_TO_READY {
     on loadSucceeded enter START_CHECK
-    on loadFailed do { reportModuleLoadFailed, loadCmd_ERROR } enter IDLE
+    on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
+
+    on run do { respond_NOT_ALLOWED }
+    on load do { respond_NOT_ALLOWED }
+    on invoke do { respond_NOT_ALLOWED }
   }
 
   choice START_CHECK {
     if moduleHasStart do {
       invokeStart
-    } enter START_INVOKE_CHECK else do { loadCmd_OK } enter READY
+    } enter START_INVOKE_CHECK else do { respond_noblock_OK } enter READY
   }
 
   choice START_INVOKE_CHECK {
-    if invokeSucceeded enter RUNNING_START else do {
+    if invokeSucceeded do {
+      setContext
+    } enter RUNNING_START else do {
       reportModuleStartInvokeFailed
-      loadCmd_ERROR
+      respond_ERROR
     } enter IDLE
   }
 
   state RUNNING_START {
     entry do { runEngine }
 
-    on engineFinished enter INTERPRETER_STATUS
+    on engineFinished do { clearContext } enter INTERPRETER_STATUS
 
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {
-        loadCmd_OK
-      } enter READY else do { reportModuleFailed, loadCmd_ERROR } enter IDLE
+        respond_noblock_OK
+      } enter READY else do {
+        reportModuleStartFailed
+        respond_ERROR
+      } enter IDLE
     }
+
+    on run do { respond_NOT_ALLOWED }
+    on load do { respond_NOT_ALLOWED }
+    on invoke do { respond_NOT_ALLOWED }
   }
 
   state LOADING_TO_RUN {
     on loadSucceeded enter MAIN_CHECK_PENDING_START_AND_MAIN
-    on loadFailed do {
-      reportModuleLoadFailed
-      loadCmd_ERROR
-      runCmd_ERROR
-    } enter IDLE
+    on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
+
+    on run do { respond_NOT_ALLOWED }
+    on load do { respond_NOT_ALLOWED }
+    on invoke do { respond_NOT_ALLOWED }
   }
 
   @ Make sure the module we want to run has a main function
   choice MAIN_CHECK_PENDING_START_AND_MAIN {
     if moduleHasValidMain enter START_CHECK_PENDING_MAIN else do {
       reportModuleInvalidMain
-      runCmd_ERROR
-      loadCmd_ERROR
+      respond_ERROR
       # The module loaded fine; it just has no runnable main. Stay in READY
       # (the store is valid) rather than tearing everything down
     } enter READY
@@ -206,16 +241,16 @@ state machine ControllerStateMachine {
     if moduleHasStart do {
       invokeStart
     } enter START_INVOKE_CHECK_PENDING_CHAIN else do {
-      loadCmd_OK
       invokeMain
     } enter MAIN_INVOKE_CHECK
   }
 
   choice START_INVOKE_CHECK_PENDING_CHAIN {
-    if invokeSucceeded enter RUNNING_START_PENDING_MAIN else do {
+    if invokeSucceeded do {
+      setContext
+    } enter RUNNING_START_PENDING_MAIN else do {
       reportModuleStartInvokeFailed
-      runCmd_ERROR
-      loadCmd_ERROR
+      respond_block_ERROR
     } enter IDLE
   }
 
@@ -223,38 +258,43 @@ state machine ControllerStateMachine {
   state RUNNING_START_PENDING_MAIN {
     entry do { runEngine }
 
-    on engineFinished enter INTERPRETER_STATUS
+    on engineFinished do { clearContext } enter INTERPRETER_STATUS
 
     @ Once the start function finishes successfully we still owe the caller a
     @ main invocation (this is the RUN-with-start path). Chain into invokeMain
     @ rather than settling in READY.
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {
-        invokeMainPending
+        invokeMain
       } enter MAIN_INVOKE_CHECK else do {
         reportModuleFailed
-        loadCmd_ERROR
-        runCmd_ERROR
+        respond_block_ERROR
       } enter IDLE
     }
+
+    on run do { respond_NOT_ALLOWED }
+    on load do { respond_NOT_ALLOWED }
+    on invoke do { respond_NOT_ALLOWED }
   }
 
   @ The engine is running a module's main function
   state RUNNING_MAIN {
     entry do { runEngine }
 
-    on engineFinished enter INTERPRETER_STATUS
+    on engineFinished do { clearContext } enter INTERPRETER_STATUS
 
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {
         reportModuleSucceeded
-        loadCmd_OK
-        runCmd_OK
+        respond_block_OK
       } enter READY else do {
         reportModuleFailed
-        loadCmd_ERROR
-        runCmd_ERROR
+        respond_block_ERROR
       } enter IDLE
     }
+
+    on run do { respond_NOT_ALLOWED }
+    on load do { respond_NOT_ALLOWED }
+    on invoke do { respond_NOT_ALLOWED }
   }
 }

@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  WasmSequencer.cpp
+// \title  WasmSequencerEngine.cpp
 // \author tumbar
-// \brief  cpp file for WasmSequencer component implementation class
+// \brief  cpp file for WasmSequencer engine state machine
 // ======================================================================
 
 #include "Fw/Com/ComPacket.hpp"
@@ -158,19 +158,13 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_setLastHostFunc
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_finish(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    this->controller_sendSignal_engineFinished();
+    this->controller_sendSignal_engineFinished(this->m_executingContext);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_reportPaused(
     SmId smId,
     Svc_WasmSequencer_EngineStateMachine::Signal signal) {
     this->log_ACTIVITY_HI_SequencePaused();
-}
-
-void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_pendPause(
-    SmId smId,
-    Svc_WasmSequencer_EngineStateMachine::Signal signal) {
-    this->m_pendingPause = true;
 }
 
 void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_clearPause(

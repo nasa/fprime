@@ -1,15 +1,14 @@
 // ======================================================================
-// \title  WasmSequencer.cpp
+// \title  WasmSequencerController.cpp
 // \author tumbar
-// \brief  cpp file for WasmSequencer component implementation class
+// \brief  cpp file for WasmSequencer controller state machine
 // ======================================================================
 
+#include "Fw/Cmd/CmdResponseEnumAc.hpp"
 #include "Fw/Types/Assert.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_ExitReasonEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ModuleIdxAliasAc.hpp"
-#include "Svc/WasmSequencer/WasmSequencer_StatusEnumAc.hpp"
-#include "spacewasm.h"
 
 namespace Svc {
 
@@ -17,102 +16,64 @@ namespace Svc {
 // Implementations for internal state machine actions
 // ----------------------------------------------------------------------
 
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_loadCmd_OK(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    if (this->m_hasPendingLoadCmd) {
-        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq, Fw::CmdResponse::OK);
-        this->m_hasPendingLoadCmd = false;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_loadCmd_ERROR(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    if (this->m_hasPendingLoadCmd) {
-        this->cmdResponse_out(this->m_pendingLoadCmd.opCode, this->m_pendingLoadCmd.cmdSeq,
-                              Fw::CmdResponse::EXECUTION_ERROR);
-        this->m_hasPendingLoadCmd = false;
-    }
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runCmd_OK(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // Respond to every command blocked on interpreter finish. Sequence-level
-    // telemetry and events are owned by reportModuleSucceeded/reportModuleFailed
-    // (which fire on all engine-completion paths, not just RUN commands).
-    PendingCmd cmd{};
-    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
-        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::OK);
-    }
-
-    // Report the run completion to internal callers (no-op if this completion did
-    // not originate from a RUN). runCmd_OK fires on every RUN success path.
-    this->reportSeqDone(Fw::CmdResponse::OK);
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runCmd_ERROR(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // Respond to every command blocked on interpreter finish. Sequence-level
-    // telemetry and events are owned by reportModuleFailed.
-    PendingCmd cmd{};
-    while (this->m_pendingFinishCmds.dequeue(cmd) == Fw::Success::SUCCESS) {
-        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-    }
-
-    // Report the run completion to internal callers (no-op if this completion did
-    // not originate from a RUN). runCmd_ERROR fires on every RUN failure/cancel path.
-    this->reportSeqDone(Fw::CmdResponse::EXECUTION_ERROR);
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportSeqStarted(
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_noblock_OK(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleLoad& value) {
-    // A RUN has been accepted (the cmd_RUN transition). Mark the run active so its
-    // terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut exactly
-    // once, and echo the start to internal callers. The args were stored in m_args
-    // by the RUN command / seqRunIn port handler before the signal was sent.
-    this->m_seqRunActive = true;
-    if (this->isConnected_seqStartOut_OutputPort(0)) {
-        this->seqStartOut_out(0, value.get_fileName(), this->m_args);
+    const Svc::WasmSequencer_RequestContext& value) {
+    // Respond only to NO_BLOCK requests
+    if (value.get_block() == Svc::BlockState::NO_BLOCK) {
+        // Respond to this request!
+        this->respondToRequest(value, Fw::CmdResponse::OK);
     }
 }
 
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_ERROR(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // Reached only when a module's main function ran to completion successfully.
-    // A successful load/start alone does not count as a sequence success.
-    this->m_tlm.sequencesSucceeded++;
-    this->log_ACTIVITY_HI_SequenceSucceeded(this->m_invokedModule);
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
+
+    // Respond to all wait requests
+    this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
 }
 
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_NOT_ALLOWED(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // Reached on any engine-completion failure, whether the engine was running a
-    // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
-    // so the right counter is bumped.
-    switch (this->m_exit.reason) {
-        case WasmSequencer_ExitReason::CANCEL:
-            this->m_tlm.sequencesCancelled++;
-            this->log_ACTIVITY_HI_SequenceCancelled(this->m_invokedModule);
-            break;
-        default:
-            this->m_tlm.sequencesFailed++;
-            this->log_WARNING_HI_SequenceFailed(this->m_invokedModule, this->m_exit.reason, this->m_exit.code,
-                                                this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
-            break;
-    }
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    // TODO(tumbar) Change the response to BUSY and the EVR to signal kind
+    this->log_WARNING_LO_InvalidCommand(Svc::WasmSequencer_ControllerStateMachine_State::LOADING_TO_RUN);
+    this->respondToRequest(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_block_OK(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    // Respond only to BLOCK requests
+    if (value.get_block() == Svc::BlockState::BLOCK) {
+        // Respond to this request!
+        this->respondToRequest(value, Fw::CmdResponse::OK);
+    }
+
+    // Respond to all wait requests
+    this->respondToWaiting(Fw::CmdResponse::OK);
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_block_ERROR(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {}
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleLoad& value) {
+    const Svc::WasmSequencer_RequestContext& value) {
+    FW_ASSERT(this->m_hasPendingLoad);
+
+    // We are processing this load
+    this->m_hasPendingLoad = false;
+
     // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
     // base dir (the default) means paths are used verbatim; otherwise a single
     // '/' is inserted between the base dir and the requested path, matching the
@@ -121,25 +82,27 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     const Fw::ParamString baseDir = this->paramGet_SEQ_BASE_DIR(baseDirValid);
     Fw::String filePath;
     if (baseDir.length() == 0) {
-        filePath = value.get_fileName();
+        filePath = this->m_pendingLoad.fileName;
     } else {
         // The result is truncated to filePath's capacity on overflow; a
         // truncated path will then fail to open and report FileOpenError.
-        const Fw::FormatStatus fmtStatus = filePath.format("%s/%s", baseDir.toChar(), value.get_fileName().toChar());
+        const Fw::FormatStatus fmtStatus =
+            filePath.format("%s/%s", baseDir.toChar(), this->m_pendingLoad.fileName.toChar());
         if (fmtStatus != Fw::FormatStatus::SUCCESS) {
             FW_ASSERT(fmtStatus == Fw::FormatStatus::OVERFLOWED, static_cast<FwAssertArgType>(fmtStatus));
-            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, value.get_fileName());
+            this->log_WARNING_HI_SequenceFilePathTooLong(baseDir, this->m_pendingLoad.fileName);
         }
     }
 
     // Record the sequence name for telemetry (module name, or filename stem).
-    this->setSequenceName(filePath, value.get_moduleName());
+    this->setSequenceName(filePath, this->m_pendingLoad.moduleName);
 
     Os::File file;
     const Os::File::Status openStatus = file.open(filePath.toChar(), Os::File::OPEN_READ);
     if (openStatus != Os::File::Status::OP_OK) {
         this->log_WARNING_HI_FileOpenError(filePath, openStatus);
-        this->controller_sendSignal_loadFailed(WasmSequencer_Status::ERR_READER_ERROR);
+        this->m_loadFailureStatus = WasmSequencer_Status::ERR_READER_ERROR;
+        this->controller_sendSignal_loadFailed(value);
         return;
     }
 
@@ -178,9 +141,10 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
         /* userdata */ this);
 
     U32 moduleIndex;
+    Svc::WasmSequencer_RequestContext next = value;
 
     auto status = spacewasm_load_module(
-        this->m_wasm, value.get_moduleName().toChar(),
+        this->m_wasm, this->m_pendingLoad.moduleName.toChar(),
         [](void* userdata, const U8** outBuf, std::size_t* outLen) -> spacewasm_read_result_t {
             FW_ASSERT(userdata != nullptr);
             return static_cast<WasmSequencer*>(userdata)->readModuleChunk(outBuf, outLen);
@@ -188,6 +152,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
         this, alloc, &moduleIndex);
 
     spacewasm_allocator_destroy(alloc);
+    next.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));
 
     this->releaseAllocatorLock();
 
@@ -195,86 +160,70 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     file.close();
 
     if (status == SPACEWASM_OK) {
-        this->controller_sendSignal_loadSucceeded(static_cast<WasmSequencer_ModuleIdx>(moduleIndex));
+        this->controller_sendSignal_loadSucceeded(next);
     } else {
-        this->controller_sendSignal_loadFailed(WasmSequencer_Status(status));
+        this->m_loadFailureStatus = WasmSequencer_Status(status);
+        this->controller_sendSignal_loadFailed(value);
     }
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleLoadFailed(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_Status& value) {
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
     // A failed load counts as a failed sequence: the RUN/LOAD attempt did not
     // reach a runnable module.
     this->m_tlm.sequencesFailed++;
-    this->log_WARNING_HI_ModuleLoadFailed(value);
+    this->log_WARNING_HI_ModuleLoadFailed(this->m_loadFailureStatus);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeStart(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) {
-    this->m_pendingMainModule = value;
-
+    const Svc::WasmSequencer_RequestContext& value) {
     U32 start_module_idx;
     U32 start_function_idx;
 
     // Get the module's start function WasmRef
-    auto status = spacewasm_module_start(this->m_wasm, static_cast<U32>(value), &start_module_idx, &start_function_idx);
+    auto status = spacewasm_module_start(this->m_wasm, value.get_moduleIdx(), &start_module_idx, &start_function_idx);
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    this->m_invokedModule = static_cast<WasmSequencer_ModuleIdx>(start_module_idx);
     this->m_invokeStatus = spacewasm_invoke(this->m_wasm, start_module_idx, start_function_idx, nullptr, 0);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeMain(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) {
-    this->invokeMainOnModule(value);
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_invokeMainPending(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    // Start function has finished; run main on the module we loaded (invokeStart
-    // may have left m_invokedModule pointing at a different module that owned the
-    // start function).
-    this->invokeMainOnModule(this->m_pendingMainModule);
-}
-
-void WasmSequencer ::invokeMainOnModule(WasmSequencer_ModuleIdx moduleIdx) {
+    const Svc::WasmSequencer_RequestContext& value) {
     // Resolve the main function of given module index
     U32 funcIndex = 0;
-    auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(moduleIdx), "main", &funcIndex);
+    auto status = spacewasm_find_export_func(this->m_wasm, static_cast<U32>(value.get_moduleIdx()), "main", &funcIndex);
 
     // This should always succeed because our state machine is checking whether this module has a main/is-valid
     FW_ASSERT(status == SPACEWASM_OK, status);
 
-    this->m_invokedModule = moduleIdx;
-    this->m_invokeStatus = spacewasm_invoke(this->m_wasm, static_cast<U32>(moduleIdx), funcIndex, nullptr, 0);
+    this->m_invokeStatus =
+        spacewasm_invoke(this->m_wasm, static_cast<U32>(value.get_moduleIdx()), funcIndex, nullptr, 0);
 }
-
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleInvalidMain(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) {
+    const Svc::WasmSequencer_RequestContext& value) {
     // A module that cannot be run (no valid main) counts as a failed sequence.
-    this->m_tlm.sequencesFailed++;
-    auto problemStatus = this->validateModuleMain(value);
-    this->log_WARNING_HI_InvalidModuleEntrypoint(value, WasmSequencer_Status(problemStatus));
+    auto problemStatus = this->validateModuleMain(value.get_moduleIdx());
+    this->log_WARNING_HI_InvalidModuleEntrypoint(value.get_moduleIdx(), WasmSequencer_Status(problemStatus));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleMainInvokeFailed(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
     this->log_WARNING_HI_ModuleMainInvokeFailed(WasmSequencer_Status(this->m_invokeStatus));
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStartInvokeFailed(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
     this->log_WARNING_HI_ModuleStartInvokeFailed(WasmSequencer_Status(this->m_invokeStatus));
 }
 
@@ -284,10 +233,76 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_resetStore(
     this->createStore();
 }
 
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_setContext(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    FW_ASSERT(!this->m_hasExectingContext);
+    this->m_hasExectingContext = true;
+    this->m_executingContext = value;
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_clearContext(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
+    FW_ASSERT(this->m_hasExectingContext);
+    this->m_hasExectingContext = false;
+}
+
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
     this->interpreter_sendSignal_run();
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    // Reached only when a module's main function ran to completion successfully.
+    // A successful load/start alone does not count as a sequence success.
+    this->m_tlm.sequencesSucceeded++;
+    this->log_ACTIVITY_HI_SequenceSucceeded(value.get_moduleIdx());
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStartFailed(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    // Reached on any engine-completion failure, whether the engine was running a
+    // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
+    // so the right counter is bumped.
+    switch (this->m_exit.reason) {
+        case WasmSequencer_ExitReason::CANCEL:
+            this->m_tlm.sequencesCancelled++;
+            this->log_ACTIVITY_HI_SequenceCancelled(value.get_moduleIdx());
+            break;
+        default:
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequenceStartFailed(value.get_moduleIdx(), this->m_exit.reason, this->m_exit.code,
+                                                     this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
+            break;
+    }
+}
+
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleFailed(
+    SmId smId,
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) {
+    // Reached on any engine-completion failure, whether the engine was running a
+    // start function (LOAD/RUN) or a main function (RUN). Reason about the cause
+    // so the right counter is bumped.
+    switch (this->m_exit.reason) {
+        case WasmSequencer_ExitReason::CANCEL:
+            this->m_tlm.sequencesCancelled++;
+            this->log_ACTIVITY_HI_SequenceCancelled(value.get_moduleIdx());
+            break;
+        default:
+            this->m_tlm.sequencesFailed++;
+            this->log_WARNING_HI_SequenceFailed(value.get_moduleIdx(), this->m_exit.reason, this->m_exit.code,
+                                                this->m_exit.lastTrapReason, this->m_exit.lastHostFunction);
+            break;
+    }
 }
 
 // ----------------------------------------------------------------------
@@ -297,10 +312,11 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
 bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasStart(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) const {
+    const Svc::WasmSequencer_RequestContext& value) const {
     U32 start_module_idx;
     U32 start_function_idx;
-    auto status = spacewasm_module_start(this->m_wasm, static_cast<U32>(value), &start_module_idx, &start_function_idx);
+    auto status = spacewasm_module_start(this->m_wasm, static_cast<U32>(value.get_moduleIdx()), &start_module_idx,
+                                         &start_function_idx);
 
     switch (status) {
         case SPACEWASM_OK:
@@ -317,13 +333,14 @@ bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasSta
 bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasValidMain(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
-    const Svc::WasmSequencer_ModuleIdx& value) const {
-    return this->validateModuleMain(value) == SPACEWASM_OK;
+    const Svc::WasmSequencer_RequestContext& value) const {
+    return this->validateModuleMain(value.get_moduleIdx()) == SPACEWASM_OK;
 }
 
 bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_invokeSucceeded(
     SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) const {
+    Svc_WasmSequencer_ControllerStateMachine::Signal signal,
+    const Svc::WasmSequencer_RequestContext& value) const {
     return this->m_invokeStatus == SPACEWASM_OK;
 }
 

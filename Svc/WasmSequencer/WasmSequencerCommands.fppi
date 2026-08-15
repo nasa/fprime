@@ -49,10 +49,12 @@ async command WAIT opcode 4
 @ return to IDLE mode.
 sync command CANCEL opcode 5
 
-@ Pauses the execution of the sequencer, just before it is about to dispatch the next directive,
-@ until unpaused by the CONTINUE command, or stepped by the STEP command. This command is only valid
-@ substates of the RUNNING state that are not RUNNING.PAUSED.
-sync command PAUSE opcode 6
+@ Pauses the execution of the sequencer, just before it is about to start spinning.
+@ This simply pends a pause flag that will be take before the sequence engine starts
+@ up again.
+@
+@ This command completes immediately
+async command PAUSE opcode 6
 
 @ Resume the sequence from a paused state
 async command CONTINUE opcode 7

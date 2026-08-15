@@ -122,6 +122,17 @@ event SequenceFailed(
   severity warning high \
   format "Sequence at index {} failed with reason={} code={} trap={} hostFn={}"
 
+@ The sequence failed to execute start function
+event SequenceStartFailed(
+  index: ModuleIdx
+  exitReason: ExitReason
+  exitCode: I32
+  trapReason: TrapReason
+  hostFunction: HostFunction
+) \
+  severity warning high \
+  format "Sequence at index {} failed start with reason={} code={} trap={} hostFn={}"
+
 @ Execution was paused at a breakpoint
 event SequencePaused() severity activity high format "Sequence execution paused"
 

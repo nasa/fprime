@@ -170,19 +170,6 @@ U32 WasmSequencer ::makeCmdUid() const {
     return static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_tlm.commandsDispatched & 0xFFFF));
 }
 
-void WasmSequencer ::reportSeqDone(const Fw::CmdResponse& response) {
-    // Only report a done for a run we reported a start for. This keeps the
-    // seqStart/seqDone pair balanced and avoids emitting a done for a completion
-    // that was not a RUN (e.g. INVOKE / LOAD).
-    if (!this->m_seqRunActive) {
-        return;
-    }
-    this->m_seqRunActive = false;
-    if (this->isConnected_seqDoneOut_OutputPort(0)) {
-        this->seqDoneOut_out(0, 0, 0, response);
-    }
-}
-
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {
     // spacewasm_trap_t values 0..14 map 1:1 onto the TrapReason enum ordinals.
     switch (trap) {
