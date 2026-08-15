@@ -31,6 +31,7 @@ FileDownlink ::FileDownlink(const char* const name)
       m_warnings(this),
       m_sequenceIndex(0),
       m_curTimer(0),
+      m_fileQueueDepth(0),
       m_byteOffset(0),
       m_endOffset(0),
       m_lastCompletedType(Fw::FilePacket::T_NONE),
@@ -41,6 +42,7 @@ FileDownlink ::FileDownlink(const char* const name)
 void FileDownlink ::configure(U32 cooldown, U32 cycleTime, U32 fileQueueDepth) {
     this->m_cooldown = cooldown;
     this->m_cycleTime = cycleTime;
+    this->m_fileQueueDepth = fileQueueDepth;
     this->m_configured = true;
 
     Os::Queue::Status stat =
@@ -245,6 +247,26 @@ void FileDownlink ::Cancel_cmdHandler(const FwOpcodeType opCode, const U32 cmdSe
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+void FileDownlink ::Reset_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
+    const Mode::Type mode = this->m_mode.get();
+    // Force-complete any active transfer without waiting on the outstanding buffer return
+    if (mode == Mode::DOWNLINK || mode == Mode::WAIT || mode == Mode::CANCEL) {
+        // Best effort: skip a duplicate cancel packet when one is known to be outstanding.
+        // finishHelper() below clears m_lastCompletedType, so this only covers a cancel packet
+        // emitted by the normal Cancel path.
+        if (this->m_lastCompletedType != Fw::FilePacket::T_CANCEL) {
+            this->sendCancelPacket();
+        }
+        this->finishHelper(true);
+    }
+    // Advance past all handed-out buffer IDs so a late return of an outstanding buffer is
+    // dropped as stale rather than driving the state machine
+    this->m_lastBufferId++;
+    const U32 drained = this->drainFileQueue();
+    this->log_ACTIVITY_HI_DownlinkReset(drained);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
 // ----------------------------------------------------------------------
 // Private helper methods
 // ----------------------------------------------------------------------
@@ -269,17 +291,44 @@ Fw::CmdResponse FileDownlink ::statusToCmdResp(SendFileStatus status) {
 }
 
 void FileDownlink ::sendResponse(SendFileStatus resp) {
-    FW_ASSERT(this->m_curEntry.source == FileDownlink::COMMAND || this->m_curEntry.source == FileDownlink::PORT,
-              static_cast<FwAssertArgType>(this->m_curEntry.source));
-    if (this->m_curEntry.source == FileDownlink::COMMAND) {
-        this->cmdResponse_out(this->m_curEntry.opCode, this->m_curEntry.cmdSeq, statusToCmdResp(resp));
+    this->sendResponse(this->m_curEntry, resp);
+}
+
+void FileDownlink ::sendResponse(const FileEntry& entry, SendFileStatus resp) {
+    FW_ASSERT(entry.source == FileDownlink::COMMAND || entry.source == FileDownlink::PORT,
+              static_cast<FwAssertArgType>(entry.source));
+    if (entry.source == FileDownlink::COMMAND) {
+        this->cmdResponse_out(entry.opCode, entry.cmdSeq, statusToCmdResp(resp));
     } else {
         for (FwIndexType i = 0; i < this->getNum_FileComplete_OutputPorts(); i++) {
             if (this->isConnected_FileComplete_OutputPort(i)) {
-                this->FileComplete_out(i, Svc::SendFileResponse(resp, this->m_curEntry.context));
+                this->FileComplete_out(i, Svc::SendFileResponse(resp, entry.context));
             }
         }
     }
+}
+
+U32 FileDownlink ::drainFileQueue() {
+    // Bound the loop by the queue depth rather than a live message count: delivering an error
+    // response can re-enter SendFile_handler on the caller's thread and enqueue again, and
+    // Os::Queue::getMessagesAvailable() is not serialized against that enqueue.
+    U32 drained = 0;
+    struct FileEntry entry;
+    FwSizeType real_size = 0;
+    FwQueuePriorityType prio = 0;
+    for (U32 i = 0; i < this->m_fileQueueDepth; i++) {
+        if (m_fileQueue.receive(reinterpret_cast<U8*>(&entry), static_cast<FwSizeType>(sizeof(entry)),
+                                Os::Queue::BlockingType::NONBLOCKING, real_size, prio) != Os::Queue::Status::OP_OK) {
+            break;
+        }
+        // The queue is created with this fixed message size; a short read would silently strand
+        // the request's caller without a response
+        FW_ASSERT(sizeof(entry) == real_size, static_cast<FwAssertArgType>(real_size));
+        this->sendResponse(
+            entry, FILEDOWNLINK_COMMAND_FAILURES_DISABLED ? SendFileStatus::STATUS_OK : SendFileStatus::STATUS_ERROR);
+        drained++;
+    }
+    return drained;
 }
 
 void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,

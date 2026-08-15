@@ -304,6 +304,12 @@ class FileDownlink final : public FileDownlinkComponentBase {
                            const U32 cmdSeq            //!< The command sequence number
     );
 
+    //! Implementation for FileDownlink_Reset command handler
+    //!
+    void Reset_cmdHandler(const FwOpcodeType opCode,  //!< The opcode
+                          const U32 cmdSeq            //!< The command sequence number
+    );
+
     //! Implementation for FILE_DWN_SEND_PARTIAL command handler
     //!
     void SendPartial_cmdHandler(
@@ -345,8 +351,12 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void finishHelper(bool is_cancel);
     // Convert internal status enum to a command response
     Fw::CmdResponse statusToCmdResp(SendFileStatus status);
-    // Send response after completing file downlink
+    // Send response for the current file downlink
     void sendResponse(SendFileStatus resp);
+    // Send response for a given file downlink request
+    void sendResponse(const FileEntry& entry, SendFileStatus resp);
+    // Drain the file queue, responding to each request with an error. Returns the number drained.
+    U32 drainFileQueue();
 
   private:
     // ----------------------------------------------------------------------
@@ -388,6 +398,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! rate (milliseconds) at which we are running
     U32 m_cycleTime;
+
+    //! Max number of items in the file downlink queue
+    U32 m_fileQueueDepth;
 
     ////! Buffer for sending file data
     Fw::Buffer m_buffer;

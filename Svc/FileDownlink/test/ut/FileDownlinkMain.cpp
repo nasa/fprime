@@ -24,6 +24,31 @@ TEST(FileDownlink, CancelInIdleMode) {
     tester.cancelInIdleMode();
 }
 
+TEST(FileDownlink, ResetWedgedDownlink) {
+    Svc::FileDownlinkTester tester;
+    tester.resetWedgedDownlink();
+}
+
+TEST(FileDownlink, ResetDrainsQueue) {
+    Svc::FileDownlinkTester tester;
+    tester.resetDrainsQueue();
+}
+
+TEST(FileDownlink, ResetWithCancelPacketOutstanding) {
+    Svc::FileDownlinkTester tester;
+    tester.resetWithCancelPacketOutstanding();
+}
+
+TEST(FileDownlink, ResetDrainBounded) {
+    Svc::FileDownlinkTester tester;
+    tester.resetDrainBounded();
+}
+
+TEST(FileDownlink, ResetInIdleMode) {
+    Svc::FileDownlinkTester tester;
+    tester.resetInIdleMode();
+}
+
 TEST(FileDownlink, DownlinkPartial) {
     Svc::FileDownlinkTester tester;
     tester.downlinkPartial();

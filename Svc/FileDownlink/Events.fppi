@@ -102,3 +102,11 @@ event SourceOutOfSandbox(
   severity warning high \
   id 0x12 \
   format "Source file {} is outside the configured read sandbox"
+
+@ The File Downlink component was reset by command. Queued downlink requests are dropped with error responses.
+event DownlinkReset(
+                     queuedFilesDropped: U32 @< Number of queued downlink requests dropped
+                   ) \
+  severity activity high \
+  id 0x13 \
+  format "File downlink reset; dropped {} queued downlink requests"
