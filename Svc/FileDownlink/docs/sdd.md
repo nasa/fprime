@@ -48,7 +48,7 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
    > rejected with `OUTSIDE_SANDBOX` (emitting `SourceOutOfSandbox`) — an unconfigured
    > `FileDownlink` cannot read anything. A deployment **must** call the `configure(directory)`
    > overload during topology setup to enable downlink reads and select the allowed base
-   > directory (the `configure(cooldown, cycleTime, fileQueueDepth)` overload does **not** set a
+   > directory (the `configure(cooldown, cycleTime, fileQueueDepth, stallTimeout)` overload does **not** set a
    > sandbox). Note that the stock `FileHandling` subtopology configures the sandbox to `"/"` for
    > backwards compatibility, which permits reading **any absolute path accessible to the
    > process** via ground command. Security-conscious deployments using that subtopology **must**

@@ -232,9 +232,11 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Configure FileDownlink component
     //!
-    void configure(U32 cooldown,       //!< Cooldown (in ms) between finishing a downlink and starting the next file.
-                   U32 cycleTime,      //!< Rate at which we are running
-                   U32 fileQueueDepth  //!< Max number of items in file downlink queue
+    void configure(
+        U32 cooldown,         //!< Cooldown (in ms) between finishing a downlink and starting the next file.
+        U32 cycleTime,        //!< Rate at which we are running
+        U32 fileQueueDepth,   //!< Max number of items in file downlink queue
+        U32 stallTimeout = 0  //!< Time (in ms) waiting on a buffer return before a DownlinkStalled warning. 0 disables.
     );
 
     //! Restrict SendFile / SendPartial reads to paths under the configured directory.
@@ -398,6 +400,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! rate (milliseconds) at which we are running
     U32 m_cycleTime;
+
+    //! Time (in ms) waiting on a buffer return before a DownlinkStalled warning. 0 disables the warning.
+    U32 m_stallTimeout;
 
     //! Max number of items in the file downlink queue
     U32 m_fileQueueDepth;

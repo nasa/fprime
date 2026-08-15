@@ -31,6 +31,7 @@ FileDownlink ::FileDownlink(const char* const name)
       m_warnings(this),
       m_sequenceIndex(0),
       m_curTimer(0),
+      m_stallTimeout(0),
       m_fileQueueDepth(0),
       m_byteOffset(0),
       m_endOffset(0),
@@ -39,9 +40,10 @@ FileDownlink ::FileDownlink(const char* const name)
       m_curEntry(),
       m_cntxId(0) {}
 
-void FileDownlink ::configure(U32 cooldown, U32 cycleTime, U32 fileQueueDepth) {
+void FileDownlink ::configure(U32 cooldown, U32 cycleTime, U32 fileQueueDepth, U32 stallTimeout) {
     this->m_cooldown = cooldown;
     this->m_cycleTime = cycleTime;
+    this->m_stallTimeout = stallTimeout;
     this->m_fileQueueDepth = fileQueueDepth;
     this->m_configured = true;
 
@@ -96,8 +98,17 @@ void FileDownlink ::Run_handler(const FwIndexType portNum, U32 context) {
             }
             break;
         }
+        // A pending cancellation waits on the same buffer return, so it can stall the same way
+        case Mode::CANCEL:
         case Mode::WAIT: {
+            const U32 previous = this->m_curTimer;
             this->m_curTimer += m_cycleTime;
+            // Warn once per wait, on the cycle that crosses the stall timeout
+            if ((this->m_stallTimeout != 0) && (previous < this->m_stallTimeout) &&
+                (this->m_curTimer >= this->m_stallTimeout)) {
+                this->log_WARNING_HI_DownlinkStalled(this->m_file.getSourceName(), this->m_file.getDestName(),
+                                                     this->m_curTimer);
+            }
             break;
         }
         default:
@@ -243,6 +254,9 @@ void FileDownlink ::Cancel_cmdHandler(const FwOpcodeType opCode, const U32 cmdSe
     // Must be able to cancel in both downlink and waiting states
     if (this->m_mode.get() == Mode::DOWNLINK || this->m_mode.get() == Mode::WAIT) {
         this->m_mode.set(Mode::CANCEL);
+        // The cancellation begins a new wait on the buffer return; restart the stall timer so a
+        // cancellation that also stalls is warned about
+        this->m_curTimer = 0;
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

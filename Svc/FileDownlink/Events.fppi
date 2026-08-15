@@ -110,3 +110,13 @@ event DownlinkReset(
   severity activity high \
   id 0x13 \
   format "File downlink reset; dropped {} queued downlink requests"
+
+@ A downlink has been waiting longer than the configured stall timeout for a buffer to be returned. The downstream component may be failing to return buffers; the Reset command recovers the component if the buffer never comes back.
+event DownlinkStalled(
+                       sourceFileName: string size 100 @< The source file name
+                       destFileName: string size 100 @< The destination file name
+                       waitTimeMs: U32 @< Time in milliseconds spent waiting for a buffer return
+                     ) \
+  severity warning high \
+  id 0x14 \
+  format "Downlink of file {} to file {} has waited {} ms for a buffer return"

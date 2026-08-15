@@ -49,6 +49,11 @@ TEST(FileDownlink, ResetInIdleMode) {
     tester.resetInIdleMode();
 }
 
+TEST(FileDownlink, DownlinkStallWarning) {
+    Svc::FileDownlinkTester tester;
+    tester.downlinkStallWarning();
+}
+
 TEST(FileDownlink, DownlinkPartial) {
     Svc::FileDownlinkTester tester;
     tester.downlinkPartial();

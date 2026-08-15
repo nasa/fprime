@@ -132,6 +132,9 @@ class FileDownlinkTester : public FileDownlinkGTestBase {
     //! Send a reset command in idle mode
     void resetInIdleMode();
 
+    //! Warn when a downlink waits too long on a buffer return, in WAIT and in CANCEL mode
+    void downlinkStallWarning();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for from ports

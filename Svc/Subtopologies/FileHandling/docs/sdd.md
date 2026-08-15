@@ -47,7 +47,7 @@ The **FileHandling subtopology** packages the core file-transfer services common
 >
 > * `FileHandling::fileUplink.configure(<directory>)` — restrict uplinked file writes.
 > * `FileHandling::fileDownlink.configure(<directory>)` — restrict downlink reads (this is the
->   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth)`
+>   `configure(directory)` overload; the `configure(cooldown, cycleTime, fileQueueDepth, stallTimeout)`
 >   overload does **not** set a sandbox).
 > * `FileHandling::prmDb.configureSandbox(<directory>)` — restrict all `prmDb` file access
 >   (startup read, `PRM_SAVE_FILE`, `PRM_LOAD_FILE`); the directory must contain the store file
