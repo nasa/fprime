@@ -42,7 +42,7 @@ Fw/DataStructures/Array.hpp                   46      46   100%
 Fw/DataStructures/ArrayMap.hpp                17      17   100%
 Fw/DataStructures/ArraySet.hpp                17      17   100%
 Fw/DataStructures/ArraySetOrMapImpl.hpp       96      95    99%   170
-Fw/DataStructures/CircularIndex.hpp           38      37    97%   101
+Fw/DataStructures/CircularIndex.hpp           38      38   100%
 Fw/DataStructures/ExternalArray.hpp           57      57   100%
 Fw/DataStructures/ExternalArrayMap.hpp        32      32   100%
 Fw/DataStructures/ExternalArraySet.hpp        34      34   100%
@@ -203,9 +203,9 @@ Os/Posix/File.hpp                              2       2   100%
 Os/Posix/FileSystem.cpp                       57      50    87%   50,58,79,88,94,102-103
 Os/Posix/FileSystem.hpp                        2       2   100%
 Os/Posix/Mutex.cpp                            23      23   100%
-Os/Posix/RawTime.cpp                          37      33    89%   18,52,64,68
+Os/Posix/RawTime.cpp                          37      31    83%   18,37-38,52,64,68
 Os/Posix/RawTime.hpp                           2       2   100%
-Os/Posix/Task.cpp                            141     108    76%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,265-267,271-272,274
+Os/Posix/Task.cpp                            141     109    77%   55-56,86-88,92-94,114-115,120,122-125,128-129,134,171,218,226,240-242,244-246,266-267,271-272,274
 Os/Posix/Task.hpp                              2       2   100%
 Os/Queue.cpp                                  77      71    92%   84,121,139-142
 Os/Queue.hpp                                   4       4   100%
