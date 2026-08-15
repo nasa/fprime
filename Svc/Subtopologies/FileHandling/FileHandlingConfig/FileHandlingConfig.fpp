@@ -40,5 +40,6 @@ module FileHandlingConfig {
         constant cooldown       = 1000         # File downlink cooldown in ms  
         constant cycleTime      = 1000         # File downlink cycle time in ms
         constant fileQueueDepth = 10           # File downlink queue depth
+        constant stallTimeout   = 0            # DownlinkStalled warning threshold in ms; 0 disables
     }
 }

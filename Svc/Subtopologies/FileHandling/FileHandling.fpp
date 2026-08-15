@@ -19,7 +19,8 @@ module FileHandling {
         FileHandling::fileDownlink.configure(
             FileHandlingConfig::DownlinkConfig::cooldown,
             FileHandlingConfig::DownlinkConfig::cycleTime,
-            FileHandlingConfig::DownlinkConfig::fileQueueDepth
+            FileHandlingConfig::DownlinkConfig::fileQueueDepth,
+            FileHandlingConfig::DownlinkConfig::stallTimeout
         );
         """
     }

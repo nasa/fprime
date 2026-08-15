@@ -21,9 +21,9 @@
 #define CMD_SEQ 0
 #define QUEUE_DEPTH 10
 #define FILE_QUEUE_DEPTH 10
-
 #define COOLDOWN_MS 500
 #define CYCLE_MS 100
+#define STALL_TIMEOUT_MS 500
 #define MAX_ALLOCATED 100
 namespace Svc {
 
@@ -38,7 +38,7 @@ FileDownlinkTester ::FileDownlinkTester()
       m_returnBuffers(true),
       m_heldCount(0),
       m_reenqueueOnFileComplete(false) {
-    this->component.configure(COOLDOWN_MS, CYCLE_MS, FILE_QUEUE_DEPTH);
+    this->component.configure(COOLDOWN_MS, CYCLE_MS, FILE_QUEUE_DEPTH, STALL_TIMEOUT_MS);
     this->connectPorts();
     this->initComponents();
     char cwd[Os::FilePathUtils::MAX_PATH_LENGTH] = {};
@@ -430,6 +430,73 @@ void FileDownlinkTester ::resetInIdleMode() {
 
     // Assert idle mode
     ASSERT_EQ(FileDownlink::Mode::IDLE, this->component.m_mode.get());
+}
+
+void FileDownlinkTester ::downlinkStallWarning() {
+    // Create a file
+    const char* const sourceFileName = "source.bin";
+    const char* const destFileName = "dest.bin";
+    U8 data[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    FileBuffer fileBufferOut(data, sizeof(data));
+    fileBufferOut.write(sourceFileName);
+
+    // Simulate a downstream component that never returns buffers
+    this->m_returnBuffers = false;
+
+    // Start a downlink; the start packet buffer is sent and never returned
+    Fw::CmdStringArg sourceCmdStringArg(sourceFileName);
+    Fw::CmdStringArg destCmdStringArg(destFileName);
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();       // Dispatch send file command
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+
+    // No warning before the stall timeout elapses
+    for (U32 i = 0; i < (STALL_TIMEOUT_MS / CYCLE_MS) - 1; i++) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EVENTS_DownlinkStalled_SIZE(0);
+
+    // The warning fires on the cycle that crosses the timeout, exactly once
+    this->component.Run_handler(0, 0);
+    ASSERT_EVENTS_DownlinkStalled_SIZE(1);
+    ASSERT_EVENTS_DownlinkStalled(0, sourceFileName, destFileName, STALL_TIMEOUT_MS);
+    for (U32 i = 0; i < 5; i++) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EVENTS_DownlinkStalled_SIZE(1);
+
+    // Recover and start a second downlink
+    this->sendCmd_Reset(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch reset command
+    this->returnHeldBuffers();
+    while (this->component.m_mode.get() == FileDownlink::Mode::COOLDOWN) {
+        this->component.Run_handler(0, 0);
+    }
+    this->clearHistory();
+    this->sendCmd_SendFile(INSTANCE, CMD_SEQ, sourceCmdStringArg, destCmdStringArg);
+    this->component.doDispatch();       // Dispatch send file command
+    this->component.Run_handler(0, 0);  // Dequeue and start processing file
+    ASSERT_EQ(FileDownlink::Mode::WAIT, this->component.m_mode.get());
+
+    // Let the warning fire, then cancel: the cancellation begins a new wait on the same
+    // missing buffer return, so the stall timer restarts and the warning must fire again
+    for (U32 i = 0; i < STALL_TIMEOUT_MS / CYCLE_MS; i++) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EVENTS_DownlinkStalled_SIZE(1);
+    this->sendCmd_Cancel(INSTANCE, CMD_SEQ);
+    this->component.doDispatch();  // Dispatch cancel command
+    ASSERT_EQ(FileDownlink::Mode::CANCEL, this->component.m_mode.get());
+    for (U32 i = 0; i < (STALL_TIMEOUT_MS / CYCLE_MS) - 1; i++) {
+        this->component.Run_handler(0, 0);
+    }
+    ASSERT_EVENTS_DownlinkStalled_SIZE(1);
+    this->component.Run_handler(0, 0);
+    ASSERT_EVENTS_DownlinkStalled_SIZE(2);
+    ASSERT_EVENTS_DownlinkStalled(1, sourceFileName, destFileName, STALL_TIMEOUT_MS);
+
+    this->removeFile(sourceFileName);
 }
 
 void FileDownlinkTester ::downlinkPartial() {

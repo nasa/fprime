@@ -23,6 +23,7 @@ FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition t
 FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
 FD-004 | `FileDownlink` shall issue a warning if a file with zero size is encountered | Ensures that operators are aware of invalid file sizes | Test
 FD-005 | `FileDownlink` shall provide a command that force-completes the active downlink and drains the file queue without waiting on outstanding buffer returns | Allows operators to recover the component when a downstream component never returns a buffer | Test
+FD-006 | `FileDownlink` shall emit a warning event when a downlink has been waiting longer than a configurable timeout for a buffer return | A downstream component that fails to return a buffer otherwise produces no fault indication, since ping responses continue | Test
 
 ## 3 Design
 
@@ -50,7 +51,7 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
    > deployments **must** call `configure(directory)` during topology setup to restrict file
    > access. Note that the stock `FileHandling` subtopology and reference topologies do **not**
    > configure a downlink sandbox: `FileHandling` only calls the
-   > `configure(cooldown, cycleTime, fileQueueDepth)` overload, which does not set a sandbox.
+   > `configure(cooldown, cycleTime, fileQueueDepth, stallTimeout)` overload, which does not set a sandbox.
 
 ### 3.2 Ports
 
@@ -89,6 +90,13 @@ packets are stored in an internal memory store.
 * *file queue depth*: The maximum number of files that can be held in the internal file downlink
   queue. Attempting to dispatch a SendFile command or port call while the queue is full will result
   in an error response (`STATUS_ERROR` on the port, `EXECUTION_ERROR` for the command).
+* *stall timeout*: The time in ms a downlink may wait on a buffer return before a
+  `DownlinkStalled` warning is emitted. The default of 0 disables the warning. The warning is
+  observational only: it triggers no automatic action. Set it well above the worst-case buffer
+  turnaround time of the downstream component: the warning fires once per wait, so a value below
+  the nominal turnaround warns on every packet of a slow link. The warning fires at most once per
+  wait, so its rate is bounded by the timeout itself; it is deliberately not count-throttled, so
+  that a stall is always reported however long the transfer has been running.
 
 ### 3.4 State
 
