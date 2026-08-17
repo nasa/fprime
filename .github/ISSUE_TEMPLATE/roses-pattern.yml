@@ -1,0 +1,58 @@
+name: ROSES Pattern
+description: Request a standard pattern funded for documentation via ROSES
+title: "ROSES - [Pattern]"
+labels:
+  - ROSES
+type: Task
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!TIP]
+        > The **Title** may be the only thing the community sees when voting on your pattern.
+        >
+        > This work is funded through [NASA ROSES](https://github.com/nasa/fprime/discussions/3041).
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe what you want documented.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        > [!TIP]
+        > Describe the **Pattern** without trying to sell it. Describe what you need.
+  - type: dropdown
+    id: deliverable-type
+    attributes:
+      label: Deliverable type
+      description: Select the type of deliverable.
+      options:
+        - Reference
+        - User Guide
+        - How-To
+        - Tutorial
+        - Other (tool, fill-in, etc)
+    validations:
+      required: true
+  - type: checkboxes
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: Check each deliverable that will be completed before closing the issue.
+      options:
+        - label: Create documentation
+          required: true
+        - label: Create example in examples repository
+          required: true
+        - label: Pass expert review
+          required: true
+        - label: Pass user review
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        > [!TIP]
+        > Use the **Description** to describe the pattern and what you need documented.

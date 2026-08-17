@@ -1,0 +1,52 @@
+name: Task
+description: Propose a task for F´
+title: ""
+type: Task
+body:
+  - type: input
+    id: fprime-version
+    attributes:
+      label: F´ version
+      description: Which version of F´ is this task for?
+      value: devel
+  - type: input
+    id: affected-component
+    attributes:
+      label: Affected component
+      description: Which component would be affected?
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the task.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Explain why this task should be completed.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-approach
+    attributes:
+      label: Proposed approach
+      description: Optionally describe how this task could be completed.
+  - type: checkboxes
+    id: breaking-change
+    attributes:
+      label: Breaking change
+      options:
+        - label: This task would introduce a breaking change.
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I searched existing issues and discussions.
+          required: true
+        - label: I understand that contributions go through the [CCB process](./GOVERNANCE.md) described in [CONTRIBUTING.md](./CONTRIBUTING.md).
+          required: true
+        - label: I am willing to submit a pull request to address this issue.
+        - label: AI assistance was used in writing this issue. See the [AI policy](./AI_POLICY.md).

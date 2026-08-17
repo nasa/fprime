@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and discussion
+    url: https://github.com/nasa/fprime/discussions
+    about: Ask questions and discuss ideas with the F´ community.
+  - name: F´ documentation
+    url: https://fprime.jpl.nasa.gov/latest/docs
+    about: Read the F´ documentation.
+  - name: Security policy
+    url: https://github.com/nasa/fprime/blob/devel/SECURITY.md
+    about: Report security issues according to the security policy.
