@@ -32,7 +32,8 @@ module DataProducts{
         cpu DataProductsConfig.CpuAffinities.dpWriter \
     {
         phase Fpp.ToCpp.Phases.configComponents """
-            DataProducts::dpWriter.configure(dpDir);
+            Fw::FileNameString dpWriterDir(DataProductsConfig::Paths::dpDir);
+            DataProducts::dpWriter.configure(dpWriterDir);
         """
     }
 

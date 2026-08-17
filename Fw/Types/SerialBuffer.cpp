@@ -27,7 +27,7 @@ void SerialBuffer ::fill() {
 }
 
 SerializeStatus SerialBuffer ::pushBytes(const U8* const addr, const FwSizeType n) {
-    return this->serializeFrom(const_cast<U8*>(addr), n, Fw::Serialization::OMIT_LENGTH);
+    return this->serializeFrom(addr, n, Fw::Serialization::OMIT_LENGTH);
 }
 
 SerializeStatus SerialBuffer ::popBytes(U8* const addr, FwSizeType n) {

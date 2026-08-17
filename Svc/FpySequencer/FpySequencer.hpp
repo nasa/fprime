@@ -821,6 +821,14 @@ class FpySequencer : public FpySequencerComponentBase {
     // update a struct containing debug telemetry, or defaults if not in debug break
     void updateDebugTelemetryStruct();
 
+    //! sets all fields of the debug telemetry struct
+    void setDebugTelemetry(bool reachedEof,
+                           bool readSuccess,
+                           U8 stmtOpcode,
+                           FwOpcodeType cmdOpcode,
+                           U32 stmtIdx,
+                           Fpy::StackSizeType stackSize);
+
     // ----------------------------------------------------------------------
     // Directives
     // ----------------------------------------------------------------------

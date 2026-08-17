@@ -28,7 +28,7 @@ def build_nav_tree(path):
     nav = []
     entries = sorted(
         os.listdir(path),
-        key=lambda x: tab_order.index(x) if x in tab_order else len(tab_order),
+        key=lambda x: (tab_order.index(x) if x in tab_order else len(tab_order), x),
     )
 
     # Detect folder index.md first
@@ -48,7 +48,7 @@ def build_nav_tree(path):
         if (
             os.path.isfile(full_path)
             and entry.endswith(".md")
-            and not entry.endswith("index.md")
+            and entry != "index.md"
         ):
             # Check if the file stem (filename without .md) is excluded
             file_stem = Path(entry).stem
@@ -118,7 +118,7 @@ def read_h1(md_file: Path) -> str:
     behavior of titling pages by their first heading."""
     if not md_file.exists():
         return md_file.stem
-    for line in md_file.read_text().splitlines():
+    for line in md_file.read_text(encoding="utf-8").splitlines():
         if line.startswith("# "):
             return line[2:].strip()
         elif line.startswith("Title: ") or line.startswith("title: "):

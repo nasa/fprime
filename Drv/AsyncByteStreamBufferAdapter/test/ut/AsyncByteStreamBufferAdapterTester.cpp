@@ -81,7 +81,7 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
 
     // Verify data send error - buffer sent to driver but returns with error
     ASSERT_EVENTS_DataSendError_SIZE(1);
-    ASSERT_EVENTS_DataSendError(0, 3);
+    ASSERT_EVENTS_DataSendError(0, Drv::ByteStreamStatus::OTHER_ERROR);
     ASSERT_EVENTS_DriverNotReady_SIZE(1);
     ASSERT_from_toByteStreamDriver_SIZE(2);
     ASSERT_from_bufferInReturn_SIZE(3);  // Buffer returned after send error

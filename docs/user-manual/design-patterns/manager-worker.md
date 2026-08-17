@@ -85,7 +85,7 @@ active component Manager {
 ```
 void Manager ::START_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     if (this->m_busy) {
-        this->log_ACTIVITY_HI_WorkerBusy();
+        this->log_WARNING_HI_WorkerBusy();
     } else {
         this->m_busy = true;
         this->log_ACTIVITY_HI_StartWork();
@@ -130,7 +130,7 @@ There is one critical aspect of the manager/worker pattern that is set up at the
 
 **Manager/Worker Instance Priorities**
 ```
-instance manager: Manager base id Manage 0x0000 \
+instance manager: ManagerWorker.Manager base id 0x0000 \
     queue size ... \
     stack size ... \
     priority 90 # High-priority (Linux) for the Manager

@@ -112,12 +112,12 @@ endfunction()
 ####
 function(build_add_module_target BUILD_TARGET_NAME TARGET SOURCES DEPENDENCIES)
     get_property(BUILD_AUTOCODERS GLOBAL PROPERTY FPRIME_AUTOCODER_TARGET_LIST)
-    run_ac_set("${MODULE}" ${BUILD_AUTOCODERS})
+    run_ac_set("${BUILD_TARGET_NAME}" ${BUILD_AUTOCODERS})
 
     fprime__internal_standard_build_target_setup("${BUILD_TARGET_NAME}" "")
 
     # Introspection prints
     if (CMAKE_DEBUG_OUTPUT)
-        introspect("${MODULE}")
+        introspect("${BUILD_TARGET_NAME}")
     endif()
 endfunction(build_add_module_target)

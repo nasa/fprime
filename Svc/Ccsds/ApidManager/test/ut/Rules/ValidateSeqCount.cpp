@@ -17,11 +17,11 @@ namespace Ccsds {
 // ValidateSeqCount.Ok
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::ValidateSeqCount__Ok__precondition() const {
+bool ApidManagerTester::ValidateSeqCount_Ok_precondition() const {
     return !this->shadow.shadow_seqCounts.empty();
 }
 
-void ApidManagerTester::ValidateSeqCount__Ok__action() {
+void ApidManagerTester::ValidateSeqCount_Ok_action() {
     this->clearHistory();
 
     ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
@@ -36,11 +36,11 @@ void ApidManagerTester::ValidateSeqCount__Ok__action() {
 // ValidateSeqCount.Failure
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::ValidateSeqCount__Failure__precondition() const {
+bool ApidManagerTester::ValidateSeqCount_Failure_precondition() const {
     return !this->shadow.shadow_seqCounts.empty();
 }
 
-void ApidManagerTester::ValidateSeqCount__Failure__action() {
+void ApidManagerTester::ValidateSeqCount_Failure_action() {
     this->clearHistory();
 
     ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();

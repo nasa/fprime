@@ -22,11 +22,11 @@ namespace Ccsds {
 // Deframe.Nominal
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::Deframe__Nominal__precondition() const {
+bool CcsdsSdlsDeframerTester::Deframe_Nominal_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::Deframe__Nominal__action() {
+void CcsdsSdlsDeframerTester::Deframe_Nominal_action() {
     this->clearHistory();
 
     // Build a frame: leading big-endian U16 SA index followed by a random payload
@@ -65,11 +65,11 @@ void CcsdsSdlsDeframerTester::Deframe__Nominal__action() {
 // Deframe.InsufficientLength
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::Deframe__InsufficientLength__precondition() const {
+bool CcsdsSdlsDeframerTester::Deframe_InsufficientLength_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::Deframe__InsufficientLength__action() {
+void CcsdsSdlsDeframerTester::Deframe_InsufficientLength_action() {
     this->clearHistory();
 
     // A frame shorter than the 16-bit SA index cannot be deframed
@@ -92,11 +92,11 @@ void CcsdsSdlsDeframerTester::Deframe__InsufficientLength__action() {
 // Deframe.DecryptFailure
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::Deframe__DecryptFailure__precondition() const {
+bool CcsdsSdlsDeframerTester::Deframe_DecryptFailure_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::Deframe__DecryptFailure__action() {
+void CcsdsSdlsDeframerTester::Deframe_DecryptFailure_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];

@@ -2,6 +2,7 @@
 #include <cerrno>
 #include <cstdlib>
 
+namespace {
 Fw::StringUtils::StringToNumberStatus string_to_helper_input_check(const CHAR* input, FwSizeType buffer_size, U8 base) {
     Fw::StringUtils::StringToNumberStatus status = Fw::StringUtils::StringToNumberStatus::SUCCESSFUL_CONVERSION;
     // Check for null input string
@@ -79,6 +80,7 @@ Fw::StringUtils::StringToNumberStatus string_to_number_as_template(const CHAR* i
     status = string_to_helper_output_check(status, input, output_next, next);
     return status;
 }
+}  // namespace
 
 #if FW_HAS_64_BIT
 Fw::StringUtils::StringToNumberStatus Fw::StringUtils::string_to_number(const CHAR* input,

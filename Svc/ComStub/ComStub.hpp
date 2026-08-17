@@ -16,7 +16,7 @@ class ComStub final : public ComStubComponentBase {
     friend class ComStubTester;  //!< Allow UT Tester to access private members
 
   public:
-    const FwIndexType RETRY_LIMIT = 10;
+    static constexpr FwIndexType RETRY_LIMIT = 10;
     // ----------------------------------------------------------------------
     // Construction, initialization, and destruction
     // ----------------------------------------------------------------------

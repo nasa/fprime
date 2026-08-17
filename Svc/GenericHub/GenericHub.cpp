@@ -33,6 +33,10 @@ void GenericHub::send_data(const HubType type, const FwIndexType port, const U8*
     Fw::SerializeStatus status;
     // Buffer to send and a buffer used to write to it
     Fw::Buffer outgoing = allocate_out(0, static_cast<U32>(size + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+    if (!outgoing.isValid()) {
+        // Allocation failed: drop rather than assert
+        return;
+    }
     auto serialize = outgoing.getSerializer();
     // Write data to our buffer
     status = serialize.serializeFrom(static_cast<U32>(type));

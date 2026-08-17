@@ -62,7 +62,7 @@ class TcDeframer : public TcDeframerComponentBase {
     void errorNotifyHelper(Svc::Ccsds::FrameError error);
 
   private:
-    U16 m_vcId;                   //!< The virtual channel ID this deframer is configured to handle
+    U16 m_vcId = 0;               //!< The virtual channel ID this deframer is configured to handle
     U16 m_spacecraftId;           //!< The spacecraft ID this deframer is configured to handle
     bool m_acceptAllVcid = true;  //!< Flag to accept all VCIDs
 };

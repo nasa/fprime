@@ -246,6 +246,9 @@ class BufferLogger final : public BufferLoggerComponentBase {
 
     //! The file
     File m_file;
+
+    //! The number of buffers logged
+    U32 m_numLoggedBuffers;
 };
 
 }  // namespace Svc

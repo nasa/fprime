@@ -19,11 +19,11 @@ namespace Ccsds {
 // Frame.ContextSa
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::Frame__ContextSa__precondition() const {
+bool CcsdsSdlsFramerTester::Frame_ContextSa_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::Frame__ContextSa__action() {
+void CcsdsSdlsFramerTester::Frame_ContextSa_action() {
     this->clearHistory();
 
     // Pick an SA index distinct from the unset sentinel and set it in the context
@@ -54,11 +54,11 @@ void CcsdsSdlsFramerTester::Frame__ContextSa__action() {
 // Frame.ParameterSa
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::Frame__ParameterSa__precondition() const {
+bool CcsdsSdlsFramerTester::Frame_ParameterSa_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::Frame__ParameterSa__action() {
+void CcsdsSdlsFramerTester::Frame_ParameterSa_action() {
     this->clearHistory();
 
     // An unset (default) context SA index must fall back to the SA_INDEX parameter
@@ -81,11 +81,11 @@ void CcsdsSdlsFramerTester::Frame__ParameterSa__action() {
 // Frame.EncryptFailure
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::Frame__EncryptFailure__precondition() const {
+bool CcsdsSdlsFramerTester::Frame_EncryptFailure_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::Frame__EncryptFailure__action() {
+void CcsdsSdlsFramerTester::Frame_EncryptFailure_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];

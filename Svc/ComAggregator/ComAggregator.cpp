@@ -41,6 +41,7 @@ void ComAggregator ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const
 
 void ComAggregator ::dataReturnIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
     // This handler runs on the returning caller's thread: take ownership atomically
+    FW_ASSERT(data.getData() == this->m_frameBuffer.getData());
     const Fw::Buffer::OwnershipState previousState = this->m_bufferState.exchange(Fw::Buffer::OwnershipState::OWNED);
     FW_ASSERT(previousState == Fw::Buffer::OwnershipState::NOT_OWNED, static_cast<FwAssertArgType>(previousState));
 }

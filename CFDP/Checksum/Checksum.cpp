@@ -10,12 +10,10 @@
 //
 // ======================================================================
 
+#include <algorithm>
+
 #include "CFDP/Checksum/Checksum.hpp"
 #include "Fw/Types/Assert.hpp"
-
-static U32 min(const U32 a, const U32 b) {
-    return (a < b) ? a : b;
-}
 
 namespace CFDP {
 
@@ -53,7 +51,8 @@ void Checksum ::update(const U8* const data, const U32 offset, const U32 length)
     // Add the first word unaligned if necessary
     const U32 offsetMod4 = offset % 4;
     if (offsetMod4 != 0) {
-        const U8 wordLength = static_cast<U8>(min(length, 4 - offsetMod4));
+        const U8 wordLength = static_cast<U8>(std::min(length, 4 - offsetMod4));
+        // Truncation is safe: addWordUnaligned only uses position % 4
         this->addWordUnaligned(&data[index], static_cast<U8>(offset + index), wordLength);
         index += wordLength;
     }

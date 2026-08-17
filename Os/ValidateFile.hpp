@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _ValidateFile_hpp_
-#define _ValidateFile_hpp_
+#ifndef OS_VALIDATE_FILE_HPP_
+#define OS_VALIDATE_FILE_HPP_
 
 #define VFILE_HASH_CHUNK_SIZE (256)
 

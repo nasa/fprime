@@ -9,14 +9,19 @@
 // acknowledged.
 // ======================================================================
 
+#ifndef STEST_BSD_RANDOM_H
+#define STEST_BSD_RANDOM_H
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 void bsd_srandom(unsigned x);
 
-char *bsd_initstate(unsigned seed, char *arg_state, size_t n);
+char* bsd_initstate(unsigned seed, char* arg_state, size_t n);
 
-char *bsd_setstate(const char *arg_state);
+char* bsd_setstate(const char* arg_state);
 
 long bsd_random(void);
+
+#endif

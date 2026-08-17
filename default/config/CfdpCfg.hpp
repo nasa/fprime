@@ -3,6 +3,8 @@
 // \author Brian Campuzano
 // \brief  F Prime CFDP configuration constants
 // ======================================================================
+#ifndef CONFIG_CFDPCFG_HPP
+#define CONFIG_CFDPCFG_HPP
 
 #include <config/FppConstantsAc.hpp>
 
@@ -78,3 +80,4 @@ namespace Cfdp {
 }  // namespace Cfdp
 }  // namespace Ccsds
 }  // namespace Svc
+#endif  // CONFIG_CFDPCFG_HPP

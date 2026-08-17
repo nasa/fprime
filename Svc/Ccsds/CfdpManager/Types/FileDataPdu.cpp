@@ -158,13 +158,10 @@ Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
         return Fw::FW_DESERIALIZE_SIZE_MISMATCH;
     }
 
-    // Advance the buffer pointer
-    U8 tempBuf[1];  // Dummy buffer for validation
-    for (U16 i = 0; i < this->m_dataSize; ++i) {
-        status = serialBuffer.popBytes(tempBuf, 1);
-        if (status != Fw::FW_SERIALIZE_OK) {
-            return status;
-        }
+    // Advance the buffer pointer past the payload
+    status = serialBuffer.deserializeSkip(this->m_dataSize);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
     }
 
     return Fw::FW_SERIALIZE_OK;

@@ -3,8 +3,8 @@
 // \brief Os::Directory interface definition
 // ======================================================================
 
-#ifndef _OS_DIRECTORY_HPP_
-#define _OS_DIRECTORY_HPP_
+#ifndef OS_DIRECTORY_HPP_
+#define OS_DIRECTORY_HPP_
 
 #include <Fw/DataStructures/ExternalArray.hpp>
 #include <Fw/Deprecate.hpp>

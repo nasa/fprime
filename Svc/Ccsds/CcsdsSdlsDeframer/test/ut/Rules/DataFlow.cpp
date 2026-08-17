@@ -19,11 +19,11 @@ namespace Ccsds {
 // DataFlow.DecryptedData
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::DataFlow__DecryptedData__precondition() const {
+bool CcsdsSdlsDeframerTester::DataFlow_DecryptedData_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::DataFlow__DecryptedData__action() {
+void CcsdsSdlsDeframerTester::DataFlow_DecryptedData_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];
@@ -40,11 +40,11 @@ void CcsdsSdlsDeframerTester::DataFlow__DecryptedData__action() {
 // DataFlow.DataReturn
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::DataFlow__DataReturn__precondition() const {
+bool CcsdsSdlsDeframerTester::DataFlow_DataReturn_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::DataFlow__DataReturn__action() {
+void CcsdsSdlsDeframerTester::DataFlow_DataReturn_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];
@@ -61,11 +61,11 @@ void CcsdsSdlsDeframerTester::DataFlow__DataReturn__action() {
 // DataFlow.BufferReturn
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsDeframerTester::DataFlow__BufferReturn__precondition() const {
+bool CcsdsSdlsDeframerTester::DataFlow_BufferReturn_precondition() const {
     return true;
 }
 
-void CcsdsSdlsDeframerTester::DataFlow__BufferReturn__action() {
+void CcsdsSdlsDeframerTester::DataFlow_BufferReturn_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];

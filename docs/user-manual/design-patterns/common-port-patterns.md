@@ -29,7 +29,7 @@ sequenceDiagram
 
 Synchronous get ports maintain the architectural distinction between components while facilitating the return of data possible like in a standard function call. However, since these port calls execute on the thread of the caller, they should not perform substantial work as that would slow down the calling component..
 
-Synchronous get component port instances typically use a name of the form "get<Value>" to designate their function (e.g. getTemperature).
+Synchronous get component port instances typically use a name of the form `get<Value>` to designate their function (e.g. getTemperature).
 
 > [!NOTE]
 > Ensuring the work performed when in the synchronous handler is as minimal as possible is crucial to prevent delays from propagating back to the caller.
@@ -83,7 +83,7 @@ Callback ports use two port connections between two components. The first port c
 
 Command dispatch in F Prime uses the callback pattern.  The command dispatch port is invoked from the dispatcher (callback requester) to a component (callback receiver). The component will callback using the command completion port sending the success/failure status of the command execution.
 
-Callback port instances receiving the results of a request should distinguish themselves from synchronous get ports by using naming of the form "recv<Value>".
+Callback port instances receiving the results of a request should distinguish themselves from synchronous get ports by using naming of the form `recv<Value>`.
 
 Callback ports can be of any instance kind (`sync`, `guarded`, `async`) but are most commonly seen with `async` request ports as these cannot return a value upon invocation like synchronous get ports.
 

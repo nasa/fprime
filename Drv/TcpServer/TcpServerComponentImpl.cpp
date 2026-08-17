@@ -30,7 +30,11 @@ SocketIpStatus TcpServerComponentImpl::configure(const char* const ipv4_address,
                                                  const U32 send_timeout_microseconds,
                                                  FwSizeType buffer_size) {
     m_allocation_size = buffer_size;  // Store the buffer size
-    (void)m_socket.configure(ipv4_address, port, send_timeout_seconds, send_timeout_microseconds);
+    SocketIpStatus configStatus =
+        m_socket.configure(ipv4_address, port, send_timeout_seconds, send_timeout_microseconds);
+    if (configStatus != SOCK_SUCCESS) {
+        return configStatus;
+    }
     return startup();
 }
 

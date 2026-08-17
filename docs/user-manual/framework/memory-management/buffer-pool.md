@@ -79,15 +79,15 @@ object which you can then call `.serializeFrom()` or `.deserializeTo()` on. This
 U32 my_value = 123;
 Fw::Buffer my_buffer = ...;
 // Serializes my_value into my_buffer - defaults to big-endian
-my_buffer.getSerializer().serializeFrom(mv_value);
+my_buffer.getSerializer().serializeFrom(my_value);
 // Or for little-endian
-my_buffer.getSerializer().serializeFrom(mv_value, Fw::Endianness::LITTLE);
+my_buffer.getSerializer().serializeFrom(my_value, Fw::Endianness::LITTLE);
 
 U32 my_value_again = 0;
 // Deserializes my_buffer into my_value_again - defaults to big-endian
-my_buffer.getDeserializer().deserializeTo(mv_value_again);
+my_buffer.getDeserializer().deserializeTo(my_value_again);
 // Or for little-endian
-my_buffer.getDeserializer().deserializeTo(mv_value_again, Fw::Endianness::LITTLE);
+my_buffer.getDeserializer().deserializeTo(my_value_again, Fw::Endianness::LITTLE);
 ```
 
 > [!NOTE]

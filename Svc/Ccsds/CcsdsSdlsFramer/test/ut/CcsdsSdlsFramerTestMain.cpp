@@ -19,7 +19,7 @@ TEST(CcsdsSdlsFramer, FrameContextSa) {
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-001");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-002");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::Frame__ContextSa rule;
+    CcsdsSdlsFramerTester::Frame_ContextSa rule;
     rule.apply(tester);
 }
 
@@ -30,7 +30,7 @@ TEST(CcsdsSdlsFramer, FrameParameterSa) {
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-001");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-002");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::Frame__ParameterSa rule;
+    CcsdsSdlsFramerTester::Frame_ParameterSa rule;
     rule.apply(tester);
 }
 
@@ -40,7 +40,7 @@ TEST(CcsdsSdlsFramer, FrameEncryptFailure) {
     COMMENT("Raise EncryptionFailed on a bad encrypt status; the failing encryptor returns the buffer.");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-004");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::Frame__EncryptFailure rule;
+    CcsdsSdlsFramerTester::Frame_EncryptFailure rule;
     rule.apply(tester);
 }
 
@@ -50,7 +50,7 @@ TEST(CcsdsSdlsFramer, EncryptedDataFraming) {
     COMMENT("Allocate a frame buffer, prepend the SA index, send the frame, and return the encrypted buffer.");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-003");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::DataFlow__EncryptedData rule;
+    CcsdsSdlsFramerTester::DataFlow_EncryptedData rule;
     rule.apply(tester);
 }
 
@@ -60,7 +60,7 @@ TEST(CcsdsSdlsFramer, AllocationFailure) {
     COMMENT("Raise BufferAllocationFailed and drop the frame when the allocated buffer is undersized.");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-008");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::DataFlow__AllocationFailure rule;
+    CcsdsSdlsFramerTester::DataFlow_AllocationFailure rule;
     rule.apply(tester);
 }
 
@@ -71,9 +71,9 @@ TEST(CcsdsSdlsFramer, DataFlowPaths) {
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-006");
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-007");
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::DataFlow__DataReturn ruleReturn;
-    CcsdsSdlsFramerTester::DataFlow__BufferReturn ruleBufferReturn;
-    CcsdsSdlsFramerTester::DataFlow__ComStatus ruleComStatus;
+    CcsdsSdlsFramerTester::DataFlow_DataReturn ruleReturn;
+    CcsdsSdlsFramerTester::DataFlow_BufferReturn ruleBufferReturn;
+    CcsdsSdlsFramerTester::DataFlow_ComStatus ruleComStatus;
     ruleReturn.apply(tester);
     ruleBufferReturn.apply(tester);
     ruleComStatus.apply(tester);
@@ -92,14 +92,14 @@ TEST(CcsdsSdlsFramer, RandomizedTesting) {
     REQUIREMENT("SVC-CCSDS-SDLS-FRAMER-008");
     const U32 numRulesToApply = 10000;
     CcsdsSdlsFramerTester tester;
-    CcsdsSdlsFramerTester::Frame__ContextSa ruleContextSa;
-    CcsdsSdlsFramerTester::Frame__ParameterSa ruleParameterSa;
-    CcsdsSdlsFramerTester::Frame__EncryptFailure ruleFailure;
-    CcsdsSdlsFramerTester::DataFlow__EncryptedData ruleData;
-    CcsdsSdlsFramerTester::DataFlow__AllocationFailure ruleAllocation;
-    CcsdsSdlsFramerTester::DataFlow__DataReturn ruleReturn;
-    CcsdsSdlsFramerTester::DataFlow__BufferReturn ruleBufferReturn;
-    CcsdsSdlsFramerTester::DataFlow__ComStatus ruleComStatus;
+    CcsdsSdlsFramerTester::Frame_ContextSa ruleContextSa;
+    CcsdsSdlsFramerTester::Frame_ParameterSa ruleParameterSa;
+    CcsdsSdlsFramerTester::Frame_EncryptFailure ruleFailure;
+    CcsdsSdlsFramerTester::DataFlow_EncryptedData ruleData;
+    CcsdsSdlsFramerTester::DataFlow_AllocationFailure ruleAllocation;
+    CcsdsSdlsFramerTester::DataFlow_DataReturn ruleReturn;
+    CcsdsSdlsFramerTester::DataFlow_BufferReturn ruleBufferReturn;
+    CcsdsSdlsFramerTester::DataFlow_ComStatus ruleComStatus;
 
     STest::Rule<CcsdsSdlsFramerTester>* rules[] = {
         &ruleContextSa,  &ruleParameterSa, &ruleFailure,      &ruleData,

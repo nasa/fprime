@@ -580,7 +580,7 @@ class Transaction {
      *
      * @param pdu Buffer containing the EOF PDU to process
      */
-    Status::T rSubstateRecvEof(const Fw::Buffer& pdu);
+    Status::T rSubstateRecvEof(const EofPdu& eof);
 
     /************************************************************************/
     /** @brief Process receive EOF for R1.

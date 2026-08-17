@@ -38,18 +38,21 @@ void QueuedTest ::serialAsync_handler(FwIndexType portNum,          //!< The por
 void QueuedTest ::serialAsyncAssert_handler(FwIndexType portNum,          //!< The port number
                                             Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
+    // portNum is ignored: these single-instance ports map to fixed serialOut indices
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ENUM, Buffer);
 }
 
 void QueuedTest ::serialAsyncBlockPriority_handler(FwIndexType portNum,          //!< The port number
                                                    Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
+    // portNum is ignored: these single-instance ports map to fixed serialOut indices
     this->serializeStatus = this->serialOut_out(SerialPortIndex::ARRAY, Buffer);
 }
 
 void QueuedTest ::serialAsyncDropPriority_handler(FwIndexType portNum,          //!< The port number
                                                   Fw::LinearBufferBase& Buffer  //!< The serialization buffer
 ) {
+    // portNum is ignored: these single-instance ports map to fixed serialOut indices
     this->serializeStatus = this->serialOut_out(SerialPortIndex::STRUCT, Buffer);
 }
 

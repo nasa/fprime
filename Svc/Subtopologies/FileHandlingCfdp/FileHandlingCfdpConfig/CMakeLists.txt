@@ -1,7 +1,9 @@
-register_fprime_module(
+register_fprime_config(
     EXCLUDE_FROM_ALL
     SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/FileHandlingCfdpSubtopologyConfig.cpp"
+    HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/FileHandlingCfdpSubtopologyConfig.hpp"
     AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/FileHandlingCfdpConfig.fpp"
 )

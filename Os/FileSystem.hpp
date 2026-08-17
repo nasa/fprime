@@ -3,8 +3,8 @@
 // \brief Os::FileSystem interface definition
 // ======================================================================
 
-#ifndef _OS_FILESYSTEM_HPP_
-#define _OS_FILESYSTEM_HPP_
+#ifndef OS_FILESYSTEM_HPP_
+#define OS_FILESYSTEM_HPP_
 
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Os/Directory.hpp>

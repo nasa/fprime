@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""At website runtime, git clone tutorials markdown files into fprime/docs/tutorials.
+"""At website runtime, git clone tutorials markdown files into the fprime repo root.
 This was initially written for Zensical integration.
 """
 
@@ -23,7 +23,7 @@ def tutorials() -> None:
     }
 
     for target_dir, repo_url in repos.items():
-        target_path = script_dir / target_dir
+        target_path = script_dir.parent.parent / target_dir
 
         # Remove existing directory if it exists
         if target_path.exists():

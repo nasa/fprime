@@ -87,7 +87,7 @@ function(add_fprime_supplied_os_module NAMES SUFFIX)
       SOURCES
         ${SOURCE_INPUTS}
       HEADERS
-        ${HEADER_INPUTS}
+        ${HEADERS_INPUTS}
       DEPENDS
         Fw_Time
         Fw_Types

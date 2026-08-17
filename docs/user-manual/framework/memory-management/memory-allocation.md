@@ -42,6 +42,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
 
         U8* m_memPtr; // Pointer to allocated memory
         FwSizeType m_memSize; // Size of allocated memory
+        FwEnumStoreType m_memId; // Memory segment identifier used for allocation
     };
     ```
 
@@ -51,6 +52,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
     void MyComponent::setup(Fw::MemAllocator& memAllocator, FwSizeType memorySize, FwEnumStoreType memId /* other params */) {
         this->m_memAllocator = &memAllocator;  // Store the allocator for later use
         this->m_memSize = memorySize;          // Store the requested memory size
+        this->m_memId = memId;                 // Store the identifier for deallocation
         // Allocate memory using the provided arguments
         this->m_memPtr = this->m_memAllocator->allocate(memId, this->m_memSize);
         if (this->m_memPtr == nullptr) {
@@ -70,7 +72,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
     ```cpp
     void MyComponent::cleanup() {
         if (this->m_memPtr != nullptr && this->m_memAllocator != nullptr){
-            this->m_memAllocator->deallocate(this->getInstance(), this->m_memPtr);
+            this->m_memAllocator->deallocate(this->m_memId, this->m_memPtr);
         }
         this->m_memPtr = nullptr;
         this->m_memSize = 0;

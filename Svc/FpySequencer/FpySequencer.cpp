@@ -436,17 +436,26 @@ void FpySequencer::tlmWrite_handler(FwIndexType portNum,  //!< The port number
     this->tlmWrite_Debug_StackSize(this->m_debug.stackSize);
 }
 
+void FpySequencer::setDebugTelemetry(bool reachedEof,
+                                     bool readSuccess,
+                                     U8 stmtOpcode,
+                                     FwOpcodeType cmdOpcode,
+                                     U32 stmtIdx,
+                                     Fpy::StackSizeType stackSize) {
+    this->m_debug.reachedEndOfFile = reachedEof;
+    this->m_debug.nextStatementReadSuccess = readSuccess;
+    this->m_debug.nextStatementOpcode = stmtOpcode;
+    this->m_debug.nextCmdOpcode = cmdOpcode;
+    this->m_debug.nextStatementIndex = stmtIdx;
+    this->m_debug.stackSize = stackSize;
+}
+
 void FpySequencer::updateDebugTelemetryStruct() {
     // only send debug tlm when we are paused
     if (this->sequencer_getState() == State::RUNNING_PAUSED) {
         if (this->m_runtime.nextStatementIndex >= this->m_sequenceObj.get_header().get_statementCount()) {
             // reached end of file, turn on EOF flag and otherwise send some default tlm
-            this->m_debug.reachedEndOfFile = true;
-            this->m_debug.nextStatementReadSuccess = false;
-            this->m_debug.nextStatementOpcode = 0;
-            this->m_debug.nextCmdOpcode = 0;
-            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
-            this->m_debug.stackSize = this->m_runtime.stack.size;
+            this->setDebugTelemetry(true, false, 0, 0, this->m_runtime.nextStatementIndex, this->m_runtime.stack.size);
             return;
         }
 
@@ -457,41 +466,24 @@ void FpySequencer::updateDebugTelemetryStruct() {
         Fw::Success status = this->deserializeDirective(nextStmt, directiveUnion);
 
         if (status != Fw::Success::SUCCESS) {
-            this->m_debug.reachedEndOfFile = false;
-            this->m_debug.nextStatementReadSuccess = false;
-            this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
-            this->m_debug.nextCmdOpcode = 0;
-            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
-            this->m_debug.stackSize = this->m_runtime.stack.size;
+            this->setDebugTelemetry(false, false, nextStmt.get_opCode(), 0, this->m_runtime.nextStatementIndex,
+                                    this->m_runtime.stack.size);
             return;
         }
 
         if (nextStmt.get_opCode() == Fpy::DirectiveId::CONST_CMD) {
             // send opcode of the cmd to the ground
-            this->m_debug.reachedEndOfFile = false;
-            this->m_debug.nextStatementReadSuccess = true;
-            this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
-            this->m_debug.nextCmdOpcode = directiveUnion.constCmd.get_opCode();
-            this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
-            this->m_debug.stackSize = this->m_runtime.stack.size;
+            this->setDebugTelemetry(false, true, nextStmt.get_opCode(), directiveUnion.constCmd.get_opCode(),
+                                    this->m_runtime.nextStatementIndex, this->m_runtime.stack.size);
             return;
         }
 
-        this->m_debug.reachedEndOfFile = false;
-        this->m_debug.nextStatementReadSuccess = true;
-        this->m_debug.nextStatementOpcode = nextStmt.get_opCode();
-        this->m_debug.nextCmdOpcode = 0;
-        this->m_debug.nextStatementIndex = this->m_runtime.nextStatementIndex;
-        this->m_debug.stackSize = this->m_runtime.stack.size;
+        this->setDebugTelemetry(false, true, nextStmt.get_opCode(), 0, this->m_runtime.nextStatementIndex,
+                                this->m_runtime.stack.size);
         return;
     }
     // send some default tlm when we aren't in debug break
-    this->m_debug.reachedEndOfFile = false;
-    this->m_debug.nextStatementReadSuccess = false;
-    this->m_debug.nextStatementOpcode = 0;
-    this->m_debug.nextCmdOpcode = 0;
-    this->m_debug.nextStatementIndex = 0;
-    this->m_debug.stackSize = 0;
+    this->setDebugTelemetry(false, false, 0, 0, 0, 0);
 }
 
 void FpySequencer::parametersLoaded() {

@@ -129,6 +129,8 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
                                        Fw::MemAllocator& allocator,  //!< memory allocator
                                        const BufferBins& bins        //!< Set of user bins
 ) {
+    // setup may only be called once per cleanup
+    FW_ASSERT(not this->m_setup);
     this->m_mgrId = mgrId;
     this->m_memId = memId;
     this->m_allocator = &allocator;
@@ -136,6 +138,15 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
     (void)memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
 
     this->m_bufferBins = bins;
+
+    // bins must be ordered by ascending buffer size for best-fit allocation
+    Fw::Buffer::SizeType lastSize = 0;
+    for (U16 bin = 0; bin < BUFFERMGR_MAX_NUM_BINS; bin++) {
+        if (this->m_bufferBins.bins[bin].numBuffers) {
+            FW_ASSERT(this->m_bufferBins.bins[bin].bufferSize >= lastSize, static_cast<FwAssertArgType>(bin));
+            lastSize = this->m_bufferBins.bins[bin].bufferSize;
+        }
+    }
 
     // compute the amount of memory needed
     FwSizeType memorySize = 0;  // track needed memory
@@ -201,6 +212,7 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
               static_cast<FwAssertArgType>(this->m_numStructs));
     // indicate setup is done
     this->m_setup = true;
+    this->m_cleaned = false;
 }
 
 void BufferManagerComponentImpl ::schedIn_handler(const FwIndexType portNum, U32 context) {

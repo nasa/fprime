@@ -39,6 +39,10 @@
 #define UTILS_TYPES_SPSC_QUEUE_HPP
 
 #include <atomic>
+#include <limits>
+
+#include <Fw/FPrimeBasicTypes.hpp>
+#include <Fw/Types/Assert.hpp>
 
 namespace Types {
 

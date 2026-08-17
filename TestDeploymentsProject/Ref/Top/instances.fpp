@@ -58,7 +58,7 @@ module Ref {
     stack size Default.STACK_SIZE \
     priority 20
 
-  instance dpDemo: Ref.DpDemo base id 0x0A10 \
+  instance dpDemo: Ref.DpDemo base id 0x10007000 \
     queue size Default.QUEUE_SIZE \
     stack size Default.STACK_SIZE \
     priority 19

@@ -59,7 +59,7 @@ void PrmDbImpl::configureLoadSandbox(const char* directory) {
 void PrmDbImpl::readParamFile() {
     // Assumed to run at initialization time
     // State should be IDLE upon entry
-    FW_ASSERT(static_cast<FwAssertArgType>(m_state == PrmDbFileLoadState::IDLE));
+    FW_ASSERT(m_state == PrmDbFileLoadState::IDLE, static_cast<FwAssertArgType>(m_state.e));
 
     // Clear databases
     this->clearDb(PrmDbType::DB_ACTIVE);

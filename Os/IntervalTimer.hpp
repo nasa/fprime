@@ -67,8 +67,9 @@ class IntervalTimer {
     RawTime m_startTime;  //!< Stored start time
     RawTime m_stopTime;   //!< Stored end time
 
-    //! Disabled (private) Copy Constructor
-    IntervalTimer(IntervalTimer&);
+  public:
+    //! Deleted copy constructor
+    IntervalTimer(const IntervalTimer&) = delete;
 
 };  // class IntervalTimer
 

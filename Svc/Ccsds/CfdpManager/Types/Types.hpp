@@ -242,13 +242,13 @@ struct CfdpTxnFilenames {
  * Records CFDP operations for future reference
  */
 struct History {
-    CfdpTxnFilenames fnames; /**< \brief file names associated with this history entry */
-    CListNode cl_node;       /**< \brief for connection to a CList */
-    Direction dir;           /**< \brief direction of this history entry */
-    TxnStatus txn_stat;      /**< \brief final status of operation */
-    EntityId src_eid;        /**< \brief the source eid of the transaction */
-    EntityId peer_eid;       /**< \brief peer_eid is always the "other guy", same src_eid for RX */
-    TransactionSeq seq_num;  /**< \brief transaction identifier, stays constant for entire transfer */
+    CfdpTxnFilenames fnames;                             /**< \brief file names associated with this history entry */
+    CListNode cl_node{};                                 /**< \brief for connection to a CList */
+    Direction dir{Direction::DIRECTION_RX};              /**< \brief direction of this history entry */
+    TxnStatus txn_stat{TxnStatus::TXN_STATUS_UNDEFINED}; /**< \brief final status of operation */
+    EntityId src_eid{0};                                 /**< \brief the source eid of the transaction */
+    EntityId peer_eid{0};      /**< \brief peer_eid is always the "other guy", same src_eid for RX */
+    TransactionSeq seq_num{0}; /**< \brief transaction identifier, stays constant for entire transfer */
 };
 
 /**
@@ -277,17 +277,17 @@ struct CfdpChunkWrapper {
  */
 struct Playback {
     Os::Directory dir;
-    Class::T cfdp_class;
+    Class::T cfdp_class{Class::CLASS_1};
     CfdpTxnFilenames fnames;
-    U16 num_ts; /**< \brief number of transactions */
-    U8 priority;
-    EntityId dest_id;
+    U16 num_ts{0}; /**< \brief number of transactions */
+    U8 priority{0};
+    EntityId dest_id{0};
     Fw::StringTemplate<MaxFilePathSize> pending_file;
 
-    bool busy;
-    bool diropen;
-    Keep::T keep;
-    bool counted;
+    bool busy{false};
+    bool diropen{false};
+    Keep::T keep{Keep::DELETE};
+    bool counted{false};
 };
 
 /**
@@ -299,11 +299,11 @@ struct CfdpPollDir {
     Playback pb;         /**< \brief State of the current playback requests */
     Timer intervalTimer; /**< \brief Timer object used to poll the directory */
 
-    U32 intervalSec; /**< \brief number of seconds to wait before trying a new directory */
+    U32 intervalSec{0}; /**< \brief number of seconds to wait before trying a new directory */
 
-    U8 priority;        /**< \brief priority to use when placing transactions on the pending queue */
-    Class::T cfdpClass; /**< \brief the CFDP class to send */
-    EntityId destEid;   /**< \brief destination entity id */
+    U8 priority{0};                     /**< \brief priority to use when placing transactions on the pending queue */
+    Class::T cfdpClass{Class::CLASS_1}; /**< \brief the CFDP class to send */
+    EntityId destEid{0};                /**< \brief destination entity id */
 
     Fw::String srcDir; /**< \brief path to source dir */
     Fw::String dstDir; /**< \brief path to destination dir */

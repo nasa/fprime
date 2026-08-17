@@ -2,6 +2,9 @@
 #include <Fw/Time/TimeInterval.hpp>
 
 namespace Fw {
+
+// Microseconds-per-second invariant shared by carry logic and range checks
+constexpr U32 MICROSECONDS_PER_SECOND = 1000000;
 TimeInterval::TimeInterval(const TimeInterval& other) : Serializable() {
     this->m_val = other.m_val;
 }
@@ -16,7 +19,7 @@ TimeInterval::TimeInterval(const Time& start, const Time& end)
 
 void TimeInterval::set(U32 seconds, U32 useconds) {
     // Assert microseconds portion is less than 10^6
-    FW_ASSERT(useconds < 1000000, static_cast<FwAssertArgType>(useconds));
+    FW_ASSERT(useconds < MICROSECONDS_PER_SECOND, static_cast<FwAssertArgType>(useconds));
     this->m_val.set(seconds, useconds);
 }
 
@@ -63,8 +66,17 @@ SerializeStatus TimeInterval::serializeTo(SerialBufferBase& buffer, Fw::Endianne
 }
 
 SerializeStatus TimeInterval::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
-    // Use TimeIntervalValue's built-in deserialization
-    return this->m_val.deserializeFrom(buffer, mode);
+    // Deserialize to a temporary and validate the microseconds invariant before committing
+    TimeIntervalValue value;
+    const SerializeStatus status = value.deserializeFrom(buffer, mode);
+    if (status != FW_SERIALIZE_OK) {
+        return status;
+    }
+    if (value.get_useconds() >= MICROSECONDS_PER_SECOND) {
+        return FW_DESERIALIZE_FORMAT_ERROR;
+    }
+    this->m_val = value;
+    return FW_SERIALIZE_OK;
 }
 
 U32 TimeInterval::getSeconds() const {
@@ -97,10 +109,10 @@ TimeInterval::Comparison TimeInterval ::compare(const TimeInterval& time1, const
 TimeInterval TimeInterval ::add(const TimeInterval& a, const TimeInterval& b) {
     U32 seconds = a.getSeconds() + b.getSeconds();
     U32 uSeconds = a.getUSeconds() + b.getUSeconds();
-    FW_ASSERT(uSeconds < 1999999);
-    if (uSeconds >= 1000000) {
+    FW_ASSERT(uSeconds < 2 * MICROSECONDS_PER_SECOND - 1);
+    if (uSeconds >= MICROSECONDS_PER_SECOND) {
         ++seconds;
-        uSeconds -= 1000000;
+        uSeconds -= MICROSECONDS_PER_SECOND;
     }
     TimeInterval c(seconds, uSeconds);
     return c;
@@ -116,25 +128,25 @@ TimeInterval TimeInterval ::sub(const TimeInterval& t1,  //!< TimeInterval t1
     U32 uSeconds;
     if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
         seconds--;
-        uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
+        uSeconds = minuend.getUSeconds() + MICROSECONDS_PER_SECOND - subtrahend.getUSeconds();
     } else {
         uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
     }
     // Microseconds portion must be normalized to less than 10^6
-    FW_ASSERT(uSeconds < 1000000, static_cast<FwAssertArgType>(uSeconds));
+    FW_ASSERT(uSeconds < MICROSECONDS_PER_SECOND, static_cast<FwAssertArgType>(uSeconds));
     return TimeInterval(seconds, static_cast<U32>(uSeconds));
 }
 
 void TimeInterval::add(U32 seconds, U32 useconds) {
     U32 newSeconds = this->m_val.get_seconds() + seconds;
     U32 newUSeconds = this->m_val.get_useconds() + useconds;
-    FW_ASSERT(newUSeconds < 1999999, static_cast<FwAssertArgType>(newUSeconds));
-    if (newUSeconds >= 1000000) {
+    FW_ASSERT(newUSeconds < 2 * MICROSECONDS_PER_SECOND - 1, static_cast<FwAssertArgType>(newUSeconds));
+    if (newUSeconds >= MICROSECONDS_PER_SECOND) {
         newSeconds += 1;
-        newUSeconds -= 1000000;
+        newUSeconds -= MICROSECONDS_PER_SECOND;
     }
     // Assert microseconds portion is less than 10^6
-    FW_ASSERT(newUSeconds < 1000000, static_cast<FwAssertArgType>(newUSeconds));
+    FW_ASSERT(newUSeconds < MICROSECONDS_PER_SECOND, static_cast<FwAssertArgType>(newUSeconds));
     this->m_val.set(newSeconds, newUSeconds);
 }
 

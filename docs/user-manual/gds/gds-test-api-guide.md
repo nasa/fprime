@@ -235,8 +235,8 @@ ne_pred = predicates.not_equal_to(50)
 # a valid value must be within the range 0 to 100 and must not be 50.
 and_pred = predicates.satisfies_all([rng_pred, ne_pred])
 
-or_pred(15) # evaluates True
-or_pred(50) # evaluates False
+and_pred(15) # evaluates True
+and_pred(50) # evaluates False
 ```
 
 

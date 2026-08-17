@@ -89,7 +89,13 @@ class SetConstIterator {
     // ----------------------------------------------------------------------
 
     //! Copy assignment operator
-    SetConstIterator& operator=(const SetConstIterator&) = default;
+    SetConstIterator& operator=(const SetConstIterator& it) {
+        if (this != &it) {
+            this->~SetConstIterator();
+            new (this) SetConstIterator(it);
+        }
+        return *this;
+    }
 
     //! Equality comparison operator
     bool operator==(const SetConstIterator& it) const {

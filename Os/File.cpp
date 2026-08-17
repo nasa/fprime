@@ -297,7 +297,7 @@ File::Status File::readline(U8* buffer, FwSizeType& size, File::WaitType wait) {
     File::Status status = this->position(original_location);
     if (status != Os::File::Status::OP_OK) {
         size = 0;
-        (void)this->seek_absolute(original_location);
+        // Position unknown: leave the file pointer untouched
         return status;
     }
     FwSizeType read = 0;

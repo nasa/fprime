@@ -92,8 +92,8 @@ void ByteStreamBufferAdapterTester ::test_byte_stream_out() {
 
     // Verify data send error
     ASSERT_EVENTS_DataSendError_SIZE(1);
-    // Should still see ByteStreamStatus::OTHER_ERROR (3) as error code
-    ASSERT_EVENTS_DataSendError(0, 3);
+    // Should still see ByteStreamStatus::OTHER_ERROR as error code
+    ASSERT_EVENTS_DataSendError(0, Drv::ByteStreamStatus::OTHER_ERROR);
     // Should not see any DriverNotReady events since the driver is ready
     ASSERT_EVENTS_DriverNotReady_SIZE(0);
     ASSERT_from_toByteStreamDriver_SIZE(1);

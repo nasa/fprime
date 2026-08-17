@@ -8,6 +8,7 @@
 #include <Fw/Logger/Logger.hpp>
 #include <Fw/Types/Assert.hpp>
 #include <Os/File.hpp>
+#include <Os/Mutex.hpp>
 #include <Svc/EventManager/EventManager.hpp>
 
 namespace Svc {
@@ -47,9 +48,11 @@ void EventManager::LogRecv_handler(FwIndexType portNum,
     }
 
     // check ID filters
-    this->m_idFilterLock.lock();
-    Fw::Success findStatus = m_filteredIDs.find(id);
-    this->m_idFilterLock.unLock();
+    Fw::Success findStatus;
+    {
+        Os::ScopeLock lock(this->m_idFilterLock);
+        findStatus = m_filteredIDs.find(id);
+    }
     if ((findStatus == Fw::Success::SUCCESS) && (severity != Fw::LogSeverity::FATAL)) {
         return;
     }
@@ -117,9 +120,11 @@ void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcod
                                             const Enabled& idEnabled  //!< ID filter state
 ) {
     if (Enabled::ENABLED == idEnabled.e) {  // add ID
-        this->m_idFilterLock.lock();
-        const Fw::Success insertStatus = m_filteredIDs.insert(ID);
-        this->m_idFilterLock.unLock();
+        Fw::Success insertStatus;
+        {
+            Os::ScopeLock lock(this->m_idFilterLock);
+            insertStatus = m_filteredIDs.insert(ID);
+        }
         if (insertStatus == Fw::Success::SUCCESS) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             this->log_ACTIVITY_HI_ID_FILTER_ENABLED(ID);
@@ -129,9 +134,11 @@ void EventManager::SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcod
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         }
     } else {  // remove ID
-        this->m_idFilterLock.lock();
-        const Fw::Success removeStatus = m_filteredIDs.remove(ID);
-        this->m_idFilterLock.unLock();
+        Fw::Success removeStatus;
+        {
+            Os::ScopeLock lock(this->m_idFilterLock);
+            removeStatus = m_filteredIDs.remove(ID);
+        }
         if (removeStatus == Fw::Success::SUCCESS) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             this->log_ACTIVITY_HI_ID_FILTER_REMOVED(ID);
@@ -159,13 +166,14 @@ void EventManager::DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The o
     // a sync input that may re-enter this component and take the same lock
     FwEventIdType filteredIDs[TELEM_ID_FILTER_SIZE];
     FwSizeType numFilteredIDs = 0;
-    this->m_idFilterLock.lock();
-    for (FwEventIdType ID : m_filteredIDs) {
-        FW_ASSERT(numFilteredIDs < TELEM_ID_FILTER_SIZE, static_cast<FwAssertArgType>(numFilteredIDs));
-        filteredIDs[numFilteredIDs] = ID;
-        numFilteredIDs++;
+    {
+        Os::ScopeLock lock(this->m_idFilterLock);
+        for (FwEventIdType ID : m_filteredIDs) {
+            FW_ASSERT(numFilteredIDs < TELEM_ID_FILTER_SIZE, static_cast<FwAssertArgType>(numFilteredIDs));
+            filteredIDs[numFilteredIDs] = ID;
+            numFilteredIDs++;
+        }
     }
-    this->m_idFilterLock.unLock();
     for (FwSizeType i = 0; i < numFilteredIDs; i++) {
         this->log_ACTIVITY_HI_ID_FILTER_ENABLED(filteredIDs[i]);
     }

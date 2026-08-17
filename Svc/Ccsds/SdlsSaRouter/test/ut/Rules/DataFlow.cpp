@@ -19,11 +19,11 @@ namespace Ccsds {
 // DataFlow.ProcessedData
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::DataFlow__ProcessedData__precondition() const {
+bool SdlsSaRouterTester::DataFlow_ProcessedData_precondition() const {
     return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
-void SdlsSaRouterTester::DataFlow__ProcessedData__action() {
+void SdlsSaRouterTester::DataFlow_ProcessedData_action() {
     this->clearHistory();
 
     U8* const storage = this->getFreePoolBuffer();
@@ -48,11 +48,11 @@ void SdlsSaRouterTester::DataFlow__ProcessedData__action() {
 // DataFlow.ProcessedDataReturn
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::DataFlow__ProcessedDataReturn__precondition() const {
+bool SdlsSaRouterTester::DataFlow_ProcessedDataReturn_precondition() const {
     return !this->shadow.shadow_outstanding.empty();
 }
 
-void SdlsSaRouterTester::DataFlow__ProcessedDataReturn__action() {
+void SdlsSaRouterTester::DataFlow_ProcessedDataReturn_action() {
     this->clearHistory();
 
     const U8* const storage = this->shadow.shadow_getRandomOutstanding();
@@ -84,11 +84,11 @@ void SdlsSaRouterTester::DataFlow__ProcessedDataReturn__action() {
 // DataFlow.BufferReturn
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::DataFlow__BufferReturn__precondition() const {
+bool SdlsSaRouterTester::DataFlow_BufferReturn_precondition() const {
     return true;
 }
 
-void SdlsSaRouterTester::DataFlow__BufferReturn__action() {
+void SdlsSaRouterTester::DataFlow_BufferReturn_action() {
     this->clearHistory();
 
     const FwIndexType portNum = static_cast<FwIndexType>(STest::Pick::lowerUpper(0, SdlsCfg::SaRouterPortCount - 1));

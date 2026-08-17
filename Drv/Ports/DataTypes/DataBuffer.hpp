@@ -8,7 +8,8 @@ namespace Drv {
 
 class DataBuffer : public Fw::LinearBufferBase {
   public:
-    enum { DATA_BUFFER_SIZE = 256, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(DATA_BUFFER_SIZE) };
+    static constexpr FwSizeType DATA_BUFFER_SIZE = 256;
+    static constexpr FwSizeType SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(DATA_BUFFER_SIZE);
 
     DataBuffer(const U8* args, FwSizeType size);
     DataBuffer();

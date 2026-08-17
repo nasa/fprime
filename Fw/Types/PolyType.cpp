@@ -6,9 +6,7 @@ namespace Fw {
 
 // U8 methods
 
-PolyType::PolyType() {
-    this->m_dataType = TYPE_NOTYPE;
-}
+PolyType::PolyType() : m_dataType(TYPE_NOTYPE), m_val() {}
 
 PolyType::PolyType(U8 val) {
     this->m_dataType = TYPE_U8;
@@ -545,38 +543,50 @@ SerializeStatus PolyType::deserializeFrom(SerialBufferBase& buffer, Fw::Endianne
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     } else {
-        this->m_dataType = static_cast<Type>(des);
-        // switch on type
-        switch (this->m_dataType) {
+        // Validate the type tag before committing it to the member
+        const Type desType = static_cast<Type>(des);
+        switch (desType) {
             case TYPE_U8:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.u8Val, mode);
             case TYPE_I8:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.i8Val, mode);
 #if FW_HAS_16_BIT
             case TYPE_U16:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.u16Val, mode);
             case TYPE_I16:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.i16Val, mode);
 #endif
 #if FW_HAS_32_BIT
             case TYPE_U32:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.u32Val, mode);
             case TYPE_I32:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.i32Val, mode);
 #endif
 #if FW_HAS_64_BIT
             case TYPE_U64:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.u64Val, mode);
             case TYPE_I64:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.i64Val, mode);
 #endif
             case TYPE_F64:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.f64Val, mode);
             case TYPE_F32:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.f32Val, mode);
             case TYPE_BOOL:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.boolVal, mode);
             case TYPE_PTR:
+                this->m_dataType = desType;
                 return buffer.deserializeTo(this->m_val.ptrVal, mode);
             default:
                 return FW_DESERIALIZE_FORMAT_ERROR;

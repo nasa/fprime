@@ -90,7 +90,13 @@ class MapConstIterator {
     // ----------------------------------------------------------------------
 
     //! Copy assignment operator
-    MapConstIterator& operator=(const MapConstIterator&) = default;
+    MapConstIterator& operator=(const MapConstIterator& it) {
+        if (this != &it) {
+            this->~MapConstIterator();
+            new (this) MapConstIterator(it);
+        }
+        return *this;
+    }
 
     //! Equality comparison operator
     bool operator==(const MapConstIterator& it) const {

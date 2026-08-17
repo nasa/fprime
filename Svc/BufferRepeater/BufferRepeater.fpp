@@ -30,7 +30,7 @@ module Svc {
                           ) \
         severity warning high \
         id 0 \
-        format "Failed to allocate {} byte buffer for port {}"
+        format "Port {} failed to allocate a buffer of {} bytes"
 
 
     @ Hard failure in allocation
@@ -40,6 +40,6 @@ module Svc {
                           ) \
         severity fatal \
         id 1 \
-        format "Failed to allocate {} byte buffer for port {}"
+        format "Port {} failed to allocate a buffer of {} bytes"
   }
 }

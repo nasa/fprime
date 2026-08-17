@@ -19,8 +19,8 @@ using Svc::Ccsds::ApidManagerTester;
 // incrementing counts on subsequent calls.
 TEST(ApidManager, GetSequenceCounts) {
     ApidManagerTester tester;
-    ApidManagerTester::GetSeqCount__NewOk ruleNewOk;
-    ApidManagerTester::GetSeqCount__Existing ruleExisting;
+    ApidManagerTester::GetSeqCount_NewOk ruleNewOk;
+    ApidManagerTester::GetSeqCount_Existing ruleExisting;
     ruleNewOk.apply(tester);     // register a new APID; expect count 0
     ruleExisting.apply(tester);  // retrieve count for the same APID; expect count 1
 }
@@ -29,9 +29,9 @@ TEST(ApidManager, GetSequenceCounts) {
 // and fires UnexpectedSequenceCount on a mismatch.
 TEST(ApidManager, ValidateSequenceCounts) {
     ApidManagerTester tester;
-    ApidManagerTester::GetSeqCount__NewOk ruleNewOk;
-    ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
-    ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
+    ApidManagerTester::GetSeqCount_NewOk ruleNewOk;
+    ApidManagerTester::ValidateSeqCount_Ok ruleValidateOk;
+    ApidManagerTester::ValidateSeqCount_Failure ruleValidateFailure;
     ruleNewOk.apply(tester);            // register an APID so validate rules can fire
     ruleValidateOk.apply(tester);       // validate correct count; no event expected
     ruleValidateFailure.apply(tester);  // validate wrong count; event expected
@@ -41,10 +41,10 @@ TEST(ApidManager, ValidateSequenceCounts) {
 TEST(ApidManager, RandomizedTesting) {
     U32 numRulesToApply = 10000;
     ApidManagerTester tester;
-    ApidManagerTester::GetSeqCount__Existing ruleGetExisting;
-    ApidManagerTester::GetSeqCount__NewOk ruleGetNewOk;
-    ApidManagerTester::ValidateSeqCount__Ok ruleValidateOk;
-    ApidManagerTester::ValidateSeqCount__Failure ruleValidateFailure;
+    ApidManagerTester::GetSeqCount_Existing ruleGetExisting;
+    ApidManagerTester::GetSeqCount_NewOk ruleGetNewOk;
+    ApidManagerTester::ValidateSeqCount_Ok ruleValidateOk;
+    ApidManagerTester::ValidateSeqCount_Failure ruleValidateFailure;
 
     STest::Rule<ApidManagerTester>* rules[] = {
         &ruleGetExisting,

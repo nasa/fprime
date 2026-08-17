@@ -2,6 +2,9 @@
 #include <Fw/Time/Time.hpp>
 
 namespace Fw {
+
+// Microseconds-per-second invariant shared by carry logic and range checks
+constexpr U32 MICROSECONDS_PER_SECOND = 1000000;
 const Time ZERO_TIME = Time();
 
 Time::Time() : m_val() {
@@ -35,7 +38,7 @@ Time::Time(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 u
 
 void Time::set(TimeBase timeBase, FwTimeContextStoreType context, U32 seconds, U32 useconds) {
     // Assert microseconds portion is less than 10^6
-    FW_ASSERT(useconds < 1000000, static_cast<FwAssertArgType>(useconds));
+    FW_ASSERT(useconds < MICROSECONDS_PER_SECOND, static_cast<FwAssertArgType>(useconds));
     this->m_val.set(timeBase, context, seconds, useconds);
 }
 
@@ -47,9 +50,9 @@ void Fw::Time::set(F64 seconds) {
     U32 parsedSeconds = this->parseSeconds(seconds);
     U32 parsedUseconds = this->parseUSeconds(seconds);
     // parseUSeconds rounds up to a whole second at 999999.5 or above; carry it as add() does
-    if (parsedUseconds >= 1000000) {
+    if (parsedUseconds >= MICROSECONDS_PER_SECOND) {
         parsedSeconds++;
-        parsedUseconds -= 1000000;
+        parsedUseconds -= MICROSECONDS_PER_SECOND;
     }
     this->set(parsedSeconds, parsedUseconds);
 }
@@ -118,7 +121,7 @@ SerializeStatus Time::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness m
         return status;
     }
     // Reject out-of-range microseconds rather than admitting a value that asserts on later use
-    if (value.get_useconds() >= 1000000) {
+    if (value.get_useconds() >= MICROSECONDS_PER_SECOND) {
         return FW_DESERIALIZE_FORMAT_ERROR;
     }
     this->m_val = value;
@@ -178,10 +181,10 @@ Time Time ::add(const Time& a, const Time& b) {
 
     U32 seconds = a.getSeconds() + b.getSeconds();
     U32 uSeconds = a.getUSeconds() + b.getUSeconds();
-    FW_ASSERT(uSeconds < 1999999);
-    if (uSeconds >= 1000000) {
+    FW_ASSERT(uSeconds < 2 * MICROSECONDS_PER_SECOND - 1);
+    if (uSeconds >= MICROSECONDS_PER_SECOND) {
         ++seconds;
-        uSeconds -= 1000000;
+        uSeconds -= MICROSECONDS_PER_SECOND;
     }
 
     // Return a time context of 0 if they do not match
@@ -207,7 +210,7 @@ Time Time ::sub(const Time& minuend,    //!< Time minuend
     U32 uSeconds;
     if (subtrahend.getUSeconds() > minuend.getUSeconds()) {
         seconds--;
-        uSeconds = minuend.getUSeconds() + 1000000 - subtrahend.getUSeconds();
+        uSeconds = minuend.getUSeconds() + MICROSECONDS_PER_SECOND - subtrahend.getUSeconds();
     } else {
         uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
     }
@@ -240,10 +243,10 @@ U32 Fw::Time::parseUSeconds(F64 seconds) {
 void Time::add(U32 seconds, U32 useconds) {
     U32 newSeconds = this->m_val.get_seconds() + seconds;
     U32 newUSeconds = this->m_val.get_useconds() + useconds;
-    FW_ASSERT(newUSeconds < 1999999, static_cast<FwAssertArgType>(newUSeconds));
-    if (newUSeconds >= 1000000) {
+    FW_ASSERT(newUSeconds < 2 * MICROSECONDS_PER_SECOND - 1, static_cast<FwAssertArgType>(newUSeconds));
+    if (newUSeconds >= MICROSECONDS_PER_SECOND) {
         newSeconds += 1;
-        newUSeconds -= 1000000;
+        newUSeconds -= MICROSECONDS_PER_SECOND;
     }
     this->set(newSeconds, newUSeconds);
 }

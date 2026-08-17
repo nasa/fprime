@@ -11,6 +11,8 @@
 
 namespace Svc {
 
+constexpr FwIndexType ComStub::RETRY_LIMIT;
+
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------

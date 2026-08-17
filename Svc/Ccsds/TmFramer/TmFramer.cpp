@@ -26,7 +26,9 @@ TmFramer ::~TmFramer() {}
 // ----------------------------------------------------------------------
 
 void TmFramer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const ComCfg::FrameContext& context) {
-    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE,
+    // Reserve room for the minimum-size idle packet appended by fill_with_idle_packet
+    FW_ASSERT(data.getSize() <= ComCfg::TmFrameFixedSize - TMHeader::SERIALIZED_SIZE - TMTrailer::SERIALIZED_SIZE -
+                                    (SpacePacketHeader::SERIALIZED_SIZE + 1),
               static_cast<FwAssertArgType>(data.getSize()));
     FW_ASSERT(this->m_bufferState == BufferOwnershipState::OWNED, static_cast<FwAssertArgType>(this->m_bufferState));
 

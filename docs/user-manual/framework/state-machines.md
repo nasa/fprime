@@ -152,7 +152,7 @@ formal parameter of type _paramType(T)_.
 Each state machine base class has the following member variables:
 
 * A member `m_id` of type `FwEnumStoreType`.
-This variable records the current state of the state machine,
+This variable records the identifier of the state machine instance,
 represented as `FwEnumStoreType`.
 The initial value is zero.
 

@@ -25,7 +25,10 @@ Console::Console(const Console& other)
 Console& Console::operator=(const Console& other) {
     FW_ASSERT(&this->m_delegate == reinterpret_cast<Console*>(&this->m_handle_storage[0]));
     if (this != &other) {
-        this->m_delegate = *ConsoleInterface::getDelegate(m_handle_storage, &other.m_delegate);
+        // Destroy the existing delegate before constructing a new one over its storage
+        this->m_delegate.~ConsoleInterface();
+        (void)ConsoleInterface::getDelegate(m_handle_storage, &other.m_delegate);
+        FW_ASSERT(&this->m_delegate == reinterpret_cast<ConsoleInterface*>(&this->m_handle_storage[0]));
     }
     return *this;
 }

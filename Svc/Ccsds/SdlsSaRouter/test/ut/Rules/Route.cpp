@@ -18,11 +18,11 @@ namespace Ccsds {
 // Route.KnownSa
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::Route__KnownSa__precondition() const {
+bool SdlsSaRouterTester::Route_KnownSa_precondition() const {
     return true;
 }
 
-void SdlsSaRouterTester::Route__KnownSa__action() {
+void SdlsSaRouterTester::Route_KnownSa_action() {
     this->clearHistory();
 
     const FwSizeType pick = this->pickConnectedEntry();
@@ -45,11 +45,11 @@ void SdlsSaRouterTester::Route__KnownSa__action() {
 // Route.UnknownSa
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::Route__UnknownSa__precondition() const {
+bool SdlsSaRouterTester::Route_UnknownSa_precondition() const {
     return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
-void SdlsSaRouterTester::Route__UnknownSa__action() {
+void SdlsSaRouterTester::Route_UnknownSa_action() {
     this->clearHistory();
 
     // Pick an SA outside the configured map
@@ -75,11 +75,11 @@ void SdlsSaRouterTester::Route__UnknownSa__action() {
 // Route.UnknownPort
 // ----------------------------------------------------------------------
 
-bool SdlsSaRouterTester::Route__UnknownPort__precondition() const {
+bool SdlsSaRouterTester::Route_UnknownPort_precondition() const {
     return this->shadow.shadow_outstanding.size() < SdlsCfg::SaRouterMaxOutstandingBuffers;
 }
 
-void SdlsSaRouterTester::Route__UnknownPort__action() {
+void SdlsSaRouterTester::Route_UnknownPort_action() {
     this->clearHistory();
 
     // Find an SA routed to the unconnected port

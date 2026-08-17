@@ -45,7 +45,7 @@ module Drv {
 
     @Data Send
     event DataSendError(
-                          stat: I32 
+                          stat: Drv.ByteStreamStatus
                         ) \
       severity warning low \
       id 1 \
@@ -53,7 +53,7 @@ module Drv {
 
     @Data Receive
     event DataReceiveError(
-                          stat: I32 
+                          stat: Drv.ByteStreamStatus
                         ) \
       severity warning low \
       id 2 \

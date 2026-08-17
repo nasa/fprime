@@ -13,6 +13,8 @@
 #ifndef AssertFatalAdapter_HPP
 #define AssertFatalAdapter_HPP
 
+#include <atomic>
+
 #include "Svc/AssertFatalAdapter/AssertFatalAdapterComponentAc.hpp"
 
 namespace Svc {
@@ -68,7 +70,7 @@ class AssertFatalAdapterComponentImpl final : public AssertFatalAdapterComponent
     };
 
     AssertFatalAdapter m_adapter;
-    FwSizeType m_assertCount;
+    std::atomic<FwSizeType> m_assertCount;
 };
 
 }  // end namespace Svc

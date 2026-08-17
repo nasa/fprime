@@ -195,8 +195,7 @@ void Transaction::sTick(I32* cont /* unused */) {
                 // HOLD state is the normal path to recycle transaction objects, not an error
                 // Canceled transactions timing out while waiting for EOF-ACK is also normal
                 // inactivity is abnormal in any other state
-                if (this->m_state != TxnState::TXN_STATE_HOLD && this->m_state == TxnState::TXN_STATE_S2 &&
-                    !this->m_flags.com.canceled) {
+                if (this->m_state == TxnState::TXN_STATE_S2 && !this->m_flags.com.canceled) {
                     this->m_cfdpManager->log_WARNING_LO_TxInactivityTimeout(this->getClass(), this->m_history->src_eid,
                                                                             this->m_history->seq_num);
                     this->m_engine->setTxnStatus(this, TxnStatus::TXN_STATUS_INACTIVITY_DETECTED);

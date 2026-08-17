@@ -104,7 +104,7 @@ void TcDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data, const Co
 
     U16 transmitted_crc = trailer.get_fecf();
     if (transmitted_crc != computed_crc) {
-        this->log_WARNING_HI_InvalidCrc(computed_crc, transmitted_crc);
+        this->log_WARNING_HI_InvalidCrc(transmitted_crc, computed_crc);
         this->errorNotifyHelper(Ccsds::FrameError::TC_INVALID_CRC);
         this->dataReturnOut_out(0, data, context);  // drop the frame
         return;

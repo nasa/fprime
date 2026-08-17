@@ -11,9 +11,10 @@
 #ifndef PLATFORM_TYPES_H_
 #define PLATFORM_TYPES_H_
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
+#include <inttypes.h>
 #include <stdint.h>
 
 // Linux/Darwin definitions for pointer have various sizes across platforms
@@ -40,7 +41,7 @@ typedef uint8_t PlatformPointerCastType;
 #error "Expected __SIZEOF_POINTER__ to be one of 8, 4, 2, or 1"
 #endif
 
-#ifdef  __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

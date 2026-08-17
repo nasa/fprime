@@ -48,14 +48,14 @@ void ActivePhaser ::register_phased(FwIndexType port, U32 length, U32 start, U32
     // Additional checks when there are previous entries
     if (m_state.used > 0) {
         const PhaserStateEntry& previous = m_state.entries[m_state.used - 1];
+        // Calculate the next start position when DONT_CARE is specified, then check ordering
+        start = (start == DONT_CARE) ? previous.start + previous.length : start;
         FW_ASSERT((previous.start + previous.length) <= start, static_cast<FwAssertArgType>(m_state.used),
                   static_cast<FwAssertArgType>(previous.start),
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
         FW_ASSERT(previous.start < start, static_cast<FwAssertArgType>(m_state.used),
                   static_cast<FwAssertArgType>(previous.start),
                   static_cast<FwAssertArgType>(start));  // Must start after previous entry
-        // Calculate the next start position when DONT_CARE is specified.
-        start = (start == DONT_CARE) ? previous.start + previous.length : start;
     }
     // If start is DONT_CARE and does not inherit from the end of the previous task,
     // which happens when registering the first task, set start to 0.

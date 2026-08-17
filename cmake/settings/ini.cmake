@@ -37,11 +37,16 @@ function(ini_to_cache)
     if (DEFINED FPRIME_SETTINGS_FILE AND NOT FPRIME_SETTINGS_FILE STREQUAL "${CALCULATED_INI}")
         message(FATAL_ERROR "Provided settings.ini '${FPRIME_SETTINGS_FILE}' not expected file '${CALCULATED_INI}'")
     endif()
+    # Pass the toolchain as a single argument even if the path contains spaces
+    set(INI_TOOLCHAIN_ARGS)
+    if (CMAKE_TOOLCHAIN_FILE)
+        list(APPEND INI_TOOLCHAIN_ARGS "${CMAKE_TOOLCHAIN_FILE}")
+    endif()
     # Execute the process
     execute_process(COMMAND ${PYTHON}
         "${FPRIME__INTERNAL_SETTINGS_CMAKE_DIRECTORY}/ini-to-stdio.py"
         "${CALCULATED_INI}"
-        ${CMAKE_TOOLCHAIN_FILE}
+        ${INI_TOOLCHAIN_ARGS}
         OUTPUT_VARIABLE INI_OUTPUT
         OUTPUT_STRIP_TRAILING_WHITESPACE
         RESULT_VARIABLE RESULT_CODE

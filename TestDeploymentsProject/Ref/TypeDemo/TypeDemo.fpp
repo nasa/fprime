@@ -126,7 +126,7 @@ module Ref {
         event ExtraChoicesEv(choices: TooManyChoices) severity activity high format "Choices: {}"
 
         @ Too many enumeration parameter via Array
-        param EXTRA_CHOICES_PRM: ManyChoices
+        param EXTRA_CHOICES_PRM: TooManyChoices
 
         #####
         # Variations on a basic structure

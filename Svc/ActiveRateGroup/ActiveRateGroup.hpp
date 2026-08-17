@@ -15,6 +15,8 @@
 #ifndef SVC_ACTIVERATEGROUP_HPP
 #define SVC_ACTIVERATEGROUP_HPP
 
+#include <atomic>
+
 #include <Fw/DataStructures/Array.hpp>
 #include <Fw/Deprecate.hpp>
 #include <Svc/ActiveRateGroup/ActiveRateGroupComponentAc.hpp>
@@ -117,7 +119,7 @@ class ActiveRateGroup final : public ActiveRateGroupComponentBase {
 
     U32 m_cycles;                          //!< cycles executed
     U32 m_maxTime;                         //!< maximum execution time in microseconds
-    volatile bool m_cycleStarted;          //!< indicate that cycle has started. Used to detect overruns.
+    std::atomic<bool> m_cycleStarted;      //!< indicate that cycle has started. Used to detect overruns.
     U32 m_contexts[CONNECTION_COUNT_MAX];  //!< Must match number of output ports
     FwIndexType m_numContexts;             //!< Number of contexts passed in by user
     FwIndexType m_overrunThrottle;         //!< throttle value for overrun events

@@ -24,7 +24,7 @@ TEST(SdlsSaRouter, RouteKnownSa) {
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-002");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-003");
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::Route__KnownSa rule;
+    SdlsSaRouterTester::Route_KnownSa rule;
     rule.apply(tester);
 }
 
@@ -35,8 +35,8 @@ TEST(SdlsSaRouter, RouteErrors) {
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-005");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-006");
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::Route__UnknownSa ruleUnknownSa;
-    SdlsSaRouterTester::Route__UnknownPort ruleUnknownPort;
+    SdlsSaRouterTester::Route_UnknownSa ruleUnknownSa;
+    SdlsSaRouterTester::Route_UnknownPort ruleUnknownPort;
     ruleUnknownSa.apply(tester);
     ruleUnknownPort.apply(tester);
 }
@@ -48,8 +48,8 @@ TEST(SdlsSaRouter, ProcessedDataAndReturn) {
     COMMENT("Forward processed data upstream and route its ownership return to the originating port.");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::DataFlow__ProcessedData ruleData;
-    SdlsSaRouterTester::DataFlow__ProcessedDataReturn ruleReturn;
+    SdlsSaRouterTester::DataFlow_ProcessedData ruleData;
+    SdlsSaRouterTester::DataFlow_ProcessedDataReturn ruleReturn;
     ruleData.apply(tester);
     ruleReturn.apply(tester);
 }
@@ -60,7 +60,7 @@ TEST(SdlsSaRouter, BufferReturn) {
     COMMENT("Pass iv/data buffers from downstream crypto components upstream for deallocation.");
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-004");
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::DataFlow__BufferReturn rule;
+    SdlsSaRouterTester::DataFlow_BufferReturn rule;
     rule.apply(tester);
 }
 
@@ -107,12 +107,12 @@ TEST(SdlsSaRouter, RandomizedTesting) {
     REQUIREMENT("SVC-CCSDS-SDLS-SA-ROUTER-006");
     const U32 numRulesToApply = 10000;
     SdlsSaRouterTester tester;
-    SdlsSaRouterTester::Route__KnownSa ruleKnownSa;
-    SdlsSaRouterTester::Route__UnknownSa ruleUnknownSa;
-    SdlsSaRouterTester::Route__UnknownPort ruleUnknownPort;
-    SdlsSaRouterTester::DataFlow__ProcessedData ruleData;
-    SdlsSaRouterTester::DataFlow__ProcessedDataReturn ruleReturn;
-    SdlsSaRouterTester::DataFlow__BufferReturn ruleBufferReturn;
+    SdlsSaRouterTester::Route_KnownSa ruleKnownSa;
+    SdlsSaRouterTester::Route_UnknownSa ruleUnknownSa;
+    SdlsSaRouterTester::Route_UnknownPort ruleUnknownPort;
+    SdlsSaRouterTester::DataFlow_ProcessedData ruleData;
+    SdlsSaRouterTester::DataFlow_ProcessedDataReturn ruleReturn;
+    SdlsSaRouterTester::DataFlow_BufferReturn ruleBufferReturn;
 
     STest::Rule<SdlsSaRouterTester>* rules[] = {
         &ruleKnownSa, &ruleUnknownSa, &ruleUnknownPort, &ruleData, &ruleReturn, &ruleBufferReturn,

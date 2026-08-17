@@ -42,7 +42,8 @@ class ArraySetOrMapImpl final {
         ConstIterator() {}
 
         //! Constructor providing the implementation
-        ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl) : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {}
+        explicit ConstIterator(const ArraySetOrMapImpl<KE, VN>& impl)
+            : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {}
 
         //! Copy constructor
         ConstIterator(const ConstIterator& it)

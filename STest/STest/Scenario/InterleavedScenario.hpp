@@ -20,113 +20,104 @@
 
 namespace STest {
 
-  //! Randomly interleave several scenarios
-  template<typename State> class InterleavedScenario :
-    public Scenario<State>
-  {
+//! Randomly interleave several scenarios
+template <typename State>
+class InterleavedScenario : public Scenario<State> {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors and destructors
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct an InterleavedScenario object
+    InterleavedScenario(const char* const a_name,     //!< The name of the scenario
+                        Scenario<State>** scenarios,  //!< An array containing the scenarios to interleave
+                        const U32 size                //!< The size of the array
+                        )
+        : Scenario<State>(a_name), scenarioArray(new ScenarioArray<State>(scenarios, size)), seen(new bool[size]) {}
 
-      // ----------------------------------------------------------------------
-      // Constructors and destructors
-      // ----------------------------------------------------------------------
+    //! Deleted copy constructor
+    InterleavedScenario(const InterleavedScenario&) = delete;
 
-      //! Construct an InterleavedScenario object
-      InterleavedScenario(
-          const char *const a_name, //!< The name of the scenario
-          Scenario<State>** scenarios, //!< An array containing the scenarios to interleave
-          const U32 size //!< The size of the array
-      ) :
-        Scenario<State>(a_name),
-        scenarioArray(new ScenarioArray<State>(scenarios, size)),
-        seen(new bool[size])
-      {
+    //! Deleted copy assignment operator
+    InterleavedScenario& operator=(const InterleavedScenario&) = delete;
 
-      }
-
-      //! Destroy an InterleavedScenario object
-      ~InterleavedScenario() {
+    //! Destroy an InterleavedScenario object
+    ~InterleavedScenario() {
         if (this->scenarioArray != nullptr) {
-          delete this->scenarioArray;
+            delete this->scenarioArray;
         }
         if (this->seen != nullptr) {
-          delete[] this->seen;
+            delete[] this->seen;
         }
-      }
+    }
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Scenario implementation
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Scenario implementation
-      // ----------------------------------------------------------------------
-
-      //! The virtual implementation of reset required by Scenario
-      void reset_Scenario() {
+    //! The virtual implementation of reset required by Scenario
+    void reset_Scenario() {
         assert(this->scenarioArray != nullptr);
         this->scenarioArray->reset();
-      }
+    }
 
-      //! The virtual implementation of nextRule required by Scenario
-      //! \return The next rule, assuming isDone() is false, or nullptr if none
-      Rule<State>* nextRule_Scenario(
-          State& state //!< The system state
-      ) {
+    //! The virtual implementation of nextRule required by Scenario
+    //! \return The next rule, assuming isDone() is false, or nullptr if none
+    Rule<State>* nextRule_Scenario(State& state  //!< The system state
+    ) {
         assert(this->scenarioArray != nullptr);
         Rule<State>* rule = nullptr;
         memset(this->seen, 0, this->scenarioArray->size * sizeof(bool));
         U32 numSeen = 0;
-        Scenario<State>* *const scenarios =
-          this->scenarioArray->getScenarios();
+        Scenario<State>** const scenarios = this->scenarioArray->getScenarios();
         U32 numIterations = 0;
         const U32 maxIterations = 0xFFFFFFFFU;
         while (numSeen < this->scenarioArray->size) {
-          assert(numIterations < maxIterations);
-          ++numIterations;
-          const U32 i = this->scenarioArray->getRandomIndex();
-          if (this->seen[i]) {
-            continue;
-          }
-          rule = scenarios[i]->nextRule(state);
-          if (rule != nullptr) {
-            break;
-          }
-          this->seen[i] = true;
-          ++numSeen;
+            assert(numIterations < maxIterations);
+            ++numIterations;
+            const U32 i = this->scenarioArray->getRandomIndex();
+            if (this->seen[i]) {
+                continue;
+            }
+            rule = scenarios[i]->nextRule(state);
+            if (rule != nullptr) {
+                break;
+            }
+            this->seen[i] = true;
+            ++numSeen;
         }
         return rule;
-      }
+    }
 
-      //! The virtual implementation of isDone required by Scenario
-      //! \return Whether the scenario is done
-      bool isDone_Scenario() const {
+    //! The virtual implementation of isDone required by Scenario
+    //! \return Whether the scenario is done
+    bool isDone_Scenario() const {
         bool result = true;
-        Scenario<State>* *const scenarios =
-          this->scenarioArray->getScenarios();
+        Scenario<State>** const scenarios = this->scenarioArray->getScenarios();
         assert(scenarios != nullptr);
         for (U32 i = 0; i < scenarioArray->size; ++i) {
-          assert(scenarios[i] != nullptr);
-          if (!scenarios[i]->isDone()) {
-            result = false;
-            break;
-          }
+            assert(scenarios[i] != nullptr);
+            if (!scenarios[i]->isDone()) {
+                result = false;
+                break;
+            }
         }
         return result;
-      }
+    }
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected member variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Protected member variables
-      // ----------------------------------------------------------------------
+    //! The scenarios to interleave
+    ScenarioArray<State>* scenarioArray;
 
-      //! The scenarios to interleave
-      ScenarioArray<State>* scenarioArray;
+    //! An array to store the scenarios seen
+    bool* seen;
+};
 
-      //! An array to store the scenarios seen
-      bool* seen;
-
-  };
-
-}
+}  // namespace STest
 
 #endif

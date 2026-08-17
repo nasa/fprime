@@ -79,12 +79,12 @@ def list_pages(section_dir: Path):
         if entry.is_dir():
             sub_index = entry / "index.md"
             if sub_index.exists():
-                title = read_h1(sub_index)
+                title = read_h1(sub_index) or entry.name
                 title = reformat_entry(title)
                 yield title, f"{section_dir.name}/{entry.name}/index.md"
             # else: probably an asset dir (img/, _includes/, etc.) — skip
         elif entry.suffix == ".md":
-            title = read_h1(entry)
+            title = read_h1(entry) or entry.stem
             title = reformat_entry(title)
             yield title, f"{section_dir.name}/{entry.name}"
 

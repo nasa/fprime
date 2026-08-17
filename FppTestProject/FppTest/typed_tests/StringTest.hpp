@@ -93,7 +93,7 @@ TYPED_TEST_P(StringTest, AssignmentOp) {
     ASSERT_EQ(&str1, &strRef);
 
     str2 = str1;
-    ASSERT_STREQ(str1.toChar(), str1.toChar());
+    ASSERT_STREQ(str2.toChar(), str1.toChar());
 
     // Fw::StringBase assignment
     Fw::StringBase& sbRef = str1;

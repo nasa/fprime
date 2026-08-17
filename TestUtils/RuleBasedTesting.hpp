@@ -23,9 +23,9 @@
 //      FW_RBT_DEFINE_RULE(MyComponentTester, GroupName, RuleName);
 //
 //    This creates inside the tester class:
-//      bool GroupName__RuleName__precondition() const;
-//      void GroupName__RuleName__action();
-//      struct GroupName__RuleName : STest::Rule<MyComponentTester> { ... };
+//      bool GroupName_RuleName_precondition() const;
+//      void GroupName_RuleName_action();
+//      struct GroupName_RuleName : STest::Rule<MyComponentTester> { ... };
 //
 // 2. Implement the method bodies in .cpp files (and add *.cpp to CMakeLists.txt !!)
 //
@@ -33,7 +33,7 @@
 //    the tester class:
 //
 //      MyComponentTester tester;
-//      MyComponentTester::GroupName__RuleName rule;
+//      MyComponentTester::GroupName_RuleName rule;
 //      rule.apply(tester);
 //
 // ======================================================================
@@ -47,9 +47,9 @@
 //! \def FW_RBT_DEFINE_RULE
 //!
 //! Defines everything needed for one rule inside a TestState class:
-//! 1) GroupName__RuleName__precondition() const             — declaration
-//! 2) GroupName__RuleName__action()                         — declaration
-//! 3) struct GroupName__RuleName : STest::Rule<TEST_STATE>  — definition
+//! 1) GroupName_RuleName_precondition() const             — declaration
+//! 2) GroupName_RuleName_action()                         — declaration
+//! 3) struct GroupName_RuleName : STest::Rule<TEST_STATE>  — definition
 //!
 //! To use:
 //! 1. Place the macro inside the TestState class body for each rule (usually
@@ -60,17 +60,17 @@
 //! \param GROUP_NAME   Rule group: appears in method names and the rule label
 //! \param RULE_NAME    Rule variant: appears in method names and the rule label
 // -----------------------------------------------------------------------
-#define FW_RBT_DEFINE_RULE(TEST_STATE, GROUP_NAME, RULE_NAME)                                \
-    bool GROUP_NAME##__##RULE_NAME##__precondition() const;                                  \
-    void GROUP_NAME##__##RULE_NAME##__action();                                              \
-    struct GROUP_NAME##__##RULE_NAME : public STest::Rule<TEST_STATE> {                      \
-        GROUP_NAME##__##RULE_NAME() : STest::Rule<TEST_STATE>(#GROUP_NAME "." #RULE_NAME) {} \
-        bool precondition(const TEST_STATE& testState) override {                            \
-            return testState.GROUP_NAME##__##RULE_NAME##__precondition();                    \
-        }                                                                                    \
-        void action(TEST_STATE& testState) override {                                        \
-            testState.GROUP_NAME##__##RULE_NAME##__action();                                 \
-        }                                                                                    \
+#define FW_RBT_DEFINE_RULE(TEST_STATE, GROUP_NAME, RULE_NAME)                               \
+    bool GROUP_NAME##_##RULE_NAME##_precondition() const;                                   \
+    void GROUP_NAME##_##RULE_NAME##_action();                                               \
+    struct GROUP_NAME##_##RULE_NAME : public STest::Rule<TEST_STATE> {                      \
+        GROUP_NAME##_##RULE_NAME() : STest::Rule<TEST_STATE>(#GROUP_NAME "." #RULE_NAME) {} \
+        bool precondition(const TEST_STATE& testState) override {                           \
+            return testState.GROUP_NAME##_##RULE_NAME##_precondition();                     \
+        }                                                                                   \
+        void action(TEST_STATE& testState) override {                                       \
+            testState.GROUP_NAME##_##RULE_NAME##_action();                                  \
+        }                                                                                   \
     }
 
 #endif

@@ -84,10 +84,16 @@ void FileDispatcher ::ENABLE_DISPATCH_cmdHandler(FwOpcodeType opCode,
                                                  const Fw::Enabled& enable) {
     FW_ASSERT(this->m_dispatchTable.numEntries <= Svc::FileDispatcherCfg::FILE_DISPATCHER_MAX_TABLE_SIZE,
               static_cast<FwAssertArgType>(this->m_dispatchTable.numEntries));
+    bool matched = false;
     for (FwSizeType i = 0; i < this->m_dispatchTable.numEntries; i++) {
         if (this->m_dispatchTable.entries[i].port == file_type) {
             this->m_dispatchTable.entries[i].enabled = (enable == Fw::Enabled::ENABLED);
+            matched = true;
         }
+    }
+    if (!matched) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::VALIDATION_ERROR);
+        return;
     }
     this->log_ACTIVITY_HI_FileDispatchState(file_type, enable);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

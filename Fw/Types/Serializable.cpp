@@ -248,14 +248,19 @@ LinearBufferBase::serializeFrom(const U8* buff,
                                 Endianness endianMode) {  // First serialize length
     SerializeStatus stat;
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
+        // Check total room (length token + payload) before any write; subtraction avoids overflow
+        if ((this->getSerializeSizeLeft() < static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType))) ||
+            (this->getSerializeSizeLeft() - static_cast<Serializable::SizeType>(sizeof(FwSizeStoreType)) < length)) {
+            return FW_SERIALIZE_NO_ROOM_LEFT;
+        }
         stat = this->serializeFrom(static_cast<FwSizeStoreType>(length), endianMode);
         if (stat != FW_SERIALIZE_OK) {
             return stat;
         }
     }
 
-    // make sure we have enough space
-    if (this->m_serLoc + length > this->m_capacity) {
+    // make sure we have enough space (subtraction form is overflow-proof)
+    if (length > this->m_capacity - this->m_serLoc) {
         return FW_SERIALIZE_NO_ROOM_LEFT;
     }
 
@@ -556,7 +561,6 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8
                                                                               Serialization::t lengthMode,
                                                                               Endianness endianMode) {
     U8* buffAddr = this->m_buffAddr;
-    FW_ASSERT(buffAddr != nullptr);
 
     if (lengthMode == Serialization::INCLUDE_LENGTH) {
         FwSizeStoreType storedLength = 0;
@@ -574,6 +578,7 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8
 
         if (storedLength > 0) {
             FW_ASSERT(buff != nullptr);
+            FW_ASSERT(buffAddr != nullptr);
         }
         (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(storedLength));
 
@@ -587,6 +592,7 @@ FW_SERIALIZE_FORCE_INLINE_LBB SerializeStatus LinearBufferBase::deserializeTo(U8
 
         if (length > 0) {
             FW_ASSERT(buff != nullptr);
+            FW_ASSERT(buffAddr != nullptr);
         }
         (void)memcpy(buff, &buffAddr[this->m_deserLoc], static_cast<size_t>(length));
     }

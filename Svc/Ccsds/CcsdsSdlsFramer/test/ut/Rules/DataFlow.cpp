@@ -22,11 +22,11 @@ namespace Ccsds {
 // DataFlow.EncryptedData
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::DataFlow__EncryptedData__precondition() const {
+bool CcsdsSdlsFramerTester::DataFlow_EncryptedData_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::DataFlow__EncryptedData__action() {
+void CcsdsSdlsFramerTester::DataFlow_EncryptedData_action() {
     this->clearHistory();
 
     const U16 sa = static_cast<U16>(STest::Pick::lowerUpper(0, 0xFFFF));
@@ -66,11 +66,11 @@ void CcsdsSdlsFramerTester::DataFlow__EncryptedData__action() {
 // DataFlow.AllocationFailure
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::DataFlow__AllocationFailure__precondition() const {
+bool CcsdsSdlsFramerTester::DataFlow_AllocationFailure_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::DataFlow__AllocationFailure__action() {
+void CcsdsSdlsFramerTester::DataFlow_AllocationFailure_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];
@@ -103,11 +103,11 @@ void CcsdsSdlsFramerTester::DataFlow__AllocationFailure__action() {
 // DataFlow.DataReturn
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::DataFlow__DataReturn__precondition() const {
+bool CcsdsSdlsFramerTester::DataFlow_DataReturn_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::DataFlow__DataReturn__action() {
+void CcsdsSdlsFramerTester::DataFlow_DataReturn_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];
@@ -125,11 +125,11 @@ void CcsdsSdlsFramerTester::DataFlow__DataReturn__action() {
 // DataFlow.BufferReturn
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::DataFlow__BufferReturn__precondition() const {
+bool CcsdsSdlsFramerTester::DataFlow_BufferReturn_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::DataFlow__BufferReturn__action() {
+void CcsdsSdlsFramerTester::DataFlow_BufferReturn_action() {
     this->clearHistory();
 
     U8 storage[TEST_BUFFER_SIZE];
@@ -147,11 +147,11 @@ void CcsdsSdlsFramerTester::DataFlow__BufferReturn__action() {
 // DataFlow.ComStatus
 // ----------------------------------------------------------------------
 
-bool CcsdsSdlsFramerTester::DataFlow__ComStatus__precondition() const {
+bool CcsdsSdlsFramerTester::DataFlow_ComStatus_precondition() const {
     return true;
 }
 
-void CcsdsSdlsFramerTester::DataFlow__ComStatus__action() {
+void CcsdsSdlsFramerTester::DataFlow_ComStatus_action() {
     this->clearHistory();
 
     Fw::Success condition = (STest::Pick::lowerUpper(0, 1) == 0) ? Fw::Success::SUCCESS : Fw::Success::FAILURE;

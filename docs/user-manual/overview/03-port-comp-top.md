@@ -76,7 +76,7 @@ mutex shared by all guarded ports in the component. For an *asynchronous port*, 
 dispatched on a thread that empties the queue.
 
 Should the user wish to understand what types of ports are available per component type, please review the section on
-[Port Kinds Available to Each Component Type](#port-kinds-available-to-each-component-type)
+[Port Kinds Available to Each Component Type](#port-kinds-available-to-each-component-kind)
 
 ### Port Call Serialization
 
@@ -141,7 +141,7 @@ then produces the telemetry. It does not directly interact with other components
 ### Component Kinds
 
 There are three kinds of components: passive, queued, and active. These components allow for different functionality in
-the system and may use different port input types [see below](#port-kinds-available-to-each-component-type). Each kind
+the system and may use different port input types [see below](#port-kinds-available-to-each-component-kind). Each kind
 of component is defined below:
 
 **Passive component:** has no thread and cannot support asynchronous port invocations nor asynchronous commands. Port

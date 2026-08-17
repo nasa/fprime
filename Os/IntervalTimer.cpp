@@ -4,7 +4,7 @@
 // ======================================================================
 
 #include <Os/IntervalTimer.hpp>
-#include <cstring>
+#include <limits>
 
 namespace Os {
 

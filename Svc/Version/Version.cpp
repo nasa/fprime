@@ -68,7 +68,9 @@ void Version ::setVersion_handler(FwIndexType portNum,
     this->verId_db[ver_slot].set_version_enum(version_id);
     this->verId_db[ver_slot].set_version_value(version_string);
     this->verId_db[ver_slot].set_version_status(status);
-    this->m_num_custom_elements++;
+    if (this->m_num_custom_elements < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS) {
+        this->m_num_custom_elements++;
+    }
     this->customVersion_tlm(ver_slot);
 }
 
@@ -184,8 +186,7 @@ void Version ::libraryVersion_tlm() {
 
 // Send all events and tlm (if verbosity is enabled) for custom versions
 void Version ::customVersion_tlm_all() {
-    for (U8 i = 0;
-         (m_enable == true) && (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
+    for (U8 i = 0; (m_num_custom_elements != 0) && (i < Svc::VersionCfg::VersionEnum::NUM_CONSTANTS); i++) {
         Version::customVersion_tlm(VersionSlot(i));
     }
 }

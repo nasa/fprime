@@ -17,11 +17,11 @@ namespace Ccsds {
 // GetSeqCount.Existing
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::GetSeqCount__Existing__precondition() const {
+bool ApidManagerTester::GetSeqCount_Existing_precondition() const {
     return !this->shadow.shadow_seqCounts.empty();
 }
 
-void ApidManagerTester::GetSeqCount__Existing__action() {
+void ApidManagerTester::GetSeqCount_Existing_action() {
     this->clearHistory();
 
     ComCfg::Apid::T apid = this->shadow.shadow_getRandomTrackedApid();
@@ -36,11 +36,11 @@ void ApidManagerTester::GetSeqCount__Existing__action() {
 // GetSeqCount.NewOk
 // ----------------------------------------------------------------------
 
-bool ApidManagerTester::GetSeqCount__NewOk__precondition() const {
+bool ApidManagerTester::GetSeqCount_NewOk_precondition() const {
     return !this->shadow.shadow_isTableFull;
 }
 
-void ApidManagerTester::GetSeqCount__NewOk__action() {
+void ApidManagerTester::GetSeqCount_NewOk_action() {
     this->clearHistory();
 
     // Use constexpr local to avoid ODR-use of the static constexpr member

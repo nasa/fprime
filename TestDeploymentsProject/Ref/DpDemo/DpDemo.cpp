@@ -28,24 +28,43 @@ DpDemo ::~DpDemo() {}
 void DpDemo ::run_handler(FwIndexType portNum, U32 context) {
     // If a Data product is being generated, store records
     if (this->dpInProgress) {
-        this->dpContainer.serializeRecord_StringRecord(Fw::String("Test string"));
-        this->dpContainer.serializeRecord_BooleanRecord(true);
-        this->dpContainer.serializeRecord_I32Record(-100);
-        this->dpContainer.serializeRecord_F64Record(1.25);
-        this->dpContainer.serializeRecord_U32ArrayRecord(DpDemo_U32Array({1, 2, 3, 4, 5}));
-        this->dpContainer.serializeRecord_F32ArrayRecord(DpDemo_F32Array({1.1f, 2.2f, 3.3f}));
-        this->dpContainer.serializeRecord_BooleanArrayRecord(DpDemo_BooleanArray({true, false}));
+        Fw::SerializeStatus stat = Fw::FW_SERIALIZE_OK;
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_StringRecord(Fw::String("Test string"));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_BooleanRecord(true);
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_I32Record(-100);
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_F64Record(1.25);
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_U32ArrayRecord(DpDemo_U32Array({1, 2, 3, 4, 5}));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_F32ArrayRecord(DpDemo_F32Array({1.1f, 2.2f, 3.3f}));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_BooleanArrayRecord(DpDemo_BooleanArray({true, false}));
+        }
         // Array Records
         // Array record of strings
         Fw::String str0("String array element 0");
         Fw::String str1("String array element 1");
         Fw::String str2("String array element 2");
         const Fw::StringBase* strings[3] = {&str0, &str1, &str2};
-        this->dpContainer.serializeRecord_StringArrayRecord(strings, 3);
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_StringArrayRecord(strings, 3);
+        }
         // Array record of arrays
         const DpDemo_StringArray arrayArray[1] = {DpDemo_StringArray(
             {Fw::String("0 - String array record element 0"), Fw::String("0 - String array record element 1")})};
-        this->dpContainer.serializeRecord_ArrayArrayRecord(arrayArray, 1);
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_ArrayArrayRecord(arrayArray, 1);
+        }
         // Array record of structs
         const DpDemo_StructWithStringMembers structArray[2] = {
             DpDemo_StructWithStringMembers(Fw::String("0 - String member"),
@@ -54,40 +73,55 @@ void DpDemo ::run_handler(FwIndexType portNum, U32 context) {
             DpDemo_StructWithStringMembers(Fw::String("1 - String member"),
                                            DpDemo_StringArray({Fw::String("1 - String array element 0"),
                                                                Fw::String("1 - String array element 1")}))};
-        this->dpContainer.serializeRecord_StructArrayRecord(structArray, 2);
-        this->dpContainer.serializeRecord_ArrayOfStringArrayRecord(DpDemo_ArrayOfStringArray(
-            {DpDemo_StringArray({Fw::String("0 - String array element 0"), Fw::String("0 - String array element 1")}),
-             DpDemo_StringArray({Fw::String("1 - String array element 0"), Fw::String("1 - String array element 1")}),
-             DpDemo_StringArray(
-                 {Fw::String("2 - String array element 0"), Fw::String("2 - String array element 1")})}));
-        this->dpContainer.serializeRecord_ArrayOfStructsRecord(DpDemo_ArrayOfStructs(
-            {DpDemo_StructWithStringMembers(Fw::String("0 - String member"),
-                                            DpDemo_StringArray({Fw::String("0 - String array element 0"),
-                                                                Fw::String("0 - String array element 1")})),
-             DpDemo_StructWithStringMembers(Fw::String("1 - String member"),
-                                            DpDemo_StringArray({Fw::String("1 - String array element 0"),
-                                                                Fw::String("1 - String array element 1")})),
-             DpDemo_StructWithStringMembers(Fw::String("2 - String member"),
-                                            DpDemo_StringArray({Fw::String("2 - String array element 0"),
-                                                                Fw::String("2 - String array element 1")}))}));
-        this->dpContainer.serializeRecord_EnumArrayRecord(
-            DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}));
-        this->dpContainer.serializeRecord_StructWithEverythingRecord(DpDemo_StructWithEverything(
-            -1, 2.5, Fw::String("String Member"), false, this->selectedColor,
-            {DpDemo_U32Array({1, 2, 3, 4, 5}), DpDemo_U32Array({6, 7, 8, 9, 10})}, DpDemo_F32Array({4.4f, 5.5f, 6.6f}),
-            DpDemo_U32Array({6, 7, 8, 9, 10}),
-            DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}),
-            DpDemo_StringArray({Fw::String("String array element 0"), Fw::String("String array element 1")}),
-            DpDemo_BooleanArray({true, false}),
-            DpDemo_StructWithStringMembers(
-                Fw::String("String member"),
-                DpDemo_StringArray({Fw::String("String array element 0"), Fw::String("String array element 1")})),
-            DpDemo_ArrayOfStringArray({DpDemo_StringArray({Fw::String("0 - String array element 0"),
-                                                           Fw::String("0 - String array element 1")}),
-                                       DpDemo_StringArray({Fw::String("1 - String array element 0"),
-                                                           Fw::String("1 - String array element 1")}),
-                                       DpDemo_StringArray({Fw::String("2 - String array element 0"),
-                                                           Fw::String("2 - String array element 1")})})));
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_StructArrayRecord(structArray, 2);
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_ArrayOfStringArrayRecord(
+                DpDemo_ArrayOfStringArray({DpDemo_StringArray({Fw::String("0 - String array element 0"),
+                                                               Fw::String("0 - String array element 1")}),
+                                           DpDemo_StringArray({Fw::String("1 - String array element 0"),
+                                                               Fw::String("1 - String array element 1")}),
+                                           DpDemo_StringArray({Fw::String("2 - String array element 0"),
+                                                               Fw::String("2 - String array element 1")})}));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_ArrayOfStructsRecord(DpDemo_ArrayOfStructs(
+                {DpDemo_StructWithStringMembers(Fw::String("0 - String member"),
+                                                DpDemo_StringArray({Fw::String("0 - String array element 0"),
+                                                                    Fw::String("0 - String array element 1")})),
+                 DpDemo_StructWithStringMembers(Fw::String("1 - String member"),
+                                                DpDemo_StringArray({Fw::String("1 - String array element 0"),
+                                                                    Fw::String("1 - String array element 1")})),
+                 DpDemo_StructWithStringMembers(Fw::String("2 - String member"),
+                                                DpDemo_StringArray({Fw::String("2 - String array element 0"),
+                                                                    Fw::String("2 - String array element 1")}))}));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_EnumArrayRecord(
+                DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}));
+        }
+        if (stat == Fw::FW_SERIALIZE_OK) {
+            stat = this->dpContainer.serializeRecord_StructWithEverythingRecord(DpDemo_StructWithEverything(
+                -1, 2.5, Fw::String("String Member"), false, this->selectedColor,
+                {DpDemo_U32Array({1, 2, 3, 4, 5}), DpDemo_U32Array({6, 7, 8, 9, 10})},
+                DpDemo_F32Array({4.4f, 5.5f, 6.6f}), DpDemo_U32Array({6, 7, 8, 9, 10}),
+                DpDemo_EnumArray({DpDemo_ColorEnum::RED, DpDemo_ColorEnum::GREEN, DpDemo_ColorEnum::BLUE}),
+                DpDemo_StringArray({Fw::String("String array element 0"), Fw::String("String array element 1")}),
+                DpDemo_BooleanArray({true, false}),
+                DpDemo_StructWithStringMembers(
+                    Fw::String("String member"),
+                    DpDemo_StringArray({Fw::String("String array element 0"), Fw::String("String array element 1")})),
+                DpDemo_ArrayOfStringArray({DpDemo_StringArray({Fw::String("0 - String array element 0"),
+                                                               Fw::String("0 - String array element 1")}),
+                                           DpDemo_StringArray({Fw::String("1 - String array element 0"),
+                                                               Fw::String("1 - String array element 1")}),
+                                           DpDemo_StringArray({Fw::String("2 - String array element 0"),
+                                                               Fw::String("2 - String array element 1")})})));
+        }
+        if (stat == Fw::FW_SERIALIZE_NO_ROOM_LEFT) {
+            this->log_WARNING_LO_DpRecordFull(this->numRecords, static_cast<U32>(this->dpContainer.getDataSize()));
+        }
         this->log_ACTIVITY_LO_DpComplete(this->numRecords);
         this->cleanupAndSendDp();
     }

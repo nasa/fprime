@@ -70,8 +70,7 @@ bool LinuxUartDriver::open(const char* const device,
     if (-1 == stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
 
@@ -97,8 +96,7 @@ bool LinuxUartDriver::open(const char* const device,
     if (-1 == stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
 
@@ -110,8 +108,7 @@ bool LinuxUartDriver::open(const char* const device,
         if (-1 == stat) {
             (void)close(fd);
             Fw::LogStringArg _arg = device;
-            Fw::LogStringArg _err = strerror(errno);
-            this->log_WARNING_HI_OpenError(_arg, fd, _err);
+            this->log_WARNING_HI_ConfigError(_arg, errno);
             return false;
         }
 
@@ -122,8 +119,7 @@ bool LinuxUartDriver::open(const char* const device,
         if (-1 == stat) {
             (void)close(fd);
             Fw::LogStringArg _arg = device;
-            Fw::LogStringArg _err = strerror(errno);
-            this->log_WARNING_HI_OpenError(_arg, fd, _err);
+            this->log_WARNING_HI_ConfigError(_arg, errno);
             return false;
         }
     }
@@ -209,8 +205,7 @@ bool LinuxUartDriver::open(const char* const device,
     if (-1 == stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
 
@@ -251,16 +246,14 @@ bool LinuxUartDriver::open(const char* const device,
     if (stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
     stat = cfsetospeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
 
@@ -280,8 +273,7 @@ bool LinuxUartDriver::open(const char* const device,
     if (-1 == stat) {
         (void)close(fd);
         Fw::LogStringArg _arg = device;
-        Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, fd, _err);
+        this->log_WARNING_HI_ConfigError(_arg, errno);
         return false;
     }
 

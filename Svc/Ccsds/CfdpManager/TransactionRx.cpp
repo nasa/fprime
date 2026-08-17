@@ -564,61 +564,45 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
     return ret;
 }
 
-Status::T Transaction::rSubstateRecvEof(const Fw::Buffer& buffer) {
+Status::T Transaction::rSubstateRecvEof(const EofPdu& eof) {
     Status::T ret = Cfdp::Status::SUCCESS;
 
-    // Deserialize EOF PDU from buffer
-    EofPdu eof;
-    // const_cast: Fw::SerialBuffer requires non-const U8* even for deserialization (read-only)
-    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
-    sb.setBuffLen(buffer.getSize());
+    // NOTE: Engine::recvEof() currently always returns SUCCESS, so the failure branch is
+    // omitted here. Once recvEof() performs real EOF-level validation (see the TLV
+    // "Future enhancement" TODO in Engine::recvEof) and can return an error status, add an
+    // else branch that emits log_WARNING_LO_RxInvalidEofPdu, increments recvErrors, and sets
+    // Cfdp::Status::REC_PDU_BAD_EOF_ERROR for the failure case.
+    if (!this->m_engine->recvEof(this, eof)) {
+        /* this function is only entered for PDUs identified as EOF type */
+        ConditionCode cc = eof.getConditionCode();
 
-    Fw::SerializeStatus deserStatus = eof.deserializeFrom(sb);
-    if (deserStatus != Fw::FW_SERIALIZE_OK) {
-        this->m_cfdpManager->log_WARNING_LO_FailEofPduDeserialization(this->getChannelId(),
-                                                                      static_cast<I32>(deserStatus));
-        ret = Cfdp::Status::REC_PDU_BAD_EOF_ERROR;
-    }
+        /* Only check size if MD received and EOF doesn't have a non-zero condition code (e.g., don't check size for
+         * canceled transactions) */
+        if (this->m_flags.rx.md_recv && (cc == ConditionCode::CONDITION_CODE_NO_ERROR) &&
+            (eof.getFileSize() != this->m_fsize)) {
+            this->m_cfdpManager->log_WARNING_LO_RxFileSizeMismatch(
+                this->getClass(), this->m_history->src_eid, this->m_history->seq_num, this->m_fsize, eof.getFileSize());
+            this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
+            ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
+        }
 
-    if (ret == Cfdp::Status::SUCCESS) {
-        // NOTE: Engine::recvEof() currently always returns SUCCESS, so the failure branch is
-        // omitted here. Once recvEof() performs real EOF-level validation (see the TLV
-        // "Future enhancement" TODO in Engine::recvEof) and can return an error status, add an
-        // else branch that emits log_WARNING_LO_RxInvalidEofPdu, increments recvErrors, and sets
-        // Cfdp::Status::REC_PDU_BAD_EOF_ERROR for the failure case.
-        if (!this->m_engine->recvEof(this, eof)) {
-            /* this function is only entered for PDUs identified as EOF type */
-            ConditionCode cc = eof.getConditionCode();
+        /* Log condition code if non-zero (cancel or error) - applies to both Class 1 and Class 2 */
+        if (cc != ConditionCode::CONDITION_CODE_NO_ERROR) {
+            /* Set transaction status from condition code to prevent completion event */
+            this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(static_cast<I32>(cc)));
 
-            /* Only check size if MD received and EOF doesn't have a non-zero condition code (e.g., don't check size for
-             * canceled transactions) */
-            if (this->m_flags.rx.md_recv && (cc == ConditionCode::CONDITION_CODE_NO_ERROR) &&
-                (eof.getFileSize() != this->m_fsize)) {
-                this->m_cfdpManager->log_WARNING_LO_RxFileSizeMismatch(this->getClass(), this->m_history->src_eid,
-                                                                       this->m_history->seq_num, this->m_fsize,
-                                                                       eof.getFileSize());
-                this->m_cfdpManager->incrementFaultFileSizeMismatch(this->m_chan_num);
-                ret = Cfdp::Status::REC_PDU_FSIZE_MISMATCH_ERROR;
-            }
+            if (cc == ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
+                /* Increment receive EOF cancellation counter (normal operation) */
+                this->m_cfdpManager->incrementRecvEofCanceled(this->m_chan_num);
 
-            /* Log condition code if non-zero (cancel or error) - applies to both Class 1 and Class 2 */
-            if (cc != ConditionCode::CONDITION_CODE_NO_ERROR) {
-                /* Set transaction status from condition code to prevent completion event */
-                this->m_engine->setTxnStatus(this, static_cast<TxnStatus>(static_cast<I32>(cc)));
+                this->m_cfdpManager->log_ACTIVITY_HI_RxEofCancelReceived(this->getClass(), this->m_history->src_eid,
+                                                                         this->m_history->seq_num);
+            } else {
+                /* Increment RX EOF error counter (protocol error) */
+                this->m_cfdpManager->incrementFaultRxEofError(this->m_chan_num);
 
-                if (cc == ConditionCode::CONDITION_CODE_CANCEL_REQUEST_RECEIVED) {
-                    /* Increment receive EOF cancellation counter (normal operation) */
-                    this->m_cfdpManager->incrementRecvEofCanceled(this->m_chan_num);
-
-                    this->m_cfdpManager->log_ACTIVITY_HI_RxEofCancelReceived(this->getClass(), this->m_history->src_eid,
-                                                                             this->m_history->seq_num);
-                } else {
-                    /* Increment RX EOF error counter (protocol error) */
-                    this->m_cfdpManager->incrementFaultRxEofError(this->m_chan_num);
-
-                    this->m_cfdpManager->log_WARNING_LO_RxEofWithError(this->getClass(), this->m_history->src_eid,
-                                                                       this->m_history->seq_num, static_cast<U8>(cc));
-                }
+                this->m_cfdpManager->log_WARNING_LO_RxEofWithError(this->getClass(), this->m_history->src_eid,
+                                                                   this->m_history->seq_num, static_cast<U8>(cc));
             }
         }
     }
@@ -642,7 +626,7 @@ void Transaction::r1SubstateRecvEof(const Fw::Buffer& buffer) {
         return;
     }
 
-    Status::T ret = this->rSubstateRecvEof(buffer);
+    Status::T ret = this->rSubstateRecvEof(eof);
     U32 crc = eof.getChecksum();
     ConditionCode cc = eof.getConditionCode();
 
@@ -682,7 +666,7 @@ void Transaction::r2SubstateRecvEof(const Fw::Buffer& buffer) {
             return;
         }
 
-        ret = this->rSubstateRecvEof(buffer);
+        ret = this->rSubstateRecvEof(eof);
 
         /* did receiving EOF succeed? */
         if (ret == Cfdp::Status::SUCCESS) {

@@ -7,6 +7,8 @@
 #ifndef Drv_AsyncByteStreamBufferAdapter_HPP
 #define Drv_AsyncByteStreamBufferAdapter_HPP
 
+#include <atomic>
+
 #include "Drv/AsyncByteStreamBufferAdapter/AsyncByteStreamBufferAdapterComponentAc.hpp"
 
 namespace Drv {

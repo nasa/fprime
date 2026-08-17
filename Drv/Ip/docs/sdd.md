@@ -184,6 +184,10 @@ For `Drv::UdpSocket::configureSend` this means that you would like to set up the
 port that is indicated in the UDP datagrams you receive. Note that this configuration will set up the send port to the port
 specified only in the first message received.
 
+> [!WARNING]
+> The reply destination is adopted from the source address of the first received datagram without authentication, and UDP
+> source addresses can be spoofed. This feature should only be used on trusted networks.
+
 For `Drv::UdpSocket::configureRecv` this means that you would like to be assigned an ephemeral port. This would generally be used
 for setting up a sender that would like to receive responses to messages on an ephemeral port.
 

@@ -75,6 +75,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
     if (stat != Fw::FW_SERIALIZE_OK) {
         Fw::DeserialStatus serErr(static_cast<Fw::DeserialStatus::t>(stat));
         this->log_WARNING_HI_MalformedCommand(serErr);
+        this->m_numCmdErrors++;
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::VALIDATION_ERROR);
         }

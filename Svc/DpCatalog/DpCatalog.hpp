@@ -19,9 +19,9 @@
 #include <config/DpCatalogCfg.hpp>
 #include <config/DpCfg.hpp>
 
-#define DIRECTORY_DELIMITER "/"
-
 namespace Svc {
+
+static constexpr const char DIRECTORY_DELIMITER[] = "/";
 
 class DpCatalog final : public DpCatalogComponentBase {
     friend class DpCatalogTester;

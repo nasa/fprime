@@ -88,7 +88,7 @@ void ChoiceToChoice::testG1FalseG2True() {
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
+    ASSERT_EQ(this->m_guard_g2.getCallHistory().getItemAt(0), Signal::s);
     const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();
@@ -118,7 +118,7 @@ void ChoiceToChoice::testG1FalseG2False() {
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getSize(), 1);
     ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
     ASSERT_EQ(this->m_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_guard_g1.getCallHistory().getItemAt(0), Signal::s);
+    ASSERT_EQ(this->m_guard_g2.getCallHistory().getItemAt(0), Signal::s);
     const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_actionHistory.getSize(), expectedSize);
     const auto& signals = this->m_actionHistory.getSignals();

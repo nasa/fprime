@@ -64,8 +64,10 @@ class NonPrimitiveTest : public ::testing::Test {
     }
 
     void assertUnsuccessfulSerialization(NonPrimitive& s, FwSizeType bufSize) {
-        U8 data[bufSize];
-        Fw::SerialBuffer buf(data, sizeof(data));
+        // Fixed-size buffer (no VLA); bufSize selects the usable portion
+        U8 data[NonPrimitive::SERIALIZED_SIZE];
+        ASSERT_LE(bufSize, sizeof(data));
+        Fw::SerialBuffer buf(data, bufSize);
         Fw::SerializeStatus status;
 
         // Serialize

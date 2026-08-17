@@ -45,10 +45,9 @@ class PortBase : public Fw::ObjBase {
     bool m_trace;         // !< local trace flag
     bool m_ovr_trace;     // !< flag to override global trace
 #endif
-    // Disable constructors
-    PortBase(PortBase*);
-    PortBase(PortBase&);
-    PortBase& operator=(PortBase&);
+    // Disable copy operations
+    PortBase(const PortBase&) = delete;
+    PortBase& operator=(const PortBase&) = delete;
 };
 
 }  // namespace Fw

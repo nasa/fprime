@@ -224,6 +224,10 @@ Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::En
         return stat;
     }
 
+    // Re-establish the class invariant checked by advance/setSize/setData
+    if (this->m_offset + this->m_size > this->m_capacity) {
+        return Fw::FW_DESERIALIZE_FORMAT_ERROR;
+    }
     if (this->m_bufferData != nullptr) {
         this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
     }

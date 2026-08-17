@@ -138,6 +138,7 @@ void DpWriter::CLEAR_EVENT_THROTTLE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) 
     // Clear throttling
     this->log_WARNING_HI_BufferTooSmallForData_ThrottleClear();
     this->log_WARNING_HI_BufferTooSmallForPacket_ThrottleClear();
+    this->log_WARNING_HI_FileNameFormatError_ThrottleClear();
     this->log_WARNING_HI_FileOpenError_ThrottleClear();
     this->log_WARNING_HI_FileWriteError_ThrottleClear();
     this->log_WARNING_HI_InvalidBuffer_ThrottleClear();

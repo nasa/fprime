@@ -33,7 +33,10 @@ DelegateRawTime::DelegateRawTime(const DelegateRawTime& other)
 DelegateRawTime& DelegateRawTime::operator=(const DelegateRawTime& other) {
     if (this != &other) {
         this->m_source = other.m_source;
-        this->m_delegate = *RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, other.m_source);
+        // Destroy the existing delegate before constructing a new one over its storage
+        this->m_delegate.~RawTimeInterface();
+        (void)RawTimeInterface::getDelegate(m_handle_storage, &other.m_delegate, other.m_source);
+        FW_ASSERT(&this->m_delegate == reinterpret_cast<RawTimeInterface*>(&this->m_handle_storage[0]));
     }
     return *this;
 }

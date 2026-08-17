@@ -74,7 +74,7 @@ SpiStatus LinuxSpiDriverComponentImpl::SpiWriteRead_handler(const FwIndexType po
     int stat = ioctl(this->m_fd, SPI_IOC_MESSAGE(1), &tr);
 
     if (stat < 1) {
-        this->log_WARNING_HI_SPI_WriteError(this->m_device, this->m_select, stat);
+        this->log_WARNING_HI_SPI_WriteError(this->m_device, this->m_select, errno);
         return SpiStatus::SPI_OTHER_ERR;
     }
     this->m_bytes += readBuffer.getSize();
@@ -100,7 +100,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
 
     fd = ::open(devString.toChar(), O_RDWR);
     if (fd == -1) {
-        this->log_WARNING_HI_SPI_OpenError(device, select, fd);
+        this->log_WARNING_HI_SPI_OpenError(device, select, errno);
         return false;
     }
 
@@ -131,7 +131,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
 
     ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -139,7 +139,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     U8 read_mode = 0;
     ret = ioctl(fd, SPI_IOC_RD_MODE, &read_mode);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -154,7 +154,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     U8 bits = 8;
     ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -162,7 +162,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     U8 read_bits = 0;
     ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &read_bits);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -176,7 +176,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
      */
     ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &clock);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -184,7 +184,7 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     SpiFrequency read_clock;
     ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &read_clock);
     if (ret == -1) {
-        this->log_WARNING_HI_SPI_ConfigError(device, select, ret);
+        this->log_WARNING_HI_SPI_ConfigError(device, select, errno);
         (void)::close(fd);
         return false;
     }
@@ -196,6 +196,8 @@ bool LinuxSpiDriverComponentImpl::open(FwIndexType device, FwIndexType select, S
     // The device is only published once it is fully configured, so that a failed configuration
     // leaves the driver closed rather than pointing at a misconfigured device
     this->m_fd = fd;
+
+    this->log_ACTIVITY_HI_SPI_PortOpened(device, select);
 
     return true;
 }

@@ -149,7 +149,7 @@ class RedBlackTreeSetOrMapImpl final {
         ConstIterator() {}
 
         //! Constructor providing the implementation
-        ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
+        explicit ConstIterator(const RedBlackTreeSetOrMapImpl<KE, VN>& impl)
             : SetOrMapImplConstIterator<KE, VN>(), m_impl(&impl) {
             this->m_node = this->m_impl->getOuterNodeUnder(this->m_impl->m_root, Direction::LEFT);
         }
@@ -420,7 +420,7 @@ class RedBlackTreeSetOrMapImpl final {
 
     //! Get the alignment of the storage for a RedBlackTreeSetOrMapImpl
     //! \return The alignment
-    static constexpr U8 getByteArrayAlignment() { return ExternalArray<Entry>::getByteArrayAlignment(); }
+    static constexpr U8 getByteArrayAlignment() { return Nodes::getByteArrayAlignment(); }
 
     //! Get the size of the storage for an ExternalArray of the specified capacity,
     //! as a byte array

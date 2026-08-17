@@ -194,7 +194,7 @@ filter which items are displayed:
     --search WARNING_LO` will only display `WARNING_LO` events
     -   Note that unlike the other two options, `--search` will only take a *single* search string
 
-These filters can be combined together to further narrow your search (e.g. `fprime-cli channels -c pingRcvr
+These filters can be combined together to further narrow your search (e.g. `fprime-cli events -c pingRcvr
 -s WARNING_LO` will only show `WARNING_LO` events from `pingRcvr`).
 
 If you want to view a full list of all the events or channels available, you can use the `-l`/`--list` flag on a command

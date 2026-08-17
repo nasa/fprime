@@ -20,7 +20,7 @@ typedef BufferLogger_LogState LogState;
 // ----------------------------------------------------------------------
 
 BufferLogger ::BufferLogger(const char* const compName)
-    : BufferLoggerComponentBase(compName), m_state(LogState::LOGGING_ON), m_file(*this) {}
+    : BufferLoggerComponentBase(compName), m_state(LogState::LOGGING_ON), m_file(*this), m_numLoggedBuffers(0) {}
 
 // ----------------------------------------------------------------------
 // Public methods
@@ -43,6 +43,7 @@ void BufferLogger ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& 
         const U8* const addr = fwBuffer.getData();
         const FwSizeType size = fwBuffer.getSize();
         m_file.logBuffer(addr, size);
+        this->m_numLoggedBuffers++;
     }
     this->bufferSendOut_out(0, fwBuffer);
 }
@@ -52,6 +53,7 @@ void BufferLogger ::comIn_handler(FwIndexType portNum, Fw::ComBuffer& data, U32 
         const U8* const addr = data.getBuffAddr();
         const FwSizeType size = data.getSize();
         m_file.logBuffer(addr, size);
+        this->m_numLoggedBuffers++;
     }
 }
 
@@ -60,7 +62,7 @@ void BufferLogger ::pingIn_handler(FwIndexType portNum, U32 key) {
 }
 
 void BufferLogger ::schedIn_handler(const FwIndexType portNum, U32 context) {
-    // TODO
+    this->tlmWrite_BufferLogger_NumLoggedBuffers(this->m_numLoggedBuffers);
 }
 
 // ----------------------------------------------------------------------

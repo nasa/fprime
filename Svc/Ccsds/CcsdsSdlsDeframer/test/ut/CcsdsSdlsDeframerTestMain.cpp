@@ -20,7 +20,7 @@ TEST(CcsdsSdlsDeframer, DeframeNominal) {
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-002");
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-003");
     CcsdsSdlsDeframerTester tester;
-    CcsdsSdlsDeframerTester::Deframe__Nominal rule;
+    CcsdsSdlsDeframerTester::Deframe_Nominal rule;
     rule.apply(tester);
 }
 
@@ -29,7 +29,7 @@ TEST(CcsdsSdlsDeframer, DeframeInsufficientLength) {
     COMMENT("Raise InsufficientLength and return the buffer when the frame cannot hold an SA index.");
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-004");
     CcsdsSdlsDeframerTester tester;
-    CcsdsSdlsDeframerTester::Deframe__InsufficientLength rule;
+    CcsdsSdlsDeframerTester::Deframe_InsufficientLength rule;
     rule.apply(tester);
 }
 
@@ -39,7 +39,7 @@ TEST(CcsdsSdlsDeframer, DeframeDecryptFailure) {
     COMMENT("Raise DecryptionFailed, notify errorNotify, and return the buffer on a bad decrypt status.");
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-005");
     CcsdsSdlsDeframerTester tester;
-    CcsdsSdlsDeframerTester::Deframe__DecryptFailure rule;
+    CcsdsSdlsDeframerTester::Deframe_DecryptFailure rule;
     rule.apply(tester);
 }
 
@@ -50,9 +50,9 @@ TEST(CcsdsSdlsDeframer, DataFlowPaths) {
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-007");
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-008");
     CcsdsSdlsDeframerTester tester;
-    CcsdsSdlsDeframerTester::DataFlow__DecryptedData ruleData;
-    CcsdsSdlsDeframerTester::DataFlow__DataReturn ruleReturn;
-    CcsdsSdlsDeframerTester::DataFlow__BufferReturn ruleBufferReturn;
+    CcsdsSdlsDeframerTester::DataFlow_DecryptedData ruleData;
+    CcsdsSdlsDeframerTester::DataFlow_DataReturn ruleReturn;
+    CcsdsSdlsDeframerTester::DataFlow_BufferReturn ruleBufferReturn;
     ruleData.apply(tester);
     ruleReturn.apply(tester);
     ruleBufferReturn.apply(tester);
@@ -71,12 +71,12 @@ TEST(CcsdsSdlsDeframer, RandomizedTesting) {
     REQUIREMENT("SVC-CCSDS-SDLS-DEFRAMER-008");
     const U32 numRulesToApply = 10000;
     CcsdsSdlsDeframerTester tester;
-    CcsdsSdlsDeframerTester::Deframe__Nominal ruleNominal;
-    CcsdsSdlsDeframerTester::Deframe__InsufficientLength ruleInsufficient;
-    CcsdsSdlsDeframerTester::Deframe__DecryptFailure ruleFailure;
-    CcsdsSdlsDeframerTester::DataFlow__DecryptedData ruleData;
-    CcsdsSdlsDeframerTester::DataFlow__DataReturn ruleReturn;
-    CcsdsSdlsDeframerTester::DataFlow__BufferReturn ruleBufferReturn;
+    CcsdsSdlsDeframerTester::Deframe_Nominal ruleNominal;
+    CcsdsSdlsDeframerTester::Deframe_InsufficientLength ruleInsufficient;
+    CcsdsSdlsDeframerTester::Deframe_DecryptFailure ruleFailure;
+    CcsdsSdlsDeframerTester::DataFlow_DecryptedData ruleData;
+    CcsdsSdlsDeframerTester::DataFlow_DataReturn ruleReturn;
+    CcsdsSdlsDeframerTester::DataFlow_BufferReturn ruleBufferReturn;
 
     STest::Rule<CcsdsSdlsDeframerTester>* rules[] = {
         &ruleNominal, &ruleInsufficient, &ruleFailure, &ruleData, &ruleReturn, &ruleBufferReturn,

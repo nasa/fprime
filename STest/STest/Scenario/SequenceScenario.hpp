@@ -19,85 +19,72 @@
 
 namespace STest {
 
+//! A sequence of scenarios
+template <typename State>
+class SequenceScenario : public IteratedScenario<State> {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors and destructors
+    // ----------------------------------------------------------------------
 
-  //! A sequence of scenarios
-  template<typename State> class SequenceScenario :
-    public IteratedScenario<State>
-  {
+    //! Construct a SequenceScenario from an array of scenarios
+    SequenceScenario(const char* const name,       //!< The name of the scenario
+                     Scenario<State>** scenarios,  //!< The scenarios in the array
+                     const U32 size                //!< The size of the array
+                     )
+        : IteratedScenario<State>(name), scenarioArray(new ScenarioArray<State>(scenarios, size)), done(false) {}
 
-    public:
+    //! Deleted copy constructor
+    SequenceScenario(const SequenceScenario&) = delete;
 
-      // ----------------------------------------------------------------------
-      // Constructors and destructors
-      // ----------------------------------------------------------------------
+    //! Deleted copy assignment operator
+    SequenceScenario& operator=(const SequenceScenario&) = delete;
 
-      //! Construct a SequenceScenario from an array of scenarios
-      SequenceScenario(
-          const char *const name, //!< The name of the scenario
-          Scenario<State>** scenarios, //!< The scenarios in the array
-          const U32 size //!< The size of the array
-      ) :
-        IteratedScenario<State>(name),
-        scenarioArray(new ScenarioArray<State>(scenarios, size)),
-        done(false)
-      {
+    //! Destroy object SequenceScenario
+    virtual ~SequenceScenario() { delete this->scenarioArray; }
 
-      }
+  protected:
+    // ----------------------------------------------------------------------
+    // IteratedScenario implementation
+    // ----------------------------------------------------------------------
 
-
-      //! Destroy object SequenceScenario
-      virtual ~SequenceScenario() {
-        delete this->scenarioArray;
-      }
-
-    protected:
-
-      // ----------------------------------------------------------------------
-      // IteratedScenario implementation
-      // ----------------------------------------------------------------------
-
-      //! The virtual implementation of reset required by IteratedScenario
-      void reset_IteratedScenario() {
+    //! The virtual implementation of reset required by IteratedScenario
+    void reset_IteratedScenario() {
         this->scenarioArray->reset();
         this->done = false;
-      }
+    }
 
-      //! The virtual implementation of nextScenario required by IteratedScenario
-      //! \return The next scenario, assuming isDone() is false, or nullptr if none
-      Scenario<State>* nextScenario_IteratedScenario(
-          State& state //!< The system state
-      ) {
-        Scenario<State> *scenario = nullptr;
+    //! The virtual implementation of nextScenario required by IteratedScenario
+    //! \return The next scenario, assuming isDone() is false, or nullptr if none
+    Scenario<State>* nextScenario_IteratedScenario(State& state  //!< The system state
+    ) {
+        Scenario<State>* scenario = nullptr;
         if (!this->done) {
-          assert(this->scenarioArray != nullptr);
-          scenario = this->scenarioArray->nextScenario();
+            assert(this->scenarioArray != nullptr);
+            scenario = this->scenarioArray->nextScenario();
         }
         if (!this->done and scenario == nullptr) {
-          this->done = true;
+            this->done = true;
         }
         return scenario;
-      }
+    }
 
-      //! The virtual implementation of isDone required by IteratedScenario
-      //! \return Whether the scenario is done
-      bool isDone_IteratedScenario() const {
-        return this->done;
-      }
+    //! The virtual implementation of isDone required by IteratedScenario
+    //! \return Whether the scenario is done
+    bool isDone_IteratedScenario() const { return this->done; }
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected member variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Protected member variables
-      // ----------------------------------------------------------------------
+    //! The scenario array
+    ScenarioArray<State>* scenarioArray;
 
-      //! The scenario array
-      ScenarioArray<State>* scenarioArray;
+    //! Whether the sequence scenario is done
+    bool done;
+};
 
-      //! Whether the sequence scenario is done
-      bool done;
-
-  };
-
-}
+}  // namespace STest
 
 #endif
