@@ -87,13 +87,13 @@ void setUp(bool requires_io) {
         GTEST_SKIP() << "Test file exists: " << non_random_filename->c_str();
     }
     // IO required and cannot read/write to BASE_PATH then skip
-    else if (requires_io && not check_permissions(BASE_PATH, R_OK & W_OK)) {
+    else if (requires_io && not check_permissions(BASE_PATH, R_OK | W_OK)) {
         GTEST_SKIP() << "Cannot read/write in directory: " << BASE_PATH;
     }
     int signals[] = {SIGQUIT, SIGABRT, SIGTERM, SIGINT, SIGHUP};
     for (unsigned long i = 0; i < FW_NUM_ARRAY_ELEMENTS(signals); i++) {
         // Could not register signal handler
-        if (signal(SIGQUIT, cleanup) == SIG_ERR) {
+        if (signal(signals[i], cleanup) == SIG_ERR) {
             GTEST_SKIP() << "Cannot register signal handler for cleanup";
         }
     }

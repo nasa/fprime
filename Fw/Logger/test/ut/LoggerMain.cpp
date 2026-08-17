@@ -28,7 +28,7 @@ TEST(LoggerTests, RandomLoggerTests) {
     LoggerRules::Register reg(Fw::String("Register"));
     LoggerRules::LogGood log(Fw::String("Log Successfully"));
     LoggerRules::LogBad nolog(Fw::String("Log unsuccessfully"));
-    LoggerRules::LogBad string_log(Fw::String("Log Successfully (String)"));
+    LoggerRules::LogGoodStringObject string_log(Fw::String("Log Successfully (String)"));
 
     // Setup a list of rules to choose from
     STest::Rule<MockLogging::FakeLogger>* rules[] = {&reg, &log, &nolog, &string_log};
