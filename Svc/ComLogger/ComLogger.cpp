@@ -216,7 +216,7 @@ void ComLogger ::writeHashFile() {
     Os::ValidateFile::Status validateStatus;
     validateStatus = Os::ValidateFile::createValidation(this->m_fileName.toChar(), this->m_hashFileName.toChar());
     if (Os::ValidateFile::VALIDATION_OK != validateStatus) {
-        this->log_WARNING_LO_FileValidationError(this->m_fileName, this->m_hashFileName, validateStatus);
+        this->log_WARNING_LO_FileValidationError(this->m_hashFileName, this->m_fileName, validateStatus);
     }
 }
 }  // namespace Svc

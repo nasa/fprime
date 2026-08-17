@@ -187,7 +187,7 @@ def build_tutorials():
             },
             {"Cross-Compilation Setup": "docs/tutorials/cross-compilation.md"},
             {
-                "Arduino LED Blinker": "../..//tutorials-arduino-led-blinker/docs/arduino-led-blinker.md"
+                "Arduino LED Blinker": "../../tutorials/tutorials-arduino-led-blinker/docs/arduino-led-blinker.md"
             },
         ]
     }

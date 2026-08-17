@@ -16,6 +16,7 @@ DpDemo ::DpDemo(const char* const compName) : DpDemoComponentBase(compName) {
     this->selectedColor = DpDemo_ColorEnum::RED;
     this->numRecords = 0;
     this->dpPriority = 0;
+    this->dpInProgress = false;
 }
 
 DpDemo ::~DpDemo() {}
@@ -151,6 +152,9 @@ void DpDemo ::Dp_cmdHandler(FwOpcodeType opCode,
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         }
     } else if (reqType == DpDemo_DpReqType::ASYNC) {
+        // Response is deferred until the requested container arrives
+        this->pendingOpCode = opCode;
+        this->pendingCmdSeq = cmdSeq;
         this->dpRequest_DpDemoContainer(dpSize);
     } else {
         // should never get here
@@ -171,11 +175,13 @@ void DpDemo ::dpRecv_DpDemoContainer_handler(DpContainer& container, Fw::Success
         this->dpContainer.setPriority(this->dpPriority);
         this->dpContainer.setProcTypes(this->dpProc);
         this->log_ACTIVITY_LO_DpStarted(this->numRecords);
+        this->cmdResponse_out(this->pendingOpCode, this->pendingCmdSeq, Fw::CmdResponse::OK);
     } else {
         this->log_WARNING_HI_DpMemoryFail();
         // cleanup
         this->dpInProgress = false;
         this->numRecords = 0;
+        this->cmdResponse_out(this->pendingOpCode, this->pendingCmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
 

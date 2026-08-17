@@ -16,100 +16,85 @@
 
 namespace STest {
 
-  //! Iterate a scenario while a condition holds
-  template<typename State> class ConditionalIteratedScenario :
-    public IteratedScenario<State>
-  {
+//! Iterate a scenario while a condition holds
+template <typename State>
+class ConditionalIteratedScenario : public IteratedScenario<State> {
+  public:
+    // ----------------------------------------------------------------------
+    // Constructors and destructors
+    // ----------------------------------------------------------------------
 
-    public:
+    //! Construct a ConditionalIteratedScenario
+    ConditionalIteratedScenario(const char* const name,            //!< The name of the ConditionalIteratedScenario
+                                IteratedScenario<State>& scenario  //!< The scenario to run
+                                )
+        : IteratedScenario<State>(name), scenario(scenario), done(false) {}
 
-      // ----------------------------------------------------------------------
-      // Constructors and destructors
-      // ----------------------------------------------------------------------
+    //! Destroy object ConditionalIteratedScenario
+    virtual ~ConditionalIteratedScenario() {}
 
-      //! Construct a ConditionalIteratedScenario
-      ConditionalIteratedScenario(
-          const char *const name, //!< The name of the ConditionalIteratedScenario
-          IteratedScenario<State>& scenario //!< The scenario to run
-      ) :
-        IteratedScenario<State>(name),
-        scenario(scenario),
-        done(false)
-      {
+  protected:
+    // ----------------------------------------------------------------------
+    // IteratedScenario implementation
+    // ----------------------------------------------------------------------
 
-      }
-
-      //! Destroy object ConditionalIteratedScenario
-      virtual ~ConditionalIteratedScenario() {
-
-      }
-
-    protected:
-
-      // ----------------------------------------------------------------------
-      // IteratedScenario implementation
-      // ----------------------------------------------------------------------
-
-      //! The virtual implementation of reset required by IteratedScenario
-      void reset_IteratedScenario() {
+    //! The virtual implementation of reset required by IteratedScenario
+    void reset_IteratedScenario() {
         this->scenario.reset();
         this->done = this->scenario.isDone();
-      }
+        this->reset_ConditionalIteratedScenario();
+    }
 
-      //! The virtual implementation of nextScenario required by IteratedScenario
-      //! \return The next scenario, assuming isDone() is false, or nullptr if none
-      Scenario<State>* nextScenario_IteratedScenario(
-          State& state //!< The system state
-      ) {
+    //! The virtual implementation of nextScenario required by IteratedScenario
+    //! \return The next scenario, assuming isDone() is false, or nullptr if none
+    Scenario<State>* nextScenario_IteratedScenario(State& state  //!< The system state
+    ) {
         Scenario<State>* localScenario = nullptr;
         if (!this->condition_ConditionalIteratedScenario(state)) {
-          this->done = true;
+            this->done = true;
         }
         if (!this->isDone()) {
-          localScenario = this->scenario.nextScenario(state);
-          this->done = this->scenario.isDone();
+            localScenario = this->scenario.nextScenario(state);
+            this->done = this->scenario.isDone();
         }
         this->nextScenario_ConditionalIteratedScenario(localScenario);
         return localScenario;
-      }
+    }
 
-      //! The virtual implementation of isDone required by IteratedScenario
-      //! \return Whether the scenario is done
-      bool isDone_IteratedScenario() const {
-        return this->done;
-      }
+    //! The virtual implementation of isDone required by IteratedScenario
+    //! \return Whether the scenario is done
+    bool isDone_IteratedScenario() const { return this->done; }
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected virtual methods
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Protected virtual methods
-      // ----------------------------------------------------------------------
+    //! The virtual condition required by ConditionalIteratedScenario
+    //! \return Whether the condition holds
+    virtual bool condition_ConditionalIteratedScenario(const State& state  //!< The system state
+    ) const = 0;
 
-      //! The virtual condition required by ConditionalIteratedScenario
-      //! \return Whether the condition holds
-      virtual bool condition_ConditionalIteratedScenario(
-          const State& state //!< The system state
-      ) const = 0;
+    //! The virtual implementation of nextScenario required by ConditionalIteratedScenario
+    virtual void nextScenario_ConditionalIteratedScenario(
+        const Scenario<State>* const nextScenario  //!< The scenario being returned
+        ) = 0;
 
-      //! The virtual implementation of nextScenario required by ConditionalIteratedScenario
-      virtual void nextScenario_ConditionalIteratedScenario(
-          const Scenario<State> *const nextScenario //!< The scenario being returned
-      ) = 0;
+    //! The virtual implementation of reset required by ConditionalIteratedScenario
+    virtual void reset_ConditionalIteratedScenario() = 0;
 
-    protected:
+  protected:
+    // ----------------------------------------------------------------------
+    // Protected member variables
+    // ----------------------------------------------------------------------
 
-      // ----------------------------------------------------------------------
-      // Protected member variables
-      // ----------------------------------------------------------------------
+    //! The scenario to run
+    IteratedScenario<State>& scenario;
 
-      //! The scenario to run
-      IteratedScenario<State>& scenario;
+    //! Whether the iterated scenario is done
+    bool done;
+};
 
-      //! Whether the iterated scenario is done
-      bool done;
-
-  };
-
-}
+}  // namespace STest
 
 #endif

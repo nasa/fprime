@@ -12,58 +12,59 @@
 namespace Fw {
 
 AmpcsEvrLogPacket::AmpcsEvrLogPacket() : m_eventID(0), m_overSeqNum(0), m_catSeqNum(0) {
-    this->m_type = FW_PACKET_LOG;
+    this->m_type = ComPacketType::FW_PACKET_LOG;
 }
 AmpcsEvrLogPacket::~AmpcsEvrLogPacket() {}
 
-SerializeStatus AmpcsEvrLogPacket::serializeTo(SerialBufferBase& buffer) const {
+SerializeStatus AmpcsEvrLogPacket::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     SerializeStatus stat;
 
-    stat = buffer.serializeFrom(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH);
+    stat = buffer.serializeFrom(this->m_taskName, AMPCS_EVR_TASK_NAME_LEN, Fw::Serialization::OMIT_LENGTH, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_eventID);
+    stat = buffer.serializeFrom(this->m_eventID, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_overSeqNum);
+    stat = buffer.serializeFrom(this->m_overSeqNum, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.serializeFrom(this->m_catSeqNum);
+    stat = buffer.serializeFrom(this->m_catSeqNum, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(), Fw::Serialization::OMIT_LENGTH);
+    return buffer.serializeFrom(this->m_logBuffer.getBuffAddr(), m_logBuffer.getSize(), Fw::Serialization::OMIT_LENGTH,
+                                mode);
 }
 
-SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
+SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode) {
     FwSizeType len;
 
     SerializeStatus stat;
 
     len = AMPCS_EVR_TASK_NAME_LEN;
-    stat = buffer.deserializeTo(this->m_taskName, len, true);
+    stat = buffer.deserializeTo(this->m_taskName, len, Fw::Serialization::OMIT_LENGTH, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_eventID);
+    stat = buffer.deserializeTo(this->m_eventID, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_overSeqNum);
+    stat = buffer.deserializeTo(this->m_overSeqNum, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
 
-    stat = buffer.deserializeTo(this->m_catSeqNum);
+    stat = buffer.deserializeTo(this->m_catSeqNum, mode);
     if (stat != FW_SERIALIZE_OK) {
         return stat;
     }
@@ -72,7 +73,7 @@ SerializeStatus AmpcsEvrLogPacket::deserializeFrom(SerialBufferBase& buffer) {
     if (size > this->m_logBuffer.getCapacity()) {
         return FW_DESERIALIZE_SIZE_MISMATCH;
     }
-    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, true);
+    stat = buffer.deserializeTo(this->m_logBuffer.getBuffAddr(), size, Fw::Serialization::OMIT_LENGTH, mode);
     if (stat == FW_SERIALIZE_OK) {
         // Shouldn't fail
         stat = this->m_logBuffer.setBuffLen(size);
@@ -85,7 +86,7 @@ void AmpcsEvrLogPacket::setTaskName(U8* taskName, U8 len) {
     FW_ASSERT(taskName != nullptr);
     FW_ASSERT(len == AMPCS_EVR_TASK_NAME_LEN);
 
-    memcpy(this->m_taskName, (const void*)taskName, len);
+    memcpy(this->m_taskName, static_cast<const void*>(taskName), len);
 }
 
 void AmpcsEvrLogPacket::setId(U32 eventID) {

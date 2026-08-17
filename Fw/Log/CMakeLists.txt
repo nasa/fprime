@@ -9,6 +9,7 @@ register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Log.fpp"
   SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/AmpcsEvrLogPacket.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/LogPacket.cpp"
   HEADERS
     "${CMAKE_CURRENT_LIST_DIR}/AmpcsEvrLogPacket.hpp"
