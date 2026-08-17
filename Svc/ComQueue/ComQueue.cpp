@@ -217,7 +217,7 @@ void ComQueue::SET_QUEUE_PRIORITY_cmdHandler(FwOpcodeType opCode,
     }
 
     // Emit event for successful priority change
-    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, queueIndex, newPriority);
+    this->log_ACTIVITY_HI_QueuePriorityChanged(queueType, index, newPriority);
 
     // Send command response
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
