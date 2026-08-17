@@ -5,7 +5,7 @@ Directory: ../..
 File                                       Lines    Exec  Cover   Missing
 ------------------------------------------------------------------------------
 Svc/DpZLibCompressor/DpZLibCompressor.cpp
-                                              79      74    93%   102-104,125-126
+                                              79      74    93%   104-106,127-128
 Svc/DpZLibCompressor/DpZLibCompressor.hpp
                                                2       2   100%
 ------------------------------------------------------------------------------
