@@ -1183,6 +1183,49 @@ void CfdpManagerTester::testClass2RxFileDataOffsetOverflow() {
     cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
 }
 
+void CfdpManagerTester::testClass2RxZeroLengthFileData() {
+    // Regression test for GHSA-mh5x-2m6h-8267.
+    //
+    // A syntactically valid Class 2 FileData PDU that carries a complete file offset but zero
+    // file-data octets (PDU payload length equal to the encoded offset length) deserializes with
+    // dataSize == 0. Before the fix this reached CfdpChunkList::combineNext(), where a zero-size
+    // chunk violated FW_ASSERT(chunk_end > chunk->offset) and terminated the process via FATAL.
+    //
+    // Received before any metadata, this starts an R2 transaction (bound == FileSize max), so the
+    // offset/size bounds check does not reject it. The engine must instead treat the empty segment
+    // as a harmless no-op: no bytes written, no gap tracked, no fault, and above all no crash.
+    const U8 channelId = 0;
+    const U32 transactionSeq = 502;
+    const FileSize offset = 0;
+    const U16 dataSize = 0;
+    U8 data[1] = {0xA5};  // non-null pointer; zero octets are actually serialized
+
+    // Reaching this call at all after component dispatch proves the assertion no longer fires.
+    sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, offset, dataSize, data,
+                    Cfdp::Class::CLASS_2);
+    component.doDispatch();
+
+    Transaction* txn = findTransaction(channelId, transactionSeq);
+    ASSERT_NE(nullptr, txn) << "R2 transaction should be created for FileData received before metadata";
+    EXPECT_FALSE(txn->m_flags.rx.md_recv);
+
+    // An empty segment is neither out of bounds nor a fault; it is simply ignored.
+    ASSERT_EVENTS_RxFileDataOutOfBounds_SIZE(0);
+    EXPECT_FALSE(TxnStatusIsError(txn->m_history->txn_stat)) << "Empty FileData segment must not fault the transaction";
+
+    // Cycle once so channel telemetry is emitted
+    this->invoke_to_run1Hz(0, 0);
+    this->component.doDispatch();
+
+    ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
+    U32 tlmIndex = static_cast<U32>(this->tlmHistory_ChannelTelemetry->size() - 1);
+    Cfdp::ChannelTelemetryArray tlm = this->tlmHistory_ChannelTelemetry->at(tlmIndex).arg;
+    EXPECT_EQ(0u, tlm[channelId].get_recvFileDataBytes()) << "Empty FileData segment writes no bytes";
+    EXPECT_EQ(0u, tlm[channelId].get_recvErrors()) << "Empty FileData segment must not raise a receive error";
+
+    cleanupTestFile(txn->m_history->fnames.dst_filename.toChar());
+}
+
 // ----------------------------------------------------------------------
 // Port-Based Transaction Tests
 // ----------------------------------------------------------------------
