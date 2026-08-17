@@ -1988,6 +1988,78 @@ void TlmPacketizerTester ::from_pingOut_handler(const FwIndexType portNum, U32 k
 // Helper methods
 // ----------------------------------------------------------------------
 
+void TlmPacketizerTester ::perPacketOverrideTest() {
+    this->stockConfiguration();  // all sections/groups enabled
+    this->component.setPacketList(packetList, ignore, 2);
+
+    // Override: disable packet 1 (id = 4) in PRIMARY only. Its SECONDARY copy and packet 2
+    // remain group-enabled, so exactly one (packet, section) send should drop out.
+    Svc::PacketConfig cfg;
+    cfg.set_enabled(Fw::Enabled::DISABLED);
+    cfg.set_forceEnabled(Fw::Enabled::DISABLED);
+    cfg.set_rateLogic(Svc::RateLogic::ON_CHANGE_MIN);
+    cfg.set_min(0);
+    cfg.set_max(0);
+    Svc::PacketConfigEntry entry;
+    entry.set_packetId(4);
+    entry.set_section(Svc::TelemetrySection::PRIMARY);
+    entry.set_config(cfg);
+    Svc::PacketConfigBatch batch;
+    batch[0] = entry;
+    this->invoke_to_configIn(0, 1, batch);
+    this->component.doDispatch();
+
+    // Populate both packets with data (same channels as sendPacketsTest)
+    Fw::Time ts;
+    Fw::TlmBuffer buff;
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U32>(20));
+    this->invoke_to_TlmRecv(0, 10, ts, buff);         // first channel
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U16>(15));
+    this->invoke_to_TlmRecv(0, 100, ts, buff);        // second channel
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U8>(14));
+    this->invoke_to_TlmRecv(0, 333, ts, buff);        // third channel
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U64>(1000000));
+    this->invoke_to_TlmRecv(0, 13, ts, buff);         // fifth channel
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U16>(1010));
+    this->invoke_to_TlmRecv(0, 250, ts, buff);        // sixth channel
+    buff.resetSer();
+    (void)buff.serializeFrom(static_cast<U8>(15));
+    this->invoke_to_TlmRecv(0, 22, ts, buff);         // seventh channel
+
+    this->setTestTime(this->m_testTime);
+    this->invoke_to_Run(0, 0);
+    this->component.doDispatch();
+
+    // Baseline (all enabled) is 2 packets x NUM_SECTIONS; the override removes exactly one.
+    ASSERT_from_PktSend_SIZE(2 * Svc::TelemetrySection::NUM_SECTIONS - 1);
+}
+
+void TlmPacketizerTester ::getPacketConfigTest() {
+    this->stockConfiguration();
+    this->component.setPacketList(packetList, ignore, 2);
+    this->clearHistory();
+
+    // Known packet id (8) in SECONDARY -> OK + one QueriedPacketConfig report
+    this->sendCmd_GET_PACKET_CONFIG(0, 0, 8, Svc::TelemetrySection::SECONDARY);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE_SIZE(1);
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_GET_PACKET_CONFIG, 0, Fw::CmdResponse::OK);
+    ASSERT_TLM_QueriedPacketConfig_SIZE(1);
+
+    // Unknown packet id -> VALIDATION_ERROR + UnknownPacketId warning
+    this->clearHistory();
+    this->sendCmd_GET_PACKET_CONFIG(0, 1, 9999, Svc::TelemetrySection::PRIMARY);
+    this->component.doDispatch();
+    ASSERT_CMD_RESPONSE(0, TlmPacketizer::OPCODE_GET_PACKET_CONFIG, 1, Fw::CmdResponse::VALIDATION_ERROR);
+    ASSERT_EVENTS_UnknownPacketId_SIZE(1);
+    ASSERT_EVENTS_UnknownPacketId(0, 9999);
+}
+
 void TlmPacketizerTester ::connectPorts() {
     // PktSend
     // this->component.set_PktSend_OutputPort(0, this->get_from_PktSend(0));
@@ -2041,6 +2113,9 @@ void TlmPacketizerTester ::connectPorts() {
     this->connect_to_controlIn(0, this->component.get_controlIn_InputPort(0));
 
     this->connect_to_configureSectionGroupRate(0, this->component.get_configureSectionGroupRate_InputPort(0));
+
+    // configIn (per-packet configuration push)
+    this->connect_to_configIn(0, this->component.get_configIn_InputPort(0));
 }
 
 void TlmPacketizerTester::textLogIn(const FwEventIdType id,          //!< The event ID

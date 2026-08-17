@@ -39,6 +39,10 @@ module Svc {
     @ Input configuration port
     async input port configureSectionGroupRate: ConfigureGroupRate
 
+    @ Per-packet configuration input from TlmPacketConfig (batched, paced).
+    @ Entries override the group-derived policy for the addressed packet/section.
+    async input port configIn: TlmPacketConfigUpdate
+
     @ Telemetry input port
     sync input port TlmRecv: Fw.Tlm
 
@@ -125,6 +129,14 @@ module Svc {
                                         maxDelta: U32               @< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
                                       ) \
       opcode 5
+
+    @ Query the effective per-packet configuration. The result is emitted on the
+    @ QueriedPacketConfig telemetry channel; unknown ids raise UnknownPacketId.
+    async command GET_PACKET_CONFIG(
+                                    packetId: U32               @< Packet identifier
+                                    section: TelemetrySection   @< Section to query
+                                  ) \
+      opcode 6
     @ Parameter to control section enable flags
     external param SECTION_ENABLED: SectionEnabled default TELEMETRY_SECTION_ENABLED_DEFAULTS
     @ Parameter to control section configuration
@@ -194,6 +206,14 @@ module Svc {
       format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
       throttle 10
     
+    @ A configuration push or query referenced a packet id not present in this deployment
+    event UnknownPacketId(
+                          packetId: U32 @< The packet id
+                        ) \
+      severity warning low \
+      id 6 \
+      format "Packet id {} not found in packet list"
+
     # ----------------------------------------------------------------------
     # Telemetry
     # ----------------------------------------------------------------------
@@ -201,6 +221,9 @@ module Svc {
     @ Telemetry send level
     telemetry GroupConfigs: SectionConfigs id 0
     telemetry SectionEnabled: SectionEnabled id 1
+
+    @ Effective per-packet configuration, emitted in response to GET_PACKET_CONFIG
+    telemetry QueriedPacketConfig: PacketConfigEntry id 2
 
     array TelemetrySendSection = [NUM_CONFIGURABLE_TLMPACKETIZER_GROUPS] FwIndexType
     array TelemetrySendPortMap = [TelemetrySection.NUM_SECTIONS] TelemetrySendSection default TELEMETRY_SEND_PORT_MAPPING

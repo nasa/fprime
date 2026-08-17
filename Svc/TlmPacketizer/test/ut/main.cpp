@@ -126,6 +126,18 @@ TEST(TestNominal, sectionConfigParameterTest) {
     tester.sectionConfigParameterTest();
 }
 
+TEST(TestNominal, PerPacketOverrideTest) {
+    TEST_CASE(100.1.13, "Per-packet configIn override disables a single packet/section");
+    Svc::TlmPacketizerTester tester;
+    tester.perPacketOverrideTest();
+}
+
+TEST(TestNominal, GetPacketConfigTest) {
+    TEST_CASE(100.1.14, "GET_PACKET_CONFIG reports effective config; unknown id warns");
+    Svc::TlmPacketizerTester tester;
+    tester.getPacketConfigTest();
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

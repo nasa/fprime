@@ -112,6 +112,13 @@ class TlmPacketizerTester : public TlmPacketizerGTestBase {
 
     //! Non-empty packet with a nullptr channel list is still rejected by the configuration assert
     void nullChannelListTest(void);
+    
+    //! Per-packet override test: a configIn override disables one packet/section while
+    //! the group-enabled remainder still sends (Phase 2 per-packet control)
+    void perPacketOverrideTest(void);
+
+    //! GET_PACKET_CONFIG test: effective config reported for a known id; unknown id warns
+    void getPacketConfigTest(void);
 
     //! Helper to set the component into a stock-configuration regardless of default config
     //!

@@ -75,6 +75,15 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
         ) override;
 
+    //! Handler implementation for configIn
+    //!
+    //! Per-packet configuration push from TlmPacketConfig. Each entry overrides the
+    //! group-derived policy for the addressed packet/section.
+    void configIn_handler(FwIndexType portNum,                //!< The port number
+                          FwSizeType count,                   //!< Number of valid entries in batch
+                          const Svc::PacketConfigBatch& batch  //!< Batch of per-packet config entries
+                          ) override;
+
     //! Handler implementation for Run
     //!
     void Run_handler(const FwIndexType portNum, /*!< The port number*/
@@ -152,6 +161,15 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
         U32 maxDelta   //!< Maximum Sched Ticks between packets to send when using EVERY_MAX logic
         ) override;
 
+    //! Handler implementation for command GET_PACKET_CONFIG
+    //!
+    //! Emits the effective per-packet configuration on QueriedPacketConfig.
+    void GET_PACKET_CONFIG_cmdHandler(FwOpcodeType opCode,           //!< The opcode
+                                      U32 cmdSeq,                    //!< The command sequence number
+                                      U32 packetId,                  //!< Packet identifier
+                                      Svc::TelemetrySection section  //!< Section to query
+                                      ) override;
+
     // number of packets to fill
     FwChanIdType m_numPackets;
     // Array of packet buffers to send
@@ -192,6 +210,12 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     TlmPacketizer_SectionEnabled m_sectionEnabled{};
 
     TlmPacketizer_SectionConfigs m_groupConfigs{};
+
+    //! Per-packet policy overrides pushed via configIn. When m_packetOverridden is set,
+    //! this value wins over the group-derived policy for that packet/section. This is the
+    //! per-packet control layer; group config remains the base for non-overridden packets.
+    Svc::PacketConfig m_packetOverride[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
+    bool m_packetOverridden[TelemetrySection::NUM_SECTIONS][MAX_PACKETIZER_PACKETS]{};
 
     enum UpdateFlag : U8 {
         NEVER_UPDATED = 0,  //!< Packet has never been updated (NO DATA)
@@ -238,6 +262,16 @@ class TlmPacketizer final : public TlmPacketizerComponentBase, public Fw::ParamE
     //! \param group The telemetry group number
     //! \return The output port index to send telemetry for the given section and group
     static FwIndexType sectionGroupToPort(const FwIndexType section, const FwSizeType group);
+
+    //! \brief Compute the effective per-packet policy for a packet/section.
+    //!
+    //! Returns the pushed override if one is set for this packet/section, otherwise the
+    //! group-derived policy for the packet's level (preserving legacy group behavior).
+    Svc::PacketConfig effectiveConfig(FwIndexType section, FwChanIdType pkt, FwChanIdType group) const;
+
+    //! \brief Resolve a packet id to its index in the packet list.
+    //! \return true if found (index written to pkt), false otherwise.
+    bool findPacketIndexById(U32 packetId, FwChanIdType& pkt) const;
 
   private:
     FwSizeType m_numChannels;  //!< number of channels being packetized
