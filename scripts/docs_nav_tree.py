@@ -45,11 +45,7 @@ def build_nav_tree(path):
         full_path = os.path.join(path, entry)
 
         # Include only markdown files (but skip index.md here; we add it separately as the folder root link)
-        if (
-            os.path.isfile(full_path)
-            and entry.endswith(".md")
-            and entry != "index.md"
-        ):
+        if os.path.isfile(full_path) and entry.endswith(".md") and entry != "index.md":
             # Check if the file stem (filename without .md) is excluded
             file_stem = Path(entry).stem
             if file_stem in excluded_folders:
