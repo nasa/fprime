@@ -36,6 +36,29 @@ roll-ups of their artifacts.
   paths below are under `<repo-short-name>/` inside it (e.g.
   `fprime/`), so one results repo can hold reviews of many repos.
 
+## Reference repositories
+
+When `repo` is a reference deployment repo — its name matches
+`*-reference` (e.g. `fprime-community/fprime-zephyr-reference`) —
+the review target is the reference repo TOGETHER WITH its matching
+sub-library: the submodule whose name is the reference name minus
+the `-reference` suffix (e.g. `lib/fprime-zephyr` →
+`fprime-community/fprime-zephyr`).
+
+- Check out the reference repo at its pinned SHA and initialize ONLY
+  the matching sub-library submodule, at the commit the reference
+  pins. Other submodules (the F Prime framework, RTOS trees, etc.)
+  are out of scope — context reading only.
+- The manifest covers the tracked files of BOTH repos: reference
+  files at their normal paths, sub-library files under their
+  submodule path (e.g. `lib/fprime-zephyr/...`).
+- Results are keyed to the SUB-LIBRARY repo short name (e.g.
+  `fprime-zephyr/`, not `fprime-zephyr-reference/`): the library is
+  the enduring product; the reference is its integration harness.
+- Record both SHAs: `commit:` is the sub-library commit; the
+  manifest, ledger, and artifact metadata carry an additional
+  `reference_commit:` line pinning the reference repo.
+
 ## Sequence
 
 1. **Resume check.** If `<repo-short-name>/ledger.yaml` exists in
@@ -52,10 +75,10 @@ roll-ups of their artifacts.
    all-`pending` ledger to the results repo. Do not start reviewing
    from a manifest whose coverage check fails.
 3. **Reviewer roster.** Read `_shared/agent-registry.yml` and filter
-   to `role: reviewer` entries — the same nine reviewers as the PR
-   flow. All nine run on every unit. (CI-safety ordering is
-   irrelevant in batch mode; run them in registry order for
-   determinism.)
+   to `role: reviewer` entries — the same roster as the PR flow,
+   whatever the registry contains at run time. Every registered
+   reviewer runs on every unit. (CI-safety ordering is irrelevant in
+   batch mode; run them in registry order for determinism.)
 4. **Per-unit review loop.** For each non-`completed` unit, in
    manifest order:
    a. Mark the unit `in-progress` in the ledger (commit).
@@ -64,7 +87,7 @@ roll-ups of their artifacts.
       passes are sequential so §5 de-duplication can read sibling
       artifacts). Record `completed` or `FAILED: <reason>` per
       reviewer.
-   c. When all nine reviewers completed, write
+   c. When all registered reviewers completed, write
       `unit-summary.md` per batch contract §6, mark the unit
       `completed` in the ledger, regenerate the incremental
       repo-wide `summary.md` per batch contract §8, and commit
@@ -72,7 +95,7 @@ roll-ups of their artifacts.
    d. If any reviewer FAILED, do not retry the reviewer inline:
       mark the unit `failed` with the reason, increment `attempts`,
       commit, and continue with the next unit. Failed units get a
-      fresh full pass on a later sweep (all nine reviewers re-run;
+      fresh full pass on a later sweep (all registered reviewers re-run;
       stale partial artifacts from the failed attempt are
       overwritten). After 3 attempts a unit stays `failed` with its
       note.
