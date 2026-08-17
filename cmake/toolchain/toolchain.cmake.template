@@ -12,7 +12,7 @@
 # https://cmake.org/cmake/help/v3.18/manual/cmake-toolchains.7.html
 #
 # **Note:** If the user desires to set compile flags, or F prime specific build options, a platform
-#           file should be constructed. See: [platform.cmake.template](../platform/platform.cmake.template)
+#           file should be constructed. See: [Platform Template](../platform/platform-template.md)
 #
 # ### Filling In CMake Toolchain by Example ###
 #
