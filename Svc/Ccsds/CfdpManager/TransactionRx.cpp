@@ -522,6 +522,14 @@ Status::T Transaction::rProcessFd(const Fw::Buffer& buffer) {
         }
     }
 
+    // A zero-length FileData segment is syntactically valid (payload length equals the encoded
+    // offset length) but carries no bytes. There is nothing to seek to, write, or track as a gap,
+    // so treat it as a successful no-op. This avoids a pointless file I/O round trip and prevents
+    // a zero-size interval from ever reaching the chunk tracker.
+    if ((ret == Cfdp::Status::SUCCESS) && (dataSize == 0)) {
+        return ret;
+    }
+
     // Seek to file offset if needed
     if (ret == Cfdp::Status::SUCCESS) {
         if (this->m_state_data.receive.cached_pos != offset) {
