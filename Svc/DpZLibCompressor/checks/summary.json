@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-11T20:24:17Z",
+  "generated_at": "2026-08-17T21:33:41Z",
   "ref": "devel",
-  "commit": "cd5b5597edbb49be602bc36ac4bb39ec80b7cb21",
-  "passed": 2,
-  "failed": 4,
+  "commit": "5a720f1dce2114a8a0c83be37432bccf13bc1623",
+  "passed": 1,
+  "failed": 5,
   "skipped": 10,
   "checks": [
     {
@@ -57,9 +57,11 @@
       "name": "Source dependencies listed in CMakeLists",
       "category": "implementation",
       "module": "/home/runner/work/fprime/fprime/Svc/DpZLibCompressor",
-      "status": "pass",
-      "failures": [],
-      "detail": "0 dependency module(s) checked"
+      "status": "fail",
+      "failures": [
+        "dependency 'Fw/Prm' (from #include \"Fw/Prm/ParamValid.hpp\") is not declared in CMakeLists.txt (add it to DEPENDS as Fw_Prm)"
+      ],
+      "detail": "1 dependency module(s) checked"
     },
     {
       "id": "I3",

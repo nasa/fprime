@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-11T20:24:17Z",
+  "generated_at": "2026-08-17T21:33:41Z",
   "ref": "devel",
-  "commit": "cd5b5597edbb49be602bc36ac4bb39ec80b7cb21",
-  "passed": 2,
-  "failed": 6,
-  "skipped": 8,
+  "commit": "5a720f1dce2114a8a0c83be37432bccf13bc1623",
+  "passed": 3,
+  "failed": 7,
+  "skipped": 6,
   "checks": [
     {
       "id": "D1",
@@ -21,9 +21,9 @@
       "name": "Command handlers defined",
       "category": "design",
       "module": "/home/runner/work/fprime/fprime/Svc/PassiveRateGroup",
-      "status": "skip",
+      "status": "pass",
       "failures": [],
-      "detail": "no commands declared"
+      "detail": "1 command(s) checked"
     },
     {
       "id": "D3",
@@ -52,9 +52,11 @@
       "failures": [
         "requirement 'FPRIME-PRG-001' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:13) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'FPRIME-PRG-002' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:14) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'FPRIME-PRG-003' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:15) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'FPRIME-PRG-003' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:15) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'FPRIME-PRG-004' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'FPRIME-PRG-005' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "3 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -82,9 +84,11 @@
       "name": "Requirement per command",
       "category": "requirements",
       "module": "/home/runner/work/fprime/fprime/Svc/PassiveRateGroup",
-      "status": "skip",
-      "failures": [],
-      "detail": "no commands declared in the FPP model"
+      "status": "fail",
+      "failures": [
+        "command 'CLEAR_STATISTICS' has no requirement referencing it (add a requirement mentioning 'CLEAR_STATISTICS')"
+      ],
+      "detail": "1 command(s) traced against 5 requirement(s)"
     },
     {
       "id": "R2",
@@ -96,9 +100,10 @@
         "telemetry channel 'MaxCycleTime' has no requirement referencing it (add a requirement mentioning 'MaxCycleTime')",
         "telemetry channel 'CycleTime' has no requirement referencing it (add a requirement mentioning 'CycleTime')",
         "telemetry channel 'CycleCount' has no requirement referencing it (add a requirement mentioning 'CycleCount')",
-        "telemetry channel 'PortCycleTime' has no requirement referencing it (add a requirement mentioning 'PortCycleTime')"
+        "telemetry channel 'PortCycleTime' has no requirement referencing it (add a requirement mentioning 'PortCycleTime')",
+        "telemetry channel 'PortCycleTimeHWM' has no requirement referencing it (add a requirement mentioning 'PortCycleTimeHWM')"
       ],
-      "detail": "4 telemetry channel(s) traced against 3 requirement(s)"
+      "detail": "5 telemetry channel(s) traced against 5 requirement(s)"
     },
     {
       "id": "R3",
@@ -137,7 +142,7 @@
         "port 'CycleIn' has no requirement referencing it (add a requirement mentioning 'CycleIn')",
         "port 'RateGroupMemberOut' has no requirement referencing it (add a requirement mentioning 'RateGroupMemberOut')"
       ],
-      "detail": "2 port(s) traced against 3 requirement(s)"
+      "detail": "2 port(s) traced against 5 requirement(s)"
     },
     {
       "id": "R7",
@@ -148,9 +153,11 @@
       "failures": [
         "requirement 'FPRIME-PRG-001' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:13) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'FPRIME-PRG-002' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:14) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'FPRIME-PRG-003' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'FPRIME-PRG-003' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:15) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'FPRIME-PRG-004' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'FPRIME-PRG-005' (/home/runner/work/fprime/fprime/Svc/PassiveRateGroup/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "3 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -159,7 +166,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/PassiveRateGroup",
       "status": "pass",
       "failures": [],
-      "detail": "3 requirement(s) checked"
+      "detail": "5 requirement(s) checked"
     },
     {
       "id": "U3",

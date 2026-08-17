@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-11T20:24:17Z",
+  "generated_at": "2026-08-17T21:33:41Z",
   "ref": "devel",
-  "commit": "cd5b5597edbb49be602bc36ac4bb39ec80b7cb21",
+  "commit": "5a720f1dce2114a8a0c83be37432bccf13bc1623",
   "passed": 2,
   "failed": 7,
   "skipped": 7,
@@ -55,9 +55,10 @@
         "requirement 'FPRIME-BM-003' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:16) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'FPRIME-BM-004' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:17) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
         "requirement 'FPRIME-BM-005' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:18) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'FPRIME-BM-006' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:19) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'FPRIME-BM-006' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:19) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'FPRIME-BM-007' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:20) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -102,7 +103,7 @@
         "telemetry channel 'NoBuffs' has no requirement referencing it (add a requirement mentioning 'NoBuffs')",
         "telemetry channel 'EmptyBuffs' has no requirement referencing it (add a requirement mentioning 'EmptyBuffs')"
       ],
-      "detail": "5 telemetry channel(s) traced against 6 requirement(s)"
+      "detail": "5 telemetry channel(s) traced against 7 requirement(s)"
     },
     {
       "id": "R3",
@@ -113,7 +114,7 @@
       "failures": [
         "event 'NoBuffsAvailable' has no requirement referencing it (add a requirement mentioning 'NoBuffsAvailable')"
       ],
-      "detail": "1 event(s) traced against 6 requirement(s)"
+      "detail": "1 event(s) traced against 7 requirement(s)"
     },
     {
       "id": "R4",
@@ -144,7 +145,7 @@
         "port 'bufferGetCallee' has no requirement referencing it (add a requirement mentioning 'bufferGetCallee')",
         "port 'schedIn' has no requirement referencing it (add a requirement mentioning 'schedIn')"
       ],
-      "detail": "3 port(s) traced against 6 requirement(s)"
+      "detail": "3 port(s) traced against 7 requirement(s)"
     },
     {
       "id": "R7",
@@ -158,9 +159,10 @@
         "requirement 'FPRIME-BM-003' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:16) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'FPRIME-BM-004' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:17) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
         "requirement 'FPRIME-BM-005' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:18) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'FPRIME-BM-006' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'FPRIME-BM-006' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:19) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'FPRIME-BM-007' (/home/runner/work/fprime/fprime/Svc/BufferManager/docs/sdd.md:20) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -169,7 +171,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/BufferManager",
       "status": "pass",
       "failures": [],
-      "detail": "6 requirement(s) checked"
+      "detail": "7 requirement(s) checked"
     },
     {
       "id": "U3",
