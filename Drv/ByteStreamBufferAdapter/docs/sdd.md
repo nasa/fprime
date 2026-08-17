@@ -29,7 +29,28 @@ The design of `ByteStreamBufferAdapter` assumes the following:
 2. Buffer ownership follows the standard Return-To-Sender pattern: buffers are owned by the receiver until returned.
 3. The byte stream driver operates correctly and returns buffers sent to it when it is done processing.
 
-### 3.3. State
+### 3.2 Ports
+
+| Kind | Name | Type | Description |
+|------|------|------|-------------|
+| sync input | bufferIn | Fw.BufferSend | Receives buffers from the client to send to the byte stream driver |
+| output | bufferInReturn | Fw.BufferSend | Returns ownership of buffers received on `bufferIn` |
+| output | bufferOut | Fw.BufferSend | Sends buffers received from the byte stream driver to the client |
+| sync input | bufferOutReturn | Fw.BufferSend | Receives back ownership of buffers sent on `bufferOut` |
+| sync input | byteStreamDriverReady | Drv.ByteStreamReady | Receives ready signals from the byte stream driver |
+| sync input | fromByteStreamDriver | Drv.ByteStreamData | Receives data from the byte stream driver |
+| output | fromByteStreamDriverReturn | Fw.BufferSend | Returns ownership of buffers received on `fromByteStreamDriver` |
+| output | toByteStreamDriver | Drv.ByteStreamSend | Sends data to the byte stream driver |
+
+### 3.3 Events
+
+| Event | Severity | Description |
+|-------|----------|-------------|
+| DriverNotReady | warning low | A buffer arrived on `bufferIn` before the driver signaled ready |
+| DataSendError | warning low | The driver reported an error sending data |
+| DataReceiveError | warning low | The driver reported an error receiving data |
+
+### 3.4 State
 
 The component maintains a single state variable:
 

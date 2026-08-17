@@ -9,10 +9,10 @@
 # to remove the template-failsafe (step 1) and fill in all <SOMETHING> tags.
 #
 # **Note:** this file should follow the standard CMake toolchain format. See:
-# https://cmake.org/cmake/help/v3.12/manual/cmake-toolchains.7.html
+# https://cmake.org/cmake/help/v3.18/manual/cmake-toolchains.7.html
 #
 # **Note:** If the user desires to set compile flags, or F prime specific build options, a platform
-#           file should be constructed. See: [platform.md](../platform/platform.md)
+#           file should be constructed. See: [platform.cmake.template](../platform/platform.cmake.template)
 #
 # ### Filling In CMake Toolchain by Example ###
 #

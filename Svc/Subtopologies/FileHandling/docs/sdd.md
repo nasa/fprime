@@ -77,6 +77,7 @@ topology Flight {
     ComCcsds.Subtopology.fileUplinkOut                    -> FileHandling.Subtopology.fileUplinkBufferSendIn
     FileHandling.Subtopology.fileUplinkBufferSendOut     -> ComCcsds.Subtopology.fileUplinkReturnIn
   }
+}
 ```
 
 ## 4. Configuration

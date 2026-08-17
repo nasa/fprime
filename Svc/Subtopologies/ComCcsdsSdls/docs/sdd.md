@@ -1,11 +1,11 @@
-# ComCcsdsSdls (CCSDS Framing with SDLS Decryption) Subtopology — Software Design Document (SDD)
+# ComCcsdsSdls (CCSDS Framing with SDLS) Subtopology — Software Design Document (SDD)
 
-The **ComCcsdsSdls subtopologies** implement F´'s **CCSDS** communications stack for framing/deframing on the flight side, with an **SDLS (Space Data Link Security) decryption stage** inserted in the uplink path. As with `ComCcsds`, there are **two variants** in the same module:
+The **ComCcsdsSdls subtopologies** implement F´'s **CCSDS** communications stack for framing/deframing on the flight side, with **SDLS (Space Data Link Security) stages** inserted in the communication paths: a **decryption stage** in the uplink path and a mirrored **encryption stage** in the downlink path. As with `ComCcsds`, there are **two variants** in the same module:
 
 1. A variant that **supplies a `Svc::ComStub`** implementation of `Svc.ComInterface` and expects to be wired to a **`Drv::ByteStreamDriverModel`** (TCP/UDP/UART, etc.), and
 2. A variant that **expects an external implementation of [`Svc.ComInterface`](https://fprime.jpl.nasa.gov/latest/docs/reference/communication-adapter-interface/)** provided by the deployment.
 
-Both variants are **composed from the `ComCcsds` layer topologies**: the `ComCcsds.SpacePacketFraming` packet layer and the `ComCcsds.TmTcFraming` transfer frame layer are imported and wired together through their **topology ports**, with the boxed **`SdlsDecryption` layer topology** (`CcsdsSdlsDeframer` → `SdlsSaRouter` → decryptor) inserted between them on the uplink path. Only the SDLS instances are defined in this module; the packet and frame layer instances remain in `ComCcsds` and are configured through `ComCcsdsConfig`.
+Both variants are **composed from the `ComCcsds` layer topologies**: the `ComCcsds.SpacePacketFraming` packet layer and the `ComCcsds.TmTcFraming` transfer frame layer are imported and wired together through their **topology ports**, with the boxed **`SdlsDecryption` layer topology** (`CcsdsSdlsDeframer` → `SdlsSaRouter` → decryptor) inserted between them on the uplink path and the boxed **`SdlsEncryption` layer topology** on the downlink path. Only the SDLS instances are defined in this module; the packet and frame layer instances remain in `ComCcsds` and are configured through `ComCcsdsConfig`.
 
 > [!WARNING]
 > The **default decryptor is `Svc.Ccsds.ClearTextDecryptor`, which provides NO security** — no confidentiality, no integrity, and no authentication. Projects requiring security must override the configuration module to select a real decryptor implementation.
