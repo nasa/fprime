@@ -177,7 +177,7 @@ void LogBad::action(MockLogging::FakeLogger& truth) {
             Fw::Logger::log("No args");
             break;
         case 1:
-            Fw::Logger::log("One arg: %" PRI_U64 " %" PRI_U64, ra[0]);
+            Fw::Logger::log("One arg: %" PRI_U64, ra[0]);
             break;
         case 2:
             Fw::Logger::log("Two arg: %" PRI_U64 " %" PRI_U64, ra[0], ra[1]);
