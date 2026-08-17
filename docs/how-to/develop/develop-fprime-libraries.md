@@ -48,8 +48,8 @@ The `library.cmake` file is the only required file for an F´ library.  It consi
 ####
 # library.cmake for MyLibrary
 ####
-add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/Components/MyComponent")
-add_fprime_subdirectory("${CURRENT_CMAKE_LIST_DIR}/MyLibrary/MyTopology")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyLibrary/Components/MyComponent")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/MyLibrary/MyTopology")
 ```
 
 `library.cmake` should exist at the root of the library's directory structure.

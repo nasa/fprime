@@ -9,10 +9,10 @@ contract
 ([`.github/agents/_shared/review-contract.md`](agents/_shared/review-contract.md))
 and the agent registry
 ([`.github/agents/_shared/agent-registry.yml`](agents/_shared/agent-registry.yml)),
-which lists the nine reviewer agents (security, supply chain / runner
+which lists the ten reviewer agents (security, supply chain / runner
 safety, F Prime C/C++ design, stale documentation, design,
-architecture, test quality, correctness, maintainability) and the
-summary aggregator.
+architecture, test quality, correctness, operational consequences,
+maintainability) and the summary aggregator.
 
 ## Writing unit tests
 

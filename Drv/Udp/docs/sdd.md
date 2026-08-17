@@ -9,7 +9,7 @@ For more information on the ByteStreamModelDriver see: Drv::ByteStreamDriverMode
 
 ## Design
 
-The TcpClient component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
+The Udp component implements the design specified by the [`Drv::ByteStreamDriverModel`](../../ByteStreamDriverModel/docs/sdd.md).
 
 ## Usage
 

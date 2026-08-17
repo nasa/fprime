@@ -34,11 +34,11 @@
 #
 # ```
 # FIND_PACKAGE ( Threads REQUIRED )
-# include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+# add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/cmake/platform/unix/Platform/")
 # ```
 #
-# **Note:** much of this is done already in *-common.cmake for Linux. If using a linux-like system,
-#           this can be included to save time.
+# **Note:** much of this is done already in Linux.cmake and Darwin.cmake. If using a unix-like
+#           system, see those files for reference.
 #
 # **Note:** if copying the template, delete the message with FATAL_ERROR line. This is a fail-safe
 #           to prevent a raw-copy from being treated as a valid toolchain file.
@@ -67,8 +67,8 @@ if (NOT DEFINED FPRIME_USE_BAREMETAL_SCHEDULER)
    FIND_PACKAGE ( Threads REQUIRED )
 endif()
 
-# STEP 5: Specify a directory containing the "PlatformTypes.hpp" headers, as well
+# STEP 5: Specify a directory containing the "PlatformTypes.h" header, as well
 #         as other system headers. Other global headers can be placed here.
-#         Note: Typically, the Linux directory is a good default, as it grabs
-#         standard types from <cstdint>.
-include_directories(SYSTEM "${FPRIME_FRAMEWORK_PATH}/Fw/Types/Linux")
+#         Note: Typically, the unix platform directory is a good default, as it
+#         grabs standard types from <cstdint>.
+add_fprime_subdirectory("${FPRIME_FRAMEWORK_PATH}/cmake/platform/unix/Platform/")
