@@ -495,7 +495,7 @@ cc @<maintainer1> @<maintainer2> — please confirm close.
 ### Maintainer ping
 
 `Recommend: Close` is a high-stakes call; ping maintainers per
-`_shared/skills/maintainer-lookup.skill.md` (steps 1, 3, 4) so a
+`.github/skills/maintainer-lookup/SKILL.md` (steps 1, 3, 4) so a
 human decides whether to close or hold for discussion. This ping is
 always posted (not gated on confidence) because the close decision
 is human territory.
@@ -647,7 +647,7 @@ self-heals historic duplicates on every run.
    ties broken by the highest triage tag (must fix > suggestion >
    could fix > future work).
 5. **Close each non-canonical duplicate**:
-   - POST one reply per `post-inline-review.skill.md` §3:
+   - POST one reply per `post-inline-review` §3:
 
      ```
      [Summary] **Duplicate** — consolidated into <link to canonical thread>.

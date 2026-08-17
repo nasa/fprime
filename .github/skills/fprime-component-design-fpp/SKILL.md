@@ -1,6 +1,12 @@
 ---
 name: fprime-component-design-fpp
-description: FPP design phase of F Prime component development. Guides the agent through creating the FPP model that codifies the component's interface — ports, commands, events, telemetry, and parameters. Trigger when the requirements are confirmed and the next step is to write the .fpp file. Keywords: F Prime, FPP, design, model, ports, commands, telemetry, events, parameters, component definition.
+description: >-
+  FPP design phase of F Prime component development. Guides the agent
+  through creating the FPP model that codifies the component's
+  interface — ports, commands, events, telemetry, and parameters.
+  Trigger when the requirements are confirmed and the next step is to
+  write the .fpp file. Keywords: F Prime, FPP, design, model, ports,
+  commands, telemetry, events, parameters, component definition.
 ---
 
 # Skill: F Prime Component Design (FPP)
@@ -33,7 +39,7 @@ solutions exist for common needs:
 Before writing any FPP:
 
 1. **Requirements must be confirmed** (see
-   `fprime-component-requirements.skill.md`).
+   `fprime-component-requirements`).
 2. **Ask the user** about any ambiguity in:
    - Port types (does a suitable port already exist, or do we need a
      new one?)

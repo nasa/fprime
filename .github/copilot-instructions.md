@@ -14,11 +14,18 @@ safety, F Prime C/C++ design, stale documentation, design,
 architecture, test quality, correctness, maintainability) and the
 summary aggregator.
 
+## Skills
+
+Reusable procedures live in `.github/skills/<skill-name>/SKILL.md`,
+following the [Agent Skills specification](https://agentskills.io/specification).
+Agents and skills reference each other by skill name. To add or change
+one, follow the `agent-skill-authoring` skill.
+
 ## Writing unit tests
 
 When writing or modifying F Prime component unit tests, follow the
 procedure in
-[`.github/agents/_shared/skills/fprime-unit-testing.skill.md`](agents/_shared/skills/fprime-unit-testing.skill.md).
+[`.github/skills/fprime-unit-testing/SKILL.md`](skills/fprime-unit-testing/SKILL.md).
 It covers scaffold generation (`fprime-util impl --ut`), the
 Tester / GTestBase pattern, helper-function design, rules-based
 testing with STest, and `CMakeLists.txt` registration.
