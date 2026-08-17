@@ -25,7 +25,7 @@ class AmpcsEvrLogPacket : public ComPacket {
 
     SerializeStatus serializeTo(SerialBufferBase& buffer,
                                 Fw::Endianness mode = Fw::Endianness::BIG) const override;  //!< serialize contents
-    SerializeStatus deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG);
+    SerializeStatus deserializeFrom(SerialBufferBase& buffer, Fw::Endianness mode = Fw::Endianness::BIG) override;
 
     void setTaskName(U8* taskName, U8 len);
     void setId(U32 eventID);
