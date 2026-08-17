@@ -27,6 +27,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     void runNopCommands();
     void runClearCommandTracking();
     void runCommandQueueOverflow();
+    void runNonZeroPortDispatch();
 
     void registerBuiltinCommands();
 
@@ -42,6 +43,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     FwOpcodeType m_cmdSendOpCode;
     U32 m_cmdSendCmdSeq;
     Fw::CmdArgBuffer m_cmdSendArgs;
+    FwIndexType m_cmdSendPortNum;
 
     void from_seqCmdStatus_handler(FwIndexType portNum,
                                    FwOpcodeType opCode,
@@ -52,6 +54,7 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
     FwOpcodeType m_seqStatusOpCode;
     U32 m_seqStatusCmdSeq;
     Fw::CmdResponse m_seqStatusCmdResponse;
+    FwIndexType m_seqStatusPortNum;
 };
 
 } /* namespace Svc */

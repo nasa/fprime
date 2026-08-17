@@ -6,8 +6,10 @@
 name: "Code Scan: JPL Coding Standard Query Tests"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
     paths:
       - '.github/codeql/**'
       - '.github/workflows/codeql-query-tests.yml'
@@ -42,6 +44,8 @@ jobs:
       run: |
         curl -sSL -o codeql.zip \
           "https://github.com/github/codeql-cli-binaries/releases/download/${CODEQL_CLI_VERSION}/codeql-linux64.zip"
+        # sha256 of codeql-linux64.zip for CODEQL_CLI_VERSION v2.26.1; update together
+        echo "15480dda6e20336a9c7ddcb6171e0e9155f1fe73a1d31baeac153821cb89aeab  codeql.zip" | sha256sum -c -
         unzip -q codeql.zip -d "${RUNNER_TEMP}"
         echo "${RUNNER_TEMP}/codeql" >> "${GITHUB_PATH}"
 

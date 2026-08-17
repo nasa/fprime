@@ -135,6 +135,9 @@ Fw::SerializeStatus FileDataPdu::fromSerialBuffer(Fw::SerialBuffer& serialBuffer
     Fw::SerializeStatus status;
     U8 offsetSize;
     status = serialBuffer.deserializeTo(this->m_offset);
+    if (status != Fw::FW_SERIALIZE_OK) {
+        return status;
+    }
     offsetSize = sizeof(this->m_offset);
 
     // Calculate remaining data size based on header's PDU data length

@@ -5,7 +5,7 @@
 //! by including the implementation hash header that
 //! you are interested in. Ie. This could look like:
 //!
-//! #include <Utils/Hash/openssl/SHA256.hpp>
+//! #include <Utils/Hash/YourImplementation/YourImplementationHash.hpp>
 //!
 #include <Utils/Hash/Crc32/Crc32.hpp>
 

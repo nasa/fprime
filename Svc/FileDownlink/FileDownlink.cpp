@@ -349,11 +349,18 @@ void FileDownlink ::sendFile(const Fw::FileNameString& sourceFilename,
 }
 
 Os::File::Status FileDownlink ::sendDataPacket(U32& byteOffset) {
-    FW_ASSERT(byteOffset < this->m_endOffset);
     const U32 maxDataSize =
         FILEDOWNLINK_INTERNAL_BUFFER_SIZE - Fw::FilePacket::DataPacket::HEADERSIZE - sizeof(FwPacketDescriptorType);
-    const U32 dataSize =
-        (byteOffset + maxDataSize > this->m_endOffset) ? (this->m_endOffset - byteOffset) : maxDataSize;
+    // The caller is required to maintain byteOffset < m_endOffset.
+    if (byteOffset >= this->m_endOffset) {
+        return Os::File::INVALID_ARGUMENT;
+    }
+    // Subtraction cannot underflow given the check above; comparing the remainder against
+    // maxDataSize (rather than byteOffset + maxDataSize against m_endOffset) also avoids an
+    // addition that could wrap when byteOffset is near the top of the U32 range. dataSize is
+    // therefore always <= maxDataSize, i.e. never larger than the buffer below.
+    const U32 remaining = this->m_endOffset - byteOffset;
+    const U32 dataSize = (remaining < maxDataSize) ? remaining : maxDataSize;
     U8 buffer[maxDataSize];
     // This will be last data packet sent
     if (dataSize + byteOffset == this->m_endOffset) {
@@ -399,6 +406,10 @@ void FileDownlink ::sendCancelPacket() {
     // Serialize the filePacket content into the buffer
     status = filePacket.toBuffer(offsetBuffer);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+    const U32 bufferSize = filePacket.bufferSize() + static_cast<U32>(sizeof(FwPacketDescriptorType));
+    FW_ASSERT(buffer.getSize() >= bufferSize, static_cast<FwAssertArgType>(buffer.getSize()),
+              static_cast<FwAssertArgType>(bufferSize));
+    buffer.setSize(bufferSize);
     this->bufferSendOut_out(0, buffer);
     this->m_packetsSent.packetSent();
 }
@@ -502,10 +513,8 @@ void FileDownlink ::getBuffer(Fw::Buffer& buffer, PacketType type) {
     // Check type is correct
     FW_ASSERT(type < COUNT_PACKET_TYPE && type >= 0, static_cast<FwAssertArgType>(type));
     // Wrap the buffer around our indexed memory.
-    buffer.setData(this->m_memoryStore[type]);
-    buffer.setSize(FILEDOWNLINK_INTERNAL_BUFFER_SIZE);
-    // Set a known ID to look for later
-    buffer.setContext(m_lastBufferId);
+    // Set a known ID (context) to look for later
+    buffer.set(this->m_memoryStore[type], FILEDOWNLINK_INTERNAL_BUFFER_SIZE, m_lastBufferId);
     m_lastBufferId++;
 }
 }  // end namespace Svc

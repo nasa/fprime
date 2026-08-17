@@ -47,9 +47,11 @@ File::Status computeHash(const char* fileName, Utils::HashBuffer& hashBuffer) {
     }
     file.close();
 
-    // We should not have left the loop because of cnt > max_itr:
-    FW_ASSERT(size == 0);
-    FW_ASSERT(cnt <= max_itr);
+    // The iteration bound is computed from the size at open; a file that grows while
+    // being hashed exhausts it with data still unread, which is an error, not a bug
+    if (size != 0) {
+        return File::BAD_SIZE;
+    }
 
     // Calculate hash:
     Utils::HashBuffer computedHashBuffer;

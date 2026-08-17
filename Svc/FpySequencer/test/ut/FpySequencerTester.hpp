@@ -269,6 +269,7 @@ class FpySequencerTester : public FpySequencerGTestBase, public ::testing::Test 
     Fpy::Sequence* tester_get_m_sequenceObj_ptr();
     Svc::Signal tester_dispatchStatement();
     Fw::Success tester_validate();
+    bool tester_isRunningState(Svc::FpySequencer_SequencerStateMachineStateMachineBase::State state);
     Fw::String tester_get_m_sequenceFilePath();
     void tester_set_m_sequenceFilePath(Fw::String str);
     // directly invokes the setSequenceFilePath state machine action, bypassing the

@@ -231,6 +231,58 @@ The aggregator's review is identified by
 dismisses its prior review and submits a new one (since the event
 APPROVE/REQUEST_CHANGES may change between runs).
 
+### 6a. Cross-agent de-duplication (site-key + concurrence)
+
+The `finding-key` (§7) hashes in `agent_name`, so it de-duplicates
+only *within* one agent. To prevent ten reviewers from posting the
+same underlying issue as ten separate threads, every inline comment
+also carries an agent-agnostic **site-key**:
+
+```
+site-key = sha256(file_path + "|" + anchor)
+```
+
+`file_path` and `anchor` are computed exactly as for the finding-key
+(§7 / `skills/re-review-state.skill.md` §2). Two comments with the
+same site-key are anchored to the same spot; whether they are the
+same *issue* is decided by the concurrence rule below. Footers that
+carry a site-key use the `v2` marker (§9); `v1` footers without a
+site-key remain valid and readable.
+
+**First-poster-wins concurrence rule.** Reviewers run sequentially in
+a fixed order (orchestrator §Sequence). During Phase A each reviewer
+inventories **all** agents' prior inline comments on the PR (any
+`fprime-agent:` footer, not just its own), indexed by site-key.
+Before posting a new finding, the reviewer checks for an existing
+open thread at the same site-key:
+
+- **Same underlying issue, different lens** → do NOT post a new
+  thread. Post one **concurrence reply** on the existing thread using
+  the concurrence body shape (§9). The concurring agent still counts
+  the finding in its own hidden metadata (Priority 1 is preserved:
+  the finding is counted and visible, just not re-posted as a
+  separate thread). If the concurring agent's severity is **higher**
+  than the thread's current tag (e.g. it would say `must fix` where
+  the original said `suggestion`), the concurrence reply states the
+  escalated tag, and the concurring agent's metadata carries it as
+  outstanding at its own severity so verdicts stay correct.
+- **Same spot, genuinely different issue** → post normally. The
+  site-key match alone never suppresses a distinct finding.
+
+Resolution semantics on shared threads: a thread with concurrences is
+resolved only when the fix satisfies every concurring agent. Each
+concurring agent's Phase C (§7) treats the shared thread as its own
+for resolve / un-resolve purposes, keyed by its concurrence reply.
+
+**Aggregator post-pass backstop.** The aggregator runs a mandatory
+de-duplication post-pass on every run: it groups open agent-authored
+threads by site-key, detects duplicates the concurrence rule missed,
+replies on each non-canonical duplicate with a link to the canonical
+thread, and resolves it. Mechanics and canonical-thread election live
+in `review-summary.agent.md` §5h. Reviewers MUST NOT un-resolve a
+thread closed by the aggregator's `reply-kind: duplicate-close` reply;
+they track their finding on the linked canonical thread instead.
+
 ---
 
 ## 7. Re-review behavior
@@ -244,8 +296,11 @@ agent's prior run, it executes phases A–D in order. Mechanics live in
 Every inline comment carries a hidden identity footer:
 
 ```
-<!-- fprime-agent: security-review; finding-key: <key>; v1 -->
+<!-- fprime-agent: security-review; finding-key: <key>; site-key: <skey>; v2 -->
 ```
+
+(Legacy `v1` footers omit the site-key; agents parse both forms and
+recompute a best-effort site-key for `v1` comments when needed.)
 
 `finding-key` is a stable hash:
 
@@ -264,10 +319,12 @@ order: enclosing symbol name (function / class / FPP entity) + a
 that, the nearest stable structural anchor (file + symbol). The skill
 specifies the exact algorithm.
 
-The agent fetches all of its own prior inline comments via the GitHub
-API, filtered by the `fprime-agent: <self>` marker, and indexes them
-by `finding-key`. For each prior comment, the agent also fetches via
-GraphQL:
+The agent fetches **all** agent-authored prior inline comments via
+the GitHub API (any `fprime-agent:` marker). It indexes its own
+comments (marker matches `<self>`) by `finding-key`, and indexes
+every agent-authored comment — its own and others' — by `site-key`
+for the cross-agent concurrence check (§6a). For each prior comment,
+the agent also fetches via GraphQL:
 
 - **Resolution status** of the parent review thread (`isResolved`,
   `resolvedBy`).
@@ -292,6 +349,7 @@ current set of finding-keys.
 | present | absent | not resolved | Cleanly fixed | **Resolve:** reply `[<review_label>] Fixed in <sha>.` + GraphQL `resolveReviewThread`. |
 | present | absent | already resolved | Cleanly fixed and acknowledged | **Reply only:** `[<review_label>] Fixed in <sha>.` (no need to re-resolve). |
 | absent | present, same `(file, symbol)` as a prior but different `finding_class` | n/a | Author attempted a fix that left a different problem in the same spot | **Incorrect-fix follow-up:** new inline comment, body starts with `[<review_label>] **<tag>** Follow-up to <link to prior>: <new issue>`. |
+| absent | present, no related prior, **another agent's open thread shares the site-key and describes the same issue** | n/a | Cross-agent duplicate (§6a) | **Concurrence reply** on the existing thread per §6a / §9; count the finding in own metadata; do not open a new thread. |
 | absent | present, no related prior | n/a | Brand-new finding (new code) | **Post a new comment.** |
 
 ### Phase D — Update per-agent review metadata
@@ -344,6 +402,12 @@ degradation; the agent still decrements `outstanding` and increments
   forth is for the maintainer (§11).
 - **Never decrement** a tag column. Resolution decrements only
   `outstanding`.
+- **Never open a new thread** for a finding whose site-key matches
+  another agent's open thread describing the same issue — concur on
+  that thread instead (§6a).
+- **Never un-resolve** a thread the aggregator closed with a
+  `reply-kind: duplicate-close` reply; the canonical thread it links
+  is the live home of the finding.
 
 ---
 
@@ -401,13 +465,13 @@ improper-resolution reply, or a disagreement escalation.
 (low-confidence-only)
 cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
 
-<!-- fprime-agent: <name>; finding-key: <key>; v1 -->
+<!-- fprime-agent: <name>; finding-key: <key>; site-key: <skey>; v2 -->
 ```
 
 `<review_label>` is the agent's `review_label` from
 `agent-registry.yml` (e.g., `Security`, `Supply Chain`,
 `C++ Design`, `Documentation`, `Design`, `Test Quality`,
-`Correctness`, `Maintainability`).
+`Correctness`, `Operational`, `Maintainability`).
 
 Total prose ≤ 6 lines. The reviewer-label prefix, suggestion block,
 maintainer-ping line, and HTML footer don't count toward the line
@@ -448,6 +512,22 @@ cc @<maintainer1> @<maintainer2> — needs human adjudication.
 The `reply-kind` HTML attribute lets the agent recognize its own prior
 escalation replies on subsequent runs and avoid double-escalating the
 same thread.
+
+### Concurrence reply (cross-agent de-duplication, §6a)
+
+Posted by a reviewer on another agent's open thread that already
+covers the same underlying issue at the same site-key.
+
+```
+[<review_label>] **Concur** — also in scope for <my scope>: <≤ 1 line of lens-specific detail>[; severity from my scope: **<tag>**].
+
+<!-- fprime-agent: <name>; finding-key: <key>; site-key: <skey>; v2; reply-kind: concurrence -->
+```
+
+The bracketed severity clause appears only when the concurring
+agent's tag is stricter than the thread's current tag. One
+concurrence reply per agent per thread; the `reply-kind: concurrence`
+attribute is the de-dup key on later runs.
 
 ---
 

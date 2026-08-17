@@ -45,9 +45,22 @@ The Active Rate Group detects overruns (also called slips) — when a new cycle 
 - The division ratios for the Rate Group Driver are specified at construction.
 - Context values passed to member components are specified via a configuration table.
 - The Active Phaser's tick count and per-port timing windows are configured at setup time.
+- **PassiveRateGroup**: The `configure()` method accepts an optional `Os::RawTimeSource` parameter to select the timer source for cycle time measurements. This allows choosing between different platform timer implementations (e.g., monotonic clock, high-resolution timer). If not specified, defaults to `Os::RAWTIME_DEFAULT`.
+  - **Limitation**: Only the cycle *end* timestamp uses the configured source. The cycle *start* timestamp comes from the cycle driver (typically `RAWTIME_DEFAULT`). Non-default `RawTimeSource` values will subtract timestamps from different timer sources, producing incorrect cycle time measurements unless the cycle driver is also modified to use the same source.
 
 ### Telemetry
 
 Rate groups report the maximum execution time observed for their cycle, allowing operators to monitor timing margins.
+
+**PassiveRateGroup** provides detailed per-port telemetry:
+- `MaxCycleTime` — Overall maximum execution time for a complete rate group cycle (update on change)
+- `CycleTime` — Execution time of the most recent cycle (sent every cycle)
+- `CycleCount` — Total number of cycles executed (sent every cycle)
+- `PortCycleTime` — Array of execution times for each member port in the most recent cycle (sent every cycle)
+- `PortCycleTimeHWM` — Array of high water marks (maximum observed execution times) for each member port (update on change)
+
+The `PortCycleTime` telemetry is sent every cycle to provide a complete timing snapshot of each cycle's execution. The `PortCycleTimeHWM` telemetry uses "update on change" semantics, sending only when at least one port's high water mark increases, which reduces telemetry bandwidth while still capturing timing anomalies.
+
+The per-port high water marks can be cleared using the `CLEAR_STATISTICS` command, which resets all port duration high water marks and the maximum cycle time to zero. This is useful for re-baselining timing measurements after system changes or to isolate timing behavior during specific operational phases. The cycle count is not cleared, as it represents a running total.
 
 The cycle source that drives rate group scheduling is described in the [Time Services](time-services.md) document.

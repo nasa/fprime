@@ -3,11 +3,13 @@
 name: "External Repo: YAMCS Reference"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [devel]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [devel]
+    branches: [devel, release/**]
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -15,7 +17,6 @@ on:
       - '.github/ISSUE_TEMPLATE/**'
       - '.github/agents/**'
   workflow_dispatch:
-    branches: [devel]
 
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
@@ -26,35 +27,28 @@ permissions:
   contents: read
 
 jobs:
+  get-branch:
+    name: "Get target branch"
+    uses: ./.github/workflows/reusable-get-pr-branch.yml
+    with:
+      target_repository: fprime-community/fprime-yamcs-reference
+      default_target_ref: main
+
   build:
-    name: "Build"
-    runs-on: ubuntu-22.04
-    env:
-      DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
-    steps:
-      - name: "Setup external repository + overlay F´"
-        uses: nasa/fprime-actions/external-repository-setup@devel
-        with:
-          target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
-
-      - name: "Build deployment"
-        run: |
-          cd FprimeYamcsReference/YamcsDeployment
-          fprime-util generate
-          fprime-util build
-
-      - name: "Upload build artifacts"
-        uses: actions/upload-artifact@v7
-        with:
-          name: yamcs-build-artifacts
-          path: build-artifacts/
-          retention-days: 1
+    needs: get-branch
+    name: ""
+    uses: ./.github/workflows/reusable-project-builder.yml
+    with:
+      target_repository: fprime-community/fprime-yamcs-reference
+      build_location: FprimeYamcsReference/YamcsDeployment
+      run_unit_tests: false
+      target_ref: ${{ needs.get-branch.outputs.target-branch }}
+      fprime_location: ./lib/fprime
 
   test:
     name: "Test"
     runs-on: ubuntu-22.04
-    needs: build
+    needs: [get-branch, build]
     env:
       DEPLOYMENT: FprimeYamcsReference_YamcsDeployment
     steps:
@@ -62,13 +56,13 @@ jobs:
         uses: nasa/fprime-actions/external-repository-setup@devel
         with:
           target_repository: fprime-community/fprime-yamcs-reference
-          target_ref: main
+          target_ref: ${{ needs.get-branch.outputs.target-branch }}
 
       - name: "Download build artifacts"
         uses: actions/download-artifact@v7
         with:
-          name: yamcs-build-artifacts
-          path: build-artifacts
+          name: examples-build-artifacts
+          path: .
 
       - name: "Setup Java 17 for YAMCS"
         uses: actions/setup-java@v4
@@ -84,58 +78,49 @@ jobs:
           pip install "fprime-xtce>=0.1.3"
           pip install "fprime-yamcs>=0.1.4"
 
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
+
       - name: "Prepare deployment"
-        run: |
-          chmod +x ./build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
-          mkdir -p ci-logs
+        run: chmod +x ./build-artifacts/Linux/${DEPLOYMENT}/bin/${DEPLOYMENT}
 
-      - name: "Start F´ deployment with YAMCS"
-        run: |
-          fprime-yamcs --ip-client \
-            -d ${PWD}/build-artifacts/Linux/${DEPLOYMENT} \
-            --logs ${PWD}/ci-logs &
-          sleep 15
-          if ! jobs -r | grep -q fprime-yamcs; then
-            echo "ERROR: YAMCS failed to start"
-            cat ${PWD}/ci-logs/*.log 2>/dev/null || true
-            exit 1
-          fi
-          for i in {1..30}; do
-            python -c "from yamcs.client import YamcsClient; YamcsClient('127.0.0.1:8090')" 2>/dev/null && { echo "YAMCS ready"; sleep 5; exit 0; }
-            sleep 2
-          done
-          echo "YAMCS timeout" && exit 1
-
-      - name: "Run YAMCS-specific tests"
-        run: |
-          rc=0
-          pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
-            --use-yamcs \
-            -v \
-            ./FprimeYamcsReference/YamcsDeployment/test/int/test_yamcs_file_transfer.py || rc=1
-          exit $rc
-
-      - name: "Run standard Svc integration tests from lib/fprime"
-        run: |
-          pytest --dictionary ./build-artifacts/Linux/${DEPLOYMENT}/dict/YamcsDeploymentTopologyDictionary.json \
-            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json \
-            --use-yamcs \
-            -v \
-            ./lib/fprime/Svc/PrmDb/test/int/test_cmd_PrmDb.py \
-            ./lib/fprime/Svc/CmdDispatcher/test/int/test_cmd_dispatcher.py \
-            ./lib/fprime/Svc/DpCatalog/test/int/test_cmd_dpCatalog.py \
-            ./lib/fprime/Svc/DpManager/test/int/test_cmd_dpMgr.py \
-            ./lib/fprime/Svc/DpWriter/test/int/test_cmd_dpWriter.py \
-            ./lib/fprime/Svc/EventManager/test/int/test_cmd_eventManager.py \
-            ./lib/fprime/Svc/FileDownlink/test/int/test_cmd_fileDownlink.py \
-            ./lib/fprime/Svc/FileManager/test/int/test_cmd_fileManager.py \
-            ./lib/fprime/Svc/SystemResources/test/int/test_cmd_systemResources.py \
-            ./lib/fprime/Svc/CmdSequencer/test/int/test_cmd_sequencer.py \
-            ./lib/fprime/Svc/FileUplink/test/int/test_cmd_uplink.py \
-            ./lib/fprime/Svc/Subtopologies/CdhCore/test/int/test_cdh_core.py \
-            ./lib/fprime/Svc/Subtopologies/FileHandling/test/int/test_file_handling.py \
-            ./lib/fprime/Svc/Version/test/int/test_cmd_version.py \
+      - name: "Run integration tests"
+        uses: nasa/fprime-actions/run-integration-tests@devel
+        with:
+          ground-system: fprime-yamcs
+          gds-working-directory: "."
+          test-working-directory: "."
+          binary: ./build-artifacts/Linux/FprimeYamcsReference_YamcsDeployment/bin/FprimeYamcsReference_YamcsDeployment
+          # Absolute path needed because YAMCS passes this down to a subprocess
+          gds-args: -d ${{ github.workspace }}/build-artifacts/Linux/FprimeYamcsReference_YamcsDeployment
+          ready-check: python -c "from yamcs.client import YamcsClient; list(YamcsClient('127.0.0.1:8090').list_instances())"
+          ready-timeout: "300"
+          timeout: "1800"
+          pytest-args: >-
+            --dictionary ./build-artifacts/Linux/FprimeYamcsReference_YamcsDeployment/dict/YamcsDeploymentTopologyDictionary.json
+            --deployment-config ./FprimeYamcsReference/YamcsDeployment/test/int/int_config.json
+            --use-yamcs
+            -v
+            ./FprimeYamcsReference/YamcsDeployment/test/int/test_yamcs_file_transfer.py
+            ./lib/fprime/Svc/PrmDb/test/int/test_cmd_PrmDb.py
+            ./lib/fprime/Svc/CmdDispatcher/test/int/test_cmd_dispatcher.py
+            ./lib/fprime/Svc/DpCatalog/test/int/test_cmd_dpCatalog.py
+            ./lib/fprime/Svc/DpManager/test/int/test_cmd_dpMgr.py
+            ./lib/fprime/Svc/DpWriter/test/int/test_cmd_dpWriter.py
+            ./lib/fprime/Svc/EventManager/test/int/test_cmd_eventManager.py
+            ./lib/fprime/Svc/FileDownlink/test/int/test_cmd_fileDownlink.py
+            ./lib/fprime/Svc/FileManager/test/int/test_cmd_fileManager.py
+            ./lib/fprime/Svc/SystemResources/test/int/test_cmd_systemResources.py
+            ./lib/fprime/Svc/CmdSequencer/test/int/test_cmd_sequencer.py
+            ./lib/fprime/Svc/FileUplink/test/int/test_cmd_uplink.py
+            ./lib/fprime/Svc/Subtopologies/CdhCore/test/int/test_cdh_core.py
+            ./lib/fprime/Svc/Subtopologies/FileHandling/test/int/test_file_handling.py
+            ./lib/fprime/Svc/Version/test/int/test_cmd_version.py
             ./lib/fprime/Svc/Health/test/int/test_cmd_health.py
 
       - name: "Archive test logs"
@@ -143,5 +128,5 @@ jobs:
         if: always()
         with:
           name: test-logs
-          path: ci-logs
+          path: gds-logs
           retention-days: 5

@@ -80,6 +80,12 @@ TEST(TestOffNominal, DuplicateChannelIdConflictingSizeTest) {
     tester.duplicateChannelIdConflictingSizeTest();
 }
 
+TEST(TestOffNominal, OversizedChannelTest) {
+    TEST_CASE(100.2.4, "Oversized channel value is rejected with a warning event");
+    Svc::TlmPacketizerTester tester;
+    tester.oversizedChannelTest();
+}
+
 TEST(TestNominal, TlmGetTest) {
     TEST_CASE(100.1.8, "Get telemetry channel");
     Svc::TlmPacketizerTester tester;

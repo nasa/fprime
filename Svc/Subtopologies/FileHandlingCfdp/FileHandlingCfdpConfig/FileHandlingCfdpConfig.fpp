@@ -22,4 +22,10 @@ module FileHandlingCfdpConfig {
         constant fileManager   = 22
         constant prmDb         = 21
     }
+
+    module CpuAffinities {
+        constant cfdpManager   = Os.TASK_DEFAULT
+        constant fileManager   = Os.TASK_DEFAULT
+        constant prmDb         = Os.TASK_DEFAULT
+    }
 }

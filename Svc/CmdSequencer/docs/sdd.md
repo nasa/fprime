@@ -78,7 +78,10 @@ The `cmdResponseIn` port is called when a command in a sequence is completed. If
 
 This port takes a single argument `filename` of type `Fw::String`. In
 general, sending `filename` on this port has the same  effect as issuing
-a `CS_Run` command with `filename` as the file name argument.
+a `CS_Run` command with `filename` as the file name argument. If the
+sequencer is in manual stepping mode (see `CS_Manual`), the request is
+rejected: the `CS_InvalidMode` event is emitted and `EXECUTION_ERROR` is
+returned on the `seqDone` port.
 
 If `filename` is empty, then `CmdSequencer` runs the sequence stored in the
 sequence buffer, without loading a sequence first. In order for this to work:

@@ -55,7 +55,7 @@ Incoming data follows a two-stage deframing process:
 
 ### Configuration
 
-- Base IDs, queue sizes, stack sizes, and priorities via ComCcsdsConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via ComCcsdsConfig.
 - CCSDS-specific parameters (APIDs, virtual channels) are configured through the protocol components.
 
 ### Required Inputs

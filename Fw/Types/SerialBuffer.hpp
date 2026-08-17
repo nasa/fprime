@@ -35,15 +35,10 @@ class SerialBuffer final : public LinearBufferBase {
 
   public:
     // ----------------------------------------------------------------------
-    // Pure virtual methods from LinearBufferBase
+    // Deprecated methods
     // ----------------------------------------------------------------------
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-
-    const U8* getBuffAddr() const;
 
   public:
     // ----------------------------------------------------------------------
@@ -64,15 +59,6 @@ class SerialBuffer final : public LinearBufferBase {
     );
 
   private:
-    // ----------------------------------------------------------------------
-    // Data
-    // ----------------------------------------------------------------------
-
-    //! The data
-    U8* const m_data;
-
-    //! The capacity
-    const FwSizeType m_capacity;
 };
 
 }  // namespace Fw

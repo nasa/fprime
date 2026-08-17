@@ -3,7 +3,7 @@
 
 ## References
 
-- [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/README.md)
+- [F Prime ComLogger](https://github.com/nasa/fprime/blob/devel/Svc/ComLogger/docs/sdd.md)
 - [F Prime ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp)
 
 ## Overview
@@ -21,7 +21,7 @@ When inserted into the communication path, the splitter receives outgoing data, 
 
 ### Configuration
 
-- Base IDs, queue sizes, stack sizes, and priorities are configurable via ComLoggerTeeConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities are configurable via ComLoggerTeeConfig.
 - The communication logger's file path prefix and maximum file size are configured at setup time.
 
 ### Required Inputs

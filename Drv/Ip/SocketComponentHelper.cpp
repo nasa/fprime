@@ -63,12 +63,19 @@ SocketIpStatus SocketComponentHelper::open() {
         }
     }
     if (local_open == OpenState::OPENING) {
-        FW_ASSERT(this->m_descriptor.fd == -1);  // Ensure we are not opening an opened socket
-        status = this->getSocketHandler().open(this->m_descriptor);
+        // Open into a local descriptor and publish it under the lock
+        SocketDescriptor descriptor;
+        {
+            Os::ScopeLock scopeLock(m_lock);
+            descriptor = this->m_descriptor;
+        }
+        FW_ASSERT(descriptor.fd == -1);  // Ensure we are not opening an opened socket
+        status = this->getSocketHandler().open(descriptor);
         // Lock scope
         {
             Os::ScopeLock scopeLock(m_lock);
             if (Drv::SOCK_SUCCESS == status) {
+                this->m_descriptor = descriptor;
                 this->m_open = OpenState::OPEN;
             } else {
                 this->m_open = OpenState::NOT_OPEN;

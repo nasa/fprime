@@ -5,8 +5,10 @@
 name: "Config Test"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     branches: [ devel, release/** ]
     paths-ignore:
@@ -64,12 +66,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
 
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
+          ccache-key-suffix: -${{ matrix.name }}
 
       - name: "Build Framework [${{ matrix.name }}]"
         uses: nasa/fprime-actions/build@devel
@@ -102,12 +106,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
 
       - name: "Setup F´ Tools"
         uses: nasa/fprime-actions/setup@devel
         with:
           location: ${{ github.workspace }}
+          ccache-key-suffix: -${{ matrix.name }}
 
       - name: "Run Framework UTs [${{ matrix.name }}]"
         uses: nasa/fprime-actions/run-unit-tests@devel
@@ -119,5 +125,5 @@ jobs:
         uses: nasa/fprime-actions/run-unit-tests@devel
         with:
           working-directory: "TestDeploymentsProject"
-          generate-args: "-DFPRIME_ENABLE_FRAMEWORK_UTS=OFF ${{ matrix.generate-args }}"
+          generate-args: "${{ matrix.generate-args }}"
           jobs: "random"

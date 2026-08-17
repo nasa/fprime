@@ -29,7 +29,7 @@ The File Handling subtopology packages the core file-transfer and file-managemen
 
 ### Configuration
 
-- Base IDs, queue sizes, stack sizes, and priorities via FileHandlingConfig.
+- Base IDs, queue sizes, stack sizes, priorities, and CPU affinities via FileHandlingConfig.
 - The File Downlink send rate is determined by the connected rate group frequency.
 
 ### Limitations

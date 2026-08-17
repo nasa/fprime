@@ -182,6 +182,17 @@ module Svc {
       severity warning low \
       id 5 \
       format "Section {} is unconfigurable and cannot be set to {}"
+
+    @ Telemetry value larger than the configured channel size
+    event OversizedChannel(
+                            Id: FwChanIdType @< The telemetry ID
+                            valSize: FwSizeType @< The received value size
+                            expected: FwSizeType @< The configured channel size
+                          ) \
+      severity warning high \
+      id 6 \
+      format "Telemetry ID 0x{x} update of size {} exceeds configured size {}" \
+      throttle 10
     
     # ----------------------------------------------------------------------
     # Telemetry
