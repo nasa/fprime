@@ -31,8 +31,10 @@ needs (scripts, templates) goes beside its `SKILL.md`.
 
 This layout is what Copilot, VS Code, Claude Code, and Devin all scan,
 so a skill added here is model-invocable in every tool without extra
-wiring. Reference a skill from prose by name (`pr-diff-scoping`), not
-by file path.
+wiring. Cite a skill by its full path
+(`.github/skills/pr-diff-scoping/SKILL.md`) where the reader is being
+sent to it as a source of truth, and by bare name (`pr-diff-scoping`)
+in prose, tables, and diagrams where the pointer is incidental.
 
 ---
 
