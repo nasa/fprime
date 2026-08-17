@@ -16,59 +16,72 @@
 
 namespace STest {
 
-//! Run a scenario, bounding the number of iterations
-template <typename State>
-class BoundedIteratedScenario : public ConditionalIteratedScenario<State> {
-  public:
-    // ----------------------------------------------------------------------
-    // Constructors and destructors
-    // ----------------------------------------------------------------------
+  //! Run a scenario, bounding the number of iterations
+  template<typename State> class BoundedIteratedScenario :
+    public ConditionalIteratedScenario<State>
+  {
 
-    //! Construct a BoundedIteratedScenario
-    BoundedIteratedScenario(const char* const name,             //!< The name of the BoundedIteratedScenario
-                            IteratedScenario<State>& scenario,  //!< The scenario to run
-                            const U32 bound                     //!< The bound
-                            )
-        : ConditionalIteratedScenario<State>(name, scenario), numIterations(0), bound(bound) {}
+    public:
 
-    //! Destroy a BoundedIteratedScenario
-    virtual ~BoundedIteratedScenario() {}
+      // ----------------------------------------------------------------------
+      // Constructors and destructors
+      // ----------------------------------------------------------------------
 
-  public:
-    // ----------------------------------------------------------------------
-    // ConditionalIteratedScenario implementation
-    // ----------------------------------------------------------------------
+      //! Construct a BoundedIteratedScenario
+      BoundedIteratedScenario(
+          const char *const name, //!< The name of the BoundedIteratedScenario
+          IteratedScenario<State>& scenario, //!< The scenario to run
+          const U32 bound //!< The bound
+      ) :
+        ConditionalIteratedScenario<State>(name, scenario),
+        numIterations(0),
+        bound(bound)
+      {
 
-    //! The virtual condition required by ConditionalIteratedScenario
-    //! \return Whether the condition holds
-    bool condition_ConditionalIteratedScenario(const State& state  //!< The system state
-    ) const {
+      }
+
+      //! Destroy a BoundedIteratedScenario
+      virtual ~BoundedIteratedScenario() {
+
+      }
+
+    public:
+
+      // ----------------------------------------------------------------------
+      // ConditionalIteratedScenario implementation
+      // ----------------------------------------------------------------------
+
+      //! The virtual condition required by ConditionalIteratedScenario
+      //! \return Whether the condition holds
+      bool condition_ConditionalIteratedScenario(
+          const State& state //!< The system state
+      ) const {
         return this->numIterations < this->bound;
-    }
+      }
 
-    //! The virtual implementation of nextScenario required by ConditionalIteratedScenario
-    void nextScenario_ConditionalIteratedScenario(const Scenario<State>* const nextScenario  //!< The next scenario
-    ) {
+      //! The virtual implementation of nextScenario required by ConditionalIteratedScenario
+      void nextScenario_ConditionalIteratedScenario(
+          const Scenario<State> *const nextScenario //!< The next scenario
+      ) {
         if (nextScenario != nullptr) {
-            ++this->numIterations;
+          ++this->numIterations;
         }
-    }
+      }
 
-    //! The virtual implementation of reset required by ConditionalIteratedScenario
-    void reset_ConditionalIteratedScenario() { this->numIterations = 0; }
+    private:
 
-  private:
-    // ----------------------------------------------------------------------
-    // Private member variables
-    // ----------------------------------------------------------------------
+      // ----------------------------------------------------------------------
+      // Private member variables
+      // ----------------------------------------------------------------------
 
-    //! The number of iterations
-    U32 numIterations;
+      //! The number of iterations
+      U32 numIterations;
 
-    //! The bound on the number of iterations
-    const U32 bound;
-};
+      //! The bound on the number of iterations
+      const U32 bound;
 
-}  // namespace STest
+  };
+
+}
 
 #endif

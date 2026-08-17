@@ -14,46 +14,52 @@
 
 #include <cassert>
 
-#include "STest/Scenario/RuleScenario.hpp"
 #include "STest/Scenario/SequenceScenario.hpp"
+#include "STest/Scenario/RuleScenario.hpp"
 
 namespace STest {
 
-//! \brief  Apply a fixed sequence of rules
-template <typename State>
-class RuleSequenceScenario : public SequenceScenario<State> {
-  public:
-    // ----------------------------------------------------------------------
-    // Constructors and destructors
-    // ----------------------------------------------------------------------
+  //! \brief  Apply a fixed sequence of rules
+  template<typename State> class RuleSequenceScenario :
+    public SequenceScenario<State>
+  {
 
-    //! Construct a RuleSequenceScenario from an array of rules
-    RuleSequenceScenario(const char* const name,  //!< The name of the scenario
-                         Rule<State>** rules,     //!< The rules in the array
-                         const U32 size           //!< The size of the array
-                         )
-        : SequenceScenario<State>(name, new Scenario<State>*[size], size) {
+    public:
+
+      // ----------------------------------------------------------------------
+      // Constructors and destructors
+      // ----------------------------------------------------------------------
+
+      //! Construct a RuleSequenceScenario from an array of rules
+      RuleSequenceScenario(
+          const char *const name, //!< The name of the scenario
+          Rule<State>** rules, //!< The rules in the array
+          const U32 size //!< The size of the array
+      ) :
+        SequenceScenario<State>(name, new Scenario<State>*[size], size)
+      {
         assert(this->scenarioArray != nullptr);
-        Scenario<State>** const scenarios = this->scenarioArray->getScenarios();
+        Scenario<State>* *const scenarios = this->scenarioArray->getScenarios();
         assert(scenarios != nullptr);
         for (U32 i = 0; i < size; ++i) {
-            scenarios[i] = new RuleScenario<State>(*rules[i]);
+          scenarios[i] = new RuleScenario<State>(*rules[i]);
         }
-    }
+      }
 
-    //! Destroy object RuleSequenceScenario
-    ~RuleSequenceScenario() {
+      //! Destroy object RuleSequenceScenario
+      ~RuleSequenceScenario() {
         assert(this->scenarioArray != nullptr);
-        Scenario<State>** const scenarios = this->scenarioArray->getScenarios();
+        Scenario<State>* *const scenarios = this->scenarioArray->getScenarios();
         assert(scenarios != nullptr);
         for (U32 i = 0; i < this->scenarioArray->size; ++i) {
-            assert(scenarios[i] != nullptr);
-            delete scenarios[i];
+          assert(scenarios[i] != nullptr);
+          delete scenarios[i];
         }
-        delete[] scenarios;
-    }
-};
+        delete scenarios;
+      }
 
-}  // namespace STest
+  };
+
+}
 
 #endif
