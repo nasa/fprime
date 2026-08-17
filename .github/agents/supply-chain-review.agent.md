@@ -192,7 +192,7 @@ review system's own behavior:
 - `.github/agents/*.agent.md`
 - `.github/agents/_shared/review-contract.md`
 - `.github/agents/_shared/agent-registry.yml`
-- `.github/skills/*/SKILL.md`
+- `.github/skills/**`
 
 For each change:
 
