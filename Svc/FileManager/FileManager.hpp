@@ -73,7 +73,7 @@ class FileManager final : public FileManagerComponentBase {
                                     const Fw::CmdStringArg& dirName  //!< The directory to remove
                                     ) override;
 
-    //! Implementation for ConcatFiles command handler
+    //! Implementation for AppendFile command handler
     //! Append 1 file's contents to the end of another.
     void AppendFile_cmdHandler(const FwOpcodeType opCode,       //!< The opcode
                                const U32 cmdSeq,                //!< The command sequence number
@@ -97,7 +97,7 @@ class FileManager final : public FileManagerComponentBase {
 
     //! Handler implementation for command CalculateCrc
     //!
-    //! List the contents of a directory
+    //! Calculate the CRC of a file
     void CalculateCrc_cmdHandler(FwOpcodeType opCode,              //!< The opcode
                                  U32 cmdSeq,                       //!< The command sequence number
                                  const Fw::CmdStringArg& filename  //!< The file to CRC
@@ -175,8 +175,8 @@ class FileManager final : public FileManagerComponentBase {
     // ----------------------------------------------------------------------
     // The FileManager uses an asynchronous state machine to process
     // directory listings through Rate Group 2. This prevents event
-    // flooding and ensures bounded execution time by processing one
-    // directory entry per rate tick (0.5Hz).
+    // flooding and ensures bounded execution time by processing
+    // FILES_PER_RATE_TICK directory entries per rate tick.
 
     //! Directory listing state enumeration
     enum ListDirectoryState {

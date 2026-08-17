@@ -3,12 +3,12 @@ from pathlib import Path
 import yaml
 import re  # for reg expression matching of nav: block in mkdocs.yml
 
-# Get the directory where this script is located
-SCRIPT_DIR = Path(__file__).parent.parent
+# Repository root (this script lives in <root>/scripts/)
+REPO_ROOT = Path(__file__).parent.parent
 
-MKDOCS_YML = SCRIPT_DIR / "docs/mkdocs.yml"
+MKDOCS_YML = REPO_ROOT / "docs/mkdocs.yml"
 output_file = "mkdocs_nav.yml"
-root = str(SCRIPT_DIR / "docs")
+root = str(REPO_ROOT / "docs")
 excluded_folders = {
     "Home",
     "docs-venv",
@@ -193,6 +193,6 @@ def build_tutorials():
     }
 
 
-if __name__ == "__main__":  # cleaner way to write this, just testing for now
+if __name__ == "__main__":
     nav_block = write_mkdocs_nav(root, output_file)
     write_nav_into_mkdocs(nav_block)

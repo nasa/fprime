@@ -77,7 +77,7 @@ class RedBlackTreeSetOrMapImplTester {
         ASSERT_EQ(size, this->m_impl.getSize());
     }
 
-    // Check the red-black tree properties of the tree. Return the black height.
+    // Check the red-black tree properties of the tree
     void checkRbtProperties() {
         const auto& nodes = this->m_impl.m_nodes;
         auto node = this->m_impl.getOuterNodeUnder(this->m_impl.m_root, Direction::LEFT);
