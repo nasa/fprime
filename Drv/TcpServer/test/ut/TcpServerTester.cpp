@@ -50,7 +50,8 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
     Drv::SocketIpStatus status2 = Drv::SOCK_SUCCESS;
     Drv::SocketDescriptor client_fd;
 
-    this->setup_helper(recv_thread, recv_thread);
+    const bool reconnect = recv_thread;
+    this->setup_helper(recv_thread, reconnect, /*expect_started=*/true);
 
     // Loop through a bunch of client disconnects
     for (U32 i = 0; i < iterations && status1 == SOCK_SUCCESS; i++) {
@@ -196,7 +197,7 @@ void TcpServerTester ::test_no_automatic_send_connection() {
     Drv::SocketDescriptor client_fd;
 
     // Set up the server without automatic connection, and don't expect it to stay started
-    this->setup_helper(false, true, false);
+    this->setup_helper(/*recv_thread=*/false, /*reconnect=*/true, /*expect_started=*/false);
     this->component.setAutomaticOpen(false);
     Drv::Test::force_recv_timeout(client_fd.fd, client);
 
@@ -218,7 +219,7 @@ void TcpServerTester ::test_no_automatic_recv_connection() {
     Drv::SocketDescriptor client_fd;
 
     // Set up the server without automatic connection, and don't expect it to stay started
-    this->setup_helper(true, false, false);
+    this->setup_helper(/*recv_thread=*/true, /*reconnect=*/false, /*expect_started=*/false);
 
     // Connect a client to the server so it is waiting in the "listen" queue
     // The read thread should not automatically connect and will thus exit with a failure

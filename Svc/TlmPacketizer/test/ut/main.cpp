@@ -25,6 +25,12 @@ TEST(TestNominal, SendPackets) {
     tester.sendPacketsTest();
 }
 
+TEST(TestNominal, SendPacketLevels) {
+    TEST_CASE(100.1.3, "Send Packets with Levels");
+    Svc::TlmPacketizerTester tester;
+    tester.sendPacketLevelsTest();
+}
+
 TEST(TestNominal, UpdatePacketsTest) {
     TEST_CASE(100.1.4, "Update Packets");
     Svc::TlmPacketizerTester tester;

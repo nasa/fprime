@@ -23,8 +23,8 @@ namespace Rules {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return state.impl.getSize() > 0; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.impl.getSize() > 0; }
+    void action(State& state) override {
         state.impl.clear();
         ASSERT_EQ(state.impl.getSize(), 0U);
         state.modelMap.clear();
@@ -33,8 +33,8 @@ struct Clear : public Rule {
 
 struct Find : public Rule {
     Find() : Rule("Find") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         const auto key = state.getKey();
         State::ValueType value = 0;
         const auto status = state.impl.find(key, value);
@@ -49,8 +49,8 @@ struct Find : public Rule {
 
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
+    void action(State& state) override {
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.impl.begin();
@@ -70,8 +70,8 @@ struct FindExisting : public Rule {
 
 struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
+    void action(State& state) override {
         state.tester.checkProperties();
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
@@ -93,8 +93,10 @@ struct InsertExisting : public Rule {
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity; }
-    void action(State& state) {
+    bool precondition(const State& state) override {
+        return static_cast<FwSizeType>(state.impl.getSize()) >= State::capacity;
+    }
+    void action(State& state) override {
         state.tester.checkProperties();
         const auto key = state.getKey();
         const auto value = state.getValue();
@@ -109,8 +111,10 @@ struct InsertFull : public Rule {
 
 struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity; }
-    void action(State& state) {
+    bool precondition(const State& state) override {
+        return static_cast<FwSizeType>(state.impl.getSize()) < State::capacity;
+    }
+    void action(State& state) override {
         state.tester.checkProperties();
         const auto key = state.getKey();
         const auto value = state.getValue();
@@ -126,8 +130,8 @@ struct InsertNotFull : public Rule {
 
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         state.tester.checkProperties();
         const auto size = state.impl.getSize();
         ASSERT_EQ(size, state.modelMap.size());
@@ -150,8 +154,8 @@ struct Remove : public Rule {
 
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
-    bool precondition(const State& state) { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return static_cast<FwSizeType>(state.impl.getSize()) > 0; }
+    void action(State& state) override {
         state.tester.checkProperties();
         const auto size = state.impl.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));

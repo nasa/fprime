@@ -18,9 +18,9 @@
 #include "Os/Mutex.hpp"
 #include "TcpServerGTestBase.hpp"
 
-#define SEND_DATA_BUFFER_SIZE 1024
-
 namespace Drv {
+
+static constexpr FwSizeType SEND_DATA_BUFFER_SIZE = 1024;
 
 class TcpServerTester : public TcpServerGTestBase {
     // Maximum size of histories storing events, telemetry, and port outputs

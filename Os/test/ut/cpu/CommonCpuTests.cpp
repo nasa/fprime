@@ -4,7 +4,6 @@
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Os/Cpu.hpp"
-#include "Os/Darwin/Cpu.hpp"
 
 TEST(Basic, Count) {
     FwSizeType count = 0;

@@ -11,6 +11,7 @@
 #include <Svc/Ccsds/CfdpManager/Engine.hpp>
 #include <Svc/Ccsds/CfdpManager/Utils.hpp>
 #include <limits>
+#include <vector>
 
 namespace Svc {
 namespace Ccsds {
@@ -364,13 +365,13 @@ void CfdpManagerTester::setFailBufferAllocation(bool fail) {
 
 void CfdpManagerTester::verifyReceivedFile(const char* filePath, const U8* expectedData, FwSizeType expectedSize) {
     // Read destination file
-    U8* receivedData = new U8[expectedSize];
+    std::vector<U8> receivedData(expectedSize);
     Os::File file;
     Os::File::Status fileStatus = file.open(filePath, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Received file should exist";
 
     FwSizeType bytesRead = expectedSize;
-    fileStatus = file.read(receivedData, bytesRead, Os::File::WAIT);
+    fileStatus = file.read(receivedData.data(), bytesRead, Os::File::WAIT);
     file.close();
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Should read received file successfully";
     ASSERT_EQ(expectedSize, bytesRead) << "Received file size should match expected size";
@@ -379,9 +380,6 @@ void CfdpManagerTester::verifyReceivedFile(const char* filePath, const U8* expec
     for (FwSizeType i = 0; i < expectedSize; ++i) {
         EXPECT_EQ(expectedData[i], receivedData[i]) << "File content mismatch at byte " << i;
     }
-
-    // Clean up buffer
-    delete[] receivedData;
 }
 
 // ----------------------------------------------------------------------
@@ -490,13 +488,13 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
                        static_cast<U32>(actualFileSize), transactionSeq, TxnState::TXN_STATE_R1, setup);
 
     // Read test data from source file
-    U8* testData = new U8[actualFileSize];
+    std::vector<U8> testData(actualFileSize);
     Os::File file;
     Os::File::Status fileStatus = file.open(srcFile, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file for reading";
 
     FwSizeType bytesRead = actualFileSize;
-    fileStatus = file.read(testData, bytesRead, Os::File::WAIT);
+    fileStatus = file.read(testData.data(), bytesRead, Os::File::WAIT);
     file.close();
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
     ASSERT_EQ(actualFileSize, bytesRead) << "Should read entire file";
@@ -505,7 +503,7 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
     sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq,
                     0,                                 // offset
                     static_cast<U16>(actualFileSize),  // size
-                    testData, Cfdp::Class::CLASS_1);
+                    testData.data(), Cfdp::Class::CLASS_1);
     component.doDispatch();
 
     // Verify FileData processed
@@ -515,7 +513,7 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
 
     // Compute CRC for EOF PDU
     CFDP::Checksum crc;
-    crc.update(testData, 0, static_cast<U32>(actualFileSize));
+    crc.update(testData.data(), 0, static_cast<U32>(actualFileSize));
     U32 expectedCrc = crc.getValue();
 
     // Send EOF PDU
@@ -528,7 +526,7 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
     EXPECT_EQ(TxnState::TXN_STATE_HOLD, setup.txn->m_state) << "Should be in HOLD state after EOF processing";
 
     // Verify file written to disk
-    verifyReceivedFile(dstFile, testData, actualFileSize);
+    verifyReceivedFile(dstFile, testData.data(), actualFileSize);
 
     // Emit telemetry by calling run1Hz (RX tests don't automatically call this)
     this->invoke_to_run1Hz(0, 0);
@@ -556,7 +554,6 @@ void CfdpManagerTester::sendAndVerifyClass1Rx(const char* srcFile,
                                           component.getLocalEidParam(), dstFile, static_cast<U32>(actualFileSize));
 
     // Clean up
-    delete[] testData;
     waitForTransactionRecycle(channelId, transactionSeq);
     cleanupTestFile(dstFile);
     cleanupTestFile(srcFile);
@@ -582,13 +579,13 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
                        static_cast<U32>(actualFileSize), transactionSeq, TxnState::TXN_STATE_R2, setup);
 
     // Read test data
-    U8* testData = new U8[actualFileSize];
+    std::vector<U8> testData(actualFileSize);
     Os::File file;
     Os::File::Status fileStatus = file.open(srcFile, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
     ASSERT_EQ(Os::File::OP_OK, fileStatus);
 
     FwSizeType bytesRead = actualFileSize;
-    fileStatus = file.read(testData, bytesRead, Os::File::WAIT);
+    fileStatus = file.read(testData.data(), bytesRead, Os::File::WAIT);
     file.close();
     ASSERT_EQ(Os::File::OP_OK, fileStatus);
     ASSERT_EQ(actualFileSize, bytesRead);
@@ -601,7 +598,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
             U8 pduIdx = pduIndices[i];
             U32 offset = pduIdx * dataPerPdu;
             sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, offset,
-                            dataPerPdu, testData + offset, Cfdp::Class::CLASS_2);
+                            dataPerPdu, testData.data() + offset, Cfdp::Class::CLASS_2);
             component.doDispatch();
         }
     } else {
@@ -610,7 +607,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
         for (U8 pduIdx = 0; pduIdx < numPdus; pduIdx++) {
             U32 offset = pduIdx * dataPerPdu;
             sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, offset,
-                            dataPerPdu, testData + offset, Cfdp::Class::CLASS_2);
+                            dataPerPdu, testData.data() + offset, Cfdp::Class::CLASS_2);
             component.doDispatch();
         }
     }
@@ -621,7 +618,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
 
     // Compute CRC and send EOF
     CFDP::Checksum crc;
-    crc.update(testData, 0, static_cast<U32>(actualFileSize));
+    crc.update(testData.data(), 0, static_cast<U32>(actualFileSize));
     U32 expectedCrc = crc.getValue();
 
     FwSizeType pduCountBeforeEof = this->fromPortHistory_dataOut->size();
@@ -691,7 +688,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
             U8 pduIdx = missingPduIndices[i];
             U32 offset = pduIdx * dataPerPdu;
             sendFileDataPdu(channelId, TEST_GROUND_EID, component.getLocalEidParam(), transactionSeq, offset,
-                            dataPerPdu, testData + offset, Cfdp::Class::CLASS_2);
+                            dataPerPdu, testData.data() + offset, Cfdp::Class::CLASS_2);
             component.doDispatch();
         }
 
@@ -772,7 +769,7 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     waitForTransactionRecycle(channelId, transactionSeq);
 
     // Verify file
-    verifyReceivedFile(dstFile, testData, actualFileSize);
+    verifyReceivedFile(dstFile, testData.data(), actualFileSize);
 
     // Verify telemetry for Class2 RX transaction
     ASSERT_GE(this->tlmHistory_ChannelTelemetry->size(), 1u);
@@ -810,7 +807,6 @@ void CfdpManagerTester::sendAndVerifyClass2Rx(const char* srcFile,
     EXPECT_EQ(0u, tlm[channelId].get_recvErrors()) << "No receive errors should occur";
 
     // Clean up
-    delete[] testData;
     cleanupTestFile(dstFile);
     cleanupTestFile(srcFile);
 }

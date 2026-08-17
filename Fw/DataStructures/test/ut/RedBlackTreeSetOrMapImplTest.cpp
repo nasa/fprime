@@ -88,9 +88,10 @@ TEST(RedBlackTreeSetOrMapImpl, CopyAssignmentOperator) {
     ASSERT_EQ(impl2.getSize(), 1U);
 }
 
-TEST(ArraySetOrMapImpl, IteratorConstruction) {
+TEST(RedBlackTreeSetOrMapImpl, IteratorConstruction) {
     State::Impl impl;
     State::Impl::ConstIterator it(impl);
+    ASSERT_TRUE(it.compareEqual(impl.begin()));
 }
 
 TEST(RedBlackTreeSetOrMapImpl, IteratorComparison) {

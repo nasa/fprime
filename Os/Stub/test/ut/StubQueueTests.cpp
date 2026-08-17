@@ -10,7 +10,15 @@
 #include "Os/Stub/test/Queue.hpp"
 #include "STest/Random/Random.hpp"
 
-void resetInjections() {
+class Interface : public ::testing::Test {
+  protected:
+    //! Reset injected statuses even when a test exits early on failure
+    void TearDown() override { resetInjections(); }
+
+    static void resetInjections();
+};
+
+void Interface::resetInjections() {
     Os::Stub::Queue::Test::StaticData::data.createStatus = Os::QueueInterface::Status::OP_OK;
     Os::Stub::Queue::Test::StaticData::data.sendStatus = Os::QueueInterface::Status::OP_OK;
     Os::Stub::Queue::Test::StaticData::data.receiveStatus = Os::QueueInterface::Status::OP_OK;
@@ -19,21 +27,19 @@ void resetInjections() {
 }
 
 // Construction test
-TEST(Interface, Construction) {
+TEST_F(Interface, Construction) {
     Os::Queue queue;
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::CONSTRUCT_FN);
-    resetInjections();
 }
 
 // Destruct test
-TEST(Interface, Destruction) {
+TEST_F(Interface, Destruction) {
     delete (new Os::Queue);
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::DESTRUCT_FN);
-    resetInjections();
 }
 
 // Create test
-TEST(Interface, Create) {
+TEST_F(Interface, Create) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = STest::Random::lowerUpper(
@@ -49,11 +55,10 @@ TEST(Interface, Create) {
     ASSERT_STREQ(name.toChar(), Os::Stub::Queue::Test::StaticData::data.name.toChar());
     ASSERT_EQ(depth, Os::Stub::Queue::Test::StaticData::data.depth);
     ASSERT_EQ(messageSize, Os::Stub::Queue::Test::StaticData::data.size);
-    resetInjections();
 }
 
 // Send test
-TEST(Interface, SendPointer) {
+TEST_F(Interface, SendPointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = STest::Random::lowerUpper(
@@ -77,11 +82,10 @@ TEST(Interface, SendPointer) {
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.blockType, Os::QueueInterface::BlockingType::BLOCKING);
     ASSERT_EQ(depth, queue.getDepth());
     ASSERT_EQ(messageSize, queue.getMessageSize());
-    resetInjections();
 }
 
 // Send test
-TEST(Interface, SendBuffer) {
+TEST_F(Interface, SendBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = STest::Random::lowerUpper(
@@ -107,12 +111,10 @@ TEST(Interface, SendBuffer) {
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.blockType, Os::QueueInterface::BlockingType::NONBLOCKING);
     ASSERT_EQ(depth, queue.getDepth());
     ASSERT_EQ(messageSize, queue.getMessageSize());
-
-    resetInjections();
 }
 
 // Receive test
-TEST(Interface, ReceivePointer) {
+TEST_F(Interface, ReceivePointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = STest::Random::lowerUpper(
@@ -143,12 +145,10 @@ TEST(Interface, ReceivePointer) {
     ASSERT_EQ(priority, priorityOut);
     ASSERT_EQ(depth, queue.getDepth());
     ASSERT_EQ(size, queue.getMessageSize());
-
-    resetInjections();
 }
 
 // Receive test
-TEST(Interface, ReceiveBuffer) {
+TEST_F(Interface, ReceiveBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = STest::Random::lowerUpper(
@@ -179,11 +179,9 @@ TEST(Interface, ReceiveBuffer) {
     ASSERT_EQ(priority, priorityOut);
     ASSERT_EQ(depth, queue.getDepth());
     ASSERT_EQ(size, queue.getMessageSize());
-
-    resetInjections();
 }
 
-TEST(Interface, MessageCount) {
+TEST_F(Interface, MessageCount) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = 1;
@@ -194,11 +192,9 @@ TEST(Interface, MessageCount) {
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(0, name, depth, messageSize));
     Os::Stub::Queue::Test::StaticData::data.messages = messages;
     ASSERT_EQ(queue.getMessagesAvailable(), messages);
-
-    resetInjections();
 }
 
-TEST(Interface, MessageHighWaterMarkCount) {
+TEST_F(Interface, MessageHighWaterMarkCount) {
     Os::Queue queue;
     Fw::String name = "My queue";
     const FwSizeType depth = 100;
@@ -209,15 +205,12 @@ TEST(Interface, MessageHighWaterMarkCount) {
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(0, name, depth, messageSize));
     Os::Stub::Queue::Test::StaticData::data.highWaterMark = highWater;
     ASSERT_EQ(queue.getMessageHighWaterMark(), highWater);
-
-    resetInjections();
 }
 
-TEST(Interface, QueueHandle) {
+TEST_F(Interface, QueueHandle) {
     Os::Queue queue;
     ASSERT_EQ(queue.getHandle(), Os::Stub::Queue::Test::StaticData::data.handle);
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::HANDLE_FN);
-    resetInjections();
 }
 
 int main(int argc, char** argv) {

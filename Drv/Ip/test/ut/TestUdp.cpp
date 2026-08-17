@@ -144,7 +144,8 @@ TEST(SingleSide, TestSingleSideMultipleSendUdp) {
 TEST(Ephemeral, TestEphemeralPorts) {
     Drv::UdpSocket receiver;
     Drv::SocketDescriptor recv_fd;
-    const U16 recv_port = 50001;
+    const U16 recv_port = Drv::Test::get_free_port(true);
+    ASSERT_NE(0, recv_port);
     // Configure receiver as receiver-only with no send port.
     receiver.configureRecv("127.0.0.1", recv_port);
     receiver.configureSend("127.0.0.1", 0, 0, 100);

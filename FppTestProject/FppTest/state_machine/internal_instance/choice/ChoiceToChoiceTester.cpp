@@ -137,7 +137,7 @@ void ChoiceToChoiceTester::testG1FalseG2True() {
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g1.getCallHistory().getItemAt(0),
               SmChoice_ChoiceToChoice::Signal::s);
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g1.getCallHistory().getItemAt(0),
+    ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g2.getCallHistory().getItemAt(0),
               SmChoice_ChoiceToChoice::Signal::s);
     const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_actionHistory.getSize(), expectedSize);
@@ -170,7 +170,7 @@ void ChoiceToChoiceTester::testG1FalseG2False() {
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g1.getCallHistory().getItemAt(0),
               SmChoice_ChoiceToChoice::Signal::s);
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g2.getCallHistory().getSize(), 1);
-    ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g1.getCallHistory().getItemAt(0),
+    ASSERT_EQ(this->m_smChoiceChoiceToChoice_guard_g2.getCallHistory().getItemAt(0),
               SmChoice_ChoiceToChoice::Signal::s);
     const FwIndexType expectedSize = 3;
     ASSERT_EQ(this->m_smChoiceChoiceToChoice_actionHistory.getSize(), expectedSize);

@@ -48,6 +48,9 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
     void testCancelNameNotFound();
     void testCancelAll();
     void testCancelAllNoneRunning();
+    void testSeqStartIn();
+    void testSeqRunIn();
+    void testSeqDoneInUnknown();
 
   private:
     // ----------------------------------------------------------------------

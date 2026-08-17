@@ -21,8 +21,8 @@ namespace Rules {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return !state.map.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.map.isEmpty(); }
+    void action(State& state) override {
         state.map.clear();
         ASSERT_EQ(state.map.getSize(), 0);
         state.modelMap.clear();
@@ -31,8 +31,8 @@ struct Clear : public Rule {
 
 struct Find : public Rule {
     Find() : Rule("Find") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         const auto key = state.getKey();
         State::ValueType value = 0;
         const auto status = state.map.find(key, value);
@@ -47,8 +47,8 @@ struct Find : public Rule {
 
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
-    bool precondition(const State& state) { return !state.map.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.map.isEmpty(); }
+    void action(State& state) override {
         for (auto& entry : state.map) {
             const auto key = entry.getKey();
             const auto expectedValue = state.modelMap[key];
@@ -62,8 +62,8 @@ struct FindExisting : public Rule {
 
 struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
-    bool precondition(const State& state) { return !state.map.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.map.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.map.begin();
@@ -83,8 +83,8 @@ struct InsertExisting : public Rule {
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
-    bool precondition(const State& state) { return state.map.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.map.isFull(); }
+    void action(State& state) override {
         const auto key = state.getKey();
         const auto value = state.getValue();
         const auto size = state.map.getSize();
@@ -97,8 +97,8 @@ struct InsertFull : public Rule {
 
 struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
-    bool precondition(const State& state) { return !state.map.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.map.isFull(); }
+    void action(State& state) override {
         const auto key = state.getKey();
         const auto value = state.getValue();
         const auto size = state.map.getSize();
@@ -112,8 +112,8 @@ struct InsertNotFull : public Rule {
 
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         const auto size = state.map.getSize();
         ASSERT_EQ(size, state.modelMap.size());
         const auto key = state.getKey();
@@ -134,8 +134,8 @@ struct Remove : public Rule {
 
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
-    bool precondition(const State& state) { return !state.map.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.map.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.map.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.map.begin();

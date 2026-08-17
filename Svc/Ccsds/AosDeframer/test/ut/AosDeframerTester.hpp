@@ -261,10 +261,10 @@ class AosDeframerTester final : public AosDeframerGTestBase {
     AosDeframer component;
 
     //! Data buffer used to produce test frames
-    U8 m_frameData[ComCfg::AosMaxFrameFixedSize];
+    U8 m_frameData[ComCfg::AosMaxFrameFixedSize] = {};
 
     //! Static backing storage returned by the allocate port in unit tests
-    U8 m_allocBuf[ALLOC_BUF_SIZE];
+    U8 m_allocBuf[ALLOC_BUF_SIZE] = {};
 
     //! When true, the next allocate call returns an invalid buffer (simulates alloc failure)
     bool m_failNextAlloc = false;

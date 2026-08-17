@@ -3,8 +3,8 @@
 // \brief rule definitions for common testing
 // ======================================================================
 
-#ifndef __RULES_HEADERS__
-#define __RULES_HEADERS__
+#ifndef OS_TEST_UT_FILE_RULES_HEADERS_HPP
+#define OS_TEST_UT_FILE_RULES_HEADERS_HPP
 #include <gtest/gtest.h>
 #include <cstdio>
 #include <map>
@@ -160,4 +160,4 @@ std::unique_ptr<Os::Test::FileTest::Tester> get_tester_implementation();
 }  // namespace FileTest
 }  // namespace Test
 }  // namespace Os
-#endif  // __RULES_HEADERS__
+#endif  // OS_TEST_UT_FILE_RULES_HEADERS_HPP

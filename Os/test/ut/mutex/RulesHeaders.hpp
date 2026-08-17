@@ -3,8 +3,8 @@
 // \brief rule definitions for common testing
 // ======================================================================
 
-#ifndef __RULES_HEADERS__
-#define __RULES_HEADERS__
+#ifndef OS_TEST_UT_MUTEX_RULES_HEADERS_HPP
+#define OS_TEST_UT_MUTEX_RULES_HEADERS_HPP
 #include <gtest/gtest.h>
 #include "Os/Mutex.hpp"
 #include "STest/Rule/Rule.hpp"
@@ -50,4 +50,4 @@ struct Tester {
 }  // namespace Mutex
 }  // namespace Test
 }  // namespace Os
-#endif  // __RULES_HEADERS__
+#endif  // OS_TEST_UT_MUTEX_RULES_HEADERS_HPP

@@ -1,6 +1,6 @@
 
 
-#include <sys/time.h>
+#include <chrono>
 #include "Fw/Types/String.hpp"
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
@@ -132,13 +132,13 @@ void Os::Test::Task::Tester::Delay::action(Os::Test::Task::Tester& state  //!< T
     const U32 delay_micro_seconds = 5;  // STest::Pick::lowerUpper(0, MAX_DELAY_MICRO_SECONDS);
     Fw::TimeInterval delay(delay_micro_seconds / 1000000, delay_micro_seconds % 1000000);
 
-    timeval start;
-    timeval end;
-    ASSERT_EQ(gettimeofday(&start, nullptr), 0) << "Failed to get time";
+    const auto start = std::chrono::steady_clock::now();
     Os::Task::delay(delay);
-    ASSERT_EQ(gettimeofday(&end, nullptr), 0) << "Failed to get time";
+    const auto end = std::chrono::steady_clock::now();
 
-    U32 wall_clock_delay_micro = ((end.tv_sec - start.tv_sec) * 1000000) + (end.tv_usec - start.tv_usec);
+    // Round up to whole microseconds so truncation cannot under-report the delay
+    const auto elapsed_nano = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    const U32 wall_clock_delay_micro = static_cast<U32>((elapsed_nano + 999) / 1000);
     ASSERT_GE(wall_clock_delay_micro, delay_micro_seconds);
     ASSERT_LT(wall_clock_delay_micro, delay_micro_seconds + 100000) << "Delay not within 100ms";
     ASSERT_EQ(Os::Task::getNumTasks(), TestTaskInfo::s_task_count) << "Task count miss-match";

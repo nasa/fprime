@@ -27,7 +27,16 @@ constexpr FwOpcodeType getExpectedEventOpcode(const FwOpcodeType opcode) {
 
 namespace Svc {
 CommandDispatcherTester::CommandDispatcherTester(Svc::CommandDispatcherImpl& inst)
-    : CommandDispatcherGTestBase("testerbase", 100), m_impl(inst), m_cmdSendPortNum(0), m_seqStatusPortNum(0) {}
+    : CommandDispatcherGTestBase("testerbase", 100),
+      m_impl(inst),
+      m_cmdSendRcvd(false),
+      m_cmdSendOpCode(0),
+      m_cmdSendCmdSeq(0),
+      m_cmdSendPortNum(0),
+      m_seqStatusRcvd(false),
+      m_seqStatusOpCode(0),
+      m_seqStatusCmdSeq(0),
+      m_seqStatusPortNum(0) {}
 
 CommandDispatcherTester::~CommandDispatcherTester() {
     this->m_impl.deinit();
@@ -714,11 +723,12 @@ void CommandDispatcherTester::runClearCommandTracking() {
 
     clearHistory();
     // send command complete
+    this->m_seqStatusRcvd = false;
     this->invoke_to_compCmdStat(0, testOpCode, this->m_cmdSendCmdSeq, Fw::CmdResponse::OK);
     ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
 
     // verify no status returned
-    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_FALSE(this->m_seqStatusRcvd);
 }
 
 void CommandDispatcherTester::runCommandQueueOverflow() {

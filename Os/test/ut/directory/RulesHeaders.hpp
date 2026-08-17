@@ -3,8 +3,8 @@
 // \brief rule definitions for common testing
 // ======================================================================
 
-#ifndef __RULES_HEADERS__
-#define __RULES_HEADERS__
+#ifndef OS_TEST_UT_DIRECTORY_RULES_HEADERS_HPP
+#define OS_TEST_UT_DIRECTORY_RULES_HEADERS_HPP
 
 #include <gtest/gtest.h>
 #include "Os/Directory.hpp"
@@ -58,4 +58,4 @@ struct Tester {
 }  // namespace Directory
 }  // namespace Test
 }  // namespace Os
-#endif  // __RULES_HEADERS__
+#endif  // OS_TEST_UT_DIRECTORY_RULES_HEADERS_HPP

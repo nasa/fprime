@@ -6,6 +6,7 @@
 #include "DirectoryRules.hpp"
 #include <algorithm>
 #include <string>
+#include <vector>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
 
@@ -187,8 +188,8 @@ void Os::Test::Directory::Tester::ReadAllFiles::action(Os::Test::Directory::Test
     ASSERT_TRUE(state.m_directory.isOpen());
     // size can be 0 during testing so ensure at least 1
     const FwSizeType arraySize = std::max<FwSizeType>(state.m_filenames.size(), 1);
-    Fw::String outArray[arraySize];
-    Fw::ExternalArray<Fw::String> outFilenames(outArray, arraySize);
+    std::vector<Fw::String> outArray(arraySize);
+    Fw::ExternalArray<Fw::String> outFilenames(outArray.data(), arraySize);
     FwSizeType outFileCount = 0;
     Os::Directory::Status status = state.m_directory.readDirectory(outFilenames, outFileCount);
     ASSERT_EQ(status, Os::Directory::Status::OP_OK);

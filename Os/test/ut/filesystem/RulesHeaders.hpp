@@ -2,8 +2,8 @@
 // \title Os/test/ut/filesystem/RulesHeaders.hpp
 // \brief rule definitions for common testing
 // ======================================================================
-#ifndef __RULES_HEADERS__
-#define __RULES_HEADERS__
+#ifndef OS_TEST_UT_FILESYSTEM_RULES_HEADERS_HPP
+#define OS_TEST_UT_FILESYSTEM_RULES_HEADERS_HPP
 
 #include <gtest/gtest.h>
 #include "Os/FileSystem.hpp"
@@ -46,7 +46,7 @@ struct Tester {
     std::vector<TestDirectory> m_test_dirs;
     std::vector<TestFile> m_test_files;
 
-    U64 m_counter;  //!< Counter for generating unique file/directory names
+    U64 m_counter = 0;  //!< Counter for generating unique file/directory names
 
     // ---------------------------------------------------------------
     // Functions to manipulate the state of the Tester w.r.t filesystem
@@ -143,4 +143,4 @@ struct Tester {
 }  // namespace FileSystem
 }  // namespace Test
 }  // namespace Os
-#endif  // __RULES_HEADERS__
+#endif  // OS_TEST_UT_FILESYSTEM_RULES_HEADERS_HPP

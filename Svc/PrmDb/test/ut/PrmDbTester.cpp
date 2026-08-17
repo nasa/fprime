@@ -353,17 +353,18 @@ void PrmDbTester::runFileReadError() {
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
     this->m_errorType = FILE_SIZE_ERROR;
 
-    FwSizeType za = 0;
+    // Extra reads consumed by the CRC pre-pass; offsets the error-injection wait index
+    FwSizeType extraCrcReads = 0;
     for (FwSizeType i = 0; i < 5; i++) {
         clearEvents();
-        this->m_waits = i + za;
+        this->m_waits = i + extraCrcReads;
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
         switch (i) {
             case 0:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
                 ASSERT_EVENTS_PrmFileReadError(0, PrmReadError::CRC_SIZE, 0, sizeof(U32) + 1);
-                za++;
+                extraCrcReads++;
                 break;
             case 1:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
@@ -401,11 +402,12 @@ void PrmDbTester::runFileReadError() {
                 FAIL() << "Reached unknown case";
         }
 
-        FwSizeType ya = 0;
+        // Extra reads consumed by the CRC pre-pass; offsets the error-injection wait index
+        FwSizeType fieldExtraCrcReads = 0;
         // Loop through various field reads
         for (FwSizeType j = 0; j < 6; j++) {
             clearEvents();
-            this->m_waits = j + ya;
+            this->m_waits = j + fieldExtraCrcReads;
             this->m_impl.readParamFile();
             ASSERT_EVENTS_SIZE(1);
             switch (j) {
@@ -439,11 +441,12 @@ void PrmDbTester::runFileReadError() {
         }
     }
 
-    FwSizeType xa = 0;
+    // Extra reads consumed by the CRC pre-pass; offsets the error-injection wait index
+    FwSizeType dataExtraCrcReads = 0;
     this->m_errorType = FILE_DATA_ERROR;
     for (FwSizeType i = 0; i < 3; i++) {
         clearEvents();
-        this->m_waits = i + xa;
+        this->m_waits = i + dataExtraCrcReads;
         this->m_impl.readParamFile();
         ASSERT_EVENTS_SIZE(1);
 
@@ -452,7 +455,7 @@ void PrmDbTester::runFileReadError() {
                 ASSERT_EVENTS_PrmFileBadCrc_SIZE(1);
                 // Parameter read error caused by adding one to the expected read
                 ASSERT_EVENTS_PrmFileBadCrc(0, 0x34D79CD3, 0xc180712b);
-                xa++;
+                dataExtraCrcReads++;
                 break;
             case 1:
                 ASSERT_EVENTS_PrmFileReadError_SIZE(1);
@@ -496,7 +499,8 @@ void PrmDbTester::runFileWriteError() {
 
     this->runNominalPopulate();
 
-    FwSizeType zb = 0;
+    // Extra reads consumed by the CRC pre-pass; offsets the error-injection wait index
+    FwSizeType extraCrcReads = 0;
 
     // Loop through all size errors testing each
     Os::Stub::File::Test::StaticData::setNextStatus(Os::File::OP_OK);
@@ -504,7 +508,7 @@ void PrmDbTester::runFileWriteError() {
     for (FwSizeType i = 0; i < 4; i++) {
         clearEvents();
         this->clearHistory();
-        this->m_waits = i + zb;
+        this->m_waits = i + extraCrcReads;
         this->sendCmd_PRM_SAVE_FILE(0, 12);
         stat = this->m_impl.doDispatch();
         ASSERT_EQ(stat, Fw::QueuedComponentBase::MSG_DISPATCH_OK);
@@ -513,7 +517,7 @@ void PrmDbTester::runFileWriteError() {
             case 0:
                 ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
                 ASSERT_EVENTS_PrmFileWriteError(0, PrmWriteError::DELIMITER_SIZE, 0, sizeof(U8) + 1);
-                zb++;
+                extraCrcReads++;
                 break;
             case 1:
                 ASSERT_EVENTS_PrmFileWriteError_SIZE(1);
@@ -1536,6 +1540,15 @@ PrmDbTester::~PrmDbTester() {
 
 void PrmDbTester ::from_pingOut_handler(const FwIndexType portNum, U32 key) {
     this->pushFromPortEntry_pingOut(key);
+}
+
+void PrmDbTester::runPingTest() {
+    this->clearFromPortHistory();
+    const U32 pingKey = 0x123;
+    this->invoke_to_pingIn(0, pingKey);
+    ASSERT_EQ(Fw::QueuedComponentBase::MSG_DISPATCH_OK, this->m_impl.doDispatch());
+    ASSERT_from_pingOut_SIZE(1);
+    ASSERT_from_pingOut(0, pingKey);
 }
 
 void PrmDbTester::printDb(PrmDb_PrmDbType dbType) {

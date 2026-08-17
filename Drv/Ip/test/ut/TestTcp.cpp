@@ -44,6 +44,7 @@ TEST(ErrorHandling, TestRecvRetriesEintr) {
     U8 data[1] = {0};
     FwSizeType size = sizeof data;
 
+    ASSERT_EQ(socket.open(fd), Drv::SOCK_SUCCESS);
     EXPECT_EQ(socket.recv(fd, data, size), Drv::SOCK_SUCCESS);
     EXPECT_EQ(socket.recv_calls, 2u);
     EXPECT_EQ(size, 1u);

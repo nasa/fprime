@@ -345,7 +345,7 @@ Os::Test::FileTest::Tester::OpenFileCreate::OpenFileCreate(const bool randomize_
 // ------------------------------------------------------------------------------------------------------
 
 Os::Test::FileTest::Tester::OpenFileCreateOverwrite::OpenFileCreateOverwrite(const bool randomize_filename)
-    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreate",
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateOverwrite",
                                                Os::File::Mode::OPEN_CREATE,
                                                true,
                                                randomize_filename) {}

@@ -49,16 +49,21 @@ void ByteStreamBufferAdapterTester ::random_fill(Fw::SerialBufferBase& buffer, U
     }
 }
 
-void ByteStreamBufferAdapterTester ::test_byte_stream_out() {
-    clearFromPortHistory();
-    this->clearHistory();
-
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+void ByteStreamBufferAdapterTester ::prepareRandomBuffer() {
+    U32 max_random_size = static_cast<U32>(
+        STest::Pick::lowerUpper(0, static_cast<U32>(DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)))));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
     auto serializer = m_buffer.getSerializer();
     random_fill(serializer, max_random_size);
     m_buffer.setSize(max_random_size);
+}
+
+void ByteStreamBufferAdapterTester ::test_byte_stream_out() {
+    clearFromPortHistory();
+    this->clearHistory();
+
+    this->prepareRandomBuffer();
 
     invoke_to_bufferIn(0, m_buffer);
 
@@ -105,12 +110,7 @@ void ByteStreamBufferAdapterTester ::test_byte_stream_in() {
     clearFromPortHistory();
     this->clearHistory();
 
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store));
-    ASSERT_GE(m_buffer.getSize(), max_random_size);
-    auto serializer = m_buffer.getSerializer();
-    random_fill(serializer, max_random_size);
-    m_buffer.setSize(max_random_size);
+    this->prepareRandomBuffer();
 
     // Set driver to ready state first
     invoke_to_byteStreamDriverReady(0);
@@ -144,12 +144,7 @@ void ByteStreamBufferAdapterTester ::test_byte_stream_return() {
     clearFromPortHistory();
     this->clearHistory();
 
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store));
-    ASSERT_GE(m_buffer.getSize(), max_random_size);
-    auto serializer = m_buffer.getSerializer();
-    random_fill(serializer, max_random_size);
-    m_buffer.setSize(max_random_size);
+    this->prepareRandomBuffer();
 
     invoke_to_bufferOutReturn(0, m_buffer);
 
@@ -164,12 +159,7 @@ void ByteStreamBufferAdapterTester ::test_driver_ready_state() {
     this->clearHistory();
 
     // Create a test buffer
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store));
-    ASSERT_GE(m_buffer.getSize(), max_random_size);
-    auto serializer = m_buffer.getSerializer();
-    random_fill(serializer, max_random_size);
-    m_buffer.setSize(max_random_size);
+    this->prepareRandomBuffer();
 
     // Test 1: Initial state - Driver should not be ready
     // Try to send data

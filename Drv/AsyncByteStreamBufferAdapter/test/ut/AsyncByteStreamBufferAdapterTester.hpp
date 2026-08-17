@@ -10,10 +10,11 @@
 #include "Drv/AsyncByteStreamBufferAdapter/AsyncByteStreamBufferAdapter.hpp"
 #include "Drv/AsyncByteStreamBufferAdapter/AsyncByteStreamBufferAdapterGTestBase.hpp"
 
-// Larger than com buffer size
-#define DATA_SIZE (FW_COM_BUFFER_MAX_SIZE * 10 + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType))
-
 namespace Drv {
+
+// Larger than com buffer size
+static constexpr FwSizeType DATA_SIZE =
+    FW_COM_BUFFER_MAX_SIZE * 10 + sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType);
 
 class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAdapterGTestBase {
   public:
@@ -65,6 +66,9 @@ class AsyncByteStreamBufferAdapterTester final : public AsyncByteStreamBufferAda
     void initComponents();
 
     void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
+
+    //! Fill m_buffer with a random payload and set its size
+    void prepareRandomBuffer();
 
   private:
     // ----------------------------------------------------------------------

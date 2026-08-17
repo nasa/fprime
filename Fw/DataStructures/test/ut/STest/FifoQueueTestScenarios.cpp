@@ -6,6 +6,7 @@
 
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestScenarios.hpp"
 #include "Fw/DataStructures/test/ut/STest/FifoQueueTestRules.hpp"
+#include "Fw/Types/BasicTypes.hpp"
 #include "STest/Scenario/BoundedScenario.hpp"
 #include "STest/Scenario/RandomScenario.hpp"
 
@@ -54,8 +55,7 @@ void peek(State& state) {
 void random(const Fw::StringBase& name, State& state, U32 maxNumSteps) {
     Rule* rules[] = {&Rules::at,          &Rules::clear,     &Rules::dequeueEmpty, &Rules::dequeueOK,
                      &Rules::enqueueFull, &Rules::enqueueOK, &Rules::peek};
-    STest::RandomScenario<State> scenario("RandomScenario", rules,
-                                          sizeof(rules) / sizeof(STest::RandomScenario<State>*));
+    STest::RandomScenario<State> scenario("RandomScenario", rules, FW_NUM_ARRAY_ELEMENTS(rules));
     STest::BoundedScenario<State> boundedScenario(name.toChar(), scenario, maxNumSteps);
     const U32 numSteps = boundedScenario.run(state);
     printf("Ran %u steps.\n", numSteps);

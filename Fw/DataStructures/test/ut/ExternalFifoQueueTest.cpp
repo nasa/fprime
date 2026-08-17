@@ -117,7 +117,7 @@ TEST(ExternalFifoQueueScenarios, At) {
     State::ItemType items[State::capacity];
     State::ExternalQueue queue(items, State::capacity);
     State state(queue);
-    Scenarios::enqueueOK(state);
+    Scenarios::at(state);
 }
 
 TEST(ExternalFifoQueueScenarios, Clear) {

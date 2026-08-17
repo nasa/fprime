@@ -95,10 +95,11 @@ class ComStubTester : public ComStubGTestBase {
     //! The component under test
     //!
     ComStub component;
-    Drv::ByteStreamStatus m_sync_send_status;  //! Next return value for a sync send operation
-    TestMode m_test_mode;                      //! Test mode
-    FwIndexType m_retries;                     // Number of retries to test
-    bool m_retry_fail = false;                 // Whether to keep failing after max retries are hit
+    Drv::ByteStreamStatus m_sync_send_status =
+        Drv::ByteStreamStatus::OP_OK;  //! Next return value for a sync send operation
+    TestMode m_test_mode;              //! Test mode
+    FwIndexType m_retries;             // Number of retries to test
+    bool m_retry_fail = false;         // Whether to keep failing after max retries are hit
 };
 
 }  // end namespace Svc

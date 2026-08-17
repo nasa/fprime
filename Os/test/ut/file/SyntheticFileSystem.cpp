@@ -153,7 +153,7 @@ Os::File::Status SyntheticFile::write(const U8* buffer, FwSizeType& size, WaitTy
     }
     FwSizeType original_position = this->m_data->m_pointer;
     FwSizeType original_size = static_cast<FwSizeType>(this->m_data->m_data.size());
-    const U8* write_data = reinterpret_cast<const U8*>(buffer);
+    const U8* write_data = buffer;
 
     // Appends seek to end before writing
     if (Os::File::Mode::OPEN_APPEND == this->m_data->m_mode) {

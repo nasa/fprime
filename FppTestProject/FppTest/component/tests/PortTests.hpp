@@ -184,10 +184,10 @@
         ASSERT_TRUE(component.isConnected_stringAliasReturnOut_OutputPort(portNum));                                  \
         ASSERT_TRUE(this->isConnected_to_stringAliasReturn##PORT_KIND(portNum));                                      \
                                                                                                                       \
-        decltype(this->stringReturnVal.val) returnVal =                                                               \
+        decltype(this->stringAliasReturnVal.val) returnVal =                                                          \
             this->invoke_to_stringAliasReturn##PORT_KIND(portNum, port.args.val1, port.args.val2);                    \
                                                                                                                       \
-        ASSERT_EQ(returnVal, this->stringReturnVal.val);                                                              \
+        ASSERT_EQ(returnVal, this->stringAliasReturnVal.val);                                                         \
     }                                                                                                                 \
                                                                                                                       \
     void Tester ::test##PORT_KIND##PortInvoke(FwIndexType portNum, FppTest::Types::ArrayReturn& port) {               \

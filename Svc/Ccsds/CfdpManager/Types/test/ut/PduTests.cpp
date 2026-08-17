@@ -11,6 +11,22 @@
 using namespace Svc::Ccsds;
 using namespace Svc::Ccsds::Cfdp;
 
+// Serializes a PDU into the buffer and updates the buffer size
+template <typename PduType>
+static void serializePdu(PduType& pdu, Fw::Buffer& buffer) {
+    Fw::SerialBuffer sb(buffer.getData(), buffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.serializeTo(sb));
+    buffer.setSize(sb.getSize());
+}
+
+// Deserializes a PDU from the buffer contents
+template <typename PduType>
+static void deserializePdu(PduType& pdu, const Fw::Buffer& buffer) {
+    Fw::SerialBuffer sb(const_cast<U8*>(buffer.getData()), buffer.getSize());
+    sb.setBuffLen(buffer.getSize());
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.deserializeFrom(sb));
+}
+
 // Test fixture for CFDP PDU tests
 class PduTest : public ::testing::Test {
   protected:
@@ -32,9 +48,9 @@ TEST_F(PduTest, HeaderBufferSize) {
     header.initialize(PduTypeEnum::METADATA, PduDirection::DIRECTION_TOWARD_RECEIVER, Cfdp::Class::CLASS_2, 123, 456,
                       789);
 
-    // Minimum header size with 1-byte EIDs and TSN
-    // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(1) + tsn(1) + destEid(1) = 7
-    ASSERT_GE(header.getBufferSize(), 7U);
+    // flags(1) + length(2) + eidTsnLengths(1) + sourceEid(2) + tsn(2) + destEid(2) = 10
+    // EIDs share the 2-byte encoding of the larger value (789); TSN 456 also needs 2 bytes
+    ASSERT_EQ(header.getBufferSize(), 10U);
 }
 
 TEST_F(PduTest, HeaderRoundTrip) {
@@ -105,10 +121,7 @@ TEST_F(PduTest, MetadataRoundTrip) {
     // Serialize to first buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Copy to second buffer
@@ -144,7 +157,7 @@ TEST_F(PduTest, MetadataRoundTrip) {
     ASSERT_EQ(static_cast<U8>(checksumType), rxChecksumType);
 
     // Read file size
-    U32 rxFileSize;
+    FileSize rxFileSize;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, serialBuffer.deserializeTo(rxFileSize));
     ASSERT_EQ(fileSize, rxFileSize);
 
@@ -174,10 +187,7 @@ TEST_F(PduTest, MetadataEmptyFilenames) {
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
     // Should encode successfully even with empty filenames
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(pdu, txBuffer));
 }
 
 TEST_F(PduTest, MetadataLongFilenames) {
@@ -198,10 +208,7 @@ TEST_F(PduTest, MetadataLongFilenames) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(pdu, txBuffer));
 }
 
 TEST_F(PduTest, MetadataDeserializeFrom) {
@@ -223,17 +230,13 @@ TEST_F(PduTest, MetadataDeserializeFrom) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer using deserializeFrom()
     MetadataPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -266,7 +269,8 @@ TEST_F(PduTest, FileDataBufferSize) {
     // Should include header + offset(4) + data(5)
     ASSERT_GT(size, 0U);
     // Verify expected size
-    U32 expectedSize = pdu.asHeader().getBufferSize() + 4 + static_cast<U32>(sizeof(testData));
+    U32 expectedSize =
+        pdu.asHeader().getBufferSize() + static_cast<U32>(sizeof(U32)) + static_cast<U32>(sizeof(testData));
     ASSERT_EQ(expectedSize, size);
 }
 
@@ -287,19 +291,13 @@ TEST_F(PduTest, FileDataRoundTrip) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer
     FileDataPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -326,10 +324,7 @@ TEST_F(PduTest, FileDataEmptyPayload) {
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
     // Should encode successfully even with no data
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(pdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 }
 
@@ -348,19 +343,13 @@ TEST_F(PduTest, FileDataLargePayload) {
     U8 buffer[2048];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, pdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(pdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     FileDataPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(largeSize, rxPdu.getDataSize());
     EXPECT_EQ(0, memcmp(largeData, rxPdu.getData(), largeSize));
 }
@@ -399,19 +388,13 @@ TEST_F(PduTest, EofRoundTrip) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -438,19 +421,13 @@ TEST_F(PduTest, EofWithError) {
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
     // Should encode successfully even with error condition
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
 }
 
@@ -463,19 +440,13 @@ TEST_F(PduTest, EofZeroValues) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(0U, rxPdu.getChecksum());
     EXPECT_EQ(0U, rxPdu.getFileSize());
 }
@@ -489,18 +460,12 @@ TEST_F(PduTest, EofLargeValues) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(0xFFFFFFFFU, rxPdu.getChecksum());
     EXPECT_EQ(0xFFFFFFFFU, rxPdu.getFileSize());
 }
@@ -539,19 +504,13 @@ TEST_F(PduTest, FinRoundTrip) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -579,19 +538,13 @@ TEST_F(PduTest, FinWithError) {
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
     // Should encode successfully even with error condition
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
     EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
     EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), static_cast<U8>(rxPdu.getFileStatus()));
@@ -607,19 +560,13 @@ TEST_F(PduTest, FinDeliveryIncomplete) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
     EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_RETAINED), static_cast<U8>(rxPdu.getFileStatus()));
 }
@@ -634,18 +581,12 @@ TEST_F(PduTest, FinFileStatusDiscarded) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
     EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED), static_cast<U8>(rxPdu.getFileStatus()));
 }
@@ -660,18 +601,12 @@ TEST_F(PduTest, FinFileStatusDiscardedFilestore) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILESTORE_REJECTION, rxPdu.getConditionCode());
     EXPECT_EQ(FinDeliveryCode::FIN_DELIVERY_CODE_COMPLETE, rxPdu.getDeliveryCode());
     EXPECT_EQ(static_cast<U8>(FinFileStatus::FIN_FILE_STATUS_DISCARDED_FILESTORE),
@@ -695,16 +630,12 @@ TEST_F(PduTest, FinBitPackingValidation) {
             U8 buffer[512];
             Fw::Buffer txBuffer(buffer, sizeof(buffer));
             // Serialize using SerialBuffer wrapper
-            Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-            ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-            txBuffer.setSize(sb_txBuffer.getSize());
+            ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
             FinPdu rxPdu;
             const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
             // Deserialize using SerialBuffer wrapper
-            Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-            sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-            ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+            ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
             EXPECT_EQ(deliveryCode, rxPdu.getDeliveryCode())
                 << "Delivery code mismatch for combination: delivery=" << static_cast<int>(deliveryCode)
@@ -752,19 +683,13 @@ TEST_F(PduTest, AckRoundTrip) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer
     AckPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -792,19 +717,13 @@ TEST_F(PduTest, AckForEof) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     AckPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(FileDirective::FILE_DIRECTIVE_END_OF_FILE, rxPdu.getDirectiveCode());
     EXPECT_EQ(ConditionCode::CONDITION_CODE_NO_ERROR, rxPdu.getConditionCode());
     EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_ACTIVE, rxPdu.getTransactionStatus());
@@ -820,19 +739,13 @@ TEST_F(PduTest, AckForFin) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     AckPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(FileDirective::FILE_DIRECTIVE_FIN, rxPdu.getDirectiveCode());
     EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_TERMINATED, rxPdu.getTransactionStatus());
 }
@@ -847,19 +760,13 @@ TEST_F(PduTest, AckWithError) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     AckPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
     EXPECT_EQ(AckTxnStatus::ACK_TXN_STATUS_TERMINATED, rxPdu.getTransactionStatus());
 }
@@ -875,18 +782,12 @@ TEST_F(PduTest, AckWithSubtype) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     AckPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(subtypeCode, rxPdu.getDirectiveSubtypeCode());
 }
 
@@ -909,16 +810,12 @@ TEST_F(PduTest, AckBitPackingValidation) {
                 U8 buffer[512];
                 Fw::Buffer txBuffer(buffer, sizeof(buffer));
                 // Serialize using SerialBuffer wrapper
-                Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-                ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-                txBuffer.setSize(sb_txBuffer.getSize());
+                ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
                 AckPdu rxPdu;
                 const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
                 // Deserialize using SerialBuffer wrapper
-                Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-                sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-                ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+                ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
                 EXPECT_EQ(directive, rxPdu.getDirectiveCode())
                     << "Directive mismatch for combination: dir=" << static_cast<int>(directive)
@@ -965,19 +862,13 @@ TEST_F(PduTest, NakRoundTrip) {
     // Serialize to buffer
     U8 buffer1[512];
     Fw::Buffer txBuffer(buffer1, sizeof(buffer1));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Deserialize from buffer
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer1, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header fields
     const PduHeader& header = rxPdu.asHeader();
@@ -1001,19 +892,13 @@ TEST_F(PduTest, NakZeroScope) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(0U, rxPdu.getScopeStart());
     EXPECT_EQ(1024U, rxPdu.getScopeEnd());
 }
@@ -1028,19 +913,13 @@ TEST_F(PduTest, NakLargeScope) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
     ASSERT_GT(txBuffer.getSize(), 0U);
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(largeStart, rxPdu.getScopeStart());
     EXPECT_EQ(largeEnd, rxPdu.getScopeEnd());
 }
@@ -1053,18 +932,12 @@ TEST_F(PduTest, NakSingleByte) {
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
 
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(1000U, rxPdu.getScopeStart());
     EXPECT_EQ(1001U, rxPdu.getScopeEnd());
 }
@@ -1081,16 +954,12 @@ TEST_F(PduTest, NakMultipleCombinations) {
         U8 buffer[512];
         Fw::Buffer txBuffer(buffer, sizeof(buffer));
         // Serialize using SerialBuffer wrapper
-        Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-        txBuffer.setSize(sb_txBuffer.getSize());
+        ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
         NakPdu rxPdu;
         const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
         // Deserialize using SerialBuffer wrapper
-        Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-        sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-        ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+        ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
         EXPECT_EQ(scope[0], rxPdu.getScopeStart()) << "Scope start mismatch for range: " << scope[0] << "-" << scope[1];
         EXPECT_EQ(scope[1], rxPdu.getScopeEnd()) << "Scope end mismatch for range: " << scope[0] << "-" << scope[1];
@@ -1112,18 +981,12 @@ TEST_F(PduTest, NakWithSingleSegment) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
     EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
@@ -1150,18 +1013,12 @@ TEST_F(PduTest, NakWithMultipleSegments) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
     EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
@@ -1202,18 +1059,12 @@ TEST_F(PduTest, NakWithMaxSegments) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     NakPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(scopeStart, rxPdu.getScopeStart());
     EXPECT_EQ(scopeEnd, rxPdu.getScopeEnd());
@@ -1508,18 +1359,12 @@ TEST_F(PduTest, EofWithNoTlvs) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(0, rxPdu.getNumTlv());
 }
 
@@ -1537,18 +1382,12 @@ TEST_F(PduTest, EofWithOneTlv) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
     EXPECT_EQ(1, rxPdu.getNumTlv());
@@ -1577,18 +1416,12 @@ TEST_F(PduTest, EofWithMultipleTlvs) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(2, rxPdu.getNumTlv());
     EXPECT_EQ(TlvType::TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
@@ -1635,18 +1468,12 @@ TEST_F(PduTest, EofTlvRoundTripComplete) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Decode
     EofPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header
     EXPECT_EQ(direction, rxPdu.asHeader().getDirection());
@@ -1680,18 +1507,12 @@ TEST_F(PduTest, FinWithNoTlvs) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
     EXPECT_EQ(0, rxPdu.getNumTlv());
 }
 
@@ -1710,18 +1531,12 @@ TEST_F(PduTest, FinWithOneTlv) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(ConditionCode::CONDITION_CODE_FILE_CHECKSUM_FAILURE, rxPdu.getConditionCode());
     EXPECT_EQ(static_cast<U8>(FinDeliveryCode::FIN_DELIVERY_CODE_INCOMPLETE), static_cast<U8>(rxPdu.getDeliveryCode()));
@@ -1759,18 +1574,12 @@ TEST_F(PduTest, FinWithMultipleTlvs) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Verify round-trip
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(3, rxPdu.getNumTlv());
     EXPECT_EQ(TlvType::TLV_TYPE_ENTITY_ID, rxPdu.getTlvList().getTlv(0).getType());
@@ -1825,18 +1634,12 @@ TEST_F(PduTest, FinTlvRoundTripComplete) {
 
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     // Decode
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     // Verify header
     EXPECT_EQ(direction, rxPdu.asHeader().getDirection());
@@ -1879,17 +1682,11 @@ TEST_F(PduTest, FinWithMaxTlvs) {
     // Verify round-trip with 4 TLVs
     U8 buffer[512];
     Fw::Buffer txBuffer(buffer, sizeof(buffer));
-    // Serialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_txBuffer(txBuffer.getData(), txBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, txPdu.serializeTo(sb_txBuffer));
-    txBuffer.setSize(sb_txBuffer.getSize());
+    ASSERT_NO_FATAL_FAILURE(serializePdu(txPdu, txBuffer));
 
     FinPdu rxPdu;
     const Fw::Buffer rxBuffer(buffer, txBuffer.getSize());
-    // Deserialize using SerialBuffer wrapper
-    Fw::SerialBuffer sb_rxBuffer(const_cast<U8*>(rxBuffer.getData()), rxBuffer.getSize());
-    sb_rxBuffer.setBuffLen(rxBuffer.getSize());
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, rxPdu.deserializeFrom(sb_rxBuffer));
+    ASSERT_NO_FATAL_FAILURE(deserializePdu(rxPdu, rxBuffer));
 
     EXPECT_EQ(MaxTlv, rxPdu.getNumTlv());
     for (U8 i = 0; i < MaxTlv; i++) {

@@ -32,7 +32,9 @@ using TypedPortTestImplementations = ::testing::Types<FppTest::Types::NoParams,
                                                       FppTest::Types::PrimitiveReturn,
                                                       FppTest::Types::EnumReturn,
                                                       FppTest::Types::StringReturn,
+                                                      FppTest::Types::StringAliasReturn,
                                                       FppTest::Types::ArrayReturn,
+                                                      FppTest::Types::ArrayStringAliasReturn,
                                                       FppTest::Types::StructReturn>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(FppTest, TypedPortTest, TypedPortTestImplementations);

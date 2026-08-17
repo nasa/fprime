@@ -178,7 +178,6 @@ void HealthTester ::warningTlm() {
     ASSERT_EVENTS_SIZE(0);
     ASSERT_TLM_SIZE(0);
     ASSERT_CMD_RESPONSE_SIZE(0);
-    return;
 
     // invoke run handler enough times for warnings
     for (U32 i = 0; i < Svc::HealthComponentBase::NUM_PINGSEND_OUTPUT_PORTS * 2; i++) {
@@ -549,10 +548,11 @@ void HealthTester ::nominal2CmdsDuringTlm() {
     this->dispatchAll();
     ASSERT_EQ(Fw::Enabled(Fw::Enabled::DISABLED), this->component.m_enabled);
 
-    return;
+    // drop the enable-command activity event before checking for silence
+    this->clearHistory();
+
     // invoke schedIn handler for 50 times
     for (U32 i = 0; i < 50; i++) {
-        printf("Invoke: %d\n", i);
         this->invoke_to_Run(0, 0);
 
         // Check no events or telemetry have occurred
@@ -563,6 +563,9 @@ void HealthTester ::nominal2CmdsDuringTlm() {
     sendCmd_HLTH_ENABLE(0, 0, Fw::Enabled::ENABLED);
     this->dispatchAll();
     ASSERT_EQ(Fw::Enabled(Fw::Enabled::ENABLED), this->component.m_enabled);
+
+    // drop the enable-command activity event before checking for silence
+    this->clearHistory();
 
     this->invoke_to_Run(0, 0);
 

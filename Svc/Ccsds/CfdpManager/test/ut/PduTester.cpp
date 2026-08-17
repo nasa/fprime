@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include <vector>
 #include "CfdpManagerTester.hpp"
 
 namespace Svc {
@@ -212,7 +213,7 @@ void CfdpManagerTester::verifyFileDataPdu(const Fw::Buffer& pduBuffer,
     ASSERT_GT(dataSize, 0U) << "Data size is zero";
 
     // Read expected data from file at the offset specified in the PDU
-    U8* expectedData = new U8[dataSize];
+    std::vector<U8> expectedData(dataSize);
     Os::File file;
 
     Os::File::Status fileStatus = file.open(filename, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
@@ -222,15 +223,13 @@ void CfdpManagerTester::verifyFileDataPdu(const Fw::Buffer& pduBuffer,
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to seek in file";
 
     FwSizeType bytesRead = dataSize;
-    fileStatus = file.read(expectedData, bytesRead, Os::File::WAIT);
+    fileStatus = file.read(expectedData.data(), bytesRead, Os::File::WAIT);
     file.close();
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read from file";
     ASSERT_EQ(dataSize, bytesRead) << "Failed to read expected data from file";
 
     // Validate data content
-    EXPECT_EQ(0, memcmp(expectedData, pduData, dataSize)) << "Data content mismatch at offset " << offset;
-
-    delete[] expectedData;
+    EXPECT_EQ(0, memcmp(expectedData.data(), pduData, dataSize)) << "Data content mismatch at offset " << offset;
 }
 
 void CfdpManagerTester::verifyEofPdu(const Fw::Buffer& pduBuffer,
@@ -284,19 +283,17 @@ void CfdpManagerTester::verifyEofPdu(const Fw::Buffer& pduBuffer,
         ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open source file: " << sourceFilename;
 
         // Allocate buffer for file content
-        U8* fileData = new U8[expectedFileSize];
+        std::vector<U8> fileData(expectedFileSize);
         FwSizeType bytesRead = expectedFileSize;
-        fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
+        fileStatus = file.read(fileData.data(), bytesRead, Os::File::WAIT);
         file.close();
         ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read source file";
         ASSERT_EQ(expectedFileSize, bytesRead) << "Failed to read complete file";
 
         // Compute CRC using CFDP Checksum
         CFDP::Checksum computedChecksum;
-        computedChecksum.update(fileData, 0, expectedFileSize);
+        computedChecksum.update(fileData.data(), 0, expectedFileSize);
         U32 expectedCrc = computedChecksum.getValue();
-
-        delete[] fileData;
 
         // Validate checksum matches
         EXPECT_EQ(expectedCrc, rxChecksum) << "File CRC mismatch";
@@ -813,16 +810,15 @@ void CfdpManagerTester::testEofPdu() {
     Os::File::Status fileStatus = file.open(srcFile, Os::File::OPEN_READ, Os::File::NO_OVERWRITE);
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to open test file: " << srcFile;
 
-    U8* fileData = new U8[fileSize];
+    std::vector<U8> fileData(fileSize);
     FwSizeType bytesRead = fileSize;
-    fileStatus = file.read(fileData, bytesRead, Os::File::WAIT);
+    fileStatus = file.read(fileData.data(), bytesRead, Os::File::WAIT);
     file.close();
     ASSERT_EQ(Os::File::OP_OK, fileStatus) << "Failed to read test file";
     ASSERT_EQ(fileSize, bytesRead) << "Failed to read complete test file";
 
     // Compute and set CRC in transaction (matches what sendEof expects)
-    txn->m_crc.update(fileData, 0, fileSize);
-    delete[] fileData;
+    txn->m_crc.update(fileData.data(), 0, fileSize);
 
     // Clear port history before test
     this->clearHistory();

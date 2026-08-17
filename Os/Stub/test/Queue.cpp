@@ -38,8 +38,10 @@ QueueInterface::Status InjectableStlQueue::create(FwEnumStoreType id,
                                                   FwSizeType depth,
                                                   FwSizeType messageSize) {
     StaticData::data.lastCalled = StaticData::LastFn::CREATE_FN;
-    // This must be the case or this test queue will not work
-    if (StaticData::data.sendStatus != QueueInterface::Status::OP_OK) {
+    // This must be the case or this test queue will not work; only checked when
+    // status injection lets the queue actually store messages
+    if ((StaticData::data.createStatus == QueueInterface::Status::OP_OK) &&
+        (StaticData::data.sendStatus == QueueInterface::Status::OP_OK)) {
         FW_ASSERT(messageSize <= sizeof InjectableStlQueueHandle::Message::data);
     }
     StaticData::data.name = name;

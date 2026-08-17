@@ -325,4 +325,72 @@ void SeqDispatcherTester::testRunArgsBlockingVsNonBlocking() {
     ASSERT_TLM_errorCount(0, 1);
 }
 
+// Test seqStartIn reconciliation for unexpected and conflicting sequence starts
+void SeqDispatcherTester::testSeqStartIn() {
+    Svc::SeqArgs emptyArgs{0, 0};
+
+    // A sequencer we did not dispatch reports a sequence start: unexpected
+    this->invoke_to_seqStartIn(0, Fw::String("ground_seq"), emptyArgs);
+    this->component.doDispatch();
+    ASSERT_EVENTS_UnexpectedSequenceStarted_SIZE(1);
+    ASSERT_EVENTS_UnexpectedSequenceStarted(0, 0, "ground_seq");
+    // The entry table is reconciled: the sequencer is now tracked as busy
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts - 1);
+    this->clearHistory();
+
+    // The same sequencer reports a different file while tracked as running: conflicting
+    this->invoke_to_seqStartIn(0, Fw::String("other_seq"), emptyArgs);
+    this->component.doDispatch();
+    ASSERT_EVENTS_ConflictingSequenceStarted_SIZE(1);
+    ASSERT_EVENTS_ConflictingSequenceStarted(0, 0, "other_seq", "ground_seq");
+    // No availability change: the sequencer was already tracked as busy
+    ASSERT_TLM_sequencersAvailable_SIZE(0);
+    this->clearHistory();
+
+    // A start matching the tracked file is silently accepted
+    this->invoke_to_seqStartIn(0, Fw::String("other_seq"), emptyArgs);
+    this->component.doDispatch();
+    ASSERT_EVENTS_SIZE(0);
+}
+
+// Test seqRunIn dispatches to an available sequencer and warns when none remain
+void SeqDispatcherTester::testSeqRunIn() {
+    Svc::SeqArgs emptyArgs{0, 0};
+
+    // Nominal: a run request dispatches to the first available sequencer
+    this->invoke_to_seqRunIn(0, Fw::String("port_seq"), emptyArgs);
+    this->component.doDispatch();
+    ASSERT_EVENTS_SIZE(0);
+    ASSERT_from_seqRunOut_SIZE(1);
+    ASSERT_from_seqRunOut(0, Fw::String("port_seq"), emptyArgs);
+    ASSERT_TLM_dispatchedCount(0, 1);
+    ASSERT_TLM_sequencersAvailable(0, SeqDispatcherSequencerPorts - 1);
+    this->clearHistory();
+
+    // Fill the remaining sequencers
+    for (int i = 1; i < SeqDispatcherSequencerPorts; i++) {
+        this->invoke_to_seqRunIn(0, Fw::String("port_seq"), emptyArgs);
+        this->component.doDispatch();
+    }
+    ASSERT_TLM_sequencersAvailable(SeqDispatcherSequencerPorts - 2, 0);
+    this->clearHistory();
+
+    // No sequencers available: warning only, nothing dispatched
+    this->invoke_to_seqRunIn(0, Fw::String("port_seq"), emptyArgs);
+    this->component.doDispatch();
+    ASSERT_EVENTS_NoAvailableSequencers_SIZE(1);
+    ASSERT_from_seqRunOut_SIZE(0);
+}
+
+// Test seqDoneIn from a sequencer that was not tracked as running
+void SeqDispatcherTester::testSeqDoneInUnknown() {
+    this->invoke_to_seqDoneIn(0, 0, 0, Fw::CmdResponse::OK);
+    this->component.doDispatch();
+    ASSERT_EVENTS_UnknownSequenceFinished_SIZE(1);
+    ASSERT_EVENTS_UnknownSequenceFinished(0, 0);
+    // No command response and no availability change: it was already available
+    ASSERT_CMD_RESPONSE_SIZE(0);
+    ASSERT_TLM_sequencersAvailable_SIZE(0);
+}
+
 }  // namespace Svc

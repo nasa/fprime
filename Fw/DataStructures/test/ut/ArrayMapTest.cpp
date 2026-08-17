@@ -19,7 +19,7 @@ class ArrayMapTester {
   public:
     ArrayMapTester(const ArrayMap<K, V, C>& map) : m_map(map) {}
 
-    const ExternalArrayMap<K, V> getExtMap() const { return this->m_map.extMap; }
+    const ExternalArrayMap<K, V> getExtMap() const { return this->m_map.m_extMap; }
 
     const typename ArrayMap<K, V, C>::Entries& getEntries() const { return this->m_map.m_entries; }
 

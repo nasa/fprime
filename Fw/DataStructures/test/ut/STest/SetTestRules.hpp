@@ -21,8 +21,8 @@ namespace Rules {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return !state.set.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.set.isEmpty(); }
+    void action(State& state) override {
         state.set.clear();
         ASSERT_EQ(state.set.getSize(), 0);
         state.modelSet.clear();
@@ -31,8 +31,8 @@ struct Clear : public Rule {
 
 struct Find : public Rule {
     Find() : Rule("Find") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         const auto e = state.getElement();
         const auto status = state.set.find(e);
         const auto expectedStatus = state.modelSetContains(e) ? Success::SUCCESS : Success::FAILURE;
@@ -42,8 +42,8 @@ struct Find : public Rule {
 
 struct FindExisting : public Rule {
     FindExisting() : Rule("FindExisting") {}
-    bool precondition(const State& state) { return !state.set.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.set.isEmpty(); }
+    void action(State& state) override {
         // Check that sizes match
         const auto size = state.set.getSize();
         const auto modelSize = state.modelSet.size();
@@ -66,8 +66,8 @@ struct FindExisting : public Rule {
 
 struct InsertExisting : public Rule {
     InsertExisting() : Rule("InsertExisting") {}
-    bool precondition(const State& state) { return !state.set.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.set.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.set.begin();
@@ -84,8 +84,8 @@ struct InsertExisting : public Rule {
 
 struct InsertFull : public Rule {
     InsertFull() : Rule("InsertFull") {}
-    bool precondition(const State& state) { return state.set.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.set.isFull(); }
+    void action(State& state) override {
         const auto e = state.getElement();
         const auto size = state.set.getSize();
         const auto expectedStatus = state.modelSetContains(e) ? Success::SUCCESS : Success::FAILURE;
@@ -97,8 +97,8 @@ struct InsertFull : public Rule {
 
 struct InsertNotFull : public Rule {
     InsertNotFull() : Rule("InsertNotFull") {}
-    bool precondition(const State& state) { return !state.set.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.set.isFull(); }
+    void action(State& state) override {
         const auto e = state.getElement();
         const auto size = state.set.getSize();
         const auto expectedSize = state.modelSetContains(e) ? size : size + 1;
@@ -111,8 +111,8 @@ struct InsertNotFull : public Rule {
 
 struct Remove : public Rule {
     Remove() : Rule("Remove") {}
-    bool precondition(const State& state) { return true; }
-    void action(State& state) {
+    bool precondition(const State& state) override { return true; }
+    void action(State& state) override {
         const auto size = state.set.getSize();
         ASSERT_EQ(size, state.modelSet.size());
         const auto e = state.getElement();
@@ -131,8 +131,8 @@ struct Remove : public Rule {
 
 struct RemoveExisting : public Rule {
     RemoveExisting() : Rule("RemoveExisting") {}
-    bool precondition(const State& state) { return !state.set.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.set.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.set.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         auto it = state.set.begin();

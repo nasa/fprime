@@ -87,7 +87,9 @@ void TestTaskInfo::standard_task(void* argument) {
     } while ((not task_info.m_task.isCooperative()) && (task_info.stage() != TestTaskInfo::Lifecycle::END));
     // Update if in end stage
     if (task_info.stage() == TestTaskInfo::Lifecycle::END) {
+        task_info.m_lock.lock();
         task_info.m_state = Os::Task::State::EXITED;
+        task_info.m_lock.unlock();
     }
 }
 

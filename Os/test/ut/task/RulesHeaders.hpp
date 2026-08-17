@@ -1,7 +1,9 @@
-
-
-#ifndef __RULES_HEADERS__
-#define __RULES_HEADERS__
+// ======================================================================
+// \title Os/test/ut/task/RulesHeaders.hpp
+// \brief rule definitions for common testing
+// ======================================================================
+#ifndef OS_TEST_UT_TASK_RULES_HEADERS_HPP
+#define OS_TEST_UT_TASK_RULES_HEADERS_HPP
 
 #include <vector>
 #include "Os/Mutex.hpp"

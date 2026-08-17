@@ -17,7 +17,7 @@ namespace Fw {
 template <typename K, typename V, FwSizeType C>
 class RedBlackTreeMapTester {
   public:
-    using Nodes = typename RedBlackTreeMap<K, V, C>::Node;
+    using Nodes = typename RedBlackTreeMap<K, V, C>::Nodes;
 
     using FreeNodes = typename RedBlackTreeMap<K, V, C>::FreeNodes;
 

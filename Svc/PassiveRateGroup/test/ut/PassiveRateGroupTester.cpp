@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <cstdio>
 #include <cstring>
+#include <limits>
 
 namespace Svc {
 
@@ -237,21 +238,27 @@ void PassiveRateGroupTester::runClearStatisticsTest() {
     ASSERT_EQ(cycleCountBeforeClear, 5U);
 
     // Save the pre-clear HWM values if PortCycleTime is enabled
-    PassiveRateGroup_CycleTime preClClearHWM;
+    PassiveRateGroup_CycleTime preClearHWM;
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {
         ASSERT_GT(this->tlmHistory_PortCycleTimeHWM->size(), 0);
-        preClClearHWM = this->tlmHistory_PortCycleTimeHWM->at(this->tlmHistory_PortCycleTimeHWM->size() - 1).arg;
+        preClearHWM = this->tlmHistory_PortCycleTimeHWM->at(this->tlmHistory_PortCycleTimeHWM->size() - 1).arg;
 
         // Verify at least one port has a non-zero HWM before clearing
         bool foundNonZero = false;
         for (FwSizeType portIdx = 0; portIdx < Svc::PassiveRateGroup::CONNECTION_COUNT_MAX; portIdx++) {
-            if (preClClearHWM[portIdx] > 0) {
+            if (preClearHWM[portIdx] > 0) {
                 foundNonZero = true;
                 break;
             }
         }
         ASSERT_TRUE(foundNonZero) << "Should have non-zero HWM values before CLEAR_STATISTICS";
     }
+
+    // Force a huge max and run one cycle so the MaxCycleTime channel holds a known value,
+    // making the post-clear update-on-change emission deterministic
+    this->m_impl.m_maxTime = std::numeric_limits<U32>::max();
+    timestamp.now();
+    this->invoke_to_CycleIn(0, timestamp);
 
     // Clear the telemetry history to see fresh values after command
     this->clearTlm();
@@ -267,17 +274,14 @@ void PassiveRateGroupTester::runClearStatisticsTest() {
     timestamp.now();
     this->invoke_to_CycleIn(0, timestamp);
 
-    // Verify max cycle time was reset - may or may not emit depending on whether it differs from pre-clear max
-    // MaxCycleTime has "update on change" semantics, so if post-clear cycle takes same time as pre-clear max,
-    // no telemetry is emitted (intermittent flake). Only verify if history is non-empty.
+    // Verify max cycle time was reset; the forced pre-clear max guarantees the emission
     ASSERT_TLM_CycleTime_SIZE(1);
-    if (this->tlmHistory_MaxCycleTime->size() > 0) {
-        ASSERT_EQ(this->tlmHistory_MaxCycleTime->at(0).arg, this->tlmHistory_CycleTime->at(0).arg);
-    }
+    ASSERT_TLM_MaxCycleTime_SIZE(1);
+    ASSERT_EQ(this->tlmHistory_MaxCycleTime->at(0).arg, this->tlmHistory_CycleTime->at(0).arg);
 
-    // Verify cycle count was NOT reset - it should be 6 (5 before + 1 after)
+    // Verify cycle count was NOT reset - it should be 7 (6 before + 1 after)
     ASSERT_TLM_CycleCount_SIZE(1);
-    ASSERT_EQ(this->tlmHistory_CycleCount->at(0).arg, 6U);
+    ASSERT_EQ(this->tlmHistory_CycleCount->at(0).arg, 7U);
 
     // Verify per-port HWMs were cleared (FPRIME-PRG-005 primary effect)
     if (Svc::PassiveRateGroupCfg::PortCycleTime) {

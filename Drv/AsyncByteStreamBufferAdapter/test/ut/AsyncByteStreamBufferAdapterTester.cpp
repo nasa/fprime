@@ -50,16 +50,21 @@ void AsyncByteStreamBufferAdapterTester ::random_fill(Fw::SerialBufferBase& buff
     }
 }
 
-void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
-    clearFromPortHistory();
-    this->clearHistory();
-
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
+void AsyncByteStreamBufferAdapterTester ::prepareRandomBuffer() {
+    U32 max_random_size = static_cast<U32>(
+        STest::Pick::lowerUpper(0, static_cast<U32>(DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)))));
     m_buffer.set(m_data_store, sizeof(m_data_store));
     ASSERT_GE(m_buffer.getSize(), max_random_size);
     auto serializer = m_buffer.getSerializer();
     random_fill(serializer, max_random_size);
     m_buffer.setSize(max_random_size);
+}
+
+void AsyncByteStreamBufferAdapterTester ::test_byte_stream_out() {
+    clearFromPortHistory();
+    this->clearHistory();
+
+    this->prepareRandomBuffer();
 
     invoke_to_bufferIn(0, m_buffer);
 
@@ -92,12 +97,7 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
     clearFromPortHistory();
     this->clearHistory();
 
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store));
-    ASSERT_GE(m_buffer.getSize(), max_random_size);
-    auto serializer = m_buffer.getSerializer();
-    random_fill(serializer, max_random_size);
-    m_buffer.setSize(max_random_size);
+    this->prepareRandomBuffer();
 
     invoke_to_byteStreamDriverReady(0);
 
@@ -126,12 +126,7 @@ void AsyncByteStreamBufferAdapterTester ::test_byte_stream_in() {
 void AsyncByteStreamBufferAdapterTester ::test_byte_stream_return() {
     clearFromPortHistory();
 
-    U32 max_random_size = STest::Pick::lowerUpper(0, DATA_SIZE - (sizeof(U32) + sizeof(U32) + sizeof(FwBuffSizeType)));
-    m_buffer.set(m_data_store, sizeof(m_data_store));
-    ASSERT_GE(m_buffer.getSize(), max_random_size);
-    auto serializer = m_buffer.getSerializer();
-    random_fill(serializer, max_random_size);
-    m_buffer.setSize(max_random_size);
+    this->prepareRandomBuffer();
 
     invoke_to_byteStreamDriverReady(0);
     invoke_to_bufferOutReturn(0, m_buffer);

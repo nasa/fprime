@@ -3,7 +3,6 @@
 // \brief tests using stub implementation for Os::Memory interface testing
 // ======================================================================
 #include <gtest/gtest.h>
-#include "Os/Darwin/Memory.hpp"
 #include "Os/Memory.hpp"
 
 TEST(Basic, Usage) {

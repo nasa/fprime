@@ -330,12 +330,8 @@ void FileManagerTester ::calculateCrcSucceed() {
         outFile << "123456789";  // Payload with a well-known CRC32
     }
 
-    // Compute expected CRC using the same file utility as the component
-    Os::File crcFile;
-    U32 expectedCrc = 0;
-    ASSERT_EQ(Os::File::OP_OK, crcFile.open(fileName, Os::File::OPEN_READ));
-    ASSERT_EQ(Os::File::OP_OK, crcFile.calculateCrc(expectedCrc));
-    crcFile.close();
+    // Known CRC32 of "123456789" without the final 1's complement step
+    const U32 expectedCrc = 0x340BC6D9;
 
     Fw::CmdStringArg cmdStringFile(fileName);
     this->sendCmd_CalculateCrc(INSTANCE, CMD_SEQ, cmdStringFile);

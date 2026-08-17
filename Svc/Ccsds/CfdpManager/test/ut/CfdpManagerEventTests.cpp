@@ -2590,9 +2590,10 @@ void CfdpManagerTester::testFailKeepFileMoveEvent() {
     ASSERT_EQ(Os::File::OP_OK, fileOpenStatus) << "Failed to create test file " << srcFile;
 
     U8 testData[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    FwSizeType sizeWritten = 0;
+    FwSizeType sizeWritten = sizeof(testData);
     Os::File::Status fileWriteStatus = testFile.write(testData, sizeWritten, Os::File::WAIT);
     ASSERT_EQ(Os::File::OP_OK, fileWriteStatus);
+    ASSERT_EQ(sizeof(testData), sizeWritten);
     testFile.close();
 
     // Step 2: Setup TX transaction using white-box helper

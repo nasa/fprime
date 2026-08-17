@@ -33,23 +33,23 @@ SmTestTester::~SmTestTester() {
 void SmTestTester::schedIn_OK() {
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device3.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device4.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device5.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device5.state);
     invoke_to_schedIn(0, 0);
     dispatchAll();
     ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device2.state);
-    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device3.state);
-    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device4.state);
-    ASSERT_EQ(DeviceSm::ON, this->component.m_stateMachine_device5.state);
+    ASSERT_EQ(HackSm::ON, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(HackSm::ON, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(HackSm::ON, this->component.m_stateMachine_device5.state);
     invoke_to_schedIn(0, 0);
     dispatchAll();
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device1.state);
     ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device2.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device3.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device4.state);
-    ASSERT_EQ(DeviceSm::OFF, this->component.m_stateMachine_device5.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device3.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device4.state);
+    ASSERT_EQ(HackSm::OFF, this->component.m_stateMachine_device5.state);
 
     Fw::SmSignalBuffer data;
     this->component.device3_stateMachineInvoke(HackSm_Interface::HackSm_Signals::CHECK_SIG, data);

@@ -183,9 +183,7 @@ SocketIpStatus IpSocket::send(const SocketDescriptor& socketDescriptor, const U8
 }
 
 SocketIpStatus IpSocket::recv(const SocketDescriptor& socketDescriptor, U8* data, FwSizeType& req_read) {
-    // TODO: Uncomment FW_ASSERT for socketDescriptor.fd once we fix TcpClientTester to not pass in uninitialized
-    // socketDescriptor
-    //  FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
+    FW_ASSERT(socketDescriptor.fd != -1, static_cast<FwAssertArgType>(socketDescriptor.fd));
     FW_ASSERT(data != nullptr);
 
     FwSignedSizeType bytes_received_or_status;  // Stores the return value from recvProtocol

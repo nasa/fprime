@@ -75,6 +75,35 @@ TEST(RateGroupDriverTest, ReconfigureSchedule) {
     tester.runSchedNominal(dividersSet, FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers));
 }
 
+TEST(RateGroupDriverTest, ZeroDivisorAndUnconnectedPort) {
+    Svc::RateGroupDriver::DividerSet dividersSet{};
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++) {
+        dividersSet.dividers[i] = {static_cast<FwSizeType>(i + 1), 0};
+    }
+    // entry 0 has a zero divisor: skipped and excluded from the rollover product
+    dividersSet.dividers[0] = {0, 0};
+    // last entry's output port is left unconnected
+    const FwIndexType unconnectedEntry = static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE) - 1;
+
+    Svc::RateGroupDriver impl("RateGroupDriver");
+    impl.configure(dividersSet);
+
+    Svc::RateGroupDriverImplTester tester(impl);
+
+    tester.init();
+    impl.init();
+
+    // connect all cycle outputs except the unconnected entry
+    for (FwIndexType i = 0; i < static_cast<FwIndexType>(Svc::RateGroupDriver::DIVIDER_SIZE); i++) {
+        if (i != unconnectedEntry) {
+            impl.set_CycleOut_OutputPort(i, tester.get_from_CycleOut(i));
+        }
+    }
+    tester.connect_to_CycleIn(0, impl.get_CycleIn_InputPort(0));
+
+    tester.runSchedSkips(dividersSet, FW_NUM_ARRAY_ELEMENTS(dividersSet.dividers), unconnectedEntry);
+}
+
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

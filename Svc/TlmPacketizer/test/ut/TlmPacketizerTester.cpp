@@ -195,6 +195,10 @@ void TlmPacketizerTester ::sendPacketsTest() {
 void TlmPacketizerTester ::sendPacketLevelsTest() {
     this->stockConfiguration();
     this->component.setPacketList(packetList, ignore, 1);
+    // Restrict enabled groups to level 1 so only packet1 (level 1) is sent
+    this->sendCmd_SET_LEVEL(0, 0, 1);
+    this->dispatchCurrentMessages(this->component);
+    this->clearHistory();
     Fw::Time ts;
     Fw::TlmBuffer buff;
 
@@ -232,10 +236,11 @@ void TlmPacketizerTester ::sendPacketLevelsTest() {
     this->invoke_to_Run(0, 0);
     this->component.doDispatch();
 
-    ASSERT_FROM_PORT_HISTORY_SIZE(2);
-    ASSERT_from_PktSend_SIZE(2);
+    // Only packet1 (level 1) is sent, once per telemetry section
+    ASSERT_FROM_PORT_HISTORY_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
+    ASSERT_from_PktSend_SIZE(1 * Svc::TelemetrySection::NUM_SECTIONS);
 
-    // construct the packet buffers and make sure they are correct
+    // construct the packet buffer and make sure it is correct
 
     Fw::ComBuffer comBuff;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK,
@@ -246,21 +251,10 @@ void TlmPacketizerTester ::sendPacketLevelsTest() {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(15)));
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(14)));
 
-    // No recently sent packet 1. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(0, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
-
-    comBuff.resetSer();
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK,
-              comBuff.serializeFrom(static_cast<FwPacketDescriptorType>(Fw::ComPacketType::FW_PACKET_PACKETIZED_TLM)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<FwTlmPacketizeIdType>(8)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(this->m_testTime));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U32>(20)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U64>(1000000)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U16>(1010)));
-    ASSERT_EQ(Fw::FW_SERIALIZE_OK, comBuff.serializeFrom(static_cast<U8>(15)));
-
-    // No recently sent packet 2. Context set to sent counter, so this will be at max value.
-    ASSERT_from_PktSend(1, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    // No recently sent packet. Context set to sent counter, so this will be at max value.
+    for (FwIndexType section = 0; section < Svc::TelemetrySection::NUM_SECTIONS; section++) {
+        ASSERT_from_PktSend(section, comBuff, static_cast<U32>(std::numeric_limits<U32>::max()));
+    }
 }
 
 void TlmPacketizerTester ::updatePacketsTest() {
@@ -995,7 +989,7 @@ void TlmPacketizerTester ::getChannelValueTest() {
 
     Fw::Time timeIn(123, 456);
     Fw::TlmBuffer valIn;
-    valIn.serializeFrom(static_cast<I32>(789));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, valIn.serializeFrom(static_cast<I32>(789)));
     this->invoke_to_TlmRecv(0, 10, timeIn, valIn);
 
     valid = this->invoke_to_TlmGet(0, 10, time, val);

@@ -20,6 +20,10 @@ class RateGroupDriverImplTester : public RateGroupDriverGTestBase {
 
     void runSchedNominal(Svc::RateGroupDriver::DividerSet dividersSet, FwIndexType numDividers);
 
+    void runSchedSkips(Svc::RateGroupDriver::DividerSet dividersSet,
+                       FwIndexType numDividers,
+                       FwIndexType unconnectedEntry);
+
   private:
     void from_CycleOut_handler(FwIndexType portNum, Os::RawTime& cycleStart);
 

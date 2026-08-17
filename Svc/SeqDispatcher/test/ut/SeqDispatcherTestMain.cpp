@@ -54,6 +54,21 @@ TEST(CancelAll, testCancelAllNoneRunning) {
     tester.testCancelAllNoneRunning();
 }
 
+TEST(Ports, testSeqStartIn) {
+    Svc::SeqDispatcherTester tester;
+    tester.testSeqStartIn();
+}
+
+TEST(Ports, testSeqRunIn) {
+    Svc::SeqDispatcherTester tester;
+    tester.testSeqRunIn();
+}
+
+TEST(Ports, testSeqDoneInUnknown) {
+    Svc::SeqDispatcherTester tester;
+    tester.testSeqDoneInUnknown();
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

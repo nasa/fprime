@@ -75,8 +75,10 @@ void PolyDbTester::runNominalReadWrite() {
                 REQUIREMENT("PDB-002");
                 r002Emitted = true;
             }
-            if (vals[entry % NUM_TEST_VALS].isF32() or vals[entry % NUM_TEST_VALS].isF64()) {
-                ASSERT_NE(check, vals[entry % NUM_TEST_VALS]);
+            if (vals[entry % NUM_TEST_VALS].isF32()) {
+                ASSERT_FLOAT_EQ(static_cast<F32>(check), static_cast<F32>(vals[entry % NUM_TEST_VALS]));
+            } else if (vals[entry % NUM_TEST_VALS].isF64()) {
+                ASSERT_DOUBLE_EQ(static_cast<F64>(check), static_cast<F64>(vals[entry % NUM_TEST_VALS]));
             } else {
                 ASSERT_EQ(check, vals[entry % NUM_TEST_VALS]);
             }

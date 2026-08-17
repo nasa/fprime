@@ -97,8 +97,11 @@ void TcpClientTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 }
                 status2 = server.send(server_fd, send_data, send_size);
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS);
-                while (not m_spinner) {
+                // Bounded wait for the receive thread to deliver the buffer
+                for (U32 wait = 0; (not m_spinner) && (wait < Drv::Test::get_configured_delay_ms() * 100 + 1); wait++) {
+                    Os::Task::delay(Fw::TimeInterval(0, 10000));
                 }
+                ASSERT_TRUE(m_spinner) << "Timed out waiting for receive thread to deliver buffer";
             }
         }
         // Properly stop the client on the last iteration
@@ -176,8 +179,10 @@ void TcpClientTester ::test_no_automatic_send_connection() {
     this->component.setAutomaticOpen(false);
     ASSERT_EQ(this->component.send(reinterpret_cast<const U8*>("a"), 1), Drv::SOCK_AUTO_CONNECT_DISABLED);
     ASSERT_FALSE(this->component.isOpened());
-    // Clean-up even if the send worked
-    Drv::Test::drain(server, server_fd);
+    // Clean-up even if the send worked; no client connection means nothing to drain
+    if (server_fd.fd != -1) {
+        Drv::Test::drain(server, server_fd);
+    }
     server.terminate(server_fd);
 }
 
@@ -192,7 +197,10 @@ void TcpClientTester ::test_no_automatic_recv_connection() {
     // Clean-up even if the thread (incorrectly) started
     this->component.stop();
     this->component.join();
-    Drv::Test::drain(server, server_fd);
+    // No client connection means nothing to drain
+    if (server_fd.fd != -1) {
+        Drv::Test::drain(server, server_fd);
+    }
     server.terminate(server_fd);
 }
 

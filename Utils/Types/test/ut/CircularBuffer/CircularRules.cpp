@@ -91,10 +91,10 @@ void PeekOkRule::action(MockTypes::CircularState& state) {
         ASSERT_EQ(state.getTestBuffer().peek(peek_u32, state.getPeekOffset()), Fw::FW_SERIALIZE_OK);
         // Big-endian U32
         U32 value = 0;
-        value |= (buffer[0] << 24);
-        value |= (buffer[1] << 16);
-        value |= (buffer[2] << 8);
-        value |= (buffer[3] << 0);
+        value |= (static_cast<U32>(buffer[0]) << 24);
+        value |= (static_cast<U32>(buffer[1]) << 16);
+        value |= (static_cast<U32>(buffer[2]) << 8);
+        value |= (static_cast<U32>(buffer[3]) << 0);
         ASSERT_EQ(value, peek_u32);
     } else if (state.getPeekType() == 3) {
         ASSERT_TRUE(state.peek(buffer, state.getRandomSize(), state.getPeekOffset()));

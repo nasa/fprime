@@ -64,4 +64,40 @@ void RateGroupDriverImplTester::runSchedNominal(Svc::RateGroupDriver::DividerSet
     }
 }
 
+void RateGroupDriverImplTester::runSchedSkips(Svc::RateGroupDriver::DividerSet dividersSet,
+                                              FwIndexType numDividers,
+                                              FwIndexType unconnectedEntry) {
+    TEST_CASE(106.1.2, "Zero-divisor and unconnected port skips");
+    COMMENT(
+        "Verify that entries with a zero divisor are skipped and excluded from the rollover\n"
+        "product, and that unconnected CycleOut ports are never invoked.\n");
+
+    // rollover is the product of non-zero divisors only
+    FwSizeType expected_rollover = 1;
+    for (FwIndexType div = 0; div < numDividers; div++) {
+        if (dividersSet.dividers[div].divisor != 0) {
+            expected_rollover *= dividersSet.dividers[div].divisor;
+        }
+    }
+    ASSERT_EQ(expected_rollover, this->m_impl.m_rollover);
+
+    FwSizeType iters = expected_rollover * 10;
+
+    for (FwSizeType cycle = 0; cycle < iters; cycle++) {
+        this->clearPortCalls();
+        Os::RawTime t;
+        this->invoke_to_CycleIn(0, t);
+        ASSERT_EQ((cycle + 1) % expected_rollover, this->m_impl.m_ticks);
+        for (FwIndexType div = 0; div < numDividers; div++) {
+            if ((dividersSet.dividers[div].divisor == 0) || (div == unconnectedEntry)) {
+                EXPECT_FALSE(this->m_portCalls[div]);
+            } else if (cycle % dividersSet.dividers[div].divisor == dividersSet.dividers[div].offset) {
+                EXPECT_TRUE(this->m_portCalls[div]);
+            } else {
+                EXPECT_FALSE(this->m_portCalls[div]);
+            }
+        }
+    }
+}
+
 }  // namespace Svc

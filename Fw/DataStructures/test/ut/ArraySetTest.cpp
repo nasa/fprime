@@ -19,7 +19,7 @@ class ArraySetTester {
   public:
     ArraySetTester(const ArraySet<T, C>& set) : m_set(set) {}
 
-    const ExternalArraySet<T> getExtSet() const { return this->m_set.extSet; }
+    const ExternalArraySet<T> getExtSet() const { return this->m_set.m_extSet; }
 
     const typename ArraySet<T, C>::Entries& getEntries() const { return this->m_set.m_entries; }
 

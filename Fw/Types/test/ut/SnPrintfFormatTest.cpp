@@ -14,6 +14,20 @@ TEST(Nominal, snprintf_format) {
     EXPECT_STREQ(buffer_test, buffer_real);
 }
 
+TEST(ErrorPaths, snprintf_format_overflow) {
+    char buffer_test[4];
+    Fw::FormatStatus status = Fw::stringFormat(buffer_test, sizeof(buffer_test), "Hello %s", "World");
+    EXPECT_EQ(status, Fw::FormatStatus::OVERFLOWED);
+    // Output is truncated and null-terminated
+    EXPECT_STREQ(buffer_test, "Hel");
+}
+
+TEST(ErrorPaths, snprintf_format_null_format) {
+    char buffer_test[10];
+    Fw::FormatStatus status = Fw::stringFormat(buffer_test, sizeof(buffer_test), nullptr);
+    EXPECT_EQ(status, Fw::FormatStatus::INVALID_FORMAT_STRING);
+}
+
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

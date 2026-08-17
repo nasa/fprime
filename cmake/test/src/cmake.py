@@ -31,9 +31,10 @@ def subprocess_helper(args, cwd):
     def read_available(proc, stdout, stderr):
         """Read the available output from the process and return it"""
 
-        def capture_stream(stream, lines):
+        def capture_stream(stream, lines, drain=False):
             """Capture output from a stream, printing to console if needed"""
-            new_lines = stream.readlines()
+            # Read one line per readiness event; readlines() blocks until EOF
+            new_lines = stream.readlines() if drain else [stream.readline()]
             lines[stream].extend(new_lines)
             if "-s" in sys.argv or "--capture=no" in sys.argv:
                 for line in new_lines:
@@ -48,8 +49,8 @@ def subprocess_helper(args, cwd):
             ready, _, _ = select.select([stdout, stderr], [], [])
             for stream in ready:
                 capture_stream(stream, lines)
-        capture_stream(stdout, lines)
-        capture_stream(stderr, lines)
+        capture_stream(stdout, lines, drain=True)
+        capture_stream(stderr, lines, drain=True)
         return (
             proc.poll(),
             [line for line in lines[stdout] if line.strip() != ""],

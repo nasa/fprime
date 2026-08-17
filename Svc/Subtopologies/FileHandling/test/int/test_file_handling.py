@@ -58,10 +58,21 @@ def test_downlink_file(fprime_test_api):
     tmp_file_in.write(TEST_DATA)
     tmp_file_in.flush()
 
+    # Snapshot the event history so the completion search covers events sent during the command
+    event_start = fprime_test_api.get_event_test_history().size()
+
     # Request file downlink via FSW command
     fprime_test_api.send_and_assert_command(
         f"{fprime_test_api.get_mnemonic('Svc.FileDownlink')}.SendFile",
         [str(tmp_file_in.name), str(output_filename)],
     )
+
+    # SendFile completes asynchronously: await the completion event before checking contents
+    file_sent = fprime_test_api.await_event(
+        f"{fprime_test_api.get_mnemonic('Svc.FileDownlink')}.FileSent",
+        start=event_start,
+        timeout=15,
+    )
+    assert file_sent is not None, "Timed out awaiting FileDownlink FileSent event"
 
     assert output_file.read_text() == TEST_DATA

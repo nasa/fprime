@@ -21,8 +21,8 @@ namespace Rules {
 
 struct At : public Rule {
     At() : Rule("At") {}
-    bool precondition(const State& state) { return !state.stack.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.stack.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.stack.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         ASSERT_EQ(state.stack.at(index), state.modelStack.at(size - 1 - index));
@@ -31,8 +31,8 @@ struct At : public Rule {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return !state.stack.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.stack.isEmpty(); }
+    void action(State& state) override {
         state.stack.clear();
         ASSERT_EQ(state.stack.getSize(), 0);
         state.modelStack.clear();
@@ -41,8 +41,8 @@ struct Clear : public Rule {
 
 struct Peek : public Rule {
     Peek() : Rule("Peek") {}
-    bool precondition(const State& state) { return !state.stack.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.stack.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.stack.getSize();
         const auto index = STest::Pick::startLength(0, static_cast<U32>(size));
         State::ItemType item = 0;
@@ -54,8 +54,8 @@ struct Peek : public Rule {
 
 struct PopEmpty : public Rule {
     PopEmpty() : Rule("PopEmpty") {}
-    bool precondition(const State& state) { return state.stack.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.stack.isEmpty(); }
+    void action(State& state) override {
         U32 value = 0;
         const auto status = state.stack.pop(value);
         ASSERT_EQ(status, Success::FAILURE);
@@ -64,8 +64,8 @@ struct PopEmpty : public Rule {
 
 struct PopOK : public Rule {
     PopOK() : Rule("PopOK") {}
-    bool precondition(const State& state) { return !state.stack.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.stack.isEmpty(); }
+    void action(State& state) override {
         const auto size = state.stack.getSize();
         U32 value = 0;
         const auto status = state.stack.pop(value);
@@ -79,8 +79,8 @@ struct PopOK : public Rule {
 
 struct PushFull : public Rule {
     PushFull() : Rule("PushFull") {}
-    bool precondition(const State& state) { return state.stack.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.stack.isFull(); }
+    void action(State& state) override {
         const auto item = State::getRandomItem();
         const auto status = state.stack.push(item);
         ASSERT_EQ(status, Success::FAILURE);
@@ -89,8 +89,8 @@ struct PushFull : public Rule {
 
 struct PushOK : public Rule {
     PushOK() : Rule("PushOK") {}
-    bool precondition(const State& state) { return !state.stack.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.stack.isFull(); }
+    void action(State& state) override {
         const U32 value = STest::Pick::any();
         const auto status = state.stack.push(value);
         ASSERT_EQ(status, Success::SUCCESS);

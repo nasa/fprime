@@ -21,8 +21,8 @@ namespace Rules {
 
 struct At : public Rule {
     At() : Rule("At") {}
-    bool precondition(const State& state) { return !state.queue.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.queue.isEmpty(); }
+    void action(State& state) override {
         const auto index = STest::Pick::startLength(0, static_cast<U32>(state.queue.getSize()));
         ASSERT_EQ(state.queue.at(index), state.modelQueue.at(index));
     }
@@ -30,8 +30,8 @@ struct At : public Rule {
 
 struct Clear : public Rule {
     Clear() : Rule("Clear") {}
-    bool precondition(const State& state) { return !state.queue.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.queue.isEmpty(); }
+    void action(State& state) override {
         state.queue.clear();
         ASSERT_EQ(state.queue.getSize(), 0);
         state.modelQueue.clear();
@@ -40,8 +40,8 @@ struct Clear : public Rule {
 
 struct DequeueEmpty : public Rule {
     DequeueEmpty() : Rule("DequeueEmpty") {}
-    bool precondition(const State& state) { return state.queue.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.queue.isEmpty(); }
+    void action(State& state) override {
         State::ItemType item = 0;
         const auto status = state.queue.dequeue(item);
         ASSERT_EQ(status, Success::FAILURE);
@@ -50,8 +50,8 @@ struct DequeueEmpty : public Rule {
 
 struct DequeueOK : public Rule {
     DequeueOK() : Rule("DequeueOK") {}
-    bool precondition(const State& state) { return !state.queue.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.queue.isEmpty(); }
+    void action(State& state) override {
         State::ItemType item = 0;
         const auto status = state.queue.dequeue(item);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -64,8 +64,8 @@ struct DequeueOK : public Rule {
 
 struct EnqueueFull : public Rule {
     EnqueueFull() : Rule("EnqueueFull") {}
-    bool precondition(const State& state) { return state.queue.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return state.queue.isFull(); }
+    void action(State& state) override {
         const auto item = State::getRandomItem();
         const auto status = state.queue.enqueue(item);
         ASSERT_EQ(status, Success::FAILURE);
@@ -74,8 +74,8 @@ struct EnqueueFull : public Rule {
 
 struct EnqueueOK : public Rule {
     EnqueueOK() : Rule("EnqueueOK") {}
-    bool precondition(const State& state) { return !state.queue.isFull(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.queue.isFull(); }
+    void action(State& state) override {
         const auto item = State::getRandomItem();
         const auto status = state.queue.enqueue(item);
         ASSERT_EQ(status, Success::SUCCESS);
@@ -85,8 +85,8 @@ struct EnqueueOK : public Rule {
 
 struct Peek : public Rule {
     Peek() : Rule("Peek") {}
-    bool precondition(const State& state) { return !state.queue.isEmpty(); }
-    void action(State& state) {
+    bool precondition(const State& state) override { return !state.queue.isEmpty(); }
+    void action(State& state) override {
         const auto index = STest::Pick::startLength(0, static_cast<U32>(state.queue.getSize()));
         State::ItemType item = 0;
         const auto status = state.queue.peek(item, index);

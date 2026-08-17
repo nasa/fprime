@@ -1,10 +1,10 @@
 
 #ifndef OS_STUB_TEST_QUEUE_HPP
 #define OS_STUB_TEST_QUEUE_HPP
-#include <cassert>
 #include <deque>
 #include <limits>
 #include <queue>
+#include "Fw/Types/Assert.hpp"
 #include "Os/Queue.hpp"
 
 namespace Os {
@@ -72,7 +72,7 @@ struct InjectableStlQueueHandle : public QueueHandle {
                     return std::greater<FwQueuePriorityType>()(a.priority, b.priority);
                 }
                 // Cannot have like ordered items
-                assert(a.order != b.order);
+                FW_ASSERT(a.order != b.order);
                 // Compare received order for unequal received orders
                 return a.order > b.order;
             }

@@ -11,6 +11,9 @@
 
 namespace Fw {
 
+// Upper bound on the serialized size of the packets in these tests
+static constexpr U32 MAX_PACKET_SIZE = 1024;
+
 class FilePacketTester {
   public:
     // ----------------------------------------------------------------------
@@ -31,7 +34,8 @@ class FilePacketTester {
         Fw::FilePacket::Header expected;
         expected.initialize(FilePacket::T_DATA, 10);
         const U32 size = expected.bufferSize();
-        U8 bytes[size];
+        U8 bytes[MAX_PACKET_SIZE];
+        ASSERT_LE(size, sizeof bytes);
         SerialBuffer serialBuffer(bytes, size);
         {
             const SerializeStatus status = expected.toSerialBuffer(serialBuffer);
@@ -60,7 +64,8 @@ TEST(FilePacket, StartPacket) {
                         "dest"     // Destination path
     );
     const U32 size = expected.bufferSize();
-    U8 bytes[size];
+    U8 bytes[MAX_PACKET_SIZE];
+    ASSERT_LE(size, sizeof bytes);
     Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
@@ -87,7 +92,8 @@ TEST(FilePacket, DataPacket) {
                         data       // Data
     );
     const U32 size = expected.bufferSize();
-    U8 bytes[size];
+    U8 bytes[MAX_PACKET_SIZE];
+    ASSERT_LE(size, sizeof bytes);
     Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
@@ -111,7 +117,8 @@ TEST(FilePacket, EndPacket) {
                         checksum  // Checksum
     );
     const U32 size = expected.bufferSize();
-    U8 bytes[size];
+    U8 bytes[MAX_PACKET_SIZE];
+    ASSERT_LE(size, sizeof bytes);
     Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
@@ -134,7 +141,8 @@ TEST(FilePacket, CancelPacket) {
     expected.initialize(10  // Sequence index
     );
     const U32 size = expected.bufferSize();
-    U8 bytes[size];
+    U8 bytes[MAX_PACKET_SIZE];
+    ASSERT_LE(size, sizeof bytes);
     Buffer buffer(bytes, size);
     SerialBuffer serialBuffer(bytes, size);
     {
@@ -148,6 +156,36 @@ TEST(FilePacket, CancelPacket) {
     }
     const FilePacket::CancelPacket& actualCancelPacket = actual.asCancelPacket();
     GTest::FilePackets::CancelPacket::compare(expected, actualCancelPacket);
+}
+
+// Deserialize from an empty buffer
+TEST(FilePacket, FromBufferEmpty) {
+    // One byte is too short to hold a packet header
+    U8 bytes[1] = {0};
+    Buffer buffer(bytes, sizeof bytes);
+    FilePacket actual;
+    const SerializeStatus status = actual.fromBuffer(buffer);
+    ASSERT_NE(status, FW_SERIALIZE_OK);
+}
+
+// Deserialize a packet with an invalid type
+TEST(FilePacket, FromBufferInvalidType) {
+    U8 bytes[sizeof(U8) + sizeof(U32)] = {0};
+    bytes[0] = 100;  // Not a valid packet type
+    Buffer buffer(bytes, sizeof bytes);
+    FilePacket actual;
+    const SerializeStatus status = actual.fromBuffer(buffer);
+    ASSERT_EQ(status, FW_DESERIALIZE_INVALID_DATA);
+}
+
+// Deserialize a packet with type T_NONE
+TEST(FilePacket, FromBufferTypeNone) {
+    U8 bytes[sizeof(U8) + sizeof(U32)] = {0};
+    bytes[0] = static_cast<U8>(FilePacket::T_NONE);
+    Buffer buffer(bytes, sizeof bytes);
+    FilePacket actual;
+    const SerializeStatus status = actual.fromBuffer(buffer);
+    ASSERT_EQ(status, FW_DESERIALIZE_TYPE_MISMATCH);
 }
 
 }  // namespace Fw

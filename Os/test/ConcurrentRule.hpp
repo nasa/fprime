@@ -2,6 +2,8 @@
 // \title Os/test/ut/queue/RulesHeaders.cpp
 // \brief definitions for concurrent running rules
 // ======================================================================
+#ifndef OS_TEST_CONCURRENT_RULE
+#define OS_TEST_CONCURRENT_RULE
 #include <gtest/gtest.h>
 #include <STest/Rule/Rule.hpp>
 #include <iterator>
@@ -10,8 +12,6 @@
 #include "Os/Condition.hpp"
 #include "Os/Mutex.hpp"
 #include "Os/Task.hpp"
-#ifndef OS_TEST_CONCURRENT_RULE
-#define OS_TEST_CONCURRENT_RULE
 
 // Forward declaration of the aggregated concurrent rule
 template <typename State>

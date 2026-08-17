@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "AosDeframerTester.hpp"
+#include <cstring>
 #include "STest/Random/Random.hpp"
 #include "Svc/Ccsds/Types/AOSHeaderSerializableAc.hpp"
 #include "Svc/Ccsds/Types/AOSTrailerSerializableAc.hpp"
@@ -63,6 +64,7 @@ void AosDeframerTester::testNominalDeframing() {
     // Verify packet content and context
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ASSERT_EQ(outBuffer.getSize(), sppSize);
+    ASSERT_EQ(std::memcmp(outBuffer.getData(), payload, static_cast<size_t>(sppSize)), 0);
     ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_pvn(), ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
 
     // Verify telemetry

@@ -31,6 +31,10 @@ void connectPorts(Svc::PrmDbImpl& impl, Svc::PrmDbTester& tester) {
     tester.connect_to_getPrm(0, impl.get_getPrm_InputPort(0));
     tester.connect_to_setPrm(0, impl.get_setPrm_InputPort(0));
 
+    // ping ports
+    tester.connect_to_pingIn(0, impl.get_pingIn_InputPort(0));
+    impl.set_pingOut_OutputPort(0, tester.get_from_pingOut(0));
+
 #if FW_PORT_TRACING
     // Fw::PortBase::setTrace(true);
 #endif
@@ -285,6 +289,22 @@ TEST(ParameterDbTest, PrmFileLoadSandboxViolation) {
     connectPorts(impl, tester);
 
     tester.runPrmFileLoadSandboxViolation();
+}
+
+TEST(ParameterDbTest, PrmPingTest) {
+    Svc::PrmDbImpl impl("PrmDbImpl");
+
+    impl.init(10, 0);
+    impl.configure("TestFile.prm");
+
+    Svc::PrmDbTester tester(impl);
+
+    tester.init();
+
+    // connect ports
+    connectPorts(impl, tester);
+
+    tester.runPingTest();
 }
 
 TEST(ParameterDbTest, PrmShorterSaveDoesNotCorrupt) {
