@@ -1,6 +1,5 @@
 name: Bug Report
 description: Report a problem using F´
-title: ""
 labels:
   - bug
 type: Bug
@@ -54,7 +53,7 @@ body:
       options:
         - label: I searched existing issues and discussions.
           required: true
-        - label: I understand that contributions go through the [CCB process](./GOVERNANCE.md) described in [CONTRIBUTING.md](./CONTRIBUTING.md).
+        - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
           required: true
         - label: I am willing to submit a pull request to address this issue.
-        - label: AI assistance was used in writing this issue. See the [AI policy](./AI_POLICY.md).
+        - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).

@@ -44,15 +44,6 @@ body:
       description: Check each deliverable that will be completed before closing the issue.
       options:
         - label: Create documentation
-          required: true
         - label: Create example in examples repository
-          required: true
         - label: Pass expert review
-          required: true
         - label: Pass user review
-          required: true
-  - type: markdown
-    attributes:
-      value: |
-        > [!TIP]
-        > Use the **Description** to describe the pattern and what you need documented.

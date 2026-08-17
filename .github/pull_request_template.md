@@ -3,10 +3,11 @@
 | | |
 |:---|:---|
 |**_Related Issue(s)_**|  |
-|**_Closes #_**|  <!-- Link the approved issue this pull request closes, for example: #123. --> |
 |**_Has Unit Tests (y/n)_**|  |
 |**_Documentation Included (y/n)_**|  |
 |**_Generative AI was used in this contribution (y/n)_**|  |
+
+Closes # <!-- Reference the approved issue this pull request closes. -->
 
 ---
 ## Change Description
