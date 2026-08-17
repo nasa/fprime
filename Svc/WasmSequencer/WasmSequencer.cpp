@@ -15,6 +15,8 @@
 #include "Svc/Seq/SeqArgsSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_ControllerStateMachine_StateEnumAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_HostFunctionEnumAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_InvokeRequestSerializableAc.hpp"
+#include "Svc/WasmSequencer/WasmSequencer_LoadRequestSerializableAc.hpp"
 #include "Svc/WasmSequencer/WasmSequencer_SignalSourceEnumAc.hpp"
 #include "Svc/WasmSequencer/fprime_spacewasm/include/fprime_spacewasm.h"
 #include "Svc/WasmSequencer/spacewasm_include/spacewasm.h"
@@ -30,13 +32,11 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_page_used_mask(0),
       m_guest_offset(0),
       m_wasm(nullptr),
-      m_hasPendingLoadCmd(false),
-      m_seqRunActive(false),
+      m_hasExectingContext(false),
       m_pendingTimer(),
       m_hasPendingTimer(false),
       m_statementStart(),
       m_hasStatementStart(false),
-      m_pendingMainModule(0),
       m_invokeStatus(SPACEWASM_OK),
       m_pendingPause(false),
       m_loadFile(nullptr),
@@ -142,25 +142,13 @@ void WasmSequencer ::writeTelemetry_handler(FwIndexType portNum, U32 context) {
 }
 
 void WasmSequencer ::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename, const Svc::SeqArgs& args) {
-    if (this->m_hasPendingLoad) {
-        // We are waiting for another load request to be processed by the state machine
-        // We should reject this command since it would failed with "NOT_ALLOWED" once it enters the state machine
-        // TODO(tumbar) Change the response to BUSY and the EVR to signal kind
-        this->log_WARNING_LO_InvalidCommand(Svc::WasmSequencer_ControllerStateMachine_State::LOADING_TO_RUN);
-        return;
-    }
-
-    this->m_args = args;
-    this->m_pendingLoad.fileName = filename;
-    this->m_pendingLoad.moduleName = "";
-    this->m_hasPendingLoad = true;
-
     Fw::String runModuleName = "";
 
-    this->controller_sendSignal_run(Svc::WasmSequencer_RequestContext(
-        WasmSequencer_SignalSource::PORT_RUN, 0, 0, BlockState::NO_BLOCK,
-        /* moduleIdx */ 0  // placeholder, gets filled in after load
-        ));
+    this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
+        filename, runModuleName, args,
+        Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::PORT_RUN, 0, 0, BlockState::NO_BLOCK,
+                                          /* moduleIdx */ 0  // placeholder, gets filled in after load
+                                          )));
 }
 
 void WasmSequencer ::seqCancelIn_handler(FwIndexType portNum) {
@@ -220,24 +208,12 @@ void WasmSequencer ::RUN_cmdHandler(FwOpcodeType opCode,
                                     const Fw::CmdStringArg& fileName,
                                     const Svc::BlockState& block,
                                     const SeqArgs& seqArgs) {
-    if (this->m_hasPendingLoad) {
-        // We are waiting for another load request to be processed by the state machine
-        // We should reject this command since it would failed with "NOT_ALLOWED" once it enters the state machine
-        // TODO(tumbar) Change EVR to signal kind
-        this->log_WARNING_LO_InvalidCommand(Svc::WasmSequencer_ControllerStateMachine_State::LOADING_TO_RUN);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
-        return;
-    }
-
-    this->m_args = seqArgs;
-    this->m_pendingLoad.fileName = fileName;
-    this->m_pendingLoad.moduleName = "";
-    this->m_hasPendingLoad = true;
-
-    this->controller_sendSignal_run(Svc::WasmSequencer_RequestContext(
-        WasmSequencer_SignalSource::COMMAND_RUN, opCode, cmdSeq, block,
-        /* moduleIdx */ 0  // placeholder, gets filled in after load
-        ));
+    Fw::String runModuleName = "";
+    this->controller_sendSignal_run(Svc::WasmSequencer_LoadRequest(
+        fileName, runModuleName, seqArgs,
+        Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_RUN, opCode, cmdSeq, block,
+                                          /* moduleIdx */ 0  // placeholder, gets filled in after load
+                                          )));
 }
 
 void WasmSequencer ::WAIT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -266,23 +242,12 @@ void WasmSequencer ::LOAD_NAME_cmdHandler(FwOpcodeType opCode,
                                           U32 cmdSeq,
                                           const Fw::CmdStringArg& fileName,
                                           const Fw::CmdStringArg& name) {
-    if (this->m_hasPendingLoad) {
-        // We are waiting for another load request to be processed by the state machine
-        // We should reject this command since it would failed with "NOT_ALLOWED" once it enters the state machine
-        // TODO(tumbar) Change EVR to signal kind
-        this->log_WARNING_LO_InvalidCommand(Svc::WasmSequencer_ControllerStateMachine_State::LOADING_TO_RUN);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::BUSY);
-        return;
-    }
-
-    this->m_pendingLoad.fileName = fileName;
-    this->m_pendingLoad.moduleName = "";
-    this->m_hasPendingLoad = true;
-
-    this->controller_sendSignal_load(Svc::WasmSequencer_RequestContext(
-        WasmSequencer_SignalSource::COMMAND_RUN, opCode, cmdSeq, Svc::BlockState::NO_BLOCK,
-        /* moduleIdx */ 0  // placeholder, gets filled in after load
-        ));
+    this->controller_sendSignal_load(Svc::WasmSequencer_LoadRequest(
+        fileName, name, Svc::SeqArgs(),
+        Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_LOAD, opCode, cmdSeq,
+                                          Svc::BlockState::NO_BLOCK,
+                                          /* moduleIdx */ 0  // placeholder, gets filled in after load
+                                          )));
 }
 
 void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
@@ -290,23 +255,11 @@ void WasmSequencer ::INVOKE_cmdHandler(FwOpcodeType opCode,
                                        const Fw::CmdStringArg& module,
                                        const Svc::BlockState& block,
                                        const Svc::SeqArgs& seqArgs) {
-    // Resolve the module name to its index within the engine.
-    FW_ASSERT(this->m_wasm != nullptr);
-    U32 moduleIdx = 0;
-    const spacewasm_status_t findStatus = spacewasm_find_module(this->m_wasm, module.toChar(), &moduleIdx);
-    if (findStatus != SPACEWASM_OK) {
-        this->log_WARNING_LO_ModuleNotFound(module);
-        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-        return;
-    }
-
-    // TODO(tumbar) This unconditionally overwrites the args, we should gate these with a pend bool...
-    this->m_args = seqArgs;
-
-    this->controller_sendSignal_invoke(Svc::WasmSequencer_RequestContext(
-        WasmSequencer_SignalSource::COMMAND_INVOKE, opCode, cmdSeq, block,
-        /* moduleIdx */ 0  // placeholder, gets filled in after load
-        ));
+    this->controller_sendSignal_invoke(Svc::WasmSequencer_InvokeRequest(
+        module, seqArgs,
+        Svc::WasmSequencer_RequestContext(WasmSequencer_SignalSource::COMMAND_INVOKE, opCode, cmdSeq, block,
+                                          /* moduleIdx */ 0  // placeholder, gets filled in after invoke
+                                          )));
 }
 
 void WasmSequencer ::CANCEL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
@@ -333,7 +286,8 @@ void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
             break;
         default:
-            this->log_WARNING_LO_InvalidCommand(this->controller_getState());
+        case WasmSequencer_EngineStateMachine_State::IDLE:
+            this->log_WARNING_LO_SequenceNotRunning();
             this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
             break;
     }

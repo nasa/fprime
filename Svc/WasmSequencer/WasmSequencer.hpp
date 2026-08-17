@@ -201,6 +201,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     // Implementations for internal state machine actions
     // ----------------------------------------------------------------------
 
+    //! Implementation for action processInvoke of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Action to save the invoke arguments and emit an 'invoked' signal
+    void Svc_WasmSequencer_ControllerStateMachine_action_processInvoke(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_InvokeRequest& value             //!< The value
+        ) override;
+
     //! Implementation for action respond_noblock_OK of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Responds to $block == NO_BLOCK requests with OK
@@ -219,14 +228,24 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
-    //! Implementation for action respond_NOT_ALLOWED of state machine Svc_WasmSequencer_ControllerStateMachine
+    //! Implementation for action respondInvoke_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Responds to request with EXECUTION_ERROR
     //! Emit an event to say why we are rejecting this request in the current state
-    void Svc_WasmSequencer_ControllerStateMachine_action_respond_NOT_ALLOWED(
+    void Svc_WasmSequencer_ControllerStateMachine_action_respondInvoke_BUSY(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        const Svc::WasmSequencer_InvokeRequest& value             //!< The value
+        ) override;
+
+    //! Implementation for action respondLoad_BUSY of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Responds to request with EXECUTION_ERROR
+    //! Emit an event to say why we are rejecting this request in the current state
+    void Svc_WasmSequencer_ControllerStateMachine_action_respondLoad_BUSY(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_LoadRequest& value               //!< The value
         ) override;
 
     //! Implementation for action respond_block_OK of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -251,13 +270,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Implementation for action load of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
-    //! report that a RUN has begun on seqStartOut, and mark a run active so its
-    //! terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut
     //! Load a pending module request
     void Svc_WasmSequencer_ControllerStateMachine_action_load(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        const Svc::WasmSequencer_LoadRequest& value               //!< The value
         ) override;
 
     //! Implementation for action reportModuleLoadFailed of state machine Svc_WasmSequencer_ControllerStateMachine
@@ -309,6 +326,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! Emit an event noting why the invocation of a module start failed
     void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStartInvokeFailed(
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
+        ) override;
+
+    //! Implementation for action reportModuleStarted of state machine Svc_WasmSequencer_ControllerStateMachine
+    //!
+    //! Reports that a module started running it's main function
+    void Svc_WasmSequencer_ControllerStateMachine_action_reportModuleStarted(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
         const Svc::WasmSequencer_RequestContext& value            //!< The value
@@ -639,20 +665,20 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     void setSequenceName(const Fw::StringBase& filePath, const Fw::StringBase& moduleName);
 
     //! Static pool backing the process-wide spacewasm global page allocator.
-    alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE];
+    alignas(16) U8 m_memory_pool[Svc::WasmSequencerConfig::DYNAMIC_MEMORY_SIZE]{};
 
     //! Which pages of `m_memory_pool` are currently handed out (bit i == page i).
     U32 m_page_used_mask;
 
     //! Static pool backing the per-load guest linear-memory allocator; a simple
     //! bump allocator (guest modules are compiled with memory.grow disabled).
-    alignas(16) U8 m_guest_pool[Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE];
+    alignas(16) U8 m_guest_pool[Svc::WasmSequencerConfig::GUEST_MEMORY_SIZE]{};
 
     //! Current bump offset into `m_guest_pool`.
     FwSizeType m_guest_offset;
 
     //! Buffer handed to the streaming loader, filled from `m_loadFile`.
-    U8 m_readBuf[256];
+    U8 m_readBuf[Svc::WasmSequencerConfig::LOAD_READ_CHUNK_SIZE]{};
 
     //! Opaque handle to the spacewasm engine, or null.
     spacewasm_t* m_wasm;
@@ -669,17 +695,14 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! WAIT commands waiting for sequence completion
     Fw::FifoQueue<WaitingCmd, 8> m_waiting;
 
-    struct ModuleLoad {
-        Fw::FileNameString fileName;
-        Fw::StringTemplate<16> moduleName;
-    };
-
-    ModuleLoad m_pendingLoad{};
-    bool m_hasPendingLoad = false;
+    //! Status stored by the `load` action indicated failure reason
     WasmSequencer_Status m_loadFailureStatus = WasmSequencer_Status::OK;
 
     //! Currently stored sequence arguments
     Svc::SeqArgs m_args;
+
+    //! File path of the last module load
+    Fw::FileNameString m_lastLoadFileName;
 
     WasmSequencer_RequestContext m_executingContext;
     bool m_hasExectingContext;
@@ -847,16 +870,20 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Helper function for checking the signature of a modules main function
     spacewasm_status_t validateModuleMain(WasmSequencer_ModuleIdx moduleIdx) const;
 
-    //! Resolve and invoke the "main" export of the given module, recording the
-    //! result in m_invokeStatus. Shared by the invokeMain / invokeMainPending
-    //! state-machine actions.
-    void invokeMainOnModule(WasmSequencer_ModuleIdx moduleIdx);
+    //! Check if there are any pending flags before trying to fill the pending state
+    Fw::Success checkPendingFlags();
 
     //! Respond to a request with certain reply
     void respondToRequest(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
     //! Send response to all waiting requests
     void respondToWaiting(const Fw::CmdResponse& response);
+
+    //! Report that the active RUN finished on seqDoneOut (if connected) with the
+    //! given response, and clear the active-run flag. A no-op when no run is
+    //! active, so it is safe to call from every terminal responder. Called from
+    //! the respond_* state-machine actions that conclude a request.
+    void reportSeqDone(const Fw::CmdResponse& response);
 
     void hostFprimeV1(spacewasm_host_t*);
 

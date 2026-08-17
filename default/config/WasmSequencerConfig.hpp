@@ -55,6 +55,9 @@ constexpr U8 MAX_GUEST_MODULES = 8;
 /// invoke the serial output port
 constexpr U32 MAX_SERIAL_PORT_SIZE = 256;
 
+/// Buffer size to allocate for streaming a Wasm module from the filesystem to the decoder/validator
+constexpr FwSizeType LOAD_READ_CHUNK_SIZE = 512;
+
 }  // namespace WasmSequencerConfig
 }  // namespace Svc
 

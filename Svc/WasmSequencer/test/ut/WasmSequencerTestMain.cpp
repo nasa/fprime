@@ -26,7 +26,7 @@ static const Svc::BlockState NO_BLOCK(Svc::BlockState::NO_BLOCK);
 TEST_F(WasmSequencerTester, InitialStateIsIdle) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     // No pending work on a fresh component.
-    ASSERT_FALSE(this->hasPendingLoadCmd());
+    ASSERT_FALSE(this->hasPendingLoad());
     ASSERT_FALSE(this->hasPendingTimer());
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::NONE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -124,9 +124,12 @@ TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
     this->dispatchAll();
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
-    ASSERT_EVENTS_SequenceFailed_SIZE(1);
-    ASSERT_EVENTS_SequenceFailed(0, 0, WasmSequencer_ExitReason::INTERPRETER_TRAP, 0,
-                                 WasmSequencer_TrapReason::UNREACHABLE, WasmSequencer_HostFunction::NONE);
+    // A LOAD-with-start whose start function traps fails during the start phase, so
+    // it is reported via SequenceStartFailed (reportModuleStartFailed) rather than
+    // SequenceFailed (which is reserved for main-execution failures).
+    ASSERT_EVENTS_SequenceStartFailed_SIZE(1);
+    ASSERT_EVENTS_SequenceStartFailed(0, 0, WasmSequencer_ExitReason::INTERPRETER_TRAP, 0,
+                                      WasmSequencer_TrapReason::UNREACHABLE, WasmSequencer_HostFunction::NONE);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_LOAD, 41, Fw::CmdResponse::EXECUTION_ERROR);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -134,9 +137,9 @@ TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
 }
 
 TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
-    // Regression: the load-cmd slot must be freed on the startInvoked->RUNNING
-    // completion path. A second LOAD-with-start would otherwise trip the
-    // FW_ASSERT(!m_hasPendingLoadCmd) guard in LOAD_NAME_cmdHandler.
+    // Regression: the pending-load slot (m_hasPendingLoad) must be freed on the
+    // load path so a second LOAD-with-start is not rejected as BUSY by the
+    // m_hasPendingLoad guard in LOAD_NAME_cmdHandler.
     const Fw::String file = this->copyAsset("start.wasm");
 
     this->sendCmd_LOAD(0, 42, file);
@@ -2250,9 +2253,9 @@ TEST_F(WasmSequencerTester, PauseWhilePausedIsIdempotent) {
 }
 
 TEST_F(WasmSequencerTester, WaitFinishQueueOverflow) {
-    // The blocking-finish queue (m_pendingFinishCmds) is 8 deep. Fill it with
-    // WAITs while a sequence is running; the 9th overflows and is rejected with
-    // TooManyBlockingCommands + EXECUTION_ERROR (WAIT_cmdHandler enqueue-failure).
+    // The WAIT queue (m_waiting) is 8 deep. Fill it with WAITs while a sequence is
+    // running; the 9th overflows and is rejected with TooManyBlockingCommands +
+    // EXECUTION_ERROR (WAIT_cmdHandler enqueue-failure).
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     const Fw::String file = this->copyAsset("loop.wasm");

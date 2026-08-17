@@ -128,7 +128,6 @@ class WasmSequencerTester : public WasmSequencerGTestBase, public ::testing::Tes
     }
 
     bool hasPendingTimer() const { return this->component.m_hasPendingTimer; }
-    bool hasPendingLoadCmd() const { return this->component.m_hasPendingLoadCmd; }
 
     //! Set the test-time returned by the component's timeCaller port.
     void setTestTime(const Fw::Time& time) { this->WasmSequencerGTestBase::setTestTime(time); }

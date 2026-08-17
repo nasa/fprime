@@ -3,8 +3,22 @@ type ModuleIdx = U8
 enum SignalSource: U8 {
   COMMAND_RUN
   COMMAND_INVOKE
+  COMMAND_LOAD
   PORT_RUN
   PORT_INVOKE
+}
+
+struct LoadRequest {
+  fileName: string size FileNameStringSize
+  moduleName: string size 20
+  args: Svc.SeqArgs
+  context: RequestContext
+}
+
+struct InvokeRequest {
+  moduleName: string size 20
+  args: Svc.SeqArgs
+  context: RequestContext
 }
 
 @ A struct holding information about where an asynchronous request originated
@@ -27,14 +41,20 @@ state machine ControllerStateMachine {
 
   @ Signal sent from a command to execute a Wasm module
   @ Valid while in the IDLE or READY state
-  signal run: RequestContext
+  signal run: LoadRequest
 
   @ Signal sent from command to load a Wasm module but not execute it
-  signal load: RequestContext
+  signal load: LoadRequest
 
   @ Signal sent from a command to invoke main on an already-loaded module
   @ Only valid while in the READY state
-  signal invoke: RequestContext
+  signal invoke: InvokeRequest
+
+  @ Action to save the invoke arguments and emit an 'invoked' signal
+  action processInvoke: InvokeRequest
+
+  @ Signal sent
+  signal invoked: RequestContext
 
   @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
   signal cancel
@@ -47,7 +67,11 @@ state machine ControllerStateMachine {
 
   @ Responds to request with EXECUTION_ERROR
   @ Emit an event to say why we are rejecting this request in the current state
-  action respond_NOT_ALLOWED: RequestContext
+  action respondInvoke_BUSY: InvokeRequest
+
+  @ Responds to request with EXECUTION_ERROR
+  @ Emit an event to say why we are rejecting this request in the current state
+  action respondLoad_BUSY: LoadRequest
 
   @ Responds to $block == BLOCK requests with OK
   @ Responds to any pending WAIT requests with OK
@@ -57,16 +81,13 @@ state machine ControllerStateMachine {
   @ Responds to any pending WAIT requests with ERROR
   action respond_block_ERROR: RequestContext
 
-  @ report that a RUN has begun on seqStartOut, and mark a run active so its
-  @ terminal outcome (runCmd_OK / runCmd_ERROR) reports on seqDoneOut
-  # action reportSeqStarted: ModuleLoad
-
   ###############
   # Loading     #
   ###############
 
-  @ Load a pending module request
-  action load: RequestContext
+  @ Load a module into the store.
+  @ Emits `loadSucceded` or `loadFailed` depending on result
+  action load: LoadRequest
 
   @ Signal emited inside of the load action when a module load succeeds
   signal loadSucceeded: RequestContext
@@ -104,6 +125,9 @@ state machine ControllerStateMachine {
 
   @ Emit an event noting why the invocation of a module start failed
   action reportModuleStartInvokeFailed: RequestContext
+
+  @ Reports that a module started running it's main function
+  action reportModuleStarted: RequestContext
 
   @ Emit an event noting a module succeeded during execution. Increment telemetry counters.
   action reportModuleSucceeded: RequestContext
@@ -144,6 +168,7 @@ state machine ControllerStateMachine {
     on cancel enter IDLE
     on run do { load } enter LOADING_TO_RUN
     on load do { load } enter LOADING_TO_READY
+    on invoke do { respondInvoke_BUSY }
   }
 
   @ Interpreter has modules loaded into the store and is ready to execute
@@ -151,7 +176,15 @@ state machine ControllerStateMachine {
     on cancel enter IDLE
     on run do { resetStore, load } enter LOADING_TO_RUN
     on load do { load } enter LOADING_TO_READY
-    on invoke enter MAIN_CHECK
+
+    on invoke do { processInvoke } enter INVOKING
+  }
+
+  state INVOKING {
+    on invoked enter MAIN_CHECK
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 
   @ Make sure the module we want to run has a main function
@@ -166,6 +199,7 @@ state machine ControllerStateMachine {
 
   choice MAIN_INVOKE_CHECK {
     if invokeSucceeded do {
+      reportModuleStarted
       respond_noblock_OK
       setContext
     } enter RUNNING_MAIN else do {
@@ -178,9 +212,9 @@ state machine ControllerStateMachine {
     on loadSucceeded enter START_CHECK
     on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
 
-    on run do { respond_NOT_ALLOWED }
-    on load do { respond_NOT_ALLOWED }
-    on invoke do { respond_NOT_ALLOWED }
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 
   choice START_CHECK {
@@ -212,18 +246,18 @@ state machine ControllerStateMachine {
       } enter IDLE
     }
 
-    on run do { respond_NOT_ALLOWED }
-    on load do { respond_NOT_ALLOWED }
-    on invoke do { respond_NOT_ALLOWED }
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 
   state LOADING_TO_RUN {
     on loadSucceeded enter MAIN_CHECK_PENDING_START_AND_MAIN
     on loadFailed do { reportModuleLoadFailed, respond_ERROR } enter IDLE
 
-    on run do { respond_NOT_ALLOWED }
-    on load do { respond_NOT_ALLOWED }
-    on invoke do { respond_NOT_ALLOWED }
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 
   @ Make sure the module we want to run has a main function
@@ -250,7 +284,9 @@ state machine ControllerStateMachine {
       setContext
     } enter RUNNING_START_PENDING_MAIN else do {
       reportModuleStartInvokeFailed
-      respond_block_ERROR
+      # The RUN has not been answered yet (respond_noblock_OK is only reached after
+      # the start completes and main is invoked), so respond regardless of block.
+      respond_ERROR
     } enter IDLE
   }
 
@@ -268,13 +304,16 @@ state machine ControllerStateMachine {
         invokeMain
       } enter MAIN_INVOKE_CHECK else do {
         reportModuleFailed
-        respond_block_ERROR
+        # The RUN has not been answered yet (respond_noblock_OK is only reached
+        # after the start completes and main is invoked), so respond regardless
+        # of block.
+        respond_ERROR
       } enter IDLE
     }
 
-    on run do { respond_NOT_ALLOWED }
-    on load do { respond_NOT_ALLOWED }
-    on invoke do { respond_NOT_ALLOWED }
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 
   @ The engine is running a module's main function
@@ -293,8 +332,8 @@ state machine ControllerStateMachine {
       } enter IDLE
     }
 
-    on run do { respond_NOT_ALLOWED }
-    on load do { respond_NOT_ALLOWED }
-    on invoke do { respond_NOT_ALLOWED }
+    on run do { respondLoad_BUSY }
+    on load do { respondLoad_BUSY }
+    on invoke do { respondInvoke_BUSY }
   }
 }

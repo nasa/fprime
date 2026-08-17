@@ -170,6 +170,38 @@ U32 WasmSequencer ::makeCmdUid() const {
     return static_cast<U32>(((this->m_sequencesStarted & 0xFFFF) << 16) | (this->m_tlm.commandsDispatched & 0xFFFF));
 }
 
+void WasmSequencer ::respondToRequest(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response) {
+    switch (value.get_source()) {
+        case WasmSequencer_SignalSource::COMMAND_RUN:
+        case WasmSequencer_SignalSource::COMMAND_INVOKE:
+        case WasmSequencer_SignalSource::COMMAND_LOAD:
+            // The request originated from a command; answer it on cmdResponse.
+            this->cmdResponse_out(value.get_opcode(), value.get_cmdSeq(), response);
+            break;
+        case WasmSequencer_SignalSource::PORT_RUN:
+        case WasmSequencer_SignalSource::PORT_INVOKE:
+            // Port-driven requests have no command response to send.
+            break;
+        default:
+            FW_ASSERT(false, static_cast<FwAssertArgType>(value.get_source()));
+            break;
+    }
+}
+
+void WasmSequencer ::respondToWaiting(const Fw::CmdResponse& response) {
+    // Drain every WAIT command blocked on sequence completion, answering each.
+    WaitingCmd cmd{};
+    while (this->m_waiting.dequeue(cmd) == Fw::Success::SUCCESS) {
+        this->cmdResponse_out(cmd.opCode, cmd.cmdSeq, response);
+    }
+}
+
+void WasmSequencer ::reportSeqDone(const Fw::CmdResponse& response) {
+    if (this->isConnected_seqDoneOut_OutputPort(0)) {
+        this->seqDoneOut_out(0, 0, 0, response);
+    }
+}
+
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {
     // spacewasm_trap_t values 0..14 map 1:1 onto the TrapReason enum ordinals.
     switch (trap) {

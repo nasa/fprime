@@ -4,19 +4,17 @@ event StoreAllocationSucceeded(moduleCount: U16) \
   format "Successfully allocated store with {} modules"
 
 @ A command was issued in a state where it is not valid
-event InvalidCommand($state: ControllerStateMachine.State) \
+event ControllerBusy(
+  signalSource: SignalSource
+  $state: ControllerStateMachine.State
+) \
   severity warning low \
-  format "Command not valid in state {}"
+  format "Controller cannot process signal {} in state {}"
 
 @ A command was issued in a state where it is not valid
 event ModuleNotFound(module_name: string size 16) \
   severity warning low \
   format "Failed to invoke main on module with name {}"
-
-@ A run was requested on the seqRunIn port from a state where it is not valid
-event InvalidSeqRunCall($state: ControllerStateMachine.State) \
-  severity warning high \
-  format "Cannot run sequence from a port in state {}"
 
 @ A cancel was requested on the seqCancelIn port from a state where it is not valid
 event InvalidSeqCancelCall($state: ControllerStateMachine.State) \
@@ -88,6 +86,11 @@ event HostFunctionInvalidSeverity(raw: I32, msg: string size 128) \
   severity warning high \
   format "Guest event at invalid/forbidden severity '{}': {}"
 
+@ A sequence is starting after the main entrypoint was invoked
+event SequenceStarting(index: ModuleIdx) \
+  severity activity high \
+  format "Sequence at index {} finished starting"
+
 @ The interpreter ran a program to completion
 event SequenceSucceeded(index: ModuleIdx) \
   severity activity high \
@@ -135,6 +138,9 @@ event SequenceStartFailed(
 
 @ Execution was paused at a breakpoint
 event SequencePaused() severity activity high format "Sequence execution paused"
+
+@ No sequence is running so we cannot continue from a pause
+event SequenceNotRunning() severity warning low format "Sequence cannot continue when interpreter is not running"
 
 @ The guest program called fprime.exit with a non-zero code
 event SequenceExited(code: I32) \
