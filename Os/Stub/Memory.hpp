@@ -35,6 +35,9 @@ class StubMemory : public MemoryInterface {
     //!
     ~StubMemory() override = default;
 
+    //! \brief initialize singleton
+    static void init() {}
+
     // ------------------------------------
     // Functions overrides
     // ------------------------------------

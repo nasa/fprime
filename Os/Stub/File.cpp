@@ -13,6 +13,10 @@ StubFile::Status StubFile::open(const char* filepath, StubFile::Mode open_mode, 
     return status;
 }
 
+bool StubFile::isOpen() const {
+    return false;
+}
+
 void StubFile::close() {}
 
 StubFile::Status StubFile::size(FwSizeType& size_result) {
@@ -52,6 +56,11 @@ StubFile::Status StubFile::write(const U8* buffer, FwSizeType& size, StubFile::W
 
 FileHandle* StubFile::getHandle() {
     return &this->m_handle;
+}
+
+StubFile::Status StubFile::calculateCrc(U32& crc) {
+    crc = 0;
+    return Status::NOT_SUPPORTED;
 }
 
 }  // namespace File

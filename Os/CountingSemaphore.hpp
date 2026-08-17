@@ -1,91 +1,43 @@
 // ======================================================================
 // \title Os/CountingSemaphore.hpp
-// \brief common function definitions for Os::CountingSemaphore
+// \brief public Os::CountingSemaphore interface and alias
+//
+// This header aggregates all definitions needed to use Os::CountingSemaphore:
+// the interface, the configured alias, and the concrete delegate type.
+//
+// WARNING — include order is load-bearing. Do not reorder.
+//
+// The dependency constraints are:
+//
+//   1. config/OsDelegateCountingSemaphore.hpp (CFG) defines the
+//      Os::CountingSemaphore type alias by forward-declaring a link-time
+//      delegate (e.g. DelegateCountingSemaphore) or directly aliasing a
+//      concrete implementation.
+//      Must not include Os OSAL headers (they aren't yet defined).
+//      Should only be included in Os/CountingSemaphoreInterface.hpp.
+//
+//   2. Os/CountingSemaphoreInterface.hpp (IF) includes CFG first (so the
+//      Os::CountingSemaphore alias is available), then defines
+//      CountingSemaphoreHandle and CountingSemaphoreInterface.
+//
+//   3. OS_COUNTING_SEMAPHORE_HEADER (IMPL) is defined by CFG and points to
+//      the concrete implementation header. If using delegation, this points
+//      to Os/DelegateCountingSemaphore.hpp. If using compile-time selection,
+//      it points directly to a platform-specific implementation.
+//
+// CountingSemaphoreInterface.hpp must precede OS_COUNTING_SEMAPHORE_HEADER
+// here, and CFG must never include either of them (that would form a cycle).
 // ======================================================================
 #ifndef OS_COUNTING_SEMAPHORE_HPP_
 #define OS_COUNTING_SEMAPHORE_HPP_
-#include "Fw/Time/TimeInterval.hpp"
-#include "Os/Os.hpp"
 
-namespace Os {
+#include "Os/CountingSemaphoreInterface.hpp"
 
-class CountingSemaphoreHandle {};
+// Validate that OS_COUNTING_SEMAPHORE_HEADER was defined by config/OsDelegateCountingSemaphore.hpp
+#ifndef OS_COUNTING_SEMAPHORE_HEADER
+#error "OS_COUNTING_SEMAPHORE_HEADER must be defined in config/OsDelegateCountingSemaphore.hpp"
+#endif
 
-class CountingSemaphoreInterface {
-  public:
-    enum Status {
-        OP_OK,                  //!< Operation was successful
-        ERROR_TIMEOUT,          //!< Timeout occurred during wait
-        ERROR_INVALID,          //!< Invalid semaphore or argument
-        ERROR_NOT_IMPLEMENTED,  //!< Feature not implemented
-        NOT_SUPPORTED,          //!< CountingSemaphore does not support operation
-        ERROR_OTHER             //!< All other errors
-    };
+#include OS_COUNTING_SEMAPHORE_HEADER
 
-    //! \brief default constructor
-    CountingSemaphoreInterface() = default;
-
-    //! \brief default virtual destructor
-    virtual ~CountingSemaphoreInterface() = default;
-
-    //! \brief copy constructor is forbidden
-    CountingSemaphoreInterface(const CountingSemaphoreInterface& other) = delete;
-
-    //! \brief assignment operator is forbidden
-    CountingSemaphoreInterface& operator=(const CountingSemaphoreInterface& other) = delete;
-
-    //! \brief wait (decrement) the semaphore, blocking if count is zero
-    //! \return status of the operation
-    virtual Status wait() = 0;
-
-    //! \brief wait on the semaphore with a timeout
-    //! \param interval maximum time to wait
-    //! \return OP_OK on success, ERROR_TIMEOUT if the interval elapsed
-    virtual Status waitTimeout(const Fw::TimeInterval& interval) = 0;
-
-    //! \brief non-blocking attempt to decrement the semaphore
-    //! \return OP_OK if decremented, ERROR_TIMEOUT if count was zero
-    virtual Status tryWait() = 0;
-
-    //! \brief post (increment) the semaphore, potentially waking a waiting thread
-    //! \return status of the operation
-    virtual Status post() = 0;
-
-    //! \brief return the underlying semaphore handle (implementation specific)
-    //! \return internal semaphore handle representation
-    virtual CountingSemaphoreHandle* getHandle() = 0;
-
-    //! \brief provide a pointer to a CountingSemaphore delegate object
-    static CountingSemaphoreInterface* getDelegate(CountingSemaphoreHandleStorage& aligned_new_memory,
-                                                   U32 initial_count);
-};
-
-class CountingSemaphore final : public CountingSemaphoreInterface {
-  public:
-    explicit CountingSemaphore(U32 initial_count);  //!< Constructor with initial count
-
-    ~CountingSemaphore() final;  //!< Destructor
-
-    CountingSemaphore(const CountingSemaphoreInterface& other) = delete;
-
-    CountingSemaphore(const CountingSemaphore& other) = delete;
-    CountingSemaphore& operator=(const CountingSemaphore& other) = delete;
-    CountingSemaphore(CountingSemaphore&& other) = delete;
-    CountingSemaphore& operator=(CountingSemaphore&& other) = delete;
-
-    Status wait() override;  //!< wait (decrement), blocking if count is zero
-
-    Status waitTimeout(const Fw::TimeInterval& interval) override;  //!< wait with timeout
-
-    Status tryWait() override;
-
-    Status post() override;
-
-    CountingSemaphoreHandle* getHandle() override;
-
-  private:
-    alignas(FW_HANDLE_ALIGNMENT) CountingSemaphoreHandleStorage m_handle_storage;
-    CountingSemaphoreInterface& m_delegate;
-};
-}  // namespace Os
 #endif  // OS_COUNTING_SEMAPHORE_HPP_

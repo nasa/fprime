@@ -45,6 +45,18 @@ class StubFile : public FileInterface {
     //!
     Os::FileInterface::Status open(const char* path, Mode mode, OverwriteType overwrite) override;
 
+    // Bring the base class's open(const char*, Mode) convenience overload back into scope; it would
+    // otherwise be hidden by the open(const char*, Mode, OverwriteType) override declared above.
+    using FileInterface::open;
+
+    //! \brief determine if the file is open
+    //!
+    //! This implementation never actually opens a file, so this always returns false.
+    //!
+    //! \return false
+    //!
+    bool isOpen() const;
+
     //! \brief close the file, if not opened then do nothing
     //!
     //! This implementation does nothing.
@@ -111,7 +123,7 @@ class StubFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data, `NO_WAIT` to return what is currently available
     //! \return NOT_SUPPORTED
     //!
-    Status read(U8* buffer, FwSizeType& size, WaitType wait) override;
+    Status read(U8* buffer, FwSizeType& size, WaitType wait = WaitType::WAIT) override;
 
     //! \brief read data from this file into supplied buffer bounded by size
     //!
@@ -126,7 +138,7 @@ class StubFile : public FileInterface {
     //! \param wait: `WAIT` to wait for data to write to disk, `NO_WAIT` to return what is currently available
     //! \return NOT_SUPPORTED
     //!
-    Status write(const U8* buffer, FwSizeType& size, WaitType wait) override;
+    Status write(const U8* buffer, FwSizeType& size, WaitType wait = WaitType::WAIT) override;
 
     //! \brief returns the raw file handle
     //!
@@ -136,6 +148,15 @@ class StubFile : public FileInterface {
     //! \return raw file handle
     //!
     FileHandle* getHandle() override;
+
+    //! \brief calculate the CRC32 of the entire file
+    //!
+    //! This implementation does nothing but return NOT_IMPLEMENTED.
+    //!
+    //! \param crc: U32 bit value to fill with CRC
+    //! \return NOT_IMPLEMENTED
+    //!
+    Status calculateCrc(U32& crc);
 
   private:
     //! File handle for PosixFile

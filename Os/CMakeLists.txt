@@ -135,14 +135,145 @@ register_fprime_module(
       Fw_Types
 )
 
-add_named_os_module(Console Fw_Logger)
-add_named_os_module("File;FileSystem;Directory" Utils_Hash Fw_DataStructures)
+# Console: Console.hpp is a thin public alias header (no .cpp); the interface and
+# link-time delegate live in ConsoleInterface.hpp and DelegateConsole.{hpp,cpp}.
+# Registered explicitly because add_named_os_module assumes a matching
+# <name>.cpp per header.
+register_fprime_module(
+      "Os_Console"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_Console"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConsole.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/Console.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/ConsoleInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConsole.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+      Fw_Logger
+)
+fprime_target_dependencies(Os PUBLIC "Os_Console")
+
+# File: File.hpp is a thin public alias header; the interface and link-time
+# delegate live in FileInterface.hpp and DelegateFile.{hpp,cpp}. FileSystem
+# and Directory follow the same pattern. Registered explicitly because
+# add_named_os_module assumes a matching <name>.cpp per header.
+register_fprime_module(
+      "Os_File"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_File"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateFile.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateFileSystem.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileSystemInterface.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateDirectory.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/File.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateFile.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileSystem.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/FileSystemInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateFileSystem.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Directory.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DirectoryInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateDirectory.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+      Utils_Hash
+      Fw_DataStructures
+)
+fprime_target_dependencies(Os PUBLIC "Os_File")
+
 add_named_os_module(Task ${CMAKE_THREAD_LIBS_INIT})
-add_named_os_module("Mutex;Condition")
-add_named_os_module(CountingSemaphore)
+
+# Mutex: Mutex.hpp is a thin public alias header; the interface and link-time
+# delegate live in MutexInterface.hpp and DelegateMutex.{hpp,cpp}.
+# Registered explicitly because add_named_os_module assumes a matching
+# <name>.cpp per header.
+register_fprime_module(
+      "Os_Mutex"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_Mutex"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Mutex.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/Mutex.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/MutexInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateMutex.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/Condition.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateConditionVariable.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/ConditionVariableInterface.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+)
+fprime_target_dependencies(Os PUBLIC "Os_Mutex")
+# CountingSemaphore: CountingSemaphore.hpp is a thin public alias header (no
+# .cpp); the interface and link-time delegate live in
+# CountingSemaphoreInterface.hpp and DelegateCountingSemaphore.{hpp,cpp}.
+# Registered explicitly because add_named_os_module assumes a matching
+# <name>.cpp per header.
+register_fprime_module(
+      "Os_CountingSemaphore"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_CountingSemaphore"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateCountingSemaphore.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/CountingSemaphore.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/CountingSemaphoreInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateCountingSemaphore.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+)
+fprime_target_dependencies(Os PUBLIC "Os_CountingSemaphore")
 add_named_os_module(Queue)
-add_named_os_module(Cpu)
-add_named_os_module(Memory)
+# Cpu: Cpu.hpp is a thin public alias header (no .cpp); the interface and
+# link-time delegate live in CpuInterface.hpp and DelegateCpu.{hpp,cpp}.
+# Registered explicitly because add_named_os_module assumes a matching
+# <name>.cpp per header.
+register_fprime_module(
+      "Os_Cpu"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_Cpu"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateCpu.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/CpuInterface.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/Cpu.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/CpuInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateCpu.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+)
+fprime_target_dependencies(Os PUBLIC "Os_Cpu")
+# Memory: Memory.hpp is a thin public alias header (no .cpp); the interface and
+# link-time delegate live in MemoryInterface.hpp and DelegateMemory.{hpp,cpp}.
+# Registered explicitly because add_named_os_module assumes a matching
+# <name>.cpp per header.
+register_fprime_module(
+      "Os_Memory"
+    REQUIRES_IMPLEMENTATIONS
+      "Os_Memory"
+    SOURCES
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateMemory.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/MemoryInterface.cpp"
+    HEADERS
+      "${CMAKE_CURRENT_LIST_DIR}/Memory.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/MemoryInterface.hpp"
+      "${CMAKE_CURRENT_LIST_DIR}/DelegateMemory.hpp"
+    DEPENDS
+      Fw_Time
+      Fw_Types
+)
+fprime_target_dependencies(Os PUBLIC "Os_Memory")
 # RawTime: RawTime.hpp is a thin public alias header (no .cpp); the interface and
 # link-time delegate live in DelegateRawTime.{hpp,cpp}. Registered explicitly
 # because add_named_os_module assumes a matching <name>.cpp per header.

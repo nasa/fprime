@@ -35,6 +35,9 @@ class StubCpu : public CpuInterface {
     //!
     ~StubCpu() override = default;
 
+    //! \brief initialize singleton
+    static void init() {}
+
     // ------------------------------------
     // Functions overrides
     // ------------------------------------

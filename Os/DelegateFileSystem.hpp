@@ -1,32 +1,32 @@
 // ======================================================================
-// \title Os/Stub/FileSystem.hpp
-// \brief stub fileSystem definitions for Os::FileSystem
+// \title Os/DelegateFileSystem.hpp
+// \brief Define the Os::DelegateFileSystem class
 // ======================================================================
-#ifndef OS_STUB_FILESYSTEM_HPP
-#define OS_STUB_FILESYSTEM_HPP
 
-#include "Os/FileSystem.hpp"
+#ifndef OS_DELEGATEFILESYSTEM_HPP_
+#define OS_DELEGATEFILESYSTEM_HPP_
+
+#include <Os/FileSystemInterface.hpp>
 
 namespace Os {
-namespace Stub {
-namespace FileSystem {
 
-struct StubFileSystemHandle : public FileSystemHandle {};
+//! \brief FileSystem class
+//!
+//! This class provides a common interface for file system operations.
+//! This class uses the singleton pattern and should be accessed through
+//! its static functions, for example using `Os::FileSystem::removeFile(path)`.
+class DelegateFileSystem final : public FileSystemInterface {
+    // Grants FileSystemInterface's convenience static wrappers access to the private constructor below
+    friend class FileSystemInterface;
 
-//! \brief stub implementation of Os::FileSystem
-//!
-//! Stub implementation of `FileSystemInterface` for use as a delegate class handling error-only fileSystem operations.
-//!
-class StubFileSystem : public FileSystemInterface {
+  private:
+    DelegateFileSystem();  //!<  Constructor (private because singleton pattern)
   public:
-    //! \brief constructor
-    StubFileSystem() = default;
+    ~DelegateFileSystem() final;  //!<  Destructor
 
-    //! \brief destructor
-    ~StubFileSystem() override = default;
-
-    //! \brief initialize singleton
-    static void init() {}
+    //! \brief return the underlying FileSystem handle (implementation specific)
+    //! \return internal FileSystem handle representation
+    FileSystemHandle* getHandle() override;
 
     // ------------------------------------------------------------
     // Implementation-specific FileSystem member functions
@@ -91,15 +91,6 @@ class StubFileSystem : public FileSystemInterface {
     //! \return Status of the operation
     Status _changeWorkingDirectory(const char* path) override;
 
-    //! \brief returns the raw fileSystem handle
-    //!
-    //! Gets the raw fileSystem handle from the implementation. Note: users must include the implementation specific
-    //! header to make any real use of this handle. Otherwise it//!must* be passed as an opaque type.
-    //!
-    //! \return raw fileSystem handle
-    //!
-    FileSystemHandle* getHandle() override;
-
     //! \brief Get the type of the path (file, directory, etc.)
     //!
     //! It is invalid to pass `nullptr` as the path.
@@ -109,12 +100,27 @@ class StubFileSystem : public FileSystemInterface {
     //! \return Status of the operation
     Status _getPathType(const char* path, PathType& pathType) override;
 
+    // Convenience static wrappers (removeDirectory, removeFile, rename, getWorkingDirectory,
+    // changeWorkingDirectory, getFreeSpace, exists, getPathType, touch, createDirectory, appendFile,
+    // copyFile, moveFile, getFileSize) are inherited from Os::FileSystemInterface.
+
+  public:
+    //! \brief initialize singleton
+    static void init();
+
+    //! \brief get a reference to singleton
+    //! \return reference to singleton
+    static DelegateFileSystem& getSingleton();
+
   private:
-    //! FileSystem handle for PosixFileSystem
-    StubFileSystemHandle m_handle;
+    // This section is used to store the implementation-defined FileSystem handle. To Os::FileSystem and fprime, this
+    // type is opaque and thus normal allocation cannot be done. Instead, we allow the implementor to store then handle
+    // in the byte-array here and set `handle` to that address for storage.
+
+    alignas(FW_HANDLE_ALIGNMENT) FileSystemHandleStorage m_handle_storage;  //!< FileSystem handle storage
+    FileSystemInterface& m_delegate;
 };
 
-}  // namespace FileSystem
-}  // namespace Stub
 }  // namespace Os
-#endif  // OS_STUB_FILESYSTEM_HPP
+
+#endif  // OS_DELEGATEFILESYSTEM_HPP_
