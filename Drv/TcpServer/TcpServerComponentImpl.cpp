@@ -93,7 +93,13 @@ SocketIpStatus TcpServerComponentImpl::startup() {
     return status;
 }
 
+void TcpServerComponentImpl::stop() {
+    // The read task blocks in `accept` on the listening socket, so stopping it requires terminating that socket
+    this->terminate();
+}
+
 void TcpServerComponentImpl::terminate() {
+    SocketComponentHelper::stop();
     Os::ScopeLock scopedLock(this->m_lock);
     this->m_socket.terminate(this->m_descriptor);
     this->m_descriptor.serverFd = -1;

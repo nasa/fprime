@@ -78,9 +78,21 @@ class TcpServerComponentImpl : public TcpServerComponentBase, public SocketCompo
     SocketIpStatus startup();
 
     /**
-     * \brief terminate the server socket
+     * \brief stop the read task and terminate the server socket
      *
-     * Close the server socket. Should be done after all clients are shutdown and closed.
+     * Equivalent to `terminate`. The read task blocks in `accept` on the server socket, which the base
+     * implementation does not close; it is terminated here to allow `join` to return.
+     */
+    void stop() override;
+
+    /**
+     * \brief stop the read task and terminate the server socket
+     *
+     * Stops the read task, then shuts down and closes the server socket so that a read task
+     * blocked in `accept` can exit.
+     *
+     * \note This stops the component permanently. It cannot be used to stop accepting new clients
+     * while continuing to service an already-connected one.
      */
     void terminate();
 
