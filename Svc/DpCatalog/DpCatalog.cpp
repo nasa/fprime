@@ -369,8 +369,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     for (FwSizeType dir = 0; dir < this->m_numDirectories && dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES); dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
-        FwSizeType filesRead = 0;
         U32 filesProcessed = 0;
+        bool quitProcessing = false;
 
         Os::Directory dpDir;
         Os::Directory::Status status = dpDir.open(this->m_directories[dir].toChar(), Os::Directory::OpenMode::READ);
@@ -378,51 +378,65 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
-        Fw::ExternalArray<Fw::String> fileList(this->m_fileList, this->m_numDpSlots - totalFiles);
-        status = dpDir.readDirectory(fileList, filesRead);
 
-        if (status != Os::Directory::OP_OK) {
-            this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
-            return Fw::CmdResponse::EXECUTION_ERROR;
-        }
+        // Read the directory in chunks sized to the remaining catalog slots.
+        // Non-DP entries do not consume slots, so keep reading until the
+        // directory is exhausted or the catalog fills.
+        while (not quitProcessing and ((totalFiles + filesProcessed) < this->m_numDpSlots)) {
+            const FwSizeType chunkCapacity = this->m_numDpSlots - (totalFiles + filesProcessed);
+            FwSizeType filesRead = 0;
+            Fw::ExternalArray<Fw::String> fileList(this->m_fileList, chunkCapacity);
+            status = dpDir.readDirectory(fileList, filesRead);
 
-        // Assert number of files isn't more than asked
-        FW_ASSERT(filesRead <= this->m_numDpSlots - totalFiles, static_cast<FwAssertArgType>(filesRead),
-                  static_cast<FwAssertArgType>(this->m_numDpSlots - totalFiles));
-
-        // extract metadata for each file
-        for (FwSizeType file = 0; file < filesRead; file++) {
-            // only consider files with the DP extension
-
-            const FwSizeType fileNameLength = this->m_fileList[file].length();
-            const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
-            const FwSignedSizeType loc = Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(),
-                                                                              fileNameLength, DP_EXT, dpExtLength);
-
-            // Only accept files whose final suffix is the data product extension
-            if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
-                continue;
+            if (status != Os::Directory::OP_OK) {
+                this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
+                return Fw::CmdResponse::EXECUTION_ERROR;
             }
 
-            Fw::String fullFile;
-            Fw::FormatStatus formatStatus =
-                fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
-            if (formatStatus != Fw::FormatStatus::SUCCESS) {
-                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
-                                                         static_cast<Fw::StringFormatStatus::T>(formatStatus));
-                continue;
-            }
+            // Assert number of files isn't more than asked
+            FW_ASSERT(filesRead <= chunkCapacity, static_cast<FwAssertArgType>(filesRead),
+                      static_cast<FwAssertArgType>(chunkCapacity));
 
-            const ProcessFileStatus ret = processFile(fullFile, dir);
-            if (ret == ProcessFileStatus::QUIT) {
+            // extract metadata for each file
+            for (FwSizeType file = 0; file < filesRead; file++) {
+                // only consider files with the DP extension
+
+                const FwSizeType fileNameLength = this->m_fileList[file].length();
+                const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
+                const FwSignedSizeType loc = Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(),
+                                                                                  fileNameLength, DP_EXT, dpExtLength);
+
+                // Only accept files whose final suffix is the data product extension
+                if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
+                    continue;
+                }
+
+                Fw::String fullFile;
+                Fw::FormatStatus formatStatus =
+                    fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+                if (formatStatus != Fw::FormatStatus::SUCCESS) {
+                    this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
+                                                             static_cast<Fw::StringFormatStatus::T>(formatStatus));
+                    continue;
+                }
+
+                const ProcessFileStatus ret = processFile(fullFile, dir);
+                if (ret == ProcessFileStatus::QUIT) {
+                    quitProcessing = true;
+                    break;
+                }
+
+                if (ret == ProcessFileStatus::SUCCESS) {
+                    filesProcessed++;
+                }
+
+            }  // end for each file in a chunk
+
+            // A short read means the directory is exhausted
+            if (filesRead < chunkCapacity) {
                 break;
             }
-
-            if (ret == ProcessFileStatus::SUCCESS) {
-                filesProcessed++;
-            }
-
-        }  // end for each file in a directory
+        }  // end for each chunk in a directory
 
         totalFiles += filesProcessed;
 
