@@ -1,6 +1,5 @@
 name: Task
 description: Propose a task for F´
-title: ""
 type: Task
 body:
   - type: input
