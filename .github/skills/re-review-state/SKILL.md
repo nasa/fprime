@@ -45,7 +45,7 @@ Keep **all** agent-authored comments (any `fprime-agent:` footer):
 
 ### 1b. Fetch each thread's resolution status and reply chain
 
-Use the GraphQL query in `post-inline-review.skill.md` §5. For each
+Use the GraphQL query in `post-inline-review` §5. For each
 prior comment, retrieve:
 
 - `thread.id` (needed for `resolveReviewThread` /
@@ -157,7 +157,7 @@ For each `k` in `intersect`, decide which row of the table applies:
 1. Call `unresolveReviewThread(input: { threadId })` (GraphQL).
 2. POST a reply on the thread with the improper-resolution body
    shape from review contract §9.
-3. Append a maintainer ping per `maintainer-lookup.skill.md`. The
+3. Append a maintainer ping per `maintainer-lookup`. The
    improper-resolution case ALWAYS pings the maintainer (not gated
    on confidence) because the contributor's resolve action conflicts
    with the agent's re-analysis.
@@ -172,7 +172,7 @@ resolved but the reply + maintainer ping is visible inline.
 
 1. POST a reply on the thread with the disagreement-escalation body
    shape from review contract §9.
-2. Append a maintainer ping per `maintainer-lookup.skill.md`. Always
+2. Append a maintainer ping per `maintainer-lookup`. Always
    pings (the whole point is human adjudication).
 3. Do NOT resolve the thread. Leave it open for the maintainer.
 4. Do NOT repost the original finding.

@@ -1,6 +1,12 @@
 ---
 name: fprime-component-implementation
-description: C++ implementation phase of F Prime component development. Guides the agent through implementing handler functions generated from the FPP model. Must follow fprime-cpp-design.skill.md rules (CPP-1 through CPP-34). Trigger when the FPP model is confirmed and the next step is to write the C++ implementation. Keywords: F Prime, C++, implementation, handler, component, flight software, autocoded.
+description: >-
+  C++ implementation phase of F Prime component development. Guides
+  the agent through implementing handler functions generated from the
+  FPP model. Must follow fprime-cpp-design rules (CPP-1 through
+  CPP-34). Trigger when the FPP model is confirmed and the next step
+  is to write the C++ implementation. Keywords: F Prime, C++,
+  implementation, handler, component, flight software, autocoded.
 ---
 
 # Skill: F Prime Component Implementation (C++)
@@ -30,8 +36,8 @@ for naming and code style.
 ## Prerequisites
 
 The FPP model must be confirmed (see
-`fprime-component-design-fpp.skill.md`) and C++ design rules
-(`fprime-cpp-design.skill.md`, CPP-1 through CPP-34) are mandatory.
+`fprime-component-design-fpp`) and C++ design rules
+(`fprime-cpp-design`, CPP-1 through CPP-34) are mandatory.
 The confirmed requirements and FPP model should provide all the
 information needed for implementation.
 
@@ -92,7 +98,7 @@ Iterate until compilation succeeds. Common issues:
 ### Step 4 — Review Against C++ Design Rules
 
 Before considering implementation complete, verify compliance with
-`fprime-cpp-design.skill.md` (CPP-1 through CPP-34).
+`fprime-cpp-design` (CPP-1 through CPP-34).
 
 ---
 

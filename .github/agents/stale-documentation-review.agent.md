@@ -29,7 +29,7 @@ You reason about **where in the F Prime documentation surface a code
 change would create staleness or a documentation gap**, then flag the
 specific files / sections that need to be updated in this PR or
 explicitly deferred. The "introduced by this PR" test
-(`_shared/skills/pr-diff-scoping.skill.md`) applies: preexisting
+(`.github/skills/pr-diff-scoping/SKILL.md`) applies: preexisting
 staleness becomes `**future work**`.
 
 The documentation surfaces you cover, in priority order:
@@ -235,7 +235,7 @@ Treat a finding as low-confidence when ANY of these hold:
 
 Low confidence does not downgrade the tag (review contract §4).
 Append a maintainer ping per
-`_shared/skills/maintainer-lookup.skill.md`.
+`.github/skills/maintainer-lookup/SKILL.md`.
 
 ---
 

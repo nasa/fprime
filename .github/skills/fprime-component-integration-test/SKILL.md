@@ -1,6 +1,14 @@
 ---
 name: fprime-component-integration-test
-description: Integration testing phase of F Prime component development. Guides the agent through writing reusable pytest-based integration tests in the component's test/int/ folder using the GDS Integration Test API. These tests ship with the component and can be run against any deployment that includes it. Trigger when unit tests pass and the component is ready for integration testing. Keywords: F Prime, integration test, pytest, GDS, fprime_test_api, reusable test, component test.
+description: >-
+  Integration testing phase of F Prime component development. Guides
+  the agent through writing reusable pytest-based integration tests in
+  the component's test/int/ folder using the GDS Integration Test API.
+  These tests ship with the component and can be run against any
+  deployment that includes it. Trigger when unit tests pass and the
+  component is ready for integration testing. Keywords: F Prime,
+  integration test, pytest, GDS, fprime_test_api, reusable test,
+  component test.
 ---
 
 # Skill: F Prime Reusable Component Integration Testing

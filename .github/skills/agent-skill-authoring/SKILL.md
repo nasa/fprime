@@ -11,7 +11,32 @@ changes that AI reviewers can interpret without verbose explanation.
 
 ---
 
-## 1. Writing rules (fprime-cpp-design.skill.md and similar)
+## 0. Where skills and agents live
+
+Skills follow the [Agent Skills specification](https://agentskills.io/specification):
+one directory per skill, holding a file named exactly `SKILL.md`.
+
+| Artifact | Path |
+|---|---|
+| Skill | `.github/skills/<skill-name>/SKILL.md` |
+| Agent | `.github/agents/<agent-name>.agent.md` |
+| Shared review contract / registry | `.github/agents/_shared/` |
+
+The directory name must equal the `name` in the skill's frontmatter,
+using lowercase letters, digits, and hyphens only — a mismatch makes
+the skill fail to load silently. Frontmatter carries `name` and a
+`description` that states when to use the skill; agents that host
+tools may add fields, skills may not. Any supporting file the skill
+needs (scripts, templates) goes beside its `SKILL.md`.
+
+This layout is what Copilot, VS Code, Claude Code, and Devin all scan,
+so a skill added here is model-invocable in every tool without extra
+wiring. Reference a skill from prose by name (`pr-diff-scoping`), not
+by file path.
+
+---
+
+## 1. Writing rules (fprime-cpp-design and similar)
 
 **Be terse.** The rule title carries most of the meaning. AI agents
 are capable of inferring rationale from a well-named rule. Aim for
@@ -101,9 +126,9 @@ Before committing a new rule, verify all references are updated:
 
 | Location | What to update |
 |---|---|
-| `fprime-cpp-design.skill.md` §1 | Rule text |
-| `fprime-cpp-design.skill.md` §2 | Finding-class row |
-| `fprime-cpp-design.skill.md` §3 | Triage hint + cluster header |
+| `fprime-cpp-design` §1 | Rule text |
+| `fprime-cpp-design` §2 | Finding-class row |
+| `fprime-cpp-design` §3 | Triage hint + cluster header |
 | `fprime-code-review.agent.md` scope | "CPP-1 through CPP-N" (2 occurrences) |
 | `fprime-code-review.agent.md` finding classes | New entry |
 | `fprime-code-review.agent.md` heuristics | Clause in scan item |
