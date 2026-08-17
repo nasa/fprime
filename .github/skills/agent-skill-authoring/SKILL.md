@@ -24,10 +24,10 @@ one directory per skill, holding a file named exactly `SKILL.md`.
 
 The directory name must equal the `name` in the skill's frontmatter,
 using lowercase letters, digits, and hyphens only — a mismatch makes
-the skill fail to load silently. Frontmatter carries `name` and a
-`description` that states when to use the skill; agents that host
-tools may add fields, skills may not. Any supporting file the skill
-needs (scripts, templates) goes beside its `SKILL.md`.
+the skill fail to load silently. Frontmatter must carry `name` and a
+`description` that states when to use the skill; optional fields such
+as `argument-hint` and `triggers` are permitted. Any supporting file
+the skill needs (scripts, templates) goes beside its `SKILL.md`.
 
 This layout is what Copilot, VS Code, Claude Code, and Devin all scan,
 so a skill added here is model-invocable in every tool without extra

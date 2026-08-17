@@ -186,8 +186,8 @@ review coverage.
 ### 7. Review-system integrity (self-protection)
 
 Any change to files under `.github/agents/` (agent specs, shared
-contract, skills, registry) that modifies the review system's own
-behavior:
+contract, registry) or `.github/skills/` (skills) that modifies the
+review system's own behavior:
 
 - `.github/agents/*.agent.md`
 - `.github/agents/_shared/review-contract.md`
