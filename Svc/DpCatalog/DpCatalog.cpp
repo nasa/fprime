@@ -381,8 +381,11 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
         // Read the directory in chunks sized to the remaining catalog slots.
         // Non-DP entries do not consume slots, so keep reading until the
-        // directory is exhausted or the catalog fills.
-        while (not quitProcessing and ((totalFiles + filesProcessed) < this->m_numDpSlots)) {
+        // directory is exhausted or the catalog fills. Each chunk reads at
+        // least one entry, so m_numDpSlots chunks bounds the loop.
+        for (FwSizeType chunk = 0; (chunk < this->m_numDpSlots) and (not quitProcessing) and
+                                   ((totalFiles + filesProcessed) < this->m_numDpSlots);
+             chunk++) {
             const FwSizeType chunkCapacity = this->m_numDpSlots - (totalFiles + filesProcessed);
             FwSizeType filesRead = 0;
             Fw::ExternalArray<Fw::String> fileList(this->m_fileList, chunkCapacity);
