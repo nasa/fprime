@@ -9,6 +9,7 @@
 #include "Svc/DpCompressProc/DpCompressProc.hpp"
 
 #include <Fw/Dp/DpContainer.hpp>
+#include <Fw/Prm/ParamValid.hpp>
 
 namespace Svc {
 
@@ -43,7 +44,7 @@ void DpCompressProc::serializeCompressionHeader(Fw::LinearBufferBase& serializer
 void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuffer) {
     Fw::ParamValid param_valid;
     Fw::Enabled en_compression = paramGet_ENABLE(param_valid);
-    FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
     if (en_compression == Fw::Enabled::DISABLED) {
         // Bypass compression
         return;
@@ -81,7 +82,7 @@ void DpCompressProc ::procRequest_handler(FwIndexType portNum, Fw::Buffer& fwBuf
     }
 
     FwSizeType prm_chunk_size = paramGet_CHUNK_SIZE(param_valid);
-    FW_ASSERT((param_valid == Fw::ParamValid::DEFAULT) || (param_valid == Fw::ParamValid::VALID), param_valid);
+    FW_ASSERT(FW_PARAM_OK(param_valid), param_valid);
 
     if (prm_chunk_size > container.getDataSize()) {
         prm_chunk_size = container.getDataSize();

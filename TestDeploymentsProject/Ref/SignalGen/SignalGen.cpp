@@ -41,6 +41,7 @@ SignalGen ::SignalGen(const char* name)
       m_dpInProgress(false),
       m_numDps(0),
       m_currDp(0),
+      m_dpBytes(0),
       m_dpPriority(0) {}
 
 SignalGen ::~SignalGen() {}
@@ -219,7 +220,7 @@ void SignalGen::Dp_cmdHandler(FwOpcodeType opCode,
 
     // get DP buffer. Use sync or async request depending on
     // requested type
-    FwSizeType dpSize = records * (SignalInfo::SERIALIZED_SIZE + sizeof(FwDpIdType));
+    FwSizeType dpSize = records * SIZE_OF_DataRecord_RECORD;
     this->m_numDps = records;
     this->m_currDp = 0;
     this->m_dpPriority = static_cast<FwDpPriorityType>(priority);

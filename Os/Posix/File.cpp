@@ -134,7 +134,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
 }
 
 void PosixFile::close() {
-    // Only close file handles that are not open
+    // Only close file handles that are open
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR != this->m_handle.m_file_descriptor) {
         (void)::close(this->m_handle.m_file_descriptor);
         this->m_handle.m_file_descriptor = PosixFileHandle::INVALID_FILE_DESCRIPTOR;

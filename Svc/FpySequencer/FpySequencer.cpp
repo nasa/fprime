@@ -4,6 +4,7 @@
 // \brief  cpp file for FpySequencer component implementation class
 // ======================================================================
 
+#include <Fw/Prm/ParamValid.hpp>
 #include <Svc/FpySequencer/FpySequencer.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
 #include <new>
@@ -514,8 +515,7 @@ void FpySequencer::parameterUpdated(FwPrmIdType id) {
         }
     }
 
-    FW_ASSERT(valid != Fw::ParamValid::INVALID && valid != Fw::ParamValid::UNINIT,
-              static_cast<FwAssertArgType>(valid.e));
+    FW_ASSERT(FW_PARAM_OK(valid), static_cast<FwAssertArgType>(valid.e));
 }
 
 bool FpySequencer::isRunningState(State state) {

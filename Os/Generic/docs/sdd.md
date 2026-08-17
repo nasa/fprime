@@ -11,7 +11,7 @@ Available implementations:
 
 ## Os::PriorityQueue
 
-Os::PriorityQueue is an in-memory implementation of Os::Queue. It allows projects that desire in-memory queue support to use Os::Queues.  Os::PriorityQueue allocates memory for its underlying data structures using `new (nothrow)` and deallocates memory with `delete`. These actions are taken during `create` and object destruction. This implies that Os::PriorityQueue should be instantiated and initialized during system initialization.
+Os::PriorityQueue is an in-memory implementation of Os::Queue. It allows projects that desire in-memory queue support to use Os::Queues.  Os::PriorityQueue allocates memory for its underlying data structures through the registered `Fw::MemAllocator` and deallocates it through the same allocator. These actions are taken during `create` and object destruction. This implies that Os::PriorityQueue should be instantiated and initialized during system initialization.
 
 For memory protection, Os::PriorityQueue delegates to Os::Mutex and Os::ConditionVariable.
 
@@ -28,7 +28,7 @@ Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
 PQ-001 | The PriorityQueue shall implement the Os::QueueInterface for compatibility with F´ components | Inspection, Unit Test
 PQ-002 | The PriorityQueue shall support message prioritization with higher priority messages dequeued before lower priority messages | Unit Test
-PQ-003 | The PriorityQueue shall allocate memory dynamically using new/delete during create and destruction | Inspection
+PQ-003 | The PriorityQueue shall allocate memory during create and deallocate it during destruction using the registered `Fw::MemAllocator` | Inspection
 PQ-004 | The PriorityQueue shall use a single shared memory pool for all message priorities | Inspection
 PQ-005 | The PriorityQueue shall support blocking and non-blocking send operations | Unit Test
 PQ-006 | The PriorityQueue shall support blocking and non-blocking receive operations | Unit Test

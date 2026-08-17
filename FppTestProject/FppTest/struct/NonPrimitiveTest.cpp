@@ -39,7 +39,7 @@ class NonPrimitiveTest : public ::testing::Test {
                        static_cast<F64>(FppTest::Utils::getNonzeroU32()));
 
         for (U32 i = 0; i < 3; i++) {
-            testU32Arr[0] = FppTest::Utils::getNonzeroU32();
+            testU32Arr[i] = FppTest::Utils::getNonzeroU32();
         }
 
         for (U32 i = 0; i < 3; i++) {
