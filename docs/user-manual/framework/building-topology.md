@@ -56,7 +56,7 @@ method naming scheme is as follows:
 
 Get input port pointer:
 
-> \<PortType\>\* get\_\<port name\>\_InputPort(NATIVE\_INT\_TYPE
+> \<PortType\>\* get\_\<port name\>\_InputPort(FwIndexType
 > portNum);
 
 where
@@ -75,7 +75,7 @@ Set output port pointer:
 The value of the input pointer retrieved via the method in the last
 section is given to an output port of the same type by calling:
 
-> void set\_\<port name\>\_OutputPort(NATIVE\_INT\_TYPE portNum,
+> void set\_\<port name\>\_OutputPort(FwIndexType portNum,
 > \<PortType\>\*port);
 
 where
@@ -92,7 +92,7 @@ only one instance of the port.
 There is a second overloaded version of the method to set an output port
 when the input port being passed to it is a serialized port:
 
-> void set\_\<port name\>\_OutputPort(NATIVE\_INT\_TYPE portNum,
+> void set\_\<port name\>\_OutputPort(FwIndexType portNum,
 > Fw::InputSerializePort \*port);
 
 ### Command Ports
@@ -100,20 +100,21 @@ when the input port being passed to it is a serialized port:
 As discussed in Section 6.6.4, the code generator will create the
 correct set of command-related ports for a component that has commands
 defined. For that component, the functions used to get or set
-command-related port pointers have standard names. The names are as
+command-related port pointers are derived from the special port names
+declared in the component model. For the typical port names, they are as
 follows:
 
 Get command input port:
 
-> Fw::InputFwCmdPort\* get\_CmdDisp\_InputPort();
+> Fw::InputCmdPort\* get\_cmdIn\_InputPort();
 
 Set command status port:
 
-> void set\_CmdStatus\_OutputPort(Fw::InputCmdResponse\_Port\* port);
+> void set\_cmdResponseOut\_OutputPort(Fw::InputCmdResponsePort\* port);
 
 Set command registration port:
 
-> void set\_CmdReg\_OutputPort(Fw::InputCmdRegPort\* port);
+> void set\_cmdRegOut\_OutputPort(Fw::InputCmdRegPort\* port);
 
 For the component(s) that are connected to those ports, they would use
 the normal methods for accessing the port pointers as described in the
@@ -125,11 +126,11 @@ The standard port accessor functions for telemetry are as follows:
 
 Set telemetry output ports:
 
-> void set\_Tlm\_OutputPort(Fw::InputTlmPort\* port);
+> void set\_tlmOut\_OutputPort(Fw::InputTlmPort\* port);
 
 Set time output ports:
 
-> void set\_Time\_OutputPort(Fw::InputTimePort\* port);
+> void set\_timeGetOut\_OutputPort(Fw::InputTimePort\* port);
 
 ### Event Logging Ports
 
@@ -137,24 +138,24 @@ The standard port accessor functions for logging events are as follows:
 
 Set logging output ports:
 
-> void set\_Log\_OutputPort(Fw::InputLogPort\* port);
+> void set\_logOut\_OutputPort(Fw::InputLogPort\* port);
 >
-> void set\_TextLog\_OutputPort(Fw::InputFwLogTextPort\* port);
+> void set\_logTextOut\_OutputPort(Fw::InputLogTextPort\* port);
 
 Set time output ports:
 
-> void set\_Time\_OutputPort(Fw::InputFwTimePort\* port);
+> void set\_timeGetOut\_OutputPort(Fw::InputTimePort\* port);
 
-Note that the set\_Time\_OutputPort() call is shared with the telemetry
+Note that the set\_timeGetOut\_OutputPort() call is shared with the telemetry
 ports. It can be called once for both.
 
 ### Parameter Ports
 
 The standard port accessor functions for parameters is as follows:
 
-> void set\_ParamGet\_OutputPort(Fw::InputFwPrmGetPort\* port);
+> void set\_prmGetOut\_OutputPort(Fw::InputPrmGetPort\* port);
 >
-> void set\_ParamSet\_OutputPort(Fw::InputFwPrmSetPort\* port);
+> void set\_prmSetOut\_OutputPort(Fw::InputPrmSetPort\* port);
 
 ## Registering Commands
 
@@ -189,17 +190,18 @@ updated.
 
 The last action in constructing the topology is to start the tasks for
 any active components. The start() method is found in the
-ActiveComponentBase base class in Fw/Comp/FwActiveComponentBase.hpp.
+ActiveComponentBase base class in Fw/Comp/ActiveComponentBase.hpp.
 Table 22 provides the arguments and their meanings.
 
 **Table 22.** Active component start()
 arguments.
 
-| Argument   | Meaning                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------- |
-| identifier | A thread-independent value that is used to identify activities of the thread. Should be unique in the system. |
-| priority   | The execution priority of the task: 0 = low priority, 255 = high priority.                                    |
-| stackSize  | The size of the stack given to the task.                                                                      |
+| Argument    | Meaning                                                                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------- |
+| priority    | The execution priority of the task (`FwTaskPriorityType`). Defaults to `Os::Task::TASK_PRIORITY_DEFAULT`.     |
+| stackSize   | The size of the stack given to the task (`FwSizeType`). Defaults to `Os::Task::TASK_DEFAULT`.                 |
+| cpuAffinity | The CPU affinity of the task (`FwSizeType`). Defaults to `Os::Task::TASK_DEFAULT`.                            |
+| identifier  | A thread-independent value used to identify activities of the thread (`FwTaskIdType`). Defaults to `Os::Task::TASK_DEFAULT`. |
 
 As mentioned in Section 6.7.8.3, the functions preamble() and
 finalizer() will be run once before and after the loop waiting for port

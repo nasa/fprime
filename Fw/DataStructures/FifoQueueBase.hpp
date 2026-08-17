@@ -73,7 +73,7 @@ class FifoQueueBase : public SizedContainer {
 
     //! Enqueue an item (add to the right)
     //! \return SUCCESS if item enqueued
-    virtual Success enqueue(const T& e  //!< The item (output)
+    virtual Success enqueue(const T& e  //!< The item (input)
                             ) = 0;
 
     //! Peek an item at an index

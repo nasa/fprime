@@ -85,9 +85,9 @@ class ExternalStack final : public StackBase<T> {
         this->clear();
     }
 
-    //! Push an element (push on the right)
+    //! Push an element (add to the right)
     //! \return SUCCESS if element pushed
-    Success push(const T& e  //!< The element (output)
+    Success push(const T& e  //!< The element (input)
                  ) override {
         auto status = Success::FAILURE;
         if (this->m_size < this->getCapacity()) {

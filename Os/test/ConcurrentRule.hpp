@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/queue/RulesHeaders.cpp
+// \title Os/test/ConcurrentRule.hpp
 // \brief definitions for concurrent running rules
 // ======================================================================
 #include <gtest/gtest.h>

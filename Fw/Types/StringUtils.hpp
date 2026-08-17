@@ -111,7 +111,7 @@ enum StringToNumberStatus {
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -125,7 +125,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -140,7 +140,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -154,7 +154,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -169,7 +169,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -183,7 +183,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -198,7 +198,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -212,7 +212,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number, clamped to the type's range on INVALID_RANGE
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -226,7 +226,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number as produced by the underlying C conversion
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
@@ -239,7 +239,7 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \param input: input string
  * \param buffer_size: maximum length of string bounding the conversion
  * \param base: base of the number. 0 to detect decimal, octal, hexadecimal. 2-36 to use specified base.
- * \param output: (output) will contain the converted number or 0 on error
+ * \param output: (output) will contain the converted number as produced by the underlying C conversion
  * \param next: (output) will contain a pointer to the next character after the number and null pointer on error
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */

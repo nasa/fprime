@@ -57,12 +57,13 @@ The dashboard supports the following components shown below.
 
 | Component | Function | Available F´ Fields |
 |----|----|----|
-| <dashboard-row>...</dashboard-row> | Horizontal container for other components | |
-| <dashboard-box>...</dashboard-box> | Box container for other components        | title  |
-| <command-input/>   | Command builder and transmission component     | fields, filter-text, items-shown, compact |
-| <command-history/> | List of commands sent as tracked by the GDS    | fields, filter-text, items-shown, compact |
-| <event-list/>      | Ordered list of events received by the GDS     | fields, filter-text, items-shown, compact |
-| <channel-table/>   | Latest channel readings as received by the GDS | fields, filter-text, items-shown, compact |
+| `<dashboard-row>...</dashboard-row>` | Horizontal container for other components | |
+| `<dashboard-box>...</dashboard-box>` | Box container for other components        | title  |
+| `<command-input/>`   | Command builder and transmission component     | fields, filter-text, items-shown, compact |
+| `<command-history/>` | List of commands sent as tracked by the GDS    | fields, filter-text, items-shown, compact |
+| `<event-list/>`      | Ordered list of events received by the GDS     | fields, filter-text, items-shown, compact |
+| `<channel-table/>`   | Latest channel readings as received by the GDS | fields, filter-text, items-shown, compact |
+| `<logging/>`         | Logged messages stored as the GDS runs         | fields, filter-text, items-shown, compact |
 
 ## Customizing Components
 

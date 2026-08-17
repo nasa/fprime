@@ -51,7 +51,7 @@ environment has been activated.
 
 `fprime-cli` connects to the `fprime-gds` ground system layer. Should the user wish to run `fprime-cli` make sure to
 start an instance of the `fprime-gds` in headless mode `fprime-gds -g none`. More information can be found in the
-[F´ GDS guide](../overview/gds-introduction.md).  If the GDS is running on a non-standard port, supply the `-p` and `-id` flags
+[F´ GDS guide](../overview/gds-introduction.md).  If the GDS is running on a non-standard port or address, supply the `--tts-port` and `--tts-addr` flags
 on any command below to connect to it. Without these flags, the default address of `127.0.0.1:50050` will be used.
 
 ### The Basics

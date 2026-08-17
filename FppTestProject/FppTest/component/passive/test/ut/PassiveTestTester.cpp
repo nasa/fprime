@@ -155,7 +155,7 @@ Fw::SerializeStatus PassiveTestTester::PassiveTestComponentBaseParamExternalDele
     Fw::SerializeStatus stat;
     (void)base_id;
 
-    // Serialize the parameter based on ID
+    // Deserialize the parameter based on ID
     switch (local_id) {
         // ParamBoolExternal
         case PassiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:

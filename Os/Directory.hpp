@@ -99,12 +99,6 @@ class DirectoryInterface {
     //! \return status of the operation
     virtual Status read(char* fileNameBuffer, FwSizeType buffSize) = 0;
 
-    //! \brief Get next filename from directory stream and write it to a Fw::StringBase object
-    //!
-    //! \param filename: Fw::StringBase (or derived) object to store filename in
-    //! \return status of the operation
-    // virtual Status read(Fw::StringBase& filename) = 0;
-
     //! \brief Close directory
     virtual void close() = 0;
 };

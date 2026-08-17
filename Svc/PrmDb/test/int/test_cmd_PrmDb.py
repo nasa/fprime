@@ -1,13 +1,13 @@
 """test_cmd_PrmDb.py:
 
-Test the command dispatcher with basic integration tests.
+Test the parameter database with basic integration tests.
 """
 
 
 def test_send_PrmDb(fprime_test_api):
-    """Test that commands may be sent
+    """Test PrmDb commands
 
-    Tests command send, dispatch, and receipt using send_and_assert command with a pair of CmdDispatcher commands.
+    Tests PrmDb's PRM_SAVE_FILE command and a FileManager move using send_and_assert command.
 
     """
 

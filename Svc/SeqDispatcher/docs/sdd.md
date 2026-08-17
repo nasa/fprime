@@ -47,7 +47,6 @@ Dispatches command sequences to available command sequencers, allowing the space
 |canceledCount|Number of sequences canceled by the CANCEL_NAME and CANCEL_ALL commands|
 
 ## Unit Tests
-Add unit test descriptions in the chart below
 | Name | Description |
 |testDispatch|Tests the basic dispatch functionality of the `SeqDispatcher`|
 |testLogStatus|Tests the LOG_STATUS command|
@@ -55,6 +54,10 @@ Add unit test descriptions in the chart below
 |testCancelNameNotFound|Tests that CANCEL_NAME with an unmatched file name errors and cancels nothing|
 |testCancelAll|Tests that CANCEL_ALL cancels every running sequencer and clears state on seqDoneIn|
 |testCancelAllNoneRunning|Tests that CANCEL_ALL with no running sequences succeeds and cancels nothing|
+|testRunArgsWithValidArguments|Tests RUN_ARGS with valid arguments|
+|testRunArgsWithMaxSizedArguments|Tests RUN_ARGS with maximum-sized arguments|
+|testRunArgsNoSequencersAvailable|Tests RUN_ARGS when no sequencers are available|
+|testRunArgsBlockingVsNonBlocking|Tests RUN_ARGS blocking and non-blocking dispatch|
 
 ## Requirements
 Add requirements in the chart below

@@ -13,13 +13,13 @@
 
 Spacecraft Sequences, are an ordered list of commands that are executed together. Sequences store a series of commands in a specific order and with specific timing to be dispatched later in that order and with that timing. Any software command can be executed in a sequence.
 
-In Fprime this capability is handled by the Sequence Dispatcher and Command Sequencer components. The Sequence Dispatcher component is responsible for coordinating the execution of multiple sequences while the Command Sequence component is instanced for each sequence to be executed. 
+In Fprime this capability is handled by the Sequence Dispatcher and Command Sequencer components. The Sequence Dispatcher component is responsible for coordinating the execution of multiple sequences while the Command Sequence component is instanced for each sequence to be executed. The framework also provides the Fpy Sequencer (`Svc/FpySequencer`), an alternative sequencing engine that loads, validates, and executes Fpy bytecode sequence files. 
 
 ### Sequence Management
 
 Prior to execution, sequences are simply files contained within the file system. They are managed via file system functionality and stored within the defined partitions of the file system. 
 
-Maximum Sequence Size is defined at compile time and is [configurable](https://github.com/nasa/fprime/blob/14b48734d0bb010526b2d31ca427c100c6615af6/Ref/Top/RefTopology.cpp#L55).
+Maximum Sequence Size is defined at compile time and is configurable via the buffer allocated to the `CmdSequencer` instance in the deployment topology (the `allocateBuffer` call).
 
 ### Sequence Loading and Validation
 

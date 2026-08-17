@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/file/MyRules.hpp
+// \title Os/test/ut/file/FileRules.hpp
 // \brief rule definitions for common testing
 // ======================================================================
 // Stripped when compiled, here for IDEs

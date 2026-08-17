@@ -42,7 +42,7 @@ FormalAliasStringArray from_arrayStringAliasReturnOut_handler(FwIndexType portNu
                                                               FormalParamArray& aRef      //!< An array ref
                                                               ) final;
 
-//! Handler base-class function for from_arrayStringAliasReturnOut
+//! Handler base-class function for from_stringAliasReturnOut
 FormalAliasString from_stringAliasReturnOut_handler(FwIndexType portNum,        //!< The port number
                                                     const Fw::StringBase& str,  //!< A string
                                                     Fw::StringBase& strRef      //!< A string ref

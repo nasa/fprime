@@ -2,16 +2,16 @@
 
 | Hardware         | OS | Architecture   | Reference Project | Build Status |
 | ---------------- | -------------------- | ------------------------------- | ---------------------------------- | ------------ |
-| Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI [macOS]](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test-macos.yml) |
+| Apple Silicon    | Darwin    | ARM  | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI](https://github.com/nasa/fprime/actions/workflows/framework.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/framework.yml) |
 | BeagleBone Black | VxWorks 7 | ARMv7 | [`fprime-vxworks-reference`](https://github.com/fprime-community/fprime-vxworks-reference) | N/A |
 | Feather M4 	   | FreeRTOS  | ARM | [`fprime-featherm4-freertos-reference`](https://github.com/fprime-community/fprime-featherm4-freertos-reference) | N/A |
 | Pi Pico          | Zephyr    | ARMv6-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | N/A |
-| Pi Pico 2        | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Pico 2)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-pico2.yml) |
+| Pi Pico 2        | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Pico 2)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference.yml) |
 | PolarFire SoC    | VxWorks 7 | RISC-V | TBD | N/A |
 | PyCubed          | Zephyr    | RISC-V | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | N/A |
 | Raspberry Pi     | Linux     | ARMv8 | [`fprime-workshop-led-blinker`](https://github.com/fprime-community/fprime-workshop-led-blinker) | [![External Repo: RPI LedBlinker](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-raspberry-led-blinker.yml) |
-| Teensy41         | Zephyr    | ARMv7-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Teensy 4.1)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference-teensy41.yml) |
-| x86              | Linux     | x86\_64 | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI [ubuntu]](https://github.com/nasa/fprime/actions/workflows/build-test.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test.yml) [![CI [RHEL8]](https://github.com/nasa/fprime/actions/workflows/build-test-rhel8.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test-rhel8.yml) |
+| Teensy41         | Zephyr    | ARMv7-M | [`fprime-zephyr-reference`](https://github.com/fprime-community/fprime-zephyr-reference) | [![External Repo: Zephyr Reference (Teensy 4.1)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/ext-fprime-zephyr-reference.yml) |
+| x86              | Linux     | x86\_64 | [`F Prime Ref`](https://github.com/nasa/fprime) | [![CI](https://github.com/nasa/fprime/actions/workflows/framework.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/framework.yml) [![CI [RHEL8]](https://github.com/nasa/fprime/actions/workflows/build-test-rhel8.yml/badge.svg)](https://github.com/nasa/fprime/actions/workflows/build-test-rhel8.yml) |
 
 ## Targeted Platforms (Planned Support)
 

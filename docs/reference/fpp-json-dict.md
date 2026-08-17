@@ -78,7 +78,7 @@ Example: Type Descriptor for `U64`
     "name": "U64",
     "kind": "integer",
     "size": 64,
-    "signed": false,
+    "signed": false
 }
 ```
 
@@ -94,7 +94,7 @@ Example: Type Descriptor for `I8`
     "name": "I8",
     "kind": "integer",
     "size": 8,
-    "signed": true,
+    "signed": true
 }
 ```
 
@@ -115,7 +115,7 @@ Example: Type Descriptor for F64
 {
     "name": "F64",
     "kind": "float",
-    "size": 64,
+    "size": 64
 }
 ```
 
@@ -156,7 +156,7 @@ Example Type Descriptor for string
 {
     "name": "string",
     "kind": "string",
-    "size": 80,
+    "size": 80
 }
 ```
 
@@ -174,7 +174,7 @@ Example JSON of qualified name
 ```json
 {
     "name": "Module1.MyArray",
-    "kind": "qualifiedIdentifier",
+    "kind": "qualifiedIdentifier"
 }
 ```
 
@@ -260,7 +260,7 @@ module M1 {
 | `kind` | The kind of type | `enum` | true |
 | `qualifiedName` | Fully qualified name of element in FPP model | Period-separated **String** | true |
 | `representationType` | Type of the enumerated values | **[Type Descriptor](#type-descriptors)** | true |
-| `enumeratedConstants` | The enumerated constants | JSON Dictionary of enumerated constants (keys) to [Enumerated Constant Descriptor](#enumerated-constant-descriptors) (values) | true |
+| `enumeratedConstants` | The enumerated constants | JSON Array of [Enumerated Constant Descriptors](#enumerated-constant-descriptors) | true |
 | `default` | Qualified name of the enumeration's default value | **[Enumeration Value](#enumeration-values)** | true |
 | `annotation` | User-defined annotation | **String** | false |
 
@@ -306,9 +306,9 @@ module M1 {
             "name" : "MAYBE",
             "value" : 2,
             "annotation": "The cat would know"
-        },
+        }
     ],
-    "default": "M.Status.MAYBE",
+    "default": "M1.Status.MAYBE",
     "annotation": "Schroedinger's status"
 }
 ```
@@ -356,7 +356,7 @@ module M1 {
               "name": "U32",
               "kind": "integer",
               "size": 32,
-              "signed": false,
+              "signed": false
             },
             "index": 0,
             "size": 3,
@@ -370,7 +370,7 @@ module M1 {
                 "size": 32
             },
             "index": 1,
-            "format": "the count is {}",
+            "format": "the count is {}"
         },
         "y": {
             "type": {
@@ -582,7 +582,7 @@ Formal Parameters are used in Commands and Events definitions.
         "name": "U32",
         "kind": "integer",
         "size": 32,
-        "signed": false,
+        "signed": false
     },
     "ref": false,
     "annotation": "This is param1"
@@ -639,7 +639,7 @@ JSON representation:
                 "name": "U32",
                 "kind": "integer",
                 "size": 32,
-                "signed": false,
+                "signed": false
             },
             "ref": false
         },
@@ -653,7 +653,7 @@ JSON representation:
             },
             "ref": false
         }
-    ],
+    ]
 }
 ```
 
@@ -777,13 +777,13 @@ module M {
             "name": "U32",
             "kind": "integer",
             "size": 32,
-            "signed": false,
+            "signed": false
         },
         "ref": false  
       }
     ],
     "id": 259,
-    "format": "Event 1 occurred",
+    "format": "Event 1 occurred"
 }
 ```
 
@@ -942,18 +942,18 @@ module M {
     {
        "name": "M.c1.Container0",
        "annotation": "Container 0",
-       "id": 263,
+       "id": 263
     },
     {
         "name": "M.c1.Container1",
         "annotation": "Container 1",
-        "id": 264,
+        "id": 264
     },
     {
         "name": "M.c1.Container2",
         "annotation": "Container 2",
         "id": 265,
-        "defaultPriority": 259
+        "defaultPriority": 10
     }
 ]
 ```
@@ -1199,7 +1199,7 @@ module M {
           "value" : 2
         }
       ],
-      "default" : "M1.StatusEnum.MAYBE"
+      "default" : "M.StatusEnum.MAYBE"
     },
     {
       "kind" : "struct",
@@ -1365,12 +1365,12 @@ module M {
     {
        "name": "M.c1.Container0",
        "annotation": "Container 0",
-       "id": 263,
+       "id": 263
     },
     {
         "name": "M.c1.Container1",
         "annotation": "Container 1",
-        "id": 264,
+        "id": 264
     },
     {
         "name": "M.c1.Container2",

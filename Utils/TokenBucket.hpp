@@ -49,7 +49,7 @@ class TokenBucket {
     // Main point of entry
     //
     // Evaluates time since last trigger to determine number of tokens to
-    // replenish. If time moved backwards, always returns false.
+    // replenish. If time moved backwards, no tokens are replenished.
     //
     // If number of tokens is not zero, consumes one and returns true.
     // Otherwise, returns false.

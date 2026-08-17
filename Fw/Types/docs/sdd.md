@@ -14,6 +14,17 @@ The user of the class can assign one of the types in `BasicTypes.hpp` to an inst
 If an attempt is made to retrieve a value type other than the one stored, an `Fw::Assert` will be called.
 `Fw::PolyType` is a subtype of `Fw::Serializable,` so it can be passed via ports.
 
+### 2.2 Other Types and Classes
+
+In addition to `PolyType`, the module provides:
+
+* Assertion machinery (`Assert.hpp`, `FW_ASSERT`) and assertion hook support
+* String classes: `Fw::StringBase`, `Fw::String`, `Fw::ExternalString`, `Fw::StringTemplate`, and related utilities (`StringUtils.hpp`)
+* Serialization support: `Fw::Serializable`, `Fw::SerialBufferBase`, `Fw::ExternalSerializeBuffer`, and `Fw::SerialBuffer`
+* Byte array and buffer helpers (`ByteArray.hpp`)
+* Memory allocators: `Fw::MemAllocator`, `Fw::MallocAllocator`
+* `Fw::Optional`, a type that may or may not hold a value
+
 ## 3. Change Log
 
 Date | Description

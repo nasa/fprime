@@ -8,7 +8,7 @@ Commands are specified via the FPP modeling language and can include the followi
 - `command-kind` - Commands can be 'async', 'sync', or 'guarded'
     - `async` - Asynchronous commands are added to the message queue of the executing component and are executed in the component's thread 
     - `sync` - Synchronous commands invoked immediately in the thread of the caller
-    - `guarded` - A synchronous command that is protected by a #TBD
+    - `guarded` - A synchronous command that is protected by a mutex
 - `opcode` - A unique numeric value for the command (integer)
 - `param-list` - A list of arguments for the command
     - `identifier` - The unique name of the parameter/argument
@@ -49,8 +49,7 @@ Events are specified via the FPP modeling language and can include the following
 - `identifier` - The unique name of the event
 - `severity` - The severity of the event (fatal, warning high, warning low, activity high, activity low, command, diagnostic)
 - `format` - Format string for the event
-- `throttle` - Defines the max number of events that can be reported in a given time period (also defines the time period)
-- `throttle-time` - Defines the time period for the throttle (integer)
+- `throttle` - Defines the max number of times an event is emitted before it is suppressed until the throttle is cleared
 - `param-list` - A list of arguments for the command
     - `identifier` - The unique name of the parameter/argument
     - `type` - Limited to "displayable types" (INT, UINT, BOOL, ENUM, STRING, ARRAY, STRUCT)

@@ -34,7 +34,7 @@ SVC-DPWRITER-002 | `Svc::DpWriter` shall provide an array of ports for sending `
 SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` shall use the processing type field of the header of _C_ to select zero or more processing ports to invoke, in port order. | The processing type field is a bit mask. A one in bit `2^n` in the bit mask selects port index `n`. | Unit Test
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
 SVC-DPWRITER-005 | `Svc::DpWriter` shall provide a port for notifying other components that data products have been written. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time. | Unit Test
-SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
+SVC-DPWRITER-006 | `Svc::DpWriter` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
 SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
 
 ## 3. Design
@@ -104,12 +104,12 @@ It does the following:
 1. If the previous step succeeded, then check that the size of `B` is large enough to
    hold a data product container packet. If not, emit a warning event.
 
-1. If the previous steps succeeded, then check that the packet
-   header of `B` can be successfully deserialized.
-   If not, emit a warning event.
-
 1. If the previous steps succeeded, then check that the header
    hash of `B` is valid.
+   If not, emit a warning event.
+
+1. If the previous steps succeeded, then check that the packet
+   header of `B` can be successfully deserialized.
    If not, emit a warning event.
 
 1. If the previous steps succeeded, then check that the data
@@ -178,18 +178,25 @@ Typically it is a directory path prefix.
 
 | Name | Type | Description |
 |------|------|-------------|
-| `NumDataProducts` | `U32` | The number of data products handled |
-| `NumBytes` | `U64` | The number of bytes handled |
+| `NumBuffersReceived` | `U32` | The number of buffers received |
+| `NumBytesWritten` | `U64` | The number of bytes written |
+| `NumSuccessfulWrites` | `U32` | The number of successful writes |
+| `NumFailedWrites` | `U32` | The number of failed writes |
+| `NumErrors` | `U32` | The number of errors |
 
 ### 5.3. Events
 
 | Name | Severity | Description |
 |------|----------|-------------|
-| `BufferInvalid` | `warning high` | Incoming buffer is invalid |
-| `BufferTooSmall` | `warning high` | Incoming buffer is too small to hold a data product container |
-| `InvalidPacketDescriptor` | `warning high` | Incoming buffer has an invalid packet descriptor |
+| `InvalidBuffer` | `warning high` | Incoming buffer is invalid |
+| `BufferTooSmallForPacket` | `warning high` | Incoming buffer is too small to hold a data product container packet |
+| `InvalidHeaderHash` | `warning high` | Incoming buffer has an invalid header hash |
+| `InvalidHeader` | `warning high` | Incoming buffer has an invalid packet header |
+| `BufferTooSmallForData` | `warning high` | Incoming buffer is too small to hold the data size recorded in the header |
+| `FileNameFormatError` | `warning high` | An error occurred when formatting a file name |
 | `FileOpenError` | `warning high` | An error occurred when opening a file |
 | `FileWriteError` | `warning high` | An error occurred when writing to a file |
+| `FileWritten` | `activity low` | A data product file was successfully written |
 
 ## 6. Example Uses
 

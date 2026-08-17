@@ -1,7 +1,7 @@
 // ======================================================================
 // \title  Timer.hpp
 // \author Brian Campuzano
-// \brief  hpp file for CFDP timer that is driven by
+// \brief  hpp file for CFDP timer driven by the 1 Hz scheduler tick
 // ======================================================================
 
 #ifndef CCSDS_CFDPTIMER_HPP

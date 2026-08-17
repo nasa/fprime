@@ -73,23 +73,23 @@ In this case an assertion failure will occur.
 ### 3.6. operator*
 
 ```c++
-const EntryBase& operator*() const
+const T& operator*() const
 ```
 
 Return a `const` reference to the `T` element
 pointed to by the iterator.
-If the iterator is not in range for the map, an assertion failure will occur.
+If the iterator is not in range for the set, an assertion failure will occur.
 It is not recommended to use this operation
 after updating the set that the iterator points to.
 
 ### 3.7. operator->
 
 ```c++
-const EntryBase* operator->() const
+const T* operator->() const
 ```
 
 Return a pointer to the `const T` element
 pointed to by the iterator.
-If the iterator is not in range for the map, an assertion failure will occur.
+If the iterator is not in range for the set, an assertion failure will occur.
 It is not recommended to use this operation
 after updating the set that the iterator points to.

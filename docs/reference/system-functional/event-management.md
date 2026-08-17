@@ -30,10 +30,7 @@ Events are categorized by severity to support filtering and prioritization:
 
 ### Event Throttling
 
-Events can be configured with throttle limits to prevent log flooding when a condition triggers the same event repeatedly. Throttling is configured on the individual component that emits the event. Two throttling modes are available:
-
-- **Count-based** — Limits the number of times an event can be reported before it is suppressed. A specific clear action resets the throttle counter.
-- **Time-based** — Limits the rate at which an event can be reported based on elapsed time.
+Events can be configured with throttle limits to prevent log flooding when a condition triggers the same event repeatedly. Throttling is configured on the individual component that emits the event. Throttling is count-based: it limits the number of times an event can be reported before it is suppressed, and a specific clear action resets the throttle counter.
 
 ### Text Logging
 

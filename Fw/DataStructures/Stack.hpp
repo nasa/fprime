@@ -56,9 +56,9 @@ class Stack final : public StackBase<T> {
     //! Clear the stack
     void clear() override { this->m_extStack.clear(); }
 
-    //! Push an item (push on the right)
+    //! Push an item (add to the right)
     //! \return SUCCESS if item pushed
-    Success push(const T& e  //!< The item (output)
+    Success push(const T& e  //!< The item (input)
                  ) override {
         return this->m_extStack.push(e);
     }

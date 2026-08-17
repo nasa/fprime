@@ -5,7 +5,6 @@
 The `Svc::TlmChan` Component is used to store telemetry values written by other components. The values are stored in serialized form. 
 The data is stored as a set of telemetry channels in a table. 
 The data can be individually read back or periodically pushed to another component for transporting out of the system. 
-`Svc::TlmChan` is an implementation of the `Svc::TlmStore` component in the `Svc/Tlm` directory.
 
 ## 2. Requirements
 
@@ -112,19 +111,7 @@ Event | Severity | Arguments | Description
 ----- | -------- | --------- | -----------
 `TlmChanEpochProcessingCapReached` | WARNING_HI | `numDeferred: U32`, `numTimesDeferredCountReached: U32` | Emitted when `Run_handler` reaches `TLMCHAN_MAX_ENTRIES_PER_RUN` before processing all updated entries. `numDeferred` is the count of entries dropped this cycle; `numTimesDeferredCountReached` is the cumulative count of invocations where the cap was reached.
 
-## 4. Dictionaries
-
-TBD
-
-## 5. Module Checklists
-
-Checklist |
--------- |
-[Design](Checklist_Design.xlsx) |
-[Code](Checklist_Code.xlsx) |
-[Unit Test](Checklist_Unit_Test.xls) |
-
-## 6. Unit Testing
+## 4. Unit Testing
 
 To see unit test coverage run fprime-util check --coverage
 

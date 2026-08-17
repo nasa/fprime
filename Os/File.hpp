@@ -520,7 +520,7 @@ class File final : public FileInterface {
     //! \brief returns the raw file handle
     //!
     //! Gets the raw file handle from the implementation. Note: users must include the implementation specific
-    //! header to make any real use of this handle. Otherwise it//!must* be passed as an opaque type.
+    //! header to make any real use of this handle. Otherwise it *must* be passed as an opaque type.
     //!
     //! \return raw file handle
     //!

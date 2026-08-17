@@ -41,7 +41,7 @@ types, then developers must define the missing C equivalent types directly in th
 To print these types, users may use the standard C++ PRI macros as shown described:
 [https://cplusplus.com/reference/cinttypes/](https://cplusplus.com/reference/cinttypes/).
 
-The limits of these types can be obtained by using `std::numeric_limits<T>::min()` and `std::numeric_limits<T>::min()`
+The limits of these types can be obtained by using `std::numeric_limits<T>::min()` and `std::numeric_limits<T>::max()`
 for the defined type T.
 
 ```c++
@@ -124,11 +124,11 @@ systems. These GDS types have defaults based on configurable platform independen
 
 | GDS Type               | Logical Usage              | Default               | Format Specifier           |
 |------------------------|----------------------------|-----------------------|----------------------------|
-| FwBuffSizeType         | `Fw::Buffer` sizes         | U16                   | PRI_FwBuffSizeType         |
+| FwSizeStoreType        | Serialized size fields (legacy alias: `FwBuffSizeType`) | U16 | PRI_FwSizeStoreType        |
 | FwEnumStoreType        | Enumeration values         | I32                   | PRI_FwEnumStoreType        |
 | FwTimeBaseStoreType    | Time base                  | U16                   | PRI_FwTimeBaseStoreType    |
 | FwTimeContextStoreType | Time context               | U8                    | PRI_FwTimeContextStoreType |
-| FwPacketDescriptorType | F´ packet descriptor field | U32                   | PRI_FwPacketDescriptorType |
+| FwPacketDescriptorType | F´ packet descriptor field | U16                   | PRI_FwPacketDescriptorType |
 | FwOpcodeType           | F´ command opcodes         | U32                   | PRI_FwOpcodeType           |
 | FwChanIdType           | F´ channel ids             | U32                   | PRI_FwChanIdType           |
 | FwEventIdType          | F´ event ids               | U32                   | PRI_FwEventIdType          |
@@ -138,13 +138,10 @@ systems. These GDS types have defaults based on configurable platform independen
 > [!NOTE]
 > the F´ GDS expects the above types to use their default setting. Users intending to use the F´ GDS should not stray from the above definitions.
 
-All defaults can be overridden via project specific configuration supplying a custom `FpConfig.h`. A complete
-definition of a framework/GDS type in `FpConfig.h` would look like:
+All defaults can be overridden via project specific configuration supplying a custom `FpConfig.fpp`. Framework/GDS
+types are configured as FPP type aliases, from which headers are generated. A complete definition of a
+framework/GDS type in `FpConfig.fpp` would look like:
 
-```c++
-#include <BasicTypes.hpp>
-...
-typedef U32 FwSizeType;
-#define PRI_FwSizeType PRIu32
-...
+```
+type FwSizeType = U32
 ```

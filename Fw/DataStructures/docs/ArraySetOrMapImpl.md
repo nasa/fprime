@@ -192,7 +192,7 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 
     1. If `e.getKey() == keyOrElement`
 
-        1. Call `e.setValue(valueOrNil)`.
+        1. Call `e.setValueOrNil(valueOrNil)`.
 
         1. Set `status = Success::SUCCESS`.
 
@@ -201,9 +201,6 @@ Success insert(const KE& keyOrElement, const VN& valueOrNil)
 1. If `(status == Success::FAILURE) && (m_size < getCapacity())`
 
     1. Set `m_entries[m_size] = Entry(keyOrElement, valueOrNil)`.
-
-    1. If `m_size > 0` then
-       call `m_entries[m_size - 1].setNextEntry(&m_entries[m_size])`.
 
     1. Increment `m_size`.
 
@@ -225,15 +222,9 @@ Success remove(const KE& keyOrElement, VN& valueOrNil)
 
         1. Set `valueOrNil = m_entries[i].getValue()`.
 
-        1. If `i < m_size - 1` then
+        1. If `i < m_size - 1` then set `m_entries[i] = m_entries[m_size - 1]`.
 
-            1. `m_entries[i] = m_entries[m_size - 1]`.
-
-            1. Call `m_entries[i].setNextEntry(&m_entries[i + 1])`.
-
-        1. Otherwise call `m_entries[i].setNextEntry(nullptr)`.
-
-        1. Decrement `size`.
+        1. Decrement `m_size`.
 
         1. Set `status = Success::SUCCESS`.
 

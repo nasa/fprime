@@ -25,7 +25,7 @@ The deframer validates each incoming frame header: Transfer Frame Version Number
 
 For each valid frame, the M_PDU First Header Pointer (FHP) is used to locate packet boundaries within the data zone. Complete packets are emitted directly. When a packet spans multiple frames, the deframer allocates a buffer through its `BufferAllocation` interface (`allocate`/`deallocate` ports), accumulates the packet across successive frames, and emits it when complete. A frame count gap, an invalid FHP, or an allocation failure causes any in-progress spanning packet to be abandoned and reported via events.
 
-Ownership of incoming frame buffers is returned to the sender via the `dataReturnOut` port; downstream consumers return emitted packet buffers via the `dataReturnIn` port, which the deframer deallocates when it owns them (spanning-packet buffers) or passes back upstream otherwise.
+Ownership of incoming frame buffers is returned to the sender via the `dataReturnOut` port; downstream consumers return emitted packet buffers via the `dataReturnIn` port, and the deframer deallocates them through its `deallocate` port (all emitted packets are allocated through the `BufferAllocation` interface).
 
 ## Configuration
 

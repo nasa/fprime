@@ -58,7 +58,7 @@ class FifoQueue final : public FifoQueueBase<T> {
 
     //! Enqueue an item (push on the right)
     //! \return SUCCESS if item enqueued
-    Success enqueue(const T& e  //!< The item (output)
+    Success enqueue(const T& e  //!< The item (input)
                     ) override {
         return this->m_extQueue.enqueue(e);
     }

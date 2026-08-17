@@ -1,5 +1,5 @@
 module Svc {
-    @ Dispatches command sequences to available command sequencers
+    @ Loads, validates and runs Fpy bytecode sequence files
     active component FpySequencer {
 
         enum GoalState : U8 {

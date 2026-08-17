@@ -68,7 +68,7 @@ The `DataProducts` subtopology is not a stand-alone application. It requires con
 
 ```fpp
 topology Flight {
-  instance DataProducts.Subtopology
+  import DataProducts.Subtopology
 
   connections RateGroups {
     rg1Hz.RateGroupMemberOut[0] -> DataProducts.Subtopology.dpMgrSchedIn

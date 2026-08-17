@@ -52,7 +52,7 @@ class CpuInterface {
     //! \return internal task handle representation
     virtual CpuHandle* getHandle() = 0;
 
-    //! \brief provide a pointer to a Mutex delegate object
+    //! \brief provide a pointer to a Cpu delegate object
     static CpuInterface* getDelegate(CpuHandleStorage& aligned_new_memory);
 };
 
@@ -148,4 +148,4 @@ class Cpu final : public CpuInterface {
     CpuInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 }  // namespace Os
-#endif  // OS_CONDITION_HPP_
+#endif  // OS_CPU_HPP_

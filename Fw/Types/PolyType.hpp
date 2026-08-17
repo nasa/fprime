@@ -26,7 +26,7 @@ class PolyType : public Serializable {
     operator U16() const;          //!< U16 cast operator
     void get(U16& val) const;      //!< U16 accessor
     bool isU16() const;            //!< U16 checker
-    PolyType& operator=(U16 val);  //!< I8 operator=
+    PolyType& operator=(U16 val);  //!< U16 operator=
 
     PolyType(I16 val);             //!< I16 constructor
     operator I16() const;          //!< I16 cast operator

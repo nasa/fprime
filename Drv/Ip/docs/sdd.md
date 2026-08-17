@@ -197,17 +197,17 @@ section. The automatic reconnection is handled by a separate dedicated thread up
 or a send request.
 
 In order to start the receiving thread a call to the `Drv::SocketComponentHelper::start` method is performed passing
-in a name, and all arguments to `Os::Task::start` to start the receive and reconnect tasks. An optional parameter, reconnect,
-will determine if this read task will request reconnects to sockets should a disconnect or error occur. Once started, the read task will continue
-until a `Drv::SocketComponentHelper::stop` has been called or an error occurred when started without reconnect set to
-`true`.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
+in a name, and all arguments to `Os::Task::start` to start the receive and reconnect tasks. Automatic reconnection is
+configured via `Drv::SocketComponentHelper::setAutomaticOpen`, which determines if this read task will request reconnects
+to sockets should a disconnect or error occur. Once started, the read task will continue until a
+`Drv::SocketComponentHelper::stop` has been called or an error occurred with automatic open disabled.  Once the socket stop call has been made, the user should call `Drv::SocketComponentHelper::join` in order to
 wait until the full tasks have finished.  `Drv::SocketComponentHelper::stop` will call `Drv::SocketComponentHelper::shutdown`
 on the provided Drv::IpSocket to ensure that any blocking reads exit, freeing the thread to completely stop. Normal usage of
 a Drv::SocketComponentHelper derived class is shown below.
 
 ```c++
 Os::TaskString name("ReceiveTask");
-uplinkComm.start(name); // Default reconnect=true
+uplinkComm.start(name); // Automatic open enabled by default; see setAutomaticOpen
 ...
 
 uplinkComm.stop();

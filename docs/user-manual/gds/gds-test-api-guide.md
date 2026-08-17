@@ -29,7 +29,7 @@ To run this test, ensure the GDS is running (by invoking `fprime-gds`) and then 
 
 ## Usage Patterns
 
-All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `fprime_test_api` is provided as a pytest fixture.  You may also browse sample [Ref app integration tests](https://github.com/nasa/fprime/blob/devel/Ref/test/int/ref_integration_test.py).
+All usage patterns are written such that they would be compatible with the test framework example described above: each test case assumes that the histories were recently emptied and that the `fprime_test_api` is provided as a pytest fixture.  You may also browse sample [Ref app integration tests](https://github.com/nasa/fprime/blob/devel/TestDeploymentsProject/Ref/test/int/ref_integration_test.py).
 
 ### Sending Commands
 

@@ -11,13 +11,13 @@ namespace Os {
 namespace Linux {
 namespace Cpu {
 
-//! CpuHandle class definition for stub implementations.
+//! CpuHandle class definition for the Linux implementation.
 //!
 struct LinuxCpuHandle : public CpuHandle {};
 
-//! \brief stub implementation of Os::CpuInterface
+//! \brief Linux implementation of Os::CpuInterface
 //!
-//! Linux implementation of `CpuInterface` for use as a delegate class handling stub console operations.
+//! Linux implementation of `CpuInterface` for use as a delegate class handling CPU usage queries.
 //!
 class LinuxCpu : public CpuInterface {
   public:

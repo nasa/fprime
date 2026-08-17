@@ -74,11 +74,11 @@ class StackBase : public SizedContainer {
 
     //! Push an item (add to the right)
     //! \return SUCCESS if item pushed
-    virtual Success push(const T& e  //!< The item (output)
+    virtual Success push(const T& e  //!< The item (input)
                          ) = 0;
 
     //! Peek an item at an index
-    //! Indices go from left to right in the range [0, size)
+    //! Index 0 is the rightmost (latest) element; indices increase from right to left in the range [0, size)
     //! \return SUCCESS if item exists
     Success peek(T& e,                 //!< The item (output)
                  FwSizeType index = 0  //!< The index (input)

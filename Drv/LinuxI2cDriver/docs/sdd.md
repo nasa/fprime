@@ -37,7 +37,7 @@ The LinuxI2cDriver is a passive component. All operations execute synchronously 
 
 ### 3.3 Stub Implementation
 
-A stub implementation (`LinuxI2cDriverStub.cpp`) is provided for platforms without Linux I2C support; it reports open failures for all transactions. The build selects the real or stub implementation based on the target platform.
+A stub implementation (`LinuxI2cDriverStub.cpp`) is provided for platforms without Linux I2C support; its `open()` returns `true` and all transactions report `I2C_OK` without performing any bus activity. The build selects the real or stub implementation based on the target platform.
 
 ## 4. Usage
 

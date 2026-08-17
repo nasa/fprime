@@ -80,8 +80,8 @@ Example of integrating `CdhCore` in a deployment topology:
 
 ```fpp
 topology Flight {
-  instance CdhCore.Subtopology
-  instance ComCcsds.Subtopology  # Used as an example communication subtopology
+  import CdhCore.Subtopology
+  import ComCcsds.Subtopology  # Used as an example communication subtopology
 
   # Use CdhCore handler components
   command connections instance CdhCore.cmdDisp

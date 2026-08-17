@@ -55,17 +55,6 @@ struct CfdpTraverseTransSeqArg {
 };
 
 /**
- * @brief Argument structure for use with Channel::traverseAllTransactions()
- *
- * This basically allows for running a traversal on several lists at once
- */
-struct CfdpTraverseAllArg {
-    CfdpTraverseAllTransactionsFunc fn; /**< \brief internal callback to use for each CList_Traverse */
-    void* context;                      /**< \brief opaque object to pass to internal callback */
-    I32 counter;                        /**< \brief Running tally of all nodes traversed from all lists */
-};
-
-/**
  * @brief Argument structure for use with CfdpCListTraverseR()
  *
  * This is for searching for transactions of a specific priority
@@ -74,28 +63,6 @@ struct CfdpTraversePriorityArg {
     Transaction* txn; /**< \brief OUT: holds value of transaction with which to call CfdpCListInsertAfter on */
     U8 priority;      /**< \brief seeking this priority */
 };
-
-/************************************************************************/
-/** @brief List traversal function to check if the desired sequence number matches.
- *
- * @param node         Pointer to node currently being traversed
- * @param context   Pointer to state object passed through from initial call
- *
- * @retval 1 when it's found, which terminates list traversal
- * @retval 0 when it isn't found, which causes list traversal to continue
- */
-CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode* node, void* context);
-
-/************************************************************************/
-/** @brief Searches for the first transaction with a lower priority than given.
- *
- * @param node    Node being currently traversed
- * @param context Pointer to CfdpTraversePriorityArg object indicating the priority to search for
- *
- * @retval CFDP_CLIST_EXIT when it's found, which terminates list traversal
- * @retval CFDP_CLIST_CONT when it isn't found, which causes list traversal to continue
- */
-CListTraverseStatus PrioSearch(CListNode* node, void* context);
 
 /************************************************************************/
 /** @brief Converts the internal transaction status to a CFDP condition code

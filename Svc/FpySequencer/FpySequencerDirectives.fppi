@@ -67,7 +67,7 @@ struct StackOpDirective {
 
 @ ends the sequence
 struct ExitDirective {
-    # pops U8 off the stack
+    # pops I32 error code off the stack
     _empty: U8
 }
 

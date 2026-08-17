@@ -63,7 +63,7 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 
 ```fpp
 topology Flight {
-  instance ComFprime.Subtopology
+  import ComFprime.Subtopology
 
   # (A1) Provide a ByteStreamDriver interface (e.g. Drv.TcpClient)
   instance comDriver: ...

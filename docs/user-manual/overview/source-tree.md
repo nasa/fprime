@@ -27,11 +27,10 @@ the types declared to construct the entities in the architecture.
 
 ### config
 
-The config directory contains header files used to
-configure various properties of the architecture. The developer can
-modify the file to tune the architecture for the requirements of a
-particular deployment environment. The contents are described in Section
-9.
+Configuration files (`FpConfig.fpp`, `AcConstants.fpp`, and related headers) live in
+`default/config` and are copied into a project's `config/` directory. The developer can
+modify these files to tune the architecture for the requirements of a
+particular deployment environment.
 
 The file AcConstants.fpp contains a set of values for variables used in
 the code generation. Using this file allows component features like opcodes

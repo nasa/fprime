@@ -2,24 +2,20 @@ module Svc {
     @ Component to dispatch uplinked files to various services
     active component FileDispatcher {
 
-        # @ disable dispatch of a file type
+        @ Enable or disable dispatch of a file type
         async command ENABLE_DISPATCH(
                 file_type: Svc.FileDispatcherCfg.FileDispatchPort @< the file type dispatch to enable/disable
                 enable: Fw.Enabled
             ) \
             opcode 0
 
-        ##############################################################################
-        #### Uncomment the following examples to start customizing your component ####
-        ##############################################################################
-
-        # @ File type dispatch enabled/disabled event
+        @ File type dispatch enabled/disabled event
         event FileDispatchState(file_type: Svc.FileDispatcherCfg.FileDispatchPort, enabled: Fw.Enabled) severity activity high format "File dispatch {} state changed: to {}"
 
-        # @ File dispatched event
+        @ File dispatched event
         event FileDispatched(file_name: string size FileNameStringSize, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity activity high format "File {} dispatched to {}"
 
-        # @ File matched a dispatch entry whose output port is not connected
+        @ File matched a dispatch entry whose output port is not connected
         event FileDispatchPortNotConnected(file_name: string size FileNameStringSize, file_type: Svc.FileDispatcherCfg.FileDispatchPort) severity warning low format "File {} matched {} but the dispatch port is not connected" throttle 5
 
         ###############################################################################

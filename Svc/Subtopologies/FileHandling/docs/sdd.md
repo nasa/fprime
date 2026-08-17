@@ -59,7 +59,7 @@ Focused on **file transfer and on-board file ops** only. It does **not** provide
 
 ```fpp
 topology Flight {
-  instance FileHandling.Subtopology
+  import FileHandling.Subtopology
 
   param connections instance FileHandling.prmDb
 

@@ -39,7 +39,7 @@ class MemoryInterface {
     //! \return internal task handle representation
     virtual MemoryHandle* getHandle() = 0;
 
-    //! \brief provide a pointer to a Mutex delegate object
+    //! \brief provide a pointer to a Memory delegate object
     static MemoryInterface* getDelegate(MemoryHandleStorage& aligned_new_memory);
 };
 
@@ -107,4 +107,4 @@ class Memory final : public MemoryInterface {
     MemoryInterface& m_delegate;                                        //!< Delegate for the real implementation
 };
 }  // namespace Os
-#endif  // OS_CONDITION_HPP_
+#endif  // OS_MEMORY_HPP_

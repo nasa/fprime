@@ -221,7 +221,7 @@ while (!shutdown) {
 
 Here, as seen above, `run_once` does not block and so each component gets a slice of execution time before yielding to the next. Concurrency has been virtualized — each component takes turns running, and the processor is shared without writing a full-blown thread scheduler or requiring processor instruction set support to switch threading contexts.
 
-Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks on receiving messages. When `BAREMETAL_SCHEDULER` is enabled in the F´ configuration, this alternate implementation is used. Under `Os/Baremetal`, an implementation of a sequential scheduler exists. This scheduler snoops on task registration and will call all thread executions in a loop driven from the main program loop similar to below.
+Inside F´ a parallel implementation of the active component task was implemented such that it returns rather than blocks on receiving messages. When the `FPRIME_USE_BAREMETAL_SCHEDULER` CMake option is enabled, this alternate implementation is used. Under `Os/Baremetal`, an implementation of a sequential scheduler exists. This scheduler snoops on task registration and will call all thread executions in a loop driven from the main program loop similar to below.
 
 ```C++
 setup(); // Setup F´

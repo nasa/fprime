@@ -2,7 +2,7 @@
 
 The `Svc::Ccsds::TcDeframer` is an implementation of the [DeframerInterface](../../../Interfaces/docs/sdd.md) for the CCSDS [TC Space Data Link Protocol](https://ccsds.org/Pubs/232x0b4e1c1.pdf). 
 
-It receives payload data (such as a Space Packet or a VCA_SDU) on input and produces a TC frame on its output port as a result. Please refer to the CCSDS [TC specification (CCSDS 232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf) for details on the frame format and protocol.
+It receives TC frames on input and produces the deframed payload data (such as a Space Packet or a VCA_SDU) on its output port as a result. Please refer to the CCSDS [TC specification (CCSDS 232.0-B-4)](https://ccsds.org/Pubs/232x0b4e1c1.pdf) for details on the frame format and protocol.
 
 The `Svc::Ccsds::TcDeframer` is designed to work in the common F Prime telemetry stack, receiving data from a [Communications Adapter](../../../Interfaces/docs/sdd.md) or the `Svc::FrameAccumulator`, for deframing and transmission to the rest of the system. It is commonly coupled with the [`Svc::Ccsds::SpacePacketDeframer`](../../SpacePacketFramer/docs/sdd.md) to unwrap CCSDS Space Packets from TC frames.
 
@@ -34,6 +34,7 @@ void configure(U16 vcId, U16 spacecraftId, bool acceptAllVcid);
 
 | Name | Severity | Description |
 |---|---|---|
+| InvalidPacket | `warning low` | Invalid packet received that will be dropped |
 | InvalidSpacecraftId | `warning low` | Deframing received an invalid SCID |
 | InvalidFrameLength | `warning high` | Deframing received an invalid frame length |
 | InvalidVcId | `activity low` | Deframing received an invalid VCID |

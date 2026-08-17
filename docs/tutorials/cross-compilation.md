@@ -59,7 +59,7 @@ Choose the operating system you are using to install F Prime:
     tutorial. Mac users must install the following utilities
     *and ensure they are available on the command line path*.
 
-    1. [Python 3](https://www.python.org/downloads/release/python-3913/)
+    1. [Python 3](https://www.python.org/downloads/)
     2. [CMake](https://cmake.org/download/)
     3. clang and lld
 

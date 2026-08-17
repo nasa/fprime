@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Stub/test/ut/StubMemoryTests.cpp
-// \brief tests using stub implementation for Os::Memory interface testing
+// \title Os/test/ut/memory/CommonMemoryTests.cpp
+// \brief common tests for the Os::Memory interface
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Os/Darwin/Memory.hpp"

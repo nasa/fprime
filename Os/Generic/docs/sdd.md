@@ -164,7 +164,7 @@ struct PriorityMemQueueHandle {
    - Get `AtomicQueue` at mapped index
    - Call `getSize()` as a cheap pre-filter (2 relaxed loads)
    - If `getSize() > 0`, attempt `dequeue()` via lock-free CAS
-   - On success, return message; on failure (MPSC contention), continue to next priority
+   - On success, return message; on failure (MPMC contention), continue to next priority
 3. If no message found:
    - BLOCKING: `wait()` on semaphore, then re-scan
    - NONBLOCKING: return `EMPTY`

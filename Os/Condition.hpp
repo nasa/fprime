@@ -65,7 +65,7 @@ class ConditionVariableInterface {
     //! \return internal task handle representation
     virtual ConditionVariableHandle* getHandle() = 0;
 
-    //! \brief provide a pointer to a Mutex delegate object
+    //! \brief provide a pointer to a ConditionVariable delegate object
     static ConditionVariableInterface* getDelegate(ConditionVariableHandleStorage& aligned_new_memory);
 };
 

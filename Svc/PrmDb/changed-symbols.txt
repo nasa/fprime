@@ -65,5 +65,5 @@ Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_VALUE
 Svc::PrmDb_PrmWriteError::PARAMETER_VALUE
 
 Svc::PrmDbComponentBase::PRM_WRITE_PARAMETER_VALUE_SIZE
-Svc::PrmDb_PrmWriteError::VALUE_SIZE
+Svc::PrmDb_PrmWriteError::PARAMETER_VALUE_SIZE
 

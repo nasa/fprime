@@ -1,3 +1,3 @@
-This implementation provides the isf the CRC32 hash only, even though other hashes are provided in libcrc.
+F Prime builds the CRC16/CCITT/DNP/Kermit/SICK routines from libcrc; the CRC32 routines are compiled out (see "F PRIME CHANGE" markers) in favor of the Utils/Hash/Crc32 implementation.
 
 Source code was obtained here: http://www.lammertbies.nl/comm/software/

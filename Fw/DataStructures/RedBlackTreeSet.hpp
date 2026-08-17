@@ -1,7 +1,7 @@
 // ======================================================================
 // \file   RedBlackTreeSet.hpp
 // \author bocchino
-// \brief  An array-based set with internal storage
+// \brief  A set based on a red-black tree with internal storage
 // ======================================================================
 
 #ifndef Fw_RedBlackTreeSet_HPP

@@ -47,7 +47,7 @@ name of the port declaration in the component FPP. The function is
 declared in the protected section of the class and has the following
 naming scheme:
 
-> \<port name\>\_handler(NATIVE\_INT\_TYPE portNum, \<argument list\>) =
+> \<port name\>\_handler(FwIndexType portNum, \<argument list\>) =
 > 0;
 
 where
@@ -70,7 +70,7 @@ and type of the port declaration in the component FPP. The function is
 declared in the protected section of the class and has the following
 naming scheme:
 
-> \<port name\>\_out(NATIVE\_INT\_TYPE portNum, \<argument list\>);
+> \<port name\>\_out(FwIndexType portNum, \<argument list\>);
 
 where
 
@@ -93,14 +93,14 @@ If the port is not connected and is called, the code will assert. If the
 design calls for ports that are optionally connected, the connection
 status can be checked before calling via this function:
 
-> isConnected \_\<port name\>\_OutputPort(NATIVE\_INT\_TYPE portNum);
+> isConnected \_\<port name\>\_OutputPort(FwIndexType portNum);
 
 ### Port number calls
 
 A method in the base class can be called to get the number of ports
 available. The method has the following naming scheme:
 
-> NATIVE\_INT\_TYPE getNum\_\<port name\>\_\<direction\>Ports();
+> FwIndexType getNum\_\<port name\>\_\<direction\>Ports();
 
 where
 
@@ -134,7 +134,7 @@ called in the base class to inform the dispatcher of the command that it
 has completed. That function call is as follows:
 
 > void cmdResponse\_out(FwOpcodeType opCode, U32 cmdSeq,
-> Fw::CommandResponse response);
+> Fw::CmdResponse response);
 
 The opcode and cmdSeq values passed by the function should be passed to
 the command response function as well as a status indicating the success
@@ -225,10 +225,10 @@ values.
 
 | Value              | Meaning                                                                                                                                                                                               |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fw::PARAM\_UNINIT  | The code to attempt to retrieve the value was never called. This is most likely an error in forgetting to call the loadParameters() public function for the component during software initialization. |
-| Fw::PARAM\_VALID   | The parameter was successfully retrieved.                                                                                                                                                             |
-| Fw::PARAM\_INVALID | The parameter was not successfully retrieved, and no default was specified.                                                                                                                           |
-| Fw::PARAM\_DEFAULT | The parameter was not successfully retrieved, but a default was provided.                                                                                                                             |
+| Fw::ParamValid::UNINIT  | The code to attempt to retrieve the value was never called. This is most likely an error in forgetting to call the loadParameters() public function for the component during software initialization. |
+| Fw::ParamValid::VALID   | The parameter was successfully retrieved.                                                                                                                                                             |
+| Fw::ParamValid::INVALID | The parameter was not successfully retrieved, and no default was specified.                                                                                                                           |
+| Fw::ParamValid::DEFAULT | The parameter was not successfully retrieved, but a default was provided.                                                                                                                             |
 
 A virtual method is defined in the base class:
 
@@ -313,7 +313,7 @@ override the function with an alternate version.
 
 The function name for ports is as follows:
 
-> void \<port name\>\_preMsgHook(NATIVE\_INT\_TYPE portNum, \<port
+> void \<port name\>\_preMsgHook(FwIndexType portNum, \<port
 > arguments\>);
 
 The values of the port arguments are passed to the function.

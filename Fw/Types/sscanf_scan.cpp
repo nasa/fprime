@@ -1,7 +1,7 @@
 // ======================================================================
-// \title  format.cpp
+// \title  sscanf_scan.cpp
 // \author mstarch
-// \brief  cpp file for c-string format function as a implementation using snprintf
+// \brief  cpp file for c-string scan function as an implementation using vsscanf
 // ======================================================================
 #include <Fw/Types/StringUtils.hpp>
 #include <Fw/Types/scan.hpp>

@@ -52,8 +52,8 @@ The `DpCompression` subtopology is not a stand-alone application. It requires co
 
 ```fpp
 topology Flight {
-  instance DataProducts.Subtopology
-  instance DpCompression.Subtopology
+  import DataProducts.Subtopology
+  import DpCompression.Subtopology
 
   connections Compression {
     DataProducts.Subtopology.dpWriterProcOut -> DpCompression.Subtopology.dpCompressProcIn

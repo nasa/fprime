@@ -48,6 +48,9 @@ Incoming data follows a two-stage deframing process:
 - **Space Packet Framer / Deframer** — CCSDS Space Packet Protocol layer
 - **TM Framer** — CCSDS TM Transfer Frame construction for downlink
 - **TC Deframer** — CCSDS TC Transfer Frame extraction for uplink
+- **Buffer Manager** — Provides buffer allocation for the communications stack
+- **Com Aggregator** — Aggregates framed data streams for the link
+- **APID Manager** — Manages CCSDS APID sequence counts
 - **F Prime Router** — Routes deframed packets to their destinations
 - **Communication Queue** — Queues and prioritizes outgoing data
 - **Frame Accumulator** — Assembles complete frames from byte stream input

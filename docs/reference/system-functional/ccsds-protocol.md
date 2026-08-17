@@ -45,7 +45,7 @@ The TC Deframer implements the CCSDS Telecommand (TC) Space Data Link Protocol (
 
 ### AOS Space Data Link Protocol
 
-The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data Link Protocol (732.0-B-5). AOS provides an alternative to TM for missions requiring more flexible virtual channel management.
+The AOS Framer implements the CCSDS Advanced Orbiting Systems (AOS) Space Data Link Protocol (732.0-B-5) for downlink, and the AOS Deframer extracts packets from received AOS Transfer Frames on uplink. AOS provides an alternative to TM for missions requiring more flexible virtual channel management.
 
 ### Space Data Link Security (SDLS)
 

@@ -1,6 +1,6 @@
 // ======================================================================
-// \title Os/Stub/test/ut/StubCpuTests.cpp
-// \brief tests using stub implementation for Os::Cpu interface testing
+// \title Os/test/ut/cpu/CommonCpuTests.cpp
+// \brief common tests for the Os::Cpu interface
 // ======================================================================
 #include <gtest/gtest.h>
 #include "Os/Cpu.hpp"

@@ -82,7 +82,7 @@ const U32 element = 42;
 const auto status = s1.insert(element);
 ASSERT_EQ(status, Success::SUCCESS);
 // Call the copy constructor
-Set s2;
+Set s2(s1);
 ASSERT_EQ(s2.getSize(), 1);
 ```
 
@@ -190,7 +190,7 @@ ASSERT_EQ(iter, set.end());
 ### 6.5. find
 
 ```c++
-Success find(const K& element, V& value) override
+Success find(const T& element) const override
 ```
 
 Return `m_extSet.find(element)`.

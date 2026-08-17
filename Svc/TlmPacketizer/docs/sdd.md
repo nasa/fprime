@@ -43,7 +43,11 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Svc::Sched`](../../Sched/docs/sdd.md) | Run | Input | Asynchronous | Execute a cycle to write changed telemetry channels\r
 [`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | TlmRecv | Input | Synchronous Input | Update a telemetry channel\r
 [`Fw::Com`](../../../Fw/Com/docs/sdd.md) | PktSend | Output | n/a | Array of ports used to write packets with updated telemetry\r
-[`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups\r
+[`Svc::EnableSection`](../../Ports/TlmPacketizerPorts/sdd.md) | controlIn | Input | Asynchronous | Enable / Disable sections of telemetry groups
+[`Fw::TlmGet`](../../../Fw/Tlm/docs/sdd.md) | TlmGet | Input | Synchronous | Read back the latest value of a telemetry channel
+[`Svc::ConfigureGroupRate`](../../Ports/TlmPacketizerPorts/sdd.md) | configureSectionGroupRate | Input | Asynchronous | Configure the output rate of a section group
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingIn | Input | Asynchronous | Health ping input
+[`Svc::Ping`](../../Ping/docs/sdd.md) | pingOut | Output | n/a | Health ping response\r
 
 #### 3.1.3 Terminology
 
@@ -107,8 +111,7 @@ Updated groups using `ON_CHANGE_MIN` or `ON_CHANGE_MIN_OR_EVERY_MAX` while group
 
 ### 3.5 Algorithms
 
-In order to speed up lookups for storing and reading telemetry channels, a simple hash function is used to select a location in an array of hash table slots.
-A configuration value in `TlmPacketizerImplCfg.h` defines a set of hash buckets to store the telemetry values. The number of buckets has to be at least as large as the number of telemetry channels defined in the system. The number of channels in the system can be determined by invoking `make comp_report_gen` from the deployment directory. The number of has table slots `TLMPACKETIZER_NUM_TLM_HASH_SLOTS` and the hash value `TLMPACKETIZER_HASH_MOD_VALUE` in the configuration file can be varied to balance the amount of memory for slots versus the distribution of buckets to slots. See `TlmPacketizerImplCfg.h` for a procedure on how to tune the algorithm.
+Telemetry channel lookups for storing and reading values use an `Fw::RedBlackTreeMap` keyed by channel ID, sized by `MAX_PACKETIZER_CHANNELS`.
 
 ## 4. Configuration
 
@@ -295,7 +298,7 @@ constant TELEMETRY_SECTION_DEFAULTS = [
 
 To see unit test coverage run fprime-util check --coverage
 
-## 7. Change Log
+## 6. Change Log
 
 Date | Description
 ---- | -----------

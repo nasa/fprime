@@ -43,8 +43,9 @@ no matter what the time given is. After that, trigger will return true only if
 time has elapsed enough for a token to be replenished (in this example, once
 per second).
 
-Note that the max tokens is capped at 1000, currently defined as
-`MAX_TOKEN_BUCKET_TOKENS` in TokenBucket.hpp.
+Note that the two-argument constructor asserts max tokens is at most 1000
+(`MAX_TOKEN_BUCKET_TOKENS` in TokenBucket.hpp); the full constructor and
+`setMaxTokens()` do not enforce this cap.
 
 ### 2.2 Advanced
 

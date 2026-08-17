@@ -86,7 +86,7 @@ void setValue(FwSizeType value)
 
 1. Assert `m_modulus > 0`.
 
-2. Set `m_value = m_value % m_modulus`.
+2. Set `m_value = value % m_modulus`.
 
 ### 3.4. getModulus
 

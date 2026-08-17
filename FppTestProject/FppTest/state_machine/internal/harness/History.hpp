@@ -35,7 +35,7 @@ class History {
     void clear() { this->m_size = 0; }
 
     //! Check two histories for equality
-    bool operator==(History& history  //!< The other history
+    bool operator==(const History& history  //!< The other history
     ) const {
         bool result = (this->m_size == history.m_size);
         if (result) {

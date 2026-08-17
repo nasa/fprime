@@ -44,7 +44,7 @@ class ActiveTextLogger final : public ActiveTextLoggerComponentBase {
     //!  This is to create an optional log file to write all the messages to.
     //!  The file will not be written to once the max size is hit.
     //!
-    //!  \param fileName The name of the file to create.  Must be less than 80 characters.
+    //!  \param fileName The name of the file to create.  Must fit within Fw::FileNameString capacity.
     //!  \param maxSize The max size of the file
     //!  \param maxBackups The maximum backups of the log file. Default: 10
     //!

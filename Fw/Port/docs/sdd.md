@@ -8,21 +8,30 @@ The `Fw::Port` module contains the base classes for input and output ports in th
 
 ### 2.1 Fw::PortBase
 
-The `Fw::PortBase` class is the port base class in the ISF class hierarchy. It is the base class for all ports.  
+The `Fw::PortBase` class is the port base class in the F´ class hierarchy. It is the base class for all ports.  
 
-### 2.2 Fw::ObjRegistry
+### 2.2 Fw::InputPortBase
 
-The `Fw::ObjRegistry` class is a virtual base class for object registry. This is an optional feature that is
-turned on or off with the `FW_OBJECT_REGISTRATION` macro, found in `FpConfig.hpp`. The concept is that
-an object registry provides a way to track all the objects that have been instantiated in the system. The registry
-can query any public functions in `Fw::Object` to get information on the instance. The actual method for storing
-`Fw::Object` pointers and producing data on the instances is left to the derived classes.
+The `Fw::InputPortBase` class is the base class for all input ports. It stores a pointer to the component that owns
+the port and the port number, which are used when invoking the component's handler for the port.
+
+### 2.3 Fw::OutputPortBase
+
+The `Fw::OutputPortBase` class is the base class for all output ports. It supports connecting the output port to an
+input port either directly (typed connection) or via a serialized connection when serialization is enabled.
+
+### 2.4 Fw::InputSerializePort
+
+The `Fw::InputSerializePort` class is an input port that receives serialized buffers. It is used to connect
+serialized output ports to components that handle serialized data (available when `FW_PORT_SERIALIZATION` is enabled).
+
+### 2.5 Fw::OutputSerializePort
+
+The `Fw::OutputSerializePort` class is an output port that sends serialized buffers. It allows a typed input port to
+be driven from a serialized connection (available when `FW_PORT_SERIALIZATION` is enabled).
 
 ## 3. Change Log
 
 Date | Description
 ---- | -----------
 4/24/2016 |  Initial Version
-
-
-

@@ -34,16 +34,16 @@ FormalParamArray arrayReturnSync_handler(FwIndexType portNum,        //!< The po
                                          FormalParamArray& aRef      //!< An array ref
                                          ) override;
 
-//! Handler implementation for arrayReturnGuarded
+//! Handler implementation for arrayStringAliasReturnGuarded
 FormalAliasStringArray arrayStringAliasReturnGuarded_handler(FwIndexType portNum,        //!< The port number
-                                                             const FormalParamArray& a,  //!< A string
-                                                             FormalParamArray& aRef      //!< A string ref
+                                                             const FormalParamArray& a,  //!< An array
+                                                             FormalParamArray& aRef      //!< An array ref
                                                              ) override;
 
-//! Handler implementation for arrayReturnSync
+//! Handler implementation for arrayStringAliasReturnSync
 FormalAliasStringArray arrayStringAliasReturnSync_handler(FwIndexType portNum,        //!< The port number
-                                                          const FormalParamArray& a,  //!< A string
-                                                          FormalParamArray& aRef      //!< A string ref
+                                                          const FormalParamArray& a,  //!< An array
+                                                          FormalParamArray& aRef      //!< An array ref
                                                           ) override;
 
 //! Handler implementation for enumArgsGuarded

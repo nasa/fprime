@@ -65,7 +65,7 @@ Focused on CFDP-based file transfer and on-board file ops only. It does **not** 
 
 ```fpp
 topology Flight {
-  instance FileHandlingCfdp.Subtopology
+  import FileHandlingCfdp.Subtopology
 
   param connections instance FileHandlingCfdp.prmDb
 

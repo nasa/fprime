@@ -141,7 +141,7 @@ def write_mkdocs_nav(root_path, output_file="mkdocs_nav.yml"):
     return yaml_output
 
 
-def write_nav_into_mkdocs(nav: list) -> None:
+def write_nav_into_mkdocs(nav: str) -> None:
     """Replace the body of the existing `nav:` block in mkdocs.yml.
     Everything else in the file is untouched."""
     text = MKDOCS_YML.read_text()
@@ -160,7 +160,7 @@ def write_nav_into_mkdocs(nav: list) -> None:
             end = i
             break
 
-    body = Path("mkdocs_nav.yml").read_text()
+    body = nav
 
     # Indent everything by two spaces
     body = "".join("  " + ln for ln in body.splitlines(keepends=True))

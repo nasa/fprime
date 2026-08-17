@@ -290,6 +290,8 @@ Success pop(T& e) override
 
     1. Set `e = m_items[m_size]`.
 
+    1. Set `status = Success::SUCCESS`.
+
 1. Return `status`.
 
 _Example:_
@@ -320,6 +322,8 @@ Success push(const T& e) override
     1. Set `m_items[m_size] = e`.
 
     1. Increment `m_size`.
+
+    1. Set `status = Success::SUCCESS`.
 
 1. Return `status`.
 

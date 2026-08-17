@@ -1,8 +1,7 @@
 /**
- * FakeLogger.cpp:
+ * CircularState.cpp:
  *
- * Setup a fake logger for use with the testing. This allows for the capture of messages from the system and ensure that
- * the proper log messages are coming through as expected.
+ * Shadow "truth" state model used by the CircularBuffer rule-based tests.
  *
  * @author mstarch
  */

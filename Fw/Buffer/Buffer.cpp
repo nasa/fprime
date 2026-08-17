@@ -21,39 +21,18 @@
 namespace Fw {
 
 Buffer::Buffer()
-    : Serializable(),
-      m_serialize_repr(),
-      m_bufferData(nullptr),
-      m_offset(0),
-      m_size(0),
-      m_capacity(0),
-      m_context(0xFFFFFFFF) {}
+    : Serializable(), m_bufferData(nullptr), m_offset(0), m_size(0), m_capacity(0), m_context(0xFFFFFFFF) {}
 
 Buffer::Buffer(const Buffer& src)
     : Serializable(),
-      m_serialize_repr(),
       m_bufferData(src.m_bufferData),
       m_offset(src.m_offset),
       m_size(src.m_size),
       m_capacity(src.m_capacity),
-      m_context(src.m_context) {
-    if (src.m_bufferData != nullptr) {
-        this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
-    }
-}
+      m_context(src.m_context) {}
 
 Buffer::Buffer(U8* data, FwSizeType size, U32 context)
-    : Serializable(),
-      m_serialize_repr(),
-      m_bufferData(data),
-      m_offset(0),
-      m_size(size),
-      m_capacity(size),
-      m_context(context) {
-    if (m_bufferData != nullptr) {
-        this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);
-    }
-}
+    : Serializable(), m_bufferData(data), m_offset(0), m_size(size), m_capacity(size), m_context(context) {}
 
 Buffer& Buffer::operator=(const Buffer& src) {
     // Ward against self-assignment
@@ -63,9 +42,6 @@ Buffer& Buffer::operator=(const Buffer& src) {
         this->m_size = src.m_size;
         this->m_capacity = src.m_capacity;
         this->m_context = src.m_context;
-        if (this->m_bufferData != nullptr) {
-            this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
-        }
     }
     return *this;
 }
@@ -119,7 +95,6 @@ void Buffer::advance(const FwSignedSizeType amount) {
     this->m_size = static_cast<FwSizeType>(static_cast<FwSignedSizeType>(this->m_size) - amount);
     FW_ASSERT(this->m_offset + this->m_size <= this->m_capacity, static_cast<FwAssertArgType>(this->m_offset),
               static_cast<FwAssertArgType>(this->m_size), static_cast<FwAssertArgType>(this->m_capacity));
-    this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
 }
 
 void Buffer::setData(U8* const data) {
@@ -132,9 +107,6 @@ void Buffer::setSize(const FwSizeType size) {
     FW_ASSERT(this->m_offset + size <= this->m_capacity, static_cast<FwAssertArgType>(this->m_offset),
               static_cast<FwAssertArgType>(size), static_cast<FwAssertArgType>(this->m_capacity));
     this->m_size = size;
-    if (m_bufferData != nullptr) {
-        this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
-    }
 }
 
 void Buffer::setContext(const U32 context) {
@@ -146,9 +118,6 @@ void Buffer::set(U8* const data, const FwSizeType size, const U32 context) {
     this->m_offset = 0;
     this->m_size = size;
     this->m_capacity = size;
-    if (m_bufferData != nullptr) {
-        this->m_serialize_repr.setExtBuffer(this->m_bufferData, this->m_size);
-    }
     this->m_context = context;
 }
 
@@ -222,10 +191,6 @@ Fw::SerializeStatus Buffer::deserializeFrom(Fw::SerialBufferBase& buffer, Fw::En
     stat = buffer.deserializeTo(this->m_capacity, mode);
     if (stat != Fw::FW_SERIALIZE_OK) {
         return stat;
-    }
-
-    if (this->m_bufferData != nullptr) {
-        this->m_serialize_repr.setExtBuffer(this->m_bufferData + this->m_offset, this->m_size);
     }
     return stat;
 }

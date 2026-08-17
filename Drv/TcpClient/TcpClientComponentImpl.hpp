@@ -96,12 +96,10 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
     Fw::Buffer getBuffer() override;
 
     /**
-     * \brief sends a buffer to be filled with data
+     * \brief forwards the filled receive buffer out the recv port
      *
-     * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
-     * component how to send back the buffer. Ignores buffers with error status error.
-     *
-     * \return Fw::Buffer filled with data to send out
+     * Forwards the buffer gotten by getBuffer, now filled with data, out the recv port with the
+     * given status mapped to a ByteStreamStatus.
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
@@ -119,9 +117,9 @@ class TcpClientComponentImpl final : public TcpClientComponentBase, public Socke
      * \brief Send data out of the TcpClient
      *
      * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
-     * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
-     * transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when the data
-     * has been sent.
+     * to. Should the send be interrupted, then this port call will return SEND_RETRY and critical
+     * transmissions should be retried. OTHER_ERROR indicates an unresolvable error (including a closed or
+     * disconnected socket). OP_OK is returned when the data has been sent.
      *
      * Note: this component delegates the reopening of the socket to the read thread and thus the caller should retry
      * after the read thread has attempted to reopen the port but does not need to reopen the port manually.

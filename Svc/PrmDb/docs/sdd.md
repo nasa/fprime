@@ -6,7 +6,7 @@ The `Svc::PrmDb` Component is used to store parameter values used by other compo
 
 ## 2. Requirements
 
-The requirements for `Svc::TlmChan` are as follows:
+The requirements for `Svc::PrmDb` are as follows:
 
 Requirement | Description | Verification Method
 ----------- | ----------- | -------------------
@@ -23,7 +23,7 @@ PRMDB-004 | The `Svc::PrmDb` component shall provide a command to save the curre
 
 The `Svc::PrmDb` component has the following component diagram:
 
-![Svc::PrmDb Diagram](img/PrmDbBDD.jpg "Svc::TlmChan")
+![Svc::PrmDb Diagram](img/PrmDbBDD.jpg "Svc::PrmDb")
 
 #### 3.1.2 Ports
 
@@ -36,7 +36,7 @@ Port | Name | Direction | Type | Usage
 
 #### 3.2 Functional Description
 
-The `Svc::PrmDb` component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occurring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status to the `getPrm` port of `PARAM_INVALID` will be returned, otherwise `PARAM_OK`. 
+The `Svc::PrmDb` component stores parameter values in a table by parameter ID. The table is mutex protected to prevent reading and writing from occurring at the same time. When the parameter file is read, the ID and serialized value are extracted and placed in the table. If an error occurs during the file load, any entries not successfully loaded will return a status of `PARAM_INVALID` to the `getPrm` port; otherwise `PARAM_VALID` is returned. 
 
 When a new parameter value is written to the `setPrm` port, the table in memory is updated, and the flag indicating a valid value is set.
 
@@ -86,7 +86,7 @@ This diagram shows the scenario where parameters are saved to a file.
 
 ### 3.4 State
 
-`Svc::PrmDb` has no state machines.
+`Svc::PrmDb` uses the `PrmDbFileLoadState` state machine (IDLE, LOADING_FILE_UPDATES, FILE_UPDATES_STAGED) to gate the `PRM_LOAD_FILE` and `PRM_COMMIT_STAGED` staged-load commands.
 
 ### 3.5 Algorithms
 

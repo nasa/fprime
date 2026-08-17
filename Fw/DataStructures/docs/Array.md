@@ -68,8 +68,6 @@ Array<U32, 3> a({ 1, 2, 3 });
 Array(const Elements& elements)
 ```
 
-1. Statically assert that `S1 == S`.
-
 1. Set `*this = elements`.
 
 _Example:_

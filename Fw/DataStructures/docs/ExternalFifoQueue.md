@@ -260,6 +260,8 @@ Success enqueue(const T& e) override
 
     1. Increment `m_size`.
 
+    1. Set `status = Success::SUCCESS`.
+
 1. Return `status`.
 
 _Example:_
@@ -315,6 +317,8 @@ Success dequeue(T& e) override
     1. Call `m_dequeueIndex.increment()`.
 
     1. Decrement `m_size`.
+
+    1. Set `status = Success::SUCCESS`.
 
 1. Return `status`.
 

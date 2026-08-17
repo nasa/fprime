@@ -101,15 +101,6 @@ CListTraverseStatus Transaction::prioritySearchCallback(CListNode* node, void* c
     return CLIST_TRAVERSE_CONTINUE;
 }
 
-// Legacy wrappers for backward compatibility
-CListTraverseStatus FindTransactionBySequenceNumberImpl(CListNode* node, void* context) {
-    return Transaction::findBySequenceNumberCallback(node, context);
-}
-
-CListTraverseStatus PrioSearch(CListNode* node, void* context) {
-    return Transaction::prioritySearchCallback(node, context);
-}
-
 bool TxnStatusIsError(TxnStatus txn_stat) {
     // The value of TxnStatus::TXN_STATUS_UNDEFINED (-1) indicates a transaction is in progress and no error
     // has occurred yet.  This will be set to TxnStatus::TXN_STATUS_NO_ERROR (0) after successful completion

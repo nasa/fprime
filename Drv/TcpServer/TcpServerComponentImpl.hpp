@@ -56,7 +56,7 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
      * example, "0.0.0.0" to bind on all interfaces, or "127.0.0.1" for loopback only).
      *
      * \param ipv4_address: IPv4 address to bind for listening, in dotted-quad form "x.x.x.x"
-     * \param port: port of remote tcp server
+     * \param port: local port to bind and listen on (0 to auto-select)
      * \param send_timeout_seconds: send timeout seconds component. Defaults to: SOCKET_TIMEOUT_SECONDS
      * \param send_timeout_microseconds: send timeout microseconds component. Must be less than 1000000.
      *        Defaults to: SOCKET_TIMEOUT_MICROSECONDS
@@ -129,12 +129,10 @@ class TcpServerComponentImpl final : public TcpServerComponentBase, public Socke
     Fw::Buffer getBuffer() override;
 
     /**
-     * \brief sends a buffer to be filled with data
+     * \brief forwards the filled receive buffer out the recv port
      *
-     * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
-     * component how to send back the buffer. Ignores buffers with error status error.
-     *
-     * \return Fw::Buffer filled with data to send out
+     * Forwards the buffer gotten by getBuffer, now filled with data, out the recv port with the
+     * given status mapped to a ByteStreamStatus.
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 

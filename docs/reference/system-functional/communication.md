@@ -69,7 +69,7 @@ This protocol is designed for simplicity and is commonly used for development an
 
 ### Splitting and Aggregation
 
-- [CmdSplitter](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md) — Duplicates incoming command buffers to multiple outputs, enabling redundant command processing paths.
+- [CmdSplitter](https://github.com/nasa/fprime/blob/devel/Svc/CmdSplitter/docs/sdd.md) — Routes each incoming command to a local or remote command dispatcher based on a configured opcode base, supporting the hub pattern.
 - [ComSplitter](https://github.com/nasa/fprime/blob/devel/Svc/ComSplitter/ComSplitter.fpp) — Distributes outgoing communication buffers to multiple output ports.
 - [ComAggregator](https://github.com/nasa/fprime/blob/devel/Svc/ComAggregator/docs/sdd.md) — Merges data from multiple input sources into a single output stream.
 

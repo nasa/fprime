@@ -10,13 +10,13 @@ namespace Os {
 namespace Linux {
 namespace Memory {
 
-//! MemoryHandle class definition for stub implementations.
+//! MemoryHandle class definition for the Linux implementation.
 //!
 struct LinuxMemoryHandle : public MemoryHandle {};
 
-//! \brief stub implementation of Os::MemoryInterface
+//! \brief Linux implementation of Os::MemoryInterface
 //!
-//! Linux implementation of `MemoryInterface` for use as a delegate class handling stub console operations.
+//! Linux implementation of `MemoryInterface` for use as a delegate class handling memory usage queries.
 //!
 class LinuxMemory : public MemoryInterface {
   public:
@@ -46,17 +46,17 @@ class LinuxMemory : public MemoryInterface {
     //! \return:  ERROR when error occurs, OK otherwise.
     Status _getUsage(Os::Memory::Usage& memory_usage) override;
 
-    //! \brief returns the raw console handle
+    //! \brief returns the raw memory handle
     //!
-    //! Gets the raw console handle from the implementation. Note: users must include the implementation specific
+    //! Gets the raw memory handle from the implementation. Note: users must include the implementation specific
     //! header to make any real use of this handle. Otherwise it will be as an opaque type.
     //!
-    //! \return raw console handle
+    //! \return raw memory handle
     //!
     MemoryHandle* getHandle() override;
 
   private:
-    //! File handle for PosixFile
+    //! Memory handle for LinuxMemory
     LinuxMemoryHandle m_handle;
 };
 }  // namespace Memory

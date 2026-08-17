@@ -26,7 +26,7 @@ as the set implementation.
 
 |Name|Definition|
 |----|----------|
-|`ConstIterator`|Alias of [`MapConstIterator<T>`](MapConstIterator.md)|
+|`ConstIterator`|Alias of [`SetConstIterator<T>`](SetConstIterator.md)|
 |`Entry`|Alias of [`SetOrMapImplEntry<T, Nil>`](SetOrMapImplEntry.md)|
 
 The type `Nil` is defined [in this file](Nil.md).

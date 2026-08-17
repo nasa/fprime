@@ -297,7 +297,7 @@ class Task final : public TaskInterface {
     void onStart() override;
 
     //! \brief invoke the task's routine
-    //~
+    //!
     //! This will invoke the task's routine passing this as the argument to that call. This is used as a helper when
     //! running this task (e.g. repetitive cooperative calls).
     void invokeRoutine();

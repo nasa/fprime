@@ -1,5 +1,5 @@
 // ======================================================================
-// \title Os/test/ut/file/MyRules.cpp
+// \title Os/test/ut/file/FileRules.cpp
 // \brief rule implementations for common testing
 // ======================================================================
 #include <Fw/Types/String.hpp>

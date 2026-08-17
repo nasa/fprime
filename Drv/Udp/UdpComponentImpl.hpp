@@ -29,7 +29,7 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     // ----------------------------------------------------------------------
 
     /**
-     * \brief construct the TcpClient component.
+     * \brief construct the Udp component.
      * \param compName: name of this component
      */
     UdpComponentImpl(const char* const compName);
@@ -103,7 +103,7 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
      * \brief returns a reference to the socket handler
      *
      * Gets a reference to the current socket handler in order to operate generically on the IpSocket instance. Used for
-     * receive, and open calls. This socket handler will be a TcpClient.
+     * receive, and open calls. This socket handler will be a UdpSocket.
      *
      * \return IpSocket reference
      */
@@ -120,12 +120,10 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     Fw::Buffer getBuffer() override;
 
     /**
-     * \brief sends a buffer to be filled with data
+     * \brief forwards the filled receive buffer out the recv port
      *
-     * Sends the buffer gotten by getBuffer that has now been filled with data. This is used to delegate to the
-     * component how to send back the buffer. Ignores buffers with error status error.
-     *
-     * \return Fw::Buffer filled with data to send out
+     * Forwards the buffer gotten by getBuffer, now filled with data, out the recv port with the
+     * given status mapped to a ByteStreamStatus.
      */
     void sendBuffer(Fw::Buffer buffer, SocketIpStatus status) override;
 
@@ -140,12 +138,12 @@ class UdpComponentImpl : public UdpComponentBase, public SocketComponentHelper {
     // ----------------------------------------------------------------------
 
     /**
-     * \brief Send data out of the TcpClient
+     * \brief Send data out of the Udp component
      *
-     * Passing data to this port will send data from the TcpClient to whatever TCP server this component has connected
-     * to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY and critical
-     * transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when the data
-     * has been sent.
+     * Passing data to this port will send data from the Udp component to whatever UDP peer this component has
+     * connected to. Should the socket not be opened or was disconnected, then this port call will return SEND_RETRY
+     * and critical transmissions should be retried. OTHER_ERROR indicates an unresolvable error. OP_OK is returned when
+     * the data has been sent.
      *
      * Note: this component delegates the reopening of the socket to the read thread and thus the caller should retry
      * after the read thread has attempted to reopen the port but does not need to reopen the port manually.

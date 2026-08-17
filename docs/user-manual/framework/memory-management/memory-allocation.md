@@ -80,7 +80,7 @@ The following steps outline the design pattern for using `Fw::MemAllocator` in a
 4. **Update Topology Configuration and Teardown**: In your deployment's `Topology.cpp` (or phase code if you use phases), ensure to call `setup()` and `cleanup()`, choosing an appropriate `Fw::MemAllocator` implementation to pass in. For demonstration purposes, let's imagine that we need two instances of `MyComponent`, each requiring different memory sizes:
 
     ```cpp
-    #include "Fw/MemAllocator/MemAllocator.hpp"
+    #include "Fw/Types/MemAllocator.hpp"
     static Fw::MallocAllocator mallocAllocator;  // Here we choose to use the MallocAllocator implementation
 
     void configureTopology() {

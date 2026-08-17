@@ -198,7 +198,7 @@ Port handlers return `Drv::GpioStatus`:
 | INVALID_MODE | Operation not permitted with the current configuration |
 | UNKNOWN_ERROR | An unknown error occurred |
 
-`open()` returns `Os::File::Status`, translated from the `errno` reported by the underlying system call. Note: in the current implementation, a request for a line number beyond the chip's line count logs `OpenPinError` but returns the preceding status (`OP_OK`); callers should not rely on `open()` returning an error in that case.
+`open()` returns `Os::File::Status`, translated from the `errno` reported by the underlying system call. A request for a line number beyond the chip's line count logs `OpenPinError` and returns `DOESNT_EXIST`.
 
 ### 5.4 Events
 

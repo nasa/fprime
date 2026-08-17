@@ -123,7 +123,6 @@ Directory::Status Directory::readDirectory(Fw::ExternalArray<Fw::String>& filena
     }
 
     Status readStatus = Status::OP_OK;
-    Status returnStatus = Status::OP_OK;
     FwSizeType index;
     filenameCount = 0;
     // Iterate through the directory and read the filenames into the array
@@ -141,7 +140,7 @@ Directory::Status Directory::readDirectory(Fw::ExternalArray<Fw::String>& filena
         return Status::OTHER_ERROR;
     }
 
-    return returnStatus;
+    return Status::OP_OK;
 }
 
 Directory::Status Directory::readDirectory(Fw::String filenameArray[],

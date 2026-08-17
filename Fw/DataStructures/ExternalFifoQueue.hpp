@@ -102,7 +102,7 @@ class ExternalFifoQueue final : public FifoQueueBase<T> {
 
     //! Enqueue an element (push on the right)
     //! \return SUCCESS if element enqueued
-    Success enqueue(const T& e  //!< The element (output)
+    Success enqueue(const T& e  //!< The element (input)
                     ) override {
         auto status = Success::FAILURE;
         if (this->m_size < this->getCapacity()) {

@@ -833,39 +833,7 @@ If `node` has no child in that direction, then the result is `node`.
 1. Return `node`.
 
 
-### 8.5. getPredecessorOfNone
-
-```c++
-Node::Index getPredecessorOfNone(Node::Index node, Direction direction) const
-```
-
-**Overview:**
-This function gets the predecessor of a `NONE` node, specified as
-(1) a node, which is either `NONE` itself or a node with a `NONE` child;
-and (2) a direction.
-The predecessor of a node is the predecessor in the inorder traversal of the
-tree.
-
-If `node` is `NONE`, then the function returns `NONE` and ignores `direction`.
-Otherwise, the function returns the predecessor of the
-the child of `node` in the direction `direction`, assuming that the
-child is `NONE`.
-
-**Algorithm:**
-
-1. Set `result = node`.
-
-1. If `node != NONE`
-
-    1. Set `parent = m_nodes[node].parent`.
-
-    1. If `parent == NONE` and `direction == LEFT` then set `result = NONE`.
-
-    1. If `parent != NONE` and `m_nodes[parent].direction != direction` then set `result = parent`.
-
-1. Return `result`.
-
-### 8.6. insertNode
+### 8.5. insertNode
 
 ```c++
 void insertNode(Node::Index node, Node::Index parent, Direction direction)
@@ -1020,7 +988,7 @@ It is not permissible for `node` to be `NONE`.
 
 1. _Here the tree is a red-black tree._
 
-### 8.7. removeNode
+### 8.6. removeNode
 
 ```c++
 void removeNode(Node::Index node, Node::Index& removedNode)
@@ -1043,7 +1011,7 @@ On return, `removedNode` stores the node that was actually removed.
 
    1. Set `removedNode = node`.
 
-### 8.8. removeBlackLeafNode
+### 8.7. removeBlackLeafNode
 
 ```c++
 void removeBlackLeafNode(Node::Index node)
@@ -1360,7 +1328,7 @@ It must not be `NONE`.
 
 1. _The tree is a valid red-black tree._
 
-### 8.9. removeBlackLeafNodeHelper1
+### 8.8. removeBlackLeafNodeHelper1
 
 ```c++
 void removeBlackLeafNodeHelper1(
@@ -1388,7 +1356,7 @@ written).
 
 1. Set `sibling = closeNephew`.
 
-### 8.10. removeBlackLeafNodeHelper2
+### 8.9. removeBlackLeafNodeHelper2
 
 ```c++
 void removeBlackLeafNodeHelper2(
@@ -1412,7 +1380,7 @@ This is a helper function for `removeBlackLeafNode`.
 
 1. Set `m_nodes[distantNephew].color = Color::BLACK`.
 
-### 8.11. removeNodeWithAtMostOneChild
+### 8.10. removeNodeWithAtMostOneChild
 
 ```c++
 void removeNodeWithAtMostOneChild(Node::Index node)
@@ -1438,7 +1406,7 @@ It must not be `NONE`.
 
 1. Otherwise call `removeBlackLeafNode(node)`.
 
-### 8.12. removeNodeWithOneChild
+### 8.11. removeNodeWithOneChild
 
 ```c++
 void removeNodeWithOneChild(Node::Index node, Direction direction)
@@ -1473,7 +1441,7 @@ It must not be `NONE`.
 
 1. Set `m_nodes[child].color = BLACK`.
 
-### 8.13. removeNodeWithTwoChildren
+### 8.12. removeNodeWithTwoChildren
 
 ```c++
 void removeNodeWithTwoChildren(Node::Index node, Node::Index& removedNode)
@@ -1495,7 +1463,7 @@ On return, `removedNode` stores the node that was actually removed.
 
 1. Call `removeNodeWithAtMostOneChild(removedNode)`.
 
-### 8.14. removeRedLeafNode
+### 8.13. removeRedLeafNode
 
 ```c++
 void removeRedLeafNode(Node::Index node)
@@ -1519,7 +1487,7 @@ It must not be `NONE`.
 
 1. Call `m_nodes[parent].setChild(direction, NONE)`.
 
-### 8.15. rotateSubtree
+### 8.14. rotateSubtree
 
 ```c++
 void rotateSubtree(Node::Index node, Direction direction)

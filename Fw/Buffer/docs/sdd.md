@@ -63,7 +63,7 @@ The following contractual expectations apply:
 
 ### 2.2 The Port Fw::BufferGet
 
-As shown in the following diagram, `Fw::BufferGet` has one argument `size` of type `U32`. It returns a value of type
+As shown in the following diagram, `Fw::BufferGet` has one argument `size` of type `FwSizeType`. It returns a value of type
 `Fw::Buffer`. The returned `Fw::Buffer` must be checked for validity before using.
 
 ![`Fw::BufferGet` Diagram](img/BufferGetBDD.jpg "Fw::BufferGet Port")

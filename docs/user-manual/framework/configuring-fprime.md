@@ -124,6 +124,7 @@ The following time base options are required:
 | Enum | Description |
 |------|-------------|
 | TB_NONE | No time base has been established |
+| TB_PROC_TIME | Indicates time is processor cycle time |
 | TB_WORKSTATION_TIME | Time as reported on workstation where software is running. For testing. |
 | TB_DONT_CARE | Don't care value for sequences. If FwTimeBaseStoreType is changed, value should be changed |
 
@@ -231,7 +232,7 @@ Setting assert level `FW_FILEID_ASSERT`  saves a lot of code space since no file
 supplies this to the compiler by hashing the file name. The original filename can be recovered by running
 `fprime-util hash-to-file <hash>`.
 
-Setting assert level to `FW_ASSERT_TEXT_SIZE` can ease debugging asserts, but typically `FW_ASSERT_TEXT_SIZE` must be
+Setting assert level to `FW_FILENAME_ASSERT` can ease debugging asserts, but typically `FW_ASSERT_TEXT_SIZE` must be
 increased as most file name paths are longer than 120.
 
 
@@ -239,7 +240,7 @@ increased as most file name paths are longer than 120.
 
 When components are interconnected, it is often useful to trace the set of invocations through components and ports. The
 port base class has a `trace()` call that is invoked by the derived port classes whenever the port is invoked. The
-`trace()` calls `Os::Log::log()` with the name of the port once the port base class method `setTrace()` has been called.
+`trace()` calls `Fw::Logger::log()` with the name of the port once the static port base class method `setTrace()` has been called.
 Individual ports can have tracing turned on and off by calling the `overrideTrace()` method on the port instance.
 Table 39 provides the macro to configure this feature.
 
@@ -295,15 +296,15 @@ Table 42 provides the macros to configure these features.
 
 | Macro                           | Definition                                            | Default | Valid Values     |
 | ------------------------------- | ------------------------------------------------------|---------|------------------|
-| FW_COM_BUFFER_MAX_SIZE          | Defines the size of a com buffer                      | 128     | Positive integer |
+| FW_COM_BUFFER_MAX_SIZE          | Defines the size of a com buffer                      | 512     | Positive integer |
 | FW_CMD_ARG_BUFFER_MAX_SIZE      | Defines the size of command argument buffers          | Derived |                  |
 | FW_CMD_STRING_MAX_SIZE          | Defines the maximum size of a command string argument | 40      |                  |
 | FW_LOG_BUFFER_MAX_SIZE          | Defines the size of event buffers                     | Derived |                  |
-| FW_LOG_STRING_MAX_SIZE          | Defines the maximum size of an event string argument  | 100     |                  |
+| FW_LOG_STRING_MAX_SIZE          | Defines the maximum size of an event string argument  | 200     |                  |
 | FW_TLM_BUFFER_MAX_SIZE          | Defines the size of telemetry channel buffers         | Derived |                  |
 | FW_TLM_STRING_MAX_SIZE          | Defines the maximum size of a channel string value    | 40      |                  |
-| FW_PRM_BUFFER_MAX_SIZE          | Defines the size of parameter buffers                 | Derived |                  |
-| FW_PRM_STRING_MAX_SIZE          | Defines the maximum size of a parameter string value  | 40      |                  |
+| FW_PARAM_BUFFER_MAX_SIZE        | Defines the size of parameter buffers                 | Derived |                  |
+| FW_PARAM_STRING_MAX_SIZE        | Defines the maximum size of a parameter string value  | 40      |                  |
 
 Other Buffers are defined in the system for specific purposes. These do not need to fit inside a comm buffer, and thus
 are less restrictive in size.

@@ -75,7 +75,7 @@ Below is an example of how to run the sample example sequence with the Ref dicti
 dictionary will not be generated.
 
 ```
-fprime-seqgen fprime/Gds/examples/simple_sequence.seq -d fprime/build-artifacts/*/Ref/dict/RefTopologyDictionary.json
+fprime-seqgen simple_sequence.seq -d fprime/build-artifacts/*/Ref/dict/RefTopologyDictionary.json
 ```
 
 Here the output file is not specified, so it will be a new file in the same directory as the sequence but ending with
@@ -122,10 +122,10 @@ source. The available time sources are listed below:
 
 | Timebase | Value | Explanation |
 |---|---|---|
+| TB_NONE | 0 | No time base has been established |
 | TB_PROC_TIME | 1 | Sequence will run when only raw processor time is reported |
 | TB_WORKSTATION_TIME | 2 | Sequence will run when time is synchronized with test workstation (for testing) |
 | TB_SC_TIME | 3 | Sequence will run when time is synchronized with spacecraft time |
-| TB_FPGA_TIME | 4 | Sequence will run when time is synchronized with FPGA/hardware clock |
 | TB_DONT_CARE | 0xFFFF | Sequence will run regardless of flight software timebase |
 
 > [!NOTE]

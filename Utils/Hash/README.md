@@ -18,8 +18,8 @@ A specific implementation can be selected by modifying the `HashConfig.hpp` file
 
 ## Using `hash`
 
-The generic hash interface includes only 4 methods besides the constructor/destructor. A 
-description of each method is included below:
+The core generic hash interface methods are described below; `Hash` additionally provides `setHashValue`, a `finalize(U32&)` overload, and file-extension helpers (`getFileExtensionString`, `addFileExtension`, `getFileExtensionLength`). A 
+description of each core method is included below:
 
 `hash.init()` - This method initializes the hash object, priming it for computing a new hash. It 
 should be run before beginning to calculate each new hash. It resets any state remaining

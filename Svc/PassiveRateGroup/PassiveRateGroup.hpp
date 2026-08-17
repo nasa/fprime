@@ -21,13 +21,13 @@
 
 namespace Svc {
 
-//! \class PassiveRateGroupImpl
+//! \class PassiveRateGroup
 //! \brief Executes a set of components as part of a rate group
 //!
 //! PassiveRateGroup takes an input cycle call to begin the rate group cycle.
 //! It calls each output port in succession and passes the value in the context
 //! array at the index corresponding to the output port number. It keeps track of the execution
-//! time of the rate group and detects overruns.
+//! time of the rate group.
 //!
 
 class PassiveRateGroup final : public PassiveRateGroupComponentBase {
@@ -40,13 +40,13 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     //! Array of context values for rate group members, indexed by output port number
     using ContextArray = Fw::Array<U32, CONNECTION_COUNT_MAX>;
 
-    //!  \brief PassiveRateGroupImpl constructor
+    //!  \brief PassiveRateGroup constructor
     //!
     //!  The constructor of the class clears all the flags and copies the
     //!  contents of the context array to private storage.
     //!
     //!  \param compName Name of the component
-    explicit PassiveRateGroup(const char* compName);  //!  \brief PassiveRateGroupImpl initialization function
+    explicit PassiveRateGroup(const char* compName);
 
     //!  \brief PassiveRateGroup configuration function
     //!
@@ -73,7 +73,7 @@ class PassiveRateGroup final : public PassiveRateGroupComponentBase {
     DEPRECATED(void configure(const U32 contexts[], const FwIndexType numContexts),
                "Use configure(const PassiveRateGroup::ContextArray& contexts) instead");
 
-    //!  \brief PassiveRateGroupImpl destructor
+    //!  \brief PassiveRateGroup destructor
     //!
     //!  The destructor of the class is empty
     ~PassiveRateGroup();

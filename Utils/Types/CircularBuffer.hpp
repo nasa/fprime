@@ -5,8 +5,8 @@
  * data store as the backing for this buffer. Thus it is dependent on receiving sole ownership
  * of the supplied buffer.
  *
- * Note: this given implementation loses one byte of the data store in order to ensure that a
- * separate wrap-around tracking variable is not needed.
+ * Note: the implementation tracks the allocated size explicitly, so the full
+ * data store is usable (no byte is sacrificed for wrap-around tracking).
  *
  *  Created on: Apr 4, 2019
  *      Author: lestarch

@@ -280,7 +280,7 @@ FileSystem::Status FileSystem::handleDirectoryError(Directory::Status dirStatus)
             status = FileSystem::OTHER_ERROR;
     }
     return status;
-}  // end handleFileError
+}  // end handleDirectoryError
 
 FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwSizeType size) {
     static_assert(FILE_SYSTEM_FILE_CHUNK_SIZE != 0, "FILE_SYSTEM_FILE_CHUNK_SIZE must be >0");

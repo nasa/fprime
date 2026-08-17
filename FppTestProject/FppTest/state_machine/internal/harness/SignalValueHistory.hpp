@@ -45,10 +45,10 @@ class SignalValueHistory {
     }
 
     //! Check two histories for equality
-    bool operator==(SignalValueHistory& history  //!< The other history
+    bool operator==(const SignalValueHistory& history  //!< The other history
     ) const {
-        return (this->m_size == history.m_size) && (this->m_signals = history.m_signals) &&
-               (this->m_values = history.m_values);
+        return (this->m_size == history.m_size) && (this->m_signals == history.m_signals) &&
+               (this->m_values == history.m_values);
     }
 
     //! Push an item on the history

@@ -90,7 +90,7 @@ class MyCustomApp(GdsStandardApp):
 
     def __init__(self, no_op_rate, **kwargs):
         super().__init__(**kwargs)
-        self.no_op_rate = custom_rate
+        self.no_op_rate = no_op_rate
 
     def start(self, pipeline):
         print("App started: " + self.no_op_rate)
@@ -99,12 +99,11 @@ class MyCustomApp(GdsStandardApp):
             time.sleep(self.no_op_rate)
     
     def get_additional_arguments(self):
-        from argparse import ArgumentParser
         return {("--no-op-rate",): {
             "type": int,
             "default": 10,
             "help": "Rate to emit no-ops"
-        }
+        }}
 ```
 
 > [!NOTE]

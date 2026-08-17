@@ -137,7 +137,7 @@ class QueueInterface {
     virtual FwSizeType getMessageHighWaterMark() const = 0;
 
     //! \brief return the underlying queue handle (implementation specific)
-    //! \return internal task handle representation
+    //! \return internal queue handle representation
     virtual QueueHandle* getHandle() = 0;
 
     //! \brief provide a pointer to a queue delegate object
@@ -198,7 +198,6 @@ class Queue final : public QueueInterface {
     //!
     //! Allow for queues to deallocate resources as part of system shutdown. This delegates to the underlying queue
     //! implementation.
-    //! implementation.
     void teardown() override;
 
     //! \brief send a message into the queue through delegate
@@ -255,7 +254,7 @@ class Queue final : public QueueInterface {
     FwSizeType getMessageHighWaterMark() const override;
 
     //! \brief return the underlying queue handle (implementation specific). Delegates to implementation.
-    //! \return internal task handle representation
+    //! \return internal queue handle representation
     QueueHandle* getHandle() override;
 
     //! \brief send a message to a queue
