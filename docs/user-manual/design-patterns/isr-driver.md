@@ -151,7 +151,8 @@ active component MyDriver {
     async input port run: Svc.Sched
 
     # Internal interface for ISR reporting
-    internal port IsrReport(interrupts: U32)
+    # `drop` queue-full behavior: a full queue must drop (not FW_ASSERT) in ISR context
+    internal port IsrReport(interrupts: U32) drop
 
     # Port to send timer ticks
     # NOTE: invoked in ISR context, so it must be connected to a `sync` input
@@ -175,6 +176,8 @@ active component MyDriver {
     # ...
 }
 ```
+
+The internal port declares the `drop` queue-full behavior. The default behavior is `assert`, which calls `FW_ASSERT` when the message queue is full — unacceptable in ISR context (see [Asserts and ISR Context](#asserts-and-isr-context)). With `drop`, the generated invoke increments the component's dropped-message counter and returns instead. Size the component's message queue for the worst-case interrupt burst so drops do not occur in normal operation.
 
 ### Header File Structure
 
@@ -362,7 +365,7 @@ The default implementation, `Os::Generic::PriorityQueue`, uses `Os::Mutex` and c
 - [`Os::Generic::LocklessPriorityQueue`](../../../Os/Generic/docs/sdd.md#oslocklesspriorityqueue) - lock-free, full priority range, allocation only at `create` time
 - [`Os::Generic::PriorityMemQueue`](../../../Os/Generic/docs/sdd.md#osprioritymemqueue) - lock-free, per-priority memory pools and configuration
 
-Both allocate all memory up front, and only their non-blocking send/receive paths are ISR-safe; the blocking variants must not be called from an ISR.
+Both allocate all memory up front. `LocklessPriorityQueue`'s non-blocking send/receive paths are fully lock-free and ISR-safe; `PriorityMemQueue`'s non-blocking send posts a counting semaphore, so its ISR safety is platform-dependent — verify `Os_CountingSemaphore` ISR safety for the target (see its SDD). The blocking variants of both must not be called from an ISR.
 
 The implementation is selected at build time with the `CHOOSES_IMPLEMENTATIONS` directive (`Os_Generic_LocklessPriorityQueue` or `Os_Generic_PriorityMemQueue`), either in the platform definition or as a per-deployment override. See [CMake Implementations](../build-system/cmake-implementations.md).
 
