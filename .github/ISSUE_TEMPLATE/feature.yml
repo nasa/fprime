@@ -9,12 +9,16 @@ body:
     attributes:
       label: F´ version and affected component
       description: Which version of F´ are you using, and which component would this feature affect?
-      value: devel
+      value: devel / <component>
   - type: textarea
     id: description
     attributes:
       label: Feature description and rationale
       description: Describe the feature you are requesting and why F´ needs it.
+      value: |
+        ### Feature description
+
+        ### Rationale
     validations:
       required: true
   - type: textarea

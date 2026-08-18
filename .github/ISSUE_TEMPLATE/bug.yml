@@ -9,7 +9,7 @@ body:
     attributes:
       label: F´ version and affected component
       description: Which version of F´ are you using, and which component is affected?
-      value: devel
+      value: devel / <component>
   - type: textarea
     id: description
     attributes:

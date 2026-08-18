@@ -7,12 +7,18 @@ body:
     attributes:
       label: F´ version and affected component
       description: Which version of F´ are you using, and which component would this task affect?
-      value: devel
+      value: devel / <component>
   - type: textarea
     id: description
     attributes:
       label: Task description, rationale, and proposed approach
       description: Describe the task, why it should be completed, and optionally how it could be completed.
+      value: |
+        ### Task description
+
+        ### Rationale
+
+        ### Proposed approach
     validations:
       required: true
   - type: checkboxes
