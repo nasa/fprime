@@ -34,6 +34,6 @@ body:
       options:
         - label: I searched existing issues and discussions.
           required: true
-        - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
+        - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md#the-decision-making-process) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
           required: true
         - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).
