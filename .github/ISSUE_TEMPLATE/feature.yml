@@ -15,11 +15,6 @@ body:
         ### Rationale
     validations:
       required: true
-  - type: textarea
-    id: proposed-approach
-    attributes:
-      label: Proposed approach
-      description: Optionally describe how this feature could be implemented.
   - type: checkboxes
     id: breaking-change
     attributes:
