@@ -196,7 +196,14 @@ void WasmSequencer ::respondToWaiting(const Fw::CmdResponse& response) {
     }
 }
 
-void WasmSequencer ::reportSeqDone(const Fw::CmdResponse& response) {
+void WasmSequencer ::reportSeqDone(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response) {
+    // seqStart/seqDone are RUN-scoped: seqStartOut is only emitted for RUN sources
+    // (see reportModuleStarted), so only emit the matching seqDoneOut for those.
+    // A non-RUN completion (INVOKE / LOAD) reports neither, keeping the pair balanced.
+    if (value.get_source() != Svc::WasmSequencer_SignalSource::COMMAND_RUN &&
+        value.get_source() != Svc::WasmSequencer_SignalSource::PORT_RUN) {
+        return;
+    }
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         this->seqDoneOut_out(0, 0, 0, response);
     }

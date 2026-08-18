@@ -30,12 +30,15 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_processInvo
 
     if (findStatus != SPACEWASM_OK) {
         this->log_WARNING_LO_ModuleNotFound(value.get_moduleName());
-        this->cmdResponse_out(value.get_context().get_opcode(), value.get_context().get_cmdSeq(),
-                              Fw::CmdResponse::EXECUTION_ERROR);
-        return;
+        this->controller_sendSignal_invokeFailed(value.get_context());
+    } else {
+        // Store the arguments for the ARGS host function round trip and carry the
+        // resolved module index forward in the request context.
+        this->m_args = value.get_args();
+        Svc::WasmSequencer_RequestContext context = value.get_context();
+        context.set_moduleIdx(static_cast<WasmSequencer_ModuleIdx>(moduleIdx));
+        this->controller_sendSignal_invoked(context);
     }
-
-    this->controller_sendSignal_invoked(value.get_context());
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_noblock_OK(
@@ -89,7 +92,7 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_blo
     this->respondToWaiting(Fw::CmdResponse::OK);
 
     // If this concluded an active RUN, report the done to internal callers.
-    this->reportSeqDone(Fw::CmdResponse::OK);
+    this->reportSeqDone(value, Fw::CmdResponse::OK);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_block_ERROR(
@@ -106,13 +109,17 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_respond_blo
     this->respondToWaiting(Fw::CmdResponse::EXECUTION_ERROR);
 
     // If this concluded an active RUN, report the done to internal callers.
-    this->reportSeqDone(Fw::CmdResponse::EXECUTION_ERROR);
+    this->reportSeqDone(value, Fw::CmdResponse::EXECUTION_ERROR);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_load(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_LoadRequest& value) {
+    FW_ASSERT(this->m_wasm != nullptr);
+
+    this->m_args = value.get_args();
+
     // Resolve the requested path against the SEQ_BASE_DIR parameter. An empty
     // base dir (the default) means paths are used verbatim; otherwise a single
     // '/' is inserted between the base dir and the requested path, matching the

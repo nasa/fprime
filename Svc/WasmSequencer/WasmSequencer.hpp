@@ -879,11 +879,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! Send response to all waiting requests
     void respondToWaiting(const Fw::CmdResponse& response);
 
-    //! Report that the active RUN finished on seqDoneOut (if connected) with the
-    //! given response, and clear the active-run flag. A no-op when no run is
-    //! active, so it is safe to call from every terminal responder. Called from
-    //! the respond_* state-machine actions that conclude a request.
-    void reportSeqDone(const Fw::CmdResponse& response);
+    //! Report that a RUN finished on seqDoneOut (if connected) with the given
+    //! response. Only emits for RUN-sourced requests, matching the RUN-gated
+    //! seqStartOut in reportModuleStarted, so the seqStart/seqDone pair stays
+    //! balanced. A no-op for INVOKE/LOAD, so it is safe to call from every
+    //! terminal responder.
+    void reportSeqDone(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
     void hostFprimeV1(spacewasm_host_t*);
 

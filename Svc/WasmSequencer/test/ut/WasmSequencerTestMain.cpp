@@ -26,7 +26,6 @@ static const Svc::BlockState NO_BLOCK(Svc::BlockState::NO_BLOCK);
 TEST_F(WasmSequencerTester, InitialStateIsIdle) {
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     // No pending work on a fresh component.
-    ASSERT_FALSE(this->hasPendingLoad());
     ASSERT_FALSE(this->hasPendingTimer());
     ASSERT_EQ(this->getPendingHostFunctionKind(), WasmSequencer_HostFunction::NONE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
@@ -137,9 +136,9 @@ TEST_F(WasmSequencerTester, LoadStartModuleTrapRespondsError) {
 }
 
 TEST_F(WasmSequencerTester, LoadStartModuleTwiceDoesNotWedge) {
-    // Regression: the pending-load slot (m_hasPendingLoad) must be freed on the
-    // load path so a second LOAD-with-start is not rejected as BUSY by the
-    // m_hasPendingLoad guard in LOAD_NAME_cmdHandler.
+    // Regression: a LOAD-with-start must settle back in READY on completion so a
+    // second LOAD-with-start is accepted rather than rejected as BUSY (the SM only
+    // rejects load/run signals while a prior request is still in flight).
     const Fw::String file = this->copyAsset("start.wasm");
 
     this->sendCmd_LOAD(0, 42, file);
@@ -569,13 +568,15 @@ TEST_F(WasmSequencerTester, InvokeUnknownModule) {
 }
 
 TEST_F(WasmSequencerTester, InvokeFromIdleInvalid) {
-    // INVOKE is only valid from READY.
+    // INVOKE is only valid from READY. From IDLE the controller rejects it as BUSY
+    // (ControllerBusy for the COMMAND_INVOKE signal in the IDLE state).
     this->sendCmd_INVOKE(0, 34, Fw::CmdStringArg(""), NO_BLOCK, {});
     this->dispatchAll();
 
-    ASSERT_EVENTS_InvalidCommand_SIZE(1);
-    ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_ControllerStateMachine_State::IDLE);
-    ASSERT_CMD_RESPONSE(0, OPCODE_INVOKE, 34, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EVENTS_ControllerBusy_SIZE(1);
+    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::COMMAND_INVOKE,
+                                 WasmSequencer_ControllerStateMachine_State::IDLE);
+    ASSERT_CMD_RESPONSE(0, OPCODE_INVOKE, 34, Fw::CmdResponse::BUSY);
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
 }
@@ -613,8 +614,7 @@ TEST_F(WasmSequencerTester, WaitFromReadyRespondsImmediately) {
 TEST_F(WasmSequencerTester, ContinueFromIdleInvalid) {
     this->sendCmd_CONTINUE(0, 50);
     this->dispatchAll();
-    ASSERT_EVENTS_InvalidCommand_SIZE(1);
-    ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_ControllerStateMachine_State::IDLE);
+    ASSERT_EVENTS_SequenceNotRunning_SIZE(1);
     ASSERT_CMD_RESPONSE(0, OPCODE_CONTINUE, 50, Fw::CmdResponse::EXECUTION_ERROR);
     // The rejected command leaves the component in IDLE.
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
@@ -1790,7 +1790,8 @@ TEST_F(WasmSequencerTester, SeqRunInFromReadyRuns) {
 
 TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
     // seqRunIn is only valid from IDLE or READY. A run request while already
-    // running is rejected with InvalidSeqRunCall and leaves the run untouched.
+    // running is rejected as BUSY (ControllerBusy for the PORT_RUN signal in the
+    // RUNNING_MAIN state) and leaves the run untouched.
     this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
 
     const Fw::String file = this->copyAsset("loop.wasm");
@@ -1803,8 +1804,8 @@ TEST_F(WasmSequencerTester, SeqRunInWhileRunningRejected) {
     this->invoke_to_seqRunIn(0, file, Svc::SeqArgs());
     this->dispatchAll();
 
-    ASSERT_EVENTS_InvalidSeqRunCall_SIZE(1);
-    ASSERT_EVENTS_InvalidSeqRunCall(0, ControllerState::RUNNING_MAIN);
+    ASSERT_EVENTS_ControllerBusy_SIZE(1);
+    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::PORT_RUN, ControllerState::RUNNING_MAIN);
     // No new start was reported; the original run is still active.
     ASSERT_EQ(this->seqStartOutCount, startsBefore);
 
@@ -2082,18 +2083,19 @@ TEST_F(WasmSequencerTester, RunWhileRunningRejected) {
     this->sendCmd_RUN(0, 150, file, NO_BLOCK, {});
     this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
 
-    // RUN is only valid from IDLE/READY; from RUNNING it is rejected
-    // (RUN_cmdHandler invalid-state guard) without disturbing the running loop.
-    // The original NO_BLOCK RUN already responded OK at load (index 0); the
-    // rejected RUN lands as an EXECUTION_ERROR (index 1). The loop still finishes.
+    // RUN is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
+    // (ControllerBusy for the COMMAND_RUN signal) without disturbing the running
+    // loop. The original NO_BLOCK RUN already responded OK at load (index 0); the
+    // rejected RUN lands as a BUSY (index 1). The loop still finishes.
     this->sendCmd_RUN(0, 151, file, NO_BLOCK, {});
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    ASSERT_EVENTS_InvalidCommand_SIZE(1);
-    ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
+    ASSERT_EVENTS_ControllerBusy_SIZE(1);
+    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::COMMAND_RUN,
+                                 WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 150, Fw::CmdResponse::OK);
-    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 151, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(1, OPCODE_RUN, 151, Fw::CmdResponse::BUSY);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }
@@ -2105,17 +2107,19 @@ TEST_F(WasmSequencerTester, LoadWhileRunningRejected) {
     this->sendCmd_RUN(0, 152, file, NO_BLOCK, {});
     this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
 
-    // LOAD_NAME invalid-state guard (only IDLE/READY accepted). The original
-    // NO_BLOCK RUN responded OK at load (index 0); the rejected LOAD is
-    // EXECUTION_ERROR (index 1). The loop still finishes.
+    // LOAD is only valid from IDLE/READY; from RUNNING it is rejected as BUSY
+    // (ControllerBusy for the COMMAND_LOAD signal). The original NO_BLOCK RUN
+    // responded OK at load (index 0); the rejected LOAD is BUSY (index 1). The
+    // loop still finishes.
     this->sendCmd_LOAD(0, 153, file);
     this->dispatchUntilControllerState(ControllerState::READY);
 
     ASSERT_EQ(this->controllerState(), ControllerState::READY);
-    ASSERT_EVENTS_InvalidCommand_SIZE(1);
-    ASSERT_EVENTS_InvalidCommand(0, WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
+    ASSERT_EVENTS_ControllerBusy_SIZE(1);
+    ASSERT_EVENTS_ControllerBusy(0, WasmSequencer_SignalSource::COMMAND_LOAD,
+                                 WasmSequencer_ControllerStateMachine_State::RUNNING_MAIN);
     ASSERT_CMD_RESPONSE(0, OPCODE_RUN, 152, Fw::CmdResponse::OK);
-    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 153, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_CMD_RESPONSE(1, OPCODE_LOAD, 153, Fw::CmdResponse::BUSY);
     ASSERT_FROM_PORT_HISTORY_SIZE(0);
     this->removeFile("loop.wasm");
 }

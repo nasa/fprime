@@ -56,6 +56,10 @@ state machine ControllerStateMachine {
   @ Signal sent
   signal invoked: RequestContext
 
+  @ Signal emitted by processInvoke when the requested module could not be
+  @ resolved. Returns the controller to READY (the store is still valid).
+  signal invokeFailed: RequestContext
+
   @ Called on CANCEL cmd. Raised in LOADING, READY and RUNNING modes
   signal cancel
 
@@ -182,6 +186,7 @@ state machine ControllerStateMachine {
 
   state INVOKING {
     on invoked enter MAIN_CHECK
+    on invokeFailed do { respond_ERROR } enter READY
     on run do { respondLoad_BUSY }
     on load do { respondLoad_BUSY }
     on invoke do { respondInvoke_BUSY }
