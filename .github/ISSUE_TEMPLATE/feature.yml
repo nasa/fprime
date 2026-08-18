@@ -4,12 +4,6 @@ labels:
   - enhancement
 type: feature
 body:
-  - type: input
-    id: fprime-version
-    attributes:
-      label: F´ version and affected component
-      description: Which version of F´ are you using, and which component would this feature affect?
-      value: devel / <component>
   - type: textarea
     id: description
     attributes:
@@ -42,3 +36,13 @@ body:
         - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md#the-decision-making-process) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
           required: true
         - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).
+  - type: textarea
+    id: environment
+    attributes:
+      label: F´ version and affected component
+      description: Run `fprime-util version-check`, paste the output, and name the affected component.
+      render: shell
+      placeholder: |
+        $ fprime-util version-check
+        F´ version: devel
+        Affected component: <component>

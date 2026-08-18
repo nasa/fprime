@@ -4,12 +4,6 @@ labels:
   - bug
 type: bug
 body:
-  - type: input
-    id: fprime-version
-    attributes:
-      label: F´ version and affected component
-      description: Which version of F´ are you using, and which component is affected?
-      value: devel / <component>
   - type: textarea
     id: description
     attributes:
@@ -37,8 +31,12 @@ body:
           required: true
         - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).
   - type: textarea
-    id: version-check
+    id: environment
     attributes:
-      label: fprime-util version-check output
-      description: Run `fprime-util version-check` and paste the output.
+      label: F´ version and affected component
+      description: Run `fprime-util version-check`, paste the output, and name the affected component.
       render: shell
+      placeholder: |
+        $ fprime-util version-check
+        F´ version: devel
+        Affected component: <component>
