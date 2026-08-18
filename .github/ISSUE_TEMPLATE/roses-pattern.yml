@@ -3,7 +3,7 @@ description: Request a standard pattern funded for documentation via ROSES
 title: "ROSES - [Pattern]"
 labels:
   - ROSES
-type: Task
+type: task
 body:
   - type: markdown
     attributes:

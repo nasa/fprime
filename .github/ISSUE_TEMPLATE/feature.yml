@@ -2,7 +2,7 @@ name: Feature Request
 description: Suggest an improvement to F´
 labels:
   - enhancement
-type: Feature
+type: feature
 body:
   - type: input
     id: fprime-version

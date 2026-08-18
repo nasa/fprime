@@ -1,6 +1,6 @@
 name: Task
 description: Propose a task for F´
-type: Task
+type: task
 body:
   - type: input
     id: fprime-version

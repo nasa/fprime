@@ -2,7 +2,7 @@ name: Bug Report
 description: Report a problem using F´
 labels:
   - bug
-type: Bug
+type: bug
 body:
   - type: input
     id: fprime-version
