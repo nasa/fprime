@@ -384,7 +384,7 @@ bool WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_guard_moduleHasSta
         default:
             // All other status means we passed the c api invalid options
             FW_ASSERT(false, status);
-            break;
+            return false;
     }
 }
 
