@@ -38,5 +38,6 @@ body:
       render: shell
       placeholder: |
         $ fprime-util version-check
-        F´ version: devel
+        <paste output here>
+
         Affected component: <component>
