@@ -14,7 +14,7 @@ module FppTest {
         queue size 10 \
         stack size 32 * 1024
 
-    topology SpecialPorts {
+    deployment topology SpecialPorts {
         instance framework
         instance comp1
         instance comp2
