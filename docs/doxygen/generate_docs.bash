@@ -76,3 +76,5 @@ do
     cp "${image}" "${IMG_DIR}"
 done
 
+# Automatic index generation
+python3 "${FPRIME}/docs/scripts/gen_indexes.py"
