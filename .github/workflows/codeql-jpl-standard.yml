@@ -156,7 +156,7 @@ jobs:
         uses: nasa/fprime-actions/codeql-publish@devel
         with:
           codeql-subdirectory: codeql-jpl
-          check-label: "CodeQL JPL Standard"
+          check-label: "Static Analysis (JPL) [CodeQL]"
           sarif-files: |
             sarif-results/jpl-standard-pack-1.sarif
             sarif-results/jpl-standard-pack-2.sarif
