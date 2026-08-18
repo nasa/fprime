@@ -8,5 +8,5 @@
   "worst": null,
   "tier": "platinum",
   "dismissed": 9,
-  "label": "CodeQL JPL Standard"
+  "label": "Static Analysis (JPL) [CodeQL]"
 }
