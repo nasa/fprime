@@ -4,7 +4,7 @@ Directory: ../..
 ------------------------------------------------------------------------------
 File                                       Lines    Exec  Cover   Missing
 ------------------------------------------------------------------------------
-Svc/CmdSequencer/CmdSequencerImpl.cpp        306     274    89%   59,80,88-90,112-114,150-152,185-187,205-210,212,214,293-294,368-370,380-382,453-454
+Svc/CmdSequencer/CmdSequencerImpl.cpp        313     278    88%   59,80,88-90,117-119,155-157,190-192,210-215,217,219,298-299,373-375,384-386,391-393,464-465
 Svc/CmdSequencer/CmdSequencerImpl.hpp         13      13   100%
 Svc/CmdSequencer/Events.cpp                   60      60   100%
 Svc/CmdSequencer/formats/AMPCSSequence.cpp
@@ -12,5 +12,5 @@ Svc/CmdSequencer/formats/AMPCSSequence.cpp
 Svc/CmdSequencer/FPrimeSequence.cpp          207     197    95%   145-146,155-156,162-163,169-170,253,287
 Svc/CmdSequencer/Sequence.cpp                 43      41    95%   70-71
 ------------------------------------------------------------------------------
-TOTAL                                        842     785    93%
+TOTAL                                        849     789    92%
 ------------------------------------------------------------------------------
