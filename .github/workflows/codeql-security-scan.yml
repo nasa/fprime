@@ -139,7 +139,7 @@ jobs:
       - name: Publish findings to baseline branch
         uses: nasa/fprime-actions/codeql-publish@devel
         with:
-          check-label: "CodeQL Security"
+          check-label: "Static Analysis (Security) [CodeQL]"
           sarif-files: |
             sarif-results/cpp.sarif
             sarif-results/python.sarif
