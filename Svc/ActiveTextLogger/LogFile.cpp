@@ -84,21 +84,21 @@ bool LogFile::set_log_file(const char* fileName, const FwSizeType maxSize, const
 
     // Check if file already exists, and if it does try to tack on a suffix.
     // Quit after maxBackups suffix addition tries (first try is w/ the original name).
-    U32 suffix = 0;
-    bool failedSuffix = false;
+    bool failedSuffix = true;
     FwSizeType fileSize = 0;
-    while (Os::FileSystem::getFileSize(searchFilename.toChar(), fileSize) == Os::FileSystem::OP_OK) {
-        // Not able to create a new non-existing file in maxBackups tries, then mark that it failed:
-        if (suffix >= maxBackups) {
-            failedSuffix = true;
+    for (U32 suffix = 0; suffix <= maxBackups; ++suffix) {
+        // A non-existing file was found, so use it:
+        if (Os::FileSystem::getFileSize(searchFilename.toChar(), fileSize) != Os::FileSystem::OP_OK) {
+            failedSuffix = false;
             break;
         }
         // Format and check for error and overflows
-        formatStatus = searchFilename.format("%s%" PRIu32, fileName, suffix);
-        if (formatStatus != Fw::FormatStatus::SUCCESS) {
-            return false;
+        if (suffix < maxBackups) {
+            formatStatus = searchFilename.format("%s%" PRIu32, fileName, suffix);
+            if (formatStatus != Fw::FormatStatus::SUCCESS) {
+                return false;
+            }
         }
-        ++suffix;
     }
 
     // If failed trying to make a new file, just use the original file

@@ -16,7 +16,7 @@ namespace Fw {
 template <typename K, typename V>
 class ExternalRedBlackTreeMapTester {
   public:
-    ExternalRedBlackTreeMapTester<K, V>(const ExternalRedBlackTreeMap<K, V>& map) : m_map(map) {}
+    ExternalRedBlackTreeMapTester(const ExternalRedBlackTreeMap<K, V>& map) : m_map(map) {}
 
     const RedBlackTreeSetOrMapImpl<K, V>& getImpl() const { return this->m_map.m_impl; }
 

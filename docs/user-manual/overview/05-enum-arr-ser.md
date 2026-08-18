@@ -133,7 +133,7 @@ Fw::SerializeStatus deserializeFrom(Fw::SerialBufferBase& buffer,
 Notes:
 
 - `Fw::SerialBufferBase` is the abstract buffer interface accepted by `Fw::Serializable` APIs. Concrete buffers such as
-  `Fw::SerializeBufferBase` and helper wrappers like `Fw::ExternalSerializeBufferWithMemberCopy` implement this interface.
+  `Fw::LinearBufferBase` and helper wrappers like `Fw::ExternalSerializeBufferWithMemberCopy` implement this interface.
 - Endianness defaults to `Fw::Endianness::BIG` (network byte order). Pass `Fw::Endianness::LITTLE` to serialize or
   deserialize fields in little-endian.
 

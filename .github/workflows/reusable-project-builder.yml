@@ -39,13 +39,26 @@ on:
         required: false
         type: string
         default: "devel"
+      skip_aarch64_build:
+        description: "Skip ARM64 cross-compilation build"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
 
 jobs:
 
   build:
     runs-on: ${{ inputs.runs_on }}
     name: "Build"
+    env:
+      FPRIME_LOCATION: ${{ inputs.fprime_location }}
+      TARGET_PLATFORM: ${{ inputs.target_platform }}
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -59,24 +72,49 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
       - name: "Generate build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          fprime-util generate ${VERBOSE_FLAG} ${TARGET_PLATFORM} 2>&1 | output-cleaner
         shell: bash
       - name: "Build"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          fprime-util build -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} 2>&1 | output-cleaner
         shell: bash
+      - name: "Upload build artifacts"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: examples-build-artifacts
+          path: |
+            ${{ inputs.build_location }}/build-artifacts/
+            build-artifacts/
+          if-no-files-found: ignore
+          retention-days: 1
 
   runUT:
     if: ${{ inputs.run_unit_tests }}
     runs-on: ${{ inputs.runs_on }}
     name: "Unit Tests"
+    env:
+      FPRIME_LOCATION: ${{ inputs.fprime_location }}
+      TARGET_PLATFORM: ${{ inputs.target_platform }}
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -90,21 +128,46 @@ jobs:
           path: ${{ inputs.fprime_location }}
       - name: "Install requirements.txt"
         run: |
-          pip3 install -r ${{ inputs.fprime_location }}/requirements.txt
+          pip3 install -r ${FPRIME_LOCATION}/requirements.txt
         shell: bash
+
       - name: "Generate UT build cache"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util generate --ut ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          fprime-util generate --ut ${VERBOSE_FLAG} ${TARGET_PLATFORM} 2>&1 | output-cleaner
         shell: bash
       - name: "Build UTs"
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util build --ut -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          fprime-util build --ut -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} 2>&1 | output-cleaner
         shell: bash
       - name: "Run Unit Tests"
+        continue-on-error: false
         working-directory: ${{ inputs.build_location }}
         run: |
-          fprime-util check -j8 ${{ runner.debug == '1' && '--verbose' || '' }} ${{ inputs.target_platform }}
+          if [ "${RUNNER_DEBUG:-0}" = "1" ]; then
+            VERBOSE_FLAG=--verbose
+          else
+            VERBOSE_FLAG=
+          fi
+          fprime-util check -j8 ${VERBOSE_FLAG} ${TARGET_PLATFORM} --pass-through --output-on-failure
         shell: bash
+      - name: "Archive test logs"
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unit-test-logs
+          path: ${{ inputs.build_location }}/build-*/Testing/Temporary/*.log
+          if-no-files-found: ignore
+          retention-days: 5
 

@@ -25,6 +25,13 @@ TEST(BufferSendIn, BufferTooSmallForPacket) {
     tester.BufferTooSmallForPacket();
 }
 
+TEST(BufferSendIn, FileNameFormatError) {
+    COMMENT("Invoke bufferSendIn with a file name format error and verify the event throttle.");
+    REQUIREMENT("SVC-DPMANAGER-001");
+    BufferSendIn::Tester tester;
+    tester.FileNameFormatError();
+}
+
 TEST(BufferSendIn, FileOpenError) {
     COMMENT("Invoke bufferSendIn with a file open error.");
     REQUIREMENT("SVC-DPMANAGER-001");
@@ -69,6 +76,16 @@ TEST(BufferSendIn, OK) {
     REQUIREMENT("SVC-DPMANAGER-005");
     BufferSendIn::Tester tester;
     tester.OK();
+}
+
+TEST(BufferSendIn, OKProcShrink) {
+    COMMENT("Invoke bufferSendIn with nominal input. Shrink the buffer in processing");
+    REQUIREMENT("SVC-DPMANAGER-002");
+    REQUIREMENT("SVC-DPMANAGER-003");
+    REQUIREMENT("SVC-DPMANAGER-004");
+    REQUIREMENT("SVC-DPMANAGER-007");
+    BufferSendIn::Tester tester;
+    tester.OKProcShrink();
 }
 
 TEST(CLEAR_EVENT_THROTTLE, OK) {

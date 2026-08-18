@@ -27,15 +27,14 @@ DpManagerTester ::~DpManagerTester() {
 // ----------------------------------------------------------------------
 
 Fw::Buffer DpManagerTester::from_bufferGetOut_handler(const FwIndexType portNum, FwSizeType size) {
-    this->abstractState.bufferGetOutPortNumOpt = TestUtils::Option<FwIndexType>::some(portNum);
+    this->abstractState.bufferGetOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
     this->pushFromPortEntry_bufferGetOut(size);
     Fw::Buffer buffer;
     switch (this->abstractState.bufferGetStatus) {
         case AbstractState::BufferGetStatus::VALID:
             // Construct a valid buffer
-            buffer.setData(this->abstractState.bufferData);
             FW_ASSERT(size <= AbstractState::MAX_BUFFER_SIZE);
-            buffer.setSize(size);
+            buffer.set(this->abstractState.bufferData, size);
             break;
         case AbstractState::BufferGetStatus::INVALID:
             // Leave buffer in invalid state
@@ -51,12 +50,12 @@ void DpManagerTester::from_productResponseOut_handler(const FwIndexType portNum,
                                                       FwDpIdType id,
                                                       const Fw::Buffer& buffer,
                                                       const Fw::Success& status) {
-    this->abstractState.productResponseOutPortNumOpt = TestUtils::Option<FwIndexType>::some(portNum);
+    this->abstractState.productResponseOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
     this->pushFromPortEntry_productResponseOut(id, buffer, status);
 }
 
 void DpManagerTester::from_productSendOut_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
-    this->abstractState.productSendOutPortNumOpt = TestUtils::Option<FwIndexType>::some(portNum);
+    this->abstractState.productSendOutPortNumOpt = Fw::Optional<FwIndexType>(portNum);
     this->pushFromPortEntry_productSendOut(fwBuffer);
 }
 

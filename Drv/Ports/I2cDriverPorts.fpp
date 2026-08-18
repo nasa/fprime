@@ -30,3 +30,31 @@ module Drv {
           ) -> Drv.I2cStatus
 
 }
+
+module Drv {
+  @ I2C write/read request port (async, no return value)
+    port I2cRequest(
+        addr: U32 @< I2C slave device address
+        ref buffer: Fw.Buffer @< Buffer with data to write or space for read data
+    )
+
+    @ I2C write-read request port (async, no return value)
+    port I2cWriteReadRequest(
+        addr: U32 @< I2C slave device address
+        ref writeBuffer: Fw.Buffer @< Buffer to write
+        ref readBuffer: Fw.Buffer @< Buffer to read into
+    )
+
+    @ I2C write/read completion callback port
+    port I2cCallback(
+        ref buffer: Fw.Buffer @< Buffer used in transaction (contains read data for read operations)
+        status: Drv.I2cStatus @< Transaction result status
+    )
+
+    @ I2C write-read completion callback port
+    port I2cWriteReadCallback(
+        ref writeBuffer: Fw.Buffer @< Write buffer used in transaction
+        ref readBuffer: Fw.Buffer @< Read buffer with received data
+        status: Drv.I2cStatus @< Transaction result status
+    )
+}

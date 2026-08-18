@@ -31,204 +31,209 @@
 #include <limits>
 #include <sstream>
 
+namespace FppTest {
+
+namespace Array {
+
 // Tests FPP format strings
 class FormatTest : public ::testing::Test {
   protected:
-    void SetUp() override { buf2 << "[ "; }
+    void SetUp() override { expected << "[ "; }
 
-    std::stringstream buf1, buf2;
+    std::stringstream actual;
+    std::stringstream expected;
 };
 
 TEST_F(FormatTest, Bool) {
     bool testVals[FormatBool::SIZE] = {true, true, false};
     FormatBool a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatBool::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << testVals[i] << " b";
+        expected << "a " << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, U8) {
     U8 testVals[FormatU8::SIZE] = {0, 100, std::numeric_limits<U8>::max()};
     FormatU8 a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatU8::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << static_cast<U16>(testVals[i]) << " b";
+        expected << "a " << static_cast<U16>(testVals[i]) << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, U16Dec) {
     U16 testVals[FormatU16Dec::SIZE] = {0, 100, std::numeric_limits<U16>::max()};
     FormatU16Dec a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatU16Dec::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::dec << testVals[i] << " b";
+        expected << "a " << std::dec << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, U32Oct) {
     U32 testVals[FormatU32Oct::SIZE] = {0, 100, std::numeric_limits<U32>::max()};
     FormatU32Oct a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatU32Oct::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::oct << testVals[i] << " b";
+        expected << "a " << std::oct << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, U64Hex) {
     U64 testVals[FormatU64Hex::SIZE] = {0, 100, std::numeric_limits<U64>::max()};
     FormatU64Hex a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatU64Hex::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::hex << testVals[i] << " b";
+        expected << "a " << std::hex << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, I8) {
     I8 testVals[FormatI8::SIZE] = {std::numeric_limits<I8>::min(), 0, std::numeric_limits<I8>::max()};
     FormatI8 a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatI8::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << static_cast<I16>(testVals[i]) << " b";
+        expected << "a " << static_cast<I16>(testVals[i]) << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, I16Dec) {
     I16 testVals[FormatI16Dec::SIZE] = {std::numeric_limits<I16>::min(), 0, std::numeric_limits<I16>::max()};
     FormatI16Dec a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatI16Dec::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::dec << testVals[i] << " b";
+        expected << "a " << std::dec << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, I32Oct) {
     I32 testVals[FormatI32Oct::SIZE] = {std::numeric_limits<I32>::min(), 0, std::numeric_limits<I32>::max()};
     FormatI32Oct a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatI32Oct::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::oct << testVals[i] << " b";
+        expected << "a " << std::oct << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, I64Hex) {
     I64 testVals[FormatI64Hex::SIZE] = {std::numeric_limits<I64>::min(), 0, std::numeric_limits<I64>::max()};
     FormatI64Hex a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatI64Hex::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::hex << testVals[i] << " b";
+        expected << "a " << std::hex << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, F32E) {
     F32 testVals[FormatF32e::SIZE] = {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
     FormatF32e a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatF32e::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::setprecision(1) << std::scientific << testVals[i] << " b";
+        expected << "a " << std::setprecision(1) << std::scientific << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, F32F) {
     F32 testVals[FormatF32f::SIZE] = {std::numeric_limits<F32>::min(), 0.0, std::numeric_limits<F32>::max()};
     FormatF32f a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatF32f::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::setprecision(2) << std::fixed << testVals[i] << " b";
+        expected << "a " << std::setprecision(2) << std::fixed << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, F64G) {
     F64 testVals[FormatF64g::SIZE] = {std::numeric_limits<F64>::min(), 0.0, std::numeric_limits<F64>::max()};
     FormatF64g a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatF64g::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << std::setprecision(3) << testVals[i] << " b";
+        expected << "a " << std::setprecision(3) << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
 
 TEST_F(FormatTest, String) {
@@ -241,16 +246,23 @@ TEST_F(FormatTest, String) {
 
     FormatString a(testVals);
 
-    buf1 << a;
+    actual << a;
+
+    // Construct the full expected string
+    std::stringstream expectedStream;
+    expectedStream << "[ ";
     for (U32 i = 0; i < FormatString::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expectedStream << ", ";
         }
-        buf2 << "% " << testVals[i].toChar();
+        expectedStream << "% " << testVals[i];
     }
-    buf2 << " ]";
+    expectedStream << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    // Handle F Prime string truncation
+    Fw::String expectedString(expectedStream.str().c_str());
+
+    ASSERT_STREQ(actual.str().c_str(), expectedString.toChar());
 }
 
 TEST_F(FormatTest, Char) {
@@ -258,14 +270,18 @@ TEST_F(FormatTest, Char) {
                                      FppTest::Utils::getNonzeroU8()};
     FormatChar a(testVals);
 
-    buf1 << a;
+    actual << a;
     for (U32 i = 0; i < FormatChar::SIZE; i++) {
         if (i > 0) {
-            buf2 << ", ";
+            expected << ", ";
         }
-        buf2 << "a " << testVals[i] << " b";
+        expected << "a " << testVals[i] << " b";
     }
-    buf2 << " ]";
+    expected << " ]";
 
-    ASSERT_STREQ(buf1.str().c_str(), buf2.str().c_str());
+    ASSERT_STREQ(actual.str().c_str(), expected.str().c_str());
 }
+
+}  // namespace Array
+
+}  // namespace FppTest

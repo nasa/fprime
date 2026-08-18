@@ -5,6 +5,9 @@ namespace PingEntries {
 namespace DataProducts_dpCat {
 enum { WARN = 3, FATAL = 5 };
 }
+namespace DataProducts_dpBufferAccumulator {
+enum { WARN = 3, FATAL = 5 };
+}
 }  // namespace PingEntries
 
 #endif

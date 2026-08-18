@@ -32,10 +32,14 @@ class PrmDbTester : public PrmDbGTestBase {
     void runPrmFileLoadNominal();
     void runPrmFileLoadWithErrors();
     void runPrmFileLoadIllegal();
+    void runPrmFileLoadSandboxViolation();
+    void runShorterSaveDoesNotCorrupt();
 
     void runRefPrmFile();
 
   private:
+    bool dbEqual();
+
     //! Handler for from_pingOut
     //!
     void from_pingOut_handler(const FwIndexType portNum, /*!< The port number*/
@@ -75,6 +79,8 @@ class PrmDbTester : public PrmDbGTestBase {
     };
 
     void printDb(PrmDb_PrmDbType dbType);
+
+    //! Expose PrmDbImpl::computeCrc for hardcoded CRC value testing
 };
 
 }  // namespace Svc

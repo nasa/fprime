@@ -73,3 +73,12 @@ struct DiffU32Overflow : public STest::Rule<Os::Test::RawTime::Tester> {
     bool precondition(const Os::Test::RawTime::Tester& state);
     void action(Os::Test::RawTime::Tester& state);
 };
+
+// ------------------------------------------------------------------------------------------------------
+// Rule Operators: Test RawTime equality and assignment operators
+// ------------------------------------------------------------------------------------------------------
+struct Operators : public STest::Rule<Os::Test::RawTime::Tester> {
+    Operators();
+    bool precondition(const Os::Test::RawTime::Tester& state);
+    void action(Os::Test::RawTime::Tester& state);
+};

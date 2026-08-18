@@ -12,6 +12,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Fw/Types/StringType.hpp>
 #include <Fw/Types/StringUtils.hpp>
+#include <algorithm>
 #include <cstdarg>
 #include <cstring>
 
@@ -23,16 +24,21 @@ ConstStringBase::~ConstStringBase() {}
 
 ConstStringBase::SizeType ConstStringBase::length() const {
     SizeType length = 0;
-    if (this->getCapacity() > 0) {
-        length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), this->getCapacity()));
+    SizeType capacity = this->getCapacity();
+    SizeType maxLength = this->maxLength(capacity);
+    if (capacity > 0) {
+        length = static_cast<SizeType>(StringUtils::string_length(this->toChar(), capacity));
     }
-    FW_ASSERT(length <= this->maxLength(), static_cast<FwAssertArgType>(length),
-              static_cast<FwAssertArgType>(this->maxLength()));
+    FW_ASSERT(length <= maxLength, static_cast<FwAssertArgType>(length), static_cast<FwAssertArgType>(maxLength));
     return length;
 }
 
 ConstStringBase::SizeType ConstStringBase::maxLength() const {
     const SizeType capacity = this->getCapacity();
+    return maxLength(capacity);
+}
+
+ConstStringBase::SizeType ConstStringBase::maxLength(SizeType capacity) const {
     return capacity == 0 ? 0 : capacity - 1;
 }
 
@@ -41,7 +47,7 @@ ConstStringBase::SizeType ConstStringBase::serializedSize() const {
 }
 
 ConstStringBase::SizeType ConstStringBase::serializedTruncatedSize(FwSizeType maxLength) const {
-    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(FW_MIN(this->length(), maxLength));
+    return static_cast<SizeType>(sizeof(FwSizeStoreType)) + static_cast<SizeType>(std::min(this->length(), maxLength));
 }
 
 bool ConstStringBase::operator==(const ConstStringBase& other) const {
@@ -77,7 +83,7 @@ SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer, Fw::Endia
 }
 
 SerializeStatus ConstStringBase::serializeTo(SerialBufferBase& buffer, SizeType maxLength, Fw::Endianness mode) const {
-    const FwSizeType len = FW_MIN(maxLength, this->length());
+    const FwSizeType len = std::min(maxLength, this->length());
     // Serialize length and then bytes
     return buffer.serializeFrom(reinterpret_cast<const U8*>(this->toChar()), len, Serialization::INCLUDE_LENGTH);
 }

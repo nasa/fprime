@@ -31,7 +31,7 @@ void ComStub::dataIn_handler(const FwIndexType portNum, Fw::Buffer& sendBuffer, 
     } else if (this->isConnected_drvAsyncSendOut_OutputPort(0)) {
         this->handleAsynchronousSend(sendBuffer, context);
     } else {
-        FW_ASSERT(0);  // Neither send port is connected, this should never happen
+        FW_ASSERT(false);  // Neither send port is connected, this should never happen
     }
 }
 
@@ -97,6 +97,8 @@ void ComStub::handleSynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::FrameC
     if (sendStatus == Drv::ByteStreamStatus::OP_OK) {
         comSuccess = Fw::Success::SUCCESS;
     } else if (sendStatus == Drv::ByteStreamStatus::SEND_RETRY) {
+        // Retry exhaustion requires a driver reconnect to emit the recovery SUCCESS
+        this->m_reinitialize = true;
         Fw::Logger::log("ComStub RETRY_LIMIT exceeded, skipped sending data");
     } else {
         // Other error - need to reinitialize
@@ -114,12 +116,15 @@ void ComStub::handleAsynchronousSend(Fw::Buffer& sendBuffer, const ComCfg::Frame
 }
 
 void ComStub::handleAsyncRetry(Fw::Buffer& fwBuffer) {
+    FW_ASSERT(this->m_retry_count <= this->RETRY_LIMIT, static_cast<FwAssertArgType>(this->m_retry_count));
     if (this->m_retry_count < this->RETRY_LIMIT) {
         // Attempt retry if under the limit
         this->m_retry_count++;
         this->drvAsyncSendOut_out(0, fwBuffer);
     } else {
         // Exceeded retry limit - return buffer and notify failure
+        // Retry exhaustion requires a driver reconnect to emit the recovery SUCCESS
+        this->m_reinitialize = true;
         this->dataReturnOut_out(0, fwBuffer, this->m_storedContext);
         Fw::Success comStatus = Fw::Success::FAILURE;
         this->comStatusOut_out(0, comStatus);

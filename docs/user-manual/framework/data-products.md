@@ -1,7 +1,7 @@
 # Data Products
 
 > [!TIP]
-> The following document is a technical guide to the Data Products system in F´. For a quick introduction to get started with using data products, see the [How To: Generate Data Products](../../how-to/data-products.md).
+> The following document is a technical guide to the Data Products system in F´. For a quick introduction to get started with using data products, see the [How To: Generate Data Products](../../how-to/develop/data-products.md).
 
 ## 1. Introduction
 
@@ -72,9 +72,12 @@ components:
         See [`Svc::DpCatalog`](../../../Svc/DpCatalog/docs/sdd.md).
 
     1. A **data product processor**.
-        This component is not yet developed.
-        When it is developed, it will perform in-memory processing on data
-        product containers.
+        This component receives filled containers from a data product
+        write. It attempts to process the contents and returns the same
+        container with modified contents. One example is lossless data
+        product compression, provided by
+        [`Svc::DpZLibCompressor`](../../../Svc/DpZLibCompressor/docs/sdd.md).
+        See [`Svc::DpCompressProc`](../../../Svc/DpCompressProc/docs/sdd.md)
 
 Note that when using data products, you need to develop only the
 producer components. The other components are provided by F Prime.
@@ -468,6 +471,11 @@ is a data product producer.
 **Cataloging and downlinking data products:**
 For a preliminary implementation of the data product catalog,
 see [`Svc::DpCatalog`](../../../Svc/DpCatalog/docs/sdd.md).
+
+**Compressing data products:**
+For on-board lossless compression of data products, see
+[`Svc::DpCompressProc`](../../../Svc/DpCompressProc/docs/sdd.md) and
+[`Svc::DpZLibCompressor`](../../../Svc/DpZLibCompressor/docs/sdd.md).
 
 **Processing data products:**
 Data product binary files (typically with the `.fdp` extension) can be decoded on the ground with the `fprime-dp` command, which is a CLI tool shipped with the F Prime GDS. See `fprime-dp decode -h` for options on how to use the tool.

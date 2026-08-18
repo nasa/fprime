@@ -6,10 +6,9 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 
 ## Functionality
 
-- Maintains a table of APIDs and their associated 14-bit sequence counts.
-- Handles a fixed maximum number of tracked APIDs (as configured in the project).
+- Maintains a `Fw::ArrayMap` of APIDs and their associated 14-bit sequence counts. The map is sized to the number of APIDs configured in the ComCfg.Apid enum.
 - Provides a way to retrieve the current sequence count for a given APID through a port call.
-- Provides a way to validate a received sequence counts for a given APID through a port call.
+- Provides a way to validate a received sequence count for a given APID through a port call.
 
 ## Port Descriptions
 
@@ -23,7 +22,6 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 | Name                   | Severity      | Description                                                                 |
 |------------------------|---------------|-----------------------------------------------------------------------------|
 | UnexpectedSequenceCount| warning low   | Received an unexpected sequence count for an APID.                          |
-| ApidTableFull          | warning high  | APID table is full; cannot track additional APIDs.                          |
 
 ## Usage
 
@@ -39,11 +37,10 @@ The `ApidManager` is typically used in conjunction with the [`SpacePacketFramer`
 | SVC-Ccsds-APID-MANAGER-003         | The ApidManager shall increment the sequence count for each APID on request.| Unit Test            |
 | SVC-Ccsds-APID-MANAGER-004         | The ApidManager shall provide validation of a received sequence counts for each APID.  | Unit Test |
 | SVC-Ccsds-APID-MANAGER-005         | The ApidManager shall emit an event if an unexpected sequence count is received.| Unit Test        |
-| SVC-Ccsds-APID-MANAGER-006         | The ApidManager shall emit an event if the APID table is full and an APID is not able to be added to the tracking. | Unit Test |
 | SVC-Ccsds-APID-MANAGER-007         | The ApidManager shall synchronize the onboard sequence count if a mismatch is detected.| Unit Test   |
 
 ## See Also
 
 - [`Svc::Ccsds::SpacePacketFramer`](../../SpacePacketFramer/docs/sdd.md)
 - [`Svc::Ccsds::SpacePacketDeframer`](../../SpacePacketDeframer/docs/sdd.md)
-- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://public.ccsds.org/Pubs/133x0b2e1.pdf)
+- [CCSDS Space Packet Protocol (CCSDS 133.0-B-2)](https://ccsds.org/Pubs/133x0b2e2.pdf)

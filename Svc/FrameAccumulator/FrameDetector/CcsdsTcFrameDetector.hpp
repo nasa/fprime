@@ -42,8 +42,7 @@ class CcsdsTcFrameDetector : public FrameDetector {
 
   protected:
     //! \brief expected flags and spacecraft ID token for a valid CCSDS TC frame
-    const U16 m_expectedFlagsAndScIdToken =
-        0x1 << Ccsds::TCSubfields::BypassFlagOffset | (ComCfg::FppConstant_SpacecraftId::SpacecraftId);
+    const U16 m_expectedFlagsAndScIdToken = (0x1 << Ccsds::TCSubfields::BypassFlagOffset) | (ComCfg::SpacecraftId);
 
 };  // class CcsdsTcFrameDetector
 }  // namespace FrameDetectors

@@ -93,7 +93,7 @@ void StateToStateTester::testInit() {
     const auto& signals = this->m_smStateStateToState_actionHistory.getSignals();
     const auto& actions = this->m_smStateStateToState_actionHistory.getValues();
     for (FwIndexType i = 0; i < expectedSize; i++) {
-        ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+        ASSERT_EQ(signals.getItemAt(i), SmState_StateToState::Signal::__FPRIME_INITIAL_TRANSITION);
     }
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S1);
     ASSERT_EQ(actions.getItemAt(1), ActionId::ENTER_S2);

@@ -21,7 +21,7 @@ namespace SequenceFiles {
 
 BadCRCFile ::BadCRCFile(const Format::t a_format) : File("bad_crc", a_format) {}
 
-void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void BadCRCFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordData = 0x10;
     const U32 dataSize = sizeof recordData + FPrime::CRCs::SIZE;
@@ -36,12 +36,13 @@ void BadCRCFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     const U32 size = buffer.getSize();
     this->crc.init();
     this->crc.update(addr, size);
-    this->crc.finalize();
-    crc.m_stored = this->crc.m_computed + 1;
+    U32 crcFinal = 0;
+    this->crc.m_computed.finalize(crcFinal);
+    crc.m_stored = crcFinal + 1;
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(this->crc.m_stored));
 }
 
-void BadCRCFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void BadCRCFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records
@@ -49,7 +50,9 @@ void BadCRCFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
     ASSERT_EQ(Fw::FW_SERIALIZE_OK, buffer.serializeFrom(recordData));
     // CRC
     AMPCS::CRCs::computeCRC(buffer, this->crc);
-    this->crc.m_stored = this->crc.m_computed + 1;
+    U32 crcFinal = 0;
+    this->crc.m_computed.finalize(crcFinal);
+    crc.m_stored = crcFinal + 1;
     AMPCS::CRCs::writeCRC(this->crc.m_stored, this->getName().toChar());
 }
 

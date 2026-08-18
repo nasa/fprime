@@ -107,3 +107,13 @@ event PrmDbFileLoadInvalidAction(
     severity warning low \
     id 11 \
     format "Invalid action during parameter file load. Current state: {}, Action (Invalid for current state): {}."
+
+
+@ parameter file failed CRC
+event PrmFileBadCrc(
+                       readCrc: U32  @< The read CRC
+                       compCrc: U32  @< The computed CRC
+                        ) \
+    severity warning high \
+    id 12 \
+    format "Parameter file failed CRC. Read: 0x{x} Computed: 0x{x}"

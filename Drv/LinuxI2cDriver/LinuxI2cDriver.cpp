@@ -32,12 +32,12 @@ LinuxI2cDriver ::LinuxI2cDriver(const char* const compName) : LinuxI2cDriverComp
 
 LinuxI2cDriver::~LinuxI2cDriver() {
     if (-1 != this->m_fd) {  // check if file is open
-        ::close(this->m_fd);
+        (void)::close(this->m_fd);
     }
 }
 
 bool LinuxI2cDriver::open(const char* device) {
-    FW_ASSERT(device);
+    FW_ASSERT(device != nullptr);
     this->m_fd = ::open(device, O_RDWR);
     return (-1 != this->m_fd);
 }
@@ -60,11 +60,11 @@ Drv::I2cStatus LinuxI2cDriver ::write_handler(const FwIndexType portNum, U32 add
         return I2cStatus::I2C_ADDRESS_ERR;
     }
     // make sure it isn't a null pointer
-    FW_ASSERT(serBuffer.getData());
+    FW_ASSERT(serBuffer.getData() != nullptr);
     FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
     // write data
     ssize_t status_write = write(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
-    if (status_write == -1) {
+    if ((status_write == -1) || (static_cast<FwSizeType>(status_write) != serBuffer.getSize())) {
         return I2cStatus::I2C_WRITE_ERR;
     }
     return I2cStatus::I2C_OK;
@@ -82,11 +82,11 @@ Drv::I2cStatus LinuxI2cDriver ::read_handler(const FwIndexType portNum, U32 addr
         return I2cStatus::I2C_ADDRESS_ERR;
     }
     // make sure it isn't a null pointer
-    FW_ASSERT(serBuffer.getData());
+    FW_ASSERT(serBuffer.getData() != nullptr);
     // read data
     FW_ASSERT_NO_OVERFLOW(serBuffer.getSize(), size_t);
     ssize_t status_read = read(this->m_fd, serBuffer.getData(), static_cast<size_t>(serBuffer.getSize()));
-    if (status_read == -1) {
+    if ((status_read == -1) || (static_cast<FwSizeType>(status_read) != serBuffer.getSize())) {
         return I2cStatus::I2C_READ_ERR;
     }
     return I2cStatus::I2C_OK;
@@ -103,8 +103,8 @@ Drv::I2cStatus LinuxI2cDriver ::writeRead_handler(const FwIndexType portNum, /*!
     FW_ASSERT(-1 != this->m_fd);
 
     // make sure they are not null pointers
-    FW_ASSERT(writeBuffer.getData());
-    FW_ASSERT(readBuffer.getData());
+    FW_ASSERT(writeBuffer.getData() != nullptr);
+    FW_ASSERT(readBuffer.getData() != nullptr);
     // make sure downcasts are safe
     FW_ASSERT_NO_OVERFLOW(addr, U16);
     FW_ASSERT_NO_OVERFLOW(writeBuffer.getSize(), U16);

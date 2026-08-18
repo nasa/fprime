@@ -42,7 +42,7 @@ void BasicSelfTester::test() {
     ASSERT_EQ(this->smStateBasicSelf_getState(), SmState_BasicSelf::State::S);
     ASSERT_EQ(this->m_smStateBasicSelf_action_a_history.getSize(), 1);
     ASSERT_EQ(this->m_smStateBasicSelf_action_a_history.getItemAt(0),
-              SmState_BasicSelf::Signal::__FPRIME_AC_INITIAL_TRANSITION);
+              SmState_BasicSelf::Signal::__FPRIME_INITIAL_TRANSITION);
     this->m_smStateBasicSelf_action_a_history.clear();
     this->smStateBasicSelf_sendSignal_s();
     const auto status = this->doDispatch();

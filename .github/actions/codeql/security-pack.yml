@@ -6,12 +6,27 @@ queries:
 query-filters:
   - include: 
       id: cpp/incorrect-not-operator-usage
+  # Read-before-initialize check (tagged security only, so it would otherwise
+  # be dropped by the tag filters below)
+  - include:
+      id: cpp/uninitialized-local
   - include: 
       tags contain: correctness
   - include: 
       tags contain: reliability
+  - exclude:
+      id: cpp/constant-comparison
 
+# NOTE: for compiled languages (cpp) paths-ignore does not filter results by
+# itself; the actual exclusion is the filter-sarif step in
+# codeql-security-scan.yml. It does apply to interpreted languages (python).
 paths-ignore:
+  # CMake-internal generated sources (try_compile checks, compiler id, feature
+  # tests) inside the build cache; the cache itself is still needed so that
+  # F Prime autocoded sources are built and analyzed
+  - "**/CMakeFiles/**"
+  # Third-party dependencies fetched by CMake (e.g. googletest via FetchContent)
+  - "**/_deps/**"
   - docs/
   - cmake/docs/
   - cmake/test/

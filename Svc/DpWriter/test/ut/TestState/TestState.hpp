@@ -34,12 +34,21 @@ class TestState : public DpWriterTester {
     TEST_STATE_DEF_RULE(BufferSendIn, InvalidHeader)
     TEST_STATE_DEF_RULE(BufferSendIn, InvalidHeaderHash)
     TEST_STATE_DEF_RULE(BufferSendIn, OK)
+    TEST_STATE_DEF_RULE(BufferSendIn, OKProcShrink)
     TEST_STATE_DEF_RULE(CLEAR_EVENT_THROTTLE, OK)
     TEST_STATE_DEF_RULE(FileOpenStatus, Error)
     TEST_STATE_DEF_RULE(FileOpenStatus, OK)
     TEST_STATE_DEF_RULE(FileWriteStatus, Error)
     TEST_STATE_DEF_RULE(FileWriteStatus, OK)
     TEST_STATE_DEF_RULE(SchedIn, OK)
+
+  public:
+    // ----------------------------------------------------------------------
+    // Non-rule tests
+    // ----------------------------------------------------------------------
+
+    //! Test the FileNameFormatError event and its throttle
+    void testFileNameFormatError();
 };
 
 }  // namespace Svc

@@ -78,7 +78,7 @@ void BufferLogger ::BL_CloseFile_cmdHandler(const FwOpcodeType opCode, const U32
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void BufferLogger ::BL_SetLogging_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, LogState state) {
+void BufferLogger ::BL_SetLogging_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const LogState& state) {
     m_state = state;
     if (state == LogState::LOGGING_OFF) {
         m_file.closeAndEmitEvent();

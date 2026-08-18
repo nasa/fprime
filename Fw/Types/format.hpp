@@ -52,7 +52,7 @@ FormatStatus stringFormat(char* destination, const FwSizeType maximumSize, const
 //!   OTHER_ERROR: another error occurred in an underlying function call
 //! Otherwise SUCCESS is returned.  destination may be modified even in the case of an error.
 //!
-//! This version take a variable argument list
+//! This version takes a variable argument list
 //!
 //! \param destination: destination to fill with the formatted string
 //! \param maximumSize: size of the buffer represented by destination

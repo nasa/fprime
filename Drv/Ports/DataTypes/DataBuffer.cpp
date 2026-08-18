@@ -3,17 +3,19 @@
 
 namespace Drv {
 
-DataBuffer::DataBuffer(const U8* args, FwSizeType size) {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(args, size);
+DataBuffer::DataBuffer(const U8* args, FwSizeType size) : Fw::LinearBufferBase(m_data, sizeof(m_data)) {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(args, size);
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
-DataBuffer::DataBuffer() {}
+DataBuffer::DataBuffer() : Fw::LinearBufferBase(m_data, sizeof(m_data)) {}
 
 DataBuffer::~DataBuffer() {}
 
-DataBuffer::DataBuffer(const DataBuffer& other) : Fw::SerializeBufferBase() {
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
+// m_data contents are copied via setBuff below
+// cppcheck-suppress missingMemberCopy
+DataBuffer::DataBuffer(const DataBuffer& other) : Fw::LinearBufferBase(m_data, sizeof(m_data)) {
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
 }
 
@@ -22,25 +24,13 @@ DataBuffer& DataBuffer::operator=(const DataBuffer& other) {
         return *this;
     }
 
-    Fw::SerializeStatus stat = Fw::SerializeBufferBase::setBuff(other.m_data, other.getSize());
+    Fw::SerializeStatus stat = Fw::LinearBufferBase::setBuff(other.m_data, other.getSize());
     FW_ASSERT(Fw::FW_SERIALIZE_OK == stat, static_cast<FwAssertArgType>(stat));
     return *this;
 }
 
-FwSizeType DataBuffer::getCapacity() const {
-    return sizeof(this->m_data);
-}
-
 FwSizeType DataBuffer::getBuffCapacity() const {
     return this->getCapacity();
-}
-
-const U8* DataBuffer::getBuffAddr() const {
-    return this->m_data;
-}
-
-U8* DataBuffer::getBuffAddr() {
-    return this->m_data;
 }
 
 }  // namespace Drv

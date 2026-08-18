@@ -26,11 +26,11 @@ wait for the thread to exit using `join`.
 ```c++
 Drv::TcpClientComponentImpl comm = Drv::TcpClientComponentImpl("TCP Client");
 
-bool constructApp(bool dump, U32 port_number, char* hostname) {
+bool constructApp(bool dump, U32 port_number, char* ipv4_address) {
     ...
-    comm.configure(hostname, port_number);
+    comm.configure(ipv4_address, port_number);
     ...
-    if (hostname != nullptr && port_number != 0) {
+    if (ipv4_address != nullptr && port_number != 0) {
         Os::TaskString name("ReceiveTask");
         comm.start(name);
     }

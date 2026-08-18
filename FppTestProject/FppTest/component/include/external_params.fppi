@@ -1,6 +1,6 @@
 external param ParamBoolExternal: bool
 
-external param ParamI32External: I32
+external param ParamU32External: U32
 
 external param ParamStringExternal: string \
   default "external default"

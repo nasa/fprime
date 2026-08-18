@@ -147,23 +147,21 @@ void EventManagerTester::runFilterInvalidCommands() {
     U32 cmdSeq = 21;
     this->clearHistory();
     FilterSeverity reportFilterLevel = FilterSeverity::WARNING_HI;
-    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
-    Enabled filterEnabled(static_cast<Enabled::t>(10));
+    Enabled filterEnabled;
+    filterEnabled.setSerializeValue(10);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
     this->clearHistory();
     reportFilterLevel = FilterSeverity::WARNING_HI;
-    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
-    filterEnabled.e = static_cast<Enabled::t>(-2);
+    filterEnabled.setSerializeValue(-2);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, reportFilterLevel, filterEnabled);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
     FilterSeverity eventLevel;
     this->clearHistory();
     Enabled reportEnable = Enabled::ENABLED;
-    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
-    eventLevel.e = static_cast<FilterSeverity::t>(-1);
+    eventLevel.setSerializeValue(-1);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
@@ -171,8 +169,7 @@ void EventManagerTester::runFilterInvalidCommands() {
     this->clearHistory();
 
     reportEnable = Enabled::ENABLED;
-    // NOLINTNEXTLINE(clang-analyzer-optin.core.EnumCastOutOfRange) intentional invalid test
-    eventLevel.e = static_cast<FilterSeverity::t>(100);
+    eventLevel.setSerializeValue(100);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, eventLevel, reportEnable);
     ASSERT_CMD_RESPONSE_SIZE(1);
     ASSERT_CMD_RESPONSE(0, EventManager::OPCODE_SET_EVENT_FILTER, cmdSeq, Fw::CmdResponse::FORMAT_ERROR);
@@ -300,7 +297,8 @@ void EventManagerTester::runFilterIdNominal() {
     // Send an invalid argument
     this->clearHistory();
     this->clearEvents();
-    Enabled idEnabled(static_cast<Enabled::t>(10));
+    Enabled idEnabled;
+    idEnabled.setSerializeValue(10);
     this->sendCmd_SET_ID_FILTER(0, cmdSeq, 10, idEnabled);
     // dispatch message
     this->m_impl.doDispatch();
@@ -450,6 +448,47 @@ void EventManagerTester::runEventFatal() {
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, FilterSeverity::ACTIVITY_HI, Enabled::ENABLED);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, FilterSeverity::ACTIVITY_LO, Enabled::ENABLED);
     this->sendCmd_SET_EVENT_FILTER(0, cmdSeq, FilterSeverity::DIAGNOSTIC, Enabled::ENABLED);
+}
+
+void EventManagerTester::runDroppedTelemetry() {
+    this->clearHistory();
+
+    // verify baseline: no drops yet
+    this->invoke_to_run(0, 0);
+    this->m_impl.doDispatch();
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_EventsDropped_SIZE(1);
+    ASSERT_TLM_EventsDropped(0, 0);
+
+    // fill the queue (size 10) without dispatching to cause drops
+    Fw::LogBuffer buff;
+    Fw::SerializeStatus stat = buff.serializeFrom(static_cast<U32>(0));
+    ASSERT_EQ(Fw::FW_SERIALIZE_OK, stat);
+    Fw::Time timeTag(TimeBase::TB_NONE, 0, 0);
+
+    const FwSizeType queueDepth = 10;
+    for (FwSizeType i = 0; i < queueDepth; i++) {
+        this->invoke_to_LogRecv(0, static_cast<FwEventIdType>(i), timeTag, Fw::LogSeverity::ACTIVITY_HI, buff);
+    }
+    // queue is now full; next events will be dropped
+    const FwSizeType numDropped = 3;
+    for (FwSizeType i = 0; i < numDropped; i++) {
+        this->invoke_to_LogRecv(0, static_cast<FwEventIdType>(100 + i), timeTag, Fw::LogSeverity::ACTIVITY_HI, buff);
+    }
+
+    // drain the queue
+    for (FwSizeType i = 0; i < queueDepth; i++) {
+        this->m_impl.doDispatch();
+    }
+
+    // invoke run to emit telemetry and dispatch it
+    this->clearTlm();
+    this->invoke_to_run(0, 0);
+    this->m_impl.doDispatch();
+
+    ASSERT_TLM_SIZE(1);
+    ASSERT_TLM_EventsDropped_SIZE(1);
+    ASSERT_TLM_EventsDropped(0, numDropped);
 }
 
 void EventManagerTester::writeEvent(FwEventIdType id, Fw::LogSeverity severity, U32 value) {

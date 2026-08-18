@@ -4,6 +4,8 @@
 // \brief  cpp file for CmdSplitter component implementation class
 // ======================================================================
 
+#include <limits>
+
 #include <Fw/Cmd/CmdPacket.hpp>
 #include <Fw/FPrimeBasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
@@ -16,7 +18,8 @@ namespace Svc {
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
 
-CmdSplitter ::CmdSplitter(const char* const compName) : CmdSplitterComponentBase(compName) {}
+CmdSplitter ::CmdSplitter(const char* const compName)
+    : CmdSplitterComponentBase(compName), m_remoteBase(std::numeric_limits<FwOpcodeType>::max()) {}
 
 CmdSplitter ::~CmdSplitter() {}
 

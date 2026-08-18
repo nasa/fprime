@@ -7,19 +7,23 @@
 #
 ####
 
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.cpp"
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.hpp"
 )
-register_fprime_module()
 
 
 #### UTS ####
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTester.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTestMain.cpp"
-)
-set(UT_AUTO_HELPERS ON)
 
-register_fprime_ut()
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/FprimeRouter.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FprimeRouterTestMain.cpp"
+  UT_AUTO_HELPERS
+)

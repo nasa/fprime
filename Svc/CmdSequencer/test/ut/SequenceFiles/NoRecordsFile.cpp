@@ -20,7 +20,7 @@ namespace SequenceFiles {
 
 NoRecordsFile ::NoRecordsFile(const Format::t a_format) : File("norecords", a_format) {}
 
-void NoRecordsFile::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void NoRecordsFile::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const FwSizeType numRecs = 0;
     const U32 recordDataSize = numRecs * FPrime::Records::STANDARD_SIZE;
@@ -35,7 +35,7 @@ void NoRecordsFile::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::CRCs::serialize(buffer);
 }
 
-void NoRecordsFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void NoRecordsFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // No Records

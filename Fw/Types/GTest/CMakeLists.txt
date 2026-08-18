@@ -7,14 +7,15 @@
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
 if(BUILD_TESTING)
-    set(SOURCE_FILES
-      "${CMAKE_CURRENT_LIST_DIR}/Bytes.cpp"
+    register_fprime_module(
+      SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/Bytes.cpp"
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/Bytes.hpp"
+      DEPENDS
+        gtest
+        Fw_Types
+        Fw_Comp
+        Fw_Port
     )
-    set(MOD_DEPS
-      gtest
-      Fw/Types
-      Fw/Comp
-      Fw/Port
-    )
-    register_fprime_module()
 endif()

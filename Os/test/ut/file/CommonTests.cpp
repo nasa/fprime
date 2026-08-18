@@ -66,6 +66,24 @@ TEST_F(Functionality, CopyConstructor) {
     close_rule.apply(*tester);
 }
 
+// Ensure that open works via the bounded char* overload
+TEST_F(Functionality, OpenWithCreationBounded) {
+    Os::Test::FileTest::Tester::OpenFileCreateBounded rule(false);
+    rule.apply(*tester);
+}
+
+// Ensure that open works via the ConstStringBase overload
+TEST_F(Functionality, OpenWithCreationString) {
+    Os::Test::FileTest::Tester::OpenFileCreateString rule(false);
+    rule.apply(*tester);
+}
+
+// Ensure that open asserts on unterminated path within bounds
+TEST_F(InvalidArguments, OpenBoundedPathUnterminated) {
+    Os::Test::FileTest::Tester::OpenIllegalBoundedPath rule;
+    rule.apply(*tester);
+}
+
 // Ensure that open on existence works
 TEST_F(FunctionalIO, OpenWithCreationExists) {
     Os::Test::FileTest::Tester::OpenFileCreate open_rule(false);
@@ -310,6 +328,8 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
     Os::Test::FileTest::Tester::WriteIllegalBuffer write_illegal_buffer;
     Os::Test::FileTest::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
+    Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
+    Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_overwrite_rule,
@@ -328,7 +348,9 @@ TEST_F(Functionality, RandomizedInterfaceTesting) {
                                                         &read_illegal_buffer,
                                                         &write_illegal_buffer,
                                                         &incremental_invalid_mode_rule,
-                                                        &full_invalid_mode_rule};
+                                                        &full_invalid_mode_rule,
+                                                        &open_file_create_bounded_rule,
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
@@ -368,6 +390,8 @@ TEST_F(FunctionalIO, RandomizedTesting) {
     Os::Test::FileTest::Tester::WriteInvalidModes write_invalid_modes_rule;
     Os::Test::FileTest::Tester::IncrementalCrcInvalidModes incremental_invalid_mode_rule;
     Os::Test::FileTest::Tester::FullCrcInvalidModes full_invalid_mode_rule;
+    Os::Test::FileTest::Tester::OpenFileCreateBounded open_file_create_bounded_rule(true);
+    Os::Test::FileTest::Tester::OpenFileCreateString open_file_create_string_rule(true);
 
     // Place these rules into a list of rules
     STest::Rule<Os::Test::FileTest::Tester>* rules[] = {&open_file_create_rule,
@@ -393,7 +417,9 @@ TEST_F(FunctionalIO, RandomizedTesting) {
                                                         &read_invalid_modes_rule,
                                                         &write_invalid_modes_rule,
                                                         &incremental_invalid_mode_rule,
-                                                        &full_invalid_mode_rule};
+                                                        &full_invalid_mode_rule,
+                                                        &open_file_create_bounded_rule,
+                                                        &open_file_create_string_rule};
 
     // Take the rules and place them into a random scenario
     STest::RandomScenario<Os::Test::FileTest::Tester> random("Random Rules", rules, FW_NUM_ARRAY_ELEMENTS(rules));
@@ -449,4 +475,108 @@ TEST_F(InvalidArguments, ReadInvalidBuffer) {
 TEST_F(InvalidArguments, WriteInvalidBuffer) {
     Os::Test::FileTest::Tester::WriteIllegalBuffer rule;
     rule.apply(*tester);
+}
+
+// ======================================================================
+// Hardcoded CRC32 value tests
+//
+// These tests verify that Os::File CRC calculations produce known expected
+// values. Os::File uses raw CRC32 accumulation (init 0xFFFFFFFF, no final
+// ones' complement), so the "finalized" CRC is the raw accumulator value.
+// ======================================================================
+
+// Verify CRC32 of known data "123456789" against hardcoded expected value
+TEST_F(FunctionalIO, CrcHardcodedValue_123456789) {
+    // Write known data to file
+    const char data[] = "123456789";
+    const FwSizeType dataLen = 9;
+
+    Os::Test::FileTest::Tester::OpenFileCreate open_rule(false);
+    open_rule.apply(*tester);
+
+    // Write data directly through the file handle
+    FwSizeType writeSize = dataLen;
+    Os::File::Status status = tester->m_file.write(reinterpret_cast<const U8*>(data), writeSize);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(writeSize, dataLen);
+
+    // Close and reopen for read
+    tester->m_file.close();
+    status = tester->m_file.open(tester->m_current_path.c_str(), Os::File::OPEN_READ);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    // Calculate CRC
+    U32 crc = 0;
+    status = tester->m_file.calculateCrc(crc);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    // Os::File returns raw accumulator (no ones' complement)
+    // Expected: CRC32 raw accumulator of "123456789" = 0x340BC6D9
+    ASSERT_EQ(crc, static_cast<U32>(0x340BC6D9))
+        << "Os::File CRC of \"123456789\" must equal 0x340BC6D9 (raw accumulator, no ones' complement)";
+
+    tester->m_file.close();
+}
+
+// Verify CRC32 of {0xDE, 0xAD, 0xBE, 0xEF} against hardcoded expected value
+TEST_F(FunctionalIO, CrcHardcodedValue_DEADBEEF) {
+    const U8 data[] = {0xDE, 0xAD, 0xBE, 0xEF};
+    const FwSizeType dataLen = 4;
+
+    Os::Test::FileTest::Tester::OpenFileCreate open_rule(false);
+    open_rule.apply(*tester);
+
+    FwSizeType writeSize = dataLen;
+    Os::File::Status status = tester->m_file.write(data, writeSize);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    tester->m_file.close();
+    status = tester->m_file.open(tester->m_current_path.c_str(), Os::File::OPEN_READ);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    U32 crc = 0;
+    status = tester->m_file.calculateCrc(crc);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    // Expected: CRC32 raw accumulator of {0xDE,0xAD,0xBE,0xEF} = 0x83635CA5
+    ASSERT_EQ(crc, static_cast<U32>(0x83635CA5)) << "Os::File CRC of {0xDE,0xAD,0xBE,0xEF} must equal 0x83635CA5";
+
+    tester->m_file.close();
+}
+
+// Verify incremental CRC produces the same hardcoded value
+TEST_F(FunctionalIO, CrcHardcodedValue_Incremental) {
+    const char data[] = "123456789";
+    const FwSizeType dataLen = 9;
+
+    Os::Test::FileTest::Tester::OpenFileCreate open_rule(false);
+    open_rule.apply(*tester);
+
+    FwSizeType writeSize = dataLen;
+    Os::File::Status status = tester->m_file.write(reinterpret_cast<const U8*>(data), writeSize);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    tester->m_file.close();
+    status = tester->m_file.open(tester->m_current_path.c_str(), Os::File::OPEN_READ);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    // Use incremental CRC: read 4 bytes, then 5 bytes
+    FwSizeType size = 4;
+    status = tester->m_file.incrementalCrc(size);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(size, static_cast<FwSizeType>(4));
+
+    size = 5;
+    status = tester->m_file.incrementalCrc(size);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+    ASSERT_EQ(size, static_cast<FwSizeType>(5));
+
+    U32 crc = 0;
+    status = tester->m_file.finalizeCrc(crc);
+    ASSERT_EQ(status, Os::File::Status::OP_OK);
+
+    // Same expected value as full CRC
+    ASSERT_EQ(crc, static_cast<U32>(0x340BC6D9)) << "Incremental CRC of \"123456789\" must equal 0x340BC6D9";
+
+    tester->m_file.close();
 }

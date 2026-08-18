@@ -23,8 +23,8 @@ void TimeIntervalTester::test_TimeIntervalInstantiateTest() {
     std::cout << time << std::endl;
 
     Fw::TimeInterval time2(time);
-    ASSERT_EQ(time.getSeconds(), 1);
-    ASSERT_EQ(time.getUSeconds(), 2);
+    ASSERT_EQ(time2.getSeconds(), 1);
+    ASSERT_EQ(time2.getUSeconds(), 2);
     std::cout << time2 << std::endl;
 
     Fw::TimeInterval time3(Fw::Time(10, 20), Fw::Time(20, 40));
@@ -127,6 +127,20 @@ void TimeIntervalTester::test_TimeIntervalSubtractionTest() {
     Fw::TimeInterval result4 = Fw::TimeInterval::sub(t5, t6);
     ASSERT_EQ(result4.getSeconds(), 0);
     ASSERT_EQ(result4.getUSeconds(), 0);
+}
+
+void TimeIntervalTester::test_TimeIntervalToTimeIntervalValue() {
+    U32 seconds = 5;
+    U32 useconds = 500000;
+    Fw::TimeInterval time_interval(seconds, useconds);
+
+    Fw::TimeIntervalValue time_interval_value = time_interval.asTimeIntervalValue();
+
+    // Alter the original
+    time_interval.set(0, 0);
+
+    ASSERT_EQ(time_interval_value.get_seconds(), seconds);
+    ASSERT_EQ(time_interval_value.get_useconds(), useconds);
 }
 
 }  // namespace Fw

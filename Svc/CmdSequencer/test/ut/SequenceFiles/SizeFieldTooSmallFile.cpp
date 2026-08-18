@@ -19,7 +19,7 @@ namespace SequenceFiles {
 
 SizeFieldTooSmallFile ::SizeFieldTooSmallFile(const Format::t a_format) : File("size_field_too_small", a_format) {}
 
-void SizeFieldTooSmallFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void SizeFieldTooSmallFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 dataSize = FPrime::Records::RECORD_DESCRIPTOR_SIZE + sizeof(U32) +  // seconds
                          sizeof(U32) +                                            // subseconds (CRC should land here)

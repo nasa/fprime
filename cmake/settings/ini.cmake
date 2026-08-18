@@ -8,7 +8,7 @@
 include_guard()
 
 # Necessary global variables
-set(FPRIME__INTERNAL_SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
+set(FPRIME__INTERNAL_SETTINGS_CMAKE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "Internal path to settings cmake directory" FORCE)
 find_program(PYTHON NAMES python3 python) #This happens before required
 
 ####

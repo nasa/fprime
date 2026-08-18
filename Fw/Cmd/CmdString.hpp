@@ -7,53 +7,12 @@
 #ifndef FW_CMD_STRING_HPP
 #define FW_CMD_STRING_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 
 namespace Fw {
 
-class CmdStringArg final : public StringBase {
-  public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_CMD_STR,
-        STRING_SIZE = FW_CMD_STRING_MAX_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE),
-    };
+using CmdStringArg = StringTemplate<FW_CMD_STRING_MAX_SIZE>;
 
-    CmdStringArg() : StringBase() { *this = ""; }
-
-    CmdStringArg(const CmdStringArg& src) : StringBase() { *this = src; }
-
-    CmdStringArg(const ConstStringBase& src) : StringBase() { *this = src; }
-
-    explicit CmdStringArg(const char* src) : StringBase() { *this = src; }
-
-    ~CmdStringArg() {}
-
-    CmdStringArg& operator=(const CmdStringArg& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    CmdStringArg& operator=(const ConstStringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    CmdStringArg& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
-
-  private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
-};
 }  // namespace Fw
 
 #endif

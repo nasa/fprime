@@ -1,0 +1,46 @@
+[
+  {
+    "name": "minimal",
+    "generate-args": "-DFW_OBJECT_NAMES=0 -DFW_OBJECT_REGISTRATION=0 -DFW_QUEUE_REGISTRATION=0 -DFW_PORT_TRACING=0 -DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF",
+    "disabled": true,
+    "reason": "CdhCore symbol not defined when text logging disabled in TestDeploymentsProject"
+  },
+  {
+    "name": "no-text-logging",
+    "generate-args": "-DFW_ENABLE_TEXT_LOGGING=0 -DFW_SERIALIZABLE_TO_STRING=0 -DFPRIME_ENABLE_TEXT_LOGGERS=OFF",
+    "disabled": true,
+    "reason": "CdhCore symbol not defined when text logging disabled in TestDeploymentsProject"
+  },
+  {
+    "name": "no-object-names",
+    "generate-args": "-DFW_OBJECT_NAMES=0"
+  },
+  {
+    "name": "direct-port-calls",
+    "generate-args": "-DFPRIME_ENABLE_DIRECT_PORT_CALLS=ON"
+  },
+  {
+    "name": "fileid-assert",
+    "generate-args": "-DFW_ASSERT_LEVEL=2"
+  },
+  {
+    "name": "no-assert",
+    "generate-args": "-DFW_ASSERT_LEVEL=1"
+  },
+  {
+    "name": "relative-path-assert",
+    "generate-args": "-DFW_ASSERT_LEVEL=4"
+  },
+  {
+    "name": "no-port-serialization",
+    "generate-args": "-DFW_PORT_SERIALIZATION=0"
+  },
+  {
+    "name": "assertions-always-abort",
+    "generate-args": "-DFW_ASSERTIONS_ALWAYS_ABORT=1"
+  },
+  {
+    "name": "no-cmd-residual-check",
+    "generate-args": "-DFW_CMD_CHECK_RESIDUAL=0"
+  }
+]

@@ -6,13 +6,9 @@
 
 namespace Drv {
 
-class DataBuffer : public Fw::SerializeBufferBase {
+class DataBuffer : public Fw::LinearBufferBase {
   public:
-    enum {
-        DATA_BUFFER_SIZE = 256,
-        SERIALIZED_TYPE_ID = 1010,
-        SERIALIZED_SIZE = DATA_BUFFER_SIZE + sizeof(FwBuffSizeType)
-    };
+    enum { DATA_BUFFER_SIZE = 256, SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(DATA_BUFFER_SIZE) };
 
     DataBuffer(const U8* args, FwSizeType size);
     DataBuffer();
@@ -21,10 +17,6 @@ class DataBuffer : public Fw::SerializeBufferBase {
     DataBuffer& operator=(const DataBuffer& other);
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
 
   private:
     U8 m_data[DATA_BUFFER_SIZE];  // packet data buffer

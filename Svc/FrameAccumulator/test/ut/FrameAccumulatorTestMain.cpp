@@ -47,9 +47,19 @@ TEST(FrameAccumulator, testBufferReturnDeallocation) {
     tester.testBufferReturnDeallocation();
 }
 
+TEST(FrameAccumulator, testDropValidFrameWhenAllocationFailsAndRingIsFull) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testDropValidFrameWhenAllocationFailsAndRingIsFull();
+}
+
 TEST(FrameAccumulator, testDetectionErrorHandling) {
     Svc::FrameAccumulatorTester tester;
     tester.testDetectionErrorHandling();
+}
+
+TEST(FrameAccumulator, testContextForwarded) {
+    Svc::FrameAccumulatorTester tester;
+    tester.testContextForwarded();
 }
 
 int main(int argc, char** argv) {

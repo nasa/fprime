@@ -6,6 +6,10 @@ event InvalidSeqRunCall($state: I32) \
     severity warning high \
     format "Cannot run sequence from a port in state {}"
 
+event InvalidSeqCancelCall($state: I32) \
+    severity warning high \
+    format "Cannot cancel sequence from a port in state {}"
+
 event FileOpenError(
     filePath: string
     errorCode: I32
@@ -73,6 +77,20 @@ event InsufficientBufferSpace(
     severity warning high \
     format "Buffer capacity of {} was not big enough for sequence {}"
 
+event FileApiError(
+    filePath: string
+    errorCode: I32
+) \
+    severity warning high \
+    format "File system API error encountered while operating on file {}: {}"
+
+event SequenceFilePathTooLong(
+    baseDir: string
+    fileName: string
+) \
+    severity warning high \
+    format "Sequence file path was truncated: base directory {} and file name {} together exceed the maximum path length"
+
 # runtime
 
 event CommandFailed(
@@ -98,7 +116,7 @@ event SequenceCancelled(
 
 event SequenceExitedWithError(
     filePath: string
-    errorCode: U8
+    errorCode: I32
 ) \
     severity warning high \
     format "Sequence {} exited with error code {}"
@@ -215,6 +233,27 @@ event TooManySequenceDirectives(
     severity warning high \
     format "A sequence specified it had {} directives but the max was {}"
 
+event ArgSizeMismatch(
+    expected: Fpy.StackSizeType
+    actual: FwSizeType
+    filePath: string
+) \
+    severity warning high \
+    format "Expected {} bytes of arguments, but received {} in sequence file {}"
+
+event ArgSizeExceedsCapacity(
+    actual: FwSizeType
+    capacity: FwSizeType
+) \
+    severity warning high \
+    format "Argument size {} exceeds the {} byte argument buffer"
+
+event ArgTotalSizeExceedsStackLimit(
+    argSize: Fpy.StackSizeType
+) \
+    severity warning high \
+    format "Arguments of size {} would exceed max stack size."
+
 event SequencePaused(
     stmtIdx: U32
 ) \
@@ -231,3 +270,52 @@ event BreakpointSet(
 event BreakpointCleared() \
     severity activity high \
     format "Breakpoint cleared"
+
+event LogFatal(
+    filePath: string
+    message: string
+) \
+    severity fatal \
+    format "Sequence {}: {}"
+
+event LogWarningHi(
+    filePath: string
+    message: string
+) \
+    severity warning high \
+    format "Sequence {}: {}"
+
+event LogWarningLo(
+    filePath: string
+    message: string
+) \
+    severity warning low \
+    format "Sequence {}: {}"
+
+event LogCommand(
+    filePath: string
+    message: string
+) \
+    severity command \
+    format "Sequence {}: {}"
+
+event LogActivityHi(
+    filePath: string
+    message: string
+) \
+    severity activity high \
+    format "Sequence {}: {}"
+
+event LogActivityLo(
+    filePath: string
+    message: string
+) \
+    severity activity low \
+    format "Sequence {}: {}"
+
+event LogDiagnostic(
+    filePath: string
+    message: string
+) \
+    severity diagnostic \
+    format "Sequence {}: {}"

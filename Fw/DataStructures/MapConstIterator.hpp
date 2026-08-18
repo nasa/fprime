@@ -76,7 +76,7 @@ class MapConstIterator {
                 this->m_implIterator = new (&this->m_impl.redBlackTree) RedBlackTreeIterator(it.m_impl.redBlackTree);
                 break;
             default:
-                FW_ASSERT(0, static_cast<FwAssertArgType>(implKind));
+                FW_ASSERT(false, static_cast<FwAssertArgType>(implKind));
                 break;
         }
     }
@@ -93,7 +93,7 @@ class MapConstIterator {
     MapConstIterator& operator=(const MapConstIterator&) = default;
 
     //! Equality comparison operator
-    bool operator==(const MapConstIterator& it) {
+    bool operator==(const MapConstIterator& it) const {
         bool result = false;
         const auto implKind1 = this->getImplIterator().implKind();
         const auto implKind2 = it.getImplIterator().implKind();
@@ -106,7 +106,7 @@ class MapConstIterator {
                     result = this->m_impl.redBlackTree.compareEqual(it.m_impl.redBlackTree);
                     break;
                 default:
-                    FW_ASSERT(0, static_cast<FwAssertArgType>(implKind1));
+                    FW_ASSERT(false, static_cast<FwAssertArgType>(implKind1));
                     break;
             }
         }
@@ -114,7 +114,7 @@ class MapConstIterator {
     }
 
     //! Inequality comparison operator
-    bool operator!=(const MapConstIterator& it) { return !(*this == it); };
+    bool operator!=(const MapConstIterator& it) const { return !(*this == it); };
 
     //! Prefix increment
     MapConstIterator& operator++() {

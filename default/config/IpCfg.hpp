@@ -12,17 +12,6 @@
 #include <Fw/Time/TimeInterval.hpp>
 #ifndef REF_IPCFG_HPP
 #define REF_IPCFG_HPP
-
-enum IpCfg {
-    SOCKET_SEND_TIMEOUT_SECONDS = 1,       // Seconds component of timeout to an individual send
-    SOCKET_SEND_TIMEOUT_MICROSECONDS = 0,  // Milliseconds component of timeout to an individual send
-    SOCKET_IP_SEND_FLAGS = 0,              // send, sendto FLAGS argument
-    SOCKET_IP_RECV_FLAGS = 0,              // recv FLAGS argument
-    SOCKET_MAX_ITERATIONS = 0xFFFF,        // Maximum send/recv attempts before an error is returned
-    SOCKET_MAX_HOSTNAME_SIZE = 256         // Maximum stored hostname
-};
-static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
-
 #ifdef TGT_OS_TYPE_VXWORKS
 #include <socket.h>
 #elif defined TGT_OS_TYPE_LINUX || TGT_OS_TYPE_DARWIN
@@ -30,6 +19,25 @@ static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
 #else
 #error OS not supported for IP Socket Communications
 #endif
+
+enum IpCfg {
+    SOCKET_SEND_TIMEOUT_SECONDS = 1,       // Seconds component of timeout to an individual send
+    SOCKET_SEND_TIMEOUT_MICROSECONDS = 0,  // Milliseconds component of timeout to an individual send
+    SOCKET_IP_SEND_FLAGS = 0,              // send, sendto FLAGS argument
+    SOCKET_IP_RECV_FLAGS = 0,              // recv FLAGS argument
+    SOCKET_MAX_ITERATIONS = 0xFFFF,        // Maximum send/recv attempts before an error is returned
+    // Maximum stored IPv4 address string. Sized to fit a full dotted-quad ("255.255.255.255")
+    // plus NUL terminator, with extra slack. The driver does NOT perform DNS resolution; the
+    // configure() call requires an IPv4 address in the form x.x.x.x. The buffer is kept at 256
+    // bytes (rather than INET_ADDRSTRLEN==16) for backwards-compatibility with downstream
+    // projects that override this macro for their own purposes.
+    SOCKET_MAX_IPV4_ADDRESS_SIZE = 256,
+    // DEPRECATED: legacy alias retained for one minor release. New code should use
+    // SOCKET_MAX_IPV4_ADDRESS_SIZE. Removing this alias is a breaking change and must be
+    // accompanied by a major-version bump per the F' versioning policy.
+    SOCKET_MAX_HOSTNAME_SIZE = SOCKET_MAX_IPV4_ADDRESS_SIZE
+};
+static const Fw::TimeInterval SOCKET_RETRY_INTERVAL = Fw::TimeInterval(1, 0);
 
 // Value type enumeration
 enum SocketOptionValueType {
@@ -78,7 +86,9 @@ inline IpSocketOptions makeSizeOption(int opt, int level, size_t val) {
 // machine, they could potentially bind to the same port and intercept messages.
 // Projects should evaluate their threat model and choose options accordingly.
 static const IpSocketOptions IP_SOCKET_OPTIONS[] = {
-    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 0),  // Example
+    // Default the TcpServer to reuse the same port, which prevents TIME_WAIT delays when rerunning
+    // flight software. Set to zero to turn off.
+    makeIntOption(SO_REUSEADDR, SOL_SOCKET, 1),
     // Add other socket options as needed, and expand above helper functions
     // if other types are needed
 };

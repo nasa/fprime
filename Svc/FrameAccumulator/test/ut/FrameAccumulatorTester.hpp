@@ -66,8 +66,14 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! Test returning ownership of a buffer
     void testBufferReturnDeallocation();
 
+    //! Test dropping a detected frame when allocation fails and the ring is full
+    void testDropValidFrameWhenAllocationFailsAndRingIsFull();
+
     //! Test handling of errors from the FrameDetector (too large size_out)
     void testDetectionErrorHandling();
+
+    //! Test that the most recent context is forwarded when a frame is detected
+    void testContextForwarded();
 
   private:
     // ----------------------------------------------------------------------
@@ -122,6 +128,7 @@ class FrameAccumulatorTester : public FrameAccumulatorGTestBase {
     //! The component under test (should be listed after mallocator for safe destruction)
     Svc::FrameAccumulator component;
 
+    bool m_failBufferAllocate;
     Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
     U8 m_buffer_slot[2048];
 };

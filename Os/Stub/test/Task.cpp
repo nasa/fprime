@@ -40,7 +40,7 @@ Os::TaskInterface::Status TestTask::start(const Os::TaskInterface::Arguments& ar
     return StaticData::data.startStatus;
 }
 
-Os::Task::Status TestTask::_delay(Fw::TimeInterval interval) {
+Os::Task::Status TestTask::_delay(const Fw::TimeInterval& interval) {
     Os::Stub::Task::Test::StaticData::data.lastCalled = Os::Stub::Task::Test::StaticData::LastFn::DELAY_FN;
     Os::Stub::Task::Test::StaticData::data.delay = interval;
 

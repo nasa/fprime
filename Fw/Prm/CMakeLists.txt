@@ -5,10 +5,22 @@
 # MOD_DEPS: (optional) module dependencies
 #
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Prm.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.cpp"
+
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Prm.fpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/ParamBuffer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ParamValid.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PrmBuffer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PrmExternalTypes.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PrmString.hpp"
 )
 
-register_fprime_module()
-
+### UTs ###
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ParamValidTest.cpp"
+  DEPENDS
+    Fw_Prm
+)

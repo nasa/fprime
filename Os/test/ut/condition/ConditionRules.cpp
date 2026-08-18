@@ -24,8 +24,10 @@ void Os::Test::Condition::Tester::Wait::action(Os::Test::Condition::Tester& stat
     state.m_notify = false;
     state.m_waiters += 1;
     this->notify_other("Notify");
-    state.m_condition.wait(this->getLock());
-    ASSERT_TRUE(state.m_notify) << "Notify was not set";
+    // Conditions must be rechecked after the wait returns (e.g. spurious wakeups)
+    while (not state.m_notify) {
+        state.m_condition.wait(this->getLock());
+    }
     state.m_waiters -= 1;
     this->notify_other("Notify");
 }

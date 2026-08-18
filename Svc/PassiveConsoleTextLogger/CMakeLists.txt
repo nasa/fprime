@@ -6,12 +6,25 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
-)
-set(MOD_DEPS
-  Fw/Logger
+
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImplCommon.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/ConsoleTextLoggerImpl.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveTextLogger.hpp"
+  DEPENDS
+    Fw_Logger
+    Svc_Types_EventSeverityFilter
 )
 
-register_fprime_module()
+### UTs ###
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PassiveConsoleTextLogger.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveConsoleTextLoggerTester.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PassiveConsoleTextLoggerTestMain.cpp"
+)

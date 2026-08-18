@@ -25,6 +25,7 @@ class EventManagerTester : public Svc::EventManagerGTestBase {
     void runFilterDump();
     void runFilterInvalidCommands();
     void runEventFatal();
+    void runDroppedTelemetry();
     void runFileDump();
     void runFileDumpErrors();
 

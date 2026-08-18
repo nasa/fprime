@@ -1,0 +1,608 @@
+event BuffersExhausted severity warning low \
+    format "Unable to allocate a PDU buffer"
+
+event InvalidChannel(
+    channelId: U8 @< Requested channel index
+    maxChannelId: U8 @< Maximum channel index
+) \
+    severity warning low \
+    format "Invalid channel ID {}, maximum channel ID is {}" 
+
+event TxFileQueued(
+    sourceFileName: string size MaxFilePathSize @< Source file to be sent
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity activity low \
+    format "TX file queued for {} (transaction {})" 
+
+event UnsupportedSendFileArguments(
+    offset: U32 @< Offset of the send file request
+    length: U32 @< Length of the send file request
+) \
+    severity warning low \
+    format "Invalid send file port request with offset {}, length {}" 
+
+event SendFileInitiateFail(
+    sourceFileName: string size MaxFilePathSize @< Source file being sent
+) \
+    severity warning low \
+    format "Failed to initiate file send transfer for {}"
+
+event PlaybackInitiated(
+    sourceDirectory: string size MaxFilePathSize @< Source directory being sent
+) \
+    severity activity low \
+    format "Successfully initiated directory playback for {}"
+
+event PollDirInitiated(
+    sourceDirectory: string size MaxFilePathSize @< Source directory being sent
+    pollId: U8 @< Channel poll index
+) \
+    severity activity low \
+    format "Successfully initiated directory poll for {} (index {})"
+
+event PollDirStopped(
+    channelId: U8 @< Channel index stopped
+    pollId: U8 @< Channel poll index stopped
+) \
+    severity activity low \
+    format "Successfully stopped directory poll for channel {}, index {}"
+
+event PollDirBusy(
+    channelId: U8 @< Channel index
+    pollId: U8 @< Poll index that is busy
+) \
+    severity warning low \
+    format "Cannot start directory poll - channel {} poll {} already in use"
+
+event PollDirNotActive(
+    channelId: U8 @< Channel index
+    pollId: U8 @< Poll index requested
+) \
+    severity warning low \
+    format "Cannot stop directory poll - channel {} poll {} is not active"
+
+event SetFlowState(
+    channelId: U8 @< Channel being set
+    flowState: Cfdp.Flow @< Flow state set
+) \
+    severity activity low \
+    format "Set channel {} to {}" 
+
+event InvalidChannelPoll(
+    pollId: U8 @< Requested channel index
+    maxPollId: U8 @< Maximum channel index
+) \
+    severity warning low \
+    format "Invalid poll ID {}, maximum poll ID is {}"
+
+event InvalidPollInterval(
+    interval: U32 @< Requested poll interval in seconds
+) \
+    severity warning low \
+    format "Invalid poll interval {} seconds, must be non-zero"
+
+event FailKeepFileMove(
+    srcFile: string size MaxFilePathSize @< Source file being moved
+    moveDir: string size MaxFilePathSize @< Directory file was moved to
+    status: I32 @< Status of the move operation
+) \
+    severity warning low \
+    format "Failed to move {} to {} error {}" 
+
+event FailPollFileMove(
+    srcFile: string size MaxFilePathSize @< Source file being moved
+    failDir: string size MaxFilePathSize @< Directory file was moved to
+    status: I32 @< Status of the move operation
+) \
+    severity warning low \
+    format "Failed to move {} to {} error {}"
+
+event FailPduHeaderDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize PDU header on channel {}, status {}"
+
+event FailPduSerialization(
+    channelId: U8 @< Channel sending the PDU
+    pduType: Cfdp.PduTypeEnum @< PDU type
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to serialize {} PDU on channel {}, status {}"
+
+event FailMetadataPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize Metadata PDU on channel {}, status {}"
+
+event FailFileDataPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize File Data PDU on channel {}, status {}"
+
+event FailEofPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize EOF PDU on channel {}, status {}"
+
+event FailAckPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize ACK PDU on channel {}, status {}"
+
+event FailFinPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize FIN PDU on channel {}, status {}"
+
+event FailNakPduDeserialization(
+    channelId: U8 @< Channel that received the PDU
+    status: I32 @< Serialization status code
+) \
+    severity warning low \
+    format "Failed to deserialize NAK PDU on channel {}, status {}"
+
+event RxAckLimitReached(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "RX class {} ACK limit reached for transaction {}:{}, no fin-ack sent"
+
+event RxTempFileCreated(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Temporary filename created
+) \
+    severity activity low \
+    format "RX class {} transaction {}:{} creating temp file {} without metadata"
+
+event RxFileCreateFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< File that failed to create
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to create file {}, error={}"
+
+event RxCrcMismatch(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    expected: U32 @< Expected CRC value
+    actual: U32 @< Actual CRC value
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} CRC mismatch: expected 0x{x} actual 0x{x}"
+
+event RxNakLimitReached(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} NAK limit reached"
+
+event RxSeekFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    offset: U32 @< Offset that failed to seek
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to seek to offset {}, error={}"
+
+event RxWriteFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    expected: U32 @< Expected bytes to write
+    actual: I32 @< Actual bytes written
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} write failed: expected {} bytes, got {}"
+
+event RxFileDataOutOfBounds(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    offset: U32 @< File data offset from PDU
+    dataSize: U32 @< File data size from PDU
+    fileSize: U32 @< Bound applied: declared file size from metadata, or 2^32-1 if no metadata received yet
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} file data [{}, +{}] exceeds file size bound {}, PDU rejected"
+
+event RxFileSizeMismatch(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    expected: U32 @< Expected file size from metadata
+    actual: U32 @< Actual file size from EOF
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} EOF file size mismatch: expected {} got {}"
+
+event RxEofCancelReceived(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity activity high \
+    format "RX class {} transaction {}:{} cancelled by sender"
+
+event RxEofWithError(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    conditionCode: U8 @< EOF condition code (checksum failure, file error, etc.)
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} received EOF with error condition code {}"
+
+event RxSeekCrcFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    offset: U32 @< Offset that failed during CRC calculation
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to seek offset {} during CRC calculation, error={}"
+
+event RxReadCrcFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    expected: U32 @< Expected bytes to read
+    actual: I32 @< Actual bytes read
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to read during CRC calculation: expected {} bytes, got {}"
+
+event RxEofMdSizeMismatch(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    mdSize: U32 @< File size from metadata
+    eofSize: U32 @< File size from EOF
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} EOF/metadata size mismatch: metadata={}, EOF={}"
+
+event RxFileRenameFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    tempFile: string size MaxFilePathSize @< Temporary file path
+    finalFile: string size MaxFilePathSize @< Final file path
+    status: I32 @< File system operation status
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to rename {} to {}, error={}"
+
+event RxFileReopenFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< File that failed to reopen
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} failed to reopen file {} after rename, error={}"
+
+event RxInactivityTimeout(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} inactivity timer expired"
+
+event RxInvalidDirectiveCode(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    directiveCode: U8 @< Invalid directive code received
+    substate: U8 @< Current transaction substate
+) \
+    severity warning low \
+    format "RX class {} transaction {}:{} received invalid directive code {} for substate {}"
+
+event TxAckLimitReached(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} ACK limit reached, no eof-ack received"
+
+event TxInactivityTimeout(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} inactivity timer expired"
+
+event TxZeroLengthFile(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< Zero-length file
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} cannot transfer zero-length file {}"
+
+event TxFileOpenFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    filename: string size MaxFilePathSize @< File that failed to open
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} failed to open file {}, error={}"
+
+event TxFileSeekFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    status: I32 @< File operation status
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} failed to seek to beginning of file, error={}"
+
+event TxSendMetadataFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} failed to send metadata PDU"
+
+event TxEarlyFinReceived(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} received early FIN, cancelling transfer"
+
+event TxInvalidNakPdu(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} received invalid NAK PDU"
+
+event TxInvalidSegmentRequests(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    badCount: U32 @< Number of invalid segment requests
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} received {} invalid NAK segment requests"
+
+event TxNonFileDirectivePduReceived(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} received non-file-directive PDU"
+
+event TxInvalidDirectiveCode(
+    cfdpClass: Cfdp.Class @< CFDP class
+    srcEid: U32 @< Source entity ID
+    seqNum: U32 @< Transaction sequence number
+    directiveCode: U8 @< Invalid directive code received
+    substate: U8 @< Current transaction substate
+) \
+    severity warning low \
+    format "TX class {} transaction {}:{} received invalid directive code {} for substate {}"
+
+event TxFileTransferStarted(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    fileSize: U32 @< File size in bytes
+) \
+    severity activity high \
+    format "TX {} transaction {} transfer started, {}:{} -> {}:{}, {} bytes"
+
+event TxFileTransferCompleted(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    fileSize: U32 @< File size in bytes
+) \
+    severity activity high \
+    format "TX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
+
+event TxFileTransferFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    conditionCode: U8 @< Failure condition code
+) \
+    severity warning low \
+    format "TX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
+
+event RxFileTransferCompleted(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    fileSize: U32 @< File size in bytes
+) \
+    severity activity high \
+    format "RX {} transaction {} completed, {}:{} -> {}:{}, {} bytes"
+
+event RxFileTransferFailed(
+    cfdpClass: Cfdp.Class @< CFDP class
+    seqNum: U32 @< Transaction sequence number
+    srcEid: U32 @< Source entity ID
+    srcFile: string size MaxFilePathSize @< Source filename
+    destEid: U32 @< Destination entity ID
+    destFile: string size MaxFilePathSize @< Destination filename
+    conditionCode: U8 @< Failure condition code
+) \
+    severity warning low \
+    format "RX {} transaction {} FAILED, {}:{} -> {}:{}, error code {}"
+
+event MetadataReceived(
+    srcFile: string size MaxFilePathSize @< Source filename from metadata
+    destFile: string size MaxFilePathSize @< Destination filename from metadata
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity activity low \
+    format "Metadata received for source: {}, dest: {} (transaction {})"
+
+event FileDataSegmentMetadata severity warning low \
+    format "File data PDU with unsupported segment metadata received"
+
+event ChunklistUnavailable(
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "Cannot get chunklist, abandoning transaction {}"
+
+event UnhandledPduInIdleState severity warning low \
+    format "Unhandled PDU type received in idle state"
+
+event RxTransactionLimitReached(
+    srcEid: U32 @< Source entity ID
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "Dropping packet from {} transaction {} due to max RX transactions reached"
+
+event InvalidDestinationEid(
+    destEid: U32 @< Invalid destination entity ID
+) \
+    severity warning low \
+    format "Dropping packet for invalid destination EID {}"
+
+event MaxTxTransactionsReached severity warning low \
+    format "Maximum number of commanded TX files reached"
+
+event PlaybackDirOpenFailed(
+    directory: string size MaxFilePathSize @< Directory that failed to open
+    status: I32 @< Directory operation status
+) \
+    severity warning low \
+    format "Failed to open playback directory {}, error={}"
+
+event PlaybackDirSlotUnavailable severity warning low \
+    format "No playback directory slot available"
+
+event DanglingFileHandleClosed(
+    channelId: U8 @< Channel ID
+    transactionSeq: U32 @< Transaction sequence number
+) \
+    severity warning low \
+    format "Closed dangling file handle for channel {} transaction {}"
+
+event PlaybackDirReadFailed(
+    directory: string size MaxFilePathSize @< Directory being read
+    status: I32 @< Directory operation status
+) \
+    severity warning low \
+    format "Failed to read from playback directory {}, error={}"
+
+event ResetFreedTransaction severity diagnostic \
+    format "Attempt to reset a transaction that has already been freed"
+
+event FileRemoveFailed(
+    filename: string size MaxFilePathSize @< File that failed to delete
+    status: I32 @< File system operation status
+) \
+    severity warning low \
+    format "Failed to remove file {}, error={}"
+
+@ Transaction was suspended
+event TransactionSuspended(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity low \
+    format "Transaction ({}, {}) suspended"
+
+@ Transaction was resumed
+event TransactionResumed(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity low \
+    format "Transaction ({}, {}) resumed"
+
+@ Transaction canceled
+event TransactionCanceled(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity high \
+    format "Transaction ({}, {}) canceled"
+
+@ Transaction abandoned
+event TransactionAbandoned(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity activity high \
+    format "Transaction ({}, {}) abandoned"
+
+@ Transaction not found for command
+event TransactionNotFound(
+    transactionSeq: Cfdp.TransactionSeq @< Transaction sequence number
+    entityId: Cfdp.EntityId @< Entity ID
+) \
+    severity warning low \
+    format "Transaction ({}, {}) not found"
+
+event ResetCounters(
+    channelId: U8 @< Channel ID reset (0xFF indicates all channels)
+) \
+    severity activity high \
+    format "Reset telemetry counters for channel {}"
+
+@ A FIN arrived for a downlink transaction we sourced that has already completed and
+@ been recycled; acknowledged statelessly per CFDP so the peer can close out.
+event TxLateFinAcked(
+    srcEid: Cfdp.EntityId @< Source entity ID (this local entity)
+    seqNum: Cfdp.TransactionSeq @< Transaction sequence number
+) \
+    severity diagnostic \
+    format "Acknowledged late FIN for transaction {}:{}"

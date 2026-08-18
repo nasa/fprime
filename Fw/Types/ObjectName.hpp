@@ -7,53 +7,12 @@
 #ifndef FW_OBJECT_NAME_HPP
 #define FW_OBJECT_NAME_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 
 namespace Fw {
 
-class ObjectName final : public StringBase {
-  public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_OBJECT_NAME,
-        STRING_SIZE = FW_OBJ_NAME_BUFFER_SIZE,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
-    };
+using ObjectName = StringTemplate<FW_OBJ_NAME_BUFFER_SIZE>;
 
-    ObjectName() : StringBase() { *this = ""; }
-
-    ObjectName(const ObjectName& src) : StringBase() { *this = src; }
-
-    ObjectName(const ConstStringBase& src) : StringBase() { *this = src; }
-
-    explicit ObjectName(const char* src) : StringBase() { *this = src; }
-
-    ~ObjectName() {}
-
-    ObjectName& operator=(const ObjectName& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    ObjectName& operator=(const ConstStringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    ObjectName& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
-
-  private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
-};
 }  // namespace Fw
 
 #endif

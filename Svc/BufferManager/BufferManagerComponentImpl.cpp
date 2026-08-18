@@ -44,8 +44,8 @@ BufferManagerComponentImpl ::~BufferManagerComponentImpl() {
 }
 
 void BufferManagerComponentImpl ::cleanup() {
-    FW_ASSERT(this->m_buffers);
-    FW_ASSERT(this->m_allocator);
+    FW_ASSERT(this->m_buffers != nullptr);
+    FW_ASSERT(this->m_allocator != nullptr);
 
     if (not this->m_cleaned) {
         // walk through Fw::Buffer instances and delete them
@@ -66,7 +66,7 @@ void BufferManagerComponentImpl ::cleanup() {
 void BufferManagerComponentImpl ::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& fwBuffer) {
     // make sure component has been set up
     FW_ASSERT(this->m_setup);
-    FW_ASSERT(m_buffers);
+    FW_ASSERT(m_buffers != nullptr);
     // check for null, empty buffers - this is a warning because this component returns
     // null, empty buffers if it can't allocate one.
     // however, empty non-null buffers could potentially be previously allocated
@@ -102,7 +102,7 @@ void BufferManagerComponentImpl ::bufferSendIn_handler(const FwIndexType portNum
 Fw::Buffer BufferManagerComponentImpl ::bufferGetCallee_handler(const FwIndexType portNum, Fw::Buffer::SizeType size) {
     // make sure component has been set up
     FW_ASSERT(this->m_setup);
-    FW_ASSERT(m_buffers);
+    FW_ASSERT(m_buffers != nullptr);
     // find smallest buffer based on size.
     for (U16 buff = 0; buff < this->m_numStructs; buff++) {
         if ((not this->m_buffers[buff].allocated) and (size <= this->m_buffers[buff].size)) {
@@ -133,7 +133,7 @@ void BufferManagerComponentImpl::setup(U16 mgrId,                    //!< manage
     this->m_memId = memId;
     this->m_allocator = &allocator;
     // clear bins
-    memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
+    (void)memset(&this->m_bufferBins, 0, sizeof(this->m_bufferBins));
 
     this->m_bufferBins = bins;
 

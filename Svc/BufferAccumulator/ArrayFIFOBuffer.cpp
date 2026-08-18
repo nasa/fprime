@@ -65,7 +65,7 @@ bool BufferAccumulator::ArrayFIFOBuffer ::dequeue(Fw::Buffer& e) {
         return false;
     }
 
-    FW_ASSERT(this->m_elements);
+    FW_ASSERT(this->m_elements != nullptr);
     bool status;
 
     if (this->m_size > 0) {

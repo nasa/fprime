@@ -17,6 +17,7 @@
 #include <Os/File.hpp>
 #include <Os/Mutex.hpp>
 #include <Os/Queue.hpp>
+#include <Os/SandboxedFile.hpp>
 #include <Svc/FileDownlink/FileDownlinkComponentAc.hpp>
 #include <config/FileDownlinkCfg.hpp>
 
@@ -51,7 +52,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
         }
 
         //! Get the Mode value
-        Type get() {
+        Type get() const {
             this->m_mutex.lock();
             const Type value = this->m_value;
             this->m_mutex.unLock();
@@ -63,7 +64,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
         Type m_value;
 
         //! The Mode mutex
-        Os::Mutex m_mutex;
+        mutable Os::Mutex m_mutex;
     };
 
     //! Class representing an outgoing file
@@ -81,8 +82,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! The destination file name
         Fw::LogStringArg m_destName;
 
-        //! The underlying OS file
-        Os::File m_osFile;
+        //! The underlying OS file (sandboxed to restrict read locations)
+        Os::SandboxedFile m_osFile;
 
         //! The file size
         U32 m_size;
@@ -92,8 +93,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
       public:
         //! Open the OS file for reading and initialize the checksum
-        Os::File::Status open(const char* const sourceFileName,  //!< The source file name
-                              const char* const destFileName     //!< The destination file name
+        Os::File::Status open(const Fw::FileNameString& sourceFileName,  //!< The source file name
+                              const Fw::FileNameString& destFileName     //!< The destination file name
         );
 
         //! Read bytes from the OS file and update the checksum
@@ -108,8 +109,11 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Get the destination file name
         Fw::LogStringArg& getDestName(void) { return this->m_destName; }
 
+        //! Configure the allowed read directory for sandboxed file opens
+        void configureSandbox(const char* directory) { this->m_osFile.configure(directory); }
+
         //! Get the underlying OS file
-        Os::File& getOsFile(void) { return this->m_osFile; }
+        Os::SandboxedFile& getOsFile(void) { return this->m_osFile; }
 
         //! Get the file size
         U32 getSize(void) { return this->m_size; }
@@ -176,6 +180,12 @@ class FileDownlink final : public FileDownlinkComponentBase {
         //! Issue a File Read Error warning
         void fileRead(const Os::File::Status status);
 
+        //! Issue a Zero-Size File warning
+        void zeroSize();
+
+        //! Issue a Source Out Of Sandbox warning
+        void sourceOutOfSandbox();
+
       private:
         //! Record a warning
         void warning() {
@@ -196,8 +206,8 @@ class FileDownlink final : public FileDownlinkComponentBase {
 
     //! Used to track a single file downlink request
     struct FileEntry {
-        char srcFilename[Fw::FileNameString::STRING_SIZE];   // Name of requested file
-        char destFilename[Fw::FileNameString::STRING_SIZE];  // Name of requested file
+        Fw::FileNameString srcFilename;   // Name of requested file
+        Fw::FileNameString destFilename;  // Name of requested file
         U32 offset;
         U32 length;
         CallerSource source;  // Source of the downlink request
@@ -226,6 +236,10 @@ class FileDownlink final : public FileDownlinkComponentBase {
                    U32 cycleTime,      //!< Rate at which we are running
                    U32 fileQueueDepth  //!< Max number of items in file downlink queue
     );
+
+    //! Restrict SendFile / SendPartial reads to paths under the configured directory.
+    //! Fail-open: until called, the sandbox defaults to `/` (any readable path is allowed).
+    void configure(const char* directory);
 
     //! Cleans up file queue before dispatching to underlying component
     void deinit();
@@ -307,9 +321,9 @@ class FileDownlink final : public FileDownlinkComponentBase {
     // ----------------------------------------------------------------------
 
     void sendFile(
-        const char* sourceFilename,  //!< The name of the on-board file to send
-        const char* destFilename,    //!< The name of the destination file on the ground
-        U32 startOffset,             //!< Starting offset of the source file
+        const Fw::FileNameString& sourceFilename,  //!< The name of the on-board file to send
+        const Fw::FileNameString& destFilename,    //!< The name of the destination file on the ground
+        U32 startOffset,                           //!< Starting offset of the source file
         U32 length  //!< Number of bytes to send from starting offset. Length of 0 implies until the end of the file
     );
 
@@ -330,7 +344,7 @@ class FileDownlink final : public FileDownlinkComponentBase {
     void downlinkPacket();
     // Finish the file transfer
     void finishHelper(bool is_cancel);
-    // Convert internal status enum to a command response;
+    // Convert internal status enum to a command response
     Fw::CmdResponse statusToCmdResp(SendFileStatus status);
     // Send response after completing file downlink
     void sendResponse(SendFileStatus resp);

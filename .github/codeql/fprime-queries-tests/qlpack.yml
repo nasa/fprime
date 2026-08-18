@@ -1,0 +1,5 @@
+name: fprime/jpl-c-queries-tests
+version: 1.0.0
+extractor: cpp
+dependencies:
+  fprime/jpl-c-queries: "*"

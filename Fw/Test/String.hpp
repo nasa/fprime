@@ -9,7 +9,6 @@
 
 #include <Fw/FPrimeBasicTypes.hpp>
 
-#include "Fw/Types/SerIds.hpp"
 #include "Fw/Types/StringBase.hpp"
 
 namespace Test {

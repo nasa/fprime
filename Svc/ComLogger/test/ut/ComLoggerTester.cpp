@@ -9,6 +9,7 @@
 #include <Os/ValidateFile.hpp>
 #include "ComLoggerTester.hpp"
 #include "Fw/Cmd/CmdPacket.hpp"
+#include "Fw/Types/StringUtils.hpp"
 
 #define ID_BASE 256
 
@@ -30,6 +31,56 @@ ComLoggerTester ::ComLoggerTester(const char* const compName, bool standardCLIni
 
 ComLoggerTester ::~ComLoggerTester() {
     this->comLogger.deinit();
+    this->cleanupFiles();
+}
+
+void ComLoggerTester::cleanupFiles() {
+    Os::Directory dir;
+    Os::Directory::Status dirStatus = dir.open(".", Os::Directory::OpenMode::READ);
+    if (dirStatus != Os::Directory::OP_OK) {
+        return;
+    }
+
+    const char* const hashExt = Utils::Hash::getFileExtensionString();
+    const FwSizeType hashExtLen = Utils::Hash::getFileExtensionLength();
+    const FwSizeType prefixLen = sizeof(FILE_STR) - 1;
+
+    static const CHAR* const COM_EXT = ".com";
+    static const FwSizeType COM_EXT_LEN = 4U;
+
+    Fw::String filename;
+
+    while (dir.read(filename) == Os::Directory::OP_OK) {
+        const CHAR* const fileName = filename.toChar();
+        const FwSizeType fileNameLen = filename.length();
+
+        // Skip files that do not start with the expected prefix
+        if (Fw::StringUtils::substring_find(fileName, fileNameLen, FILE_STR, prefixLen) != 0) {
+            continue;
+        }
+        // Prefix must be followed by an underscore separator
+        if (fileNameLen <= prefixLen || fileName[prefixLen] != '_') {
+            continue;
+        }
+
+        // Check for .com extension
+        const FwSignedSizeType comPos = Fw::StringUtils::substring_find(fileName, fileNameLen, COM_EXT, COM_EXT_LEN);
+        const bool isCom = (comPos >= 0) && (static_cast<FwSizeType>(comPos) == fileNameLen - COM_EXT_LEN);
+
+        // Check for .com<hashExt> extension (e.g., .com.CRC32)
+        const FwSignedSizeType comHashPos =
+            Fw::StringUtils::substring_find(fileName, fileNameLen, COM_EXT, COM_EXT_LEN);
+        const FwSignedSizeType hashPos = Fw::StringUtils::substring_find(fileName, fileNameLen, hashExt, hashExtLen);
+        const bool isComHash = (comHashPos >= 0) && (hashPos >= 0) &&
+                               (static_cast<FwSizeType>(hashPos) == fileNameLen - hashExtLen) &&
+                               (static_cast<FwSizeType>(comHashPos) == fileNameLen - COM_EXT_LEN - hashExtLen);
+
+        if (isCom || isComHash) {
+            (void)Os::FileSystem::removeFile(fileName);
+        }
+    }
+
+    dir.close();
 }
 
 void ComLoggerTester ::connectPorts() {

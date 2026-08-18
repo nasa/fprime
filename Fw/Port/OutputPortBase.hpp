@@ -11,9 +11,8 @@ namespace Fw {
 class OutputPortBase : public PortBase {
   public:
 #if FW_PORT_SERIALIZATION == 1
-    void registerSerialPort(InputPortBase* port);  // !< register a port for serialized calls
-    SerializeStatus invokeSerial(
-        SerializeBufferBase& buffer);  // !< invoke the port with a serialized version of the call
+    void registerSerialPort(InputPortBase* port);            // !< register a port for serialized calls
+    SerializeStatus invokeSerial(LinearBufferBase& buffer);  // !< invoke the port with a serialized version of the call
 #endif
 
   protected:

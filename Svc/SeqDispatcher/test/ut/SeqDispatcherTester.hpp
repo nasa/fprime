@@ -40,14 +40,26 @@ class SeqDispatcherTester : public SeqDispatcherGTestBase {
 
     void testDispatch();
     void testLogStatus();
+    void testRunArgsWithValidArguments();
+    void testRunArgsWithMaxSizedArguments();
+    void testRunArgsNoSequencersAvailable();
+    void testRunArgsBlockingVsNonBlocking();
+    void testCancelName();
+    void testCancelNameNotFound();
+    void testCancelAll();
+    void testCancelAllNoneRunning();
 
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
     // ----------------------------------------------------------------------
 
-    void seqRunOut_handler(FwIndexType portNum,            //!< The port number
-                           const Fw::StringBase& filename  //!< The sequence file
+    void seqRunOut_handler(FwIndexType portNum,             //!< The port number
+                           const Fw::StringBase& filename,  //!< The sequence file
+                           const Svc::SeqArgs& args         //!< Sequence arguments
+    );
+
+    void seqCancelOut_handler(FwIndexType portNum  //!< The port number
     );
 
   private:

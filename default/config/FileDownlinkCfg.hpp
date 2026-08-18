@@ -10,10 +10,6 @@
 
 namespace Svc {
 
-// If this is set to true, the run handler will look to
-// see if a packet is ready. If it is false, the next packet
-// will be sent as soon as the previous is complete.
-static const bool FILEDOWNLINK_PACKETS_BY_RUN = false;
 // If this is set, errors that would cause FileDownlink to return an error response, such as a
 // missing file or attempting to send a partial chunk past the end of the file will instead
 // return success. This is recommended to avoid a non-serious FileDownlink error aborting a

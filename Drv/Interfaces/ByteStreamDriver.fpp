@@ -17,4 +17,25 @@ module Drv {
         @ Port receiving back ownership of data sent out on $recv port
         guarded input port recvReturnIn: Fw.BufferSend
     }
+
+
+    # ----------------------------------------------------------------------
+    # Client interface
+    # Use this interface to connect to a ByteStreamDriver
+    # ----------------------------------------------------------------------
+
+    @ Client of the synchronous ByteStreamDriver interface
+    interface ByteStreamDriverClient {
+        @ Ready signal when driver is connected
+        sync input port drvConnected: Drv.ByteStreamReady
+
+        @ Receive (read) data from driver.
+        sync input port drvReceiveIn: Drv.ByteStreamData
+
+        @ Returning ownership of buffer that came in on drvReceiveIn
+        output port drvReceiveReturnOut: Fw.BufferSend
+
+        @ Send (write) data to the driver
+        output port drvSendOut: Drv.ByteStreamSend
+    }
 }

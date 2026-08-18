@@ -15,6 +15,8 @@
 #include <sys/time.h>
 #include <cstring>
 
+#include "Fw/Types/MallocAllocator.hpp"
+
 namespace Svc {
 
 namespace Drain {
@@ -44,6 +46,25 @@ void BufferAccumulatorTester ::OK() {
     }
 
     delete[] data;
+}
+
+void BufferAccumulatorTester ::InitialMode() {
+    this->component.m_mode = BufferAccumulator_OpState::ACCUMULATE;
+    this->component.m_send = false;
+
+    Fw::MallocAllocator allocator;
+    this->component.allocateQueue(0, allocator, MAX_NUM_BUFFERS, BufferAccumulator_OpState::DRAIN);
+
+    U8 data[10];
+    Fw::Buffer buffer(data, sizeof(data));
+    this->invoke_to_bufferSendInFill(0, buffer);
+    this->doDispatch();
+
+    ASSERT_EQ(BufferAccumulator_OpState::DRAIN, this->component.m_mode.e);
+    ASSERT_from_bufferSendOutDrain_SIZE(1);
+    ASSERT_from_bufferSendOutDrain(0, buffer);
+
+    this->component.deallocateQueue(allocator);
 }
 
 void BufferAccumulatorTester ::PartialDrainOK() {

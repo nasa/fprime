@@ -38,6 +38,8 @@ telemetry Debug_ReachedEndOfFile: bool update on change
 telemetry Debug_NextStatementReadSuccess: bool update on change
 @ the opcode of the next statement to dispatch.
 telemetry Debug_NextStatementOpcode: U8 update on change
+@ the index of the next statement to be executed
+telemetry Debug_NextStatementIndex: U32 update on change
 @ if the next statement is a cmd directive, the opcode of that cmd
 telemetry Debug_NextCmdOpcode: FwOpcodeType update on change
 @ the size of the stack in bytes
@@ -59,5 +61,5 @@ telemetry BreakBeforeNextLine: bool update on change
 @ value of prm STATEMENT_TIMEOUT_SECS
 telemetry PRM_STATEMENT_TIMEOUT_SECS: F32 update on change
 
-@ value of prm FLAG_DEFAULT_EXIT_ON_CMD_FAIL
-telemetry PRM_FLAG_DEFAULT_EXIT_ON_CMD_FAIL: bool update on change
+@ value of prm SEQ_BASE_DIR
+telemetry PRM_SEQ_BASE_DIR: string size FileNameStringSize update on change

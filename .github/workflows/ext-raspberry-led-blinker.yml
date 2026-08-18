@@ -4,16 +4,19 @@
 name: "External Repo: RPI LedBlinker"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [release/**]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ devel, release/** ]
+    branches: [devel, release/**]
     paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '.github/actions/spelling/**'
-      - '.github/ISSUE_TEMPLATE/**'
+      - "docs/**"
+      - "**.md"
+      - ".github/actions/spelling/**"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/agents/**"
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -22,6 +25,9 @@ concurrency:
 env:
   RPI_TOOLCHAIN_DIR: /tmp/rpi-toolchain
   FPRIME_LOCATION: ./lib/fprime
+
+permissions:
+  contents: read
 
 jobs:
   get-branch:
@@ -35,6 +41,8 @@ jobs:
     runs-on: ubuntu-22.04
     needs: get-branch
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout target repository"
         uses: actions/checkout@v4
         with:
@@ -47,6 +55,7 @@ jobs:
           submodules: true
           path: ${{ env.FPRIME_LOCATION }}
           fetch-depth: 0
+          filter: blob:none
       - uses: ./lib/fprime/.github/actions/setup
         with:
           location: ${{ env.FPRIME_LOCATION }}
@@ -54,18 +63,20 @@ jobs:
         uses: fprime-community/setup-rpi-sysroot@main
       - name: "Generate RPI Build Cache"
         run: |
-          fprime-util generate raspberrypi
+          fprime-util generate raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Build RPI"
         run: |
           cd LedBlinker/LedBlinkerDeployment
-          fprime-util build raspberrypi
+          fprime-util build raspberrypi 2>&1 | output-cleaner
+        shell: bash
       - name: "Prepare artifacts"
         run: |
           mkdir -p rpi-artifacts
           cp -r ./build-artifacts rpi-artifacts
           cp -r LedBlinker/Components/Led/test/int rpi-artifacts
       - name: "Archive Build Artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rpi-artifacts
           path: rpi-artifacts
@@ -85,9 +96,18 @@ jobs:
         run: |
           python -m venv venv
           . venv/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
+          echo "${PWD}/venv/bin" >> "${GITHUB_PATH}"
+      # Upgrade GDS to a matching pr-xxxx branch if it exists; never fall back to devel
+      - name: "Upgrade fprime-gds to pr-xxxx (if it exists)"
+        if: github.event_name == 'pull_request'
+        uses: nasa/fprime-actions/upgrade-package@devel
+        with:
+          repository: nasa/fprime-gds
+          pr-branch-only: true
       - name: "Artifacts Download"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: rpi-artifacts
       - name: Run Integration Tests
@@ -100,7 +120,7 @@ jobs:
           sleep 10
           pytest --dictionary ./build-artifacts/raspberrypi/${DEPLOYMENT}/dict/LedBlinkerDeploymentTopologyDictionary.json ./int/led_integration_tests.py
       - name: "Archive logs"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: rpi-logs

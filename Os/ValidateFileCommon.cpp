@@ -47,13 +47,15 @@ File::Status computeHash(const char* fileName, Utils::HashBuffer& hashBuffer) {
     }
     file.close();
 
-    // We should not have left the loop because of cnt > max_itr:
-    FW_ASSERT(size == 0);
-    FW_ASSERT(cnt <= max_itr);
+    // The iteration bound is computed from the size at open; a file that grows while
+    // being hashed exhausts it with data still unread, which is an error, not a bug
+    if (size != 0) {
+        return File::BAD_SIZE;
+    }
 
     // Calculate hash:
     Utils::HashBuffer computedHashBuffer;
-    hash.final(computedHashBuffer);
+    hash.finalize(computedHashBuffer);
     hashBuffer = computedHashBuffer;
 
     return status;
@@ -70,7 +72,7 @@ File::Status readHash(const char* hashFileName, Utils::HashBuffer& hashBuffer) {
     }
 
     // Read hash from checksum file:
-    unsigned char savedHash[HASH_DIGEST_LENGTH];
+    U8 savedHash[HASH_DIGEST_LENGTH];
     FwSizeType size = static_cast<FwSizeType>(hashBuffer.getCapacity());
     status = hashFile.read(savedHash, size);
     if (File::OP_OK != status) {
@@ -133,7 +135,9 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
+                    // legitimately come from the OS layer; report rather than assert
+                    return ValidateFile::OTHER_ERROR;
             }
             break;
         case HashFileType:
@@ -153,11 +157,13 @@ ValidateFile::Status translateStatus(File::Status status, StatusFileType type) {
                 case File::OTHER_ERROR:
                     return ValidateFile::OTHER_ERROR;
                 default:
-                    FW_ASSERT(0, status);
+                    // Unlisted statuses (e.g. NOT_SUPPORTED, INVALID_ARGUMENT) can
+                    // legitimately come from the OS layer; report rather than assert
+                    return ValidateFile::OTHER_ERROR;
             }
             break;
         default:
-            FW_ASSERT(0, type);
+            FW_ASSERT(false, type);
     }
 
     return ValidateFile::OTHER_ERROR;
@@ -219,6 +225,17 @@ ValidateFile::Status ValidateFile::createValidation(const char* fileName,
 ValidateFile::Status ValidateFile::createValidation(const char* fileName, const char* hashFileName) {
     Utils::HashBuffer hashBuffer;  // pass by reference - final value is unused
     return createValidation(fileName, hashFileName, hashBuffer);
+}
+
+ValidateFile::Status ValidateFile::createValidation(const char* hashFileName, const Utils::HashBuffer& hashBuffer) {
+    File::Status status;
+
+    status = writeHash(hashFileName, hashBuffer);
+    if (File::OP_OK != status) {
+        return translateStatus(status, HashFileType);
+    }
+
+    return ValidateFile::VALIDATION_OK;
 }
 
 }  // namespace Os

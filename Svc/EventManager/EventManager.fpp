@@ -52,6 +52,9 @@ module Svc {
     @ FATAL event announce port
     output port FatalAnnounce: Svc.FatalEvent
 
+    @ Rate group input port for telemetry
+    async input port run: Svc.Sched drop
+
     @ Ping input port
     async input port pingIn: Svc.Ping
 
@@ -77,6 +80,9 @@ module Svc {
     @ Port for emitting text events
     text event port LogText
 
+    @ Port for emitting telemetry
+    telemetry port Tlm
+
     @ Port for getting the time
     time get port Time
 
@@ -101,6 +107,13 @@ module Svc {
     @ Dump the filter states via events
     async command DUMP_FILTER_STATE \
       opcode 3
+
+    # ----------------------------------------------------------------------
+    # Telemetry
+    # ----------------------------------------------------------------------
+
+    @ Number of events dropped due to queue full
+    telemetry EventsDropped: FwSizeType update on change
 
     # ----------------------------------------------------------------------
     # Events

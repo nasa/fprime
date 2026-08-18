@@ -41,7 +41,7 @@ MaxHeap::~MaxHeap() {
 
 void MaxHeap::create(FwSizeType capacity, Fw::ByteArray heap_allocation) {
     FW_ASSERT(this->m_heap == nullptr);
-    FW_ASSERT(heap_allocation.size >= (capacity * sizeof(Node)), static_cast<FwAssertArgType>(capacity),
+    FW_ASSERT((heap_allocation.size / sizeof(Node)) >= capacity, static_cast<FwAssertArgType>(capacity),
               static_cast<FwAssertArgType>(heap_allocation.size));
     FW_ASSERT(heap_allocation.bytes != nullptr);
     // Loop bounds will overflow if capacity set to the max allowable value
@@ -116,6 +116,7 @@ bool MaxHeap::pop(FwQueuePriorityType& value, FwSizeType& id) {
     if (this->isEmpty()) {
         return false;
     }
+    FW_ASSERT(this->m_heap != nullptr);
 
     // Set the return values to the top (max) of
     // the heap:
@@ -127,7 +128,6 @@ bool MaxHeap::pop(FwQueuePriorityType& value, FwSizeType& id) {
     // This will put the smallest value in the
     // heap on the top, violating the heap property.
     FwSizeType index = this->m_size - 1;
-    // Fw::Logger::log("Putting on top: i: %u v: %d\n", index, this->m_heap[index].value);
     this->m_heap[0] = this->m_heap[index];
     --this->m_size;
 

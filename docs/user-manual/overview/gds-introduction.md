@@ -270,6 +270,7 @@ in real time.
 ![Logs](../../img/gds_gui_logs.png)
 
 There are several standard logs that appear:
+
 - `ThreadedTCP.log`: log from the GDS middleware server linking comm to the GDS actual
 - `channel.log`: log of all channels received by the GDS
 - `command.log`: log of all commands sent by the GDS

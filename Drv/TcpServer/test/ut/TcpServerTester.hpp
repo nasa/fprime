@@ -15,6 +15,7 @@
 
 #include "Drv/Ip/TcpClientSocket.hpp"
 #include "Drv/TcpServer/TcpServerComponentImpl.hpp"
+#include "Os/Mutex.hpp"
 #include "TcpServerGTestBase.hpp"
 
 #define SEND_DATA_BUFFER_SIZE 1024
@@ -23,7 +24,7 @@ namespace Drv {
 
 class TcpServerTester : public TcpServerGTestBase {
     // Maximum size of histories storing events, telemetry, and port outputs
-    static const FwSizeType MAX_HISTORY_SIZE = 1000;
+    static const FwSizeType MAX_HISTORY_SIZE = 2000;
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
     // Queue depth supplied to component instance under test
@@ -115,6 +116,8 @@ class TcpServerTester : public TcpServerGTestBase {
     //!
     TcpServerComponentImpl component;
     Fw::Buffer m_data_buffer;
+    //! Protects m_data_buffer, which is shared with the receive thread's handler
+    Os::Mutex m_buffer_lock;
     U8 m_data_storage[SEND_DATA_BUFFER_SIZE];
     std::atomic<bool> m_spinner;
 };

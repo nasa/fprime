@@ -115,9 +115,11 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
 
     //! Give the class a memory buffer. Should be called after constructor
     //! and init, but before task is spawned.
-    void allocateQueue(FwEnumStoreType identifier,
-                       Fw::MemAllocator& allocator,
-                       FwSizeType maxNumBuffers  //!< The maximum number of buffers
+    void allocateQueue(
+        FwEnumStoreType identifier,
+        Fw::MemAllocator& allocator,
+        FwSizeType maxNumBuffers,  //!< The maximum number of buffers
+        BufferAccumulator_OpState initialMode = BufferAccumulator_OpState::ACCUMULATE  //!< The initial operating mode
     );
 
     //! Return allocated queue. Should be done during shutdown
@@ -151,9 +153,9 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
 
     //! Implementation for SetMode command handler
     //! Set the mode
-    void BA_SetMode_cmdHandler(const FwOpcodeType opCode,      //!< The opcode
-                               const U32 cmdSeq,               //!< The command sequence number
-                               BufferAccumulator_OpState mode  //!< The mode
+    void BA_SetMode_cmdHandler(const FwOpcodeType opCode,             //!< The opcode
+                               const U32 cmdSeq,                      //!< The command sequence number
+                               const BufferAccumulator_OpState& mode  //!< The mode
     );
 
     //! Implementation for BA_DrainBuffers command handler
@@ -161,7 +163,7 @@ class BufferAccumulator final : public BufferAccumulatorComponentBase {
     void BA_DrainBuffers_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                     const U32 cmdSeq,          /*!< The command sequence number*/
                                     U32 numToDrain,
-                                    BufferAccumulator_BlockMode blockMode);
+                                    const BufferAccumulator_BlockMode& blockMode);
 
   private:
     // ----------------------------------------------------------------------

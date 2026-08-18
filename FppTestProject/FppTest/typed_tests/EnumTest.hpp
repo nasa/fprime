@@ -83,14 +83,24 @@ TYPED_TEST_P(EnumTest, Default) {
 // Test enum constructors
 TYPED_TEST_P(EnumTest, Constructors) {
     typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType serialVal = static_cast<typename TypeParam::SerialType>(validVal);
+    typename TypeParam::SerialType invalidSerialVal =
+        static_cast<typename TypeParam::SerialType>(FppTest::Enum::getInvalidValue<TypeParam>());
 
     // Raw enum value constructor
     TypeParam e1(validVal);
     ASSERT_EQ(e1.e, validVal);
 
-    // Copy constructor
-    TypeParam e2(e1);
+    // Serial representation value constructor
+    TypeParam e2(serialVal);
     ASSERT_EQ(e2.e, validVal);
+
+    // Copy constructor
+    TypeParam e3(e1);
+    ASSERT_EQ(e3.e, validVal);
+
+    // Invalid serial representation value constructor
+    ASSERT_DEATH_IF_SUPPORTED(static_cast<void>(TypeParam{invalidSerialVal}), "");
 }
 
 // Test enum assignment operator
@@ -99,14 +109,24 @@ TYPED_TEST_P(EnumTest, AssignmentOp) {
     TypeParam e2;
 
     typename TypeParam::T validVal = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType serialVal = static_cast<typename TypeParam::SerialType>(validVal);
+    typename TypeParam::SerialType invalidSerialVal =
+        static_cast<typename TypeParam::SerialType>(FppTest::Enum::getInvalidValue<TypeParam>());
 
     // Raw enum value assignment
     e1 = validVal;
     ASSERT_EQ(e1.e, validVal);
 
+    // Serial representation value assignment
+    e1 = serialVal;
+    ASSERT_EQ(e1.e, validVal);
+
     // Object assignment
     e2 = e1;
     ASSERT_EQ(e2.e, validVal);
+
+    // Invalid serial representation value assignment
+    ASSERT_DEATH_IF_SUPPORTED(e1 = invalidSerialVal, "");
 }
 
 // Test enum equality and inequality operator
@@ -144,44 +164,49 @@ TYPED_TEST_P(EnumTest, EqualityOp) {
 
 // Test enum isValid() function
 TYPED_TEST_P(EnumTest, IsValidFunction) {
-    TypeParam validEnum = FppTest::Enum::getValidValue<TypeParam>();
-    TypeParam invalidEnum = FppTest::Enum::getInvalidValue<TypeParam>();
+    typename TypeParam::SerialType validValue = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType invalidValue = FppTest::Enum::getInvalidValue<TypeParam>();
 
+    ASSERT_TRUE(TypeParam::isValid(validValue));
+    TypeParam validEnum(static_cast<typename TypeParam::T>(validValue));
     ASSERT_TRUE(validEnum.isValid());
-    ASSERT_FALSE(invalidEnum.isValid());
+    ASSERT_FALSE(TypeParam::isValid(invalidValue));
 }
 
 // Test enum serialization and deserialization
 TYPED_TEST_P(EnumTest, Serialization) {
-    TypeParam validEnum = FppTest::Enum::getValidValue<TypeParam>();
-    TypeParam invalidEnum = FppTest::Enum::getInvalidValue<TypeParam>();
+    typename TypeParam::SerialType validValue = FppTest::Enum::getValidValue<TypeParam>();
+    typename TypeParam::SerialType invalidValue = FppTest::Enum::getInvalidValue<TypeParam>();
 
     // Copy of enums to test after serialization
-    TypeParam validEnumCopy;
-    TypeParam invalidEnumCopy;
+    TypeParam validEnum;
+    TypeParam invalidEnum;
 
     Fw::SerializeStatus status;
     U8 data[TypeParam::SERIALIZED_SIZE * 2];
     Fw::SerialBuffer buf(data, sizeof(data));
 
     // Serialize the enums
-    status = buf.serializeFrom(validEnum);
+    TypeParam validEnum1(static_cast<typename TypeParam::T>(validValue));
+    status = buf.serializeFrom(validEnum1);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getSize(), sizeof(typename TypeParam::SerialType));
 
-    status = buf.serializeFrom(invalidEnum);
+    TypeParam invalidEnum1;
+    invalidEnum1.setSerializeValue(invalidValue);
+    status = buf.serializeFrom(invalidEnum1);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
     ASSERT_EQ(buf.getSize(), sizeof(typename TypeParam::SerialType) * 2);
 
     // Deserialize the enums
-    status = buf.deserializeTo(validEnumCopy);
+    status = buf.deserializeTo(validEnum);
 
     ASSERT_EQ(status, Fw::FW_SERIALIZE_OK);
-    ASSERT_EQ(validEnumCopy, validEnum);
+    ASSERT_EQ(validEnum.e, validValue);
 
-    status = buf.deserializeTo(invalidEnumCopy);
+    status = buf.deserializeTo(invalidEnum);
 
     ASSERT_EQ(status, Fw::FW_DESERIALIZE_FORMAT_ERROR);
 }

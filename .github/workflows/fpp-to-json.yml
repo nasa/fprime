@@ -1,8 +1,10 @@
 name: "fpp-to-json Test"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -11,30 +13,37 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   fpp-to-json-ref:
     name: Ref Deployment
     runs-on: ubuntu-22.04
     steps:
+      - name: "Setup output-cleaner"
+        uses: nasa/fprime-actions/output-cleaner@devel
       - name: "Checkout F´ Repository"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          filter: blob:none
           submodules: true
       - uses: ./.github/actions/setup
       - name: "Generate Ref Deployment"
-        working-directory: ./Ref
+        working-directory: ./TestDeploymentsProject
         run: |
-          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
+          fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
         shell: bash
       - name: "Run fpp-to-json on Ref topology"
-        working-directory: ./Ref/Top
+        working-directory: ./TestDeploymentsProject/Ref/Top
         run: |
-          DEPENDENCIES=$(fpp-depend ../build-fprime-automatic-native/locs.fpp *.fpp)
+          DEPENDENCIES=$(fpp-depend ../../build-fprime-automatic-native/locs.fpp *.fpp)
           fpp-to-json ${DEPENDENCIES} *.fpp
         shell: bash

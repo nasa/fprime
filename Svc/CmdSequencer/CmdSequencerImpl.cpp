@@ -12,9 +12,8 @@
 #include <Fw/Types/SerialBuffer.hpp>
 #include <Fw/Types/Serializable.hpp>
 #include <Svc/CmdSequencer/CmdSequencerImpl.hpp>
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>
-}
+#include <Utils/Hash/Hash.hpp>
+#include <config/CommandDispatcherImplCfg.hpp>
 
 namespace Svc {
 
@@ -35,7 +34,7 @@ CmdSequencerComponentImpl::CmdSequencerComponentImpl(const char* name)
       m_totalExecutedCount(0),
       m_sequencesCompletedCount(0),
       m_timeout(0),
-      m_blockState(Svc::CmdSequencer_BlockState::NO_BLOCK),
+      m_blockState(Svc::BlockState::NO_BLOCK),
       m_opCode(0),
       m_cmdSeq(0),
       m_join_waiting(false) {}
@@ -74,12 +73,19 @@ CmdSequencerComponentImpl::~CmdSequencerComponentImpl() {}
 void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
                                                   U32 cmdSeq,
                                                   const Fw::CmdStringArg& fileName,
-                                                  Svc::CmdSequencer_BlockState block) {
+                                                  const Svc::BlockState& block) {
     if (not this->requireRunMode(STOPPED)) {
         if (m_join_waiting) {
             // Inform user previous seq file is not complete
             this->log_WARNING_HI_CS_JoinWaitingNotComplete();
         }
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    if ((Svc::BlockState::BLOCK == block.e) && (MANUAL == this->m_stepMode)) {
+        // In MANUAL mode nothing executes until CS_STEP, so a BLOCK response could never be sent
+        this->log_WARNING_HI_CS_InvalidMode();
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -90,6 +96,11 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
 
     // load commands
     if (not this->loadFile(fileName)) {
+        // Clear the recorded command state so a later port-driven run cannot
+        // emit a duplicate response for this already-answered command
+        this->m_blockState = Svc::BlockState::NO_BLOCK;
+        this->m_opCode = 0;
+        this->m_cmdSeq = 0;
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
@@ -99,13 +110,17 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            // Create empty SeqArgs as placeholder
+            // Use parameterized constructor to ensure m_size is initialized to 0
+            Svc::SeqArgs emptyArgs{0, 0};
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
         }
         this->performCmd_Step();
     }
 
-    if (Svc::CmdSequencer_BlockState::NO_BLOCK == this->m_blockState) {
+    if (Svc::BlockState::NO_BLOCK == this->m_blockState) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     }
 }
@@ -113,6 +128,7 @@ void CmdSequencerComponentImpl::CS_RUN_cmdHandler(FwOpcodeType opCode,
 void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
                                                        U32 cmdSeq,
                                                        const Fw::CmdStringArg& fileName) {
+    FW_ASSERT(this->m_sequence != nullptr);
     if (!this->requireRunMode(STOPPED)) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -134,6 +150,12 @@ void CmdSequencerComponentImpl::CS_VALIDATE_cmdHandler(FwOpcodeType opCode,
 
 //! Handler for input port seqRunIn
 void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
+    if (MANUAL == this->m_stepMode) {
+        // In MANUAL mode nothing executes until CS_STEP, so a port-driven run would wedge
+        this->log_WARNING_HI_CS_InvalidMode();
+        this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
     if (!this->requireRunMode(STOPPED)) {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
         return;
@@ -161,8 +183,12 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     // Check the step mode. If it is auto, start the sequence
     if (AUTO == this->m_stepMode) {
         this->m_runMode = RUNNING;
+        this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
         if (this->isConnected_seqStartOut_OutputPort(0)) {
-            this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+            // Create empty SeqArgs as placeholder
+            // Use parameterized constructor to ensure m_size is initialized to 0
+            Svc::SeqArgs emptyArgs{0, 0};
+            this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
         }
         this->performCmd_Step();
     }
@@ -170,7 +196,10 @@ void CmdSequencerComponentImpl::doSequenceRun(const Fw::StringBase& filename) {
     this->log_ACTIVITY_HI_CS_PortSequenceStarted(this->m_sequence->getLogFileName());
 }
 
-void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& filename) {
+void CmdSequencerComponentImpl::seqRunIn_handler(FwIndexType portNum,
+                                                 const Fw::StringBase& filename,
+                                                 const Svc::SeqArgs& args) {
+    (void)args;  // Suppress unused parameter warning
     this->doSequenceRun(filename);
 }
 
@@ -207,10 +236,16 @@ void CmdSequencerComponentImpl::CS_JOIN_WAIT_cmdHandler(const FwOpcodeType opCod
         this->log_WARNING_LO_CS_NoSequenceActive();
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
         return;
+    } else if ((Svc::BlockState::BLOCK == this->m_blockState) || this->m_join_waiting) {
+        // A command response is already owed to a BLOCK-mode CS_RUN caller or a
+        // previous CS_JOIN_WAIT caller. Reject rather than overwrite that state,
+        // which would leave the original caller without a completion response.
+        this->log_WARNING_HI_CS_JoinWaitingNotComplete();
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     } else {
         m_join_waiting = true;
         Fw::LogStringArg& logFileName = this->m_sequence->getLogFileName();
-        this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, m_opCode);
+        this->log_ACTIVITY_HI_CS_JoinWaiting(logFileName, m_cmdSeq, CmdDispatcherCfg::getEventOpcode(m_opCode));
         m_cmdSeq = cmdSeq;
         m_opCode = opCode;
     }
@@ -227,6 +262,16 @@ bool CmdSequencerComponentImpl ::loadFile(const Fw::ConstStringBase& fileName) {
         this->log_ACTIVITY_LO_CS_SequenceLoaded(logFileName);
         ++this->m_loadCmdCount;
         this->tlmWrite_CS_LoadCommands(this->m_loadCmdCount);
+    } else {
+        // A partial load may have populated m_buffer before an intermediate
+        // validation step (e.g. CRC, time, record structure) failed. Without
+        // an explicit reset, FPrimeSequence::hasMoreRecords() still returns
+        // true because getDeserializeSizeLeft() > 0, so a subsequent CS_START
+        // bypasses the "no sequence active" guard and reaches
+        // FPrimeSequence::nextRecord, which asserts on the failed deserialize
+        // and aborts the FSW. Clearing the sequence on every load failure
+        // closes that window.
+        this->m_sequence->clear();
     }
     return status;
 }
@@ -237,6 +282,7 @@ void CmdSequencerComponentImpl::error() {
 }
 
 void CmdSequencerComponentImpl::performCmd_Cancel() {
+    FW_ASSERT(this->m_sequence != nullptr);
     this->m_sequence->reset();
     this->m_runMode = STOPPED;
     this->m_cmdTimer.clear();
@@ -247,13 +293,13 @@ void CmdSequencerComponentImpl::performCmd_Cancel() {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
+    if (Svc::BlockState::BLOCK == this->m_blockState || m_join_waiting) {
         // Do not wait if sequence was canceled or a cmd failed
         this->m_join_waiting = false;
         this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
 }
 
 void CmdSequencerComponentImpl ::cmdResponseIn_handler(FwIndexType portNum,
@@ -262,7 +308,7 @@ void CmdSequencerComponentImpl ::cmdResponseIn_handler(FwIndexType portNum,
                                                        const Fw::CmdResponse& response) {
     if (this->m_runMode == STOPPED) {
         // Sequencer is not running
-        this->log_WARNING_HI_CS_UnexpectedCompletion(opcode);
+        this->log_WARNING_HI_CS_UnexpectedCompletion(CmdDispatcherCfg::getEventOpcode(opcode));
     } else {
         // clear command timeout
         this->m_cmdTimeoutTimer.clear();
@@ -317,18 +363,35 @@ void CmdSequencerComponentImpl ::CS_START_cmdHandler(FwOpcodeType opcode, U32 cm
         return;
     }
 
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
     this->m_runMode = RUNNING;
-    this->performCmd_Step();
+    this->tlmWrite_CS_CurrentSequence(this->m_sequence->getStringFileName());
     this->log_ACTIVITY_HI_CS_CmdStarted(this->m_sequence->getLogFileName());
+    this->performCmd_Step();
     if (this->isConnected_seqStartOut_OutputPort(0)) {
-        this->seqStartOut_out(0, this->m_sequence->getStringFileName());
+        // Create empty SeqArgs as placeholder
+        Svc::SeqArgs emptyArgs{0, 0};
+        this->seqStartOut_out(0, this->m_sequence->getStringFileName(), emptyArgs);
     }
     this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void CmdSequencerComponentImpl ::CS_STEP_cmdHandler(FwOpcodeType opcode, U32 cmdSeq) {
+    FW_ASSERT(this->m_sequence != nullptr);
     if (this->requireRunMode(RUNNING)) {
+        if (MANUAL != this->m_stepMode) {
+            // CS_STEP is valid only in MANUAL step mode
+            this->log_WARNING_HI_CS_InvalidMode();
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (not this->m_sequence->hasMoreRecords()) {
+            // A sequence with no end-of-sequence record leaves nothing to step; stepping anyway
+            // asserts in the sequence reader
+            this->log_WARNING_LO_CS_NoSequenceActive();
+            this->cmdResponse_out(opcode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
         this->performCmd_Step();
         // check for special case where end of sequence entry was encountered
         if (this->m_runMode != STOPPED) {
@@ -374,7 +437,8 @@ bool CmdSequencerComponentImpl::requireRunMode(RunMode mode) {
 }
 
 void CmdSequencerComponentImpl ::commandError(const U32 number, const FwOpcodeType opCode, const U32 error) {
-    this->log_WARNING_HI_CS_CommandError(this->m_sequence->getLogFileName(), number, opCode, error);
+    this->log_WARNING_HI_CS_CommandError(this->m_sequence->getLogFileName(), number,
+                                         CmdDispatcherCfg::getEventOpcode(opCode), error);
     this->error();
 }
 
@@ -398,11 +462,12 @@ void CmdSequencerComponentImpl::performCmd_Step() {
             this->performCmd_Step_ABSOLUTE(currentTime);
             break;
         default:
-            FW_ASSERT(0, m_record.m_descriptor);
+            FW_ASSERT(false, m_record.m_descriptor);
     }
 }
 
 void CmdSequencerComponentImpl::sequenceComplete() {
+    FW_ASSERT(this->m_sequence != nullptr);
     ++this->m_sequencesCompletedCount;
     // reset buffer
     this->m_sequence->clear();
@@ -414,16 +479,18 @@ void CmdSequencerComponentImpl::sequenceComplete() {
         this->seqDone_out(0, 0, 0, Fw::CmdResponse::OK);
     }
 
-    if (Svc::CmdSequencer_BlockState::BLOCK == this->m_blockState || m_join_waiting) {
+    if (Svc::BlockState::BLOCK == this->m_blockState || m_join_waiting) {
         this->cmdResponse_out(this->m_opCode, this->m_cmdSeq, Fw::CmdResponse::OK);
     }
 
     m_join_waiting = false;
-    this->m_blockState = Svc::CmdSequencer_BlockState::NO_BLOCK;
+    this->m_blockState = Svc::BlockState::NO_BLOCK;
+    this->tlmWrite_CS_CurrentSequence(NO_SEQ);
 }
 
 void CmdSequencerComponentImpl::commandComplete(const FwOpcodeType opcode) {
-    this->log_ACTIVITY_LO_CS_CommandComplete(this->m_sequence->getLogFileName(), this->m_executedCount, opcode);
+    this->log_ACTIVITY_LO_CS_CommandComplete(this->m_sequence->getLogFileName(), this->m_executedCount,
+                                             CmdDispatcherCfg::getEventOpcode(opcode));
     ++this->m_executedCount;
     ++this->m_totalExecutedCount;
     this->tlmWrite_CS_CommandsExecuted(this->m_totalExecutedCount);

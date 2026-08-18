@@ -44,16 +44,6 @@ TEST(Test, removeFileFail) {
     tester.removeFileFail();
 }
 
-TEST(Test, shellCommandSucceed) {
-    Svc::FileManagerTester tester;
-    tester.shellCommandSucceed();
-}
-
-TEST(Test, shellCommandFail) {
-    Svc::FileManagerTester tester;
-    tester.shellCommandFail();
-}
-
 TEST(Test, appendFileSucceedNewFile) {
     Svc::FileManagerTester tester;
     tester.appendFileSucceed_newFile();
@@ -97,6 +87,61 @@ TEST(Test, listDirectoryFail) {
 TEST(Test, listDirectoryWithSubdirs) {
     Svc::FileManagerTester tester;
     tester.listDirectoryWithSubdirs();
+}
+
+TEST(Test, generateDpSucceed) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSucceed();
+}
+
+TEST(Test, generateDpFileNotFound) {
+    Svc::FileManagerTester tester;
+    tester.generateDpFileNotFound();
+}
+
+TEST(Test, generateDpEmptyFile) {
+    Svc::FileManagerTester tester;
+    tester.generateDpEmptyFile();
+}
+
+TEST(Test, generateDpChunkSizeClamped) {
+    Svc::FileManagerTester tester;
+    tester.generateDpChunkSizeClamped();
+}
+
+TEST(Test, generateDpPartialRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpPartialRange();
+}
+
+TEST(Test, generateDpInvalidRange) {
+    Svc::FileManagerTester tester;
+    tester.generateDpInvalidRange();
+}
+
+TEST(Test, generateDpBufferFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpBufferFailure();
+}
+
+TEST(Test, generateDpWhileBusy) {
+    Svc::FileManagerTester tester;
+    tester.generateDpWhileBusy();
+}
+
+TEST(Test, generateDpSerializationFailure) {
+    Svc::FileManagerTester tester;
+    tester.generateDpSerializationFailure();
+}
+
+TEST(Test, generateDpImmediateMode) {
+    Svc::FileManagerTester tester;
+    tester.generateDpImmediateMode();
+}
+
+TEST(Test, generateDpCustomPriority) {
+    Svc::FileManagerTester tester;
+    tester.generateDpCustomPriority();
 }
 
 int main(int argc, char** argv) {

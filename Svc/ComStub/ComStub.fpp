@@ -3,30 +3,16 @@ module Svc {
     @ ComStub can use both synchronous and asynchronous byte stream drivers, users should connect the appropriate
     @ based on their driver type
     passive component ComStub {
-        import Com
+        import Svc.Com
 
         # ----------------------------------------------------------------------
-        # Byte stream model (common)
+        # Ports to connect to a ByteStreamDriver (synchronous)
         # ----------------------------------------------------------------------
 
-        @ Ready signal when driver is connected
-        sync input port drvConnected: Drv.ByteStreamReady
-
-        @ Receive (read) data from driver. This gets forwarded to dataOut
-        sync input port drvReceiveIn: Drv.ByteStreamData
-
-        @ Returning ownership of buffer that came in on drvReceiveIn
-        output port drvReceiveReturnOut: Fw.BufferSend
+        import Drv.ByteStreamDriverClient
 
         # ----------------------------------------------------------------------
-        # Byte stream model (synchronous)
-        # ----------------------------------------------------------------------
-
-        @ Send (write) data to the driver. This gets invoked on dataIn invocation
-        output port drvSendOut: Drv.ByteStreamSend
-
-        # ----------------------------------------------------------------------
-        # Byte stream model (asynchronous)
+        # Additional ports to connect to an AsyncByteStreamDriver (asynchronous)
         # ----------------------------------------------------------------------
     
         @ Send (write) data to the driver asynchronously

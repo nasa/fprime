@@ -175,7 +175,7 @@ class TaskInterface {
     //!
     //! \param interval: delay time
     //! \return status of the delay
-    virtual Status _delay(Fw::TimeInterval interval) = 0;
+    virtual Status _delay(const Fw::TimeInterval& interval) = 0;
 
     //! \brief determine if the task requires cooperative multitasking
     //!
@@ -256,7 +256,7 @@ class Task final : public TaskInterface {
     //! and exited.
     //!
     //! \return task state
-    State getState();
+    State getState() const;
 
     //! \brief start this task
     //!
@@ -341,7 +341,7 @@ class Task final : public TaskInterface {
     //!
     //! \param interval: delay time
     //! \return status of the delay
-    Status _delay(Fw::TimeInterval interval) override;
+    Status _delay(const Fw::TimeInterval& interval) override;
 
     //! \brief determine if the task is cooperative multitasking (implementation specific)
     //! \return true if cooperative, false otherwise
@@ -379,7 +379,7 @@ class Task final : public TaskInterface {
     //!
     //! \param interval: delay time
     //! \return status of the delay
-    static Status delay(Fw::TimeInterval interval);
+    static Status delay(const Fw::TimeInterval& interval);
 
   private:
     static TaskRegistry* s_taskRegistry;  //!< Pointer to registered task registry
@@ -388,7 +388,7 @@ class Task final : public TaskInterface {
 
     TaskString m_name;  //!< Task object name
     TaskInterface::State m_state = Task::NOT_STARTED;
-    Mutex m_lock;                       //!< Guards state transitions
+    mutable Mutex m_lock;               //!< Guards state transitions
     TaskRoutineWrapper m_wrapper;       //!< Concrete storage for task routine wrapper
     FwTaskPriorityType m_priority = 0;  // Storage of priority
 

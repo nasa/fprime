@@ -5,7 +5,7 @@
 # the JSON model representation to integrate with the build system.
 ####
 include_guard()
-set(FPP__INTERNAL_ARGS_FROM_FILE "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/arguments-from-file.py")
+set(FPP__INTERNAL_ARGS_FROM_FILE "${PYTHON}" "${CMAKE_CURRENT_LIST_DIR}/../tools/arguments-from-file.py" CACHE INTERNAL "Internal helper for fpp-to-json to read arguments from file" FORCE)
 ####
 # Function `fpp_to_json_add_global_target`:
 #

@@ -53,6 +53,8 @@ FormalAliasString from_stringAliasReturnOut_handler(FwIndexType portNum,        
 void from_stringArgsOut_handler(const FwIndexType portNum,
                                 const Fw::StringBase& str80,
                                 Fw::StringBase& str80Ref,
+                                const Fw::StringBase& str0,
+                                Fw::StringBase& str0Ref,
                                 const Fw::StringBase& str100,
                                 Fw::StringBase& str100Ref) final;
 
@@ -92,14 +94,14 @@ U32 from_primitiveReturnOut_handler(const FwIndexType portNum,  //!< The port nu
                                     bool b,
                                     bool& bRef) final;
 
-//! Handler for from_prmGetIn
+//! Handler for from_to_prmGetIn
 //!
-Fw::ParamValid from_prmGetIn_handler(const FwIndexType portNum,  //!< The port number
-                                     FwPrmIdType id,             //!< Parameter ID
-                                     Fw::ParamBuffer& val        //!< Buffer containing serialized parameter value
-                                     ) final;
+Fw::ParamValid from_to_prmGetIn_handler(const FwIndexType portNum,  //!< The port number
+                                        FwPrmIdType id,             //!< Parameter ID
+                                        Fw::ParamBuffer& val        //!< Buffer containing serialized parameter value
+                                        ) final;
 
-//! Handler for from_prmGetIn
+//! Handler for from_to_prmGetIn
 //!
 void from_prmSetIn_handler(const FwIndexType portNum,  //!< The port number
                            FwPrmIdType id,             //!< Parameter ID

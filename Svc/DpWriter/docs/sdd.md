@@ -35,6 +35,7 @@ SVC-DPWRITER-003 | On receiving a data product container _C_, `Svc::DpWriter` sh
 SVC-DPWRITER-004 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall write _B_ to disk. | The purpose of `DpWriter` is to write data products to the disk. | Unit Test
 SVC-DPWRITER-005 | `Svc::DpWriter` shall provide a port for notifying other components that data products have been written. | This requirement allows `Svc::DpCatalog` or a similar component to update its catalog in real time. | Unit Test
 SVC-DPWRITER-006 | `Svc::DpManager` shall provide telemetry that reports the number of buffers received, the number of data products written, the number of bytes written, the number of failed writes, and the number of errors. | This requirement establishes the telemetry interface for the component. | Unit test
+SVC-DPWRITER-007 | On receiving an `Fw::Buffer` _B_, and after performing any requested processing on _B_, `Svc::DpWriter` shall re-parse the container header and shrink the size of the product. | Allows processing interfaces to compress data products and communicate that compressed state back to `Svc::DpWriter`. | Unit Test
 
 ## 3. Design
 
@@ -70,11 +71,11 @@ The diagram below shows the `DpWriter` component.
 
 ### 3.4. Compile-Time Setup
 
-1. The configuration constant [`DpWriterNumProcPorts`](../../../config/AcConstants.fpp)
+1. The configuration constant [`DpWriterNumProcPorts`](../../../default/config/AcConstants.fpp)
    specifies the number of ports for connecting components that perform
    processing.
 
-1. The configuration [`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp)
+1. The configuration [`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp)
    specifies the file name format.
 
 ### 3.5. Runtime Setup
@@ -125,6 +126,10 @@ It does the following:
       `procBufferSendOut` at port number `N`, passing in `B`.
       This step updates the memory pointed to by `B` in place.
 
+   1. Re-parse the container header pointed to by `B`. If necessary,
+      shrink the size of the `B` buffer to be consistent with the data
+      size in the updated container header.
+
    1. Write `B` to a file, using the format described in the [**File
       Format**](#file_format) section. For the time stamp, use the time
       provided by `timeGetOut`.
@@ -146,7 +151,7 @@ with the format described in the
 ### 4.2. File Name
 
 The name of each file is formatted with the configurable format string
-[`DP_FILENAME_FORMAT`](../../../config/DpCfg.hpp).
+[`DP_FILENAME_FORMAT`](../../../default/config/DpCfg.hpp).
 The format string must contain format specifications for the following arguments,
 in order.
 

@@ -9,6 +9,8 @@
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 
 #include <Os/File.hpp>
+#include <Os/SandboxedFile.hpp>
+#include <Utils/Hash/Hash.hpp>
 
 #include <cstdio>
 #include <cstring>
@@ -20,17 +22,14 @@ namespace Svc {
 
 // anonymous namespace for buffer declaration
 namespace {
-class WorkingBuffer : public Fw::SerializeBufferBase {
+class WorkingBuffer : public Fw::LinearBufferBase {
   public:
-    FwSizeType getCapacity() const { return sizeof(m_buff); }
-
-    U8* getBuffAddr() { return m_buff; }
-
-    const U8* getBuffAddr() const { return m_buff; }
+    WorkingBuffer() : Fw::LinearBufferBase(m_buff, sizeof(m_buff)) {}
 
   private:
     // Set to max of parameter buffer + id
     U8 m_buff[FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)];
+    static_assert(sizeof(m_buff) >= sizeof(U32), "Size of parameter buffer storage must be >= sizeof(U32)");
 };
 }  // namespace
 
@@ -38,8 +37,8 @@ class WorkingBuffer : public Fw::SerializeBufferBase {
 //! Construction, initialization, and destruction
 //! ----------------------------------------------------------------------
 PrmDbImpl::PrmDbImpl(const char* name) : PrmDbComponentBase(name), m_state(PrmDbFileLoadState::IDLE) {
-    this->m_activeDb = this->m_dbStore1;
-    this->m_stagingDb = this->m_dbStore2;
+    this->m_activeDb = &this->m_dbStore1;
+    this->m_stagingDb = &this->m_dbStore2;
 
     this->clearDb(PrmDbType::DB_ACTIVE);
     this->clearDb(PrmDbType::DB_STAGING);
@@ -50,6 +49,11 @@ PrmDbImpl::~PrmDbImpl() {}
 void PrmDbImpl::configure(const char* file) {
     FW_ASSERT(file != nullptr);
     this->m_fileName = file;
+}
+
+void PrmDbImpl::configureLoadSandbox(const char* directory) {
+    FW_ASSERT(directory != nullptr);
+    this->m_sandboxDir = directory;
 }
 
 void PrmDbImpl::readParamFile() {
@@ -74,24 +78,19 @@ void PrmDbImpl::readParamFile() {
 
 Fw::ParamValid PrmDbImpl::getPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
     // search for entry
-    Fw::ParamValid stat = Fw::ParamValid::INVALID;
+    auto success = this->m_activeDb->find(id, val);
 
-    for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-        if (this->m_activeDb[entry].used) {
-            if (this->m_activeDb[entry].id == id) {
-                val = this->m_activeDb[entry].val;
-                stat = Fw::ParamValid::VALID;
-                break;
-            }
-        }
+    switch (success.e) {
+        case Fw::Success::FAILURE:
+            // if unable to find parameter, send error message
+            this->log_WARNING_LO_PrmIdNotFound(id);
+            return Fw::ParamValid::INVALID;
+        case Fw::Success::SUCCESS:
+            return Fw::ParamValid::VALID;
+        default:
+            FW_ASSERT(false, success.e);
+            return Fw::ParamValid::INVALID;
     }
-
-    // if unable to find parameter, send error message
-    if (Fw::ParamValid::INVALID == stat.e) {
-        this->log_WARNING_LO_PrmIdNotFound(id);
-    }
-
-    return stat;
 }
 
 void PrmDbImpl::setPrm_handler(FwIndexType portNum, FwPrmIdType id, Fw::ParamBuffer& val) {
@@ -132,115 +131,189 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     Os::File paramFile;
     WorkingBuffer buff;
 
-    Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE);
+    Os::File::Status stat = paramFile.open(this->m_fileName.toChar(), Os::File::OPEN_WRITE, Os::File::OVERWRITE);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::OPEN, 0, stat);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
         return;
     }
 
+    // write placeholder for the CRC
+    Utils::Hash crc;
+    U32 crcInitial = 0xFFFFFFFF;
+    buff.resetSer();
+    Fw::SerializeStatus serStat = buff.serializeFrom(crcInitial);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    FwSizeType writeSize = static_cast<FwSizeType>(buff.getSize());
+    stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
+
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_PLACE, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
     this->lock();
-    t_dbStruct* db = getDbPtr(PrmDbType::DB_ACTIVE);
+    auto db = getDbPtr(PrmDbType::DB_ACTIVE);
     FW_ASSERT(db != nullptr);
 
     // Traverse the parameter list, saving each entry
 
     U32 numRecords = 0;
 
-    for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-        if (db[entry].used) {
-            // write delimiter
-            static const U8 delim = PRMDB_ENTRY_DELIMITER;
-            FwSizeType writeSize = static_cast<FwSizeType>(sizeof(delim));
-            stat = paramFile.write(&delim, writeSize, Os::File::WaitType::WAIT);
-            if (stat != Os::File::OP_OK) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER, static_cast<I32>(numRecords), stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            if (writeSize != sizeof(delim)) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER_SIZE, static_cast<I32>(numRecords),
-                                                       static_cast<I32>(writeSize));
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            // serialize record size = id field + data
-            U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + db[entry].val.getSize());
+    for (const auto& entry : *db) {
+        // write delimiter
+        static const U8 delim = PRMDB_ENTRY_DELIMITER;
+        writeSize = static_cast<FwSizeType>(sizeof(delim));
+        stat = paramFile.write(&delim, writeSize, Os::File::WaitType::WAIT);
+        if (stat != Os::File::OP_OK) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER, static_cast<I32>(numRecords), stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (writeSize != sizeof(delim)) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::DELIMITER_SIZE, static_cast<I32>(numRecords),
+                                                   static_cast<I32>(writeSize));
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
 
-            // reset buffer
-            buff.resetSer();
-            Fw::SerializeStatus serStat = buff.serializeFrom(recordSize);
-            // should always work
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+        // add delimiter to CRC
+        crc.update(&delim, sizeof(delim));
 
-            // write record size
-            writeSize = static_cast<FwSizeType>(buff.getSize());
-            stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-            if (stat != Os::File::OP_OK) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE, static_cast<I32>(numRecords), stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            if (writeSize != sizeof(recordSize)) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE, static_cast<I32>(numRecords),
-                                                       static_cast<I32>(writeSize));
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
+        // serialize record size = id field + data
+        U32 recordSize = static_cast<U32>(sizeof(FwPrmIdType) + entry.getValue().getSize());
 
-            // reset buffer
-            buff.resetSer();
+        // reset buffer
+        buff.resetSer();
+        serStat = buff.serializeFrom(recordSize);
+        // should always work
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
 
-            // serialize parameter id
+        // write record size
+        writeSize = static_cast<FwSizeType>(buff.getSize());
+        stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
+        if (stat != Os::File::OP_OK) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE, static_cast<I32>(numRecords), stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (writeSize != sizeof(recordSize)) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::RECORD_SIZE_SIZE, static_cast<I32>(numRecords),
+                                                   static_cast<I32>(writeSize));
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
 
-            serStat = buff.serializeFrom(db[entry].id);
-            // should always work
-            FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+        // add recordSize to CRC
+        if (buff.getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(buff.getBuffAddr(), writeSize);
+        }
 
-            // write parameter ID
-            writeSize = static_cast<FwSizeType>(buff.getSize());
-            stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-            if (stat != Os::File::OP_OK) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID, static_cast<I32>(numRecords), stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            if (writeSize != static_cast<FwSizeType>(buff.getSize())) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE, static_cast<I32>(numRecords),
-                                                       static_cast<I32>(writeSize));
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
+        // reset buffer
+        buff.resetSer();
 
-            // write serialized parameter value
+        // serialize parameter id
 
-            writeSize = static_cast<FwSizeType>(db[entry].val.getSize());
-            stat = paramFile.write(db[entry].val.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
-            if (stat != Os::File::OP_OK) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE, static_cast<I32>(numRecords),
-                                                       stat);
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            if (writeSize != static_cast<FwSizeType>(db[entry].val.getSize())) {
-                this->unLock();
-                this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE,
-                                                       static_cast<I32>(numRecords), static_cast<I32>(writeSize));
-                this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
-                return;
-            }
-            numRecords++;
-        }  // end if record in use
-    }  // end for each record
+        serStat = buff.serializeFrom(entry.getKey());
+        // should always work
+        FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+
+        // write parameter ID
+        writeSize = static_cast<FwSizeType>(buff.getSize());
+        stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
+        if (stat != Os::File::OP_OK) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID, static_cast<I32>(numRecords), stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (writeSize != static_cast<FwSizeType>(buff.getSize())) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_ID_SIZE, static_cast<I32>(numRecords),
+                                                   static_cast<I32>(writeSize));
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // add parameter ID to CRC
+        if (buff.getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(buff.getBuffAddr(), writeSize);
+        }
+
+        // write serialized parameter value
+
+        writeSize = static_cast<FwSizeType>(entry.getValue().getSize());
+        stat = paramFile.write(entry.getValue().getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
+        if (stat != Os::File::OP_OK) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE, static_cast<I32>(numRecords), stat);
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+        if (writeSize != static_cast<FwSizeType>(entry.getValue().getSize())) {
+            this->unLock();
+            this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::PARAMETER_VALUE_SIZE, static_cast<I32>(numRecords),
+                                                   static_cast<I32>(writeSize));
+            this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+            return;
+        }
+
+        // add serialized parameter value to crc
+        if (entry.getValue().getBuffAddr() != nullptr && writeSize != 0) {
+            crc.update(entry.getValue().getBuffAddr(), writeSize);
+        }
+
+        numRecords++;
+    }
 
     this->unLock();
+
+    // save current location of pointer in paramFile
+    FwSizeType currPosInParamFile;
+
+    stat = paramFile.position(currPosInParamFile);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CURR_POSITION, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // seek to beginning and write CRC value
+    stat = paramFile.seek(0, Os::File::SeekType::ABSOLUTE);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_ZERO, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    buff.resetSer();
+    U32 crcFinal = 0;
+    crc.finalize(crcFinal);
+    crcFinal = ~crcFinal;
+    serStat = buff.serializeFrom(crcFinal);
+
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    writeSize = static_cast<FwSizeType>(buff.getSize());
+
+    stat = paramFile.write(buff.getBuffAddr(), writeSize, Os::File::WaitType::WAIT);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::CRC_REAL, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Restore pointer to previously saved location
+    stat = paramFile.seek(static_cast<FwSignedSizeType>(currPosInParamFile), Os::File::SeekType::ABSOLUTE);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileWriteError(PrmWriteError::SEEK_POSITION, 0, stat);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
     this->log_ACTIVITY_HI_PrmFileSaveComplete(numRecords);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
@@ -248,7 +321,7 @@ void PrmDbImpl::PRM_SAVE_FILE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 void PrmDbImpl::PRM_LOAD_FILE_cmdHandler(FwOpcodeType opCode,
                                          U32 cmdSeq,
                                          const Fw::CmdStringArg& fileName,
-                                         PrmDb_Merge merge) {
+                                         const PrmDb_Merge& merge) {
     // Reject PRM_LOAD_FILE command during non-idle file load states
     if (m_state != PrmDbFileLoadState::IDLE) {
         this->log_WARNING_LO_PrmDbFileLoadInvalidAction(m_state, PrmDb_PrmLoadAction::LOAD_FILE_COMMAND);
@@ -295,7 +368,7 @@ void PrmDbImpl::PRM_COMMIT_STAGED_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 
     // Swap active and staging databases, safely w.r.t. prmGet
     this->lock();
-    t_dbStruct* temp = this->m_activeDb;
+    PrmDbStore* temp = this->m_activeDb;
     this->m_activeDb = this->m_stagingDb;
     this->unLock();
     this->m_stagingDb = temp;
@@ -318,32 +391,90 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     FW_ASSERT(fileName.length() > 0);
 
-    Fw::String dbString = getDbString(dbType);
-
-    // load file. FIXME: Put more robust file checking, such as a CRC.
+    // Commanded loads (staging) may carry a ground-supplied path; restrict them
+    // to the configured sandbox directory to prevent path traversal
+    if ((dbType == PrmDbType::DB_STAGING) && (this->m_sandboxDir.length() > 0)) {
+        Os::SandboxedFile paramFile;
+        paramFile.configure(this->m_sandboxDir.toChar());
+        return this->readParamFileWork(paramFile, fileName, dbType);
+    }
     Os::File paramFile;
+    return this->readParamFileWork(paramFile, fileName, dbType);
+}
+
+template <typename FileType>
+PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileWork(FileType& paramFile,
+                                                      const Fw::StringBase& fileName,
+                                                      PrmDbType dbType) {
+    Fw::String dbString = getDbString(dbType);
 
     Os::File::Status stat = paramFile.open(fileName.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_PrmFileReadError(PrmReadError::OPEN, 0, stat);
         return PrmLoadStatus::ERROR;
     }
-
+    //===========================================================================
+    // read CRC from beginning of file
     WorkingBuffer buff;
+    U32 fileCrc;
+    FwSizeType readSize = static_cast<FwSizeType>(sizeof(fileCrc));
+
+    // Read raw CRC bytes from file
+    stat = paramFile.read(buff.getBuffAddr(), readSize);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC, static_cast<I32>(0), stat);
+        return PrmLoadStatus::ERROR;
+    }
+
+    if (readSize != sizeof(fileCrc)) {
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_SIZE, static_cast<I32>(0), static_cast<I32>(readSize));
+        return PrmLoadStatus::ERROR;
+    }
+
+    // Deserialize the CRC in a portable way
+    Fw::SerializeStatus serStat = buff.setBuffLen(readSize);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+    buff.resetDeser();
+    serStat = buff.deserializeTo(fileCrc);
+    FW_ASSERT(Fw::FW_SERIALIZE_OK == serStat, static_cast<FwAssertArgType>(serStat));
+
+    U32 crc = 0xFFFFFFFF;
+    // read into CRC buffer for checking
+
+    Os::File::Status status = paramFile.calculateCrc(crc);
+    if (status != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::CRC_BUFFER, static_cast<I32>(0), status);
+        return PrmLoadStatus::ERROR;
+    }
+
+    if (fileCrc != crc) {
+        this->log_WARNING_HI_PrmFileBadCrc(fileCrc, crc);
+        return PrmLoadStatus::ERROR;
+    }
+
+    // seek back to just after CRC
+    stat = paramFile.seek(sizeof(fileCrc), Os::File::SeekType::ABSOLUTE);
+    if (stat != Os::File::OP_OK) {
+        this->log_WARNING_HI_PrmFileReadError(PrmReadError::SEEK_ZERO, 0, stat);
+        return PrmLoadStatus::ERROR;
+    }
+    //===========================================================================
 
     U32 recordNumTotal = 0;
     U32 recordNumAdded = 0;
     U32 recordNumUpdated = 0;
+    U32 recordNumDropped = 0;
 
     for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
         U8 delimiter;
-        FwSizeType readSize = static_cast<FwSizeType>(sizeof(delimiter));
+        readSize = static_cast<FwSizeType>(sizeof(delimiter));
 
         // read delimiter
         Os::File::Status fStat = paramFile.read(&delimiter, readSize, Os::File::WaitType::WAIT);
 
-        // check for end of file (read size 0)
-        if (0 == readSize) {
+        // check for end of file (successful read of size 0); a failed read can
+        // also yield size 0 and must not be mistaken for a clean EOF
+        if ((Os::File::OP_OK == fStat) && (0 == readSize)) {
             break;
         }
 
@@ -391,7 +522,7 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         // sanity check value. It can't be larger than the maximum parameter buffer size + id
         // or smaller than the record id
-        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(U32)) or (recordSize < sizeof(U32))) {
+        if ((recordSize > FW_PARAM_BUFFER_MAX_SIZE + sizeof(FwPrmIdType)) or (recordSize < sizeof(FwPrmIdType))) {
             this->log_WARNING_HI_PrmFileReadError(PrmReadError::RECORD_SIZE_VALUE, static_cast<I32>(recordNumTotal),
                                                   static_cast<I32>(recordSize));
             return PrmLoadStatus::ERROR;
@@ -450,8 +581,14 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 
         if (updateStatus == NO_SLOTS) {
             this->log_WARNING_HI_PrmDbFull(parameterId);
+            recordNumDropped++;
         }
         recordNumTotal++;
+    }
+
+    // Dropped records mean the database does not reflect the file: report an error
+    if (recordNumDropped > 0) {
+        return PrmLoadStatus::ERROR;
     }
 
     this->log_ACTIVITY_HI_PrmFileLoadComplete(dbString, recordNumTotal, recordNumAdded, recordNumUpdated);
@@ -459,34 +596,28 @@ PrmDbImpl::PrmLoadStatus PrmDbImpl::readParamFileImpl(const Fw::StringBase& file
 }
 
 PrmDbImpl::PrmUpdateType PrmDbImpl::updateAddPrmImpl(FwPrmIdType id, Fw::ParamBuffer& val, PrmDbType prmDbType) {
-    t_dbStruct* db = getDbPtr(prmDbType);
+    auto* db = getDbPtr(prmDbType);
 
     PrmUpdateType updateStatus = NO_SLOTS;
 
     this->lock();
-    // search for existing entry
-    bool existingEntry = false;
 
-    for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-        if ((db[entry].used) && (id == db[entry].id)) {
-            db[entry].val = val;
-            existingEntry = true;
-            updateStatus = PARAM_UPDATED;
+    auto prevSize = db->getSize();
+    switch (db->insert(id, val)) {
+        case Fw::Success::FAILURE:
+            updateStatus = NO_SLOTS;
             break;
-        }
-    }
-
-    // if there is no existing entry, add one
-    if (!existingEntry) {
-        for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-            if (!(db[entry].used)) {
-                db[entry].val = val;
-                db[entry].id = id;
-                db[entry].used = true;
+        case Fw::Success::SUCCESS:
+            if (prevSize < db->getSize()) {
                 updateStatus = PARAM_ADDED;
-                break;
+            } else {
+                FW_ASSERT(prevSize == db->getSize(), static_cast<FwAssertArgType>(prevSize),
+                          static_cast<FwAssertArgType>(db->getSize()));
+                updateStatus = PARAM_UPDATED;
             }
-        }
+            break;
+        default:
+            FW_ASSERT(false);
     }
 
     this->unLock();
@@ -498,40 +629,15 @@ PrmDbImpl::PrmUpdateType PrmDbImpl::updateAddPrmImpl(FwPrmIdType id, Fw::ParamBu
 //! ----------------------------------------------------------------------
 
 void PrmDbImpl::clearDb(PrmDbType prmDbType) {
-    t_dbStruct* db = getDbPtr(prmDbType);
-    for (FwSizeType entry = 0; entry < PRMDB_NUM_DB_ENTRIES; entry++) {
-        db[entry].used = false;
-        db[entry].id = 0;
-    }
-}
-
-bool PrmDbImpl::dbEqual() {
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        if (!(this->m_dbStore1[i] == this->m_dbStore2[i])) {
-            return false;
-        }
-    }
-    return true;
+    getDbPtr(prmDbType)->clear();
 }
 
 void PrmDbImpl::dbCopy(PrmDbType dest, PrmDbType src) {
-    for (FwSizeType i = 0; i < PRMDB_NUM_DB_ENTRIES; i++) {
-        dbCopySingle(dest, src, i);
-    }
+    *getDbPtr(dest) = *getDbPtr(src);
     this->log_ACTIVITY_HI_PrmDbCopyAllComplete(getDbString(src), getDbString(dest));
 }
 
-void PrmDbImpl::dbCopySingle(PrmDbType dest, PrmDbType src, FwSizeType index) {
-    t_dbStruct* srcPtr = getDbPtr(src);
-    t_dbStruct* destPtr = getDbPtr(dest);
-
-    FW_ASSERT(index < PRMDB_NUM_DB_ENTRIES);
-    destPtr[index].used = srcPtr[index].used;
-    destPtr[index].id = srcPtr[index].id;
-    destPtr[index].val = srcPtr[index].val;
-}
-
-PrmDbImpl::t_dbStruct* PrmDbImpl::getDbPtr(PrmDbType dbType) {
+PrmDbImpl::PrmDbStore* PrmDbImpl::getDbPtr(PrmDbType dbType) {
     FW_ASSERT(dbType == PrmDbType::DB_ACTIVE or dbType == PrmDbType::DB_STAGING);
     if (dbType == PrmDbType::DB_ACTIVE) {
         return m_activeDb;

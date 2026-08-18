@@ -6,12 +6,15 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
-  "${CMAKE_CURRENT_LIST_DIR}/PolyDb.cpp"
-)
 
-register_fprime_module()
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.hpp"
+)
 ### UTs ###
 ####
 # WARNING:
@@ -19,13 +22,11 @@ register_fprime_module()
 # This UT does not use auto-generate GTest files. DO NOT emulate.
 ####
 
-set(UT_AUTO_HELPERS ON)
-
-set(UT_SOURCE_FILES
-    "${FPRIME_FRAMEWORK_PATH}/Svc/PolyDb/PolyDb.fpp"
+register_fprime_ut(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/PolyDb.fpp"
+  SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTestMain.cpp"
-#    "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTesterHelpers.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/PolyDbTester.cpp"
+  UT_AUTO_HELPERS
 )
-
-register_fprime_ut()

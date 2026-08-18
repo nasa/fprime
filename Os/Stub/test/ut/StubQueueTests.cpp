@@ -3,6 +3,7 @@
 // \brief tests using stub implementation for Os::File interface testing
 // ======================================================================
 #include <gtest/gtest.h>
+#include <algorithm>
 #include "Fw/Types/String.hpp"
 #include "Os/Os.hpp"
 #include "Os/Queue.hpp"
@@ -35,12 +36,12 @@ TEST(Interface, Destruction) {
 TEST(Interface, Create) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    const FwSizeType depth =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
-    const FwSizeType messageSize =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType depth = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
+    const FwSizeType messageSize = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     Os::Stub::Queue::Test::StaticData::data.createStatus = Os::QueueInterface::Status::INVALID_PRIORITY;
     Os::QueueInterface::Status status = queue.create(0, name, depth, messageSize);
     ASSERT_EQ(Os::Stub::Queue::Test::StaticData::data.lastCalled, Os::Stub::Queue::Test::StaticData::CREATE_FN);
@@ -55,12 +56,13 @@ TEST(Interface, Create) {
 TEST(Interface, SendPointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    const FwSizeType depth =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType depth = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     const FwSizeType messageSize = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
-    const FwQueuePriorityType priority = STest::Random::lowerUpper(
-        0, FW_MIN(std::numeric_limits<FwQueuePriorityType>::max(), std::numeric_limits<U32>::max()));
+    const FwQueuePriorityType priority =
+        STest::Random::lowerUpper(0, std::min(std::numeric_limits<FwQueuePriorityType>::max(),
+                                              static_cast<FwQueuePriorityType>(std::numeric_limits<U32>::max())));
     U8 buffer[messageSize];
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(0, name, depth, messageSize));
     ASSERT_STREQ(name.toChar(), queue.getName().toChar());
@@ -82,12 +84,13 @@ TEST(Interface, SendPointer) {
 TEST(Interface, SendBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    const FwSizeType depth =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType depth = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     const FwSizeType messageSize = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
-    const FwQueuePriorityType priority = STest::Random::lowerUpper(
-        0, FW_MIN(std::numeric_limits<FwQueuePriorityType>::max(), std::numeric_limits<U32>::max()));
+    const FwQueuePriorityType priority =
+        STest::Random::lowerUpper(0, std::min(std::numeric_limits<FwQueuePriorityType>::max(),
+                                              static_cast<FwQueuePriorityType>(std::numeric_limits<U32>::max())));
     U8 storage[messageSize];
     Fw::ExternalSerializeBuffer buffer(storage, sizeof storage);
     Fw::String message = "hello";
@@ -112,12 +115,13 @@ TEST(Interface, SendBuffer) {
 TEST(Interface, ReceivePointer) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    const FwSizeType depth =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType depth = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     const FwSizeType sizeOut = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
-    const FwQueuePriorityType priorityOut = STest::Random::lowerUpper(
-        0, FW_MIN(std::numeric_limits<FwQueuePriorityType>::max(), std::numeric_limits<U32>::max()));
+    const FwQueuePriorityType priorityOut =
+        STest::Random::lowerUpper(0, std::min(std::numeric_limits<FwQueuePriorityType>::max(),
+                                              static_cast<FwQueuePriorityType>(std::numeric_limits<U32>::max())));
 
     FwSizeType size = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
     FwQueuePriorityType priority;
@@ -147,12 +151,13 @@ TEST(Interface, ReceivePointer) {
 TEST(Interface, ReceiveBuffer) {
     Os::Queue queue;
     Fw::String name = "My queue";
-    const FwSizeType depth =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType depth = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     const FwSizeType sizeOut = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
-    const FwQueuePriorityType priorityOut = STest::Random::lowerUpper(
-        0, FW_MIN(std::numeric_limits<FwQueuePriorityType>::max(), std::numeric_limits<U32>::max()));
+    const FwQueuePriorityType priorityOut =
+        STest::Random::lowerUpper(0, std::min(std::numeric_limits<FwQueuePriorityType>::max(),
+                                              static_cast<FwQueuePriorityType>(std::numeric_limits<U32>::max())));
 
     FwSizeType size = sizeof Os::Stub::Queue::Test::InjectableStlQueueHandle::Message::data;
     FwQueuePriorityType priority;
@@ -183,9 +188,9 @@ TEST(Interface, MessageCount) {
     Fw::String name = "My queue";
     const FwSizeType depth = 1;
     const FwSizeType messageSize = 1;
-    const FwSizeType messages =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType messages = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(0, name, depth, messageSize));
     Os::Stub::Queue::Test::StaticData::data.messages = messages;
     ASSERT_EQ(queue.getMessagesAvailable(), messages);
@@ -198,9 +203,9 @@ TEST(Interface, MessageHighWaterMarkCount) {
     Fw::String name = "My queue";
     const FwSizeType depth = 100;
     const FwSizeType messageSize = 200;
-    const FwSizeType highWater =
-        STest::Random::lowerUpper(std::numeric_limits<FwSizeType>::min(),
-                                  FW_MIN(std::numeric_limits<FwSizeType>::max(), std::numeric_limits<U32>::max()));
+    const FwSizeType highWater = STest::Random::lowerUpper(
+        std::numeric_limits<FwSizeType>::min(),
+        std::min(std::numeric_limits<FwSizeType>::max(), static_cast<FwSizeType>(std::numeric_limits<U32>::max())));
     ASSERT_EQ(Os::QueueInterface::Status::OP_OK, queue.create(0, name, depth, messageSize));
     Os::Stub::Queue::Test::StaticData::data.highWaterMark = highWater;
     ASSERT_EQ(queue.getMessageHighWaterMark(), highWater);

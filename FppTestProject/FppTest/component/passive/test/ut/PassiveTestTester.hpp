@@ -126,11 +126,11 @@ class PassiveTestTester : public PassiveTestGTestBase {
     FppTest::Types::AliasStringArrayType arrayStringAliasReturnVal;
 
     // Buffers from serial output ports;
-    U8 primitiveData[InputPrimitiveArgsPort::SERIALIZED_SIZE];
-    U8 stringData[InputStringArgsPort::SERIALIZED_SIZE];
-    U8 enumData[InputEnumArgsPort::SERIALIZED_SIZE];
-    U8 arrayData[InputArrayArgsPort::SERIALIZED_SIZE];
-    U8 structData[InputStructArgsPort::SERIALIZED_SIZE];
+    U8 primitiveData[PrimitiveArgsPortBuffer::CAPACITY];
+    U8 stringData[StringArgsPortBuffer::CAPACITY];
+    U8 enumData[EnumArgsPortBuffer::CAPACITY];
+    U8 arrayData[ArrayArgsPortBuffer::CAPACITY];
+    U8 structData[StructArgsPortBuffer::CAPACITY];
     U8 serialData[SERIAL_ARGS_BUFFER_CAPACITY];
 
     Fw::SerialBuffer primitiveBuf;
@@ -156,37 +156,14 @@ class PassiveTestTester : public PassiveTestGTestBase {
     class PassiveTestComponentBaseParamExternalDelegate : public Fw::ParamExternalDelegate {
       public:
         // ----------------------------------------------------------------------
-        // Parameter validity flags
-        // ----------------------------------------------------------------------
-
-        //! True if ParamBoolExternal was successfully received
-        Fw::ParamValid m_param_ParamBoolExternal_valid;
-
-        //! True if ParamI32External was successfully received
-        Fw::ParamValid m_param_ParamI32External_valid;
-
-        //! True if ParamStringExternal was successfully received
-        Fw::ParamValid m_param_ParamStringExternal_valid;
-
-        //! True if ParamEnumExternal was successfully received
-        Fw::ParamValid m_param_ParamEnumExternal_valid;
-
-        //! True if ParamArrayExternal was successfully received
-        Fw::ParamValid m_param_ParamArrayExternal_valid;
-
-        //! True if ParamStructExternal was successfully received
-        Fw::ParamValid m_param_ParamStructExternal_valid;
-
-      public:
-        // ----------------------------------------------------------------------
         // Parameter variables
         // ----------------------------------------------------------------------
 
         //! Parameter ParamBoolExternal
         bool m_param_ParamBoolExternal;
 
-        //! Parameter ParamI32External
-        I32 m_param_ParamI32External;
+        //! Parameter ParamU32External
+        I32 m_param_ParamU32External;
 
         //! Parameter ParamStringExternal
         Fw::ParamString m_param_ParamStringExternal;
@@ -225,7 +202,7 @@ class PassiveTestTester : public PassiveTestGTestBase {
     // ----------------------------------------------------------------------
 
     //! Delegate to serialize/deserialize an externally stored parameter
-    PassiveTestComponentBaseParamExternalDelegate paramPassiveTestTesterDelegate;
+    PassiveTestComponentBaseParamExternalDelegate paramTesterDelegate;
 };
 
 #endif

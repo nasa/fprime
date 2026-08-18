@@ -14,7 +14,7 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 | SVC-CDHCORE-006 | The subtopology shall provide **assert to fatal handling functionality** to convert `FW_ASSERT`s into `FATAL` events.         | Inspection |
 | SVC-CDHCORE-007 | The subtopology shall provide **fatal-event routing functionality** to forward fatal announcements to a configurable handler. | Inspection |
 | SVC-CDHCORE-008 | The subtopology shall provide **telemetry sending functionality** through a configurable telemetry interface.                 | Inspection |
-| SVC-CDHCORE-009 | The subtopology shall support **configurable instance properties** for IDs, queue sizes, stack sizes, and priorities.         | Inspection |
+| SVC-CDHCORE-009 | The subtopology shall support **configurable instance properties** for IDs, queue sizes, stack sizes, priorities, and CPU affinities.         | Inspection |
 | SVC-CDHCORE-010 | The subtopology shall expose rate-group connection points for any rate-drive components it contains.                          | Inspection |
 
 ## 2. Design & Core Functions
@@ -35,7 +35,7 @@ The **CdhCore subtopology** provides a reusable bundle of the core flight-softwa
 ### 2.2 Configuration Hooks inside the Subtopology
 
 * **Health**: Configures `$health` with a ping table (`ConfigObjects.CdhCore_health::pingEntries`).
-* **Version**: Calls `version.config(true)` so version/config reporting is enabled at startup.
+* **Version**: Calls `version.config(true)` so version/config reporting is enabled at startup. Calls `version.start()` to send initial version events and telemetry. 
 
 ### 2.3 Internal Wiring
 
@@ -80,8 +80,8 @@ Example of integrating `CdhCore` in a deployment topology:
 
 ```fpp
 topology Flight {
-  import CdhCore.Subtopology
-  import ComCcsds.Subtopology  # Used as an example communication subtopology
+  instance CdhCore.Subtopology
+  instance ComCcsds.Subtopology  # Used as an example communication subtopology
 
   # Use CdhCore handler components
   command connections instance CdhCore.cmdDisp
@@ -92,20 +92,20 @@ topology Flight {
 
   connections RateGroups {
     # Connect rate groups to active components inside CdhCore
-    rg.RateGroupMemberOut[0] -> CdhCore.tlmSend.Run
-    rg.RateGroupMemberOut[1] -> CdhCore.$health.Run
+    rg.RateGroupMemberOut[0] -> CdhCore.Subtopology.tlmSendRun
+    rg.RateGroupMemberOut[1] -> CdhCore.Subtopology.healthRun
   }
 
   connections ComCcsds_CdhCore{
       # events and telemetry to comQueue
-      CdhCore.events.PktSend        -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
-      CdhCore.tlmSend.PktSend       -> ComCcsds.comQueue.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
+      CdhCore.Subtopology.eventsPktSend  -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.EVENTS]
+      CdhCore.Subtopology.tlmSendPktSend -> ComCcsds.Subtopology.comPacketQueueIn[ComCcsds.Ports_ComPacketQueue.TELEMETRY]
 
       # Router <-> CmdDispatcher
-      ComCcsds.fprimeRouter.commandOut  -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus     -> ComCcsds.fprimeRouter.cmdResponseIn
-      cmdSeq.comCmdOut -> CdhCore.cmdDisp.seqCmdBuff
-      CdhCore.cmdDisp.seqCmdStatus -> cmdSeq.cmdResponseIn
+      ComCcsds.Subtopology.commandOut        -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> ComCcsds.Subtopology.cmdResponseIn
+      cmdSeq.comCmdOut                       -> CdhCore.Subtopology.seqCmdBuff
+      CdhCore.Subtopology.seqCmdStatus       -> cmdSeq.cmdResponseIn
   }
 }
 ```
@@ -139,6 +139,7 @@ topology Flight {
 * **Queue sizes** — component queue depths (for active and queued components).
 * **Stack sizes** — task stack allocation (for active).
 * **Priorities** — RTOS scheduling priority (for active).
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 > These govern footprint and responsiveness of: command dispatching, event management, health monitoring, text logging, version reporting, and assert→fatal adaptation. Override to meet platform timing and memory constraints.
 

@@ -116,12 +116,16 @@ void RateLimiter ::updateCounter(bool triggered) {
     FW_ASSERT(this->m_counterCycle > 0);
 
     if (triggered) {
-        // triggered, set to next state
+        // triggered, set to next state and maybe wrap (handles counterCycle == 1)
         this->m_counter = 1;
+        if (this->m_counter >= this->m_counterCycle) {
+            this->m_counter = 0;
+        }
 
     } else {
         // otherwise, just increment and maybe wrap
-        if (++this->m_counter >= this->m_counterCycle) {
+        this->m_counter++;
+        if (this->m_counter >= this->m_counterCycle) {
             this->m_counter = 0;
         }
     }

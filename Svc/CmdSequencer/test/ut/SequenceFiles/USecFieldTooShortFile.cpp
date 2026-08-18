@@ -19,7 +19,7 @@ namespace SequenceFiles {
 
 USecFieldTooShortFile ::USecFieldTooShortFile(const Format::t a_format) : File("usec_field_too_short", a_format) {}
 
-void USecFieldTooShortFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void USecFieldTooShortFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
     const U32 timeContext = 0;

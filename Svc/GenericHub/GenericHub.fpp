@@ -65,6 +65,13 @@ module Svc {
     #    genericHub.bufferInReturn[0] -> bufferProducer0.bufferIn
     #    bufferProducer1.bufferOut -> genericHub.bufferIn[1]
     #    genericHub.bufferInReturn[1] -> bufferProducer1.bufferIn
+    #
+    #    commandSplitter.RemoteCmd[0] -> genericHub.cmdDispIn[0]
+    #    commandSplitter.RemoteCmd[1] -> genericHub.cmdDispIn[1]
+    #    ...
+    #    genericHub.cmdRespOut[0] -> commandSplitter.seqCmdStatus[0]
+    #    genericHub.cmdRespOut[1] -> commandSplitter.seqCmdStatus[1]
+    #    ...
     # ----------------------------------------------------------------------
 
     @ Port for sending events to the hub
@@ -95,6 +102,12 @@ module Svc {
 
     @ bufferIn and bufferInReturn ports must match
     match bufferIn with bufferInReturn
+
+    @ for sending remote commands 
+    sync input port cmdDispIn: [CmdDispatcherSequencePorts] Fw.Com
+
+    @ Command response back from remote hub
+    output port cmdRespOut: [CmdDispatcherSequencePorts] Fw.CmdResponse
 
     # ----------------------------------------------------------------------
     # Ports for sending data from the hub to a buffer driver
@@ -154,6 +167,13 @@ module Svc {
     #    bufferConsumer0.bufferInReturn -> genericHub.bufferOutReturn[0]
     #    genericHub.bufferOut[1] -> bufferConsumer1.bufferIn
     #    bufferConsumer1.bufferInReturn -> genericHub.bufferOutReturn[1]
+    #
+    #    genericHub.cmdDispOut[0] -> commandDispatch.seqCmdBuff[0]
+    #    genericHub.cmdDispOut[1] -> commandDispatch.seqCmdBuff[1]
+    #    ...
+    #    commandDispatch.seqCmdStatus[0] -> genericHub.cmdRespIn[0]
+    #    commandDispatch.seqCmdStatus[1] -> genericHub.cmdRespIn[1]
+    #    ...
     # ----------------------------------------------------------------------
 
     @ Port for receiving events
@@ -182,6 +202,12 @@ module Svc {
 
     @ bufferOut and bufferOutReturn ports must match
     match bufferOut with bufferOutReturn
+
+    @ handling remote commands
+    output port cmdDispOut: [CmdDispatcherSequencePorts] Fw.Com
+
+    @ remote command response 
+    sync input port cmdRespIn: [CmdDispatcherSequencePorts] Fw.CmdResponse
 
   }
 

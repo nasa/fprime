@@ -24,6 +24,7 @@ New users should start with the [Hello World tutorial](../../tutorials-hello-wor
 
 Here are some additional references to continue learning about F´:
 
+- [F' Cheatsheet](https://fprime.jpl.nasa.gov/cheatsheet.pdf)
 - [More tutorials](../tutorials/index.md)
 - [F´ User Manual](../user-manual/index.md)
 - [Installation and Troubleshooting](./installing-fprime.md)

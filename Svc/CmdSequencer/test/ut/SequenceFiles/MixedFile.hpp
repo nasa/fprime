@@ -31,11 +31,11 @@ class MixedFile : public File {
 
   public:
     //! Serialize the file in F Prime format
-    void serializeFPrime(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeFPrime(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 
     //! Serialize the file in AMPCS format
-    void serializeAMPCS(Fw::SerializeBufferBase& buffer  //!< The buffer
+    void serializeAMPCS(Fw::LinearBufferBase& buffer  //!< The buffer
     );
 };
 

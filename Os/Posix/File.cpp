@@ -91,7 +91,9 @@ mode_t PosixFile::map_open_create_mode(const U32 create_mode) {
 
     out_mode |= (create_mode & Os::FILE_MODE_ISUID) ? S_ISUID : 0;
     out_mode |= (create_mode & Os::FILE_MODE_ISGID) ? S_ISGID : 0;
+#if defined(S_ISVTX)
     out_mode |= (create_mode & Os::FILE_MODE_ISVTX) ? S_ISVTX : 0;
+#endif
 
     return out_mode;
 }
@@ -119,7 +121,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
             mode_flags = O_WRONLY | O_CREAT | O_APPEND;
             break;
         default:
-            FW_ASSERT(0, requested_mode);
+            FW_ASSERT(false, requested_mode);
             break;
     }
     int descriptor = ::open(filepath, mode_flags, map_open_create_mode(Os::FILE_DEFAULT_CREATE_MODE));
@@ -132,7 +134,7 @@ PosixFile::Status PosixFile::open(const char* filepath,
 }
 
 void PosixFile::close() {
-    // Only close file handles that are not open
+    // Only close file handles that are open
     if (PosixFileHandle::INVALID_FILE_DESCRIPTOR != this->m_handle.m_file_descriptor) {
         (void)::close(this->m_handle.m_file_descriptor);
         this->m_handle.m_file_descriptor = PosixFileHandle::INVALID_FILE_DESCRIPTOR;
@@ -257,6 +259,7 @@ PosixFile::Status PosixFile::flush() {
 }
 
 PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -276,7 +279,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
         if (PosixFileHandle::ERROR_RETURN_VALUE == read_size) {
             int errno_store = errno;
             // Interrupted w/o read, try again
-            if (EINTR != errno_store) {
+            if (EINTR == errno_store) {
                 continue;
             }
             status = Os::Posix::errno_to_file_status(errno_store);
@@ -297,6 +300,7 @@ PosixFile::Status PosixFile::read(U8* buffer, FwSizeType& size, PosixFile::WaitT
 }
 
 PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile::WaitType wait) {
+    FW_ASSERT(buffer != nullptr);
     Status status = OP_OK;
     FwSizeType accumulated = 0;
     // Loop up to 2 times for each by, bounded to prevent overflow
@@ -317,7 +321,7 @@ PosixFile::Status PosixFile::write(const U8* buffer, FwSizeType& size, PosixFile
         if (PosixFileHandle::ERROR_RETURN_VALUE == write_size || write_size < 0) {
             int errno_store = errno;
             // Interrupted w/o write, try again
-            if (EINTR != errno_store) {
+            if (EINTR == errno_store) {
                 continue;
             }
             status = Os::Posix::errno_to_file_status(errno_store);

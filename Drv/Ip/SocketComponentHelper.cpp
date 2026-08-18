@@ -33,7 +33,7 @@ void SocketComponentHelper::start(const Fw::ConstStringBase& name,
               Os::Task::State::NOT_STARTED);  // It is a coding error to start this task multiple times
     this->m_reconnectStop = false;
     Fw::String reconnectName;
-    reconnectName.format("%s_reconnect", name.toChar());
+    (void)reconnectName.format("%s_reconnect", name.toChar());  // task name may safely truncate
     Os::Task::Arguments reconnectArguments(reconnectName, SocketComponentHelper::reconnectTask, this, priorityReconnect,
                                            stackReconnect, cpuAffinityReconnect);
     Os::Task::Status reconnectStat = m_reconnectTask.start(reconnectArguments);
@@ -63,12 +63,19 @@ SocketIpStatus SocketComponentHelper::open() {
         }
     }
     if (local_open == OpenState::OPENING) {
-        FW_ASSERT(this->m_descriptor.fd == -1);  // Ensure we are not opening an opened socket
-        status = this->getSocketHandler().open(this->m_descriptor);
+        // Open into a local descriptor and publish it under the lock
+        SocketDescriptor descriptor;
+        {
+            Os::ScopeLock scopeLock(m_lock);
+            descriptor = this->m_descriptor;
+        }
+        FW_ASSERT(descriptor.fd == -1);  // Ensure we are not opening an opened socket
+        status = this->getSocketHandler().open(descriptor);
         // Lock scope
         {
             Os::ScopeLock scopeLock(m_lock);
             if (Drv::SOCK_SUCCESS == status) {
+                this->m_descriptor = descriptor;
                 this->m_open = OpenState::OPEN;
             } else {
                 this->m_open = OpenState::NOT_OPEN;
@@ -213,22 +220,27 @@ void SocketComponentHelper::readLoop() {
         // If the network connection is open, read from it
         if (this->isOpened() and this->running()) {
             Fw::Buffer buffer = this->getBuffer();
-            U8* data = buffer.getData();
-            FW_ASSERT(data);
-            FwSizeType size = buffer.getSize();
-            // recv blocks, so it may have been a while since its done an isOpened check
-            status = this->recv(data, size);
-            if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
-                (status != SOCK_NO_DATA_AVAILABLE)) {
-                Fw::Logger::log("[WARNING] %s failed to recv from port with status %d and errno %d\n",
-                                this->m_task.getName().toChar(), status, errno);
-                this->close();
-                buffer.setSize(0);
+            if (buffer.isValid()) {
+                U8* data = buffer.getData();
+                FW_ASSERT(data != nullptr);
+                FwSizeType size = buffer.getSize();
+                // recv blocks, so it may have been a while since its done an isOpened check
+                status = this->recv(data, size);
+                if ((status != SOCK_SUCCESS) && (status != SOCK_INTERRUPTED_TRY_AGAIN) &&
+                    (status != SOCK_NO_DATA_AVAILABLE)) {
+                    Fw::Logger::log("[WARNING] %s failed to recv from port with status %d and errno %d\n",
+                                    this->m_task.getName().toChar(), status, errno);
+                    this->close();
+                    buffer.setSize(0);
+                } else {
+                    // Send out received data
+                    buffer.setSize(size);
+                }
+                this->sendBuffer(buffer, status);
             } else {
-                // Send out received data
-                buffer.setSize(size);
+                Fw::Logger::log("[WARNING] %s failed to get buffer for recv\n", this->m_task.getName().toChar());
+                (void)Os::Task::delay(SOCKET_RETRY_INTERVAL);
             }
-            this->sendBuffer(buffer, status);
         }
     }
     // This will loop until stopped. If auto-open is disabled, this will break when reopen returns disabled status
@@ -238,7 +250,7 @@ void SocketComponentHelper::readLoop() {
 }
 
 void SocketComponentHelper::readTask(void* pointer) {
-    FW_ASSERT(pointer);
+    FW_ASSERT(pointer != nullptr);
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
     self->readLoop();
 }
@@ -263,11 +275,16 @@ bool SocketComponentHelper::runningReconnect() {
 
 void SocketComponentHelper::reconnectLoop() {
     SocketIpStatus status = SOCK_SUCCESS;
+    // @non-terminating@: runs until the reconnect thread is stopped
     while (this->runningReconnect()) {
         // Check if we need to reconnect
         bool reconnect = false;
         {
             Os::ScopeLock scopedLock(this->m_reconnectLock);
+            FW_ASSERT(this->m_reconnectState == ReconnectState::NOT_RECONNECTING ||
+                          this->m_reconnectState == ReconnectState::REQUEST_RECONNECT ||
+                          this->m_reconnectState == ReconnectState::RECONNECT_IN_PROGRESS,
+                      static_cast<FwAssertArgType>(this->m_reconnectState));
             if (this->m_reconnectState == ReconnectState::REQUEST_RECONNECT) {
                 this->m_reconnectState = ReconnectState::RECONNECT_IN_PROGRESS;
                 reconnect = true;
@@ -310,7 +327,7 @@ void SocketComponentHelper::reconnectLoop() {
 }
 
 void SocketComponentHelper::reconnectTask(void* pointer) {
-    FW_ASSERT(pointer);
+    FW_ASSERT(pointer != nullptr);
     SocketComponentHelper* self = reinterpret_cast<SocketComponentHelper*>(pointer);
     self->reconnectLoop();
 }

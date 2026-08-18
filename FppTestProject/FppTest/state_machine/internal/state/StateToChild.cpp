@@ -51,7 +51,7 @@ void StateToChild::testInit() {
     ASSERT_EQ(this->m_actionHistory.getSize(), 1);
     const auto& signals = this->m_actionHistory.getSignals();
     const auto& actions = this->m_actionHistory.getValues();
-    ASSERT_EQ(signals.getItemAt(0), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+    ASSERT_EQ(signals.getItemAt(0), Signal::__FPRIME_INITIAL_TRANSITION);
     ASSERT_EQ(actions.getItemAt(0), ActionId::ENTER_S2);
 }
 

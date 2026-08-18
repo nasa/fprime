@@ -20,6 +20,11 @@ TEST(RateLimiterTest, TestCounterAndTimeTriggering) {
     tester.testCounterAndTimeTriggering();
 }
 
+TEST(RateLimiterTest, TestDefaultConstructorAndSetters) {
+    Utils::RateLimiterTester tester;
+    tester.testDefaultConstructorAndSetters();
+}
+
 TEST(TokenBucketTest, TestTriggering) {
     Utils::TokenBucketTester tester;
     tester.testTriggering();
@@ -33,6 +38,11 @@ TEST(TokenBucketTest, TestReconfiguring) {
 TEST(TokenBucketTest, TestInitialSettings) {
     Utils::TokenBucketTester tester;
     tester.testInitialSettings();
+}
+
+TEST(TokenBucketTest, TestReplenishAndEdgeCases) {
+    Utils::TokenBucketTester tester;
+    tester.testReplenishAndEdgeCases();
 }
 
 int main(int argc, char** argv) {

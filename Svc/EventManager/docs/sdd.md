@@ -36,6 +36,8 @@ Port Data Type | Name | Direction | Kind | Usage
 [`Fw::Log`](../../../Fw/Log/docs/sdd.md) | LogRecv | Input | Synchronous | Receive events from components
 [`Fw::Com`](../../../Fw/Log/docs/sdd.md) | PktSend | Output | n/a | Send event packets to external user
 [`Svc::FatalEvent`](../../../Svc/Fatal/docs/sdd.md) | FatalAnnounce | Output | n/a | Send FATAL event (to health)
+[`Svc::Sched`](../../../Svc/Sched/docs/sdd.md) | run | Input | Async (drop) | Rate group driven telemetry updates
+[`Fw::Tlm`](../../../Fw/Tlm/docs/sdd.md) | Tlm | Output | n/a | Send telemetry channels
 
 ### 3.2 Functional Description
 
@@ -45,8 +47,6 @@ developers to specify a set of events in the component FPP.
 autocoder will add an `Fw::Log` output port to send events in serialized form. The EventManager receives these port
 calls and provides commands to filter these events. The filtered events are sent to other components such as the ground
 interface. 
- 
-**Note:** the Event ID value 0 is reserved for the logger.
 
 Should a FATAL severity event arrive, it is announced using a FATAL out port allow the system to respond when a FATAL
 event is seen.
@@ -64,6 +64,12 @@ These filters are modified at runtime by the `SET_ID_FILTER` command.
 
 FATAL events are never filtered, so they can be caught and broadcast to the system. Outgoing events are converted into
 the F´ ground format and sent out using the `PktSend` port.
+
+#### 3.2.3 Dropped Event Reporting
+
+The `EventManager` component reports the number of events dropped due to internal queue overflow via the
+`EventsDropped` telemetry channel. The channel is written from the `run` port handler, which should be connected to a
+rate group for periodic updates. The channel uses update-on-change semantics.
 
 
 
@@ -104,6 +110,7 @@ Date | Description
 9/7/2015 | Unit Test updates 
 10/28/2015 | Added FATAL announce port
 12/1/2020 | Removed event buffers and post-filter
+6/27/2026 | Added EventsDropped telemetry channel and rate group port
 
 
 

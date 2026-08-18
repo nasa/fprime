@@ -20,6 +20,10 @@ Fw::FormatStatus Fw::stringFormat(char* destination,
                                   const char* formatString,
                                   va_list args) {
     Fw::FormatStatus formatStatus = Fw::FormatStatus::SUCCESS;
+    // Check destination pointer
+    if (destination == nullptr || maximumSize == 0) {
+        return Fw::FormatStatus::OTHER_ERROR;
+    }
     // Force null termination in error cases
     destination[0] = 0;
     // Check format string
@@ -30,7 +34,8 @@ Fw::FormatStatus Fw::stringFormat(char* destination,
     else if (maximumSize > std::numeric_limits<size_t>::max()) {
         formatStatus = Fw::FormatStatus::SIZE_OVERFLOW;
     } else {
-        int needed_size = vsnprintf(destination, static_cast<size_t>(maximumSize), formatString, args);
+        // Format string is intentionally a runtime parameter; suppressing static analysis warning
+        int needed_size = vsnprintf(destination, static_cast<size_t>(maximumSize), formatString, args);  // NOLINT
         destination[maximumSize - 1] = 0;  // Force null-termination
         if (needed_size < 0) {
             formatStatus = Fw::FormatStatus::OTHER_ERROR;

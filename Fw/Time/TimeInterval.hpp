@@ -43,6 +43,10 @@ class TimeInterval : public Serializable {
     bool operator<=(const TimeInterval& other) const;
     TimeInterval& operator=(const TimeInterval& other);
 
+    //! \brief get the underlying TimeIntervalValue
+    //! \return the TimeIntervalValue representation of this TimeInterval as a copy
+    TimeIntervalValue asTimeIntervalValue() const;
+
     //! The type of a comparison result
     typedef enum { LT = -1, EQ = 0, GT = 1, INCOMPARABLE = 2 } Comparison;
 

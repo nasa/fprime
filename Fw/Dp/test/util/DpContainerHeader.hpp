@@ -85,7 +85,7 @@ struct DpContainerHeader {
         DpContainerHeader::moveDeserToOffset(file, line, deserializer, DpContainer::Header::DATA_SIZE_OFFSET);
         status = deserializer.deserializeSize(this->m_dataSize);
         DP_CONTAINER_HEADER_ASSERT_EQ(status, FW_SERIALIZE_OK);
-        // After deserializing time, the deserialization index should be at
+        // After deserializing the data size, the deserialization index should be at
         // the header hash offset
         checkDeserialAtOffset(deserializer, DpContainer::HEADER_HASH_OFFSET);
         // Check the header hash
@@ -157,8 +157,8 @@ struct DpContainerHeader {
     }
 
     //! Check that the serialize repr is at the specified deserialization offset
-    static void checkDeserialAtOffset(SerializeBufferBase& serialRepr,  //!< The serialize repr
-                                      FwSizeType offset                 //!< The offset
+    static void checkDeserialAtOffset(LinearBufferBase& serialRepr,  //!< The serialize repr
+                                      FwSizeType offset              //!< The offset
     ) {
         const U8* buffAddr = serialRepr.getBuffAddr();
         const U8* buffAddrLeft = serialRepr.getBuffAddrLeft();

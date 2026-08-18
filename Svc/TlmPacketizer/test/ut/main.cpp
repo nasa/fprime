@@ -25,13 +25,6 @@ TEST(TestNominal, SendPackets) {
     tester.sendPacketsTest();
 }
 
-// TEST(TestNominal,SendPacketLevels) {
-//
-//     TEST_CASE(100.1.3,"Send Packets with levels");
-//     Svc::TlmPacketizerTester tester;
-//     tester.sendPacketLevelsTest();
-// }
-
 TEST(TestNominal, UpdatePacketsTest) {
     TEST_CASE(100.1.4, "Update Packets");
     Svc::TlmPacketizerTester tester;
@@ -69,10 +62,56 @@ TEST(TestOffNominal, NonPacketizedChannelTest) {
     tester.nonPacketizedChannelTest();
 }
 
+TEST(TestOffNominal, SetLevelInvalidTest) {
+    TEST_CASE(100.2.2, "SET_LEVEL with out-of-range level");
+    Svc::TlmPacketizerTester tester;
+    tester.setLevelInvalidTest();
+}
+
+TEST(TestNominal, DuplicateChannelIdMatchingSizeTest) {
+    TEST_CASE(100.1.13, "Duplicate channel ID across packets with identical size");
+    Svc::TlmPacketizerTester tester;
+    tester.duplicateChannelIdMatchingSizeTest();
+}
+
+TEST(TestOffNominal, DuplicateChannelIdConflictingSizeTest) {
+    TEST_CASE(100.2.3, "Duplicate channel ID across packets with conflicting size");
+    Svc::TlmPacketizerTester tester;
+    tester.duplicateChannelIdConflictingSizeTest();
+}
+
+TEST(TestOffNominal, OversizedChannelTest) {
+    TEST_CASE(100.2.4, "Oversized channel value is rejected with a warning event");
+    Svc::TlmPacketizerTester tester;
+    tester.oversizedChannelTest();
+}
+
 TEST(TestNominal, TlmGetTest) {
     TEST_CASE(100.1.8, "Get telemetry channel");
     Svc::TlmPacketizerTester tester;
     tester.getChannelValueTest();
+}
+TEST(TestNominal, configuredTelemetryGroupsTests) {
+    TEST_CASE(100.1.9, "Configure Telem Send Levels and Rates");
+    Svc::TlmPacketizerTester tester;
+    tester.configuredTelemetryGroupsTests();
+}
+TEST(TestNominal, advancedControlGroupTests) {
+    TEST_CASE(100.1.10, "Control enable sections and groups");
+    Svc::TlmPacketizerTester tester;
+    tester.advancedControlGroupTests();
+}
+
+TEST(TestNominal, sectionEnabledParameterTest) {
+    TEST_CASE(100.1.11, "Test Section Enabled Parameter");
+    Svc::TlmPacketizerTester tester;
+    tester.sectionEnabledParameterTest();
+}
+
+TEST(TestNominal, sectionConfigParameterTest) {
+    TEST_CASE(100.1.12, "Test Section Config Parameter");
+    Svc::TlmPacketizerTester tester;
+    tester.sectionConfigParameterTest();
 }
 
 int main(int argc, char* argv[]) {

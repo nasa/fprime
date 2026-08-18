@@ -23,10 +23,10 @@ namespace Queue {
 
 constexpr FwSizeType DEPTH_BOUND = 100000;
 
-struct Tester {
+struct Tester : public Os::QueueRegistry {
   public:
     //! Constructor
-    Tester() = default;
+    Tester();
     virtual ~Tester() { queue.teardown(); };
 
     struct QueueMessage {
@@ -72,6 +72,7 @@ struct Tester {
     };
     QueueState shadow;
     Os::Queue queue;
+    std::vector<Os::Queue*> m_all_queues;
 
     //! Shadow is created
     bool is_shadow_created() const {
@@ -118,6 +119,9 @@ struct Tester {
                                               FwQueuePriorityType& priority);
     //! Complete a previous blocking queue receive
     void shadow_receive_unblock();
+
+    //! Register a queue with the registry
+    void registerQueue(Os::Queue* q) override;
 
   public:
 #include "QueueRules.hpp"

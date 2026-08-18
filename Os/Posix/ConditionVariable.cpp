@@ -21,14 +21,17 @@ PosixConditionVariable::~PosixConditionVariable() {
 
 PosixConditionVariable::Status PosixConditionVariable::pend(Os::Mutex& mutex) {
     PosixMutexHandle* mutex_handle = reinterpret_cast<PosixMutexHandle*>(mutex.getHandle());
+    FW_ASSERT(mutex_handle != nullptr);
     int status = pthread_cond_wait(&this->m_handle.m_condition, &mutex_handle->m_mutex_descriptor);
     return posix_status_to_conditional_status(status);
 }
 void PosixConditionVariable::notify() {
-    FW_ASSERT(pthread_cond_signal(&this->m_handle.m_condition) == 0);
+    const int status = pthread_cond_signal(&this->m_handle.m_condition);
+    FW_ASSERT(status == 0);
 }
 void PosixConditionVariable::notifyAll() {
-    FW_ASSERT(pthread_cond_broadcast(&this->m_handle.m_condition) == 0);
+    const int status = pthread_cond_broadcast(&this->m_handle.m_condition);
+    FW_ASSERT(status == 0);
 }
 
 ConditionVariableHandle* PosixConditionVariable::getHandle() {

@@ -39,6 +39,7 @@ The component consists of the following key elements:
 ### 3.2 Send Operation
 
 When data is sent via the `send` input port:
+
 1. The component validates the file descriptor and buffer
 2. Data is written to the UART device using the Linux `write()` system call
 3. Bytes sent counter is updated for telemetry
@@ -47,6 +48,7 @@ When data is sent via the `send` input port:
 ### 3.3 Receive Operation
 
 The receive operation runs in a separate thread:
+
 1. A buffer is allocated from the buffer manager
 2. The thread blocks on `read()` waiting for incoming data
 3. Received data is packaged in the buffer and sent via `recv` output port
@@ -56,6 +58,7 @@ The receive operation runs in a separate thread:
 ### 3.4 Threading Model
 
 The component uses a single dedicated thread for receive operations (`serialReadTaskEntry`). This thread:
+
 - Runs continuously until `quitReadThread()` is called
 - Allocates buffers for each receive operation
 - Handles timeouts and errors gracefully
@@ -164,6 +167,7 @@ The receive thread can be configured with:
 ### 5.4 Events and Telemetry
 
 The component generates the following events:
+
 - **OpenError**: UART device open failures
 - **ConfigError**: UART configuration failures
 - **WriteError**: Data transmission errors
@@ -173,5 +177,6 @@ The component generates the following events:
 - **BufferTooSmall**: Insufficient buffer size
 
 The component reports the following telemetry:
+
 - **BytesSent**: Total bytes transmitted
 - **BytesRecv**: Total bytes received

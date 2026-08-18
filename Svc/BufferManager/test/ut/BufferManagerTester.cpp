@@ -458,6 +458,28 @@ void BufferManagerTester::multBuffSize() {
     this->component.cleanup();
 }
 
+void BufferManagerTester::bufferSizeTrimmed() {
+    REQUIREMENT("FPRIME-BM-007");
+
+    BufferManagerComponentImpl::BufferBins bins;
+    memset(&bins, 0, sizeof(bins));
+    bins.bins[0].bufferSize = BIN1_BUFFER_SIZE;
+    bins.bins[0].numBuffers = 1;
+
+    TestAllocator alloc;
+    this->component.setup(MGR_ID, MEM_ID, alloc, bins);
+
+    const Fw::Buffer::SizeType requestedSize = BIN1_BUFFER_SIZE - 1;
+    Fw::Buffer buffer = this->invoke_to_bufferGetCallee(0, requestedSize);
+    ASSERT_TRUE(buffer.isValid());
+    ASSERT_EQ(requestedSize, buffer.getSize());
+
+    this->invoke_to_bufferSendIn(0, buffer);
+    ASSERT_FALSE(this->component.m_buffers[0].allocated);
+
+    this->component.cleanup();
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

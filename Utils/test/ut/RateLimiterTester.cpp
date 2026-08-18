@@ -127,6 +127,38 @@ void RateLimiterTester ::testCounterAndTimeTriggering() {
     }
 }
 
+void RateLimiterTester ::testDefaultConstructorAndSetters() {
+    // A default-constructed limiter has no counter or time cycle: always triggers
+    RateLimiter limiter;
+    for (U32 i = 0; i < 10; i++) {
+        ASSERT_TRUE(limiter.trigger());
+    }
+
+    // Configuring via setters behaves like the parameterized constructor
+    const U32 cycles = 4;
+    limiter.setCounterCycle(cycles);
+    limiter.reset();
+    for (U32 iter = 0; iter < 100; iter++) {
+        bool shouldTrigger = (iter % cycles == 0);
+        ASSERT_EQ(shouldTrigger, limiter.trigger());
+    }
+
+    // Time cycle via setter
+    RateLimiter timeLimiter;
+    const U32 timeCycle = 3;
+    timeLimiter.setTimeCycle(timeCycle);
+    timeLimiter.reset();
+    ASSERT_TRUE(timeLimiter.trigger(Fw::Time::zero()));
+    ASSERT_FALSE(timeLimiter.trigger(Fw::Time(timeCycle - 1, 0)));
+    ASSERT_TRUE(timeLimiter.trigger(Fw::Time(timeCycle, 0)));
+
+    // setTime establishes a concrete reference point
+    timeLimiter.reset();
+    timeLimiter.setTime(Fw::Time(10, 0));
+    ASSERT_FALSE(timeLimiter.trigger(Fw::Time(10 + timeCycle - 1, 0)));
+    ASSERT_TRUE(timeLimiter.trigger(Fw::Time(10 + timeCycle, 0)));
+}
+
 // ----------------------------------------------------------------------
 // Helper methods
 // ----------------------------------------------------------------------

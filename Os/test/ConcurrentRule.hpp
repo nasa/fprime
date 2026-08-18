@@ -43,10 +43,10 @@ class ConcurrentRule : public STest::Rule<State> {
         ASSERT_NE(rule_pointer, nullptr) << "Passed null input to task";
         ConcurrentRule<State>* self = reinterpret_cast<ConcurrentRule<State>*>(rule_pointer);
         ASSERT_TRUE(self->is_asynchronous) << "Rule " << self->getName() << " not run in aggregated concurrent rule";
-        ASSERT_TRUE(self->precondition(*self->m_state)) << "precondition failed applying rule " << self->getName();
 
-        // Ensure this rule owns the global state
+        // Ensure this rule owns the global state, including for the precondition check
         Os::ScopeLock lock(self->getLock());
+        ASSERT_TRUE(self->precondition(*self->m_state)) << "precondition failed applying rule " << self->getName();
         self->action(*self->m_state);
     }
 

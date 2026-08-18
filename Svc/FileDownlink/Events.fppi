@@ -33,7 +33,7 @@ event DownlinkCanceled(
   id 0x03 \
   format "Canceled downlink of file {} to file {}"
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request exceeded the source file size; length was clamped
 event DownlinkPartialWarning(
                               startOffset: U32 @< Starting file offset in bytes
                               length: U32 @< Number of bytes to downlink
@@ -45,7 +45,7 @@ event DownlinkPartialWarning(
   id 0x05 \
   format "Offset {} plus length {} is greater than source size {} for partial downlink of file {} to file {}. "
 
-@ The File Downlink component has detected a timeout. Downlink has been canceled.
+@ A partial downlink request started beyond the source file size and failed
 event DownlinkPartialFail(
                            sourceFileName: string size 100 @< The source filename
                            destFileName: string size 100 @< The destination file name
@@ -74,3 +74,31 @@ event SendStarted(
   severity activity high \
   id 0x08 \
   format "Downlink of {} bytes started from {} to {}"
+
+@ The File Downlink component stopped due to a zero-size file
+event DownlinkZeroSizeFile(
+                        sourceFileName: string size 100 @< The source file name
+                      ) \
+  severity warning high \
+  id 0x09 \
+  format "Downlink of file {} stopped due to zero-size."
+
+@ Supplied filename has overflowed. This intentionally discards the filename to avoid cascading overflows.
+event FilenameSourceOverflow() \
+  severity warning high \
+  id 0x10 \
+  format "Commanded source filename too long"
+
+@ Supplied filename has overflowed
+event FilenameDestinationOverflow() \
+  severity warning high \
+  id 0x11 \
+  format "Commanded destination filename too long"
+
+@ Source file path is outside the configured read sandbox
+event SourceOutOfSandbox(
+                        fileName: string size 100 @< The rejected source file path
+                      ) \
+  severity warning high \
+  id 0x12 \
+  format "Source file {} is outside the configured read sandbox"

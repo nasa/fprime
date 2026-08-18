@@ -27,10 +27,15 @@ FileUplink::FileUplink(const char* const name)
       m_lastSequenceIndex(0),
       m_lastPacketWriteStatus(Os::File::MAX_STATUS),
       m_filesReceived(this),
+      m_filesReceivedFailed(this),
       m_packetsReceived(this),
       m_warnings(this) {}
 
 FileUplink::~FileUplink() {}
+
+void FileUplink::configure(const char* directory) {
+    this->m_file.osFile.configure(directory);
+}
 
 // ----------------------------------------------------------------------
 // Handler implementations for user-defined typed input ports
@@ -45,7 +50,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
     }
 
     // Read the packet type from the packet buffer
-    FwPacketDescriptorType packetType;
+    FwPacketDescriptorType packetType = 0;
     Fw::SerializeStatus status = buffer.getDeserializer().deserializeTo(packetType);
     FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
 
@@ -79,7 +84,7 @@ void FileUplink::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buf
                 this->handleCancelPacket();
                 break;
             default:
-                FW_ASSERT(0);
+                FW_ASSERT(false);
                 break;
         }
     }
@@ -132,10 +137,11 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
     this->checkSequenceIndex(sequenceIndex);
     const U32 byteOffset = dataPacket.getByteOffset();
     const U32 dataSize = dataPacket.getDataSize();
-    if (byteOffset + dataSize > this->m_file.size) {
+    if ((std::numeric_limits<U32>::max() - byteOffset < dataSize) || (byteOffset + dataSize > this->m_file.size)) {
         this->m_warnings.packetOutOfBounds(sequenceIndex, this->m_file.name);
         return;
     }
+    FW_ASSERT(dataPacket.getData() != nullptr);
     const Os::File::Status status = this->m_file.write(dataPacket.getData(), byteOffset, dataSize);
     if (status != Os::File::OP_OK) {
         this->m_warnings.fileWrite(this->m_file.name);
@@ -147,12 +153,18 @@ void FileUplink::handleDataPacket(const Fw::FilePacket::DataPacket& dataPacket) 
 void FileUplink::handleEndPacket(const Fw::FilePacket::EndPacket& endPacket) {
     this->m_packetsReceived.packetReceived();
     if (this->m_receiveMode == DATA) {
-        this->m_filesReceived.fileReceived();
         this->checkSequenceIndex(endPacket.asHeader().getSequenceIndex());
-        this->compareChecksums(endPacket);
-        this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
-        if (this->isConnected_fileAnnounce_OutputPort(0)) {
-            this->fileAnnounce_out(0, this->m_file.name);
+        if (this->compareChecksums(endPacket)) {
+            this->m_filesReceived.fileReceived();
+            this->log_ACTIVITY_HI_FileReceived(this->m_file.name);
+            if (this->isConnected_fileAnnounce_OutputPort(0)) {
+                this->fileAnnounce_out(0, this->m_file.name);
+            }
+        } else {
+            // compareChecksums() has already issued the BadChecksum warning. The
+            // file failed its integrity check, so it is not announced or reported
+            // as successfully received; record the failed transfer instead.
+            this->m_filesReceivedFailed.fileReceivedFailed();
         }
     } else {
         this->m_warnings.invalidReceiveMode(Fw::FilePacket::T_END);
@@ -183,13 +195,16 @@ bool FileUplink::checkDuplicatedPacket(const U32 sequenceIndex) {
     return false;
 }
 
-void FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
-    CFDP::Checksum computed, stored;
+bool FileUplink::compareChecksums(const Fw::FilePacket::EndPacket& endPacket) {
+    CFDP::Checksum computed;
+    CFDP::Checksum stored;
     this->m_file.getChecksum(computed);
     endPacket.getChecksum(stored);
-    if (computed != stored) {
+    const bool match = (computed == stored);
+    if (!match) {
         this->m_warnings.badChecksum(computed.getValue(), stored.getValue());
     }
+    return match;
 }
 
 void FileUplink::goToStartMode() {

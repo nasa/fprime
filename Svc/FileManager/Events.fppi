@@ -35,15 +35,6 @@ event FileRemoveError(
   id 0x03 \
   format "Could not remove file {}, returned status {}"
 
-@ The File System component executed a shell command that returned status non-zero
-event ShellCommandFailed(
-                          $command: string size 256 @< The command string
-                          status: U32 @< The status code
-                        ) \
-  severity warning high \
-  id 0x04 \
-  format "Shell command {} failed with status {}"
-
 @ The File System component returned status non-zero when trying to append 2 files together
 event AppendFileFailed(
                         source: string size FileNameStringSize @< The name of the file being read from
@@ -62,14 +53,6 @@ event AppendFileSucceeded(
   severity activity high \
   id 0x06 \
   format "Appended {} to the end of {}"
-
-@ The File System component executed a shell command that returned status zero
-event ShellCommandSucceeded(
-                             $command: string size FileNameStringSize @< The command string
-                           ) \
-  severity activity high \
-  id 0x07 \
-  format "Shell command {} succeeded"
 
 @ The File System component created a new directory without error
 event CreateDirectorySucceeded(
@@ -112,14 +95,6 @@ event AppendFileStarted(
   severity activity high \
   id 0x0C \
   format "Appending file {} to the end of {}..."
-
-@ The File System component began executing a shell command
-event ShellCommandStarted(
-                           $command: string size 256 @< The command string
-                         ) \
-  severity activity high \
-  id 0x0D \
-  format "Running shell command {}..."
 
 @ The File System component began creating a new directory
 event CreateDirectoryStarted(
@@ -240,6 +215,15 @@ event CalculateCrcFailed(fileName: string size FileNameStringSize @< The name of
   id 0x1b \
   format "Failed CRC calculation for file {}, returned status {}"
 
+@ Error formatting a file path
+event FileNameFormatError(
+                          fileName: string size FileNameStringSize @< The file whose full path failed to format
+                          status: Fw.StringFormatStatus @< The status returned from the format operation
+                        ) \
+  severity warning high \
+  id 0x1d \
+  format "Failed to format full path for file {} with status {}"
+
 @ CRC succeeded
 event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name of the file being read from
                        crc: U32 @< The computed CRC value
@@ -247,3 +231,44 @@ event CalculateCrcSucceeded(fileName: string size FileNameStringSize @< The name
   severity activity high \
   id 0x1c \
   format "{} has CRC value 0x{x}"
+@ File data product generation started
+event GenerateDpStarted(fileName: string size FileNameStringSize @< The file being packaged
+                        bytesToWrite: U64 @< The number of file bytes that will be written
+                       ) \
+  severity activity high \
+  id 0x1e \
+  format "Started data product generation for file {} ({} bytes)"
+
+@ File data product generation completed
+event GenerateDpComplete(fileName: string size FileNameStringSize @< The file that was packaged
+                         chunks: U32 @< The number of chunks emitted
+                        ) \
+  severity activity high \
+  id 0x1f \
+  format "Completed data product generation for file {} in {} chunks"
+
+@ File data product generation failed
+event GenerateDpFailed(fileName: string size FileNameStringSize @< The file being packaged
+                       stage: Svc.FileManager.GenerateDpStage @< Where the failure occurred
+                       status: U32 @< The error status
+                      ) \
+  severity warning high \
+  id 0x20 \
+  format "Data product generation failed for file {} at stage {}, status {}"
+
+@ Data product container allocation failed
+event GenerateDpBufferFailed(fileName: string size FileNameStringSize @< The file being packaged
+                            ) \
+  severity warning high \
+  id 0x21 \
+  format "Failed to allocate data product buffer for file {}"
+
+@ Invalid offset range requested for data product generation
+event GenerateDpInvalidRange(fileName: string size FileNameStringSize @< The file being packaged
+                             beginOffset: U64 @< The requested begin offset
+                             endOffset: U64 @< The requested end offset
+                             fileSize: U64 @< The size of the file
+                            ) \
+  severity warning high \
+  id 0x22 \
+  format "Invalid offset range requested for file {}: [{}, {}) with file size {}"

@@ -22,6 +22,7 @@ register_os_implementation(Cpu Test_Stub)
 register_os_implementation(Memory Test_Stub)
 register_os_implementation(Queue Test_Stub)
 register_os_implementation(RawTime Test_Stub) # add Fw_Buffer here?
+register_os_implementation(CountingSemaphore Test_Stub)
 
 #### File Stub Testing ####
 register_fprime_ut(

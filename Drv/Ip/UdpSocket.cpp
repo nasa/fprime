@@ -46,36 +46,41 @@ UdpSocket::UdpSocket() : IpSocket(), m_recv_configured(false) {
 
 UdpSocket::~UdpSocket() = default;
 
-SocketIpStatus UdpSocket::configure(const char* const hostname,
+SocketIpStatus UdpSocket::configure(const char* const ipv4_address,
                                     const U16 port,
                                     const U32 timeout_seconds,
                                     const U32 timeout_microseconds) {
-    FW_ASSERT(0);  // Must use configureSend and/or configureRecv
+    (void)ipv4_address;
+    (void)port;
+    (void)timeout_seconds;
+    (void)timeout_microseconds;
+    FW_ASSERT(false);  // Must use configureSend and/or configureRecv
     return SocketIpStatus::SOCK_INVALID_CALL;
 }
 
-SocketIpStatus UdpSocket::configureSend(const char* const hostname,
+SocketIpStatus UdpSocket::configureSend(const char* const ipv4_address,
                                         const U16 port,
                                         const U32 timeout_seconds,
                                         const U32 timeout_microseconds) {
-    FW_ASSERT(hostname != nullptr);
+    FW_ASSERT(ipv4_address != nullptr);
     FW_ASSERT(this->isValidPort(port));
     FW_ASSERT(timeout_microseconds < 1000000);
-    return IpSocket::configure(hostname, port, timeout_seconds, timeout_microseconds);
+    return IpSocket::configure(ipv4_address, port, timeout_seconds, timeout_microseconds);
 }
 
-SocketIpStatus UdpSocket::configureRecv(const char* hostname, const U16 port) {
-    FW_ASSERT(hostname != nullptr);
+SocketIpStatus UdpSocket::configureRecv(const char* const ipv4_address, const U16 port) {
+    FW_ASSERT(ipv4_address != nullptr);
     FW_ASSERT(this->isValidPort(port));
-    FW_ASSERT(Fw::StringUtils::string_length(hostname, SOCKET_MAX_HOSTNAME_SIZE) < SOCKET_MAX_HOSTNAME_SIZE);
+    FW_ASSERT(Fw::StringUtils::string_length(ipv4_address, static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE)) <
+              static_cast<FwSizeType>(SOCKET_MAX_IPV4_ADDRESS_SIZE));
 
     // Initialize the receive address structure
     (void)::memset(&m_addr_recv, 0, sizeof(m_addr_recv));
     m_addr_recv.sin_family = AF_INET;
     m_addr_recv.sin_port = htons(port);
 
-    // Convert hostname to IP address
-    SocketIpStatus status = IpSocket::addressToIp4(hostname, &m_addr_recv.sin_addr);
+    // Convert IPv4 address (dotted-quad) to network-order in_addr
+    SocketIpStatus status = IpSocket::addressToIp4(ipv4_address, &m_addr_recv.sin_addr);
     if (status != SOCK_SUCCESS) {
         return status;
     }
@@ -102,7 +107,8 @@ SocketIpStatus UdpSocket::bind(const int fd) {
     }
 
     socklen_t size = sizeof(address);
-    if (::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size) == -1) {
+    const int socknameStatus = ::getsockname(fd, reinterpret_cast<struct sockaddr*>(&address), &size);
+    if (socknameStatus == -1) {
         return SOCK_FAILED_TO_READ_BACK_PORT;
     }
 
@@ -118,7 +124,6 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     }
 
     SocketIpStatus status = SOCK_SUCCESS;
-    int socketFd = -1;
 
     // Initialize address structure to zero before use
     struct sockaddr_in address;
@@ -128,8 +133,18 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     U16 recv_port = ntohs(this->m_addr_recv.sin_port);
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_DGRAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_DGRAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
+    }
+
+    // Apply the configured timeouts. This socket may send even when no send port was
+    // configured, because a send port of 0 means "reply to the source of the last
+    // datagram received", so the timeout must not be tied to `port != 0` below.
+    status = this->setupTimeouts(socketFd);
+    if (status != SOCK_SUCCESS) {
+        (void)::close(socketFd);
+        return status;
     }
 
     // May not be sending in all cases
@@ -143,27 +158,20 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
         address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-        // First IP address to socket sin_addr
-        status = IpSocket::addressToIp4(m_hostname, &(address.sin_addr));
+        // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+        status = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
         if (status != SOCK_SUCCESS) {
-            Fw::Logger::log("Failed to resolve hostname %s: %d\n", m_hostname, static_cast<I32>(status));
-            ::close(socketFd);
+            Fw::Logger::log("Failed to parse IPv4 address %s: %d\n", this->m_ipv4_address, static_cast<I32>(status));
+            (void)::close(socketFd);
             return status;
         };
 
         if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-            ::close(socketFd);
+            (void)::close(socketFd);
             return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
         }
 
-        // Now apply timeouts
-        status = this->setupTimeouts(socketFd);
-        if (status != SOCK_SUCCESS) {
-            ::close(socketFd);
-            return status;
-        }
-        FW_ASSERT(sizeof(this->m_addr_send) == sizeof(address), static_cast<FwAssertArgType>(sizeof(this->m_addr_send)),
-                  static_cast<FwAssertArgType>(sizeof(address)));
+        static_assert(sizeof(m_addr_send) == sizeof(address), "Send address must match the local address structure");
         (void)memcpy(&this->m_addr_send, &address, sizeof(this->m_addr_send));
     }
 
@@ -187,9 +195,10 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
     if ((port == 0) && (recv_port > 0)) {
         Fw::Logger::log("Setup to only receive udp at %s:%hu\n", recv_addr, recv_port);
     } else if ((port > 0) && (recv_port == 0)) {
-        Fw::Logger::log("Setup to only send udp at %s:%hu\n", m_hostname, port);
+        Fw::Logger::log("Setup to only send udp at %s:%hu\n", this->m_ipv4_address, port);
     } else if ((port > 0) && (recv_port > 0)) {
-        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port, m_hostname, port);
+        Fw::Logger::log("Setup to receive udp at %s:%hu and send to %s:%hu\n", recv_addr, recv_port,
+                        this->m_ipv4_address, port);
     }
 
     FW_ASSERT(status == SOCK_SUCCESS, static_cast<FwAssertArgType>(status));
@@ -200,9 +209,15 @@ SocketIpStatus UdpSocket::openProtocol(SocketDescriptor& socketDescriptor) {
 FwSignedSizeType UdpSocket::sendProtocol(const SocketDescriptor& socketDescriptor,
                                          const U8* const data,
                                          const FwSizeType size) {
-    FW_ASSERT(this->m_addr_send.sin_family != 0);  // Make sure the address was previously setup
-    FW_ASSERT(socketDescriptor.fd >= 0);           // File descriptor should be valid
-    FW_ASSERT(data != nullptr);                    // Data pointer should not be null
+    FW_ASSERT(socketDescriptor.fd >= 0);          // File descriptor should be valid
+    FW_ASSERT((size == 0) || (data != nullptr));  // Data pointer should not be null for nonzero sizes
+
+    // In respond-to-sender mode the destination is learned from the first received
+    // packet; a send before then has nowhere to go and is a send error, not a bug
+    if (this->m_addr_send.sin_family == 0) {
+        errno = ENOTCONN;
+        return -1;
+    }
 
     return static_cast<FwSignedSizeType>(
         ::sendto(socketDescriptor.fd, data, static_cast<size_t>(size), SOCKET_IP_SEND_FLAGS,

@@ -3,8 +3,6 @@
 Test the command dispatcher with basic integration tests.
 """
 
-import time
-
 
 def test_send_PrmDb(fprime_test_api):
     """Test that commands may be sent

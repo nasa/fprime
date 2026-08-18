@@ -4,6 +4,7 @@
 # This target sets up a test target for checking the right recursive dependencies come in
 ####
 include(utilities)
+include(global_interface)
 # Current full dependency list for TestDeployment (mostly via Svc_CmdDispatcher)
 set(EXPECTED_FULL_DEPENDENCIES
     Fw
@@ -12,6 +13,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Com
     Fw_Comp
     Fw_CompQueued
+    Fw_DataStructures
     Fw_Fpy
     Fw_Log
     Fw_Logger
@@ -19,6 +21,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     Fw_Port
     Fw_Prm
     Fw_StringFormat_snprintf
+    Fw_StringScan_sscanf
     Fw_Time
     Fw_Tlm
     Fw_Types
@@ -26,6 +29,9 @@ set(EXPECTED_FULL_DEPENDENCIES
     Os_Console
     Os_Console_Posix
     Os_Console_Posix_Implementation
+    Os_CountingSemaphore
+    Os_CountingSemaphore_Posix
+    Os_CountingSemaphore_Posix_Implementation
     Os_Cpu
     Os_Cpu_${FPRIME_PLATFORM}
     Os_Cpu_${FPRIME_PLATFORM}_Implementation
@@ -57,7 +63,7 @@ set(EXPECTED_FULL_DEPENDENCIES
     TestLibrary_TestComponent
     UnixPlatformTypes
     Utils_Hash
-    __fprime_config
+    ${FPRIME_GLOBAL_INTERFACE_TARGET}
     default_config
 )
 

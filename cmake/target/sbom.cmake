@@ -4,7 +4,7 @@
 # A target used to add SBOM generation to the build. Will be invoked when running the "all" target
 # and installed into the build_artifacts directory underneath the platform folder.
 ####
-set(FPRIME__INTERNAL_SBOM_REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py")
+set(FPRIME__INTERNAL_SBOM_REDIRECTOR "${CMAKE_CURRENT_LIST_DIR}/tools/redirector.py" CACHE INTERNAL "Internal path to SBOM redirector script" FORCE)
 
 ####
 # sbom_add_global_target:
@@ -29,7 +29,10 @@ function(sbom_add_global_target TARGET)
         # Install the SBOM file
         install(FILES "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_sbom.json" DESTINATION ${TOOLCHAIN_NAME} COMPONENT ${TARGET})
         add_custom_command(TARGET "${TARGET}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
-                          -DCMAKE_INSTALL_COMPONENT=${TARGET} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
+                          -DCMAKE_INSTALL_COMPONENT=${TARGET}
+                          -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
+                          -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
+                          -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
     else()
         fprime_cmake_status("[INFO] Failed to find 'syft' on PATH, please install to generate software bill-of-materials")
     endif()

@@ -54,7 +54,7 @@ FileSystem::Status errno_to_filesystem_status(int errno_input) {
         case 0:
             status = FileSystem::Status::OP_OK;
             break;
-        // All fall through are intended to fallback on OTHER_ERROR
+        // Adjacent cases below intentionally share a status via fallthrough
         case EACCES:
             status = FileSystem::Status::NO_PERMISSION;
             break;
@@ -196,6 +196,26 @@ ConditionVariable::Status posix_status_to_conditional_status(int posix_status) {
             break;
         default:
             status = ConditionVariable::Status::ERROR_OTHER;
+            break;
+    }
+    return status;
+}
+
+CountingSemaphore::Status posix_status_to_semaphore_status(int posix_status) {
+    CountingSemaphore::Status status = CountingSemaphore::Status::ERROR_OTHER;
+    switch (posix_status) {
+        case 0:
+            status = CountingSemaphore::Status::OP_OK;
+            break;
+        case ETIMEDOUT:
+        case EAGAIN:
+            status = CountingSemaphore::Status::ERROR_TIMEOUT;
+            break;
+        case EINVAL:
+            status = CountingSemaphore::Status::ERROR_INVALID;
+            break;
+        default:
+            status = CountingSemaphore::Status::ERROR_OTHER;
             break;
     }
     return status;

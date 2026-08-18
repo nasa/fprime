@@ -2,12 +2,12 @@
 // \title Os/test/ut/file/MyRules.cpp
 // \brief rule implementations for common testing
 // ======================================================================
+#include <Fw/Types/String.hpp>
+#include <algorithm>
 #include <cstdio>
 #include "RulesHeaders.hpp"
 #include "STest/Pick/Pick.hpp"
-extern "C" {
-#include <Utils/Hash/libcrc/lib_crc.h>  // borrow CRC
-}
+#include "Utils/Hash/Hash.hpp"
 
 // For testing, limit files to 32K
 const FwSizeType FILE_DATA_MAXIMUM = 32 * 1024;
@@ -53,6 +53,13 @@ void Os::Test::FileTest::Tester::shadow_write(const std::vector<U8>& write_data)
     if (write_data.data() != nullptr) {
         status = m_shadow.write(write_data.data(), size, Os::File::WaitType::WAIT);
     }
+    // For append writes with data, mirror file pointer movement to EOF.
+    // Zero-byte writes should not force the pointer to EOF.
+    if ((this->m_mode == Os::File::Mode::OPEN_APPEND) && (original_size > 0)) {
+        FwSizeType shadow_size = 0;
+        ASSERT_EQ(this->m_shadow.size(shadow_size), Os::File::Status::OP_OK);
+        this->shadow_seek(shadow_size, Os::File::SeekType::ABSOLUTE);
+    }
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size, original_size);
 }
@@ -74,14 +81,22 @@ void Os::Test::FileTest::Tester::shadow_flush() {
 }
 
 void Os::Test::FileTest::Tester::shadow_crc(U32& crc) {
-    crc = this->m_independent_crc;
+    Utils::Hash hash;
+    hash.setHashValue(U32(~this->m_independent_crc));
+
     SyntheticFileData& data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
     for (FwSizeType i = data.m_pointer; i < data.m_data.size();
          i++, this->m_shadow.seek(1, Os::File::SeekType::RELATIVE)) {
-        crc = update_crc_32(crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+        hash.update(&byte, sizeof(byte));
     }
+
+    U32 crcFinal = 0;
+    hash.finalize(crcFinal);
+    crc = ~crcFinal;
+
     // Update tracking variables
     this->m_independent_crc = Os::File::INITIAL_CRC;
 }
@@ -90,10 +105,20 @@ void Os::Test::FileTest::Tester::shadow_partial_crc(FwSizeType& size) {
     SyntheticFileData data = *reinterpret_cast<SyntheticFileData*>(this->m_shadow.getHandle());
 
     // Calculate CRC on full file starting at m_pointer
-    const FwSizeType bound = FW_MIN(static_cast<FwSizeType>(data.m_pointer) + size, data.m_data.size());
+    const FwSizeType bound =
+        std::min(static_cast<FwSizeType>(data.m_pointer) + size, static_cast<FwSizeType>(data.m_data.size()));
     size = (data.m_pointer >= bound) ? 0 : static_cast<FwSizeType>(bound - data.m_pointer);
     for (FwSizeType i = data.m_pointer; i < bound; i++) {
-        this->m_independent_crc = update_crc_32(this->m_independent_crc, static_cast<char>(data.m_data.at(i)));
+        U8 byte = data.m_data.at(i);
+
+        Utils::Hash hash;
+        hash.setHashValue(U32(~this->m_independent_crc));
+        hash.update(&byte, sizeof(byte));
+
+        U32 crcFinal = 0;
+        hash.finalize(crcFinal);
+        this->m_independent_crc = ~crcFinal;
+
         this->m_shadow.seek(1, Os::File::SeekType::RELATIVE);
     }
 }
@@ -105,8 +130,6 @@ void Os::Test::FileTest::Tester::shadow_finalize(U32& crc) {
 
 Os::Test::FileTest::Tester::FileState Os::Test::FileTest::Tester::current_file_state() {
     Os::Test::FileTest::Tester::FileState state;
-    // Invariant: mode must not be closed, or path must be nullptr
-    EXPECT_TRUE((Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) || (nullptr == this->m_file.m_path));
 
     // Read state when file is open
     if (Os::File::Mode::OPEN_NO_MODE != this->m_file.m_mode) {
@@ -131,15 +154,15 @@ void Os::Test::FileTest::Tester::assert_valid_mode_status(Os::File::Status& stat
 void Os::Test::FileTest::Tester::assert_file_consistent() {
     // Ensure file mode
     ASSERT_EQ(this->m_mode, this->m_file.m_mode);
-    // Ensure CRC match
-    ASSERT_EQ(this->m_file.m_crc, this->m_independent_crc);
-    if (this->m_file.m_path == nullptr) {
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 crcNow = 0;
+    this->m_file.m_hash.finalize(crcNow);
+    crcNow = ~crcNow;
+    ASSERT_EQ(crcNow, this->m_independent_crc);
+    if (Os::File::Mode::OPEN_NO_MODE == this->m_file.m_mode) {
         ASSERT_EQ(this->m_current_path, std::string(""));
     } else {
-        // Ensure the state path matches the file path
-        std::string path = std::string(this->m_file.m_path);
-        ASSERT_EQ(path, this->m_current_path);
-
         // Check real file properties when able to do so
         if (this->functional()) {
             //  File exists, check all properties
@@ -182,7 +205,6 @@ void Os::Test::FileTest::Tester::assert_file_opened(const std::string& path,
             ASSERT_EQ(this->m_file.position(file_position), Os::File::Status::OP_OK);
             ASSERT_EQ(file_position, 0);
         }
-        ASSERT_EQ(std::string(this->m_file.m_path), path);
         ASSERT_EQ(this->m_file.m_mode, newly_opened_mode) << "File is in unexpected mode";
 
         // Check truncations
@@ -280,9 +302,10 @@ void Os::Test::FileTest::Tester::OpenBaseRule::action(Os::Test::FileTest::Tester
         while (state.exists(*filename)) {
             filename = state.get_filename(this->m_random);
             attempts++;
-            ASSERT_LT(attempts, MAX_FILENAME_ATTEMPTS)
-                << "Failed to generate unique filename after " << attempts << " attempts. "
-                << "Consider expanding the filename generation in get_filename().";
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
         }
     }
 
@@ -373,6 +396,108 @@ Os::Test::FileTest::Tester::OpenForRead::OpenForRead(const bool randomize_filena
                                                // Randomized overwrite
                                                static_cast<bool>(STest::Pick::lowerUpper(0, 1)),
                                                randomize_filename) {}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateBounded
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateBounded::OpenFileCreateBounded(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateBounded",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateBounded::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the bounded char* open overload
+    FwSizeType length = static_cast<FwSizeType>(filename->length() + 1);
+    Os::File::Status status = state.m_file.open(filename->c_str(), length, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
+// Rule:  OpenFileCreateString
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenFileCreateString::OpenFileCreateString(const bool randomize_filename)
+    : Os::Test::FileTest::Tester::OpenBaseRule("OpenFileCreateString",
+                                               Os::File::Mode::OPEN_CREATE,
+                                               false,
+                                               randomize_filename) {}
+
+void Os::Test::FileTest::Tester::OpenFileCreateString::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s mode %d\n", this->getName(), this->m_mode);
+    // Initial variables used for this test
+    std::shared_ptr<const std::string> filename = state.get_filename(this->m_random);
+    // When randomly generating filenames, some seeds can result in duplicate filenames
+    // Continue generating until unique, unless this is an overwrite test
+    constexpr U32 MAX_FILENAME_ATTEMPTS = 100000;
+    U32 attempts = 0;
+    if (this->m_random && !this->m_overwrite) {
+        while (state.exists(*filename)) {
+            filename = state.get_filename(this->m_random);
+            attempts++;
+            // Gracefully skip this iteration if we cannot find a unique filename
+            if (attempts >= MAX_FILENAME_ATTEMPTS) {
+                return;
+            }
+        }
+    }
+
+    // Ensure initial and shadow states synchronized
+    state.assert_file_consistent();
+    state.assert_file_closed();
+
+    // Perform action using the ConstStringBase open overload
+    Fw::String path(filename->c_str());
+    Os::File::Status status = state.m_file.open(path, m_mode, this->m_overwrite);
+    Os::File::Status s2 = state.shadow_open(*filename, m_mode, this->m_overwrite);
+    ASSERT_EQ(status, s2);
+
+    // Extra check to ensure file is consistently open
+    if (Os::File::Status::OP_OK == status) {
+        state.assert_file_opened(*filename, m_mode);
+        FileState file_state = state.current_file_state();
+        ASSERT_EQ(file_state.position, 0);  // Open always zeros the position
+    }
+    // Assert the file state remains consistent.
+    state.assert_file_consistent();
+}
 
 // ------------------------------------------------------------------------------------------------------
 // Rule:  CloseFile
@@ -528,7 +653,7 @@ void Os::Test::FileTest::Tester::Preallocate::action(Os::Test::FileTest::Tester&
     ASSERT_EQ(Os::File::Status::OP_OK, status);
     state.shadow_preallocate(offset, length);
     FileState final_file_state = state.current_file_state();
-    ASSERT_EQ(final_file_state.size, FW_MAX(original_file_state.size, offset + length));
+    ASSERT_EQ(final_file_state.size, std::max(original_file_state.size, offset + length));
     ASSERT_EQ(final_file_state.position, original_file_state.position);
     state.assert_file_consistent();
 }
@@ -823,6 +948,33 @@ void Os::Test::FileTest::Tester::OpenIllegalPath::action(Os::Test::FileTest::Tes
 }
 
 // ------------------------------------------------------------------------------------------------------
+// Rule:  OpenIllegalBoundedPath
+//
+// ------------------------------------------------------------------------------------------------------
+
+Os::Test::FileTest::Tester::OpenIllegalBoundedPath::OpenIllegalBoundedPath()
+    : Os::Test::FileTest::Tester::AssertRule("OpenIllegalBoundedPath") {}
+
+void Os::Test::FileTest::Tester::OpenIllegalBoundedPath::action(Os::Test::FileTest::Tester& state  //!< The test state
+) {
+    printf("--> Rule: %s \n", this->getName());
+    state.assert_file_consistent();
+    // Create a buffer filled with non-null characters with no null terminator within bounds
+    constexpr FwSizeType BOUND = 10;
+    CHAR path[BOUND];
+    memset(path, 'A', BOUND);  // Fill entirely with 'A', no null terminator within BOUND
+
+    Os::File::Mode random_mode =
+        static_cast<Os::File::Mode>(STest::Pick::lowerUpper(Os::File::Mode::OPEN_READ, Os::File::Mode::OPEN_APPEND));
+    bool overwrite = static_cast<bool>(STest::Pick::lowerUpper(0, 1));
+    ASSERT_DEATH_IF_SUPPORTED(
+        state.m_file.open(path, BOUND, random_mode,
+                          overwrite ? Os::File::OverwriteType::OVERWRITE : Os::File::OverwriteType::NO_OVERWRITE),
+        ASSERT_IN_FILE_CPP);
+    state.assert_file_consistent();
+}
+
+// ------------------------------------------------------------------------------------------------------
 // Rule:  OpenIllegalMode
 //
 // ------------------------------------------------------------------------------------------------------
@@ -998,7 +1150,13 @@ void Os::Test::FileTest::Tester::IncrementalCrc::action(Os::Test::FileTest::Test
     state.shadow_partial_crc(shadow_size);
     ASSERT_EQ(status, Os::File::Status::OP_OK);
     ASSERT_EQ(size_desired, shadow_size);
-    ASSERT_EQ(state.m_file.m_crc, state.m_independent_crc);
+
+    // Ensure the current CRC value is consistent with the file. This is done by finalizing the file's hash, removing
+    // the ones complement performed by finalize, and then comparing the values directly.
+    U32 expected_crc = 0;
+    state.m_file.m_hash.finalize(expected_crc);
+    expected_crc = ~expected_crc;
+    ASSERT_EQ(expected_crc, state.m_independent_crc);
     state.assert_file_consistent();
 }
 

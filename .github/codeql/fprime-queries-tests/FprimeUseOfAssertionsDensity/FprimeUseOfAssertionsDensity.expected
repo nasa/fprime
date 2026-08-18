@@ -1,0 +1,1 @@
+| test.cpp:11:6:11:30 | longFunctionWithoutAssert | All functions of more than 10 lines should have at least one assertion, unless they handle errors by returning a status enum or bool, or by emitting a WARNING/FATAL event. |

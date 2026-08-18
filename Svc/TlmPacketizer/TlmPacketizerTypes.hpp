@@ -13,8 +13,8 @@
 #ifndef SVC_TLMPACKETIZER_TLMPACKETIZERTYPES_HPP_
 #define SVC_TLMPACKETIZER_TLMPACKETIZERTYPES_HPP_
 
-#include <Fw/FPrimeBasicTypes.hpp>
-#include <config/TlmPacketizerCfg.hpp>
+#include "Fw/FPrimeBasicTypes.hpp"
+#include "TlmPacketizerConfig/TlmPacketizerCfg.hpp"
 
 namespace Svc {
 

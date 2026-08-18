@@ -2,17 +2,13 @@
 #define FW_STATEMENT_BUFFER_HPP
 
 #include <Fw/FPrimeBasicTypes.hpp>
-#include <Fw/Types/SerIds.hpp>
 #include <Fw/Types/Serializable.hpp>
 
 namespace Fw {
 
-class StatementArgBuffer : public SerializeBufferBase {
+class StatementArgBuffer : public LinearBufferBase {
   public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_TLM_BUFF,
-        SERIALIZED_SIZE = FW_STATEMENT_ARG_BUFFER_MAX_SIZE + sizeof(FwBuffSizeType)
-    };
+    enum { SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(FW_STATEMENT_ARG_BUFFER_MAX_SIZE) };
 
     StatementArgBuffer(const U8* args, FwSizeType size);
     StatementArgBuffer();
@@ -21,10 +17,7 @@ class StatementArgBuffer : public SerializeBufferBase {
     StatementArgBuffer& operator=(const StatementArgBuffer& other);
 
     DEPRECATED(Serializable::SizeType getBuffCapacity() const, "Use getCapacity() instead");
-    Serializable::SizeType getCapacity() const;  // !< returns capacity, not current size, of buffer
 
-    U8* getBuffAddr();
-    const U8* getBuffAddr() const;
     bool operator==(const StatementArgBuffer& other) const;
 
 #if FW_SERIALIZABLE_TO_STRING

@@ -35,6 +35,8 @@ class ConstStringBase : public Serializable {
     virtual SizeType length() const;
     //! Get the maximum length of a string that the buffer can hold (which is capacity - 1)
     SizeType maxLength() const;
+    //! Get the maximum length given a specific capacity
+    SizeType maxLength(SizeType capacity) const;
 
     //! Get the static serialized size of a string
     //! This is the max length of the string plus the size of the stored size
@@ -73,12 +75,12 @@ class ConstStringBase : public Serializable {
     SerializeStatus deserializeFrom(SerialBufferBase& buffer, Endianness mode = Endianness::BIG) override;
 
     DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer) const,
-               "Use serializeTo(SerializeBufferBase& buffer) instead") {
+               "Use serializeTo(LinearBufferBase& buffer) instead") {
         return this->serializeTo(buffer);
     }
 
     DEPRECATED(SerializeStatus serialize(SerialBufferBase& buffer, SizeType maxLen) const,
-               "Use serializeTo(SerializeBufferBase& buffer, SizeType maxLen) instead") {
+               "Use serializeTo(LinearBufferBase& buffer, SizeType maxLen) instead") {
         return this->serializeTo(buffer, maxLen);
     }
 

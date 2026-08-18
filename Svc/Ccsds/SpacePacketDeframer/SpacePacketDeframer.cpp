@@ -20,6 +20,16 @@ SpacePacketDeframer ::SpacePacketDeframer(const char* const compName) : SpacePac
 
 SpacePacketDeframer ::~SpacePacketDeframer() {}
 
+namespace {
+
+bool isValidPacketVersionNumber(const SpacePacketHeader& header) {
+    const U16 packetIdentification = header.get_packetIdentification();
+    const U16 pvn = (packetIdentification & SpacePacketSubfields::PvnMask) >> SpacePacketSubfields::PvnOffset;
+    return pvn == static_cast<U16>(ComCfg::Pvn::SPACE_PACKET_PROTOCOL);
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 // Handler implementations for typed input ports
 // ----------------------------------------------------------------------
@@ -35,21 +45,47 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     //  1b - 0/1 - (PT) Packet Type
     //  1b - 0/1 - (SHF) Secondary Header Flag
     // 11b - n/a - (APID) Application Process ID
-    //  2b - 00  - Sequence Flag
+    //  2b - 00/01/10/11 - Sequence Flag
     // 14b - n/a - Sequence Count
     // 16b - n/a - Packet Data Length
     // ################################
 
-    FW_ASSERT(data.getSize() > SpacePacketHeader::SERIALIZED_SIZE, static_cast<FwAssertArgType>(data.getSize()));
+    // Check size and drop packets that are too-small
+    if (data.getSize() <= SpacePacketHeader::SERIALIZED_SIZE) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
 
     SpacePacketHeader header;
     Fw::SerializeStatus status = data.getDeserializer().deserializeTo(header);
-    FW_ASSERT(status == Fw::FW_SERIALIZE_OK, status);
+    // Deserialization can still fail if the buffer is malformed despite passing the size check
+    if (status != Fw::FW_SERIALIZE_OK) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
 
-    // Space Packet protocol defines the Data Length as number of bytes minus 1
-    // so we need to add 1 to the length to get the actual data size
-    U16 pkt_length = static_cast<U16>(header.get_packetDataLength() + 1);
-    if (pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) {
+    if (!isValidPacketVersionNumber(header)) {
+        this->log_WARNING_HI_InvalidPacket();
+        if (this->isConnected_errorNotify_OutputPort(0)) {
+            this->errorNotify_out(0, Svc::Ccsds::FrameError::SP_INVALID_PACKET);
+        }
+        this->dataReturnOut_out(0, data, context);  // Drop the packet
+        return;
+    }
+
+    // Widen to U32 before adding 1 to prevent U16 truncation to 0 when packetDataLength == 0xFFFF (max U16 value).
+    // This is a undefined behavior condition in C++.
+    const U32 pkt_length = static_cast<U32>(header.get_packetDataLength()) + 1U;
+    if ((pkt_length > data.getSize() - SpacePacketHeader::SERIALIZED_SIZE) ||
+        (pkt_length > std::numeric_limits<FwSizeType>::max())) {
         FwSizeType maxDataAvailable = data.getSize() - SpacePacketHeader::SERIALIZED_SIZE;
         this->log_WARNING_HI_InvalidLength(pkt_length, maxDataAvailable);
         if (this->isConnected_errorNotify_OutputPort(0)) {
@@ -60,9 +96,19 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     }
 
     U16 apidValue = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
-    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(apidValue);
+    ComCfg::Apid::T apid = ComCfg::Apid::isValid(apidValue) ? static_cast<ComCfg::Apid::T>(apidValue)
+                                                            : ComCfg::Apid::INVALID_UNINITIALIZED;
     ComCfg::FrameContext contextCopy = context;
     contextCopy.set_apid(apid);
+
+    // Extract secondary header flag
+    bool hasSecHdr = (header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) != 0;
+    contextCopy.set_hasSecHdr(hasSecHdr);
+
+    // Extract sequence flags
+    U8 sequenceFlags = static_cast<U8>((header.get_packetSequenceControl() & SpacePacketSubfields::SeqFlagsMask) >>
+                                       SpacePacketSubfields::SeqFlagsOffset);
+    contextCopy.set_sequenceFlags(sequenceFlags);
 
     // Validate with the ApidManager that the sequence count is correct
     U16 receivedSequenceCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
@@ -70,7 +116,7 @@ void SpacePacketDeframer ::dataIn_handler(FwIndexType portNum, Fw::Buffer& data,
     contextCopy.set_sequenceCount(receivedSequenceCount);
 
     // Set data buffer to be of the encapsulated data: HEADER (6 bytes) | PACKET DATA
-    data.setData(data.getData() + SpacePacketHeader::SERIALIZED_SIZE);
+    data.advance(SpacePacketHeader::SERIALIZED_SIZE);
     data.setSize(pkt_length);
 
     this->dataOut_out(0, data, contextCopy);

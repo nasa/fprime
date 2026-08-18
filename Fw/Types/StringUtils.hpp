@@ -27,6 +27,20 @@ namespace StringUtils {
 char* string_copy(char* destination, const char* source, FwSizeType num);
 
 /**
+ * \brief get a pointer to the last N characters of a string
+ *
+ * Return a pointer to the last N characters of a string. If the string is shorter than N characters, this will return
+ * a pointer to the start of the string. The string is assumed to be null-terminated but operations will be performed
+ * within the supplied buffer size bound.
+ *
+ * \param source: string to get the last N characters of
+ * \param n: number of characters from the end of the string to return
+ * \param buffer_size: the size of the buffer containing source string.
+ * \return pointer to the last N characters of the string, or the source for strings of length less than N
+ */
+const char* string_last_n(const char* source, const FwSizeType n, const FwSizeType buffer_size);
+
+/**
  * \brief get the length of the source string
  *
  * If no string termination character is detected within buffer_size number of characters then buffer_size is returned.
@@ -45,7 +59,7 @@ FwSizeType string_length(const CHAR* source, FwSizeType buffer_size);
  * \param source_size: the size of the source string
  * \param substring: string to search for
  * \param sub_size: the size of the string to search for
- * \return index of substring, -1 if not found
+ * \return index of substring, -1 if not found. A zero-size substring always matches at index 0
  */
 FwSignedSizeType substring_find(const CHAR* source_string,
                                 FwSizeType source_size,
@@ -217,7 +231,6 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F32& output, char** next);
-#if FW_HAS_F64
 /**
  * \brief converts a string to a F64
  *
@@ -231,7 +244,6 @@ StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size,
  * \return SUCCESSFUL_CONVERSION when output is valid, something else on error.
  */
 StringToNumberStatus string_to_number(const CHAR* input, FwSizeType buffer_size, F64& output, char** next);
-#endif
 
 }  // namespace StringUtils
 }  // namespace Fw

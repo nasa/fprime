@@ -26,7 +26,10 @@ FwIndexType SeqDispatcher::getNextAvailableSequencerIdx() {
     return -1;
 }
 
-void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block) {
+void SeqDispatcher::runSequence(FwIndexType sequencerIdx,
+                                const Fw::ConstStringBase& fileName,
+                                BlockState block,
+                                const Svc::SeqArgs& args) {
     // this function is only designed for internal usage
     // we can guarantee it cannot be called with input that would fail
     FW_ASSERT(sequencerIdx >= 0 && sequencerIdx < SeqDispatcherSequencerPorts,
@@ -35,7 +38,7 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
     FW_ASSERT(this->m_entryTable[sequencerIdx].state == SeqDispatcher_CmdSequencerState::AVAILABLE,
               static_cast<FwAssertArgType>(this->m_entryTable[sequencerIdx].state));
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK;
     } else {
         this->m_entryTable[sequencerIdx].state = SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK;
@@ -47,12 +50,14 @@ void SeqDispatcher::runSequence(FwIndexType sequencerIdx, const Fw::ConstStringB
 
     this->m_dispatchedCount++;
     this->tlmWrite_dispatchedCount(this->m_dispatchedCount);
-    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning);
+    this->seqRunOut_out(sequencerIdx, this->m_entryTable[sequencerIdx].sequenceRunning, args);
 }
 
-void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                                       const Fw::StringBase& fileName  //!< The sequence file name
+void SeqDispatcher::seqStartIn_handler(FwIndexType portNum,             //!< The port number
+                                       const Fw::StringBase& fileName,  //!< The sequence file name
+                                       const Svc::SeqArgs& args         //!< Sequence arguments (not currently used)
 ) {
+    (void)args;  // Suppress unused parameter warning
     FW_ASSERT(portNum >= 0 && portNum < SeqDispatcherSequencerPorts, static_cast<FwAssertArgType>(portNum));
     if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK ||
         this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_NO_BLOCK) {
@@ -97,6 +102,10 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
         // about is done, the sequencer is available again (which is its current
         // state in our internal entry table already)
         this->log_WARNING_LO_UnknownSequenceFinished(static_cast<U16>(portNum));
+        // sequencer was already counted available; don't increment again
+        this->m_entryTable[portNum].state = SeqDispatcher_CmdSequencerState::AVAILABLE;
+        this->m_entryTable[portNum].sequenceRunning = "<no seq>";
+        return;
     } else {
         // ok, a sequence has finished that we knew about
         if (this->m_entryTable[portNum].state == SeqDispatcher_CmdSequencerState::RUNNING_SEQUENCE_BLOCK) {
@@ -121,7 +130,7 @@ void SeqDispatcher::seqDoneIn_handler(FwIndexType portNum,             //!< The 
 }
 
 //! Handler for input port seqRunIn
-void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName) {
+void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& fileName, const Svc::SeqArgs& args) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -129,16 +138,28 @@ void SeqDispatcher::seqRunIn_handler(FwIndexType portNum, const Fw::StringBase& 
         return;
     }
 
-    this->runSequence(idx, fileName, Fw::Wait::NO_WAIT);
+    this->runSequence(idx, fileName, BlockState::NO_BLOCK, args);
 }
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
 
+// RUN command delegates to RUN_ARGS with empty arguments for backward compatibility
 void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
                                     const U32 cmdSeq,
                                     const Fw::CmdStringArg& fileName,
-                                    Fw::Wait block) {
+                                    const BlockState& block) {
+    // Create empty args and delegate to RUN_ARGS handler
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->RUN_ARGS_cmdHandler(opCode, cmdSeq, fileName, block, emptyArgs);
+}
+
+// RUN_ARGS command dispatches a sequence with optional arguments to the first available sequencer
+void SeqDispatcher ::RUN_ARGS_cmdHandler(const FwOpcodeType opCode,
+                                         const U32 cmdSeq,
+                                         const Fw::CmdStringArg& fileName,
+                                         const BlockState& block,
+                                         const Svc::SeqArgs& buffer) {
     FwIndexType idx = this->getNextAvailableSequencerIdx();
     // no available sequencers
     if (idx == -1) {
@@ -147,9 +168,9 @@ void SeqDispatcher ::RUN_cmdHandler(const FwOpcodeType opCode,
         return;
     }
 
-    this->runSequence(idx, fileName, block);
+    this->runSequence(idx, fileName, block, buffer);
 
-    if (block == Fw::Wait::NO_WAIT) {
+    if (block == BlockState::NO_BLOCK) {
         // return instantly
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
@@ -165,6 +186,52 @@ void SeqDispatcher::LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The op
     for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
         this->log_ACTIVITY_LO_LogSequencerStatus(static_cast<U16>(idx), this->m_entryTable[idx].state,
                                                  Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+    }
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void SeqDispatcher::CANCEL_NAME_cmdHandler(
+    const FwOpcodeType opCode, /*!< The opcode*/
+    const U32 cmdSeq,          /*!< The command sequence number*/
+    const Fw::CmdStringArg& fileName) /*!< The name of the sequence file to cancel*/ {
+    bool canceled = false;
+    for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+        // only slots actively running the named sequence are candidates
+        const bool running = this->m_entryTable[idx].state != SeqDispatcher_CmdSequencerState::AVAILABLE;
+        if (running && this->m_entryTable[idx].sequenceRunning == fileName) {
+            if (this->isConnected_seqCancelOut_OutputPort(idx)) {
+                this->seqCancelOut_out(idx);
+                // Entry table is cleared via seqDoneIn_handler
+                this->log_ACTIVITY_HI_SequenceCanceled(static_cast<U16>(idx),
+                                                       Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+                this->tlmWrite_canceledCount(++this->m_canceledCount);
+                canceled = true;
+            }
+        }
+    }
+
+    if (canceled) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->log_WARNING_LO_CancelSequenceNotFound(Fw::LogStringArg(fileName));
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+//! Broadcast a cancel to every running sequencer.
+//! This does not exclude the caller!
+//! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+void SeqDispatcher::CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                                          const U32 cmdSeq) {        /*!< The command sequence number*/
+    for (FwIndexType idx = 0; idx < SeqDispatcherSequencerPorts; idx++) {
+        const bool running = this->m_entryTable[idx].state != SeqDispatcher_CmdSequencerState::AVAILABLE;
+        if (running && this->isConnected_seqCancelOut_OutputPort(idx)) {
+            this->seqCancelOut_out(idx);
+            // Entry table is cleared via seqDoneIn_handler
+            this->log_ACTIVITY_HI_SequenceCanceled(static_cast<U16>(idx),
+                                                   Fw::LogStringArg(this->m_entryTable[idx].sequenceRunning));
+            this->tlmWrite_canceledCount(++this->m_canceledCount);
+        }
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }

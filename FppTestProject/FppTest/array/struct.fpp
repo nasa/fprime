@@ -1,6 +1,14 @@
-struct S {
-  mU32: U32
-  mU32Arr: [3] U32
-}
+module FppTest {
 
-array Struct = [3] S
+  module Array {
+
+    struct S {
+      mU32: U32
+      mU32Arr: [3] U32
+    }
+
+    array Struct = [3] S
+
+  }
+
+}

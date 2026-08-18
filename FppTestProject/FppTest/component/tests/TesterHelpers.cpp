@@ -195,7 +195,7 @@ void Tester ::connectPorts() {
     // ----------------------------------------------------------------------
 
     // prmGetOut
-    this->component.set_prmGetOut_OutputPort(0, this->get_from_prmGetIn(0));
+    this->component.set_prmGetOut_OutputPort(0, this->get_from_to_prmGetIn(0));
 
     // ----------------------------------------------------------------------
     // Connect serial output ports

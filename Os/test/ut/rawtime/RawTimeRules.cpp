@@ -156,3 +156,26 @@ void Os::Test::RawTime::Tester::DiffU32Overflow::action(Os::Test::RawTime::Teste
     Os::RawTime::Status status = zero_time.getDiffUsec(now_time, result);
     ASSERT_EQ(status, Os::RawTime::Status::OP_OVERFLOW);
 }
+
+// ------------------------------------------------------------------------------------------------------
+// Rule Operators: test equality and assignment operators of RawTime
+// ------------------------------------------------------------------------------------------------------
+Os::Test::RawTime::Tester::Operators::Operators() : STest::Rule<Os::Test::RawTime::Tester>("Operators") {}
+
+bool Os::Test::RawTime::Tester::Operators::precondition(const Os::Test::RawTime::Tester& state) {
+    return true;
+}
+
+void Os::Test::RawTime::Tester::Operators::action(Os::Test::RawTime::Tester& state) {
+    Os::RawTime lhs_time;  // uninitialized time object is zero
+
+    FwIndexType index = state.pick_random_index();
+    Os::RawTime& rhs_time = state.m_times[index];
+
+    // All state.m_times are set at constructions so should be non-zero
+    ASSERT_FALSE(lhs_time == rhs_time);
+
+    lhs_time = rhs_time;  // test copy assignment operator
+
+    ASSERT_TRUE(lhs_time == rhs_time) << "Copy assignment operator failed";
+}

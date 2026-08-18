@@ -21,25 +21,24 @@ namespace SequenceFiles {
 namespace Buffers {
 
 //! A file buffer
-class FileBuffer : public Fw::SerializeBufferBase {
+class FileBuffer : public Fw::LinearBufferBase {
   public:
     enum Constants { CAPACITY = 4096 };
 
   public:
+    FileBuffer();
+    FileBuffer(const FileBuffer& other);
+
+  public:
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-
-    const U8* getBuffAddr() const;
 
   private:
     U8 m_buff[CAPACITY];
 };
 
 //! Write a buffer to a file
-void write(const Fw::SerializeBufferBase& buffer,  //!< The buffer
-           const char* fileName                    //!< The file name
+void write(const Fw::LinearBufferBase& buffer,  //!< The buffer
+           const char* fileName                 //!< The file name
 );
 
 }  // namespace Buffers

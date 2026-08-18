@@ -1,0 +1,1 @@
+| test.cpp:7:9:7:15 | case ...: | This non-empty switch case falls through to the next case without a fall-through annotation. |

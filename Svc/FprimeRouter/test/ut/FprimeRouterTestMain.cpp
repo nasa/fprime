@@ -28,18 +28,8 @@ TEST(FprimeRouter, TestRouteUnknownPacketUnconnected) {
     Svc::FprimeRouterTester tester(true);
     tester.testRouteUnknownPacketUnconnected();
 }
-TEST(FprimeRouter, TestAllocationFailureFile) {
-    COMMENT("Test failure to allocate for files");
-    Svc::FprimeRouterTester tester;
-    tester.testAllocationFailureFile();
-}
-TEST(FprimeRouter, TestAllocationFailureUnknown) {
-    COMMENT("Test failure to allocate for unknown packets");
-    Svc::FprimeRouterTester tester;
-    tester.testAllocationFailureUnknown();
-}
 TEST(FprimeRouter, TestBufferReturn) {
-    COMMENT("Deallocate a returning buffer");
+    COMMENT("Return a buffer via fileBufferReturnIn");
     Svc::FprimeRouterTester tester;
     tester.testBufferReturn();
 }
@@ -47,6 +37,26 @@ TEST(FprimeRouter, TestCommandResponse) {
     COMMENT("Handle a command response (no-op)");
     Svc::FprimeRouterTester tester;
     tester.testCommandResponse();
+}
+TEST(FprimeRouter, TestFileContextRoundTrip) {
+    COMMENT("A file buffer's context is restored on fileBufferReturnIn");
+    Svc::FprimeRouterTester tester;
+    tester.testFileContextRoundTrip();
+}
+TEST(FprimeRouter, TestMultiBufferContextRoundTrip) {
+    COMMENT("Multiple outstanding buffers each restore their own context, out of order");
+    Svc::FprimeRouterTester tester;
+    tester.testMultiBufferContextRoundTrip();
+}
+TEST(FprimeRouter, TestFileOutContextTableFull) {
+    COMMENT("Overflowing the context table on the fileOut path emits an event and degrades gracefully");
+    Svc::FprimeRouterTester tester;
+    tester.testContextTableFull(Fw::ComPacketType::FW_PACKET_FILE);
+}
+TEST(FprimeRouter, TestUnknownDataOutContextTableFull) {
+    COMMENT("Overflowing the context table on the unknownDataOut path emits an event and degrades gracefully");
+    Svc::FprimeRouterTester tester;
+    tester.testContextTableFull(Fw::ComPacketType::FW_PACKET_UNKNOWN);
 }
 
 int main(int argc, char** argv) {

@@ -14,11 +14,6 @@ module Ccsds {
             severity warning low \
             format "Unexpected sequence count received. Packets may have been dropped. Transmitted: {} | Expected on board: {}"
 
-        @ Received an unregistered APID
-        event ApidTableFull(invalidApidValue: U16) \
-            severity warning high \
-            format "APID Table is full, cannot generate or check sequence counts for APID: {}"
-
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #
         ###############################################################################

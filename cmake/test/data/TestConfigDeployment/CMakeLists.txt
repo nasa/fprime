@@ -5,7 +5,7 @@
 ####
 
 # Base settings
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 cmake_policy(SET CMP0048 NEW)
 project(TestConfigDeployment VERSION 1.0.0 LANGUAGES C CXX)
 

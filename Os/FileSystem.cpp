@@ -4,6 +4,7 @@
 // ======================================================================
 #include <Fw/Types/Assert.hpp>
 #include <Os/FileSystem.hpp>
+#include <algorithm>
 
 namespace Os {
 
@@ -178,7 +179,8 @@ FileSystem::Status FileSystem::appendFile(const char* sourcePath, const char* de
     Os::File destination;
 
     // If requested, check if destination file exists and exit if does not exist
-    if (not createMissingDest and not FileSystem::exists(destPath)) {
+    const bool destExists = FileSystem::exists(destPath);
+    if (not createMissingDest and not destExists) {
         return Status::DOESNT_EXIST;
     }
 
@@ -294,18 +296,35 @@ FileSystem::Status FileSystem::copyFileData(File& source, File& destination, FwS
 
     // Copy the file in chunks - loop until all data is copied
     FwSizeType i = 0;
-    for (copiedSize = 0; (copiedSize < size) && (i < maximum); copiedSize += chunkSize, i++) {
+    for (copiedSize = 0; (copiedSize < size) && (i < maximum); i++) {
         // chunkSize is FILE_SYSTEM_FILE_CHUNK_SIZE unless size-copiedSize is less than that
         // in which case chunkSize is size-copiedSize, ensuring the last chunk reads the remaining data
-        chunkSize = FW_MIN(FILE_SYSTEM_FILE_CHUNK_SIZE, size - copiedSize);
-        file_status = source.read(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
+        // static_cast needed to avoid ODR linker issue with static constexpr passed by reference to std::min
+        chunkSize = std::min(static_cast<FwSizeType>(FILE_SYSTEM_FILE_CHUNK_SIZE), size - copiedSize);
+        FwSizeType readSize = chunkSize;
+        file_status = source.read(fileBuffer, readSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
         }
-        file_status = destination.write(fileBuffer, chunkSize, Os::File::WaitType::WAIT);
+        // A zero-byte read means the source ended before the expected size (e.g. truncated mid-copy)
+        if (readSize == 0) {
+            break;
+        }
+        FwSizeType writeSize = readSize;
+        file_status = destination.write(fileBuffer, writeSize, Os::File::WaitType::WAIT);
         if (file_status != File::OP_OK) {
             return FileSystem::handleFileError(file_status);
         }
+        // A short write means the destination did not receive all the data (e.g. device full)
+        if (writeSize != readSize) {
+            return FileSystem::OTHER_ERROR;
+        }
+        copiedSize += writeSize;
+    }
+
+    // A copy that did not transfer the full expected size must not report success
+    if (copiedSize != size) {
+        return FileSystem::OTHER_ERROR;
     }
 
     return FileSystem::OP_OK;

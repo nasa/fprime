@@ -25,7 +25,7 @@ BadTimeBaseFile ::BadTimeBaseFile(const U32 a_n, const Format::t a_format) : Fil
     this->setName(s.toChar());
 }
 
-void BadTimeBaseFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void BadTimeBaseFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const U32 recordDataSize = (this->n - 1) * FPrime::Records::STANDARD_SIZE + FPrime::Records::RECORD_DESCRIPTOR_SIZE;
     const U32 dataSize = recordDataSize + FPrime::CRCs::SIZE;

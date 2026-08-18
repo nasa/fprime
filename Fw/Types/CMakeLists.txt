@@ -1,6 +1,7 @@
 ####
 # F prime CMakeLists.txt:
 ####
+include(global_interface)
 register_fprime_module(
     Fw_Types
   SOURCES
@@ -17,9 +18,10 @@ register_fprime_module(
   AUTOCODER_INPUTS
     "${CMAKE_CURRENT_LIST_DIR}/Types.fpp"
   DEPENDS
-    __fprime_config # Only module that should ever list __fprime_config in DEPENDS. Use Fw_Types instead.
+    ${FPRIME_GLOBAL_INTERFACE_TARGET} # Most users should prefer Fw_Types instead over the direct global interface.
   REQUIRES_IMPLEMENTATIONS
     Fw_StringFormat
+    Fw_StringScan
 )
 
 register_fprime_implementation(
@@ -31,6 +33,17 @@ register_fprime_implementation(
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/snprintf_format.cpp"
 )
+
+register_fprime_implementation(
+    Fw_StringScan_sscanf
+  IMPLEMENTS
+    Fw_StringScan
+  DEPENDS
+    Fw_Types
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/sscanf_scan.cpp"
+)
+
 
 ### UTs ###
 register_fprime_ut(
@@ -57,6 +70,33 @@ register_fprime_ut(
     Fw_StringFormat_snprintf
 )
 
+
+if (FPRIME_PLATFORM STREQUAL "Linux")
+    register_fprime_ut(
+        Fw_Types_Mmap_ut_exe
+      SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/MmapAllocatorTest.cpp"
+      DEPENDS
+        Fw_Types
+    )
+endif()
+register_fprime_ut(
+    Fw_StringScan_sscanf_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ScanfScanTest.cpp"
+  DEPENDS
+    Fw_Types
+  CHOOSES_IMPLEMENTATIONS
+    Fw_StringScan_sscanf
+)
+
+register_fprime_ut(
+    Fw_Types_Optional_ut_exe
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/OptionalTest.cpp"
+  DEPENDS
+    Fw_Types
+)
 
 # Non-test directory
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/GTest")

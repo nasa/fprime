@@ -18,7 +18,7 @@ Both variants provide the standard **F´ framer/deframer + router + ComQueue** p
 | SVC-COMFPRIME-003 | Provide an F´ **router** to route deframed packets (e.g., commands/files) into the flight software.             | Inspection |
 | SVC-COMFPRIME-004 | Provide a **subtopology variant that supplies `Svc::ComStub`** designed to connect to a ByteStream driver.      | Inspection |
 | SVC-COMFPRIME-005 | Provide a **subtopology variant that expects an external `Svc::ComInterface`** supplied by the deployment.      | Inspection |
-| SVC-COMFPRIME-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities) via `ComFprimeConfig`. | Inspection |
+| SVC-COMFPRIME-006 | Support **configurable instance properties** (IDs, queue sizes, stack sizes, priorities, CPU affinities) via `ComFprimeConfig`. | Inspection |
 
 ---
 
@@ -63,27 +63,27 @@ Below are **two usage patterns**, one for each variant. Replace identifiers/port
 
 ```fpp
 topology Flight {
-  import ComFprime.Subtopology
+  instance ComFprime.Subtopology
 
   # (A1) Provide a ByteStreamDriver interface (e.g. Drv.TcpClient)
   instance comDriver: ...
 
   # (A2) Schedule ComQueue
   connections RateGroups {
-    rg.RateGroupMemberOut[0] -> ComFprime.comQueue.run
+    rg.RateGroupMemberOut[0] -> ComFprime.Subtopology.comQueueRun
   }
 
   # (A3) Wire ByteStream driver <-> ComStub supplied by the subtopology
-      comDriver.$recv                     -> ComFprime.comStub.drvReceiveIn
-      ComFprime.comStub.drvReceiveReturnOut -> comDriver.recvReturnIn
-      ComFprime.comStub.drvSendOut      -> comDriver.$send
-      comDriver.ready         -> ComFprime.comStub.drvConnected
+      comDriver.$recv                            -> ComFprime.Subtopology.drvReceiveIn
+      ComFprime.Subtopology.drvReceiveReturnOut  -> comDriver.recvReturnIn
+      ComFprime.Subtopology.drvSendOut           -> comDriver.$send
+      comDriver.ready                            -> ComFprime.Subtopology.drvConnected
   }
 }
 ```
 
 > [!TIP]
-> `ComFprime.commsBufferManager` can be reused if the `ByteStreamDriver` requires buffer management.
+> `ComFprime.Subtopology.commsBufferGetCallee` and `ComFprime.Subtopology.commsBufferSendIn` can be used if the `ByteStreamDriver` requires buffer management.
 
 ### 3.2 Variant B — ComFprime **without** `Svc::ComStub`
 
@@ -126,6 +126,7 @@ topology Flight {
 * **Queue sizes** — Depths for **`ComQueue`** and any other active/queued elements defined by the subtopology.
 * **Stack sizes** — Task stack allocations for active components (if any beyond `ComQueue`).
 * **Priorities** — RTOS priorities for active/queued components as applicable.
+* **CPU affinities** — Core pinning for active component tasks; defaults to `TASK_DEFAULT` (no pinning).
 
 ### 4.2 Buffer Manager Bin Configuration
 

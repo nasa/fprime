@@ -82,6 +82,7 @@ border color. An example is shown below.
 ```
 
 `dashboard-box` supports the following properties:
+
 - `title`: A text label to give the box, appearing at the top-left corner (defaults to nothing)
 - `color`: The background color to give the box (defaults to transparent)
 - `border-color`: The color to give the border of the box (defaults to transparent)

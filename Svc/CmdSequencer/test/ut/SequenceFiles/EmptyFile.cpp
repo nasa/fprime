@@ -19,11 +19,11 @@ namespace SequenceFiles {
 
 EmptyFile ::EmptyFile(const Format::t a_format) : File("empty", a_format) {}
 
-void EmptyFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void EmptyFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Do nothing
 }
 
-void EmptyFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void EmptyFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // CRC
     AMPCS::CRCs::createFile(buffer, this->getName().toChar());
 }

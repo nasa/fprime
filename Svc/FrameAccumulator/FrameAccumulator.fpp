@@ -24,6 +24,11 @@ module Svc {
             severity warning high \
             format "Reported size_out={} exceeds accumulation buffer capacity"
 
+        @ A frame was detected but dropped because there was no buffer to hold it
+        event FrameDetectionValidFrameDropped \
+            severity warning high \
+            format "A valid frame was detected but dropped"
+
         ###############################################################################
         # Standard AC Ports for Events 
         ###############################################################################

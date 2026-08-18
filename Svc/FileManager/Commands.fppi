@@ -24,13 +24,6 @@ async command RemoveFile(
                         ) \
   opcode 0x03
 
-@ Perform a Linux shell command and write the output to a log file.
-async command ShellCommand(
-                            $command: string size 256 @< The shell command string
-                            logFileName: string size FileNameStringSize @< The name of the log file
-                          ) \
-  opcode 0x04
-
 @ Append 1 file's contents to the end of another.
 async command AppendFile(
                           source: string size FileNameStringSize @< The name of the file to take content from
@@ -38,6 +31,7 @@ async command AppendFile(
                         ) \
   opcode 0x05
 
+@ Get the size of a file
 async command FileSize(
                         fileName: string size FileNameStringSize @< The file to get the size of
                       ) \
@@ -50,8 +44,22 @@ async command ListDirectory(
   opcode 0x07
 
 
-@ List the contents of a directory
+@ Calculate the CRC of a file
 async command CalculateCrc(
                               filename: string size FileNameStringSize @< The file to CRC
                             ) \
   opcode 0x08
+
+@ Generate a data product from a file, split into chunks.
+@ Each chunk is emitted as a FileChunkHeaderRecord (file name, offset, data size)
+@ followed by a FileChunkDataRecord containing the chunk bytes, so ground tools
+@ can reassemble the original file regardless of DP buffer sizing.
+async command GenerateDp(
+                          fileName: string size FileNameStringSize @< The file to package as a data product
+                          chunkSize: U32 @< The maximum number of file bytes per chunk
+                          beginOffset: U64 @< The offset in the file at which to start
+                          endOffset: U64 @< The offset in the file at which to stop, exclusive; 0 means the end of the file
+                          $priority: U32 @< The container priority; 0 means the configured default
+                          mode: Svc.FileManager.GenerateDpMode @< Whether to pace the chunks with the rate group or emit them immediately
+                        ) \
+  opcode 0x09

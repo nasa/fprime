@@ -4,6 +4,7 @@
 // ======================================================================
 #include "Os/test/ut/queue/CommonTests.hpp"
 #include <gtest/gtest.h>
+#include <algorithm>
 #include "Fw/Types/String.hpp"
 #include "Os/Queue.hpp"
 #include "Os/test/ConcurrentRule.hpp"
@@ -18,6 +19,12 @@ FwSizeType Tester::QueueState::queues = 0;
 U64 Tester::QueueMessage::order_counter = 0;
 
 PriorityCompare const Tester::QueueMessageComparer::HELPER = PriorityCompare();
+
+Tester::Tester() {
+#if FW_QUEUE_REGISTRATION
+    Os::Queue::setRegistry(this);
+#endif
+}
 
 Os::QueueInterface::Status Tester::shadow_create(FwSizeType depth, FwSizeType messageSize) {
     Os::QueueInterface::Status status = Os::QueueInterface::ALREADY_CREATED;
@@ -54,16 +61,16 @@ Os::QueueInterface::Status Tester::shadow_send(const U8* buffer,
         return QueueInterface::Status::FULL;
     } else {
         this->shadow.queue.push(qm);
-        this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
+        this->shadow.highMark = std::max(this->shadow.highMark, static_cast<FwSizeType>(this->shadow.queue.size()));
         return QueueInterface::Status::OP_OK;
     }
     return QueueInterface::Status::OP_OK;
 }
 
 void Tester::shadow_send_unblock() {
-    // Send the shadow send buffered message
+    // send the shadow send buffered message
     this->shadow.queue.push(this->shadow.send_block);
-    this->shadow.highMark = FW_MAX(this->shadow.highMark, this->shadow.queue.size());
+    this->shadow.highMark = std::max(this->shadow.highMark, static_cast<FwSizeType>(this->shadow.queue.size()));
 }
 
 Os::QueueInterface::Status Tester::shadow_receive(U8* destination,
@@ -108,6 +115,10 @@ void Tester::shadow_receive_unblock() {
     this->shadow.receive_block.destination = nullptr;
     this->shadow.receive_block.size = nullptr;
     this->shadow.receive_block.priority = nullptr;
+}
+
+void Tester::registerQueue(Os::Queue* q) {
+    this->m_all_queues.push_back(q);
 }
 
 }  // namespace Queue
@@ -229,6 +240,9 @@ TEST(BasicRules, Create) {
     create_rule.action(tester);
     // Repetitive create
     create_rule.action(tester);
+#if FW_QUEUE_REGISTRATION
+    EXPECT_GT(tester.m_all_queues.size(), 0) << "No queues were registered.";
+#endif
 }
 
 TEST(BasicRules, Send) {

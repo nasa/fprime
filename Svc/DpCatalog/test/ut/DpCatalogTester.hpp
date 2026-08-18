@@ -48,7 +48,7 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void doInit();
 
     //! Test tree construction
-    void testTree(DpCatalog::DpStateEntry* list, DpCatalog::DpStateEntry* output, FwIndexType numEntries);
+    void testTree(DpCatalog::DpStateEntry* input, FwIndexType numEntries);
 
     struct DpSet {
         FwDpIdType id;
@@ -127,6 +127,9 @@ class DpCatalogTester : public DpCatalogGTestBase {
     //! The component under test
     DpCatalog component;
 
+    //! When true, from_fileOut_handler invokes a successful fileDone automatically
+    bool m_autoFileDone = true;
+
   public:
     // ----------------------------------------------------------------------
     // Moved Tests due to private/protected access
@@ -148,6 +151,11 @@ class DpCatalogTester : public DpCatalogGTestBase {
     void test_CompareEntries();
     void test_PingIn();
     void test_BadFileDone();
+    void test_ProcessFileInvalidDir();
+    void test_MalformedFile();
+    void test_TruncatedDpRejected();
+    void test_NonCanonicalDpRejected();
+    void test_BadHeaderHashRejected();
 };
 
 }  // namespace Svc

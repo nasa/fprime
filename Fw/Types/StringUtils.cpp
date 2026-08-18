@@ -21,6 +21,14 @@ char* Fw::StringUtils::string_copy(char* destination, const char* source, FwSize
     return returned;
 }
 
+const char* Fw::StringUtils::string_last_n(const char* source, const FwSizeType n, const FwSizeType buffer_size) {
+    FW_ASSERT(source != nullptr);
+    FwSizeType length = Fw::StringUtils::string_length(source, buffer_size);
+
+    // Calculate start index. If string is shorter than N, keep whole string.
+    return (length > n) ? source + (length - n) : source;
+}
+
 FwSizeType Fw::StringUtils::string_length(const CHAR* source, FwSizeType buffer_size) {
     FwSizeType length = 0;
     FW_ASSERT(source != nullptr);
@@ -39,8 +47,8 @@ FwSignedSizeType Fw::StringUtils::substring_find(const CHAR* source_string,
     FW_ASSERT(source_string != nullptr);
     FW_ASSERT(sub_string != nullptr);
 
-    // zero size sub-strings should always match
-    if ((source_size > 0) && (0 == sub_size)) {
+    // zero size sub-strings should always match, including in an empty source
+    if (0 == sub_size) {
         return 0;
     }
 
@@ -101,8 +109,9 @@ FwSignedSizeType Fw::StringUtils::substring_find_last(const CHAR* source_string,
     FW_ASSERT(source_size - sub_size <= static_cast<FwSizeType>(std::numeric_limits<FwSignedSizeType>::max()));
 
     // Loop from source_size - sub_size to zero (inclusive)
-    for (FwSizeType ii = 0; ii <= (source_size - sub_size); ii++) {
-        const FwSizeType source_index = (source_size - sub_size) - ii;
+    const FwSizeType max_start_index = source_size - sub_size;
+    for (FwSizeType ii = 0; ii <= max_start_index; ii++) {
+        const FwSizeType source_index = max_start_index - ii;
 
         // if the current character matches
         for (FwSizeType sub_index = 0; sub_index < sub_size; sub_index++) {

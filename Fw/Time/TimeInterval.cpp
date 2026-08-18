@@ -53,6 +53,10 @@ bool TimeInterval::operator<=(const TimeInterval& other) const {
     return ((LT == c) or (EQ == c));
 }
 
+TimeIntervalValue TimeInterval::asTimeIntervalValue() const {
+    return this->m_val;
+}
+
 SerializeStatus TimeInterval::serializeTo(SerialBufferBase& buffer, Fw::Endianness mode) const {
     // Use TimeIntervalValue's built-in serialization
     return this->m_val.serializeTo(buffer, mode);
@@ -116,6 +120,8 @@ TimeInterval TimeInterval ::sub(const TimeInterval& t1,  //!< TimeInterval t1
     } else {
         uSeconds = minuend.getUSeconds() - subtrahend.getUSeconds();
     }
+    // Microseconds portion must be normalized to less than 10^6
+    FW_ASSERT(uSeconds < 1000000, static_cast<FwAssertArgType>(uSeconds));
     return TimeInterval(seconds, static_cast<U32>(uSeconds));
 }
 

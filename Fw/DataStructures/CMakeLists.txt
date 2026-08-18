@@ -1,44 +1,70 @@
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/DataStructures.cpp"
+
+register_fprime_module(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/DataStructures.cpp"
+  HEADERS
+    "${CMAKE_CURRENT_LIST_DIR}/Array.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ArrayMap.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ArraySet.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ArraySetOrMapImpl.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/CircularIndex.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalArray.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalArrayMap.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalArraySet.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalFifoQueue.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalRedBlackTreeMap.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalRedBlackTreeSet.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/ExternalStack.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FifoQueue.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FifoQueueBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MapBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MapConstIterator.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/MapEntryBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Nil.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/RedBlackTreeMap.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/RedBlackTreeSet.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/RedBlackTreeSetOrMapImpl.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SetBase.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SetConstIterator.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SetOrMapImplConstIterator.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SetOrMapImplEntry.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/SizedContainer.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/Stack.hpp"
+    "${CMAKE_CURRENT_LIST_DIR}/StackBase.hpp"
 )
 
-register_fprime_module()
-
-set(UT_SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayMapTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArraySetOrMapImplTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArraySetTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularIndexTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayMapTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArraySetTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeMapTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeSetTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalStackTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeMapTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetOrMapImplTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetTest.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/RedBlackTreeSetOrMapImplTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestRules.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestScenarios.cpp"
-  "${CMAKE_CURRENT_LIST_DIR}/test/ut/StackTest.cpp"
+register_fprime_ut(
+  SOURCES
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayMapTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArraySetOrMapImplTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArraySetTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ArrayTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/CircularIndexTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/DataStructuresTestMain.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayMapTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArraySetTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalArrayTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalFifoQueueTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeMapTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalRedBlackTreeSetTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/ExternalStackTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/FifoQueueTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeMapTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetOrMapImplTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/RedBlackTreeSetTest.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/ArraySetOrMapImplTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/FifoQueueTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/MapTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/RedBlackTreeSetOrMapImplTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/RedBlackTreeSetOrMapImplTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/SetTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestRules.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/STest/StackTestScenarios.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/test/ut/StackTest.cpp"
+  DEPENDS
+    STest
 )
-
-set(UT_MOD_DEPS
-  STest
-)
-
-register_fprime_ut()

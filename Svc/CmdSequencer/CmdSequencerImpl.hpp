@@ -11,11 +11,13 @@
 #ifndef Svc_CmdSequencerImpl_HPP
 #define Svc_CmdSequencerImpl_HPP
 
+#include <Utils/Hash/Hash.hpp>
 #include "Fw/Com/ComBuffer.hpp"
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/File.hpp"
 #include "Os/ValidateFile.hpp"
 #include "Svc/CmdSequencer/CmdSequencerComponentAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 
 namespace Svc {
 
@@ -297,11 +299,11 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                         FwSizeType bufferSize  //!< The buffer size
             );
 
-            //! Finalize computed CRC
-            void finalize();
+            //! Return the finalized CRC
+            U32 finalize();
 
             //! Computed CRC
-            U32 m_computed;
+            Utils::Hash m_computed;
 
             //! Stored CRC
             U32 m_stored;
@@ -519,8 +521,9 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
                          ) override;
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum,            //!< The port number
-                          const Fw::StringBase& filename  //!< The sequence file
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& filename,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Sequence arguments (not currently used)
                           ) override;
 
     //! Handler implementation for seqDispatchIn
@@ -567,7 +570,7 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     void CS_RUN_cmdHandler(FwOpcodeType opCode,               //!< The opcode
                            U32 cmdSeq,                        //!< The command sequence number
                            const Fw::CmdStringArg& fileName,  //!< The file name
-                           Svc::CmdSequencer_BlockState block /*!< Return command status when complete or not*/
+                           const Svc::BlockState& block       /*!< Return command status when complete or not*/
                            ) override;
 
     //! Handler for command CS_START
@@ -698,10 +701,13 @@ class CmdSequencerComponentImpl final : public CmdSequencerComponentBase {
     Timer m_cmdTimeoutTimer;
 
     //! Block mode for command status
-    Svc::CmdSequencer_BlockState::t m_blockState;
+    Svc::BlockState::t m_blockState;
     FwOpcodeType m_opCode;
     U32 m_cmdSeq;
     bool m_join_waiting;
+
+    //! Telemetry to update sequence not running
+    const Fw::String NO_SEQ{"<no seq>"};
 };
 
 }  // namespace Svc

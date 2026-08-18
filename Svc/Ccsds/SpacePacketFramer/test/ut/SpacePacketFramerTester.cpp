@@ -6,6 +6,8 @@
 
 #include "SpacePacketFramerTester.hpp"
 #include "STest/Random/Random.hpp"
+#include "Svc/Ccsds/TestUtils/TestUtils.hpp"
+#include "Svc/Ccsds/Types/FppConstantsAc.hpp"
 
 namespace Svc {
 
@@ -59,10 +61,21 @@ void SpacePacketFramerTester::testNominalFraming() {
         payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
     }
     Fw::Buffer data(payload, sizeof(payload));
-    ComCfg::Apid::T apid = static_cast<ComCfg::Apid::T>(STest::Random::lowerUpper(0, 0x7FF));  // random 11 bit APID
-    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));  // random 14 bit sequence count
+    const auto apidOption = CcsdsTestUtils::getRandomApid();
+    if (!apidOption.has_value()) {
+        GTEST_SKIP() << "Could not find a valid APID\n";
+    }
+    const auto apid = apidOption.value();
+    // Choose a random 14-bit sequence count
+    U16 seqCount = static_cast<U8>(STest::Random::lowerUpper(0, 0x3FFF));
+    // Choose a random secondary header flag
+    bool hasSecHdr = static_cast<bool>(STest::Random::lowerUpper(0, 1));
+    // Choose random 2-bit sequence flags
+    U8 seqFlags = static_cast<U8>(STest::Random::lowerUpper(0, 3));
     ComCfg::FrameContext context;
     context.set_apid(apid);
+    context.set_hasSecHdr(hasSecHdr);
+    context.set_sequenceFlags(seqFlags);
     this->m_nextSeqCount = seqCount;  // seqCount to be returned by getApidSeqCount output port
 
     this->invoke_to_dataIn(0, data, context);
@@ -71,6 +84,29 @@ void SpacePacketFramerTester::testNominalFraming() {
     ASSERT_from_dataOut_SIZE(1);
     Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
     ASSERT_EQ(outBuffer.getSize(), sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE);
+
+    // Deserialize and verify the SpacePacket header
+    SpacePacketHeader header;
+    ASSERT_EQ(outBuffer.getDeserializer().deserializeTo(header), Fw::FW_SERIALIZE_OK);
+
+    // Verify APID in packetIdentification
+    U16 extractedApid = header.get_packetIdentification() & SpacePacketSubfields::ApidMask;
+    ASSERT_EQ(extractedApid, apid);
+
+    // Verify secondary header flag in packetIdentification
+    U16 extractedSecHdr = static_cast<U16>((header.get_packetIdentification() & SpacePacketSubfields::SecHdrMask) >>
+                                           SpacePacketSubfields::SecHdrOffset);
+    ASSERT_EQ(extractedSecHdr, hasSecHdr ? 1 : 0);
+
+    // Verify sequence flags in packetSequenceControl
+    U8 extractedSeqFlags = static_cast<U8>((header.get_packetSequenceControl() & SpacePacketSubfields::SeqFlagsMask) >>
+                                           SpacePacketSubfields::SeqFlagsOffset);
+    ASSERT_EQ(extractedSeqFlags, seqFlags);
+
+    // Verify sequence count in packetSequenceControl
+    U16 extractedSeqCount = header.get_packetSequenceControl() & SpacePacketSubfields::SeqCountMask;
+    ASSERT_EQ(extractedSeqCount, seqCount);
+
     // Check that the payload is present at the correct offset
     for (U32 i = 0; i < sizeof(payload); ++i) {
         ASSERT_EQ(outBuffer.getData()[SpacePacketHeader::SERIALIZED_SIZE + i], payload[i]);
@@ -79,6 +115,33 @@ void SpacePacketFramerTester::testNominalFraming() {
     ASSERT_from_dataReturnOut_SIZE(1);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getData(), payload);
     ASSERT_EQ(this->fromPortHistory_dataReturnOut->at(0).data.getSize(), sizeof(payload));
+}
+
+void SpacePacketFramerTester ::testOversizedAllocatorBufferIsTrimmed() {
+    U8 payload[16];
+    for (U32 i = 0; i < sizeof(payload); ++i) {
+        payload[i] = static_cast<U8>(STest::Random::lowerUpper(0, 0xFF));
+    }
+    Fw::Buffer data(payload, sizeof(payload));
+    ComCfg::FrameContext context;
+    context.set_apid(static_cast<ComCfg::Apid::T>(0x01));
+    this->m_nextSeqCount = 0;
+
+    // Signal the allocator handler to return a larger-than-needed buffer,
+    // simulating a BufferManager bin that is bigger than the exact packet size.
+    this->m_useOversizedAlloc = true;
+    this->invoke_to_dataIn(0, data, context);
+    this->m_useOversizedAlloc = false;
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_from_dataReturnOut_SIZE(1);
+
+    const FwSizeType expectedFrameSize = sizeof(payload) + SpacePacketHeader::SERIALIZED_SIZE;
+
+    Fw::Buffer outBuffer = this->fromPortHistory_dataOut->at(0).data;
+    // If setSize() is missing from SpacePacketFramer, getSize() returns the
+    // oversized allocation (2 * expectedFrameSize) and this assertion fails.
+    ASSERT_EQ(outBuffer.getSize(), expectedFrameSize);
 }
 
 // ----------------------------------------------------------------------
@@ -92,7 +155,8 @@ U16 SpacePacketFramerTester ::from_getApidSeqCount_handler(FwIndexType portNum,
 }
 
 Fw::Buffer SpacePacketFramerTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
-    return Fw::Buffer(this->m_internalDataBuffer, size);
+    FwSizeType allocation = (this->m_useOversizedAlloc) ? sizeof(this->m_internalDataBuffer) : size;
+    return Fw::Buffer(this->m_internalDataBuffer, allocation);
 }
 
 }  // namespace Ccsds

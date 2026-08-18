@@ -5,8 +5,10 @@ name: CI [RHEL8]
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -15,10 +17,14 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   Framework:
@@ -26,55 +32,66 @@ jobs:
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     - name: Build Framework
       run: |
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
-        fprime-util build --all -j4
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util build --all -j4 2>&1 | output-cleaner
+      shell: bash
 
   Ref:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     - name: Build Ref
       run: |
-        cd Ref
-        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON
-        fprime-util build -j4
+        cd TestDeploymentsProject
+        fprime-util generate -DFPRIME_ENABLE_JSON_MODEL_GENERATION=ON 2>&1 | output-cleaner
+        fprime-util build -j4 2>&1 | output-cleaner
+      shell: bash
 
   UTs:
     runs-on: ubuntu-latest
     container:
       image: redhat/ubi8:8.10
     steps:
+    - name: "Setup output-cleaner"
+      uses: nasa/fprime-actions/output-cleaner@devel
     - name: "Install dependencies"
       run: |
-        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan
+        dnf install -y git python3.12 python3.12-pip llvm-toolset libasan libubsan java-1.8.0-openjdk zlib-devel
         git config --global --add safe.directory ${GITHUB_WORKSPACE}
     - name: "Checkout F´ Repository"
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        filter: blob:none
         submodules: true
     - uses: ./.github/actions/setup
     # Some UTs require a non-root user to run properly due to using file permissions in tests
@@ -86,7 +103,9 @@ jobs:
     - name: UT Build and Run
       run: |
         su test-user -c "
-          fprime-util generate --ut &&
-          fprime-util build --all --ut -j4 &&
-          fprime-util check --all -j4
+          set -o pipefail &&
+          fprime-util generate --ut 2>&1 | output-cleaner &&
+          fprime-util build --all --ut -j4 2>&1 | output-cleaner &&
+          fprime-util check --all -j4 --pass-through --output-on-failure
         "
+      shell: bash

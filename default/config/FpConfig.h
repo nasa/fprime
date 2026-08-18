@@ -21,6 +21,20 @@ extern "C" {
 // Configuration switches
 // ----------------------------------------------------------------------
 
+// Enable strict assertions
+#ifndef FW_STRICT_ASSERTIONS
+#define FW_STRICT_ASSERTIONS (1)  //!< Indicates whether strict assertions are used (more checking, more instructions)
+#endif
+
+// Enable direct port calls
+#ifndef FW_DIRECT_PORT_CALLS
+#ifdef BUILD_UT
+#define FW_DIRECT_PORT_CALLS (0)  //!< Indirect port calls are required for unit tests
+#else
+#define FW_DIRECT_PORT_CALLS (1)  //!< Indicates whether direct port calls are used (saves space and time)
+#endif
+#endif
+
 // Allow objects to have names. Allocates storage for each instance
 #ifndef FW_OBJECT_NAMES
 #define FW_OBJECT_NAMES \
@@ -57,14 +71,6 @@ extern "C" {
 #define FW_QUEUE_REGISTRATION (1)  //!< Indicates whether or not queue registration is used
 #endif
 
-// On some systems, use of *printf family functions (snprintf, printf, etc) require a prohibitive amount of program
-// space. Setting this to `0` indicates that the Fw/String methods should stop using these functions to conserve
-// program size. However, this comes at the expense of discarding format parameters. i.e. the format string is returned
-// unchanged.
-#ifndef FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING
-#define FW_USE_PRINTF_FAMILY_FUNCTIONS_IN_STRING_FORMATTING (1)
-#endif
-
 // Port Facilities
 
 // This allows tracing calls through ports for debugging
@@ -81,25 +87,6 @@ extern "C" {
 
 // Component Facilities
 
-// Serialization
-
-// Add a type id when serialization is done. More storage,
-// but better detection of errors
-// TODO: Not working yet
-
-#ifndef FW_SERIALIZATION_TYPE_ID
-#define FW_SERIALIZATION_TYPE_ID \
-    (0)  //!< Indicates if type id is stored when type is serialized. (More storage, but more type safety)
-#endif
-
-// Number of bytes to use for serialization IDs. More
-// bytes is more storage, but greater number of IDs
-#if FW_SERIALIZATION_TYPE_ID
-#ifndef FW_SERIALIZATION_TYPE_ID_BYTES
-#define FW_SERIALIZATION_TYPE_ID_BYTES (4)  //!< Number of bytes used to represent type id - more bytes, more ids
-#endif
-#endif
-
 // Set assertion form. Options:
 //   1. FW_NO_ASSERT: assertions are compiled out, side effects are kept
 //   2. FW_FILEID_ASSERT: asserts report a file CRC and line number
@@ -109,6 +96,14 @@ extern "C" {
 // Note: users who want alternate asserts should set assert level to FW_NO_ASSERT and define FW_ASSERT in this header
 #ifndef FW_ASSERT_LEVEL
 #define FW_ASSERT_LEVEL (FW_FILENAME_ASSERT)  //!< Defines the type of assert used
+#endif
+
+// Decide whether the framework should force assertions to always abort.
+// If enabled, allows additional compiler optimizations and prevents code from running after an assertion trips.
+// If disabled (default), allows the FATAL event handler to decide whether code should continue running after an
+// assertion trips.
+#ifndef FW_ASSERTIONS_ALWAYS_ABORT
+#define FW_ASSERTIONS_ALWAYS_ABORT 0
 #endif
 
 // Adjust various configuration parameters in the architecture. Some of the above enables may disable some of the values
@@ -153,6 +148,16 @@ extern "C" {
 #ifndef POSIX_THREADS_ENABLE_NAMES
 #define POSIX_THREADS_ENABLE_NAMES (1)  //!< Enable/Disable assigning names to threads
 #endif
+
+// Hint to the compiler to always inline LinearBufferBase serialization &
+// deserialization methods
+#define FW_SERIALIZE_FORCE_INLINE_LBB
+// NOTE: To encourage inlining, uncomment below
+// #if defined(__GNUC__) || defined(__clang__)
+// #define FW_SERIALIZE_FORCE_INLINE_LBB __attribute__((always_inline)) inline
+// #else
+// #define FW_SERIALIZE_FORCE_INLINE_LBB
+// #endif
 
 // *** NOTE configuration checks are in Fw/Cfg/ConfigCheck.cpp in order to have
 // the type definitions in Fw/Types/BasicTypes available.

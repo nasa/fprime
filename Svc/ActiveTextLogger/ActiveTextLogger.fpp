@@ -10,7 +10,6 @@ module Svc {
     internal port TextQueue(
                              $text: string size 256 @< The text string
                            ) \
-      priority 1 \
       drop
 
   }

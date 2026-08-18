@@ -8,7 +8,7 @@
 #define SeqDispatcher_HPP
 
 #include "Fw/Types/StringBase.hpp"
-#include "Fw/Types/WaitEnumAc.hpp"
+#include "Svc/Seq/BlockStateEnumAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcherComponentAc.hpp"
 #include "Svc/SeqDispatcher/SeqDispatcher_CmdSequencerStateEnumAc.hpp"
 #include "config/FppConstantsAc.hpp"
@@ -39,13 +39,15 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     );
 
     //! Handler for input port seqStartIn
-    void seqStartIn_handler(FwIndexType portNum,            //!< The port number
-                            const Fw::StringBase& fileName  //!< The sequence file
+    void seqStartIn_handler(FwIndexType portNum,             //!< The port number
+                            const Fw::StringBase& fileName,  //!< The sequence file
+                            const Svc::SeqArgs& args         //!< Optional sequence arguments
     );
 
     //! Handler for input port seqRunIn
-    void seqRunIn_handler(FwIndexType portNum,            //!< The port number
-                          const Fw::StringBase& fileName  //!< The sequence file
+    void seqRunIn_handler(FwIndexType portNum,             //!< The port number
+                          const Fw::StringBase& fileName,  //!< The sequence file
+                          const Svc::SeqArgs& args         //!< Optional sequence arguments
     );
 
   private:
@@ -55,6 +57,8 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     U32 m_errorCount = 0;
     // number of sequencers in state AVAILABLE
     U32 m_sequencersAvailable = SeqDispatcherSequencerPorts;
+    // number of sequences canceled via the CANCEL_NAME command
+    U32 m_canceledCount = 0;
 
     struct DispatchEntry {
         FwOpcodeType opCode;  //!< opcode of entry
@@ -68,7 +72,10 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
 
     FwIndexType getNextAvailableSequencerIdx();
 
-    void runSequence(FwIndexType sequencerIdx, const Fw::ConstStringBase& fileName, Fw::Wait block);
+    void runSequence(FwIndexType sequencerIdx,
+                     const Fw::ConstStringBase& fileName,
+                     BlockState block,
+                     const Svc::SeqArgs& args);
 
     // ----------------------------------------------------------------------
     // Command handler implementations
@@ -79,9 +86,30 @@ class SeqDispatcher final : public SeqDispatcherComponentBase {
     void RUN_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
                         const U32 cmdSeq,                 /*!< The command sequence number*/
                         const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
-                        Fw::Wait block);
+                        const BlockState& block);
+
+    //! Implementation for RUN_ARGS command handler
+    //!
+    void RUN_ARGS_cmdHandler(const FwOpcodeType opCode,        /*!< The opcode*/
+                             const U32 cmdSeq,                 /*!< The command sequence number*/
+                             const Fw::CmdStringArg& fileName, /*!< The name of the sequence file*/
+                             const BlockState& block,          /*!< Return command status when complete or not*/
+                             const Svc::SeqArgs& buffer);      /*!< Arguments to pass to a sequencer*/
 
     void LOG_STATUS_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
+                               const U32 cmdSeq);         /*!< The command sequence number*/
+
+    //! Implementation for CANCEL_NAME command handler
+    //!
+    void CANCEL_NAME_cmdHandler(const FwOpcodeType opCode,         /*!< The opcode*/
+                                const U32 cmdSeq,                  /*!< The command sequence number*/
+                                const Fw::CmdStringArg& fileName); /*!< The name of the sequence file to cancel*/
+
+    //! Handler implementation for command CANCEL_ALL
+    //!
+    //! Broadcast a cancel to every running sequencer. This does not exclude the caller!
+    //! A sequence issuing CANCEL_ALL will cancel itself is connected to this seqDispatcher.
+    void CANCEL_ALL_cmdHandler(const FwOpcodeType opCode, /*!< The opcode*/
                                const U32 cmdSeq);         /*!< The command sequence number*/
 };
 

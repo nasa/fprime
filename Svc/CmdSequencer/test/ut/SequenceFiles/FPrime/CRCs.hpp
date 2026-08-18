@@ -28,7 +28,7 @@ enum Constants {
 
 //! Compute and serialize a CRC
 //! destBuffer contains the input data; CRC gets added to the end
-void serialize(Fw::SerializeBufferBase& destBuffer  //!< The buffer
+void serialize(Fw::LinearBufferBase& destBuffer  //!< The buffer
 );
 
 }  // namespace CRCs

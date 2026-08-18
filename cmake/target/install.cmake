@@ -62,11 +62,15 @@ function(install_add_deployment_target MODULE TARGET SOURCES DEPENDENCIES FULL_D
             COMPONENT ${MODULE}
             ${STATIC_LIBS_INSTALL_ARGS}
     )
-    install(FILES ${CMAKE_BINARY_DIR}/hashes.txt DESTINATION ${CMAKE_INSTALL_PREFIX} COMPONENT ${MODULE})
+    install(FILES ${CMAKE_BINARY_DIR}/hashes.txt DESTINATION . COMPONENT ${MODULE})
 
-    # Set up installation
+    # Set up installation via the fprime install wrapper, which defaults DESTDIR
+    # to FPRIME_INSTALL_DEST when the user has not set DESTDIR in the environment.
     add_custom_command(TARGET "${MODULE}" POST_BUILD COMMAND "${CMAKE_COMMAND}"
-            -DCMAKE_INSTALL_COMPONENT=${MODULE} -P ${CMAKE_BINARY_DIR}/cmake_install.cmake)
+            -DCMAKE_INSTALL_COMPONENT=${MODULE}
+            -DFPRIME_INSTALL_DEST=${FPRIME_INSTALL_DEST}
+            -DFPRIME_BUILD_DIR=${CMAKE_BINARY_DIR}
+            -P ${FPRIME_FRAMEWORK_PATH}/cmake/target/fprime_install.cmake)
 endfunction()
 
 # Install is per-deployment, a module-by-module variant does not make sense

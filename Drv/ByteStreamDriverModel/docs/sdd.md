@@ -34,6 +34,7 @@ This status is an enumeration whose values are described in the following table:
 | ByteStreamStatus::OTHER_ERROR | Receive produced an error and buffer contains no valid data. |
 
 The following components implement the byte stream model using the synchronous interface:
+
 - [`Drv::TcpClient`](../../TcpClient/docs/sdd.md): a F´ component wrapper of the tcp client
 - [`Drv::TcpServer`](../../TcpServer/docs/sdd.md): a F´ component wrapper of the tcp server
 - [`Drv::Udp`](../../Udp/docs/sdd.md): a F´ component wrapper of the udp

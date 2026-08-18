@@ -166,7 +166,8 @@ void CmdSequencerTester ::parameterizedLoadRunRun(SequenceFiles::File& file, con
     this->parameterizedAutoByPort(file, numCommands, bound);
     // Try to run a loaded sequence
     Fw::String fArg("");
-    this->invoke_to_seqRunIn(0, fArg);
+    Svc::SeqArgs emptyArgs{0, 0};
+    this->invoke_to_seqRunIn(0, fArg, emptyArgs);
     this->clearAndDispatch();
     // Assert seqDone response
     ASSERT_from_seqDone_SIZE(1);
@@ -297,9 +298,11 @@ void CmdSequencerTester ::executeCommandsAuto(const char* const fileName,
             ASSERT_EVENTS_CS_CommandComplete(0, fileName, i, i);
             ASSERT_EVENTS_CS_SequenceComplete_SIZE(1);
             // Assert telemetry
-            ASSERT_TLM_SIZE(2);
+            ASSERT_TLM_SIZE(3);
             ASSERT_TLM_CS_CommandsExecuted(0, i + 1);
             ASSERT_TLM_CS_SequencesCompleted(0, 1);
+            // Current sequence channel is cleared on completion
+            ASSERT_TLM_CS_CurrentSequence(0, this->component.NO_SEQ.toChar());
         }
     }
 }

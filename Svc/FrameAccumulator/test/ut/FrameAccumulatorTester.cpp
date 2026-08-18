@@ -16,7 +16,8 @@ namespace Svc {
 
 FrameAccumulatorTester ::FrameAccumulatorTester()
     : FrameAccumulatorGTestBase("FrameAccumulatorTester", FrameAccumulatorTester::MAX_HISTORY_SIZE),
-      component("FrameAccumulator") {
+      component("FrameAccumulator"),
+      m_failBufferAllocate(false) {
     component.configure(this->mockDetector, 1, this->mallocator, 2048);
     this->initComponents();
     this->connectPorts();
@@ -160,6 +161,28 @@ void FrameAccumulatorTester ::testBufferReturnDeallocation() {
     ASSERT_EQ(this->fromPortHistory_bufferDeallocate->at(0).fwBuffer.getSize(), sizeof(data));
 }
 
+void FrameAccumulatorTester ::testDropValidFrameWhenAllocationFailsAndRingIsFull() {
+    U8 data[2048] = {};
+    Fw::Buffer buffer(data, sizeof(data));
+    ComCfg::FrameContext context;
+    const FwSizeType ringCapacity = this->component.m_inRing.get_capacity();
+
+    ASSERT_EQ(ringCapacity, sizeof(data));
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+
+    this->m_failBufferAllocate = true;
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer.getSize());
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataReturnOut_SIZE(1);  // input buffer ownership was returned
+    ASSERT_from_dataOut_SIZE(0);        // no frame was sent because allocation failed
+    ASSERT_EQ(this->component.m_inRing.get_allocated_size(), 0);
+    ASSERT_EQ(this->component.m_inRing.get_free_size(), ringCapacity);
+    ASSERT_EVENTS_SIZE(2);
+    ASSERT_EVENTS_NoBufferAvailable_SIZE(1);
+    ASSERT_EVENTS_FrameDetectionValidFrameDropped_SIZE(1);
+}
+
 void FrameAccumulatorTester ::testDetectionErrorHandling() {
     FwSizeType too_large_size = this->component.m_inRing.get_capacity() + 1;
     // Using buffer_size=1 to simplify test since otherwise Accumulator will loop `buffer_size` times
@@ -203,6 +226,53 @@ void FrameAccumulatorTester ::testDetectionErrorHandling() {
     ASSERT_EVENTS_FrameDetectionSizeError(0, too_large_size);  // with expected size_out
 }
 
+void FrameAccumulatorTester ::testContextForwarded() {
+    // Set up a context with non-default values
+    ComCfg::FrameContext context;
+    context.set_apid(ComCfg::Apid::FW_PACKET_TELEM);
+    context.set_vcId(5);
+
+    // Single-buffer frame detection: context should be forwarded
+    U32 buffer_size = STest::Random::lowerUpper(1, 1024);
+    U8 data[buffer_size];
+    Fw::Buffer buffer(data, buffer_size);
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer_size);
+    this->invoke_to_dataIn(0, buffer, context);
+
+    ASSERT_from_dataOut_SIZE(1);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_TELEM);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), 5);
+
+    this->clearHistory();
+
+    // Multi-buffer accumulation: context of the completing call should be forwarded
+    ComCfg::FrameContext context1;
+    context1.set_apid(ComCfg::Apid::FW_PACKET_COMMAND);
+    context1.set_vcId(1);
+
+    ComCfg::FrameContext context2;
+    context2.set_apid(ComCfg::Apid::FW_PACKET_LOG);
+    context2.set_vcId(3);
+
+    Fw::Buffer::SizeType buffer1_size = 10;
+    Fw::Buffer::SizeType buffer2_size = 20;
+    U8 data1[buffer1_size];
+    U8 data2[buffer2_size];
+    Fw::Buffer buffer1(data1, buffer1_size);
+    Fw::Buffer buffer2(data2, buffer2_size);
+
+    this->mockDetector.set_next_result(FrameDetector::Status::MORE_DATA_NEEDED, buffer2_size);
+    this->invoke_to_dataIn(0, buffer1, context1);
+    ASSERT_from_dataOut_SIZE(0);
+
+    this->mockDetector.set_next_result(FrameDetector::Status::FRAME_DETECTED, buffer1_size + buffer2_size);
+    this->invoke_to_dataIn(0, buffer2, context2);
+    ASSERT_from_dataOut_SIZE(1);
+    // The context forwarded should be from the second (completing) call
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_apid(), ComCfg::Apid::FW_PACKET_LOG);
+    ASSERT_EQ(this->fromPortHistory_dataOut->at(0).context.get_vcId(), 3);
+}
+
 // ----------------------------------------------------------------------
 // Helper functions
 // ----------------------------------------------------------------------
@@ -216,7 +286,7 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 
     U8 data[buffer_max_size];
     U32 buffer_size;
-    Fw::Buffer buffer(data, 0);
+    Fw::Buffer buffer(data, sizeof(data));
     U32 accumulated_size = 0;
     ComCfg::FrameContext context;
 
@@ -247,8 +317,11 @@ void FrameAccumulatorTester ::mockAccumulateFullFrame(U32& frame_size, U32& buff
 // ----------------------------------------------------------------------
 Fw::Buffer FrameAccumulatorTester ::from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) {
     this->pushFromPortEntry_bufferAllocate(size);
-    this->m_buffer.setData(this->m_buffer_slot);
-    this->m_buffer.setSize(size);
+    if (this->m_failBufferAllocate) {
+        this->m_failBufferAllocate = false;
+        return Fw::Buffer();
+    }
+    this->m_buffer.set(this->m_buffer_slot, size);
     ::memset(this->m_buffer.getData(), 0, size);
     return this->m_buffer;
 }

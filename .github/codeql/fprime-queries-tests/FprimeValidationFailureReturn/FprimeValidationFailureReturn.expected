@@ -1,0 +1,1 @@
+| test.cpp:25:5:27:5 | if (...) ...  | This validation-failure branch in handler START_cmdHandler sends a failed command response but does not return. |

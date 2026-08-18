@@ -36,6 +36,7 @@ class ComLoggerTester : public ComLoggerGTestBase {
     void noInitError();
 
   private:
+    void cleanupFiles();
     void connectPorts();
     void initComponents();
     void dispatchOne();

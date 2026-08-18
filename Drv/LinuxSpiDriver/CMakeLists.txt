@@ -8,19 +8,27 @@
 if (NOT FPRIME_USE_STUBBED_DRIVERS)
     restrict_platforms(Linux)
 endif()
+
 if(FPRIME_USE_STUBBED_DRIVERS)
-    set(SOURCE_FILES
+    register_fprime_module(
+      AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
+      SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplStub.cpp"
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.hpp"
     )
-    register_fprime_module()
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(SOURCE_FILES
+    register_fprime_module(
+      AUTOCODER_INPUTS
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.fpp"
+      SOURCES
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImplCommon.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.cpp"
+      HEADERS
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriver.hpp"
+        "${CMAKE_CURRENT_LIST_DIR}/LinuxSpiDriverComponentImpl.hpp"
     )
-    register_fprime_module()
 endif()
-

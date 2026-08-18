@@ -57,6 +57,9 @@ Status createValidation(const char* fileName,
                         const char* hashFileName);  //!< Create a validation of the file 'fileName' and store it in
                                                     //!< in a file 'hashFileName'
 
+//! Write a pre-computed hash to a hash file
+Status createValidation(const char* hashFileName, const Utils::HashBuffer& hashBuffer);
+
 }  // namespace ValidateFile
 }  // namespace Os
 

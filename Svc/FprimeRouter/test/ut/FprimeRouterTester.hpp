@@ -20,11 +20,16 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     // Constants
     // ----------------------------------------------------------------------
 
-    // Maximum size of histories storing events, telemetry, and port outputs
-    static const FwSizeType MAX_HISTORY_SIZE = 10;
+    // Maximum size of histories storing events, telemetry, and port outputs.
+    // Must exceed FprimeRouterCfg::BufferContextTableSize so the table-full test can
+    // send more buffers than the table holds without overflowing port history.
+    static const FwSizeType MAX_HISTORY_SIZE = FprimeRouterCfg::BufferContextTableSize + 5;
 
     // Instance ID supplied to the component instance under test
     static const FwEnumStoreType TEST_INSTANCE_ID = 0;
+
+    // Sentinel virtual channel id used to verify context is preserved across the file round-trip
+    static const U8 TEST_VC_ID = 3;
 
   public:
     // ----------------------------------------------------------------------
@@ -56,17 +61,23 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     //! Route a packet of unknown type
     void testRouteUnknownPacketUnconnected();
 
-    //! Route a packet of unknown type
-    void testAllocationFailureFile();
-
-    //! Deallocate a returning buffer
-    void testAllocationFailureUnknown();
-
-    //! Deallocate a returning buffer
+    //! Test buffer return via fileBufferReturnIn
     void testBufferReturn();
 
     //! Invoke the command response input port
     void testCommandResponse();
+
+    //! A file buffer's context is saved on fileOut and restored on fileBufferReturnIn
+    void testFileContextRoundTrip();
+
+    //! Multiple outstanding file buffers each get their own context restored,
+    //! even when returned out of order
+    void testMultiBufferContextRoundTrip();
+
+    //! When the context table is full, a handed-off buffer emits the table-full
+    //! event for its routed port and its context degrades to empty on return.
+    //! \param packetType FW_PACKET_FILE (fileOut path) or FW_PACKET_UNKNOWN (unknownDataOut path)
+    void testContextTableFull(Fw::ComPacketType packetType);
 
   private:
     // ----------------------------------------------------------------------
@@ -82,14 +93,10 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
     //! Initialize components
     void initComponents();
 
-    //! Mock the reception of a packet of a specific type
-    void mockReceivePacketType(Fw::ComPacketType packetType);
-
-    // ----------------------------------------------------------------------
-    // Port handler overrides
-    // ----------------------------------------------------------------------
-    //! Overriding bufferAllocate handler to be able to request a buffer in component tests
-    Fw::Buffer from_bufferAllocate_handler(FwIndexType portNum, FwSizeType size) override;
+    //! Mock the reception of a packet of a specific type.
+    //! \return the buffer that was sent in on dataIn (the router emits the same
+    //! handle on fileOut/unknownDataOut for connected handoff paths).
+    Fw::Buffer mockReceivePacketType(Fw::ComPacketType packetType);
 
   private:
     // ----------------------------------------------------------------------
@@ -98,10 +105,6 @@ class FprimeRouterTester : public FprimeRouterGTestBase {
 
     //! The component under test
     FprimeRouter component;
-
-    Fw::Buffer m_buffer;  // buffer to be returned by mocked bufferAllocate call
-    U8 m_buffer_slot[64];
-    bool m_forceAllocationError = false;  // Flag to force allocation error
 };
 
 }  // namespace Svc

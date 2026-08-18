@@ -21,7 +21,7 @@ namespace Fw {
 //! \class SerialBuffer
 //! \brief A variable-length serializable buffer
 //!
-class SerialBuffer final : public SerializeBufferBase {
+class SerialBuffer final : public LinearBufferBase {
   public:
     // ----------------------------------------------------------------------
     // Construction
@@ -35,15 +35,10 @@ class SerialBuffer final : public SerializeBufferBase {
 
   public:
     // ----------------------------------------------------------------------
-    // Pure virtual methods from SerializeBufferBase
+    // Deprecated methods
     // ----------------------------------------------------------------------
 
     DEPRECATED(FwSizeType getBuffCapacity() const, "Use getCapacity() instead");
-    FwSizeType getCapacity() const;
-
-    U8* getBuffAddr();
-
-    const U8* getBuffAddr() const;
 
   public:
     // ----------------------------------------------------------------------
@@ -64,15 +59,6 @@ class SerialBuffer final : public SerializeBufferBase {
     );
 
   private:
-    // ----------------------------------------------------------------------
-    // Data
-    // ----------------------------------------------------------------------
-
-    //! The data
-    U8* const m_data;
-
-    //! The capacity
-    const FwSizeType m_capacity;
 };
 
 }  // namespace Fw

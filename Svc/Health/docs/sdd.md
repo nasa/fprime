@@ -45,17 +45,6 @@ Port Data Type | Name | Direction | Kind | Usage
 
 The `Svc::Health` component monitors health by iterating through a table of port numbers and their maximum allowed timeout. The timeout is specified as the number of calls to the `SchedIn` port. The actual timeout value in wall time will be dependent on the rate at which the port is called. During each `SchedIn` port call, all the `PingSend` ports are called with a key. The key is simply a counter value maintained as a private data member. An active component with a `Svc::Ping` port is required to execute the port handler on the thread of the component. When the handler is invoked, it returns the value of the `Svc::Ping` port key argument as the argument to the output `Svc::Ping` port. When the health component receives the return port invocation on the `PingReturn` port, it sets a status in the tracking table indicating the response was received. In addition to dispatching pings to components, the `SchedIn` port call checks the status of all the dispatched pings to verify that they have not exceeded the specified timeout. If there is a call that is outstanding but has not timed out, a counter is decremented. The port is not pinged while there is an outstanding ping call. If an active component times out responding to a ping, the `Svc::Health` component sends a FATAL event. The component has commands to completely turn off monitoring, turn off monitoring for a specific port, or update the timeout values. The updated timeout values or monitoring updates are not stored through a software reset.
 
-#### 3.2.2 Platform-specific Checks
-
-The `Svc::Health` component defines an internal method call `doOtherChecks()`. It is called at the end of the `Run` handler, and is meant to be used for platform-specific health checks. Alternate implementations can be added to the mod.mk `SRC_` variables. An empty stub has been provided for implementations where nothing extra is needed.
-
-#### 3.2.2.1 VxWorks
-
-The `doOtherChecks()` method does the following checks for VxWorks:
-
-* Check for suspended tasks
-* Check for PCI errors  
-
 ### 3.3 Scenarios
 
 #### 3.3.1 Ping Components

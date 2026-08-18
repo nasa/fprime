@@ -19,12 +19,13 @@ namespace FPrime {
 
 namespace CRCs {
 
-void serialize(Fw::SerializeBufferBase& destBuffer) {
+void serialize(Fw::LinearBufferBase& destBuffer) {
     CmdSequencerComponentImpl::FPrimeSequence::CRC crc;
     crc.init();
     crc.update(destBuffer.getBuffAddr(), destBuffer.getSize());
-    crc.finalize();
-    ASSERT_EQ(destBuffer.serializeFrom(crc.m_computed), Fw::FW_SERIALIZE_OK);
+    U32 crcFinal = 0;
+    crc.m_computed.finalize(crcFinal);
+    ASSERT_EQ(destBuffer.serializeFrom(crcFinal), Fw::FW_SERIALIZE_OK);
 }
 
 }  // namespace CRCs

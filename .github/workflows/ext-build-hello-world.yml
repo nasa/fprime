@@ -3,8 +3,10 @@
 name: "External Repo: Tutorial: HelloWorld"
 
 on:
+  schedule:
+    - cron: "0 21 * * *"  # Nightly at 2:00 PM US/Pacific (PDT)
   push:
-    branches: [ devel, release/** ]
+    branches: [ release/** ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ devel, release/** ]
@@ -13,10 +15,14 @@ on:
       - '**.md'
       - '.github/actions/spelling/**'
       - '.github/ISSUE_TEMPLATE/**'
+      - '.github/agents/**'
 # Cancel in-progress runs if a newer run is started on a given PR
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ !contains(github.ref, 'devel') && !contains(github.ref, 'release/')}}
+
+permissions:
+  contents: read
 
 jobs:
   get-branch:
@@ -32,6 +38,6 @@ jobs:
     with:
       target_repository: fprime-community/fprime-tutorial-hello-world
       fprime_location: ./lib/fprime
-      build_location: Hello/HelloWorldDeployment
+      build_location: HiNamespace/FirstDeployment
       run_unit_tests: false # no UTs in HelloWorld project
       target_ref: ${{ needs.get-branch.outputs.target-branch }}

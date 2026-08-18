@@ -18,6 +18,7 @@ enum FileStatus : U8 {
     INVALID_ARGUMENT, @< Invalid argument passed in
     NO_MORE_RESOURCES,@< No more available resources
     OTHER_ERROR,      @< A catch-all for other errors. Have to look in implementation-specific code
+    OUTSIDE_SANDBOX,  @< Path falls outside the configured sandbox directory
 }
 @ FPP shadow-enum representing Os::File::Mode
 enum FileMode : U8 {

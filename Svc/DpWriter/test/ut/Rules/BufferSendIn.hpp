@@ -28,6 +28,9 @@ class Tester {
     //! OK
     void OK();
 
+    //! OKProcShrink
+    void OKProcShrink();
+
     //! Invalid buffer
     void InvalidBuffer();
 
@@ -43,6 +46,9 @@ class Tester {
     //! Buffer too small for data
     void BufferTooSmallForData();
 
+    //! File name format error
+    void FileNameFormatError();
+
     //! File open error
     void FileOpenError();
 
@@ -56,6 +62,9 @@ class Tester {
 
     //! Rule BufferSendIn::OK
     Rules::BufferSendIn::OK ruleOK;
+
+    //! Rule BufferSendIn::OKProcShrink
+    Rules::BufferSendIn::OKProcShrink ruleOKProcShrink;
 
     //! Rule BufferSendIn::InvalidBuffer
     Rules::BufferSendIn::InvalidBuffer ruleInvalidBuffer;

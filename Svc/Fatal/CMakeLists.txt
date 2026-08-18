@@ -6,12 +6,11 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-set(SOURCE_FILES
-  "${CMAKE_CURRENT_LIST_DIR}/Fatal.fpp"
-)
 
-set(MOD_DEPS
-    Fw/Port
-)
 
-register_fprime_module()
+register_fprime_module(
+  AUTOCODER_INPUTS
+    "${CMAKE_CURRENT_LIST_DIR}/Fatal.fpp"
+  DEPENDS
+    Fw_Port
+)

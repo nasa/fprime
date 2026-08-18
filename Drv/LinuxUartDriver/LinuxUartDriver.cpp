@@ -59,18 +59,16 @@ bool LinuxUartDriver::open(const char* const device,
     if (fd == -1) {
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
-        this->log_WARNING_HI_OpenError(_arg, this->m_fd, _err);
+        this->log_WARNING_HI_OpenError(_arg, fd, _err);
         return false;
     }
-
-    this->m_fd = fd;
 
     // Configure blocking reads
     struct termios cfg;
 
     stat = tcgetattr(fd, &cfg);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -97,7 +95,7 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcsetattr(fd, TCSANOW, &cfg);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -110,7 +108,7 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcgetattr(fd, &t);
         if (-1 == stat) {
-            close(fd);
+            (void)close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
             this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -122,7 +120,7 @@ bool LinuxUartDriver::open(const char* const device,
 
         stat = tcsetattr(fd, TCSANOW, &t);
         if (-1 == stat) {
-            close(fd);
+            (void)close(fd);
             Fw::LogStringArg _arg = device;
             Fw::LogStringArg _err = strerror(errno);
             this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -150,25 +148,36 @@ bool LinuxUartDriver::open(const char* const device,
         case BAUD_230K:
             relayRate = B230400;
             break;
-#if defined TGT_OS_TYPE_LINUX
+#ifdef B460800
         case BAUD_460K:
             relayRate = B460800;
             break;
+#endif
+#ifdef B921600
         case BAUD_921K:
             relayRate = B921600;
             break;
+#endif
+#ifdef B1000000
         case BAUD_1000K:
             relayRate = B1000000;
             break;
+#endif
+#ifdef B1152000
         case BAUD_1152K:
             relayRate = B1152000;
             break;
+#endif
+#ifdef B1500000
         case BAUD_1500K:
             relayRate = B1500000;
             break;
+#endif
+#ifdef B2000000
         case BAUD_2000K:
             relayRate = B2000000;
             break;
+#endif
 #ifdef B2500000
         case BAUD_2500K:
             relayRate = B2500000;
@@ -189,9 +198,8 @@ bool LinuxUartDriver::open(const char* const device,
             relayRate = B4000000;
             break;
 #endif
-#endif
         default:
-            FW_ASSERT(0, static_cast<FwAssertArgType>(baud));
+            FW_ASSERT(false, static_cast<FwAssertArgType>(baud));
             break;
     }
 
@@ -199,7 +207,7 @@ bool LinuxUartDriver::open(const char* const device,
 
     stat = tcgetattr(fd, &newtio);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -234,14 +242,14 @@ bool LinuxUartDriver::open(const char* const device,
             newtio.c_cflag &= static_cast<unsigned int>(~PARENB);
             break;
         default:
-            FW_ASSERT(0, parity);
+            FW_ASSERT(false, parity);
             break;
     }
 
     // Set baud rate:
     stat = cfsetispeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -249,7 +257,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
     stat = cfsetospeed(&newtio, static_cast<speed_t>(relayRate));
     if (stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -270,7 +278,7 @@ bool LinuxUartDriver::open(const char* const device,
     // Set attributes:
     stat = tcsetattr(fd, TCSANOW, &newtio);
     if (-1 == stat) {
-        close(fd);
+        (void)close(fd);
         Fw::LogStringArg _arg = device;
         Fw::LogStringArg _err = strerror(errno);
         this->log_WARNING_HI_OpenError(_arg, fd, _err);
@@ -278,6 +286,7 @@ bool LinuxUartDriver::open(const char* const device,
     }
 
     // All done!
+    this->m_fd = fd;
     Fw::LogStringArg _arg = device;
     this->log_ACTIVITY_HI_PortOpened(_arg);
     if (this->isConnected_ready_OutputPort(0)) {
@@ -331,6 +340,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
     FW_ASSERT(ptr != nullptr);
     Drv::ByteStreamStatus status = ByteStreamStatus::OTHER_ERROR;  // added by m.chase 03.06.2017
     LinuxUartDriver* comp = reinterpret_cast<LinuxUartDriver*>(ptr);
+    // @non-terminating@: read thread runs until quit is requested
     while (!comp->m_quitReadThread) {
         Fw::Buffer buff = comp->allocate_out(0, comp->m_allocationSize);
 
@@ -341,7 +351,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
             status = ByteStreamStatus::OTHER_ERROR;
             comp->recv_out(0, buff, status);
             // to avoid spinning, wait 50 ms
-            Os::Task::delay(Fw::TimeInterval(0, 50000));
+            (void)Os::Task::delay(Fw::TimeInterval(0, 50000));  // best-effort delay
             continue;
         }
 
@@ -350,6 +360,7 @@ void LinuxUartDriver ::serialReadTaskEntry(void* ptr) {
         // Read until something is received or an error occurs. Only loop when
         // stat == 0 as this is the timeout condition and the read should spin
         FW_ASSERT_NO_OVERFLOW(buff.getSize(), size_t);
+        // @non-terminating@: retry read until data arrives or quit is requested
         while ((stat == 0) && !comp->m_quitReadThread) {
             stat = static_cast<int>(::read(comp->m_fd, buff.getData(), static_cast<size_t>(buff.getSize())));
         }

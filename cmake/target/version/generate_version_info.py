@@ -15,6 +15,7 @@
 # ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.
 # ===============================================================================
 """
+
 import argparse
 import os
 import sys
@@ -22,8 +23,7 @@ import json
 from pathlib import Path
 import subprocess
 
-
-FALLBACK_VERSION = "v3.5.0"  # Keep up-to-date on release tag
+FALLBACK_VERSION = "v4.2.2"  # Keep up-to-date on release tag
 
 
 def get_version_str(working_dir, fallback=FALLBACK_VERSION):

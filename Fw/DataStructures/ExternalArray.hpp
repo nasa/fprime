@@ -82,8 +82,7 @@ class ExternalArray final {
     //! \return *this
     ExternalArray<T>& operator=(const ExternalArray<T>& a) {
         if (&a != this) {
-            this->m_elements = a.m_elements;
-            this->m_size = a.m_size;
+            this->setStorage(a.m_elements, a.m_size);
         }
         return *this;
     }
@@ -112,10 +111,18 @@ class ExternalArray final {
     void setStorage(T* elements,     //!< The array elements
                     FwSizeType size  //!< The size
     ) {
-        this->releaseStorage();
-        this->m_elements = elements;
-        this->m_size = size;
-        this->m_destroyElementsOnRelease = false;
+        // Check that elements is not null if the array is nonempty
+        FW_ASSERT((elements != nullptr) || (size == 0), static_cast<FwAssertArgType>(size));
+        if (elements == this->m_elements) {
+            // The incoming pointer aliases the existing storage, so do not
+            // release the storage or change the ownership flag
+            this->m_size = size;
+        } else {
+            this->releaseStorage();
+            this->m_elements = elements;
+            this->m_size = size;
+            this->m_destroyElementsOnRelease = false;
+        }
     }
 
     //! Set the backing storage (untyped data)
@@ -128,7 +135,8 @@ class ExternalArray final {
         // Check that data.bytes is properly aligned
         FW_ASSERT(reinterpret_cast<uintptr_t>(data.bytes) % alignof(T) == 0);
         // Check that data.size is large enough to hold the array
-        FW_ASSERT(size * sizeof(T) <= data.size);
+        // The division form is used because size * sizeof(T) can overflow FwSizeType
+        FW_ASSERT(size <= data.size / sizeof(T));
         // Release the backing storage
         this->releaseStorage();
         // Initialize the array members

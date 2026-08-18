@@ -1,0 +1,1 @@
+| test.cpp:8:5:10:5 | for(...;...;...) ... | This loop's condition depends on the floating-point variable x. |

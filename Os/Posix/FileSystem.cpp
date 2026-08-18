@@ -45,7 +45,8 @@ PosixFileSystem::Status PosixFileSystem::_rename(const char* originPath, const c
 
 PosixFileSystem::Status PosixFileSystem::_getWorkingDirectory(char* path, FwSizeType bufferSize) {
     Status status = OP_OK;
-    if (::getcwd(path, static_cast<size_t>(bufferSize)) == nullptr) {
+    const char* cwd = ::getcwd(path, static_cast<size_t>(bufferSize));
+    if (cwd == nullptr) {
         status = errno_to_filesystem_status(errno);
     }
     return status;

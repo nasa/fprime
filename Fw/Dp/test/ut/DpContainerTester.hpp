@@ -31,7 +31,7 @@ class DpContainerTester {
     }
 
     static bool isDataBufferEmpty(const Fw::DpContainer& container) {
-        const Fw::SerializeBufferBase& buffer = container.m_dataBuffer;
+        const Fw::LinearBufferBase& buffer = container.m_dataBuffer;
         const FwSizeType buffLength = buffer.getSize();
         const FwSizeType buffLeft = buffer.getDeserializeSizeLeft();
 

@@ -1,0 +1,2 @@
+| test.cpp:11:13:11:15 | ptr | Parameter ptr is dereferenced without first being checked (e.g. with FW_ASSERT or a condition). |
+| test.cpp:17:17:17:21 | index | Parameter index is used as an array index or divisor without first being checked (e.g. with FW_ASSERT or a condition). |

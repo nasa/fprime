@@ -3,6 +3,7 @@
 * Format is DIRECTIVE_NAME (opcode).
 * Arguments can either be "hardcoded", meaning they are present in the sequence binary after the opcode, or "stack", meaning they are popped off the stack at runtime.
 * Directives can have a "stack result type", which is the type that they push to the stack after execution.
+* The `bool` type is encoded as a single byte: `FW_SERIALIZE_TRUE_VALUE` (`0xFF`) for true and `FW_SERIALIZE_FALSE_VALUE` (`0x00`) for false.
 
 ## WAIT_REL (1)
 Sleeps for a relative duration from the current time.
@@ -24,7 +25,7 @@ Sleeps until an absolute time.
 | useconds     | U32      | stack  | Microseconds |
 | seconds      | U32      | stack  | Seconds |
 | time_context | FwTimeContextStoreType       | stack  | Time context (user defined value, unused by Fpy) |
-| time_base    | U16      | stack  | Time base |
+| time_base    | FwTimeBaseStoreType      | stack  | Time base |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -136,7 +137,7 @@ Performs an `and` between two booleans, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## IEQ (11)
-Compares two integers for equality, pushes result to stack. Doesn't differentiate between signed and unsigned.
+Compares two integers for equality. If equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Doesn't differentiate between signed and unsigned.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -149,7 +150,7 @@ Compares two integers for equality, pushes result to stack. Doesn't differentiat
 **Requirement:**  FPY-SEQ-002
 
 ## INE (12)
-Compares two integers for inequality, pushes result to stack. Doesn't differentiate between signed and unsigned.
+Compares two integers for inequality. If not equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Doesn't differentiate between signed and unsigned.
 
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
@@ -163,7 +164,7 @@ Compares two integers for inequality, pushes result to stack. Doesn't differenti
 **Requirement:**  FPY-SEQ-002
 
 ## ULT (13)
-Performs an unsigned less than comparison on two unsigned integers, pushes result to stack
+Performs an unsigned less than comparison on two unsigned integers. If the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -176,7 +177,7 @@ Performs an unsigned less than comparison on two unsigned integers, pushes resul
 **Requirement:**  FPY-SEQ-002
 
 ## ULE (14)
-Performs an unsigned less than or equal to comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned less than or equal to comparison on two unsigned integers. If the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -189,7 +190,7 @@ Performs an unsigned less than or equal to comparison on two unsigned integers, 
 **Requirement:**  FPY-SEQ-002
 
 ## UGT (15)
-Performs an unsigned greater than comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned greater than comparison on two unsigned integers. If the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -202,7 +203,7 @@ Performs an unsigned greater than comparison on two unsigned integers, pushes re
 **Requirement:**  FPY-SEQ-002
 
 ## UGE (16)
-Performs an unsigned greater than or equal to comparison on two unsigned integers, pushes result to stack.
+Performs an unsigned greater than or equal to comparison on two unsigned integers. If the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | U64      | stack  | Right operand |
@@ -215,7 +216,7 @@ Performs an unsigned greater than or equal to comparison on two unsigned integer
 **Requirement:**  FPY-SEQ-002
 
 ## SLT (17)
-Performs a signed less than comparison on two signed integers, pushes result to stack.
+Performs a signed less than comparison on two signed integers. If the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -228,7 +229,7 @@ Performs a signed less than comparison on two signed integers, pushes result to 
 **Requirement:**  FPY-SEQ-002
 
 ## SLE (18)
-Performs a signed less than or equal to comparison on two signed integers, pushes result to stack.
+Performs a signed less than or equal to comparison on two signed integers. If the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -241,7 +242,7 @@ Performs a signed less than or equal to comparison on two signed integers, pushe
 **Requirement:**  FPY-SEQ-002
 
 ## SGT (19)
-Performs a signed greater than comparison on two signed integers, pushes result to stack.
+Performs a signed greater than comparison on two signed integers. If the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -254,7 +255,7 @@ Performs a signed greater than comparison on two signed integers, pushes result 
 **Requirement:**  FPY-SEQ-002
 
 ## SGE (20)
-Performs a signed greater than or equal to comparison on two signed integers, pushes result to stack.
+Performs a signed greater than or equal to comparison on two signed integers. If the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -267,7 +268,7 @@ Performs a signed greater than or equal to comparison on two signed integers, pu
 **Requirement:**  FPY-SEQ-002
 
 ## FEQ (21)
-Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Compares two floats for equality, pushes result to stack. If neither is NaN and they are otherwise equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -280,7 +281,7 @@ Compares two floats for equality, pushes result to stack. If neither is NaN and 
 **Requirement:**  FPY-SEQ-002
 
 ## FNE (22)
-Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Compares two floats for inequality, pushes result to stack. If either is NaN or they are not equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -293,7 +294,7 @@ Compares two floats for inequality, pushes result to stack. If either is NaN or 
 **Requirement:**  FPY-SEQ-002
 
 ## FLT (23)
-Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a less than comparison on two floats, pushes result to stack. If neither is NaN and the second < first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -306,7 +307,7 @@ Performs a less than comparison on two floats, pushes result to stack. If neithe
 **Requirement:**  FPY-SEQ-002
 
 ## FLE (24)
-Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a less than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second <= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -319,7 +320,7 @@ Performs a less than or equal to comparison on two floats, pushes result to stac
 **Requirement:**  FPY-SEQ-002
 
 ## FGT (25)
-Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a greater than comparison on two floats, pushes result to stack. If neither is NaN and the second > first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -332,7 +333,7 @@ Performs a greater than comparison on two floats, pushes result to stack. If nei
 **Requirement:**  FPY-SEQ-002
 
 ## FGE (26)
-Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes 1 to stack, otherwise 0. Infinity is handled consistent with C++.
+Performs a greater than or equal to comparison on two floats, pushes result to stack. If neither is NaN and the second >= first, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`. Infinity is handled consistent with C++.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -345,7 +346,7 @@ Performs a greater than or equal to comparison on two floats, pushes result to s
 **Requirement:**  FPY-SEQ-002
 
 ## NOT (27)
-Performs a boolean not operation on a boolean, pushes result to stack.
+Performs a boolean not operation on a boolean. If the operand is `FW_SERIALIZE_FALSE_VALUE`, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | bool     | stack  | Value to negate |
@@ -357,7 +358,7 @@ Performs a boolean not operation on a boolean, pushes result to stack.
 **Requirement:**  FPY-SEQ-002
 
 ## FPTOSI (28)
-Converts a float to a signed integer, pushes result to stack.
+Converts an `F64` to a signed `I64` with saturating semantics (`llvm.fptosi.sat`, wasm `i64.trunc_sat_f64_s`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; values above `I64` max clamp to `I64` max and values below `I64` min clamp to `I64` min. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -369,7 +370,7 @@ Converts a float to a signed integer, pushes result to stack.
 **Requirement:**  FPY-SEQ-015
 
 ## FPTOUI (29)
-Converts a float to an unsigned integer, pushes result to stack.
+Converts an `F64` to an unsigned `U64` with saturating semantics (`llvm.fptoui.sat`, wasm `i64.trunc_sat_f64_u`, Rust `as`), pushes result to stack. In-range values truncate toward zero; NaN converts to 0; negative values clamp to 0 and values at or above `2**64` clamp to `U64` max. Never raises an error.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Float to convert |
@@ -459,7 +460,7 @@ Performs unsigned integer division, pushes result to stack. A divisor of 0 will 
 **Requirement:**  FPY-SEQ-002
 
 ## SDIV (36)
-Performs signed integer division, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR.
+Performs signed integer division floored toward negative infinity, pushes result to stack. A divisor of 0 will result in DOMAIN_ERROR. Dividing `I64` min by -1 overflows the result type (the true quotient `2**63` is not representable) and results in ARITHMETIC_OVERFLOW.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -485,7 +486,7 @@ Performs unsigned integer modulo, pushes result to stack. A 0 divisor (rhs) will
 **Requirement:**  FPY-SEQ-002
 
 ## SMOD (38)
-Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR.
+Performs signed integer modulo, pushes result to stack. A 0 divisor (rhs) will result in DOMAIN_ERROR. Taking the minimum I64 value modulo -1 yields 0, the mathematical remainder (matching wasm `i64.rem_s`).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | I64      | stack  | Right operand |
@@ -537,7 +538,7 @@ Performs float multiplication, pushes result to stack. NaN, and infinity are han
 **Requirement:**  FPY-SEQ-002
 
 ## FDIV (42)
-Performs float division, pushes result to stack. Zero divisors, NaN, and infinity are handled consistently with C++ division.
+Performs IEEE 754 float division, pushes result to stack. Division by zero produces an infinity whose sign is the XOR of the operand signs, except that a zero or NaN dividend produces NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -550,7 +551,7 @@ Performs float division, pushes result to stack. Zero divisors, NaN, and infinit
 **Requirement:**  FPY-SEQ-002
 
 ## FPOW (43)
-Performs float exponentiation, pushes result to stack. NaN and infinity values are handled consistently with C++ `std::pow`.
+Performs float exponentiation (C `pow` semantics), pushes result to stack. A domain error (negative base with a non-integer exponent) yields NaN; overflow of the `F64` range yields an infinity with the sign of the true result; a zero base with a negative exponent yields an infinity (pole).
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | exp      | F64      | stack  | Exponent value |
@@ -575,7 +576,7 @@ Performs float logarithm, pushes result to stack. Negatives yield a DOMAIN_ERROR
 **Requirement:**  FPY-SEQ-002
 
 ## FMOD (45)
-Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in a DOMAIN_ERROR. A NaN will produce a NaN result or infinity as either argument yields NaN.
+Performs float modulo with Python's floored semantics, pushes result to stack. Computed as the exact truncated remainder (`frem`, i.e. `std::fmod`) plus at most one addition of the divisor when the remainder and divisor have differing signs; an exact-multiple result is a zero carrying the divisor's sign. A 0 divisor (rhs) yields a NaN result, not an error. A NaN operand or an infinite dividend yields NaN.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | rhs      | F64      | stack  | Right operand |
@@ -588,7 +589,7 @@ Performs float modulo, pushes result to stack. A 0 divisor (rhs) will result in 
 **Requirement:**  FPY-SEQ-002
 
 ## FPTRUNC (47)
-Truncates a 64-bit float to a 32-bit float, pushes result to stack.
+Truncates a 64-bit float to a 32-bit float (IEEE round-to-nearest demote), pushes result to stack. A finite value beyond the `F32` range rounds to +-inf.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
 | value    | F64      | stack  | Value to truncate |
@@ -720,10 +721,10 @@ Truncates a 64-bit integer to a 32-bit integer, pushes result to stack. Integers
 **Requirement:**  FPY-SEQ-015
 
 ## EXIT (57)
-Pops a byte off the stack. If the byte == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with an error code.
+Pops an `I32` exit code off the stack. If the code == 0, end sequence as if it had finished nominally, otherwise exit the sequence and raise an event with the error code.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
-| success    | U8      | stack  | 0 if should exit without error |
+| exit_code    | I32      | stack  | 0 if should exit without error |
 
 | Stack Result Type | Description |
 | ------------------|-------------|
@@ -820,7 +821,7 @@ Discards bytes from the top of the stack.
 
 ## MEMCMP (63)
 
-Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison pushing a boolean true when equal and false when unequal.
+Pops 2x `size` bytes off the stack.  Compares the first `size` bytes to the second `size` bytes with a byte-for-byte comparison. If equal, pushes `FW_SERIALIZE_TRUE_VALUE` to stack, otherwise `FW_SERIALIZE_FALSE_VALUE`.
 
 | Arg Name | Arg Type | Source     | Description |
 |----------|----------|------------|-------------|
@@ -865,33 +866,7 @@ Pushes the current time, from the `timeCaller` port, to the stack.
 
 **Requirement:**  FPY-SEQ-010
 
-## SET_FLAG (67)
-Pops a bool off the stack, and sets a command sequencer flag from the value.
-
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| flag_idx | U8 | hardcoded | Index of the flag to set |
-| value | bool | stack | Value to set the flag to |
-
-| Stack Result Type | Description |
-| ------------------|-------------|
-| N/A | |
-
-**Requirement:**  FPY-SEQ-020
-
-## GET_FLAG (68)
-Gets a command sequencer flag and pushes its value as a U8 to the stack.
-| Arg Name | Arg Type | Source | Description |
-|----------|----------|--------|-------------|
-| flag_idx | U8 | hardcoded | Index of the flag to get |
-
-| Stack Result Type | Description |
-| ------------------|-------------|
-| bool | The value of the flag |
-
-**Requirement:**  FPY-SEQ-020
-
-## GET_FIELD (69)
+## GET_FIELD (67)
 Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes from top of stack, and then inside of that a second array of hard-coded number of bytes. The second array is offset by the value previously popped off the stack, with offset 0 meaning the second array starts furthest down the stack. Leaves only the second array of bytes, deleting the surrounding bytes.
 
 | Arg Name | Arg Type | Source | Description |
@@ -906,7 +881,7 @@ Pops an offset (StackSizeType) off the stack. Takes a hard-coded number of bytes
 
 **Requirement:**  FPY-SEQ-019
 
-## PEEK (70)
+## PEEK (68)
 Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. Let `top` be the top of the stack. Takes the region starting at `top - offset - byteCount` and going to `top - offset`, and pushes this region to the top of the stack.
 | Arg Name | Arg Type | Source | Description |
 |----------|----------|--------|-------------|
@@ -919,7 +894,7 @@ Pops a StackSizeType `offset` off the stack, then a StackSizeType `byteCount`. L
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_REL (71)
+## STORE_REL (69)
 Stores a value to a local variable at a runtime-determined offset relative to the current stack frame.
 
 **Preconditions:**
@@ -947,7 +922,7 @@ Stores a value to a local variable at a runtime-determined offset relative to th
 
 **Requirement:**  FPY-SEQ-009
 
-## CALL (72)
+## CALL (70)
 Performs a function call. Pops the target directive index from the stack, saves the return address and current frame pointer to the stack, then transfers control to the target.
 
 **Preconditions:**
@@ -983,7 +958,7 @@ Performs a function call. Pops the target directive index from the stack, saves 
 
 **Requirement:**  FPY-SEQ-009
 
-## RETURN (73)
+## RETURN (71)
 Returns from a function call. Restores the caller's execution context and optionally returns a value.
 
 **Preconditions:**
@@ -1032,7 +1007,7 @@ stack_frame_start (restored)         stack top
 
 **Requirement:**  FPY-SEQ-009
 
-## LOAD_ABS (74)
+## LOAD_ABS (72)
 Loads a value from an absolute address in the stack (used for global variables), and pushes it to the stack.
 
 **Preconditions:**
@@ -1058,7 +1033,7 @@ Loads a value from an absolute address in the stack (used for global variables),
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_ABS (75)
+## STORE_ABS (73)
 Stores a value to an absolute address in the stack (used for global variables), with the offset determined at runtime.
 
 **Preconditions:**
@@ -1083,7 +1058,7 @@ Stores a value to an absolute address in the stack (used for global variables), 
 
 **Requirement:**  FPY-SEQ-009
 
-## STORE_ABS_CONST_OFFSET (76)
+## STORE_ABS_CONST_OFFSET (74)
 Stores a value to an absolute address in the stack (used for global variables), with a compile-time-known offset.
 
 **Preconditions:**
@@ -1106,3 +1081,121 @@ Stores a value to an absolute address in the stack (used for global variables), 
 | value         | bytes    | stack      | The value to store (popped from stack top). |
 
 **Requirement:**  FPY-SEQ-009
+
+## POP_EVENT (75)
+Pops a message size, message, and severity from the stack and emits an F Prime event.
+
+**Preconditions:**
+- `len(stack) >= sizeof(StackSizeType)` (to pop message_size)
+- After popping message_size: `len(stack) >= message_size + sizeof(Fw.LogSeverity)`
+
+**Semantics:**
+1. Pop `StackSizeType` from the stack — this is `message_size`.
+2. Pop `message_size` bytes from the stack — this is the UTF-8 encoded message.
+3. Pop `Fw.LogSeverity` (rep type U8) from the stack — this is the severity.
+4. The runtime raises an F Prime event whose severity is determined by the popped value and whose payload is the popped message bytes.
+
+**Severity values:**
+| Value | FPP Severity   |
+|-------|----------------|
+| 1     | FATAL          |
+| 2     | WARNING_HI     |
+| 3     | WARNING_LO     |
+| 4     | COMMAND        |
+| 5     | ACTIVITY_HI    |
+| 6     | ACTIVITY_LO    |
+| 7     | DIAGNOSTIC     |
+
+**Error Conditions:**
+- If `len(stack) < sizeof(StackSizeType)`: `STACK_UNDERFLOW`
+- If `len(stack) < message_size + sizeof(Fw.LogSeverity)` (after popping message_size): `STACK_UNDERFLOW`
+- If severity is not a valid `Fw.LogSeverity` value: `INVALID_ARG`
+
+| Arg Name     | Arg Type       | Source | Description |
+|--------------|----------------|--------|-------------|
+| message_size | StackSizeType  | stack  | Number of bytes to pop for the message. |
+| message      | bytes          | stack  | UTF-8 encoded message string. |
+| severity     | Fw.LogSeverity | stack  | The event severity level. |
+
+## SET_SEED (76)
+Pops a `U32` seed value from the stack and uses it to seed the sequencer's internal PRNG.
+
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| seed     | U32      | stack  | Seed value used to initialize the PRNG |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| N/A | |
+
+
+## PUSH_RAND (77)
+Pushes the next PRNG value to the stack.
+If this is called without the seed being manually set beforehand, then the seed will be set based on the current time.
+`PUSH_RAND` uses `std::mt19937` from C++'s random library, a deterministic non-cryptographic PRNG. It is suitable for repeatable pseudo-random values, simulations, randomized sequencing behavior, or tests, but it does not qualify as a [cryptographically secure pseudorandom number generator](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) and is not suitable for cryptographic keys, secrets, authentication tokens, or security-sensitive randomness.
+| Stack Result Type | Description |
+| ------------------|-------------|
+| U32 | The next pseudorandom 32-bit value from the sequencer's internal PRNG |
+
+## POP_SERIALIZABLE (78)
+Pops `size` bytes of serialized data from the stack and sends them to an external component via the sequencer's `serialOut` output port array.
+
+**Preconditions:**
+- `port_index < MAX_SERIAL_PORTS` (from the `Svc.Fpy.SerialPortIndex` enum in `FpySequencerCfg`)
+- `serialOut[port_index]` is connected to a target component
+- `len(stack) >= size`
+
+**Semantics:**
+1. Validate the port index is within bounds.
+2. Check that the specified port is connected.
+3. Pop `size` bytes from the stack.
+4. Send the popped bytes to the target component via `serialOut[port_index]`.
+
+**Error Conditions:**
+- If `port_index >= MAX_SERIAL_PORTS`: `SERIAL_PORT_INVALID_INDEX`
+- If `serialOut[port_index]` is not connected: `SERIAL_PORT_NOT_CONNECTED`
+- If `len(stack) < size`: `STACK_UNDERFLOW`
+
+| Arg Name     | Arg Type       | Source     | Description |
+|--------------|----------------|------------|-------------|
+| port_index   | FwIndexType    | hardcoded  | Index of the serialOut port array to use. |
+| size         | StackSizeType  | hardcoded  | Number of bytes to pop and send. |
+| value        | bytes          | stack      | Serialized data to send (popped from stack). |
+
+**Requirement:** FPY-SEQ-019
+
+## FFLOOR (79)
+Floors an `F64` toward negative infinity (the IEEE 754 `roundToIntegralTowardNegative` operation), pushes result to stack. A zero, infinite, or NaN value passes through unchanged; the sign of a zero is preserved (`-0.0` floors to `-0.0`). A NaN result is a quiet NaN; its sign and payload are unspecified. A value in `(0, 1)` floors to `0.0`; a value in `(-1, 0)` floors to `-1.0`. Never raises an error. Used to lower float floor division (`//`).
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to floor |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The floored value |
+
+**Requirement:**  FPY-SEQ-002
+
+## IABS (80)
+Pops a signed `I64`, pushes its absolute value to the stack: the value itself if non-negative, its negation otherwise. The absolute value of `I64` min (`-2**63`) is not representable in `I64` and results in ARITHMETIC_OVERFLOW.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | I64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| I64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002
+
+## FABS (81)
+Pops an `F64`, clears its sign bit, and pushes the result to the stack (the IEEE 754 `abs` operation, matching `llvm.fabs` and wasm's `f64.abs`). No bits other than the sign bit change: `-0.0` becomes `0.0`, `-inf` becomes `inf`, and a NaN keeps its payload and signaling bit. Never raises an error or floating-point exception.
+| Arg Name | Arg Type | Source | Description |
+|----------|----------|--------|-------------|
+| value    | F64      | stack  | Value to take the absolute value of |
+
+| Stack Result Type | Description |
+| ------------------|-------------|
+| F64 | The absolute value |
+
+**Requirement:**  FPY-SEQ-002

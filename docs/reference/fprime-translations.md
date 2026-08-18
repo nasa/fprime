@@ -1,4 +1,4 @@
-# F Prime Translation Guide: Software Engineering Terminology to F Prime Nomenclature
+# F Prime Translation Guide
 
 This guide provides a mapping between common software engineering concepts and their equivalent implementations in the F´ framework. It serves as a reference for developers new to F´ development.
 

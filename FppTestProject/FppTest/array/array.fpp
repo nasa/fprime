@@ -1,3 +1,11 @@
-array Uint32 = [2] U32;
+module FppTest {
 
-array Uint32Array = [3] Uint32;
+  module Array {
+
+    array Uint32 = [2] U32;
+
+    array Uint32Array = [3] Uint32;
+
+  }
+
+}

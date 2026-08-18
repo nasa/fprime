@@ -6,6 +6,8 @@
 #include <Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.hpp>
 #include "ComCcsdsConfig/ComCcsdsSubtopologyConfig.hpp"
 #include "Svc/Subtopologies/ComCcsds/ComCcsdsConfig/FppConstantsAc.hpp"
+#include "Svc/Subtopologies/ComCcsds/Ports_ComBufferQueueEnumAc.hpp"
+#include "Svc/Subtopologies/ComCcsds/Ports_ComPacketQueueEnumAc.hpp"
 
 namespace ComCcsds {
 struct SubtopologyState {

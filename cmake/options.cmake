@@ -17,13 +17,18 @@
 #
 ####
 include_guard()
-# Remap changed settings
-if (DEFINED FPRIME_INSTALL_DEST)
-    set(CMAKE_INSTALL_PREFIX ${FPRIME_INSTALL_DEST} CACHE PATH "Install dir" FORCE)
-endif()
 include("settings/ini")
-ini_to_cache()
-
+# Skip ini processing when fprime was loaded via find_package() and no settings file was explicitly provided.
+# In the find_package flow the project does not rely on fprime-util or settings.ini for path configuration.
+if (NOT FPRIME_LOADED_VIA_FIND_PACKAGE OR DEFINED FPRIME_SETTINGS_FILE)
+    ini_to_cache()
+endif()
+# FPRIME_INSTALL_DEST is the default DESTDIR used by fprime_install.cmake
+# when the user has not set DESTDIR in the environment.
+if(NOT DEFINED FPRIME_INSTALL_DEST)
+    set(FPRIME_INSTALL_DEST "${PROJECT_SOURCE_DIR}/build-artifacts" CACHE INTERNAL
+        "Install destination used as default DESTDIR" FORCE)
+endif()
 
 ####
 # `CMAKE_TOOLCHAIN_FILE:`
@@ -146,6 +151,20 @@ option(FPRIME_ENABLE_AUTOCODER_UTS "Enable autocoder UT generation" OFF)
 # e.g. `-DFPRIME_ENABLE_UT_COVERAGE=OFF`
 ####
 option(FPRIME_ENABLE_UT_COVERAGE "Calculate unit test coverage" ON)
+
+####
+# `FPRIME_ENABLE_DIRECT_PORT_CALLS`:
+#
+# Enable F Prime topology direct port calls. Enabling this will disable unit test builds as UTs are not supported
+# with direct port calls.
+#
+# **Values:**
+# - ON: generate topology port connections using direct function calls
+# - OFF: (default) generate topology port connections through a pointer call
+#
+# e.g. `-FPRIME_ENABLE_DIRECT_PORT_CALLS
+####
+option(FPRIME_ENABLE_DIRECT_PORT_CALLS "Call port connections through symbols rather than function pointers" OFF)
 
 ####
 # `FPRIME_ENABLE_TEXT_LOGGERS`:
@@ -336,18 +355,12 @@ endif()
 set(FPRIME_FRAMEWORK_PATH "${DETECTED_FRAMEWORK_PATH}" CACHE PATH "F Prime framework location" FORCE)
 
 # Setup project root
-get_filename_component(FULL_PROJECT_PATH "${CMAKE_PROJECT_DIR}" ABSOLUTE)
-file(RELATIVE_PATH TEMP_PATH "${FPRIME_FRAMEWORK_PATH}" "${FULL_PROJECT_PATH}")
-# If defined then force it to be absolute
 if (DEFINED FPRIME_PROJECT_ROOT)
+    # If explicitly defined (CLI or settings.ini), force it to be absolute
     get_filename_component(FPRIME_PROJECT_ROOT_ABS "${FPRIME_PROJECT_ROOT}" ABSOLUTE)
     set(FPRIME_PROJECT_ROOT "${FPRIME_PROJECT_ROOT_ABS}" CACHE PATH "F Prime project location" FORCE)
-# Forces framework path as project root, if a child
-elseif( "${TEMP_PATH}" MATCHES "^[^./].*" )
-    set(FPRIME_PROJECT_ROOT "${FPRIME_FRAMEWORK_PATH}" CACHE PATH "F Prime project location" FORCE)
-# Force PROJECT_ROOT
 else()
-    set(FPRIME_PROJECT_ROOT "${FULL_PROJECT_PATH}" CACHE PATH "F Prime project location" FORCE)
+    set(FPRIME_PROJECT_ROOT "${PROJECT_SOURCE_DIR}" CACHE PATH "F Prime project location" FORCE)
 endif()
 # Force  FPRIME_LIBRARY_LOCATIONS to be absolute
 set(FPRIME_LIBRARY_LOCATIONS_ABS)

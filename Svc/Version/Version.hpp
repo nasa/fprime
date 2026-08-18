@@ -24,8 +24,11 @@ class Version final : public VersionComponentBase {
     //! Destroy Version object
     ~Version();
 
-    //! configure version's verbosity and startup
+    //! configure version's verbosity
     void config(bool enable);
+
+    //! send initial version tlm and events
+    void start();
 
   private:
     // ----------------------------------------------------------------------
@@ -66,17 +69,17 @@ class Version final : public VersionComponentBase {
     //! Handler implementation for command ENABLE
     //!
     //! A command to enable or disable Version telemetry
-    void ENABLE_cmdHandler(FwOpcodeType opCode,        //!< The opcode
-                           U32 cmdSeq,                 //!< The command sequence number
-                           Svc::VersionEnabled enable  //!< whether or not Version telemetry is enabled
+    void ENABLE_cmdHandler(FwOpcodeType opCode,               //!< The opcode
+                           U32 cmdSeq,                        //!< The command sequence number
+                           const Svc::VersionEnabled& enable  //!< whether or not Version telemetry is enabled
                            ) override;
 
     //! Handler implementation for command VERSION
     //!
     //! Report version as event
-    void VERSION_cmdHandler(FwOpcodeType opCode,           //!< The opcode
-                            U32 cmdSeq,                    //!< The command sequence number
-                            Svc::VersionType version_type  //!< which version type event is requested
+    void VERSION_cmdHandler(FwOpcodeType opCode,                  //!< The opcode
+                            U32 cmdSeq,                           //!< The command sequence number
+                            const Svc::VersionType& version_type  //!< which version type event is requested
                             ) override;
 
   private:

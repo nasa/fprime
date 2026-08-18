@@ -42,16 +42,16 @@ namespace Drv {
 
 TcpClientSocket::TcpClientSocket() : IpSocket() {}
 
-bool TcpClientSocket::isValidPort(U16 port) {
+bool TcpClientSocket::isValidPort(U16 port) const {
     return port != 0;
 }
 
 SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor) {
-    int socketFd = -1;
     struct sockaddr_in address;
 
     // Acquire a socket, or return error
-    if ((socketFd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+    int socketFd = ::socket(AF_INET, SOCK_STREAM, 0);
+    if (socketFd == -1) {
         return SOCK_FAILED_TO_GET_SOCKET;
     }
     // Set up the address port and name
@@ -63,30 +63,32 @@ SocketIpStatus TcpClientSocket::openProtocol(SocketDescriptor& socketDescriptor)
     address.sin_len = static_cast<U8>(sizeof(struct sockaddr_in));
 #endif
 
-    // First IP address to socket sin_addr
-    if (IpSocket::addressToIp4(m_hostname, &(address.sin_addr)) != SOCK_SUCCESS) {
-        ::close(socketFd);
+    // Convert the configured IPv4 address (dotted-quad) to a network-order in_addr.
+
+    const SocketIpStatus addressStatus = IpSocket::addressToIp4(this->m_ipv4_address, &(address.sin_addr));
+    if (addressStatus != SOCK_SUCCESS) {
+        (void)::close(socketFd);
         return SOCK_INVALID_IP_ADDRESS;
     };
 
     if (IpSocket::setupSocketOptions(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // Now apply timeouts
     if (IpSocket::setupTimeouts(socketFd) != SOCK_SUCCESS) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_SET_SOCKET_OPTIONS;
     }
 
     // TCP requires connect to the socket to allow for communication
     if (::connect(socketFd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) < 0) {
-        ::close(socketFd);
+        (void)::close(socketFd);
         return SOCK_FAILED_TO_CONNECT;
     }
     socketDescriptor.fd = socketFd;
-    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", m_hostname, m_port);
+    Fw::Logger::log("Connected to %s:%hu as a tcp client\n", this->m_ipv4_address, this->m_port);
     return SOCK_SUCCESS;
 }
 

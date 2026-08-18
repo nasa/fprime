@@ -33,7 +33,7 @@ void BasicSelf::test() {
     ASSERT_EQ(this->m_id, id);
     ASSERT_EQ(this->getState(), State::S);
     ASSERT_EQ(this->m_action_a_history.getSize(), 1);
-    ASSERT_EQ(this->m_action_a_history.getItemAt(0), Signal::__FPRIME_AC_INITIAL_TRANSITION);
+    ASSERT_EQ(this->m_action_a_history.getItemAt(0), Signal::__FPRIME_INITIAL_TRANSITION);
     this->m_action_a_history.clear();
     this->sendSignal_s();
     ASSERT_EQ(this->getState(), State::S);

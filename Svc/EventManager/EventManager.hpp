@@ -8,8 +8,11 @@
 #ifndef Svc_EventManager_HPP_
 #define Svc_EventManager_HPP_
 
+#include <Fw/DataStructures/ArraySet.hpp>
 #include <Fw/Log/LogPacket.hpp>
+#include <Os/Mutex.hpp>
 #include <Svc/EventManager/EventManagerComponentAc.hpp>
+#include <Svc/Types/EventSeverityFilter/EventSeverityFilter.hpp>
 #include <config/EventManagerCfg.hpp>
 
 namespace Svc {
@@ -33,18 +36,21 @@ class EventManager final : public EventManagerComponentBase {
 
     void SET_EVENT_FILTER_cmdHandler(FwOpcodeType opCode,
                                      U32 cmdSeq,
-                                     EventManager_FilterSeverity filterLevel,
-                                     EventManager_Enabled filterEnabled);
+                                     const EventManager_FilterSeverity& filterLevel,
+                                     const EventManager_Enabled& filterEnabled);
 
     void SET_ID_FILTER_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                   U32 cmdSeq,           //!< The command sequence number
                                   FwEventIdType ID,
-                                  EventManager_Enabled idFilterEnabled  //!< ID filter state
+                                  const EventManager_Enabled& idFilterEnabled  //!< ID filter state
     );
 
     void DUMP_FILTER_STATE_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                       U32 cmdSeq            //!< The command sequence number
     );
+
+    //! Handler for rate group port — writes dropped-event telemetry
+    void run_handler(FwIndexType portNum, U32 context);
 
     //! Handler implementation for pingIn
     //!
@@ -52,18 +58,18 @@ class EventManager final : public EventManagerComponentBase {
                         U32 key                    /*!< Value to return to pinger*/
     );
 
-    // Filter state
-    struct t_filterState {
-        EventManager_Enabled enabled;  //<! filter is enabled
-    } m_filterState[EventManager_FilterSeverity::NUM_CONSTANTS];
+    // Severity filter state (shared implementation)
+    EventSeverityFilter m_severityFilter;
 
     // Working members
     Fw::LogPacket m_logPacket;  //!< packet buffer for assembling log packets
     Fw::ComBuffer m_comBuffer;  //!< com buffer for sending event buffers
 
-    // array of filtered event IDs.
-    // value of 0 means no entry
-    FwEventIdType m_filteredIDs[TELEM_ID_FILTER_SIZE];
+    // Set of filtered event IDs.
+    Fw::ArraySet<FwEventIdType, TELEM_ID_FILTER_SIZE> m_filteredIDs;
+
+    // Guards m_filteredIDs: read on the sync LogRecv path, mutated on the command thread
+    Os::Mutex m_idFilterLock;
 };
 
 }  // namespace Svc

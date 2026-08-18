@@ -13,6 +13,8 @@
 #ifndef COMMANDDISPATCHERIMPL_HPP_
 #define COMMANDDISPATCHERIMPL_HPP_
 
+#include <Fw/DataStructures/ArrayMap.hpp>
+#include <Fw/DataStructures/RedBlackTreeMap.hpp>
 #include <Os/Mutex.hpp>
 #include <Svc/CmdDispatcher/CommandDispatcherComponentAc.hpp>
 #include <config/CommandDispatcherImplCfg.hpp>
@@ -142,43 +144,27 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
 
-    //! \struct DispatchEntry
-    //! \brief table used to store opcode to port mappings
+    //! \brief map from opcode to output port index
     //!
-    //! The DispatchEntry table is used to map incoming opcodes to the port
-    //! connected to the component that implements the opcode.
-    //! As each command opcode is registered, a new entry is found
-    //! in the table by checking for the "used" flag. The opcode
-    //! member is set to the opcode, and the port member set to the
-    //! port to dispatch to. When a new opcode is received for
-    //! execution, the table is traversed until the opcode is located.
+    //! Maps each registered command opcode to the output port index of the
+    //! component that implements it. Replaces the former linear DispatchEntry
+    //! array with an O(log n) red-black tree lookup.
+    Fw::RedBlackTreeMap<FwOpcodeType, FwIndexType, CMD_DISPATCHER_DISPATCH_TABLE_SIZE> m_entryTable;
 
-    struct DispatchEntry {
-        bool used;                                       //!< if entry has been used yet
-        FwOpcodeType opcode;                             //!< opcode of entry
-        FwIndexType port;                                //!< which port the entry invokes
-    } m_entryTable[CMD_DISPATCHER_DISPATCH_TABLE_SIZE];  //!< table of dispatch entries
-
-    //! \struct SequenceTracker
-    //! \brief table used to store opcode that are being executed
+    //! \struct SequenceTrackerEntry
+    //! \brief data tracked for commands that are currently executing
     //!
-    //! The SequenceTracker table is used to track commands that are being executed
-    //! but are not yet complete. When a new command opcode is received,
-    //! the status port that would be used to report the completion status
-    //! is checked. If it is connected, then an entry is placed in this table.
-    //! The "used" flag is set, and the "seq" member is set to the
-    //! assigned sequence number for the command. The "opCode" field is
-    //! used for the opcode, and the "callerPort" field is used to store
-    //! the port number of the caller so the status can be reported back to
-    //! correct port.
+    //! A sequence number key is mapped to this value for each dispatched
+    //! command that expects a completion callback.
 
-    struct SequenceTracker {
-        bool used;                                             //!< if this slot is used
-        U32 seq;                                               //!< command sequence number
-        FwOpcodeType opCode;                                   //!< opcode being tracked
-        U32 context;                                           //!< context passed by user
-        FwIndexType callerPort;                                //!< port command source port
-    } m_sequenceTracker[CMD_DISPATCHER_SEQUENCER_TABLE_SIZE];  //!< sequence tracking port for command completions;
+    struct SequenceTrackerEntry {
+        FwOpcodeType opCode;     //!< opcode being tracked
+        U32 context;             //!< context passed by user
+        FwIndexType callerPort;  //!< port command source port
+    };
+
+    //! \brief map from command sequence number to pending command state
+    Fw::ArrayMap<U32, SequenceTrackerEntry, CMD_DISPATCHER_SEQUENCER_TABLE_SIZE> m_sequenceTracker;
 
     U32 m_seq;  //!< current command sequence number
 

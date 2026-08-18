@@ -2,11 +2,6 @@ module Svc {
     @ Dispatches command sequences to available command sequencers
     active component FpySequencer {
 
-        enum BlockState : U8 {
-            BLOCK
-            NO_BLOCK
-        }
-
         enum GoalState : U8 {
             RUNNING
             VALID
@@ -53,6 +48,10 @@ module Svc {
         # same priority as RUN cmd
         async input port seqRunIn: Svc.CmdSeqIn priority 7 assert
 
+        @ port for requesting to cancel the currently running sequence
+        # same priority as CANCEL cmd
+        async input port seqCancelIn: Svc.CmdSeqCancel priority 8 assert
+
         @ called when a sequence begins running
         output port seqStartOut: Svc.CmdSeqIn
 
@@ -67,6 +66,9 @@ module Svc {
 
         @ port for getting param values and storing them in sequence serRegs
         output port getParam: Fw.PrmGet
+
+        @ Output ports for popping serializable data from stack to downstream components
+        output port serialOut: [Svc.Fpy.SerialPortIndex.MAX_SERIAL_PORTS] serial
 
         ###############################################################################
         # Standard AC Ports: Required for Channels, Events, Commands, and Parameters  #

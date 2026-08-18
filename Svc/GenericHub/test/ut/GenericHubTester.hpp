@@ -60,6 +60,18 @@ class GenericHubTester : public GenericHubGTestBase {
     //!
     void test_events();
 
+    //! Test of commands in-out
+    //!
+    void test_commands();
+
+    //! Test of commands in-out on a nonzero port index
+    //!
+    void test_commands_nonzero_port();
+
+    //! Test invalid input/deserialization guard paths
+    //!
+    void test_invalid_deserialization_paths();
+
   private:
     // ----------------------------------------------------------------------
     // Handlers for typed from ports
@@ -80,6 +92,21 @@ class GenericHubTester : public GenericHubGTestBase {
                              FwChanIdType id,           /*!< Telemetry Channel ID */
                              Fw::Time& timeTag,         /*!< Time Tag */
                              Fw::TlmBuffer& val         /*!< Buffer containing serialized telemetry value */
+    );
+
+    //! Handler for from_cmdDispOut
+    //!
+    void from_cmdDispOut_handler(const FwIndexType portNum, /*!< The port number*/
+                                 Fw::ComBuffer& data,       /*!< Buffer containing packet data */
+                                 U32 context                /*!< Call context value; meaning chosen by user */
+    );
+
+    //! Handler for from_cmdRespOut
+    //!
+    void from_cmdRespOut_handler(const FwIndexType portNum,      /*!< The port number*/
+                                 FwOpcodeType opCode,            /*!< Command Op Code */
+                                 U32 cmdSeq,                     /*!< Command Sequence */
+                                 const Fw::CmdResponse& response /*!< The command response argument */
     );
 
     //! Handler for from_bufferOut
@@ -114,8 +141,8 @@ class GenericHubTester : public GenericHubGTestBase {
 
     //! Handler for from_serialOut
     //!
-    void from_serialOut_handler(FwIndexType portNum,            /*!< The port number*/
-                                Fw::SerializeBufferBase& Buffer /*!< The serialization buffer*/
+    void from_serialOut_handler(FwIndexType portNum,         /*!< The port number*/
+                                Fw::LinearBufferBase& Buffer /*!< The serialization buffer*/
     );
 
   private:
@@ -123,7 +150,19 @@ class GenericHubTester : public GenericHubGTestBase {
 
     void send_random_buffer(U32 port);
 
-    void random_fill(Fw::SerializeBufferBase& buffer, U32 max_size);
+    void random_fill(Fw::SerialBufferBase& buffer, U32 max_size);
+
+    void test_command_dispatch();
+
+    void test_command_response();
+
+    void send_from_driver_packet(U32 type,
+                                 U32 port,
+                                 FwBuffSizeType declaredSize,
+                                 const U8* payload,
+                                 FwBuffSizeType payloadSize);
+
+    void assert_no_outputs_sent();
 
     // ----------------------------------------------------------------------
     // Helper methods
@@ -154,6 +193,8 @@ class GenericHubTester : public GenericHubGTestBase {
     U32 m_comm_out;
     U32 m_buffer_out;
     U32 m_current_port;
+    FwIndexType m_cmdDispOutPort;
+    FwIndexType m_cmdRespOutPort;
     U8 m_data_store[DATA_SIZE];
     U8 m_data_for_allocation[DATA_SIZE];
 };

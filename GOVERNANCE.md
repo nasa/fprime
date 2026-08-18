@@ -26,12 +26,13 @@ The F Prime community breaks down into a set of roles that take actions and have
 
 Each role has a set of privileges afforded to it. These privileges are: 
 
-| Role              | Read/Clone | Propose Pull Request | Comment in Tickets / Discussions | Review | Binding Review | Merge | Project Decisions |
-|-------------------|------------|----------------------|----------------------------------|--------|----------------|-------|-------------------|
-| User              | ✅          | ❌                    | ❌                                | ❌      | ❌              | ❌     | ❌                 |
-| Contributor       | ✅          | ✅                    | ✅                                | ✅      | ❌              | ❌     | ❌                 |
-| CCB Member        | ✅          | ✅                    | ✅                                | ✅      | ✅              | ❌     | ✅                 |
-| Community Manager | ✅          | ✅                    | ✅                                | ✅      | ✅              | ✅     | ✅                  |
+| Role              | Read/Clone | Propose Pull Request | Comment in Tickets / Discussions | Review | Binding Review | Merge | Project Decisions | Release |
+|-------------------|------------|----------------------|----------------------------------|--------|----------------|-------|-------------------|---------|
+| User              | ✅          | ❌                   | ❌                               | ❌     | ❌             | ❌     | ❌                | ❌       |
+| Contributor       | ✅          | ✅                   | ✅                               | ✅     | ❌             | ❌     | ❌                | ❌       |
+| CCB Member        | ✅          | ✅                   | ✅                               | ✅     | ❌             | ❌     | ✅                | ❌       |
+| Maintainer        | ✅          | ✅                   | ✅                               | ✅     | ✅             | ✅     | ❌                | ✅       |
+| Community Manager | ✅          | ✅                   | ✅                               | ✅     | ✅             | ✅     | ✅                | ✅       |
 
 ### User
 
@@ -50,6 +51,10 @@ CCB members are individuals working as part of the governance of the F Prime tea
 CCB members do not operate in a vacuum. These members solicit feedback from the community through conversations in our Discussions and Issues. Specifically, CCB members will open [Calls for Comments](https://github.com/nasa/fprime/discussions/categories/call-for-comments) to solicit feedback on specific decisions they will make.
 
 The CCB is also charged with selecting the contributors to join the CCB.  These members must be active sustained members of the F Prime community.
+
+### Maintainer
+
+Maintainers are granted the authority to merge and release specific products as part of the Project. These maintainers may or may not be part of the CCB but they do assist the Community Managers in their charge of carrying out the decisions of the CCB as directed to a specific product.  Maintainers are selected by the CCB.
 
 ### Community Manager 
 

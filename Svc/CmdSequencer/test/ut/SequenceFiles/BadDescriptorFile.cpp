@@ -26,7 +26,7 @@ BadDescriptorFile ::BadDescriptorFile(const U32 a_n, const Format::t a_format) :
     this->setName(baseName.toChar());
 }
 
-void BadDescriptorFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
+void BadDescriptorFile ::serializeFPrime(Fw::LinearBufferBase& buffer) {
     // Header
     const TimeBase timeBase = TimeBase::TB_WORKSTATION_TIME;
     const U32 timeContext = 0;
@@ -47,7 +47,7 @@ void BadDescriptorFile ::serializeFPrime(Fw::SerializeBufferBase& buffer) {
     FPrime::CRCs::serialize(buffer);
 }
 
-void BadDescriptorFile ::serializeAMPCS(Fw::SerializeBufferBase& buffer) {
+void BadDescriptorFile ::serializeAMPCS(Fw::LinearBufferBase& buffer) {
     // Header
     AMPCS::Headers::serialize(buffer);
     // Records

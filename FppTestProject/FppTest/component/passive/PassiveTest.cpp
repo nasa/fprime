@@ -70,19 +70,19 @@ void PassiveTest ::CMD_STRINGS_cmdHandler(const FwOpcodeType opCode,
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void PassiveTest ::CMD_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamEnum en) {
+void PassiveTest ::CMD_ENUM_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamEnum& en) {
     this->enumCmd.args.val = en;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void PassiveTest ::CMD_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamArray arr) {
+void PassiveTest ::CMD_ARRAY_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamArray& arr) {
     this->arrayCmd.args.val = arr;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void PassiveTest ::CMD_STRUCT_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, FormalParamStruct str) {
+void PassiveTest ::CMD_STRUCT_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq, const FormalParamStruct& str) {
     this->structCmd.args.val = str;
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

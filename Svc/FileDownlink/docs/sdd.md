@@ -21,6 +21,7 @@ Requirement | Description | Rationale | Verification Method
 FD-001 | `FileDownlink` shall queue up a list of files to downlink | The requirement provides the ability to simultaneously queue up multiple files for downlink from different sources | Test
 FD-002 | `FileDownlink` shall read a file from non-volatile storage, partition the file into packets, and send out the packets. | This requirement provides the capability to downlink files from the spacecraft. | Test
 FD-003 | `FileDownlink` shall wait for a cooldown after completing a file downlink before starting another file downlink | Allows a saturated link to process a backlog that may have built up during a file downlink | Test
+FD-004 | `FileDownlink` shall issue a warning if a file with zero size is encountered | Ensures that operators are aware of invalid file sizes | Test
 
 ## 3 Design
 
@@ -35,6 +36,20 @@ of type [`Fw::FilePacket`](../../../Fw/FilePacket/docs/sdd.md).
 
 3. Both components and operators must be able to enqueue files, necessitating both a `SendFile`
    command and port.
+
+4. File access is sandboxed to a directory configured via `configure(directory)`.
+   All source paths supplied through `SendFile`/`SendPartial` commands or the
+   `SendFile` port are validated against the sandbox directory before reading; rejected paths emit
+   `SourceOutOfSandbox`. This mirrors `Svc::FileUplink` write-side sandboxing.
+
+   > [!WARNING]
+   > The sandbox is **fail-open**: until `configure(directory)` is called, the sandbox defaults to
+   > `/`, which permits reading any absolute path accessible to the process via ground command.
+   > This default is intentionally insecure for backwards compatibility. Security-conscious
+   > deployments **must** call `configure(directory)` during topology setup to restrict file
+   > access. Note that the stock `FileHandling` subtopology and reference topologies do **not**
+   > configure a downlink sandbox: `FileHandling` only calls the
+   > `configure(cooldown, cycleTime, fileQueueDepth)` overload, which does not set a sandbox.
 
 ### 3.3 Ports
 

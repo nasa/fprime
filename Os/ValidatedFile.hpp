@@ -35,6 +35,10 @@ class ValidatedFile {
     //! \return Status
     Os::ValidateFile::Status createHashFile();
 
+    //! Create the hash file from a pre-computed hash
+    //! \return Status
+    Os::ValidateFile::Status createHashFile(const Utils::HashBuffer& hashBuffer);
+
   public:
     //! Get the file name
     //! \return The file name

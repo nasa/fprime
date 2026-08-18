@@ -1,8 +1,7 @@
+#include <Utils/Hash/Hash.hpp>
 #include "Svc/FpySequencer/FppConstantsAc.hpp"
 #include "Svc/FpySequencer/FpySequencer.hpp"
-extern "C" {
-#include "Utils/Hash/libcrc/lib_crc.h"
-}
+
 namespace Svc {
 
 void FpySequencer::allocateBuffer(FwEnumStoreType identifier, Fw::MemAllocator& allocator, FwSizeType bytes) {
@@ -24,21 +23,17 @@ void FpySequencer::deallocateBuffer(Fw::MemAllocator& allocator) {
     this->m_sequenceBuffer.clear();
 }
 
-void FpySequencer::updateCrc(U32& crc, const U8* buffer, FwSizeType bufferSize) {
-    FW_ASSERT(buffer);
-    for (FwSizeType index = 0; index < bufferSize; index++) {
-        crc = static_cast<U32>(update_crc_32(crc, static_cast<char>(buffer[index])));
-    }
-}
-
 // loads the sequence in memory, and does header/crc/integrity checks.
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::validate() {
-    FW_ASSERT(this->m_sequenceFilePath.length() > 0);
+    if (this->m_sequenceFilePath.length() == 0) {
+        this->log_WARNING_HI_FileOpenError(this->m_sequenceFilePath, static_cast<I32>(Os::File::INVALID_ARGUMENT));
+        return Fw::Success::FAILURE;
+    }
 
     // crc needs to be initialized with a particular value
     // for the calculation to work
-    this->m_computedCRC = CRC_INITIAL_VALUE;
+    this->m_computedCRC.init();
 
     Os::File sequenceFile;
     Os::File::Status openStatus = sequenceFile.open(this->m_sequenceFilePath.toChar(), Os::File::OPEN_READ);
@@ -87,15 +82,41 @@ Fw::Success FpySequencer::validate() {
         return Fw::Success::FAILURE;
     }
 
-    // make sure we're at EOF
+    // make sure we're at EOF. The size() and position() OS calls can fail
+    // on filesystem errors or if the file was concurrently modified by
+    // another FileManager command (e.g. RemoveFile or AppendFile) between
+    // the file open and this point. Treat the failure as a validation
+    // failure rather than aborting the FSW process.
     FwSizeType sequenceFileSize;
-    FW_ASSERT(sequenceFile.size(sequenceFileSize) == Os::File::Status::OP_OK);
+    Os::File::Status sizeStatus = sequenceFile.size(sequenceFileSize);
+    if (sizeStatus != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(sizeStatus));
+        return Fw::Success::FAILURE;
+    }
 
     FwSizeType sequenceFilePosition;
-    FW_ASSERT(sequenceFile.position(sequenceFilePosition) == Os::File::Status::OP_OK);
+    Os::File::Status positionStatus = sequenceFile.position(sequenceFilePosition);
+    if (positionStatus != Os::File::Status::OP_OK) {
+        this->log_WARNING_HI_FileApiError(this->m_sequenceFilePath, static_cast<I32>(positionStatus));
+        return Fw::Success::FAILURE;
+    }
 
     if (sequenceFileSize != sequenceFilePosition) {
         this->log_WARNING_HI_ExtraBytesInSequence(static_cast<FwSizeType>(sequenceFileSize - sequenceFilePosition));
+        return Fw::Success::FAILURE;
+    }
+
+    if (this->m_sequenceArgs.get_size() > Fpy::MAX_STACK_SIZE) {
+        this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(
+            static_cast<Fpy::StackSizeType>(this->m_sequenceArgs.get_size()));
+        return Fw::Success::FAILURE;
+    }
+
+    // The argument size arrives separately from the argument buffer, so it can describe more bytes
+    // than that buffer holds. Reject before anything reads the buffer by that size.
+    const FwSizeType argCapacity = static_cast<FwSizeType>(sizeof(this->m_sequenceArgs.get_buffer()));
+    if (this->m_sequenceArgs.get_size() > argCapacity) {
+        this->log_WARNING_HI_ArgSizeExceedsCapacity(this->m_sequenceArgs.get_size(), argCapacity);
         return Fw::Success::FAILURE;
     }
 
@@ -139,22 +160,41 @@ Fw::Success FpySequencer::readHeader() {
 // return SUCCESS if sequence is valid, FAILURE otherwise
 Fw::Success FpySequencer::readBody() {
     Fw::SerializeStatus deserStatus;
-    // deser body:
-    // deser arg mappings
-    for (U8 argMappingIdx = 0; argMappingIdx < this->m_sequenceObj.get_header().get_argumentCount(); argMappingIdx++) {
-        // serializable register index of arg $argMappingIdx
-        // TODO should probably check that this serReg is inside range
-        deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_args()[argMappingIdx]);
-        if (deserStatus != Fw::FW_SERIALIZE_OK) {
+
+    const U8 argumentCount = this->m_sequenceObj.get_header().get_argumentCount();
+    this->m_totalExpectedArgSize = 0;
+
+    // deser arguments
+    // Read and deserialize each arg_spec incrementally since they're variable-length
+    for (U8 i = 0; i < argumentCount; i++) {
+        Fpy::ArgSpec& argSpec = this->m_sequenceObj.get_args()[i];
+        deserStatus = this->m_sequenceBuffer.deserializeTo(argSpec);
+        if (deserStatus != Fw::SerializeStatus::FW_SERIALIZE_OK) {
             this->log_WARNING_HI_FileReadDeserializeError(
                 FpySequencer_FileReadStage::BODY, this->m_sequenceFilePath, static_cast<I32>(deserStatus),
                 this->m_sequenceBuffer.getDeserializeSizeLeft(), this->m_sequenceBuffer.getSize());
             return Fw::Success::FAILURE;
         }
+
+        m_totalExpectedArgSize += argSpec.get_argSize();
+    }
+
+    // Check for overflow
+    if (m_totalExpectedArgSize > Fpy::MAX_STACK_SIZE) {
+        this->log_WARNING_HI_ArgTotalSizeExceedsStackLimit(m_totalExpectedArgSize);
+        return Fw::Success::FAILURE;
+    }
+
+    // Validate total argument size
+    if (this->m_totalExpectedArgSize != this->m_sequenceArgs.get_size()) {
+        this->log_WARNING_HI_ArgSizeMismatch(this->m_totalExpectedArgSize, this->m_sequenceArgs.get_size(),
+                                             this->m_sequenceFilePath);
+        return Fw::Success::FAILURE;
     }
 
     // deser statements
-    for (U16 statementIdx = 0; statementIdx < this->m_sequenceObj.get_header().get_statementCount(); statementIdx++) {
+    const U16 statementCount = this->m_sequenceObj.get_header().get_statementCount();
+    for (U16 statementIdx = 0; statementIdx < statementCount; statementIdx++) {
         // deser statement
         deserStatus = this->m_sequenceBuffer.deserializeTo(this->m_sequenceObj.get_statements()[statementIdx]);
         if (deserStatus != Fw::FW_SERIALIZE_OK) {
@@ -179,10 +219,11 @@ Fw::Success FpySequencer::readFooter() {
     }
 
     // need this for some reason to "finalize" the crc TODO get an explanation on this
-    this->m_computedCRC = ~this->m_computedCRC;
+    U32 computedCRC = 0;
+    this->m_computedCRC.finalize(computedCRC);
 
-    if (this->m_computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
-        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.get_footer().get_crc(), this->m_computedCRC);
+    if (computedCRC != this->m_sequenceObj.get_footer().get_crc()) {
+        this->log_WARNING_HI_WrongCRC(this->m_sequenceObj.get_footer().get_crc(), computedCRC);
         return Fw::Success::FAILURE;
     }
 
@@ -229,7 +270,7 @@ Fw::Success FpySequencer::readBytes(Os::File& file,
     FW_ASSERT(serializeStatus == Fw::FW_SERIALIZE_OK, serializeStatus);
 
     if (updateCrc) {
-        FpySequencer::updateCrc(this->m_computedCRC, this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
+        this->m_computedCRC.update(this->m_sequenceBuffer.getBuffAddr(), expectedReadLen);
     }
 
     return Fw::Success::SUCCESS;

@@ -85,8 +85,12 @@ void DpWriter::bufferSendIn_handler(const FwIndexType portNum, Fw::Buffer& buffe
     if (status == Fw::Success::SUCCESS) {
         const FwDpIdType containerId = container.getId();
         const Fw::Time timeTag = container.getTimeTag();
-        fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(), containerId, timeTag.getSeconds(),
-                        timeTag.getUSeconds());
+        const Fw::FormatStatus formatStatus = fileName.format(DP_FILENAME_FORMAT, this->m_dpFileNamePrefix.toChar(),
+                                                              containerId, timeTag.getSeconds(), timeTag.getUSeconds());
+        if (formatStatus != Fw::FormatStatus::SUCCESS) {
+            this->log_WARNING_HI_FileNameFormatError(static_cast<Fw::StringFormatStatus::T>(formatStatus));
+            status = Fw::Success::FAILURE;
+        }
     }
     // Calculate and populate the file data checksum
     if (status == Fw::Success::SUCCESS) {
@@ -158,16 +162,38 @@ Fw::Success::T DpWriter::deserializePacketHeader(Fw::Buffer& buffer, Fw::DpConta
     return status;
 }
 
-void DpWriter::performProcessing(const Fw::DpContainer& container) {
+void DpWriter::performProcessing(Fw::DpContainer& container) {
     // Get the buffer
     Fw::Buffer buffer = container.getBuffer();
     // Get the bit mask for the processing types
     const Fw::DpCfg::ProcType::SerialType procTypes = container.getProcTypes();
     // Do the processing
+    bool did_process = false;
     for (FwIndexType portNum = 0; portNum < NUM_PROCBUFFERSENDOUT_OUTPUT_PORTS; ++portNum) {
         if ((procTypes & (1 << portNum)) != 0) {
             this->procBufferSendOut_out(portNum, buffer);
+            did_process = true;
         }
+    }
+
+    if (did_process) {
+        // Updated DpContainer object state with the returned value in the
+        // container buffer
+        Fw::SerializeStatus stat = container.deserializeHeader();
+        FW_ASSERT(stat == Fw::FW_SERIALIZE_OK, stat);
+
+        // Check that the buffer size is compatible with the packet size in
+        // the container header
+        FW_ASSERT(container.getPacketSize() <= buffer.getSize(),
+                  static_cast<FwAssertArgType>(container.getPacketSize()),
+                  static_cast<FwAssertArgType>(buffer.getSize()));
+
+        // Re-compute and serialize the container header into the buffer
+        container.updateHeaderHash();
+        container.serializeHeader();
+
+        // Shrink internal Fw::Buffer
+        container.shrinkBufferSize();
     }
 }
 

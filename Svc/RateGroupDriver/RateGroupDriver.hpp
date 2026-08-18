@@ -40,9 +40,9 @@ class RateGroupDriver final : public RateGroupDriverComponentBase {
     //! \brief Struct describing a divider
     struct Divider {
         //! Initializes divisor and offset to 0 (unused)
-        Divider() : divisor(0), offset(0) {}
+        constexpr Divider() : divisor(0), offset(0) {}
         //! Initializes divisor and offset to passed-in pair
-        Divider(FwSizeType divisorIn, FwSizeType offsetIn) : divisor(divisorIn), offset(offsetIn) {}
+        constexpr Divider(FwSizeType divisorIn, FwSizeType offsetIn) : divisor(divisorIn), offset(offsetIn) {}
         //! Divisor
         FwSizeType divisor;
         //! Offset

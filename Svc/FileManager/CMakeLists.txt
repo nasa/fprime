@@ -20,7 +20,7 @@ register_fprime_module(
 
 register_fprime_ut(
   AUTOCODER_INPUTS
-    "${FPRIME_FRAMEWORK_PATH}/Svc/FileManager/FileManager.fpp"
+    "${CMAKE_CURRENT_LIST_DIR}/FileManager.fpp"
   SOURCES
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerTester.cpp"
     "${CMAKE_CURRENT_LIST_DIR}/test/ut/FileManagerMain.cpp"

@@ -10,9 +10,11 @@
 //
 // ======================================================================
 
+#include <unistd.h>
 #include <cerrno>
 #include <cstring>
 
+#include <Os/FilePathUtils.hpp>
 #include "FileUplinkTester.hpp"
 #include "Fw/Com/ComPacket.hpp"
 
@@ -33,6 +35,16 @@ FileUplinkTester ::FileUplinkTester()
       sequenceIndex(0) {
     this->connectPorts();
     this->initComponents();
+    // Configure sandbox to allow the current working directory for test files
+    char cwd[Os::FilePathUtils::MAX_PATH_LENGTH];
+    FW_ASSERT(getcwd(cwd, sizeof(cwd)) != nullptr);
+    const FwSizeType cwdLen = std::strlen(cwd);
+    FW_ASSERT(cwdLen + 2 <= sizeof(cwd));
+    if (cwd[cwdLen - 1] != '/') {
+        cwd[cwdLen] = '/';
+        cwd[cwdLen + 1] = '\0';
+    }
+    this->component.configure(cwd);
 }
 
 FileUplinkTester ::~FileUplinkTester() {
@@ -122,12 +134,15 @@ void FileUplinkTester ::badChecksum() {
     this->sendEndPacket(checksum);
     ASSERT_TLM_SIZE(3);
     ASSERT_TLM_PacketsReceived(0, ++this->expectedPacketsReceived);
-    ASSERT_TLM_FilesReceived(0, 1);
+    ASSERT_TLM_FilesReceivedFailed(0, 1);
     ASSERT_TLM_Warnings(0, 1);
 
-    ASSERT_EVENTS_SIZE(2);
-    ASSERT_EVENTS_FileReceived(0, destPath);
+    // A file that fails its checksum is not reported as received and is not
+    // announced downstream; only the BadChecksum warning is emitted.
+    ASSERT_TLM_FilesReceived_SIZE(0);
+    ASSERT_EVENTS_SIZE(1);
     ASSERT_EVENTS_BadChecksum(0, destPath, 202311690, 219088906);
+    ASSERT_from_fileAnnounce_SIZE(0);
 
     // Remove the file
     this->removeFile(destPath);

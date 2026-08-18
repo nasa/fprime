@@ -45,13 +45,13 @@ void TestState::action__ProductRequestIn__BufferValid() {
     // Check buffer get out
     ASSERT_from_bufferGetOut_SIZE(1);
     ASSERT_from_bufferGetOut(0, size);
-    ASSERT_EQ(this->abstractState.bufferGetOutPortNumOpt.get(), portNum);
+    ASSERT_EQ(this->abstractState.bufferGetOutPortNumOpt.value(), portNum);
     // Check product response out
     ASSERT_from_productResponseOut_SIZE(1);
     const Fw::Success failure(Fw::Success::SUCCESS);
     const Fw::Buffer buffer(this->abstractState.bufferData, static_cast<Fw::Buffer::SizeType>(size));
     ASSERT_from_productResponseOut(0, id, buffer, failure);
-    ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.get(), portNum);
+    ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.value(), portNum);
 }
 
 bool TestState::precondition__ProductRequestIn__BufferInvalid() const {
@@ -84,13 +84,13 @@ void TestState ::action__ProductRequestIn__BufferInvalid() {
     // Check buffer get out
     ASSERT_from_bufferGetOut_SIZE(1);
     ASSERT_from_bufferGetOut(0, size);
-    ASSERT_EQ(this->abstractState.bufferGetOutPortNumOpt.get(), portNum);
+    ASSERT_EQ(this->abstractState.bufferGetOutPortNumOpt.value(), portNum);
     // Check product response out
     ASSERT_from_productResponseOut_SIZE(1);
     const Fw::Buffer buffer;
     const Fw::Success status(Fw::Success::FAILURE);
     ASSERT_from_productResponseOut(0, id, buffer, status);
-    ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.get(), portNum);
+    ASSERT_EQ(this->abstractState.productResponseOutPortNumOpt.value(), portNum);
 }
 
 namespace ProductRequestIn {

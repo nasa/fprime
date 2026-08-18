@@ -36,9 +36,9 @@ void ActiveTestTester ::initComponents() {
     this->component.init(ActiveTestTester::TEST_INSTANCE_QUEUE_DEPTH, ActiveTestTester::TEST_INSTANCE_ID);
 }
 
-Fw::ParamValid ActiveTestTester ::from_prmGetIn_handler(const FwIndexType portNum,
-                                                        FwPrmIdType id,
-                                                        Fw::ParamBuffer& val) {
+Fw::ParamValid ActiveTestTester ::from_to_prmGetIn_handler(const FwIndexType portNum,
+                                                           FwPrmIdType id,
+                                                           Fw::ParamBuffer& val) {
     val.resetSer();
 
     Fw::SerializeStatus status;
@@ -46,39 +46,50 @@ Fw::ParamValid ActiveTestTester ::from_prmGetIn_handler(const FwIndexType portNu
 
     FW_ASSERT(id >= id_base);
 
-    switch (id - id_base) {
+    const FwPrmIdType localId = id - id_base;
+    switch (localId) {
         case ActiveTestComponentBase::PARAMID_PARAMBOOL:
+        case ActiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             status = val.serializeFrom(boolPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMU32:
+        case ActiveTestComponentBase::PARAMID_PARAMU32EXTERNAL:
             status = val.serializeFrom(u32Prm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMSTRING:
+        case ActiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
             status = val.serializeFrom(stringPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMENUM:
+        case ActiveTestComponentBase::PARAMID_PARAMENUMEXTERNAL:
             status = val.serializeFrom(enumPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMARRAY:
+        case ActiveTestComponentBase::PARAMID_PARAMARRAYEXTERNAL:
             status = val.serializeFrom(arrayPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMSTRUCT:
+        case ActiveTestComponentBase::PARAMID_PARAMSTRUCTEXTERNAL:
             status = val.serializeFrom(structPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
+
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
+            break;
     }
 
-    this->pushFromPortEntry_prmGetIn(id, val);
+    this->pushFromPortEntry_to_prmGetIn(id, val);
 
     return prmValid;
 }
@@ -89,35 +100,46 @@ void ActiveTestTester ::from_prmSetIn_handler(const FwIndexType portNum, FwPrmId
 
     FW_ASSERT(id >= id_base);
 
-    switch (id - id_base) {
+    const FwPrmIdType localId = id - id_base;
+    switch (localId) {
         case ActiveTestComponentBase::PARAMID_PARAMBOOL:
+        case ActiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             status = val.deserializeTo(boolPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMU32:
+        case ActiveTestComponentBase::PARAMID_PARAMU32EXTERNAL:
             status = val.deserializeTo(u32Prm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMSTRING:
+        case ActiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
             status = val.deserializeTo(stringPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMENUM:
+        case ActiveTestComponentBase::PARAMID_PARAMENUMEXTERNAL:
             status = val.deserializeTo(enumPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMARRAY:
+        case ActiveTestComponentBase::PARAMID_PARAMARRAYEXTERNAL:
             status = val.deserializeTo(arrayPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
             break;
 
         case ActiveTestComponentBase::PARAMID_PARAMSTRUCT:
+        case ActiveTestComponentBase::PARAMID_PARAMSTRUCTEXTERNAL:
             status = val.deserializeTo(structPrm.args.val);
             FW_ASSERT(status == Fw::FW_SERIALIZE_OK);
+            break;
+
+        default:
+            FW_ASSERT(0, static_cast<FwAssertArgType>(localId));
             break;
     }
 
@@ -142,9 +164,9 @@ Fw::SerializeStatus ActiveTestTester::ActiveTestComponentBaseParamExternalDelega
         case ActiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             stat = buff.deserializeTo(this->m_param_ParamBoolExternal);
             break;
-        // ParamI32External
-        case ActiveTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.deserializeTo(this->m_param_ParamI32External);
+        // ParamU32External
+        case ActiveTestComponentBase::PARAMID_PARAMU32EXTERNAL:
+            stat = buff.deserializeTo(this->m_param_ParamU32External);
             break;
         // ParamStringExternal
         case ActiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:
@@ -183,9 +205,9 @@ Fw::SerializeStatus ActiveTestTester::ActiveTestComponentBaseParamExternalDelega
         case ActiveTestComponentBase::PARAMID_PARAMBOOLEXTERNAL:
             stat = buff.serializeFrom(this->m_param_ParamBoolExternal);
             break;
-        // ParamI32External
-        case ActiveTestComponentBase::PARAMID_PARAMI32EXTERNAL:
-            stat = buff.serializeFrom(this->m_param_ParamI32External);
+        // ParamU32External
+        case ActiveTestComponentBase::PARAMID_PARAMU32EXTERNAL:
+            stat = buff.serializeFrom(this->m_param_ParamU32External);
             break;
         // ParamStringExternal
         case ActiveTestComponentBase::PARAMID_PARAMSTRINGEXTERNAL:

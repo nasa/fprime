@@ -24,11 +24,11 @@ This guide includes:
 
 ## How To Configure F´
 
-All configurable files (top-level and component-specific) for F´ are available in the top-level
-`config` directory. By default, all deployments use the F´ provided default configuration options.
+All configurable files (top-level and component-specific) for F´ are available in the
+`default/config` directory. By default, all deployments use the F´ provided default configuration options.
 
-Projects can also take ownership of the `config` directory to provide their own HPP/FPP configuration to
-override the framework defaults. To do so, copy the `config` directory into your project and use the
+Projects can also take ownership of the configuration to provide their own HPP/FPP configuration to
+override the framework defaults. To do so, copy the `default/config` directory into your project and use the
 [`register_fprime_config()`](../../reference/api/cmake/API.md) CMake API to let the build system know 
 to use your configuration overrides. This is demonstrated in various F´ reference projects, such as the 
 [FprimeZephyrReference](https://github.com/fprime-community/fprime-zephyr-reference/tree/devel/FprimeZephyrReference).
@@ -264,26 +264,6 @@ can be disabled to reduce the code size. Table 40 provides the macro to configur
 | ----------------------- | --------------------------- |---------|-------------------|
 | FW_PORT_SERIALIZATION   | Enables port serialization. | 1 (on)  | 0 (off) 1 (on)    |
 
-### Serializable Type ID
-
-As described [in serializable types](../overview/05-enum-arr-ser.md), serializable types can be defined for use in the code.
-When objects of those types are serialized, an integer representing the type ID can be serialized along with the object
-data. This allows the type to be determined later if only the serialized form is available. Turning off this feature
-will lower the amount of data moved around for a given object when it is serialized. Table 41 provides
-the macros to configure this feature.
-
-
-**Table 41.** Macros for serializable type ID.
-
-| Macro                          | Definition                       | Default | Valid Values      |
-| -------------------------------| ---------------------------------|---------|-------------------|
-| FW_SERIALIZATION_TYPE_ID       | Enables serializing the type ID  | 0 (off) | 0 (off) 1 (on)    |
-| FW_SERIALIZATION_TYPE_ID_BYTES | Defines size of serialization ID | 4       | 1 - 4             |
-
-> [!NOTE]
-> Smaller values for `FW_SERIALIZATION_TYPE_ID_BYTES` means that less data storage is needed, but also limits the number of types that can be defined. `FW_SERIALIZATION_TYPE_ID` is required to have type IDs in the buffer and thus to introspect what type is contained in the buffer.
-
-
 ### Buffer Sizes
 
 Many of the built-in F´ data types define buffer sizes that allow them to be passed as a com buffer type, sent out
@@ -392,6 +372,10 @@ Some components allow users to turn on and off features. If a component does not
 for the user to set.
 
 Users are encouraged to look through the header for the component of interest as they should be self-descriptive.
+
+`CommandDispatcherImplCfg.hpp` provides `Svc::CmdDispatcherCfg::IncludeCommandOpcodesInEvents`. When this setting is
+`false`, events containing command opcodes remain enabled, but their opcode fields are set to the maximum
+`FwOpcodeType` value before downlink.
 
 ## Conclusion
 

@@ -1,7 +1,15 @@
-enum E {
-  A,
-  B,
-  C,
-}
+module FppTest {
 
-array Enum = [3] E default [ E.A, E.B, E.C ]
+  module Array {
+
+    enum E {
+      A,
+      B,
+      C,
+    }
+
+    array Enum = [3] E default [ E.A, E.B, E.C ]
+
+  }
+
+}

@@ -7,54 +7,13 @@
 #ifndef FW_FILE_NAME_STRING_HPP
 #define FW_FILE_NAME_STRING_HPP
 
-#include <Fw/FPrimeBasicTypes.hpp>
-
-#include "Fw/Types/SerIds.hpp"
-#include "Fw/Types/StringBase.hpp"
+#include "Fw/Types/StringTemplate.hpp"
 #include "config/FppConstantsAc.hpp"
 
 namespace Fw {
 
-class FileNameString final : public StringBase {
-  public:
-    enum {
-        SERIALIZED_TYPE_ID = FW_TYPEID_FILE_NAME_STRING,
-        STRING_SIZE = FileNameStringSize,
-        SERIALIZED_SIZE = STATIC_SERIALIZED_SIZE(STRING_SIZE)
-    };
+using FileNameString = StringTemplate<FileNameStringSize>;
 
-    FileNameString() : StringBase() { *this = ""; }
-
-    FileNameString(const FileNameString& src) : StringBase() { *this = src; }
-
-    FileNameString(const ConstStringBase& src) : StringBase() { *this = src; }
-
-    explicit FileNameString(const char* src) : StringBase() { *this = src; }
-
-    ~FileNameString() {}
-
-    FileNameString& operator=(const FileNameString& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    FileNameString& operator=(const ConstStringBase& src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    FileNameString& operator=(const char* src) {
-        (void)StringBase::operator=(src);
-        return *this;
-    }
-
-    const char* toChar() const { return this->m_buf; }
-
-    StringBase::SizeType getCapacity() const { return sizeof this->m_buf; }
-
-  private:
-    char m_buf[BUFFER_SIZE(STRING_SIZE)];
-};
 }  // namespace Fw
 
 #endif

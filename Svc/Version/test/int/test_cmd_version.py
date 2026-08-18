@@ -8,7 +8,6 @@ from enum import Enum
 from fprime_gds.common.testing_fw import predicates
 from fprime_gds.common.utils.event_severity import EventSeverity
 
-
 """
 This enum is includes the values of EventSeverity that can be filtered by the ActiveLogger Component
 """
@@ -26,6 +25,9 @@ def test_send_version_command(fprime_test_api):
       version.ENABLE, [DISABLED/ENABLED]
     """
 
+    # Enable all telemetry packet groups so ProjectVersion/FrameworkVersion are emitted
+    fprime_test_api.set_tlm_packet_level(3)
+
     for count, value in enumerate(
         ["PROJECT", "FRAMEWORK", "LIBRARY", "CUSTOM", "ALL"], 1
     ):
@@ -36,7 +38,9 @@ def test_send_version_command(fprime_test_api):
             severity=EventSeverity.ACTIVITY_LO
         )
 
-        results2 = fprime_test_api.send_and_assert_command(
+        start_tlm = fprime_test_api.get_telemetry_test_history().size()
+
+        fprime_test_api.send_and_assert_command(
             fprime_test_api.get_mnemonic("Svc.Version") + "." + "VERSION",
             [
                 value,
@@ -58,32 +62,21 @@ def test_send_version_command(fprime_test_api):
         if count == 1:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "ProjectVersion",
-                start="NOW",
+                start=start_tlm,
             )
         elif count == 2:
             evr_ver = fprime_test_api.await_telemetry(
                 fprime_test_api.get_mnemonic("Svc.Version") + "." + "FrameworkVersion",
-                start="NOW",
+                start=start_tlm,
             )
 
         if count == 1 or count == 2:
             evr_ver_list = str(evr_ver).split()
             evr_ver_value = evr_ver_list[3]
 
-            if evr_ver_value == report_ver_value:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option PASS ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
-            else:
-                print(
-                    "COMPARE EVR vs. TELEMETRY channel and version cmd_option FAIL ",
-                    evr_ver_value,
-                    report_ver_value,
-                    value,
-                )
+            assert (
+                evr_ver_value == report_ver_value
+            ), f"EVR version {report_ver_value} != telemetry version {evr_ver_value} for {value}"
 
     fprime_test_api.send_and_assert_command(
         fprime_test_api.get_mnemonic("Svc.Version") + "." + "ENABLE",

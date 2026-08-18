@@ -13,6 +13,7 @@
 #include "Fw/Types/StringUtils.hpp"
 #include "Os/File.hpp"
 #include "Os/FileSystem.hpp"
+#include "Utils/Hash/Hash.hpp"
 
 namespace Svc {
 static_assert(DP_MAX_DIRECTORIES > 0, "Configuration DP_MAX_DIRECTORIES must be positive");
@@ -21,78 +22,40 @@ static_assert(DP_MAX_FILES > 0, "Configuration DP_MAX_FILES must be positive");
 // Component construction and destruction
 // ----------------------------------------------------------------------
 
-DpCatalog ::DpCatalog(const char* const compName)
-    : DpCatalogComponentBase(compName),
-      m_initialized(false),
-      m_dpTree(nullptr),
-      m_freeListHead(nullptr),
-      m_currentNode(nullptr),
-      m_currentXmitNode(nullptr),
-      m_numDpSlots(0),
-      m_numDirectories(0),
-      m_stateFileData(nullptr),
-      m_stateFileEntries(0),
-      m_memSize(0),
-      m_memPtr(nullptr),
-      m_allocatorId(0),
-      m_allocator(nullptr),
-      m_catalogBuilt(false),
-      m_xmitInProgress(false),
-      m_xmitCmdWait(false),
-      m_xmitBytes(0),
-      m_xmitOpCode(0),
-      m_xmitCmdSeq(0),
-      m_pendingFiles(0),
-      m_pendingDpBytes(0),
-      m_remainActive(false) {}
+DpCatalog ::DpCatalog(const char* const compName) : DpCatalogComponentBase(compName) {
+    // Members are default-initialized via in-class initializers in the header.
+}
 
-DpCatalog ::~DpCatalog() {}
-
-void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
-                          FwSizeType numDirs,
+void DpCatalog::configure(const Fw::ExternalArray<Fw::FileNameString>& directories,
                           Fw::FileNameString& stateFile,
                           FwEnumStoreType memId,
                           Fw::MemAllocator& allocator) {
+    const FwSizeType numDirs = directories.getSize();
     // Do some assertion checks
     FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
 
     this->m_stateFile = stateFile;
 
-    // request memory for catalog which is DP_MAX_FILES * slot size.
-    //
-    // A "slot" consists of a set of two memory locations for each data product consisting
-    // an entry in the binary tree and
-    // an entry in the state file data. These may not be fully used in a given
-    // situation based on the number of actual data products, but this provides room for the
-    // maximum possible.
-    static const FwSizeType slotSize = sizeof(DpBtreeNode) + sizeof(DpDstateFileEntry);
+    // Request memory for state file data storage.
+    // RedBlackTreeSet storage is allocated as a member variable, so we only need
+    // to allocate memory for the state file tracking array.
+    static const FwSizeType slotSize = sizeof(DpDstateFileEntry);
     this->m_memSize = DP_MAX_FILES * slotSize;
     bool notUsed;  // we don't need to recover the catalog.
     // request memory. this->m_memSize will be modified if there is less than we requested
     this->m_memPtr = allocator.allocate(memId, this->m_memSize, notUsed);
-    // adjust to actual size if less allocated and only initialize
-    // if there is enough room for at least one record and memory
-    // was allocated.
 
-    // Since we are given a monolithic block of memory, the data structures
-    // are interspersed in the memory using the following method:
-    //
-    // 1) Recompute how many slots can fit in the provided memory if we
-    // don't get the full amount requested. This allows for graceful degradation
-    // if there are memory issues.
-    //
-    // 2) Place the binary tree free list at the beginning of the memory.
-    //
-    // 3) Place the state file data in memory after the binary free list
-    // by indexing the free list to one element past the end of
-    // the free list.
-
+    // Initialize if there is enough room for at least one record and memory was allocated
     if ((this->m_memSize >= slotSize) and (this->m_memPtr != nullptr)) {
-        // set the number of available record slots based on how much memory we actually got
-        this->m_numDpSlots = this->m_memSize / slotSize;  // Step 1.
-        this->resetBinaryTree();                          // Step 2
-        // assign pointer for the state file storage - Step 3
-        this->m_stateFileData = reinterpret_cast<DpDstateFileEntry*>(&this->m_freeListHead[this->m_numDpSlots]);
+        // set the number of available record slots based on how much memory we actually got,
+        // never exceeding the DP_MAX_FILES working arrays even if the allocator returned more
+        // memory than was requested
+        const FwSizeType allocatedSlots = this->m_memSize / slotSize;
+        this->m_numDpSlots = (allocatedSlots < DP_MAX_FILES) ? allocatedSlots : DP_MAX_FILES;
+        // Initialize the catalog
+        this->resetCatalog();
+        // assign pointer for the state file storage
+        this->m_stateFileData = static_cast<DpDstateFileEntry*>(this->m_memPtr);
     } else {
         // if we don't have enough memory, set the number of records
         // to zero for later detection
@@ -111,24 +74,22 @@ void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
     this->m_initialized = true;
 }
 
-void DpCatalog::resetBinaryTree() {
-    // initialize data structures in the free list
-    // Step 2 in memory partition (see configure() comments)
-    FW_ASSERT(this->m_memPtr);
-    this->m_freeListHead = static_cast<DpBtreeNode*>(this->m_memPtr);
-    for (FwSizeType slot = 0; slot < this->m_numDpSlots; slot++) {
-        // overlay new instance of the DpState entry on the memory
-        (void)new (&this->m_freeListHead[slot]) DpBtreeNode();
-        this->m_freeListHead[slot].left = nullptr;
-        this->m_freeListHead[slot].right = nullptr;
-        // link the free list
-        if (slot > 0) {
-            this->m_freeListHead[slot - 1].left = &this->m_freeListHead[slot];
-        }
-    }
-    // clear binary tree
-    this->m_dpTree = nullptr;
-    // reset number of records
+void DpCatalog::configure(Fw::FileNameString directories[DP_MAX_DIRECTORIES],
+                          FwSizeType numDirs,
+                          Fw::FileNameString& stateFile,
+                          FwEnumStoreType memId,
+                          Fw::MemAllocator& allocator) {
+    FW_ASSERT(numDirs <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(numDirs));
+    const Fw::ExternalArray<Fw::FileNameString> directoryArray(directories, numDirs);
+    this->configure(directoryArray, stateFile, memId, allocator);
+}
+
+void DpCatalog::resetCatalog() {
+    // Clear the catalog
+    this->m_dpCatalog.clear();
+    // Clear transmission state
+    this->m_hasCurrentXmit = false;
+    // Reset counters
     this->m_pendingFiles = 0;
     this->m_pendingDpBytes = 0;
     // Mark the catalog as un-built
@@ -146,7 +107,7 @@ void DpCatalog::resetStateFileData() {
 }
 
 Fw::CmdResponse DpCatalog::loadStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // Make sure that a file was specified
     if (this->m_stateFile.length() == 0) {
@@ -162,6 +123,11 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
     // open the state file
     Os::File stateFile;
     Os::File::Status stat = stateFile.open(this->m_stateFile.toChar(), Os::File::OPEN_READ);
+    if (stat == Os::File::DOESNT_EXIST) {
+        // A missing state file is expected on first boot and is not an error
+        this->log_WARNING_LO_NoStateFile(this->m_stateFile);
+        return Fw::CmdResponse::OK;
+    }
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_StateFileOpenError(this->m_stateFile, stat);
         return Fw::CmdResponse::EXECUTION_ERROR;
@@ -177,6 +143,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         stat = stateFile.read(buffer, size);
         if (stat != Os::File::OP_OK) {
             this->log_WARNING_HI_StateFileReadError(this->m_stateFile, stat, static_cast<I32>(fileLoc));
+            stateFile.close();
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
 
@@ -191,6 +158,7 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         if (size != sizeof(buffer)) {
             this->log_WARNING_HI_StateFileTruncated(this->m_stateFile, static_cast<I32>(fileLoc),
                                                     static_cast<I32>(size));
+            stateFile.close();
             return Fw::CmdResponse::OK;
         }
 
@@ -203,11 +171,20 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         // deserialization after this point should always work, since
         // the source buffer was specifically sized to hold the data
 
-        // Deserialize the file directory index
+        // Deserialize the file directory index. If an error occurs processing the file,
+        // generate event and return EXECUTION_ERROR.
         Fw::SerializeStatus status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.dir);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         status = entryBuffer.deserializeTo(this->m_stateFileData[entry].entry.record);
-        FW_ASSERT(Fw::FW_SERIALIZE_OK == status, status);
+        if (status != Fw::FW_SERIALIZE_OK) {
+            this->log_WARNING_HI_FileCorruptedDataError(this->m_stateFile, static_cast<I32>(status));
+            stateFile.close();
+            return Fw::CmdResponse::EXECUTION_ERROR;
+        }
         this->m_stateFileData[entry].used = true;
         this->m_stateFileData[entry].visited = false;
 
@@ -215,12 +192,12 @@ Fw::CmdResponse DpCatalog::loadStateFile() {
         fileLoc += size;
         this->m_stateFileEntries++;
     }
-
+    stateFile.close();
     return Fw::CmdResponse::OK;
 }
 
 void DpCatalog::getFileState(DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     // search the file state data for the entry
     for (FwSizeType line = 0; line < this->m_stateFileEntries; line++) {
         // check for a match (compare dir, then id, priority, & time)
@@ -236,7 +213,7 @@ void DpCatalog::getFileState(DpStateEntry& entry) {
 }
 
 void DpCatalog::pruneAndWriteStateFile() {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
 
     // There is a chance that a data product file can disappear after
     // the state file is written from the last catalog build and transmit.
@@ -278,6 +255,7 @@ void DpCatalog::pruneAndWriteStateFile() {
             stat = stateFile.write(buffer, size);
             if (stat != Os::File::OP_OK) {
                 this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
+                stateFile.close();
                 return;
             }
         }
@@ -288,7 +266,7 @@ void DpCatalog::pruneAndWriteStateFile() {
 }
 
 void DpCatalog::appendFileState(const DpStateEntry& entry) {
-    FW_ASSERT(this->m_stateFileData);
+    FW_ASSERT(this->m_stateFileData != nullptr);
     FW_ASSERT(entry.dir < static_cast<FwIndexType>(this->m_numDirectories), static_cast<FwAssertArgType>(entry.dir),
               static_cast<FwAssertArgType>(this->m_numDirectories));
 
@@ -306,7 +284,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     }
 
     // buffer for writing entries
-    BYTE buffer[sizeof(entry.dir) + sizeof(entry.record)];
+    BYTE buffer[sizeof(FwIndexType) + DpRecord::SERIALIZED_SIZE];
     Fw::ExternalSerializeBuffer entryBuffer(buffer, sizeof(buffer));
     // reset the buffer for serializing the entry
     entryBuffer.resetSer();
@@ -321,6 +299,7 @@ void DpCatalog::appendFileState(const DpStateEntry& entry) {
     FwSizeType size = entryBuffer.getSize();
     stat = stateFile.write(buffer, size);
     if (stat != Os::File::OP_OK) {
+        stateFile.close();
         this->log_WARNING_HI_StateFileWriteError(this->m_stateFile, stat);
         return;
     }
@@ -350,17 +329,22 @@ Fw::CmdResponse DpCatalog::doCatalogBuild() {
     // reset state file data
     this->resetStateFileData();
 
-    // load state data from file
+    // load state data from file; proceeding on a failed load would later
+    // overwrite the state file and destroy the transmit state it records
     Fw::CmdResponse response = this->loadStateFile();
+    if (response != Fw::CmdResponse::OK) {
+        this->resetStateFileData();
+        return response;
+    }
 
-    // reset free list for entries
-    this->resetBinaryTree();
+    // reset catalog
+    this->resetCatalog();
 
-    // fill the binary tree with DP files
+    // fill the catalog with DP files
     response = this->fillBinaryTree();
     if (response != Fw::CmdResponse::OK) {
-        // clean up the binary tree
-        this->resetBinaryTree();
+        // clean up the catalog
+        this->resetCatalog();
         this->resetStateFileData();
         return response;
     }
@@ -381,7 +365,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
     FwSizeType totalFiles = 0;
 
     // get file listings from file system
-    for (FwSizeType dir = 0; dir < this->m_numDirectories; dir++) {
+    // double bounds to appease static analysis
+    for (FwSizeType dir = 0; dir < this->m_numDirectories && dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES); dir++) {
         // read in each directory and keep track of total
         this->log_ACTIVITY_LO_ProcessingDirectory(this->m_directories[dir]);
         FwSizeType filesRead = 0;
@@ -393,7 +378,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
             return Fw::CmdResponse::EXECUTION_ERROR;
         }
-        status = dpDir.readDirectory(this->m_fileList, (this->m_numDpSlots - totalFiles), filesRead);
+        Fw::ExternalArray<Fw::String> fileList(this->m_fileList, this->m_numDpSlots - totalFiles);
+        status = dpDir.readDirectory(fileList, filesRead);
 
         if (status != Os::Directory::OP_OK) {
             this->log_WARNING_HI_DirectoryOpenError(this->m_directories[dir], status);
@@ -408,23 +394,33 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
         for (FwSizeType file = 0; file < filesRead; file++) {
             // only consider files with the DP extension
 
-            FwSignedSizeType loc =
-                Fw::StringUtils::substring_find(this->m_fileList[file].toChar(), this->m_fileList[file].length(),
-                                                DP_EXT, Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT)));
+            const FwSizeType fileNameLength = this->m_fileList[file].length();
+            const FwSizeType dpExtLength = Fw::StringUtils::string_length(DP_EXT, sizeof(DP_EXT));
+            const FwSignedSizeType loc = Fw::StringUtils::substring_find_last(this->m_fileList[file].toChar(),
+                                                                              fileNameLength, DP_EXT, dpExtLength);
 
-            if (-1 == loc) {
+            // Only accept files whose final suffix is the data product extension
+            if ((-1 == loc) || (static_cast<FwSizeType>(loc) + dpExtLength != fileNameLength)) {
                 continue;
             }
 
             Fw::String fullFile;
-            fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+            Fw::FormatStatus formatStatus =
+                fullFile.format("%s/%s", this->m_directories[dir].toChar(), this->m_fileList[file].toChar());
+            if (formatStatus != Fw::FormatStatus::SUCCESS) {
+                this->log_WARNING_HI_FileNameFormatError(this->m_fileList[file],
+                                                         static_cast<Fw::StringFormatStatus::T>(formatStatus));
+                continue;
+            }
 
-            int ret = processFile(fullFile, dir);
-            if (ret < 0) {
+            const ProcessFileStatus ret = processFile(fullFile, dir);
+            if (ret == ProcessFileStatus::QUIT) {
                 break;
             }
 
-            filesProcessed += static_cast<U32>(ret);
+            if (ret == ProcessFileStatus::SUCCESS) {
+                filesProcessed++;
+            }
 
         }  // end for each file in a directory
 
@@ -445,7 +441,8 @@ Fw::CmdResponse DpCatalog::fillBinaryTree() {
 
 }  // end fillBinaryTree()
 
-FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
+FwSizeType DpCatalog::determineDirectory(const Fw::String& fullFile) {
+    FW_ASSERT(this->m_numDirectories <= DP_MAX_DIRECTORIES, static_cast<FwAssertArgType>(this->m_numDirectories));
     // Grab the directory string (up until the final slash)
     // Could be found directly w/ a dirname func or regex
     FwSignedSizeType loc = Fw::StringUtils::substring_find_last(
@@ -467,8 +464,9 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
         // StringUtils::substring_find will return zero if both paths agree
         // memory safe since both are fixed width strings
         // and loc is before the fixed width
-        if (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
-                                            static_cast<FwSizeType>(loc)) == 0) {
+        if ((dir_string.length() == static_cast<FwSizeType>(loc)) &&
+            (Fw::StringUtils::substring_find(dir_string.toChar(), dir_string.length(), fullFile.toChar(),
+                                             static_cast<FwSizeType>(loc)) == 0)) {
             return dir;
         }
     }
@@ -477,7 +475,8 @@ FwSizeType DpCatalog::determineDirectory(Fw::String fullFile) {
     return DP_MAX_DIRECTORIES;
 }
 
-int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
+DpCatalog::ProcessFileStatus DpCatalog::processFile(const Fw::String& fullFile, FwSizeType dir) {
+    FW_ASSERT(dir < static_cast<FwSizeType>(DP_MAX_DIRECTORIES), static_cast<FwAssertArgType>(dir));
     // file class instance for processing files
     Os::File dpFile;
 
@@ -493,30 +492,35 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     Os::FileSystem::Status sizeStat = Os::FileSystem::getFileSize(fullFile.toChar(), fileSize);
     if (sizeStat != Os::FileSystem::OP_OK) {
         this->log_WARNING_HI_FileSizeError(fullFile, sizeStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
+    }
+
+    if (fileSize < Fw::DpContainer::MIN_PACKET_SIZE) {
+        this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
+        return ProcessFileStatus::FAILED;
     }
 
     Os::File::Status stat = dpFile.open(fullFile.toChar(), Os::File::OPEN_READ);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileOpenError(fullFile, stat);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
-    // Read DP header
-    FwSizeType size = Fw::DpContainer::Header::SIZE;
+    // Read DP header and header hash
+    FwSizeType size = Fw::DpContainer::MIN_PACKET_SIZE;
 
     stat = dpFile.read(dpBuff, size);
     if (stat != Os::File::OP_OK) {
         this->log_WARNING_HI_FileReadError(fullFile, stat);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
-    // if full header isn't read, something's wrong with the file, so skip
-    if (size != Fw::DpContainer::Header::SIZE) {
+    // if full header and hashes aren't read, something's wrong with the file, so skip
+    if (size != Fw::DpContainer::MIN_PACKET_SIZE) {
         this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
         dpFile.close();
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // if all is well, don't need the file any more
@@ -525,17 +529,48 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // give buffer to container instance
     container.setBuffer(hdrBuff);
 
+    // make sure the header metadata matches its stored hash before trusting it
+    Utils::HashBuffer storedHash;
+    Utils::HashBuffer computedHash;
+    Fw::Success::T hashStatus = container.checkHeaderHash(storedHash, computedHash);
+    if (hashStatus != Fw::Success::SUCCESS) {
+        this->log_WARNING_HI_FileHdrError(fullFile, DpHdrField::CRC, computedHash.asBigEndianU32(),
+                                          storedHash.asBigEndianU32());
+        return ProcessFileStatus::FAILED;
+    }
+
     // reset header deserialization in the container
     Fw::SerializeStatus desStat = container.deserializeHeader();
     if (desStat != Fw::FW_SERIALIZE_OK) {
         this->log_WARNING_HI_FileHdrDesError(fullFile, desStat);
-        return 0;
+        return ProcessFileStatus::FAILED;
+    }
+
+    const FwSizeType dataSize = container.getDataSize();
+    const FwSizeType expectedDataSize = fileSize - Fw::DpContainer::MIN_PACKET_SIZE;
+    if (dataSize != expectedDataSize) {
+        this->log_WARNING_HI_FileReadError(fullFile, Os::File::BAD_SIZE);
+        return ProcessFileStatus::FAILED;
+    }
+
+    Fw::FileNameString canonicalFileName;
+    Fw::FormatStatus canonicalFormatStatus =
+        canonicalFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), container.getId(),
+                                 container.getTimeTag().getSeconds(), container.getTimeTag().getUSeconds());
+    if (canonicalFormatStatus != Fw::FormatStatus::SUCCESS) {
+        this->log_WARNING_HI_FileNameFormatError(fullFile,
+                                                 static_cast<Fw::StringFormatStatus::T>(canonicalFormatStatus));
+        return ProcessFileStatus::FAILED;
+    }
+    if (canonicalFileName != fullFile) {
+        this->log_WARNING_HI_InvalidFileName(fullFile, canonicalFileName);
+        return ProcessFileStatus::FAILED;
     }
 
     // skip adding an already transmitted file
     if (container.getState() == Fw::DpState::TRANSMITTED) {
         this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
-        return 0;
+        return ProcessFileStatus::FAILED;
     }
 
     // add entry to catalog.
@@ -551,12 +586,18 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // check the state file to see if there is transmit state
     this->getFileState(entry);
 
-    // insert entry into sorted list. if can't insert, quit
-    DpBtreeNode* addedEntry = this->insertEntry(entry);
-    if (addedEntry == nullptr) {
+    // a duplicate insert updates the tree in place; skip it so pending counters are not double-counted
+    if (this->m_dpCatalog.find(entry) == Fw::Success::SUCCESS) {
+        this->log_ACTIVITY_HI_DpFileSkipped(fullFile);
+        return ProcessFileStatus::FAILED;
+    }
+
+    // insert entry into sorted catalog. if can't insert, quit
+    bool inserted = this->insertEntry(entry);
+    if (!inserted) {
         this->log_WARNING_HI_DpInsertError(entry.record);
         // return and hope new slots open up later
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
     // increment our counters
@@ -566,31 +607,21 @@ int DpCatalog::processFile(Fw::String fullFile, FwSizeType dir) {
     // make sure we haven't exceeded the limit
     if (this->m_pendingFiles > this->m_numDpSlots) {
         this->log_WARNING_HI_DpCatalogFull(entry.record);
-        return -1;
+        return ProcessFileStatus::QUIT;
     }
 
-    Fw::FileNameString addedFileName;
-    addedFileName.format(DP_FILENAME_FORMAT, this->m_directories[dir].toChar(), entry.record.get_id(),
-                         entry.record.get_tSec(), entry.record.get_tSub());
+    this->log_ACTIVITY_HI_DpFileAdded(canonicalFileName);
 
-    this->log_ACTIVITY_HI_DpFileAdded(addedFileName);
+    // No need to track iterator state - begin() always gives us the highest priority entry
+    // and we remove entries as we transmit them
 
-    // Compute relative priority to current exploration node
-    // For Handling adding a node to a catalog that has
-    // already moved past the inserted node's priority
-    if (this->m_currentNode == nullptr) {
-        this->m_currentNode = addedEntry;
-    } else if (entry < this->m_currentNode->entry) {
-        this->m_currentNode = addedEntry;
-    }
-
-    return 1;
+    return ProcessFileStatus::SUCCESS;
 }
 
 // ----------------------------------------------------------------------
 // DpStateEntry Comparison Ops
 // ----------------------------------------------------------------------
-int DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
+I8 DpCatalog::DpStateEntry::compareEntries(const DpStateEntry& left, const DpStateEntry& right) {
     // check priority. Lower is higher priority
     if (left.record.get_priority() < right.record.get_priority()) {
         return -1;
@@ -639,226 +670,11 @@ bool DpCatalog::DpStateEntry::operator<(const DpStateEntry& other) const {
     return compareEntries(*this, other) < 0;
 }
 
-DpCatalog::DpBtreeNode* DpCatalog::insertEntry(DpStateEntry& entry) {
-    // the tree is filled in the following priority order:
-    // 1. DP priority - lower number is higher priority
-    // 2. DP time - older is higher priority
-    // 3. DP ID - lower number is higher priority
-
-    // Higher priority is to the left of the tree
-
-    // if the tree is empty, add the first entry
-    if (this->m_dpTree == nullptr) {
-        bool goodInsert = this->allocateNode(this->m_dpTree, entry);
-        if (not goodInsert) {
-            return nullptr;
-        }
-
-        return this->m_dpTree;
-
-        // otherwise, search depth-first to sort the entry
-    } else {
-        // to avoid recursion, loop through a max of the number of available records
-        DpBtreeNode* node = this->m_dpTree;
-        for (FwSizeType record = 0; record < this->m_numDpSlots; record++) {
-            CheckStat stat = CheckStat::CHECK_CONT;
-            stat = this->checkLeftRight(entry < node->entry, node, entry);
-
-            // act on status
-            if (stat == CheckStat::CHECK_ERROR) {
-                return nullptr;
-            } else if (stat == CheckStat::CHECK_OK) {
-                return node;
-            }
-        }  // end for each possible record
-
-        return nullptr;
-    }
-}
-
-DpCatalog::CheckStat DpCatalog::checkLeftRight(bool condition, DpBtreeNode*& node, const DpStateEntry& newEntry) {
-    if (condition) {
-        if (node->left == nullptr) {
-            bool allocated = this->allocateNode(node->left, newEntry);
-            if (not allocated) {
-                return CheckStat::CHECK_ERROR;
-            }
-            node->left->parent = node;
-            // Let the caller know where node ended up
-            node = node->left;
-            return CheckStat::CHECK_OK;
-        } else {
-            node = node->left;
-            return CheckStat::CHECK_CONT;
-        }
-    } else {
-        if (node->right == nullptr) {
-            bool allocated = this->allocateNode(node->right, newEntry);
-            if (not allocated) {
-                return CheckStat::CHECK_ERROR;
-            }
-            node->right->parent = node;
-            // Let the caller know where node ended up
-            node = node->right;
-            return CheckStat::CHECK_OK;
-        } else {
-            node = node->right;
-            return CheckStat::CHECK_CONT;
-        }
-    }
-}
-
-bool DpCatalog::allocateNode(DpBtreeNode*& newNode, const DpStateEntry& newEntry) {
-    // should always be null since we are allocating an empty slot
-    FW_ASSERT(newNode == nullptr);
-    // make sure there is an entry from the free list
-    if (this->m_freeListHead == nullptr) {
-        this->log_WARNING_HI_DpCatalogFull(newEntry.record);
-        return false;
-    }
-
-    // get a new node from the free list
-    newNode = this->m_freeListHead;
-    // move the head of the free list to the next node
-    // If we've at the bottom of the free list, head will now be nullptr
-    this->m_freeListHead = this->m_freeListHead->left;
-
-    // initialize the new node
-    newNode->left = nullptr;
-    newNode->right = nullptr;
-    newNode->parent = nullptr;
-    newNode->entry = newEntry;
-
-    // we got one, so return success
-    return true;
-}
-
-void DpCatalog::deallocateNode(DpBtreeNode* node) {
-    DpBtreeNode* parent = node->parent;
-
-    // since nodes are deallocated after xmit, left should be gone
-    // However, left node could be added during xmit
-    if (node->left != nullptr) {
-        // Since we aren't limited to adding just 1 node during file transfer
-        // the left child might not be a leaf
-        // Instead, find the node of closest (but higher) priority to this node
-        // This is the lowest priority node on the left branch
-        // Which is the rightmost node of the left branch
-        DpBtreeNode* rightmostNode = node->left;
-
-        // (i.e. node->left->right->right ... ->right until we hit null)
-
-        // bounded while loop (in case we're linked onto the free list somehow)
-        for (FwSizeType record = 0; record < this->m_numDpSlots && rightmostNode->right != nullptr; record++) {
-            rightmostNode = rightmostNode->right;
-
-            // I really hope these never fire
-            FW_ASSERT(rightmostNode != this->m_freeListHead);
-            FW_ASSERT(rightmostNode != nullptr);
-        }
-
-        FW_ASSERT(rightmostNode != nullptr);
-        FW_ASSERT(rightmostNode->parent != nullptr);
-
-        // We can then swap the node to be deallocated w/ the rightmost
-        // (since it is immediately higher priority than us)
-
-        // Make the "parent" of the deallocated node point at the rightmost
-        if (parent == nullptr) {
-            // this is the root node: has no parent, but needs the root pointer to shift
-            this->m_dpTree = rightmostNode;
-        } else {
-            // patch onto the appropriate parent branch
-            if (parent->left == node) {
-                parent->left = rightmostNode;
-            } else {
-                parent->right = rightmostNode;
-            }
-        }
-
-        // Handle the children of the rightmost node
-        if (rightmostNode == node->left) {
-            // The rightmost node is the immediate left child of the deallocated node
-            // Since it only has left children, shift the left branch up
-            // with node->left taking the place of the deallocated node
-
-            // Nothing we need to do
-            // Just avoid the infinite loop that would occur in this case
-            // on the other branch
-        } else {
-            // If the rightmost node isn't the node to be deallocated's left child,
-            // we can stitch its left branch onto its parent in its place
-            rightmostNode->parent->right = rightmostNode->left;
-
-            // Now connect the deallocated node's left branch onto rightmostNode
-            rightmostNode->left = node->left;
-            node->left->parent = rightmostNode;
-        }
-
-        // Regardless, connect the deallocated node's right branch onto rightmostNode
-        rightmostNode->right = node->right;
-
-        if (node->right != nullptr) {
-            node->right->parent = rightmostNode;
-        }
-
-        // Now that we're done using the parent of rightmost node
-        // Point at actual parent or nullptr if this is the new root
-        rightmostNode->parent = parent;
-
-        // Ensure the Left node no longer points at us
-        FW_ASSERT(node->left->parent != node);
-    } else {
-        // This node only had a right branch
-        // cut out this node and shift the right branch up
-
-        // The root node has no parent, but needs the tree root pointer to shift
-        if (parent == nullptr) {
-            this->m_dpTree = node->right;
-        } else {
-            // Patch the right branch onto
-            // the appropriate parent branch of this node
-            if (parent->left == node) {
-                parent->left = node->right;
-            } else {
-                parent->right = node->right;
-            }
-        }
-
-        // If there is a right branch
-        // Point it at the parent of the removed node
-        if (node->right != nullptr) {
-            FW_ASSERT(node->right->parent != nullptr);
-            node->right->parent = parent;
-        }
-    }
-
-    // clear out the entry
-    node->entry = {};
-    // point this node @ the old head of the free list
-    node->left = m_freeListHead;
-
-    // Ensure the Right node no longer points at us
-    if (node->right != nullptr) {
-        FW_ASSERT(node->right->parent != node);
-    }
-
-    // clear out our right reference
-    node->right = nullptr;
-
-    DpBtreeNode* oldFreeListHead = this->m_freeListHead;
-    // make this node the new head of the free list
-    this->m_freeListHead = node;
-
-    // Node is the head of the free list
-    FW_ASSERT(this->m_freeListHead == node);
-
-    node->parent = nullptr;
-
-    // Ensure this Node only points at next in free list
-    FW_ASSERT(node->left == oldFreeListHead);
-    FW_ASSERT(node->right == nullptr);
-    FW_ASSERT(node->parent == nullptr);
+bool DpCatalog::insertEntry(DpStateEntry& entry) {
+    // Insert into the RedBlackTreeSet
+    // The tree maintains sorting by priority, time, and ID via DpStateEntry comparison operators
+    Fw::Success status = this->m_dpCatalog.insert(entry);
+    return (status == Fw::Success::SUCCESS);
 }
 
 void DpCatalog::sendNextEntry() {
@@ -867,72 +683,66 @@ void DpCatalog::sendNextEntry() {
         return;
     }
 
-    // look in the tree for the next entry to send
-    this->m_currentXmitNode = this->findNextTreeNode();
-
-    if (this->m_currentXmitNode == nullptr) {
+    // Look for the next entry to send
+    DpStateEntry entry;
+    if (!this->findNextEntry(entry)) {
         // if no entry found, we are done
         this->m_xmitInProgress = false;
         this->log_ACTIVITY_HI_CatalogXmitCompleted(this->m_xmitBytes);
         this->dispatchWaitedResponse(Fw::CmdResponse::OK);
         return;
-    } else {
-        // build file name based on the found entry
-        this->m_currXmitFileName.format(
-            DP_FILENAME_FORMAT, this->m_directories[this->m_currentXmitNode->entry.dir].toChar(),
-            this->m_currentXmitNode->entry.record.get_id(), this->m_currentXmitNode->entry.record.get_tSec(),
-            this->m_currentXmitNode->entry.record.get_tSub());
-        this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName,
-                                             static_cast<U32>(this->m_currentXmitNode->entry.record.get_size()),
-                                             this->m_currentXmitNode->entry.record.get_priority());
-        Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
-        if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
-            // warn, but keep going since it may be an issue with this file but others could
-            // make it
-            this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
-        }
     }
 
+    // Save current entry for fileDone_handler
+    this->m_currentXmitEntry = entry;
+    this->m_hasCurrentXmit = true;
+
+    // Build file name based on the found entry
+    Fw::FormatStatus formatStatus =
+        this->m_currXmitFileName.format(DP_FILENAME_FORMAT, this->m_directories[entry.dir].toChar(),
+                                        entry.record.get_id(), entry.record.get_tSec(), entry.record.get_tSub());
+    if (formatStatus != Fw::FormatStatus::SUCCESS) {
+        this->log_WARNING_HI_FileNameFormatError(this->m_currXmitFileName,
+                                                 static_cast<Fw::StringFormatStatus::T>(formatStatus));
+        // No send is in flight, so no fileDone will arrive: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+    this->log_ACTIVITY_LO_SendingProduct(this->m_currXmitFileName, static_cast<U32>(entry.record.get_size()),
+                                         entry.record.get_priority());
+    Svc::SendFileResponse resp = this->fileOut_out(0, this->m_currXmitFileName, this->m_currXmitFileName, 0, 0);
+    if (resp.get_status() != Svc::SendFileStatus::STATUS_OK) {
+        this->log_WARNING_HI_DpFileSendError(this->m_currXmitFileName, resp.get_status());
+        // A rejected send produces no fileDone callback: abort the transmit
+        // rather than leaving it wedged in progress
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+    }
 }  // end sendNextEntry()
 
-DpCatalog::DpBtreeNode* DpCatalog::findNextTreeNode() {
-    // check some asserts
-    FW_ASSERT(this->m_xmitInProgress);
-
-    if (this->m_dpTree == nullptr) {
-        // We've run out of entries, we are done
-        this->m_xmitInProgress = false;
-        return nullptr;
+bool DpCatalog::findNextEntry(DpStateEntry& entry) {
+    // If catalog is empty, return false
+    if (this->m_dpCatalog.getSize() == 0) {
+        return false;
     }
 
-    // start back at the top
-    if (this->m_currentNode == nullptr) {
-        this->m_currentNode = this->m_dpTree;
+    // Get the highest priority entry (begin() returns highest priority)
+    // Since we remove entries as we transmit them, begin() always gives us the next entry
+    typename Fw::RedBlackTreeSet<DpStateEntry, DP_MAX_FILES>::ConstIterator iter = this->m_dpCatalog.begin();
+
+    // Verify iterator is valid
+    if (iter == this->m_dpCatalog.end()) {
+        return false;
     }
 
-    // Nav left until nullptr
-    // Leads to highest priority node
-    // bounded while loop (in case we're linked onto the free list somehow)
-    for (FwSizeType record = 0; record < this->m_numDpSlots && this->m_currentNode->left != nullptr; record++) {
-        this->m_currentNode = this->m_currentNode->left;
+    // Get the entry
+    entry = *iter;
 
-        // I really hope these never fire
-        FW_ASSERT(this->m_currentNode != this->m_freeListHead);
-        FW_ASSERT(this->m_currentNode != nullptr);
-    }
-
-    // save the high prio & find next best
-    DpBtreeNode* found = this->m_currentNode;
-
-    // On the next cycle, explore the node to the right, if available,
-    // otherwise the node above
-    if (this->m_currentNode->right != nullptr) {
-        this->m_currentNode = this->m_currentNode->right;
-    } else {
-        this->m_currentNode = this->m_currentNode->parent;
-    }
-
-    return found;
+    return true;
 }
 
 bool DpCatalog::checkInit() {
@@ -966,31 +776,39 @@ void DpCatalog ::fileDone_handler(FwIndexType portNum, const Svc::SendFileRespon
         this->log_WARNING_HI_DpFileXmitError(this->m_currXmitFileName, resp.get_status());
         this->m_xmitInProgress = false;
         this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
-    }
-
-    // Catalog cleared while this file was sent
-    if (!this->m_catalogBuilt) {
         return;
     }
 
-    // Since catalog built flag is true
-    // we should have a tree w/ at least one element
-    FW_ASSERT(this->m_dpTree);
+    // Catalog cleared while this file was sent; clear xmit state and answer any waited command
+    if (!this->m_catalogBuilt) {
+        this->m_hasCurrentXmit = false;
+        this->m_xmitInProgress = false;
+        this->dispatchWaitedResponse(Fw::CmdResponse::EXECUTION_ERROR);
+        return;
+    }
+
+    // Should have a valid current transmit entry
+    FW_ASSERT(this->m_hasCurrentXmit);
 
     // Reduce pending
-    this->m_pendingDpBytes -= this->m_currentXmitNode->entry.record.get_size();
+    this->m_pendingDpBytes -= this->m_currentXmitEntry.record.get_size();
     this->m_pendingFiles--;
     // Log File Complete & pending
     this->log_ACTIVITY_LO_ProductComplete(this->m_currXmitFileName, this->m_pendingFiles, this->m_pendingDpBytes);
 
     // mark the entry as transmitted
-    this->m_currentXmitNode->entry.record.set_state(Fw::DpState::TRANSMITTED);
+    this->m_currentXmitEntry.record.set_state(Fw::DpState::TRANSMITTED);
     // update the transmitted state in the state file
-    this->appendFileState(this->m_currentXmitNode->entry);
+    this->appendFileState(this->m_currentXmitEntry);
     // add the size
-    this->m_xmitBytes += this->m_currentXmitNode->entry.record.get_size();
-    // deallocate this node
-    this->deallocateNode(this->m_currentXmitNode);
+    this->m_xmitBytes += this->m_currentXmitEntry.record.get_size();
+
+    // Remove from catalog
+    Fw::Success status = this->m_dpCatalog.remove(this->m_currentXmitEntry);
+    FW_ASSERT(status == Fw::Success::SUCCESS);
+
+    this->m_hasCurrentXmit = false;
+
     // send the next entry, if it exists
     this->sendNextEntry();
 }
@@ -1035,13 +853,11 @@ void DpCatalog ::addToCat_handler(FwIndexType portNum,
         return;
     }
 
-    // ret > 0 := success
-    int ret = processFile(fileName, dir);
+    const ProcessFileStatus ret = processFile(fileName, dir);
 
-    if (ret > 0) {
+    if (ret == ProcessFileStatus::SUCCESS) {
         // If we already finished, sendNext only if remainingActive
         if (!this->m_xmitInProgress && this->m_remainActive) {
-            this->m_currentNode = this->m_dpTree;
             this->m_xmitInProgress = true;
             this->sendNextEntry();
         }
@@ -1062,23 +878,30 @@ void DpCatalog ::BUILD_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     this->cmdResponse_out(opCode, cmdSeq, this->doCatalogBuild());
 }
 
-void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, Fw::Wait wait, bool remainActive) {
-    Fw::CmdResponse resp = this->doCatalogXmit();
+void DpCatalog ::START_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::Wait& wait,
+                                               bool remainActive) {
     this->m_remainActive = remainActive;
 
+    // Arm the waited response before starting: an empty catalog completes the
+    // transmit inside doCatalogXmit and must still answer a waited command
+    if (Fw::Wait::WAIT == wait) {
+        this->m_xmitCmdWait = true;
+        this->m_xmitOpCode = opCode;
+        this->m_xmitCmdSeq = cmdSeq;
+    }
+
+    Fw::CmdResponse resp = this->doCatalogXmit();
+    FW_ASSERT(resp.isValid(), static_cast<FwAssertArgType>(resp.e));
+
     if (resp != Fw::CmdResponse::OK) {
+        this->m_xmitCmdWait = false;
+        this->m_xmitOpCode = 0;
+        this->m_xmitCmdSeq = 0;
         this->cmdResponse_out(opCode, cmdSeq, resp);
-    } else {
-        if (Fw::Wait::NO_WAIT == wait) {
-            this->cmdResponse_out(opCode, cmdSeq, resp);
-            this->m_xmitCmdWait = false;
-            this->m_xmitOpCode = 0;
-            this->m_xmitCmdSeq = 0;
-        } else {
-            this->m_xmitCmdWait = true;
-            this->m_xmitOpCode = opCode;
-            this->m_xmitCmdSeq = cmdSeq;
-        }
+    } else if (Fw::Wait::NO_WAIT == wait) {
+        this->cmdResponse_out(opCode, cmdSeq, resp);
     }
 }
 
@@ -1134,7 +957,7 @@ void DpCatalog ::STOP_XMIT_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
 }
 
 void DpCatalog ::CLEAR_CATALOG_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
-    this->resetBinaryTree();
+    this->resetCatalog();
     this->resetStateFileData();
 
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

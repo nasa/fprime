@@ -1,0 +1,2 @@
+| test.cpp:12:10:12:31 | NO_RESPONSE_cmdHandler | Command handler NO_RESPONSE_cmdHandler has a path that neither calls cmdResponse_out nor saves opCode and cmdSeq into member variables read by a deferred cmdResponse_out call. |
+| test.cpp:21:10:21:32 | SAVED_UNREAD_cmdHandler | Command handler SAVED_UNREAD_cmdHandler has a path that neither calls cmdResponse_out nor saves opCode and cmdSeq into member variables read by a deferred cmdResponse_out call. |

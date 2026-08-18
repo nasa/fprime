@@ -11,6 +11,7 @@
 #include <Fw/Com/ComBuffer.hpp>
 #include <Svc/ComQueue/ComQueueComponentAc.hpp>
 #include <Utils/Types/Queue.hpp>
+#include <atomic>
 #include <limits>
 #include "Fw/Types/MemAllocator.hpp"
 #include "Os/Mutex.hpp"
@@ -22,6 +23,9 @@ namespace Svc {
 // ----------------------------------------------------------------------
 
 class ComQueue final : public ComQueueComponentBase {
+    // Added to enable easy testing of set queue priority command
+    friend class ComQueueTester;
+
     //! State of the currently transmitted buffer
     enum BufferState { OWNED, UNOWNED };
 
@@ -47,10 +51,16 @@ class ComQueue final : public ComQueueComponentBase {
      * Priority is an integer between 0 (inclusive) and TOTAL_PORT_COUNT (exclusive). Queues with lower priority values
      * will be serviced first. Priorities may be repeated and queues sharing priorities will be serviced in a balanced
      * manner.
+     *
+     * Queue mode determines whether messages are dequeued in FIFO or LIFO order.
+     *
+     * Overflow mode determines whether the newest or oldest message is dropped when the queue is full.
      */
     struct QueueConfigurationEntry {
-        FwSizeType depth;      //!< Depth of the queue [0, infinity)
-        FwIndexType priority;  //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        FwSizeType depth;                       //!< Depth of the queue [0, infinity)
+        FwIndexType priority;                   //!< Priority of the queue [0, TOTAL_PORT_COUNT)
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode (DROP_NEWEST or DROP_OLDEST)
     };
 
     /**
@@ -81,10 +91,12 @@ class ComQueue final : public ComQueueComponentBase {
      * method. Index and message size are calculated by the configuration call.
      */
     struct QueueMetadata {
-        FwSizeType depth;      //!< Depth of the queue in messages
-        FwIndexType priority;  //!< Priority of the queue
-        FwIndexType index;     //!< Index of this queue in the prioritized list
-        FwSizeType msgSize;    //!< Message size of messages in this queue
+        FwSizeType depth;                       //!< Depth of the queue in messages
+        FwIndexType priority;                   //!< Priority of the queue
+        Types::QueueMode mode;                  //!< Queue mode (FIFO or LIFO)
+        Types::QueueOverflowMode overflowMode;  //!< Overflow handling mode
+        FwIndexType index;                      //!< Index of this queue in m_queues
+        FwSizeType msgSize;                     //!< Message size of messages in this queue
     };
 
     /**
@@ -113,9 +125,10 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Takes in the queue depth and priority per-port in order from Fw::Com through Fw::Buffer ports. Calculates the
     //! queue metadata stored `m_prioritizedList` and then sorts that list by priority.
-    void configure(QueueConfigurationTable queueConfig,  //!< Table of the configuration properties for the component
-                   FwEnumStoreType allocationId,         //!< Identifier used  when dealing with the Fw::MemAllocator
-                   Fw::MemAllocator& allocator           //!< Fw::MemAllocator used to acquire memory
+    void configure(
+        const QueueConfigurationTable& queueConfig,  //!< Table of the configuration properties for the component
+        FwEnumStoreType allocationId,                //!< Identifier used  when dealing with the Fw::MemAllocator
+        Fw::MemAllocator& allocator                  //!< Fw::MemAllocator used to acquire memory
     );
 
     //! Deallocate resources and cleanup ComQueue
@@ -131,9 +144,9 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     //! Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual
     //! downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.
-    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,       //!< The opcode
-                                U32 cmdSeq,                //!< The command sequence number
-                                Svc::QueueType queueType,  //!< The Queue data type
+    void FLUSH_QUEUE_cmdHandler(FwOpcodeType opCode,              //!< The opcode
+                                U32 cmdSeq,                       //!< The command sequence number
+                                const Svc::QueueType& queueType,  //!< The Queue data type
                                 FwIndexType indexType  //!< The index of the queue (within the supplied type) to flush
                                 ) override;
 
@@ -144,6 +157,16 @@ class ComQueue final : public ComQueueComponentBase {
     void FLUSH_ALL_QUEUES_cmdHandler(FwOpcodeType opCode,  //!< The opcode
                                      U32 cmdSeq            //!< The command sequence number
                                      ) override;
+
+    //! Handler for SET_QUEUE_PRIORITY command
+    //!
+    void SET_QUEUE_PRIORITY_cmdHandler(
+        FwOpcodeType opCode,              //!< The opcode
+        U32 cmdSeq,                       //!< The command sequence number
+        const Svc::QueueType& queueType,  //!< The Queue data type
+        FwIndexType indexType,            //!< The index of the queue (within the supplied type) to modify
+        FwIndexType newPriority           //!< New priority value for the queue
+        ) override;
 
   private:
     // ----------------------------------------------------------------------
@@ -195,12 +218,26 @@ class ComQueue final : public ComQueueComponentBase {
     // Helper Functions
     // ----------------------------------------------------------------------
 
-    //! Enqueues a message on the appropriate queue
+    //! Enqueues an Fw::ComBuffer on the appropriate com queue
     //!
     bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
-                 QueueType queueType,         //!< Type of the queue and message data
-                 const U8* data,              //!< Pointer to the message data
-                 const FwSizeType size        //!< Size of the message
+                 const Fw::ComBuffer& data    //!< Com buffer to enqueue
+    );
+
+    //! Enqueues an Fw::Buffer on the appropriate buffer queue
+    //!
+    bool enqueue(const FwIndexType queueNum,  //!< Index of the queue to enqueue the message
+                 const Fw::Buffer& data       //!< Buffer to enqueue
+    );
+
+    //! Handles overflow events, throttling, and queue processing after an enqueue attempt
+    //! \return true when the message was accepted onto the queue, false otherwise
+    //!
+    bool handleEnqueueStatus(const FwIndexType queueNum,       //!< Index of the queue enqueued to
+                             QueueType queueType,              //!< Type of the queue and message data
+                             const FwIndexType portNum,        //!< Port number associated with the queue
+                             const bool preEmptiveOverflow,    //!< Whether an entry was pre-emptively dropped
+                             const Fw::SerializeStatus status  //!< Status of the enqueue attempt
     );
 
     //! Send a chosen Fw::ComBuffer
@@ -222,6 +259,9 @@ class ComQueue final : public ComQueueComponentBase {
     //!
     void processQueue();
 
+    //! Convert Queue Type & Index into single queueIndex
+    FwIndexType getQueueNum(Svc::QueueType queueType, FwIndexType portNum);
+
   private:
     // ----------------------------------------------------------------------
     // Member variables
@@ -231,7 +271,7 @@ class ComQueue final : public ComQueueComponentBase {
     QueueMetadata m_prioritizedList[TOTAL_PORT_COUNT];  //!< Priority sorted list of queue metadata
     bool m_throttle[TOTAL_PORT_COUNT];                  //!< Per-queue EVR throttles
     SendState m_state;                                  //!< State of the component
-    BufferState m_buffer_state;                         //!< Ownership state of buffer
+    std::atomic<BufferState> m_buffer_state;  //!< Ownership state of buffer, shared with the sync dataReturnIn caller
 
     // Storage for Fw::MemAllocator properties
     FwEnumStoreType m_allocationId;  //!< Component's allocation ID

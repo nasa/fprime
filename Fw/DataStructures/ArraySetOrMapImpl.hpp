@@ -222,7 +222,9 @@ class ArraySetOrMapImpl final {
                    VN& valueOrNil           //!< The value or Nil
     ) {
         auto status = Success::FAILURE;
-        for (FwSizeType i = 0; i < this->m_size; i++) {
+        // Loop over a fixed bound; the loop exits immediately after m_size is modified
+        const FwSizeType size = this->m_size;
+        for (FwSizeType i = 0; i < size; i++) {
             if (this->m_entries[i].getKey() == keyOrElement) {
                 valueOrNil = this->m_entries[i].getValue();
                 if (i < this->m_size - 1) {

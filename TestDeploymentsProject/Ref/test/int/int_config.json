@@ -1,0 +1,15 @@
+{
+    "Svc.CommandDispatcher": "CdhCore.cmdDisp",
+    "Svc.CmdSequencer": "Ref.cmdSeq",
+    "Svc.FileDownlink": "FileHandling.fileDownlink",
+    "Svc.FileManager": "FileHandling.fileManager",
+    "Svc.FileUplink": "FileHandling.fileUplink",
+    "Svc.EventManager": "CdhCore.events",
+    "Svc.TlmChan": "CdhCore.tlmSend",
+    "Svc.PrmDb": "FileHandling.prmDb",
+    "Svc.PrmDb.filename": "/tmp/PrmDb.dat",
+    "Svc.DpCatalog": "DataProducts.dpCat",
+    "Svc.DpManager": "DataProducts.dpMgr",
+    "Svc.DpWriter": "DataProducts.dpWriter",
+    "Svc.Health": "CdhCore.health"
+}
