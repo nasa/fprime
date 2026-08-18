@@ -7,26 +7,14 @@ body:
   - type: input
     id: fprime-version
     attributes:
-      label: F´ version
-      description: Which version of F´ are you using?
+      label: F´ version and affected component
+      description: Which version of F´ are you using, and which component would this feature affect?
       value: devel
-  - type: input
-    id: affected-component
-    attributes:
-      label: Affected component
-      description: Which component would be affected?
   - type: textarea
     id: description
     attributes:
-      label: Description
-      description: Describe the feature you are requesting.
-    validations:
-      required: true
-  - type: textarea
-    id: rationale
-    attributes:
-      label: Rationale
-      description: Explain why this feature should be implemented in F´.
+      label: Feature description and rationale
+      description: Describe the feature you are requesting and why F´ needs it.
     validations:
       required: true
   - type: textarea
@@ -49,5 +37,4 @@ body:
           required: true
         - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
           required: true
-        - label: I am willing to submit a pull request to address this issue.
         - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).
