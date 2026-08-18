@@ -28,7 +28,7 @@ namespace WasmSequencerConfig {
 constexpr FwSizeType SPACEWASM_PAGE_SIZE = 8192;
 constexpr FwSizeType SPACEWASM_MAX_PAGES = 4;
 
-/// Total static pool backing the interpreter heap: 16 * 8192 = 128 KiB.
+/// Total static pool backing the interpreter heap: 4 * 8192 = 32 KiB.
 constexpr FwSizeType DYNAMIC_MEMORY_SIZE = SPACEWASM_PAGE_SIZE * SPACEWASM_MAX_PAGES;
 
 /// Size in bytes of the guest operand stack allocated per store

@@ -42,6 +42,61 @@ function(fprime_validate_platform)
 endfunction()
 
 ####
+# Function `fprime_get_target_triple`:
+#
+# Determines the target triple (e.g. x86_64-unknown-none) for the current build and returns it via
+# OUTPUT_VARIABLE. Resolution order:
+#   1. FPRIME_TARGET_TRIPLE variable, when set (user override)
+#   2. CMAKE_C_COMPILER_TARGET / CMAKE_CXX_COMPILER_TARGET (cross-compile target)
+#   3. The compiler's `-dumpmachine` output
+#
+# It is a fatal error when CMAKE_C_COMPILER_TARGET and CMAKE_CXX_COMPILER_TARGET are both set but
+# differ, or when the `-dumpmachine` invocation fails.
+#
+# OUTPUT_VARIABLE: name of the variable set in the caller's scope with the target triple
+# Returns: target triple via OUTPUT_VARIABLE
+####
+function(fprime_get_target_triple OUTPUT_VARIABLE)
+    # User override takes precedence over all detection
+    if (FPRIME_TARGET_TRIPLE)
+        set("${OUTPUT_VARIABLE}" "${FPRIME_TARGET_TRIPLE}" PARENT_SCOPE)
+        return()
+    endif()
+    # Cross-compile target triples must agree when both are set
+    if (CMAKE_C_COMPILER_TARGET AND CMAKE_CXX_COMPILER_TARGET
+            AND NOT CMAKE_C_COMPILER_TARGET STREQUAL CMAKE_CXX_COMPILER_TARGET)
+        fprime_cmake_fatal_error(
+            "CMAKE_C_COMPILER_TARGET (${CMAKE_C_COMPILER_TARGET}) and CMAKE_CXX_COMPILER_TARGET "
+            "(${CMAKE_CXX_COMPILER_TARGET}) differ. Set FPRIME_TARGET_TRIPLE to override."
+        )
+    elseif (CMAKE_C_COMPILER_TARGET)
+        set(DETECTED_TRIPLE "${CMAKE_C_COMPILER_TARGET}")
+    elseif (CMAKE_CXX_COMPILER_TARGET)
+        set(DETECTED_TRIPLE "${CMAKE_CXX_COMPILER_TARGET}")
+    else()
+        # Fall back to asking the compiler directly
+        if (CMAKE_C_COMPILER)
+            set(TRIPLE_COMPILER "${CMAKE_C_COMPILER}")
+        else()
+            set(TRIPLE_COMPILER "${CMAKE_CXX_COMPILER}")
+        endif()
+        execute_process(
+            COMMAND "${TRIPLE_COMPILER}" -dumpmachine
+            RESULT_VARIABLE DUMPMACHINE_RESULT
+            OUTPUT_VARIABLE DETECTED_TRIPLE
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+        if (NOT DUMPMACHINE_RESULT EQUAL 0 OR DETECTED_TRIPLE STREQUAL "")
+            fprime_cmake_fatal_error(
+                "'${TRIPLE_COMPILER} -dumpmachine' failed. Set FPRIME_TARGET_TRIPLE to override."
+            )
+        endif()
+    endif()
+    set("${OUTPUT_VARIABLE}" "${DETECTED_TRIPLE}" PARENT_SCOPE)
+endfunction()
+
+####
 # Function `fprime_find_platform_file`:
 #
 # Search for a platform file (cmake/platform/${FPRIME_PLATFORM}.cmake) using ordered glob patterns.

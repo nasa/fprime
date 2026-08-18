@@ -4,8 +4,8 @@
 // \brief  Header for the F Prime WebAssembly System Interface (fwasi)
 // ======================================================================
 
-#ifndef FPRIME_SPACEWASM_H
-#define FPRIME_SPACEWASM_H
+#ifndef FPRIME_SPACEWASM_GUEST_H
+#define FPRIME_SPACEWASM_GUEST_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -163,4 +163,4 @@ extern U32 fprime_wasm_serial_async(I32 index, U32 data_ptr, U32 data_size, U32 
 }  // extern "C"
 #endif  // __cplusplus
 
-#endif  // FPRIME_SPACEWASM_H
+#endif  // FPRIME_SPACEWASM_GUEST_H

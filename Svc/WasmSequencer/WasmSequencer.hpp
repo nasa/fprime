@@ -636,6 +636,12 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     U8* globalAlloc(U32 size, U32 align);
     void globalDealloc(const U8* ptr);
 
+    /// C-callback trampolines for the spacewasm global-allocator registry. Static
+    /// so they can be used as plain function pointers (no lambdas, per CPP-7);
+    /// each forwards to the owning instance carried in `userdata`.
+    static U8* globalAllocThunk(void* userdata, size_t size, size_t align);
+    static void globalDeallocThunk(void* userdata, U8* ptr, size_t size, size_t align);
+
     /// The Wasm guest allocator callbacks
     U8* guestAlloc(U32 size, U32 align);
     void guestDealloc(const U8* ptr, U32 size);
@@ -645,7 +651,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Create a fresh interpreter store with the given module capacity,
     //! destroying any existing store first.
-    Fw::Success createStore();
+    void createStore();
 
     //! Destroy the current interpreter store, if any, releasing its memory.
     void destroyStore();
@@ -688,7 +694,7 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         FwOpcodeType opCode;
         U32 cmdSeq;
 
-        WaitingCmd() = default;
+        WaitingCmd() : opCode(0), cmdSeq(0) {}
         WaitingCmd(FwOpcodeType opCode_, U32 cmdSeq_) : opCode(opCode_), cmdSeq(cmdSeq_) {}
     };
 
@@ -948,6 +954,11 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                                                 const struct spacewasm_value_t* params,
                                                 size_t n_params,
                                                 struct spacewasm_value_t* out_result);
+
+    //! Validate a guest serial-port request (shared by the sync and async variants).
+    //! Emits the appropriate warning event and returns false when the port index is
+    //! out of range/unconnected or the payload length exceeds the configured maximum.
+    bool validateSerialPortRequest(WasmSequencer_HostFunction::T kind, I32 index, U32 len);
 
     // A global static lock. This is needed to allow the global allocator in spacewasm
     // to not require to pass context to fine grained context to allocations.

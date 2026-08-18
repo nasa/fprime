@@ -21,6 +21,8 @@ U8* WasmSequencer ::globalAlloc(const U32 size, const U32 align) {
     FW_ASSERT(size == Svc::WasmSequencerConfig::SPACEWASM_PAGE_SIZE, static_cast<FwAssertArgType>(size));
     FW_ASSERT(align <= 16, static_cast<FwAssertArgType>(align));
 
+    static_assert(Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES <= 32,
+                  "m_page_used_mask (U32) supports at most 32 pages");
     for (U32 page = 0; page < Svc::WasmSequencerConfig::SPACEWASM_MAX_PAGES; page++) {
         const U32 bit = static_cast<U32>(1) << page;
         if ((this->m_page_used_mask & bit) == 0) {
@@ -92,7 +94,7 @@ spacewasm_read_result_t WasmSequencer ::readModuleChunk(const U8** outBuf, std::
     return readStatus;
 }
 
-Fw::Success WasmSequencer ::createStore() {
+void WasmSequencer ::createStore() {
     this->destroyStore();
 
     static_assert(WasmSequencerConfig::MAX_GUEST_MODULES <= 255,
@@ -120,7 +122,6 @@ Fw::Success WasmSequencer ::createStore() {
     FW_ASSERT(status == SPACEWASM_OK, status);
 
     this->log_DIAGNOSTIC_StoreAllocationSucceeded(WasmSequencerConfig::MAX_GUEST_MODULES);
-    return Fw::Success::SUCCESS;
 }
 
 void WasmSequencer ::destroyStore() {
@@ -223,7 +224,7 @@ Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t 
         case SPACEWASM_TRAP_INVALID_TABLE_FUNCTION_TYPE:
             return Svc::WasmSequencer_TrapReason::INVALID_TABLE_FUNCTION_TYPE;
         case SPACEWASM_TRAP_UNINITIALIZED_TABLE_ELEMENT:
-            return Svc::WasmSequencer_TrapReason::UNINTIIALIZED_TABLE_ELEMENT;
+            return Svc::WasmSequencer_TrapReason::UNINITIALIZED_TABLE_ELEMENT;
         case SPACEWASM_TRAP_GLOBAL_GET_FAILED:
             return Svc::WasmSequencer_TrapReason::GLOBAL_GET_FAILED;
         case SPACEWASM_TRAP_GLOBAL_SET_FAILED:
@@ -300,8 +301,9 @@ extern "C" void spacewasm_panic(const U8* filename,
                                 const U8* msg,
                                 std::size_t len) {
     Fw::String fmtMsg;
-    fmtMsg.format("Rust panic %.*s:%d: %.*s\n", static_cast<int>(filename_len), reinterpret_cast<const char*>(filename),
-                  static_cast<int>(line), static_cast<int>(len), reinterpret_cast<const char*>(msg));
+    (void)fmtMsg.format("Rust panic %.*s:%d: %.*s\n", static_cast<int>(filename_len),
+                        reinterpret_cast<const char*>(filename), static_cast<int>(line), static_cast<int>(len),
+                        reinterpret_cast<const char*>(msg));
     Os::Console::write(fmtMsg);
 
     // Rust panics map to FSW assertions

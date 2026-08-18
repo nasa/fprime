@@ -632,7 +632,7 @@ TEST_F(WasmSequencerTester, MapTrapReasonAllCases) {
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_DIVIDE_BY_ZERO), TR::DIVIDE_BY_ZERO);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_INVALID_TABLE_INDEX), TR::INVALID_TABLE_INDEX);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_INVALID_TABLE_FUNCTION_TYPE), TR::INVALID_TABLE_FUNCTION_TYPE);
-    ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_UNINITIALIZED_TABLE_ELEMENT), TR::UNINTIIALIZED_TABLE_ELEMENT);
+    ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_UNINITIALIZED_TABLE_ELEMENT), TR::UNINITIALIZED_TABLE_ELEMENT);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_GLOBAL_GET_FAILED), TR::GLOBAL_GET_FAILED);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_GLOBAL_SET_FAILED), TR::GLOBAL_SET_FAILED);
     ASSERT_EQ(mapTrapReason(SPACEWASM_TRAP_OUT_OF_MEMORY), TR::OUT_OF_MEMORY);
@@ -1130,6 +1130,17 @@ TEST_F(WasmSequencerTester, TelemetryInitialDefaults) {
     ASSERT_TLM_CommandsFailed(0, static_cast<U64>(0));
     ASSERT_TLM_LastTrapReason(0, WasmSequencer_TrapReason::NONE);
     ASSERT_TLM_SeqName(0, "");
+
+    // All channels are `update on change`: flushing again without any state change
+    // must emit nothing the second time.
+    this->clearHistory();
+    this->flushTelemetry();
+    ASSERT_TLM_ControllerState_SIZE(0);
+    ASSERT_TLM_EngineState_SIZE(0);
+    ASSERT_TLM_SequencesSucceeded_SIZE(0);
+    ASSERT_TLM_CommandsDispatched_SIZE(0);
+    ASSERT_TLM_LastTrapReason_SIZE(0);
+    ASSERT_TLM_SeqName_SIZE(0);
 }
 
 TEST_F(WasmSequencerTester, TelemetrySuccessCountAndName) {
@@ -2422,6 +2433,8 @@ TEST_F(WasmSequencerTester, SerialAsyncReplyTooLargeFails) {
 
     ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
     ASSERT_EVENTS_BufferTooSmall_SIZE(1);
+    // The guest's return buffer is 4 bytes but the reply is 8 bytes.
+    ASSERT_EVENTS_BufferTooSmall(0, WasmSequencer_HostFunction::ASYNC_PORT, 4, 8);
     ASSERT_EVENTS_SequenceFailed_SIZE(1);
     this->removeFile("serial_async.wasm");
 }

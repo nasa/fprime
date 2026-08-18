@@ -11,7 +11,7 @@ event ControllerBusy(
   severity warning low \
   format "Controller cannot process signal {} in state {}"
 
-@ A command was issued in a state where it is not valid
+@ Failed to find a loaded module with the requested name
 event ModuleNotFound(module_name: string size 16) \
   severity warning low \
   format "Failed to invoke main on module with name {}"
@@ -78,6 +78,12 @@ event HostFunctionInvalidPort(
 ) \
   severity warning high \
   format "Host function {} requested invalid serial port index {} (have {} ports)"
+
+@ A guest serial port payload could not be serialized onto the serial output port
+@ (the receiving port rejected the guest-supplied bytes)
+event SerialPortSendFailed(host_function: HostFunction, status: I32) \
+  severity warning high \
+  format "Host function {} failed to send on serial port: serialize status {}"
 
 @ The guest requested an event at a severity that is not permitted for guest
 @ programs (an out-of-range id, or FATAL/COMMAND which are reserved for the
@@ -151,11 +157,6 @@ event SequenceExited(code: I32) \
 event SequencePanic(code: I32) \
   severity warning high \
   format "Wasm program panicked: code {}"
-
-@ A guest host function could not access guest linear memory
-event GuestMemoryError(status: Status) \
-  severity warning high \
-  format "Guest memory access failed: spacewasm status {}"
 
 @ The guest requested a sleep whose duration (in microseconds) does not fit the
 @ host timer representation (its whole-seconds part overflows U32)

@@ -129,4 +129,7 @@ modules.
 
 ## Configuration
 
-<!-- If the component requires configuration at initialization, document here -->
+Compile-time configuration lives in `config/WasmSequencerConfig.hpp` (interpreter
+page count and pool size, guest stack/memory sizes, and serial-port limits).
+Runtime behavior is controlled through the component's parameters
+(`SEQ_BASE_DIR`, `INSTRUCTION_FUEL`, and `STATEMENT_TIMEOUT_SECS`).

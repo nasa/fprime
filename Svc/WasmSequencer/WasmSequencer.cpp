@@ -23,6 +23,23 @@
 
 namespace Svc {
 
+// Trampolines for the spacewasm global-allocator registry. Static member functions
+// (not lambdas, per CPP-7) that forward to the owning instance carried in `userdata`.
+U8* WasmSequencer ::globalAllocThunk(void* userdata, size_t size, size_t align) {
+    if (userdata == nullptr) {
+        return nullptr;
+    }
+    return static_cast<WasmSequencer*>(userdata)->globalAlloc(static_cast<U32>(size), static_cast<U32>(align));
+}
+
+void WasmSequencer ::globalDeallocThunk(void* userdata, U8* ptr, size_t size, size_t align) {
+    (void)size;
+    (void)align;
+    if (userdata != nullptr) {
+        static_cast<WasmSequencer*>(userdata)->globalDealloc(ptr);
+    }
+}
+
 // ----------------------------------------------------------------------
 // Component construction and destruction
 // ----------------------------------------------------------------------
@@ -42,21 +59,7 @@ WasmSequencer ::WasmSequencer(const char* const compName)
       m_loadFile(nullptr),
       m_sequencesStarted(0) {
     getGlobalAllocatorLock()->lock();
-    const auto status = spacewasm_fprime_register_global_allocator(
-        [](void* userdata, std::size_t size, std::size_t align) -> U8* {
-            if (userdata == nullptr) {
-                return nullptr;
-            }
-            return static_cast<WasmSequencer*>(userdata)->globalAlloc(static_cast<U32>(size), static_cast<U32>(align));
-        },
-        [](void* userdata, U8* ptr, std::size_t size, std::size_t align) {
-            (void)size;
-            (void)align;
-            if (userdata != nullptr) {
-                static_cast<WasmSequencer*>(userdata)->globalDealloc(ptr);
-            }
-        },
-        this);
+    const auto status = spacewasm_fprime_register_global_allocator(&globalAllocThunk, &globalDeallocThunk, this);
     getGlobalAllocatorLock()->unlock();
 
     FW_ASSERT(status == SPACEWASM_OK, status);

@@ -11,13 +11,13 @@ enum TrapReason {
   INVALID_TABLE_INDEX
   @ The function type in an indirect call does not match the function pointer's type
   INVALID_TABLE_FUNCTION_TYPE
-  @ An indirect call tried to map to a table function out of range
-  UNINTIIALIZED_TABLE_ELEMENT
+  @ An indirect call referenced an uninitialized table element
+  UNINITIALIZED_TABLE_ELEMENT
   @ An imported global could not be read
   GLOBAL_GET_FAILED
   @ An imported global could not be set
   GLOBAL_SET_FAILED
-  @ A memory operation is out of bounds
+  @ The interpreter ran out of memory
   OUT_OF_MEMORY
   @ memory.grow failed because a host function has taken ownership of a memory
   MEMORY_REF_NOT_UNIQUE
@@ -209,7 +209,7 @@ state machine EngineStateMachine {
         setExitReason_INTERPRETER_TRAP
       } enter IDLE
 
-      # Check if there is a pending
+      # Check if there is a pending pause before dispatching the host function
       choice HOST_FUNCTION {
         if pendingPause enter PAUSED else enter AWAITING_RESPONSE
       }

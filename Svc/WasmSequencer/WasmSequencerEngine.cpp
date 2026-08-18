@@ -443,7 +443,12 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
             // Invoke the serial output port. The reply port MUST NOT be connected for the
             // synchronous variant, so we resume the interpreter immediately without waiting.
             serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+            if (serStatus != Fw::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::SYNC_PORT,
+                                                          static_cast<I32>(serStatus));
+                this->interpreter_sendSignal_hostResponseFailure();
+                break;
+            }
 
             this->interpreter_sendSignal_hostResume();
             break;
@@ -471,9 +476,14 @@ void WasmSequencer ::Svc_WasmSequencer_EngineStateMachine_action_dispatchPending
             this->m_hasStatementStart = true;
 
             // Invoke the serial output port and block the interpreter until the reply
-            // comes back on serialReply[portNum] (handled by serialReply_handler)
+            // comes back on serialReply[portNum] (handled by serialReply_handler).
             serStatus = this->serialOut_out(portNum, this->m_serialPortBuffer);
-            FW_ASSERT(serStatus == Fw::FW_SERIALIZE_OK, serStatus);
+            if (serStatus != Fw::FW_SERIALIZE_OK) {
+                this->log_WARNING_HI_SerialPortSendFailed(Svc::WasmSequencer_HostFunction::ASYNC_PORT,
+                                                          static_cast<I32>(serStatus));
+                this->interpreter_sendSignal_hostResponseFailure();
+                break;
+            }
 
             break;
         }
