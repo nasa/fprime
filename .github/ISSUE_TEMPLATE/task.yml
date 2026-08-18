@@ -5,16 +5,22 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Task description, rationale, and proposed approach
-      description: Describe the task, why it should be completed, and optionally how it could be completed.
-      value: |
-        ### Task description
-
-        ### Rationale
-
-        ### Proposed approach
+      label: Task description
+      description: Describe the task.
     validations:
       required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Explain why this task should be completed.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-approach
+    attributes:
+      label: Proposed approach
+      description: Optionally describe how this task could be completed.
   - type: checkboxes
     id: breaking-change
     attributes:

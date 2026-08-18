@@ -7,12 +7,15 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Feature description and rationale
-      description: Describe the feature you are requesting and why F´ needs it.
-      value: |
-        ### Feature description
-
-        ### Rationale
+      label: Feature description
+      description: Describe the feature you are requesting.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Explain why this feature should be implemented in F´.
     validations:
       required: true
   - type: checkboxes
