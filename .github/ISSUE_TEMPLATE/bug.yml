@@ -7,20 +7,9 @@ body:
   - type: input
     id: fprime-version
     attributes:
-      label: F´ version
-      description: Which version of F´ are you using?
+      label: F´ version and affected component
+      description: Which version of F´ are you using, and which component is affected?
       value: devel
-  - type: input
-    id: affected-component
-    attributes:
-      label: Affected component
-      description: Which component is affected?
-  - type: textarea
-    id: version-check
-    attributes:
-      label: fprime-util version-check output
-      description: Run `fprime-util version-check` and paste the output.
-      render: shell
   - type: textarea
     id: problem-description
     attributes:
@@ -31,19 +20,14 @@ body:
   - type: textarea
     id: how-to-reproduce
     attributes:
-      label: How to reproduce
-      description: List the steps needed to reproduce the problem.
+      label: How to reproduce and expected behavior
+      description: List the steps needed to reproduce the problem, and describe the behavior you expected.
       placeholder: |
         1.
         2.
         3.
-    validations:
-      required: true
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: Expected behavior
-      description: Describe the behavior you expected.
+
+        Expected:
     validations:
       required: true
   - type: checkboxes
@@ -55,5 +39,10 @@ body:
           required: true
         - label: I understand that contributions go through the [CCB process](https://github.com/nasa/fprime/blob/devel/GOVERNANCE.md) described in [CONTRIBUTING.md](https://github.com/nasa/fprime/blob/devel/CONTRIBUTING.md).
           required: true
-        - label: I am willing to submit a pull request to address this issue.
         - label: AI assistance was used in writing this issue. See the [AI policy](https://github.com/nasa/fprime/blob/devel/AI_POLICY.md).
+  - type: textarea
+    id: version-check
+    attributes:
+      label: fprime-util version-check output
+      description: Run `fprime-util version-check` and paste the output.
+      render: shell
