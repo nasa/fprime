@@ -3,7 +3,7 @@
 #
 # Build core F prime.
 ####
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.18)
 project(FPrime C CXX)
 set(FPRIME_INCLUDE_FRAMEWORK_CODE OFF)
 find_package(FPrime REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}")
