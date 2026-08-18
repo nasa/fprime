@@ -40,6 +40,7 @@ The User Manual provides comprehensive documentation for understanding and using
 - [Data Products](framework/data-products.md)
 - [Ground Interface Architecture and Customization](framework/ground-interface.md)
 - [Memory Management](framework/memory-management/index.md)
+- [F´ Reference Projects](framework/reference-projects.md)
 - [F´ on Baremetal Systems](framework/run-baremetal.md)
 - [F´ on Multi-Core Systems](framework/run-multi-core.md)
 - [State Machines](framework/state-machines.md)
