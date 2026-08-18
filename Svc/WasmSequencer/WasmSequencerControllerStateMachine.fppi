@@ -149,14 +149,9 @@ state machine ControllerStateMachine {
   @ Create a new store with N_MODULES (parameter) modules
   action resetStore
 
-  @ Set the current executing context
-  action setContext: RequestContext
-
-  @ Clear the current executing context
-  action clearContext
-
   @ Send a signal to the engine state machine to begin running
-  action runEngine
+  @ The engine will asynchronously reply with the `engineFinished` signal
+  action runEngine: RequestContext
 
   @ Signal to the controller that the interpreter finished executing
   @ Request context will be sourced from the last `setContext` call
@@ -206,7 +201,7 @@ state machine ControllerStateMachine {
     if invokeSucceeded do {
       reportModuleStarted
       respond_noblock_OK
-      setContext
+      runEngine
     } enter RUNNING_MAIN else do {
       reportModuleMainInvokeFailed
       respond_ERROR
@@ -230,7 +225,7 @@ state machine ControllerStateMachine {
 
   choice START_INVOKE_CHECK {
     if invokeSucceeded do {
-      setContext
+      runEngine
     } enter RUNNING_START else do {
       reportModuleStartInvokeFailed
       respond_ERROR
@@ -238,9 +233,7 @@ state machine ControllerStateMachine {
   }
 
   state RUNNING_START {
-    entry do { runEngine }
-
-    on engineFinished do { clearContext } enter INTERPRETER_STATUS
+    on engineFinished enter INTERPRETER_STATUS
 
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {
@@ -286,7 +279,7 @@ state machine ControllerStateMachine {
 
   choice START_INVOKE_CHECK_PENDING_CHAIN {
     if invokeSucceeded do {
-      setContext
+      runEngine
     } enter RUNNING_START_PENDING_MAIN else do {
       reportModuleStartInvokeFailed
       # The RUN has not been answered yet (respond_noblock_OK is only reached after
@@ -297,9 +290,7 @@ state machine ControllerStateMachine {
 
   @ Engine is running a module's start function before running the main function
   state RUNNING_START_PENDING_MAIN {
-    entry do { runEngine }
-
-    on engineFinished do { clearContext } enter INTERPRETER_STATUS
+    on engineFinished enter INTERPRETER_STATUS
 
     @ Once the start function finishes successfully we still owe the caller a
     @ main invocation (this is the RUN-with-start path). Chain into invokeMain
@@ -323,9 +314,7 @@ state machine ControllerStateMachine {
 
   @ The engine is running a module's main function
   state RUNNING_MAIN {
-    entry do { runEngine }
-
-    on engineFinished do { clearContext } enter INTERPRETER_STATUS
+    on engineFinished enter INTERPRETER_STATUS
 
     choice INTERPRETER_STATUS {
       if interpreterSucceeded do {

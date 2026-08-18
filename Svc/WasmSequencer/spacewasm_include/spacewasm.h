@@ -635,6 +635,68 @@ spacewasm_status_t spacewasm_check_func_signature(struct spacewasm_t* engine,
                                                   const char* returns_sig);
 
 /*
+ Look up the global exported as `name` in module `module_idx` and write its
+ index to `out_index`. The written index addresses the module's own globals
+ and can be passed straight to [`spacewasm_get_global`] and
+ [`spacewasm_set_global`].
+
+ Only globals defined by module `module_idx` itself are resolvable this way:
+ if the export re-exports a global imported from another (guest or host)
+ module, this returns [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`], exactly
+ as [`spacewasm_find_export_func`] does for imported functions. Reach such a
+ global through the module that defines it.
+
+ Returns [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`] when `module_idx` is
+ out of range or the module exports no matching, locally-defined global.
+
+ # Safety
+ `engine` must be live; `name` valid; `out_index` valid.
+ */
+spacewasm_status_t spacewasm_find_global(struct spacewasm_t* engine,
+                                         uint32_t module_idx,
+                                         const char* name,
+                                         uint32_t* out_index);
+
+/*
+ Read global `global_index` of module `module_idx` into `out`, tagged with the
+ global's declared value type. `global_index` addresses the module's own
+ globals, as returned by [`spacewasm_find_global`].
+
+ Returns [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`] when `module_idx` or
+ `global_index` is out of range.
+
+ # Safety
+ `engine` must be live; `out` valid.
+ */
+spacewasm_status_t spacewasm_get_global(struct spacewasm_t* engine,
+                                        uint32_t module_idx,
+                                        uint32_t global_index,
+                                        struct spacewasm_value_t* out);
+
+/*
+ Write `value` into global `global_index` of module `module_idx`.
+ `global_index` addresses the module's own globals, as returned by
+ [`spacewasm_find_global`].
+
+ The tag of `value` must match the global's declared value type, and the
+ global must be mutable.
+
+ Returns [`spacewasm_status_t::SPACEWASM_ERR_NOT_FOUND`] when `module_idx` or
+ `global_index` is out of range,
+ [`spacewasm_status_t::SPACEWASM_ERR_GLOBAL_TYPE_MISMATCH`] when the value type
+ does not match the global, and
+ [`spacewasm_status_t::SPACEWASM_ERR_GLOBAL_IS_NOT_MUTABLE`] when the global is
+ declared `const`.
+
+ # Safety
+ `engine` must be a live handle.
+ */
+spacewasm_status_t spacewasm_set_global(struct spacewasm_t* engine,
+                                        uint32_t module_idx,
+                                        uint32_t global_index,
+                                        struct spacewasm_value_t value);
+
+/*
  Set up a call to exported function `func_index` of module `module_idx` with
  the `n` arguments in `params`. Does not run the function; drive execution
  with [`spacewasm_run`].

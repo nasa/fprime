@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Fw/Types/Assert.hpp"
+#include "Fw/Types/StringBase.hpp"
 #include "Os/Console.hpp"
 #include "Svc/WasmSequencer/WasmSequencer.hpp"
 #include "default/config/WasmSequencerConfig.hpp"
@@ -208,6 +209,42 @@ void WasmSequencer ::reportSeqDone(const Svc::WasmSequencer_RequestContext& valu
     if (this->isConnected_seqDoneOut_OutputPort(0)) {
         this->seqDoneOut_out(0, 0, 0, response);
     }
+}
+
+spacewasm_status_t WasmSequencer ::setGlobal(const Fw::StringBase& moduleName,
+                                             const Fw::StringBase& name,
+                                             spacewasm_value_t value) {
+    U32 moduleIdx = 0;
+    spacewasm_status_t status = spacewasm_find_module(this->m_wasm, moduleName.toChar(), &moduleIdx);
+    if (status != SPACEWASM_OK) {
+        return status;
+    }
+
+    U32 globalIdx;
+    status = spacewasm_find_global(this->m_wasm, moduleIdx, name.toChar(), &globalIdx);
+    if (status != SPACEWASM_OK) {
+        return status;
+    }
+
+    return spacewasm_set_global(this->m_wasm, moduleIdx, globalIdx, value);
+}
+
+spacewasm_status_t WasmSequencer ::getGlobal(const Fw::StringBase& moduleName,
+                                             const Fw::StringBase& name,
+                                             spacewasm_value_t* value) {
+    U32 moduleIdx = 0;
+    spacewasm_status_t status = spacewasm_find_module(this->m_wasm, moduleName.toChar(), &moduleIdx);
+    if (status != SPACEWASM_OK) {
+        return status;
+    }
+
+    U32 globalIdx;
+    status = spacewasm_find_global(this->m_wasm, moduleIdx, name.toChar(), &globalIdx);
+    if (status != SPACEWASM_OK) {
+        return status;
+    }
+
+    return spacewasm_get_global(this->m_wasm, moduleIdx, globalIdx, value);
 }
 
 Svc::WasmSequencer_TrapReason::T WasmSequencer ::mapTrapReason(spacewasm_trap_t trap) {

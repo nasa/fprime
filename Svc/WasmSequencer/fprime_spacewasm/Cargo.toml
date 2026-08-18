@@ -13,8 +13,8 @@ crate-type = ["staticlib"]
 # We will provide the panic handler and allocator
 # spacewasm_c_api = { git = "https://github.com/nasa/spacewasm.git", branch = "main", default-features = false, features = []}
 # spacewasm = { git = "https://github.com/nasa/spacewasm.git", branch = "main" }
-spacewasm_c_api = { version = "=0.6.1", default-features = false, features = ["provide-panic-handler"] }
-spacewasm = "=0.6.1"
+spacewasm_c_api = { version = "=0.6.2", default-features = false, features = ["provide-panic-handler"] }
+spacewasm = "=0.6.2"
 
 [profile.release]
 opt-level = 3

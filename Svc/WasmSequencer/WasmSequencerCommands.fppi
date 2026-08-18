@@ -49,6 +49,8 @@ async command WAIT opcode 4
 @ return to IDLE mode.
 sync command CANCEL opcode 5
 
+# TODO(tumbar) Add a reset and make CANCEL not clear the store
+
 @ Pauses the execution of the sequencer, just before it is about to start spinning.
 @ This simply pends a pause flag that will be take before the sequence engine starts
 @ up again.
@@ -58,3 +60,47 @@ async command PAUSE opcode 6
 
 @ Resume the sequence from a paused state
 async command CONTINUE opcode 7
+
+@ Set a global variable to a given i32 value.
+@ Command fails if the module is not found, global is not exported, mutable, or of i32 type
+async command GLOBAL_SET_I32(
+  moduleName: string size 16 @< Name of the module to set global for
+  name: string size 16       @< Name of the global
+  value: I32                 @< Value to set global to
+) \
+  opcode 8
+
+@ Set a global variable to a given i64 value.
+@ Command fails if the module is not found, global is not exported, mutable, or of i64 type
+async command GLOBAL_SET_I64(
+  moduleName: string size 16 @< Name of the module to set global for
+  name: string size 16       @< Name of the global
+  value: I64                 @< Value to set global to
+) \
+  opcode 9
+
+@ Set a global variable to a given f32 value.
+@ Command fails if the module is not found, global is not exported, mutable, or of f32 type
+async command GLOBAL_SET_F32(
+  moduleName: string size 16 @< Name of the module to set global for
+  name: string size 16       @< Name of the global
+  value: F32                 @< Value to set global to
+) \
+  opcode 10
+
+@ Set a global variable to a given f64 value.
+@ Command fails if the module is not found, global is not exported, mutable, or of f64 type
+async command GLOBAL_SET_F64(
+  moduleName: string size 16 @< Name of the module to set global for
+  name: string size 16       @< Name of the global
+  value: F64                 @< Value to set global to
+) \
+  opcode 11
+
+@ Get the current value of a global variable and emit an event
+@ Command fails if the module is not found, global is not exported, mutable, or of f64 type
+async command GLOBAL_GET(
+  moduleName: string size 16 @< Name of the module to set global for
+  name: string size 16       @< Name of the global
+) \
+  opcode 12

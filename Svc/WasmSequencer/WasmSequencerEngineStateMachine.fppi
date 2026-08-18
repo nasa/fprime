@@ -127,7 +127,13 @@ state machine EngineStateMachine {
   signal entered
 
   @ A function has been invoked, run the interpreter to completion
-  signal run
+  signal run: RequestContext
+
+  @ Set the current executing context
+  action setContext: RequestContext
+
+  @ Clear the current executing context
+  action clearContext
 
   @ raised whenever the checkTimers port is called
   signal checkTimers
@@ -174,8 +180,8 @@ state machine EngineStateMachine {
 
   @ The idle state means there is no function running in the engine
   state IDLE {
-    entry do { reset }
-    on run enter RUNNING
+    entry do { clearContext, reset }
+    on run do { setContext } enter RUNNING
   }
 
   @ sequencer is executing the loaded/invoked Wasm program

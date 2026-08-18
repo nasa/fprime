@@ -296,6 +296,106 @@ void WasmSequencer ::CONTINUE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) {
     }
 }
 
+void WasmSequencer ::GLOBAL_SET_I32_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::CmdStringArg& moduleName,
+                                               const Fw::CmdStringArg& name,
+                                               I32 value) {
+    spacewasm_value_t s_value;
+    s_value.tag = SPACEWASM_I32;
+    s_value.u.i32_ = value;
+
+    auto status = this->setGlobal(moduleName, name, s_value);
+    if (status == SPACEWASM_OK) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+void WasmSequencer ::GLOBAL_SET_I64_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::CmdStringArg& moduleName,
+                                               const Fw::CmdStringArg& name,
+                                               I64 value) {
+    spacewasm_value_t s_value;
+    s_value.tag = SPACEWASM_I64;
+    s_value.u.i64_ = value;
+
+    auto status = this->setGlobal(moduleName, name, s_value);
+    if (status == SPACEWASM_OK) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+void WasmSequencer ::GLOBAL_SET_F32_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::CmdStringArg& moduleName,
+                                               const Fw::CmdStringArg& name,
+                                               F32 value) {
+    spacewasm_value_t s_value;
+    s_value.tag = SPACEWASM_F32;
+    s_value.u.f32_ = value;
+
+    auto status = this->setGlobal(moduleName, name, s_value);
+    if (status == SPACEWASM_OK) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+void WasmSequencer ::GLOBAL_SET_F64_cmdHandler(FwOpcodeType opCode,
+                                               U32 cmdSeq,
+                                               const Fw::CmdStringArg& moduleName,
+                                               const Fw::CmdStringArg& name,
+                                               F64 value) {
+    spacewasm_value_t g_value;
+    g_value.tag = SPACEWASM_F64;
+    g_value.u.f64_ = value;
+
+    auto status = this->setGlobal(moduleName, name, g_value);
+    if (status == SPACEWASM_OK) {
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->log_WARNING_LO_GlobalSetFailed(moduleName, name, status);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
+void WasmSequencer ::GLOBAL_GET_cmdHandler(FwOpcodeType opCode,
+                                           U32 cmdSeq,
+                                           const Fw::CmdStringArg& moduleName,
+                                           const Fw::CmdStringArg& name) {
+    spacewasm_value_t g_value;
+    auto status = this->getGlobal(moduleName, name, &g_value);
+    if (status == SPACEWASM_OK) {
+        switch (g_value.tag) {
+            case SPACEWASM_I32:
+                this->log_ACTIVITY_LO_GlobalValueI32(moduleName, name, g_value.u.i32_);
+                break;
+            case SPACEWASM_I64:
+                this->log_ACTIVITY_LO_GlobalValueI64(moduleName, name, g_value.u.i64_);
+                break;
+            case SPACEWASM_F32:
+                this->log_ACTIVITY_LO_GlobalValueF32(moduleName, name, g_value.u.f32_);
+                break;
+            case SPACEWASM_F64:
+                this->log_ACTIVITY_LO_GlobalValueF64(moduleName, name, g_value.u.f64_);
+                break;
+            default:
+                FW_ASSERT(false, g_value.tag);
+        }
+
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    } else {
+        this->log_WARNING_LO_GlobalGetFailed(moduleName, name, status);
+        this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+    }
+}
+
 void WasmSequencer ::takeAllocatorLock() {
     getGlobalAllocatorLock()->lock();
 

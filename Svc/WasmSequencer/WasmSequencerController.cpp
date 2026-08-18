@@ -293,26 +293,11 @@ void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_resetStore(
     this->createStore();
 }
 
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_setContext(
+void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
     SmId smId,
     Svc_WasmSequencer_ControllerStateMachine::Signal signal,
     const Svc::WasmSequencer_RequestContext& value) {
-    FW_ASSERT(!this->m_hasExectingContext);
-    this->m_hasExectingContext = true;
-    this->m_executingContext = value;
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_clearContext(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    FW_ASSERT(this->m_hasExectingContext);
-    this->m_hasExectingContext = false;
-}
-
-void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
-    SmId smId,
-    Svc_WasmSequencer_ControllerStateMachine::Signal signal) {
-    this->interpreter_sendSignal_run();
+    this->interpreter_sendSignal_run(value);
 }
 
 void WasmSequencer ::Svc_WasmSequencer_ControllerStateMachine_action_reportModuleSucceeded(

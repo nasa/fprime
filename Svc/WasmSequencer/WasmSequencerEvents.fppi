@@ -14,7 +14,55 @@ event ControllerBusy(
 @ Failed to find a loaded module with the requested name
 event ModuleNotFound(module_name: string size 16) \
   severity warning low \
-  format "Failed to invoke main on module with name {}"
+  format "Module with name {} is not loaded into the store"
+
+event GlobalSetFailed(
+  module_name: string size 16
+  globalName: string size 16
+  reason: Status
+) \
+  severity warning low \
+  format "Failed to set global value for module {} global name {}: {}"
+
+event GlobalGetFailed(
+  module_name: string size 16
+  globalName: string size 16
+  reason: Status
+) \
+  severity warning low \
+  format "Failed to get global value for module {} global name {}: {}"
+
+event GlobalValueI32(
+  module_name: string size 16
+  globalName: string size 16
+  value: I32
+) \
+  severity activity low \
+  format "Global value module={} name={} value={}"
+
+event GlobalValueI64(
+  module_name: string size 16
+  globalName: string size 16
+  value: I64
+) \
+  severity activity low \
+  format "Global value module={} name={} value={}"
+
+event GlobalValueF32(
+  module_name: string size 16
+  globalName: string size 16
+  value: F32
+) \
+  severity activity low \
+  format "Global value module={} name={} value={}"
+
+event GlobalValueF64(
+  module_name: string size 16
+  globalName: string size 16
+  value: F64
+) \
+  severity activity low \
+  format "Global value module={} name={} value={}"
 
 @ A cancel was requested on the seqCancelIn port from a state where it is not valid
 event InvalidSeqCancelCall($state: ControllerStateMachine.State) \
@@ -120,6 +168,8 @@ enum ExitReason: U8 {
   TIMER_INCOMPARABLE   @< A sleep/statement timer became incomparable (time base changed) and could not be evaluated
 }
 
+#TODO(tumbar) Move non-zero exit to another event
+
 @ The sequence failed to execute
 event SequenceFailed(
   index: ModuleIdx
@@ -146,7 +196,9 @@ event SequenceStartFailed(
 event SequencePaused() severity activity high format "Sequence execution paused"
 
 @ No sequence is running so we cannot continue from a pause
-event SequenceNotRunning() severity warning low format "Sequence cannot continue when interpreter is not running"
+event SequenceNotRunning() \
+  severity warning low \
+  format "Sequence cannot continue when interpreter is not running"
 
 @ The guest program called fprime.exit with a non-zero code
 event SequenceExited(code: I32) \

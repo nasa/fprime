@@ -11,6 +11,7 @@
 #include "Fw/DataStructures/FifoQueue.hpp"
 #include "Fw/Types/FileNameString.hpp"
 #include "Fw/Types/LinearBufferTemplate.hpp"
+#include "Fw/Types/StringBase.hpp"
 #include "Fw/Types/StringTemplate.hpp"
 #include "Fw/Types/SuccessEnumAc.hpp"
 #include "Os/File.hpp"
@@ -196,6 +197,60 @@ class WasmSequencer final : public WasmSequencerComponentBase {
                              U32 cmdSeq            //!< The command sequence number
                              ) override;
 
+    //! Handler implementation for command GLOBAL_SET_I32
+    //!
+    //! Set a global variable to a given i32 value.
+    //! Command fails if the module is not found, global is not exported, mutable, or of i32 type
+    void GLOBAL_SET_I32_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                                   U32 cmdSeq,                          //!< The command sequence number
+                                   const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                                   const Fw::CmdStringArg& name,        //!< Name of the global
+                                   I32 value                            //!< Value to set global to
+                                   ) override;
+
+    //! Handler implementation for command GLOBAL_SET_I64
+    //!
+    //! Set a global variable to a given i64 value.
+    //! Command fails if the module is not found, global is not exported, mutable, or of i64 type
+    void GLOBAL_SET_I64_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                                   U32 cmdSeq,                          //!< The command sequence number
+                                   const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                                   const Fw::CmdStringArg& name,        //!< Name of the global
+                                   I64 value                            //!< Value to set global to
+                                   ) override;
+
+    //! Handler implementation for command GLOBAL_SET_F32
+    //!
+    //! Set a global variable to a given f32 value.
+    //! Command fails if the module is not found, global is not exported, mutable, or of f32 type
+    void GLOBAL_SET_F32_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                                   U32 cmdSeq,                          //!< The command sequence number
+                                   const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                                   const Fw::CmdStringArg& name,        //!< Name of the global
+                                   F32 value                            //!< Value to set global to
+                                   ) override;
+
+    //! Handler implementation for command GLOBAL_SET_F64
+    //!
+    //! Set a global variable to a given f64 value.
+    //! Command fails if the module is not found, global is not exported, mutable, or of f64 type
+    void GLOBAL_SET_F64_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                                   U32 cmdSeq,                          //!< The command sequence number
+                                   const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                                   const Fw::CmdStringArg& name,        //!< Name of the global
+                                   F64 value                            //!< Value to set global to
+                                   ) override;
+
+    //! Handler implementation for command GLOBAL_GET
+    //!
+    //! Get the current value of a global variable and emit an event
+    //! Command fails if the module is not found, global is not exported, mutable, or of f64 type
+    void GLOBAL_GET_cmdHandler(FwOpcodeType opCode,                 //!< The opcode
+                               U32 cmdSeq,                          //!< The command sequence number
+                               const Fw::CmdStringArg& moduleName,  //!< Name of the module to set global for
+                               const Fw::CmdStringArg& name         //!< Name of the global
+                               ) override;
+
   private:
     // ----------------------------------------------------------------------
     // Implementations for internal state machine actions
@@ -270,7 +325,8 @@ class WasmSequencer final : public WasmSequencerComponentBase {
 
     //! Implementation for action load of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
-    //! Load a pending module request
+    //! Load a module into the store.
+    //! Emits `loadSucceded` or `loadFailed` depending on result
     void Svc_WasmSequencer_ControllerStateMachine_action_load(
         SmId smId,                                                //!< The state machine id
         Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
@@ -375,29 +431,13 @@ class WasmSequencer final : public WasmSequencerComponentBase {
         Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
         ) override;
 
-    //! Implementation for action setContext of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Set the current executing context
-    void Svc_WasmSequencer_ControllerStateMachine_action_setContext(
-        SmId smId,                                                //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
-        const Svc::WasmSequencer_RequestContext& value            //!< The value
-        ) override;
-
-    //! Implementation for action clearContext of state machine Svc_WasmSequencer_ControllerStateMachine
-    //!
-    //! Clear the current executing context
-    void Svc_WasmSequencer_ControllerStateMachine_action_clearContext(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
-        ) override;
-
     //! Implementation for action runEngine of state machine Svc_WasmSequencer_ControllerStateMachine
     //!
     //! Send a signal to the engine state machine to begin running
     void Svc_WasmSequencer_ControllerStateMachine_action_runEngine(
-        SmId smId,                                               //!< The state machine id
-        Svc_WasmSequencer_ControllerStateMachine::Signal signal  //!< The signal
+        SmId smId,                                                //!< The state machine id
+        Svc_WasmSequencer_ControllerStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value            //!< The value
         ) override;
 
     //! Implementation for action signalEntered of state machine Svc_WasmSequencer_EngineStateMachine
@@ -530,6 +570,23 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //!
     //! clears the pending host function port call
     void Svc_WasmSequencer_EngineStateMachine_action_clearPendingHostFunction(
+        SmId smId,                                           //!< The state machine id
+        Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
+        ) override;
+
+    //! Implementation for action setContext of state machine Svc_WasmSequencer_EngineStateMachine
+    //!
+    //! Set the current executing context
+    void Svc_WasmSequencer_EngineStateMachine_action_setContext(
+        SmId smId,                                            //!< The state machine id
+        Svc_WasmSequencer_EngineStateMachine::Signal signal,  //!< The signal
+        const Svc::WasmSequencer_RequestContext& value        //!< The value
+        ) override;
+
+    //! Implementation for action clearContext of state machine Svc_WasmSequencer_EngineStateMachine
+    //!
+    //! Clear the current executing context
+    void Svc_WasmSequencer_EngineStateMachine_action_clearContext(
         SmId smId,                                           //!< The state machine id
         Svc_WasmSequencer_EngineStateMachine::Signal signal  //!< The signal
         ) override;
@@ -892,6 +949,15 @@ class WasmSequencer final : public WasmSequencerComponentBase {
     //! terminal responder.
     void reportSeqDone(const Svc::WasmSequencer_RequestContext& value, const Fw::CmdResponse& response);
 
+    //! Set a global to a value given the name of the module, global export name and value
+    spacewasm_status_t setGlobal(const Fw::StringBase& moduleName, const Fw::StringBase& name, spacewasm_value_t value);
+
+    //! Get the value of a global variable given its module name and global name
+    spacewasm_status_t getGlobal(const Fw::StringBase& moduleName,
+                                 const Fw::StringBase& name,
+                                 spacewasm_value_t* value);
+
+    //! Set up the fprime host interface
     void hostFprimeV1(spacewasm_host_t*);
 
     /// FPrime Wasm Interface Host Functions
