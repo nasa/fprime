@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-17T21:33:41Z",
+  "generated_at": "2026-08-18T21:28:50Z",
   "ref": "devel",
-  "commit": "5a720f1dce2114a8a0c83be37432bccf13bc1623",
+  "commit": "4adb06a6378ee9bbc0ea039d9fc8481c35b48c20",
   "passed": 3,
   "failed": 9,
   "skipped": 4,
@@ -50,20 +50,21 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager",
       "status": "fail",
       "failures": [
-        "requirement 'CFDP-001' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:686) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-002' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:687) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-003' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:688) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-004' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:689) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-005' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:690) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-006' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:691) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-007' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:692) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-008' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:693) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-009' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:694) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-010' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:695) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-011' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:696) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
-        "requirement 'CFDP-012' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:697) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
+        "requirement 'CFDP-001' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:692) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-002' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:693) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-003' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:694) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-004' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:695) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-005' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:696) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-006' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:697) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-007' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:698) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-008' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:699) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-009' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:700) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-010' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:701) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-011' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:702) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-012' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:703) is not mapped to any design artifact (add a Design column entry or reference it in a design section)",
+        "requirement 'CFDP-013' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:704) is not mapped to any design artifact (add a Design column entry or reference it in a design section)"
       ],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "I1",
@@ -106,7 +107,7 @@
         "command 'AbandonTransaction' has no requirement referencing it (add a requirement mentioning 'AbandonTransaction')",
         "command 'ResetCounters' has no requirement referencing it (add a requirement mentioning 'ResetCounters')"
       ],
-      "detail": "9 command(s) traced against 12 requirement(s)"
+      "detail": "9 command(s) traced against 13 requirement(s)"
     },
     {
       "id": "R2",
@@ -117,7 +118,7 @@
       "failures": [
         "telemetry channel 'ChannelTelemetry' has no requirement referencing it (add a requirement mentioning 'ChannelTelemetry')"
       ],
-      "detail": "1 telemetry channel(s) traced against 12 requirement(s)"
+      "detail": "1 telemetry channel(s) traced against 13 requirement(s)"
     },
     {
       "id": "R3",
@@ -198,7 +199,7 @@
         "event 'ResetCounters' has no requirement referencing it (add a requirement mentioning 'ResetCounters')",
         "event 'TxLateFinAcked' has no requirement referencing it (add a requirement mentioning 'TxLateFinAcked')"
       ],
-      "detail": "71 event(s) traced against 12 requirement(s)"
+      "detail": "71 event(s) traced against 13 requirement(s)"
     },
     {
       "id": "R4",
@@ -218,7 +219,7 @@
         "parameter 'FileInDefaultPriority' has no requirement referencing it (add a requirement mentioning 'FileInDefaultPriority')",
         "parameter 'ChannelConfig' has no requirement referencing it (add a requirement mentioning 'ChannelConfig')"
       ],
-      "detail": "10 parameter(s) traced against 12 requirement(s)"
+      "detail": "10 parameter(s) traced against 13 requirement(s)"
     },
     {
       "id": "R5",
@@ -248,7 +249,7 @@
         "port 'dataInReturn' has no requirement referencing it (add a requirement mentioning 'dataInReturn')",
         "port 'fileDoneOut' has no requirement referencing it (add a requirement mentioning 'fileDoneOut')"
       ],
-      "detail": "11 port(s) traced against 12 requirement(s)"
+      "detail": "11 port(s) traced against 13 requirement(s)"
     },
     {
       "id": "R7",
@@ -257,20 +258,21 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager",
       "status": "fail",
       "failures": [
-        "requirement 'CFDP-001' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:686) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-002' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:687) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-003' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:688) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-004' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:689) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-005' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:690) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-006' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:691) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-007' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:692) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-008' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:693) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-009' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:694) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-010' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:695) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-011' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:696) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
-        "requirement 'CFDP-012' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:697) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
+        "requirement 'CFDP-001' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:692) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-002' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:693) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-003' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:694) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-004' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:695) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-005' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:696) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-006' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:697) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-007' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:698) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-008' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:699) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-009' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:700) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-010' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:701) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-011' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:702) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-012' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:703) has no parent trace (add a Parent/Trace column entry linking a parent requirement)",
+        "requirement 'CFDP-013' (/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager/docs/sdd.md:704) has no parent trace (add a Parent/Trace column entry linking a parent requirement)"
       ],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "R8",
@@ -279,7 +281,7 @@
       "module": "/home/runner/work/fprime/fprime/Svc/Ccsds/CfdpManager",
       "status": "pass",
       "failures": [],
-      "detail": "12 requirement(s) checked"
+      "detail": "13 requirement(s) checked"
     },
     {
       "id": "U3",

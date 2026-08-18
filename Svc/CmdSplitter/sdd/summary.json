@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-18T21:28:54Z",
+  "ref": "devel",
+  "commit": "4adb06a6378ee9bbc0ea039d9fc8481c35b48c20",
+  "tier": "gold",
+  "has_sdd": true,
+  "sections": 9,
+  "filled_sections": 4,
+  "prose_words": 225,
+  "placeholder_hits": 0,
+  "table_kinds": [],
+  "declared_kinds": [
+    "ports"
+  ]
+}

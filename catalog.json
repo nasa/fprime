@@ -2,8 +2,8 @@
   "schema": 6,
   "ref": "devel",
   "ref_type": "branch",
-  "commit": "306321ad54b669ab74e0dbf65ad515e11cea926b",
-  "generated_at": "2026-08-18T21:28:21Z",
+  "commit": "4adb06a6378ee9bbc0ea039d9fc8481c35b48c20",
+  "generated_at": "2026-08-18T21:28:55Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -128,7 +128,11 @@
         "tier": "platinum",
         "report": "CFDP/Checksum/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "CFDP/Checksum/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -191,7 +195,11 @@
         "tier": "platinum",
         "report": "CFDP/Checksum/GTest/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "CFDP/Checksum/GTest/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -266,14 +274,18 @@
         "tier": "bronze",
         "report": "Drv/AsyncByteStreamBufferAdapter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Drv/AsyncByteStreamBufferAdapter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -341,14 +353,18 @@
         "tier": "bronze",
         "report": "Drv/ByteStreamBufferAdapter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Drv/ByteStreamBufferAdapter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -416,14 +432,18 @@
         "tier": "bronze",
         "report": "Drv/Ip/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Drv/Ip/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -479,14 +499,18 @@
         "tier": "bronze",
         "report": "Drv/LinuxGpioDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Drv/LinuxGpioDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -542,14 +566,18 @@
         "tier": "bronze",
         "report": "Drv/LinuxI2cDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Drv/LinuxI2cDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -605,14 +633,18 @@
         "tier": "bronze",
         "report": "Drv/LinuxSpiDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Drv/LinuxSpiDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -668,14 +700,18 @@
         "tier": "bronze",
         "report": "Drv/LinuxUartDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Drv/LinuxUartDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -731,7 +767,11 @@
         "tier": "bronze",
         "report": "Drv/Ports/DataTypes/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Drv/Ports/DataTypes/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -806,7 +846,11 @@
         "tier": "bronze",
         "report": "Drv/TcpClient/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Drv/TcpClient/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -881,7 +925,11 @@
         "tier": "bronze",
         "report": "Drv/TcpServer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Drv/TcpServer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -956,7 +1004,11 @@
         "tier": "bronze",
         "report": "Drv/Udp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Drv/Udp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1019,7 +1071,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/array/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/array/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1082,7 +1138,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/component/active/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/component/active/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1145,7 +1205,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/component/empty/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/component/empty/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1208,7 +1272,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/component/passive/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/component/passive/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1271,7 +1339,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/component/queued/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/component/queued/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1334,7 +1406,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/dp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/dp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1397,7 +1473,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/enum/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/enum/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1460,7 +1540,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/sizeof/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/sizeof/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1523,7 +1607,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/state_machine/external_instance/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/external_instance/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1586,7 +1674,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/state_machine/internal/choice/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal/choice/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1649,7 +1741,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/state_machine/internal/harness/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal/harness/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1712,7 +1808,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/state_machine/internal/initial/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal/initial/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1775,7 +1875,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/state_machine/internal/state/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal/state/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1838,7 +1942,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1901,7 +2009,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -1964,7 +2076,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/state_machine/internal_instance/state/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/state_machine/internal_instance/state/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2027,7 +2143,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/struct/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/struct/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2090,7 +2210,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/topology/async/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/async/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2153,7 +2277,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/components/Comp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/components/Comp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2216,7 +2344,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/components/Framework/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/components/Framework/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2279,7 +2411,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/components/Receiver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/components/Receiver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2342,7 +2478,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/components/Sender/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/components/Sender/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2405,7 +2545,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/topology/guarded/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/guarded/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2468,7 +2612,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/main/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/main/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2531,7 +2679,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/special_ports/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/special_ports/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2594,7 +2746,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/topology/sync/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/sync/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2657,7 +2813,11 @@
         "tier": "platinum",
         "report": "FppTestProject/FppTest/topology/top_ports/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/top_ports/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2720,7 +2880,11 @@
         "tier": "bronze",
         "report": "FppTestProject/FppTest/topology/types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "FppTestProject/FppTest/topology/types/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -2795,14 +2959,18 @@
         "tier": "bronze",
         "report": "Fw/Buffer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Fw/Buffer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -2870,14 +3038,18 @@
         "tier": "platinum",
         "report": "Fw/Cmd/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Cmd/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "silver",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -2933,14 +3105,18 @@
         "tier": "bronze",
         "report": "Fw/Com/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Com/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -2996,7 +3172,11 @@
         "tier": "platinum",
         "report": "Fw/Comp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Comp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3071,14 +3251,18 @@
         "tier": "bronze",
         "report": "Fw/DataStructures/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Fw/DataStructures/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -3146,14 +3330,18 @@
         "tier": "bronze",
         "report": "Fw/Dp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Fw/Dp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -3221,7 +3409,11 @@
         "tier": "platinum",
         "report": "Fw/FilePacket/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Fw/FilePacket/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3284,7 +3476,11 @@
         "tier": "platinum",
         "report": "Fw/FilePacket/GTest/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/FilePacket/GTest/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3347,7 +3543,11 @@
         "tier": "bronze",
         "report": "Fw/Fpy/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Fpy/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3422,14 +3622,18 @@
         "tier": "platinum",
         "report": "Fw/Log/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Log/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "silver",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -3497,7 +3701,11 @@
         "tier": "platinum",
         "report": "Fw/Logger/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Logger/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -3560,14 +3768,18 @@
         "tier": "platinum",
         "report": "Fw/Obj/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Obj/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "silver",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -3623,14 +3835,18 @@
         "tier": "bronze",
         "report": "Fw/Port/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Port/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -3686,14 +3902,18 @@
         "tier": "bronze",
         "report": "Fw/Prm/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Prm/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -3761,7 +3981,11 @@
         "tier": "platinum",
         "report": "Fw/SerializableFile/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/SerializableFile/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
@@ -3824,7 +4048,11 @@
         "tier": "platinum",
         "report": "Fw/Sm/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Sm/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3887,7 +4115,11 @@
         "tier": "platinum",
         "report": "Fw/Test/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Test/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -3962,14 +4194,18 @@
         "tier": "platinum",
         "report": "Fw/Time/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Time/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "silver",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -4037,14 +4273,18 @@
         "tier": "platinum",
         "report": "Fw/Tlm/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Tlm/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -4112,14 +4352,18 @@
         "tier": "bronze",
         "report": "Fw/Types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Fw/Types/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -4175,7 +4419,11 @@
         "tier": "platinum",
         "report": "Fw/Types/GTest/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Fw/Types/GTest/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -4250,7 +4498,11 @@
         "tier": "bronze",
         "report": "Os/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Os/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -4313,7 +4565,11 @@
         "tier": "platinum",
         "report": "Os/Darwin/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Os/Darwin/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -4388,14 +4644,18 @@
         "tier": "bronze",
         "report": "Os/Generic/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Os/Generic/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -4463,14 +4723,18 @@
         "tier": "platinum",
         "report": "Os/Generic/Types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Os/Generic/Types/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "gold",
         "ut": "gold",
         "int": null,
         "codeql": "platinum",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -4526,7 +4790,11 @@
         "tier": "platinum",
         "report": "Os/Models/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Os/Models/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -4601,7 +4869,11 @@
         "tier": "bronze",
         "report": "Os/Posix/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Os/Posix/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -4676,7 +4948,11 @@
         "tier": "bronze",
         "report": "Svc/ActivePhaser/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/ActivePhaser/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -4751,14 +5027,18 @@
         "tier": "bronze",
         "report": "Svc/ActiveRateGroup/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/ActiveRateGroup/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -4826,14 +5106,18 @@
         "tier": "bronze",
         "report": "Svc/ActiveTextLogger/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/ActiveTextLogger/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -4901,14 +5185,18 @@
         "tier": "bronze",
         "report": "Svc/AssertFatalAdapter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/AssertFatalAdapter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -4976,7 +5264,11 @@
         "tier": "bronze",
         "report": "Svc/BufferAccumulator/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/BufferAccumulator/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -5051,14 +5343,18 @@
         "tier": "bronze",
         "report": "Svc/BufferLogger/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/BufferLogger/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -5126,14 +5422,18 @@
         "tier": "bronze",
         "report": "Svc/BufferManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/BufferManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -5201,14 +5501,18 @@
         "tier": "bronze",
         "report": "Svc/BufferRepeater/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/BufferRepeater/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -5276,14 +5580,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/AosDeframer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/AosDeframer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -5351,14 +5659,18 @@
         "tier": "platinum",
         "report": "Svc/Ccsds/AosFramer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/AosFramer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "bronze",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -5426,14 +5738,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/ApidManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/ApidManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -5501,14 +5817,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/CcsdsSdlsDeframer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/CcsdsSdlsDeframer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -5576,14 +5896,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/CcsdsSdlsFramer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/CcsdsSdlsFramer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -5651,14 +5975,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/CfdpManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/CfdpManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -5726,7 +6054,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/CfdpManager/Types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Ccsds/CfdpManager/Types/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -5801,7 +6133,11 @@
         "tier": "platinum",
         "report": "Svc/Ccsds/ClearTextDecryptor/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/ClearTextDecryptor/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -5876,7 +6212,11 @@
         "tier": "platinum",
         "report": "Svc/Ccsds/ClearTextEncryptor/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/ClearTextEncryptor/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -5951,7 +6291,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/SdlsFileKeyManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/SdlsFileKeyManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -6026,14 +6370,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/SdlsSaRouter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/SdlsSaRouter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -6101,7 +6449,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/SpacePacketDeframer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/SpacePacketDeframer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
@@ -6176,14 +6528,18 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/SpacePacketFramer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/SpacePacketFramer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -6251,7 +6607,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/TcDeframer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/TcDeframer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
@@ -6326,7 +6686,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/TestUtils/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Ccsds/TestUtils/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -6401,14 +6765,18 @@
         "tier": "platinum",
         "report": "Svc/Ccsds/TmFramer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/Ccsds/TmFramer/sdd/index.html"
+      },
       "tiers": {
-        "overall": "bronze",
+        "overall": "silver",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "platinum",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -6464,7 +6832,11 @@
         "tier": "bronze",
         "report": "Svc/Ccsds/Types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Ccsds/Types/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -6539,7 +6911,11 @@
         "tier": "platinum",
         "report": "Svc/ChronoTime/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/ChronoTime/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -6614,14 +6990,18 @@
         "tier": "bronze",
         "report": "Svc/CmdDispatcher/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/CmdDispatcher/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -6689,14 +7069,18 @@
         "tier": "bronze",
         "report": "Svc/CmdSequencer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/CmdSequencer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -6764,14 +7148,18 @@
         "tier": "bronze",
         "report": "Svc/CmdSplitter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/CmdSplitter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -6839,7 +7227,11 @@
         "tier": "bronze",
         "report": "Svc/ComAggregator/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/ComAggregator/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -6914,14 +7306,18 @@
         "tier": "bronze",
         "report": "Svc/ComLogger/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/ComLogger/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -6989,14 +7385,18 @@
         "tier": "bronze",
         "report": "Svc/ComQueue/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/ComQueue/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7064,7 +7464,11 @@
         "tier": "bronze",
         "report": "Svc/ComRetry/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/ComRetry/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -7139,14 +7543,18 @@
         "tier": "bronze",
         "report": "Svc/ComSplitter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/ComSplitter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -7214,14 +7622,18 @@
         "tier": "bronze",
         "report": "Svc/ComStub/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/ComStub/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -7289,14 +7701,18 @@
         "tier": "bronze",
         "report": "Svc/DpCatalog/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/DpCatalog/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7364,7 +7780,11 @@
         "tier": "bronze",
         "report": "Svc/DpCompressProc/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/DpCompressProc/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -7439,14 +7859,18 @@
         "tier": "bronze",
         "report": "Svc/DpManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/DpManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7514,14 +7938,18 @@
         "tier": "bronze",
         "report": "Svc/DpWriter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/DpWriter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7589,7 +8017,11 @@
         "tier": "bronze",
         "report": "Svc/DpZLibCompressor/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/DpZLibCompressor/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
@@ -7664,14 +8096,18 @@
         "tier": "bronze",
         "report": "Svc/EventManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/EventManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7727,7 +8163,11 @@
         "tier": "bronze",
         "report": "Svc/FatalHandler/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/FatalHandler/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -7802,7 +8242,11 @@
         "tier": "bronze",
         "report": "Svc/FileDispatcher/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/FileDispatcher/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -7877,14 +8321,18 @@
         "tier": "bronze",
         "report": "Svc/FileDownlink/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/FileDownlink/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -7952,14 +8400,18 @@
         "tier": "bronze",
         "report": "Svc/FileManager/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/FileManager/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -8027,14 +8479,18 @@
         "tier": "bronze",
         "report": "Svc/FileUplink/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/FileUplink/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -8102,7 +8558,11 @@
         "tier": "bronze",
         "report": "Svc/FileWorker/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/FileWorker/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -8177,14 +8637,18 @@
         "tier": "bronze",
         "report": "Svc/FprimeDeframer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/FprimeDeframer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -8252,14 +8716,18 @@
         "tier": "bronze",
         "report": "Svc/FprimeFramer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/FprimeFramer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -8327,14 +8795,18 @@
         "tier": "bronze",
         "report": "Svc/FprimeRouter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/FprimeRouter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -8402,7 +8874,11 @@
         "tier": "bronze",
         "report": "Svc/FpySequencer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/FpySequencer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -8477,7 +8953,11 @@
         "tier": "bronze",
         "report": "Svc/FrameAccumulator/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/FrameAccumulator/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -8552,14 +9032,18 @@
         "tier": "bronze",
         "report": "Svc/GenericHub/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/GenericHub/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -8627,14 +9111,18 @@
         "tier": "bronze",
         "report": "Svc/Health/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/Health/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -8702,14 +9190,18 @@
         "tier": "bronze",
         "report": "Svc/LinuxTimer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/LinuxTimer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -8777,14 +9269,18 @@
         "tier": "bronze",
         "report": "Svc/OsTime/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/OsTime/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -8852,7 +9348,11 @@
         "tier": "bronze",
         "report": "Svc/PassThroughRouter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/PassThroughRouter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -8927,14 +9427,18 @@
         "tier": "bronze",
         "report": "Svc/PassiveConsoleTextLogger/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/PassiveConsoleTextLogger/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -9002,14 +9506,18 @@
         "tier": "bronze",
         "report": "Svc/PassiveRateGroup/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/PassiveRateGroup/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -9077,14 +9585,18 @@
         "tier": "bronze",
         "report": "Svc/PolyDb/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/PolyDb/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -9152,14 +9664,18 @@
         "tier": "bronze",
         "report": "Svc/PosixTime/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/PosixTime/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -9227,14 +9743,18 @@
         "tier": "bronze",
         "report": "Svc/PrmDb/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/PrmDb/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "bronze",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -9302,14 +9822,18 @@
         "tier": "bronze",
         "report": "Svc/RateGroupDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "Svc/RateGroupDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -9377,7 +9901,11 @@
         "tier": "bronze",
         "report": "Svc/SeqDispatcher/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/SeqDispatcher/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9452,7 +9980,11 @@
         "tier": "bronze",
         "report": "Svc/StaticMemory/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/StaticMemory/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -9515,7 +10047,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/CdhCore/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/CdhCore/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9578,7 +10114,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/ComCcsds/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/ComCcsds/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9641,7 +10181,11 @@
         "tier": "platinum",
         "report": "Svc/Subtopologies/ComCcsdsSdls/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/ComCcsdsSdls/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9704,7 +10248,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/ComFprime/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/ComFprime/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9767,7 +10315,11 @@
         "tier": "platinum",
         "report": "Svc/Subtopologies/ComLoggerTee/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Subtopologies/ComLoggerTee/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9830,7 +10382,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/DataProducts/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/DataProducts/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9893,7 +10449,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/DpCompression/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/DpCompression/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -9956,7 +10516,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/FileHandling/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/FileHandling/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10019,7 +10583,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/FileHandlingCfdp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Subtopologies/FileHandlingCfdp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10082,7 +10650,11 @@
         "tier": "bronze",
         "report": "Svc/Subtopologies/FileHandlingCfdp/FileHandlingCfdpConfig/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Svc/Subtopologies/FileHandlingCfdp/FileHandlingCfdpConfig/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10157,7 +10729,11 @@
         "tier": "bronze",
         "report": "Svc/SystemResources/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/SystemResources/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -10232,14 +10808,18 @@
         "tier": "bronze",
         "report": "Svc/TlmChan/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "platinum",
+        "has_sdd": true,
+        "report": "Svc/TlmChan/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "platinum"
       }
     },
     {
@@ -10307,14 +10887,18 @@
         "tier": "bronze",
         "report": "Svc/TlmPacketizer/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/TlmPacketizer/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "gold",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -10382,14 +10966,18 @@
         "tier": "bronze",
         "report": "Svc/Types/EventSeverityFilter/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "gold",
+        "has_sdd": true,
+        "report": "Svc/Types/EventSeverityFilter/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
         "int": null,
         "codeql": "silver",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "gold"
       }
     },
     {
@@ -10457,7 +11045,11 @@
         "tier": "bronze",
         "report": "Svc/Version/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "Svc/Version/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "platinum",
@@ -10520,7 +11112,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/BlockDriver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "TestDeploymentsProject/Ref/BlockDriver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10583,7 +11179,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/DpDemo/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "TestDeploymentsProject/Ref/DpDemo/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10646,7 +11246,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/PingReceiver/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "TestDeploymentsProject/Ref/PingReceiver/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10709,7 +11313,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/RecvBuffApp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "TestDeploymentsProject/Ref/RecvBuffApp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10772,7 +11380,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/SendBuffApp/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": true,
+        "report": "TestDeploymentsProject/Ref/SendBuffApp/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10835,14 +11447,18 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/SignalGen/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "silver",
+        "has_sdd": true,
+        "report": "TestDeploymentsProject/Ref/SignalGen/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
         "int": null,
         "codeql": "platinum",
         "checks": "bronze",
-        "sdd": "bronze"
+        "sdd": "silver"
       }
     },
     {
@@ -10898,7 +11514,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/Top/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "TestDeploymentsProject/Ref/Top/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -10961,7 +11581,11 @@
         "tier": "bronze",
         "report": "TestDeploymentsProject/Ref/TypeDemo/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "TestDeploymentsProject/Ref/TypeDemo/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11036,7 +11660,11 @@
         "tier": "bronze",
         "report": "Utils/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Utils/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11111,7 +11739,11 @@
         "tier": "platinum",
         "report": "Utils/Hash/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Utils/Hash/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11186,7 +11818,11 @@
         "tier": "bronze",
         "report": "Utils/Types/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "Utils/Types/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "silver",
@@ -11249,7 +11885,11 @@
         "tier": "platinum",
         "report": "cmake/test/data/TestConfigDeployment/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestConfigDeployment/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11312,7 +11952,11 @@
         "tier": "platinum",
         "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11375,7 +12019,11 @@
         "tier": "platinum",
         "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11438,7 +12086,11 @@
         "tier": "platinum",
         "report": "cmake/test/data/TestDeployment/TestLinkDepends/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestDeployment/TestLinkDepends/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11501,7 +12153,11 @@
         "tier": "platinum",
         "report": "cmake/test/data/TestDeployment/TestRelative/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/TestDeployment/TestRelative/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11564,7 +12220,11 @@
         "tier": "bronze",
         "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",
@@ -11627,7 +12287,11 @@
         "tier": "bronze",
         "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/checks/index.html"
       },
-      "sdd": null,
+      "sdd": {
+        "tier": "bronze",
+        "has_sdd": false,
+        "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/sdd/index.html"
+      },
       "tiers": {
         "overall": "bronze",
         "ut": "bronze",

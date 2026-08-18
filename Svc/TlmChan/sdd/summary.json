@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "artifact": "sdd",
+  "generated_at": "2026-08-18T21:28:54Z",
+  "ref": "devel",
+  "commit": "4adb06a6378ee9bbc0ea039d9fc8481c35b48c20",
+  "tier": "platinum",
+  "has_sdd": true,
+  "sections": 20,
+  "filled_sections": 7,
+  "prose_words": 747,
+  "placeholder_hits": 1,
+  "table_kinds": [
+    "events",
+    "ports"
+  ],
+  "declared_kinds": [
+    "events",
+    "ports"
+  ]
+}
