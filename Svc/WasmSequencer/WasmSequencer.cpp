@@ -309,6 +309,7 @@ void WasmSequencer ::GLOBAL_SET_I32_cmdHandler(FwOpcodeType opCode,
     if (status == SPACEWASM_OK) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        this->log_WARNING_LO_GlobalSetFailed(moduleName, name, status);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
@@ -326,6 +327,7 @@ void WasmSequencer ::GLOBAL_SET_I64_cmdHandler(FwOpcodeType opCode,
     if (status == SPACEWASM_OK) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        this->log_WARNING_LO_GlobalSetFailed(moduleName, name, status);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }
@@ -343,6 +345,7 @@ void WasmSequencer ::GLOBAL_SET_F32_cmdHandler(FwOpcodeType opCode,
     if (status == SPACEWASM_OK) {
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
     } else {
+        this->log_WARNING_LO_GlobalSetFailed(moduleName, name, status);
         this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
     }
 }

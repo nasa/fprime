@@ -2648,6 +2648,520 @@ TEST_F(WasmSequencerTester, LifecycleMultipleLoadsWithFailures) {
     this->removeFile("panic.wasm");
 }
 
+// ----------------------------------------------------------------------
+// GLOBAL_SET_* / GLOBAL_GET
+//
+// The global commands operate directly on the loaded store (they are plain
+// async command handlers, not routed through the controller state machine).
+// `globals.wasm` exports one mutable global of each Wasm 1.0 value type
+// (g_i32=100, g_i64=1000, g_f32=1.5, g_f64=2.5) plus an immutable const
+// (c_i32=7). The float initial/set values are all exactly representable so the
+// generated ASSERT_EVENTS_GlobalValue{F32,F64} exact-equality checks hold.
+//
+// Status codes come straight from spacewasm_c_api::spacewasm_set_global /
+// _get_global / _find_global / _find_module:
+//   * unknown module / global / out-of-range index -> ERR_NOT_FOUND (7)
+//   * set with a value tag != the global's type     -> ERR_GLOBAL_TYPE_MISMATCH (164)
+//   * set an immutable (const) global (type matches) -> ERR_GLOBAL_IS_NOT_MUTABLE (150)
+// Note set_global checks the type BEFORE mutability, so a const global written
+// with a mismatched type surfaces the type-mismatch error, not the mutability one.
+// ----------------------------------------------------------------------
+
+// --- GLOBAL_GET: read the declared initial value of each typed global -------
+
+TEST_F(WasmSequencerTester, GlobalGetReadsInitialI32) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 60, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // Unnamed LOAD -> module name is "" (see LOAD_cmdHandler). GET reads the
+    // declared init value (100) and emits the typed value event.
+    this->sendCmd_GLOBAL_GET(0, 61, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 100);
+    ASSERT_EVENTS_GlobalGetFailed_SIZE(0);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 61, Fw::CmdResponse::OK);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetReadsInitialI64) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 62, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 63, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i64"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalValueI64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI64(0, "", "g_i64", static_cast<I64>(1000));
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 63, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetReadsInitialF32) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 64, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 65, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f32"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalValueF32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF32(0, "", "g_f32", 1.5f);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 65, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetReadsInitialF64) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 66, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 67, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f64"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalValueF64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF64(0, "", "g_f64", 2.5);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 67, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetReadsConstGlobal) {
+    // A const (immutable) global is still readable via GET.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 68, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 69, Fw::CmdStringArg(""), Fw::CmdStringArg("c_i32"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "c_i32", 7);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 69, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+// --- GLOBAL_SET_* then GLOBAL_GET: full round trip per type -----------------
+
+TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI32) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 70, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 71, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), -12345);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 71, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(0);
+
+    // GET observes the value the SET just wrote.
+    this->sendCmd_GLOBAL_GET(0, 72, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", -12345);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 72, Fw::CmdResponse::OK);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetGetRoundTripI64) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 73, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // A value that does not fit in 32 bits, to prove the full i64 round-trips.
+    const I64 big = static_cast<I64>(0x0123456789ABCDEFLL);
+    this->sendCmd_GLOBAL_SET_I64(0, 74, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i64"), big);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I64, 74, Fw::CmdResponse::OK);
+
+    this->sendCmd_GLOBAL_GET(0, 75, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i64"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI64(0, "", "g_i64", big);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 75, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF32) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 76, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_F32(0, 77, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f32"), 3.25f);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_F32, 77, Fw::CmdResponse::OK);
+
+    this->sendCmd_GLOBAL_GET(0, 78, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueF32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF32(0, "", "g_f32", 3.25f);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 78, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetGetRoundTripF64) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 79, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_F64(0, 80, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f64"), 6.5);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_F64, 80, Fw::CmdResponse::OK);
+
+    this->sendCmd_GLOBAL_GET(0, 81, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f64"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueF64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF64(0, "", "g_f64", 6.5);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 81, Fw::CmdResponse::OK);
+    this->removeFile("globals.wasm");
+}
+
+// --- Named-module addressing ------------------------------------------------
+
+TEST_F(WasmSequencerTester, GlobalSetGetNamedModule) {
+    // LOAD_NAME gives the module an explicit name; the global commands must
+    // resolve globals by that same name rather than the empty string.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD_NAME(0, 82, file, Fw::CmdStringArg("mod"));
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 83, Fw::CmdStringArg("mod"), Fw::CmdStringArg("g_i32"), 555);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 83, Fw::CmdResponse::OK);
+
+    this->sendCmd_GLOBAL_GET(0, 84, Fw::CmdStringArg("mod"), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "mod", "g_i32", 555);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 84, Fw::CmdResponse::OK);
+
+    // The empty-string name no longer resolves (module was loaded as "mod").
+    this->sendCmd_GLOBAL_GET(0, 85, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalGetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalGetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_CMD_RESPONSE(3, OPCODE_GLOBAL_GET, 85, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+// --- Failure: type mismatch (set the wrong-typed value) ---------------------
+
+TEST_F(WasmSequencerTester, GlobalSetTypeMismatchI64OnI32) {
+    // g_i32 is an i32 global; setting it via the I64 command is a type mismatch.
+    // set_global checks type before mutability, so the code is TYPE_MISMATCH.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 86, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I64(0, 87, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), static_cast<I64>(1));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_GLOBAL_TYPE_MISMATCH);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I64, 87, Fw::CmdResponse::EXECUTION_ERROR);
+    // The failed set left the global untouched: it still reads its init value.
+    this->sendCmd_GLOBAL_GET(0, 88, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 100);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetTypeMismatchF32OnI32) {
+    // Setting the i32 global via the F32 command is likewise a type mismatch.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 89, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_F32(0, 90, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 1.0f);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_GLOBAL_TYPE_MISMATCH);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_F32, 90, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+// --- Failure: immutable global ----------------------------------------------
+
+TEST_F(WasmSequencerTester, GlobalSetConstIsNotMutable) {
+    // c_i32 is a const i32. Setting it with a matching-typed value passes the
+    // type check and then fails the mutability check.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 91, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 92, Fw::CmdStringArg(""), Fw::CmdStringArg("c_i32"), 999);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "c_i32", WasmSequencer_Status::ERR_GLOBAL_IS_NOT_MUTABLE);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 92, Fw::CmdResponse::EXECUTION_ERROR);
+    // The const global is unchanged.
+    this->sendCmd_GLOBAL_GET(0, 93, Fw::CmdStringArg(""), Fw::CmdStringArg("c_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32(0, "", "c_i32", 7);
+    this->removeFile("globals.wasm");
+}
+
+// --- Failure: unknown global / unknown module -------------------------------
+
+TEST_F(WasmSequencerTester, GlobalSetUnknownGlobalNotFound) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 94, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 95, Fw::CmdStringArg(""), Fw::CmdStringArg("nope"), 1);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "nope", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 95, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetUnknownGlobalNotFound) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 96, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 97, Fw::CmdStringArg(""), Fw::CmdStringArg("nope"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalGetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalGetFailed(0, "", "nope", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_EVENTS_GlobalValueI32_SIZE(0);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 97, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetUnknownModuleNotFound) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 98, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // Module loaded as "" (unnamed); a different name does not resolve.
+    this->sendCmd_GLOBAL_SET_I32(0, 99, Fw::CmdStringArg("other"), Fw::CmdStringArg("g_i32"), 1);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "other", "g_i32", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 99, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalGetUnknownModuleNotFound) {
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 100, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_GET(0, 101, Fw::CmdStringArg("other"), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalGetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalGetFailed(0, "other", "g_i32", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_GET, 101, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+// --- From IDLE (empty store, no modules loaded) -----------------------------
+
+TEST_F(WasmSequencerTester, GlobalSetFromIdleModuleNotFound) {
+    // From IDLE the store exists (IDLE's entry action creates an empty store)
+    // but has no modules, so the lookup fails cleanly with NOT_FOUND rather than
+    // crashing. State is unaffected.
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 102, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 1);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_CMD_RESPONSE(0, OPCODE_GLOBAL_SET_I32, 102, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+    ASSERT_FROM_PORT_HISTORY_SIZE(0);
+}
+
+TEST_F(WasmSequencerTester, GlobalGetFromIdleModuleNotFound) {
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+
+    this->sendCmd_GLOBAL_GET(0, 103, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalGetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalGetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_NOT_FOUND);
+    ASSERT_EVENTS_GlobalValueI32_SIZE(0);
+    ASSERT_CMD_RESPONSE(0, OPCODE_GLOBAL_GET, 103, Fw::CmdResponse::EXECUTION_ERROR);
+    ASSERT_EQ(this->controllerState(), ControllerState::IDLE);
+}
+
+// --- Interaction with execution ---------------------------------------------
+
+TEST_F(WasmSequencerTester, GlobalSetPersistsIntoInvoke) {
+    // global_incr.wasm's main does g_i32 += 10. LOAD keeps the store, so a
+    // GLOBAL_SET before INVOKE is observed by main, and a GLOBAL_GET after sees
+    // main's write-back. This proves the set mutates the same store the engine
+    // runs against (not a throwaway copy).
+    const Fw::String file = this->copyAsset("global_incr.wasm");
+    this->sendCmd_LOAD(0, 104, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    // Seed the global to 100.
+    this->sendCmd_GLOBAL_SET_I32(0, 105, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 100);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_I32, 105, Fw::CmdResponse::OK);
+
+    // INVOKE main (BLOCK) -> reads 100, writes 110. Store is retained after INVOKE.
+    this->sendCmd_INVOKE(0, 106, Fw::CmdStringArg(""), BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+    ASSERT_CMD_RESPONSE(2, OPCODE_INVOKE, 106, Fw::CmdResponse::OK);
+
+    // GET now reflects main's mutation.
+    this->sendCmd_GLOBAL_GET(0, 107, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 110);
+    ASSERT_CMD_RESPONSE(3, OPCODE_GLOBAL_GET, 107, Fw::CmdResponse::OK);
+    this->removeFile("global_incr.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetOverwrittenAfterRunResetsStore) {
+    // RUN (unlike INVOKE) does resetStore before load, so any pre-RUN global
+    // state is discarded and the module comes back at its declared init. Here
+    // main runs once as part of RUN (g_i32: 0 -> 10); a GET afterward reads 10,
+    // and a fresh RUN resets to 0 then runs main again (-> 10), NOT 20.
+    const Fw::String file = this->copyAsset("global_incr.wasm");
+
+    this->sendCmd_RUN(0, 108, file, BLOCK, {});
+    this->dispatchUntilControllerState(ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(1);
+
+    this->sendCmd_GLOBAL_GET(0, 109, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 10);
+
+    // Second RUN resets the store: main sees the init 0 again, not the prior 10.
+    // The component is already in READY and the RUN returns to READY, so drain the
+    // queue rather than waiting on a state change that has effectively already
+    // happened (cf. LoadStartModuleTwiceDoesNotWedge).
+    this->sendCmd_RUN(0, 110, file, BLOCK, {});
+    this->dispatchAll();
+    ASSERT_EQ(this->controllerState(), ControllerState::READY);
+    ASSERT_EVENTS_SequenceSucceeded_SIZE(2);
+
+    this->sendCmd_GLOBAL_GET(0, 111, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(2);
+    ASSERT_EVENTS_GlobalValueI32(1, "", "g_i32", 10);
+    this->removeFile("global_incr.wasm");
+}
+
+TEST_F(WasmSequencerTester, GlobalSetAllTypesIndependent) {
+    // Setting each typed global does not disturb the others: set all four, then
+    // read all four back and confirm each holds exactly what was written.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 112, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_I32(0, 113, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 11);
+    this->sendCmd_GLOBAL_SET_I64(0, 114, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i64"), static_cast<I64>(22));
+    this->sendCmd_GLOBAL_SET_F32(0, 115, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f32"), 0.5f);
+    this->sendCmd_GLOBAL_SET_F64(0, 116, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f64"), 0.25);
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(0);
+
+    this->sendCmd_GLOBAL_GET(0, 117, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->sendCmd_GLOBAL_GET(0, 118, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i64"));
+    this->sendCmd_GLOBAL_GET(0, 119, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f32"));
+    this->sendCmd_GLOBAL_GET(0, 120, Fw::CmdStringArg(""), Fw::CmdStringArg("g_f64"));
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 11);
+    ASSERT_EVENTS_GlobalValueI64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI64(0, "", "g_i64", static_cast<I64>(22));
+    ASSERT_EVENTS_GlobalValueF32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF32(0, "", "g_f32", 0.5f);
+    ASSERT_EVENTS_GlobalValueF64_SIZE(1);
+    ASSERT_EVENTS_GlobalValueF64(0, "", "g_f64", 0.25);
+    this->removeFile("globals.wasm");
+}
+
+// --- F64 set failure (symmetry with the I32/I64/F32 failure-event fix) -------
+
+TEST_F(WasmSequencerTester, GlobalSetF64TypeMismatchEmitsFailure) {
+    // Rounds out the SET-failure coverage: the F64 command must also emit
+    // GlobalSetFailed on error, matching the I32/I64/F32 handlers. g_i32 is an
+    // i32 global, so the F64 command's SPACEWASM_F64 tag is a type mismatch.
+    const Fw::String file = this->copyAsset("globals.wasm");
+    this->sendCmd_LOAD(0, 121, file);
+    this->dispatchUntilControllerState(ControllerState::READY);
+
+    this->sendCmd_GLOBAL_SET_F64(0, 122, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 1.0);
+    this->dispatchAll();
+
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(1);
+    ASSERT_EVENTS_GlobalSetFailed(0, "", "g_i32", WasmSequencer_Status::ERR_GLOBAL_TYPE_MISMATCH);
+    ASSERT_CMD_RESPONSE(1, OPCODE_GLOBAL_SET_F64, 122, Fw::CmdResponse::EXECUTION_ERROR);
+    this->removeFile("globals.wasm");
+}
+
+// --- Dispatched mid-sequence (engine RUNNING) -------------------------------
+
+TEST_F(WasmSequencerTester, GlobalGetSetWhileSequencePaused) {
+    // The GLOBAL_* commands are plain async handlers that touch the live store
+    // directly; unlike RUN/LOAD/INVOKE they are NOT gated by the controller and
+    // are never rejected with BUSY while a sequence is in flight. Drive
+    // global_loop.wasm (a long busy-loop that also exports g_i32) into
+    // RUNNING_PAUSED with tiny fuel, then GET and SET the global mid-run.
+    this->paramSet_INSTRUCTION_FUEL(static_cast<FwSizeType>(10), Fw::ParamValid::VALID);
+
+    const Fw::String file = this->copyAsset("global_loop.wasm");
+    this->sendCmd_RUN(0, 123, file, NO_BLOCK, {});
+    this->dispatchUntilEngineState(EngineState::RUNNING_SPINNING);
+
+    // Pause so the engine parks quiescently (no self-posted spin messages),
+    // making the global command the only work dispatchAll() advances.
+    this->sendCmd_PAUSE(0, 124);
+    this->dispatchUntilEngineState(EngineState::RUNNING_PAUSED);
+    ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_MAIN);
+
+    // GET reads the live global (its declared init 42) without disturbing the run.
+    // The RUN (NO_BLOCK -> OK at load) and PAUSE responses already occupy cmd
+    // response history indices 0 and 1, so the global responses start at index 2.
+    this->sendCmd_GLOBAL_GET(0, 125, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(1);
+    ASSERT_EVENTS_GlobalValueI32(0, "", "g_i32", 42);
+    ASSERT_CMD_RESPONSE(2, OPCODE_GLOBAL_GET, 125, Fw::CmdResponse::OK);
+    // Still paused mid-sequence: the global command did not advance or end the run.
+    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+    ASSERT_EQ(this->controllerState(), ControllerState::RUNNING_MAIN);
+
+    // SET is likewise accepted mid-run and mutates the live store.
+    this->sendCmd_GLOBAL_SET_I32(0, 126, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"), 7);
+    this->dispatchAll();
+    ASSERT_CMD_RESPONSE(3, OPCODE_GLOBAL_SET_I32, 126, Fw::CmdResponse::OK);
+    ASSERT_EVENTS_GlobalSetFailed_SIZE(0);
+    ASSERT_EQ(this->engineState(), EngineState::RUNNING_PAUSED);
+
+    this->sendCmd_GLOBAL_GET(0, 127, Fw::CmdStringArg(""), Fw::CmdStringArg("g_i32"));
+    this->dispatchAll();
+    ASSERT_EVENTS_GlobalValueI32_SIZE(2);
+    ASSERT_EVENTS_GlobalValueI32(1, "", "g_i32", 7);
+
+    // Let the sequence finish so the component tears down cleanly.
+    this->sendCmd_CANCEL(0, 128);
+    this->dispatchUntilControllerState(ControllerState::IDLE);
+    this->removeFile("global_loop.wasm");
+}
+
 }  // namespace Svc
 
 int main(int argc, char** argv) {
