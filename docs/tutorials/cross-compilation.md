@@ -86,7 +86,7 @@ Choose the operating system you are using to install F Prime:
     may be downloaded and extracted anywhere; point your PATH and LLVM_TOOLS_PATH to the extracted
     folder.
 
-   ```bash
+    ```bash
     tar -xzf LLVM-*.tar.xz
     export PATH="`pwd`/LLVM-*/bin:${PATH}"
     export LLVM_TOOLS_PATH="`pwd`/LLVM-*/bin:${PATH}"
