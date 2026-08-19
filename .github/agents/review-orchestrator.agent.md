@@ -488,6 +488,15 @@ When a reviewer agent reports `FAILED`:
      reviewer) forces only `Merge readiness: No-Go`; CI safety is
      determined solely by the two CI-safety reviewers.
 
+**Exception — secondary rate limits.** If a reviewer reports it hit
+a GitHub secondary rate limit (`429`, or `403` mentioning
+"secondary rate limit"; see
+`.github/skills/post-inline-review/SKILL.md` §7), abort the run:
+invoke no further reviewers or the aggregator, record the remaining
+reviewers as not run, and report the abort to the human operator.
+The token is shared with other services — do not retry or wait out
+the limit.
+
 If the aggregator itself FAILS:
 
 1. Record the failure.
