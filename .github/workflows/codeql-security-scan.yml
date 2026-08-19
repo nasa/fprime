@@ -112,9 +112,9 @@ jobs:
   # Publish per-module findings (line, rule, severity) to the baseline
   # branch (coverage/<ref>) and regenerate the checklist landing page.
   # Runs only on push (the run-for-record); consumes the analyze job's
-  # filtered SARIF so CodeQL is never re-run.  The concurrency group is
-  # shared with every other baseline publisher (coverage-update, future
-  # int-coverage) so writers to the branch serialize across workflows.
+  # filtered SARIF so CodeQL is never re-run.  Cross-publisher races on
+  # coverage/<ref> are handled by the fetch-and-retry push loop in the
+  # shared publish helper.
   publish-findings:
     name: Publish per-module findings
     needs: analyze
@@ -126,8 +126,8 @@ jobs:
       # from the published findings tables.
       security-events: read
     concurrency:
-      group: baseline-publish-${{ github.ref }}
-      cancel-in-progress: false
+      group: publish-codeql-security-${{ github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

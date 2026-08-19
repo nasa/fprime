@@ -2,10 +2,11 @@
 #
 # Dispatches every baseline-branch publisher (UT coverage, integration
 # coverage, component checklist, and both CodeQL scans) on the ref selected
-# in the "Run workflow" dropdown.  Each publisher is idempotent and shares
-# the baseline-publish-<ref> concurrency group, so the fan-out runs in
-# parallel and the publish steps serialize; the site is complete and
-# consistent once every dispatched run finishes.
+# in the "Run workflow" dropdown.  Each publisher is idempotent, holds its
+# own per-publisher concurrency group, and lands on coverage/<ref> through
+# the shared publish helper's fetch-and-retry push loop, so the fan-out can
+# run everything in parallel; the site is complete and consistent once
+# every dispatched run finishes.
 #
 # GITHUB_TOKEN may create workflow_dispatch events (it is an exception to
 # the no-recursive-workflows rule), so no PAT is required.

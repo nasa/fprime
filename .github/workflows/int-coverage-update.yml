@@ -26,11 +26,12 @@ concurrency:
 jobs:
   int-coverage-update:
     name: "Integration Coverage [push]"
-    # Serialize with every other baseline-branch publisher (UT coverage,
-    # CodeQL findings, checklist) so concurrent writers can't race.
+    # One publish per publisher and ref; a newer run supersedes (cancels) an
+    # older one.  Cross-publisher races on coverage/<ref> are handled by the
+    # fetch-and-retry push loop in the shared publish helper.
     concurrency:
-      group: baseline-publish-${{ github.ref }}
-      cancel-in-progress: false
+      group: publish-int-coverage-${{ github.ref }}
+      cancel-in-progress: true
     # ubuntu-24.04 ships gcov-13; see coverage-update.yml for why gcov-11
     # (Ubuntu 22.04 default) must be avoided.
     runs-on: ubuntu-24.04
