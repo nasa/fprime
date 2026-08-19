@@ -88,8 +88,8 @@ topology `.cpp`. See
 [rate groups](../../../docs/user-manual/design-patterns/rate-group.md).
 
 **Unconnected output ports assert when invoked.** A port that is
-optional by design must be guarded with
-`isConnected_<port>_OutputPort(portNum)`.
+optional by design can be guarded with
+`isConnected_<port>_OutputPort(portNum)` in the C++ implementation.
 
 ## 4 — Phased initialization
 
