@@ -68,7 +68,17 @@ platforms, and autocoder inputs. Until that skill lands, route via
 [build-system documentation](../../docs/user-manual/build-system/)
 it links.
 
-## 5. Standing rules for every phase
+## 5. Iterative development mode (approval required)
+
+When the user asks for a feature to be driven to convergence through
+repeated local test-and-review iterations, follow
+`.github/skills/fprime-iterative-development/SKILL.md`, which wraps
+the §2–§4 sequences in a local test / manual-GDS / multi-agent-review
+loop. That skill **requires explicit user approval before use** (its
+§0 gate): present the loop plan and obtain approval first — never
+enter the loop on your own initiative.
+
+## 6. Standing rules for every phase
 
 - All C++ complies with `fprime-cpp-design` (CPP-1 through CPP-34);
   consult it before writing code. Design-level expectations are in
