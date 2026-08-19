@@ -66,9 +66,9 @@ Choose the operating system you are using to install F Prime:
 
     ```bash
     xattr -d com.apple.quarantine LLVM-*-macOS-ARM64.tar.xz
-    tar -xzf LLVM-*-macOS-ARM64.tar.xz
-    export PATH="`pwd`/LLVM-*-macOS-ARM64/bin:${PATH}"
-    export LLVM_TOOLS_PATH="`pwd`/LLVM-*-macOS-ARM64/bin:${PATH}"
+    tar -xf LLVM-*-macOS-*.tar.xz
+    export PATH=`pwd`/LLVM-*-macOS-ARM64"/bin:${PATH}"
+    export LLVM_TOOLS_PATH=`pwd`/LLVM-*-macOS-ARM64"/bin:${PATH}"
     ```
 
 === "Ubuntu 20.04 / 22.04 / Generic Linux"
@@ -88,8 +88,8 @@ Choose the operating system you are using to install F Prime:
 
     ```bash
     tar -xzf LLVM-*.tar.xz
-    export PATH="`pwd`/LLVM-*/bin:${PATH}"
-    export LLVM_TOOLS_PATH="`pwd`/LLVM-*/bin:${PATH}"
+    export PATH=`pwd`/LLVM-*"/bin:${PATH}"
+    export LLVM_TOOLS_PATH=`pwd`/LLVM-*"/bin:${PATH}"
     ```
 
 To verify the tools are available, run:
@@ -149,7 +149,7 @@ on 64-bit ARM Linux the platform is called `aarch64-clang-linux`. This toolchain
 Here is how to build for the 64-bit ARM Linux platform:
 
 ```sh
-export AARCH64_SYSROOT=/opt/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
+export AARCH64_SYSROOT=$HOME/sysroots/fprime-rpi-5-sysroot-0.1/sysroot-aarch64-none-linux
 
 #You can check to make sure the environment variable is set by running:
 echo $AARCH64_SYSROOT
