@@ -49,6 +49,18 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES_UNUSED DEPENDENCIES)
     set(DELIVERY_CACHE "${FPRIME_BINARY_DIR}/${OFFSET}/fpp-cache")
     file(MAKE_DIRECTORY "${LOCAL_CACHE}")
     file(MAKE_DIRECTORY "${DELIVERY_CACHE}")
+    # fpp-depend output depends on the module's transitive fpp closure, so depend on the closure
+    # from the previous run (filtering deleted files) to regenerate when any file in it changes.
+    set(PREVIOUS_CLOSURE)
+    if (EXISTS "${LOCAL_CACHE}/stdout.txt")
+        file(STRINGS "${LOCAL_CACHE}/stdout.txt" PREVIOUS_CLOSURE_RAW)
+        foreach(CLOSURE_FILE IN LISTS PREVIOUS_CLOSURE_RAW)
+            string(STRIP "${CLOSURE_FILE}" CLOSURE_FILE)
+            if (CLOSURE_FILE AND EXISTS "${CLOSURE_FILE}")
+                list(APPEND PREVIOUS_CLOSURE "${CLOSURE_FILE}")
+            endif()
+        endforeach()
+    endif()
     if (FPP_SOURCES)
         set(OUTPUT_FILES
             "${LOCAL_CACHE}/stdout.txt"
@@ -77,6 +89,7 @@ function(fpp_depend_add_module_target MODULE TARGET SOURCES_UNUSED DEPENDENCIES)
                 fpp_locs
                 "${FPRIME_BINARY_DIR}/locs.fpp"
                 ${FPP_SOURCES}
+                ${PREVIOUS_CLOSURE}
         )
         add_custom_target("${TARGET}_${MODULE}" DEPENDS ${OUTPUT_FILES}
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different ${OUTPUT_FILES} "${DELIVERY_CACHE}"
