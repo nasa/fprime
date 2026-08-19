@@ -32,6 +32,7 @@
 #define _OS_FILESYSTEM_HPP_
 
 #include "Os/Directory.hpp"
+#include "Os/File.hpp"
 #include "Os/FileSystemInterface.hpp"
 
 // Validate that OS_FILE_SYSTEM_HEADER was defined by config/OsDelegateFileSystem.hpp
