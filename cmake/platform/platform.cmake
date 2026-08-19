@@ -105,11 +105,9 @@ endfunction()
 #
 # Priority order:
 #   1. PROJECT_SOURCE_DIR/cmake/platform/        (project-level direct)
-#   2. FPRIME_PROJECT_ROOT/cmake/platform/       (backwards compat — project root differs from PROJECT_SOURCE_DIR)
-#   3. PROJECT_SOURCE_DIR/lib/*/cmake/platform/  (project libraries)
-#   4. PROJECT_SOURCE_DIR/*/cmake/platform/      (project subdirectories)
-#   5. FPRIME_LIBRARY_LOCATIONS/cmake/platform/  (backwards compat — explicit library locations)
-#   6. FPRIME_FRAMEWORK_PATH/cmake/platform/     (framework fallback)
+#   2. PROJECT_SOURCE_DIR/lib/*/cmake/platform/  (project libraries)
+#   3. PROJECT_SOURCE_DIR/*/cmake/platform/      (project subdirectories)
+#   4. FPRIME_FRAMEWORK_PATH/cmake/platform/     (framework fallback)
 #
 # Results are cached in FPRIME_CACHED_PLATFORM_FILE to avoid re-searching.
 #
@@ -128,36 +126,8 @@ function(fprime_find_platform_file)
     # fprime_glob_ordered (utilities.cmake) so earlier patterns take priority over later ones.
     set(_PLATFORM_GLOBS
         "${PROJECT_SOURCE_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-    )
-
-    # ---- BACKWARDS COMPATIBILITY ----
-    # The following patterns support older project structures that place platform files relative to
-    # FPRIME_PROJECT_ROOT or FPRIME_LIBRARY_LOCATIONS rather than PROJECT_SOURCE_DIR. These exist
-    # to avoid breaking existing projects during the transition to convention-based discovery.
-    # TODO: Remove these patterns once all projects have migrated to the standard layout.
-    if (DEFINED FPRIME_PROJECT_ROOT AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL ""
-            AND NOT "${FPRIME_PROJECT_ROOT}" STREQUAL "${PROJECT_SOURCE_DIR}")
-        list(APPEND _PLATFORM_GLOBS
-            "${FPRIME_PROJECT_ROOT}/cmake/platform/${FPRIME_PLATFORM}.cmake"
-        )
-    endif()
-    # ---- END BACKWARDS COMPATIBILITY (project root) ----
-
-    list(APPEND _PLATFORM_GLOBS
         "${PROJECT_SOURCE_DIR}/lib/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
         "${PROJECT_SOURCE_DIR}/*/cmake/platform/${FPRIME_PLATFORM}.cmake"
-    )
-
-    # ---- BACKWARDS COMPATIBILITY ----
-    # TODO: Remove these patterns once all projects have migrated to the standard layout.
-    if (DEFINED FPRIME_LIBRARY_LOCATIONS AND NOT "${FPRIME_LIBRARY_LOCATIONS}" STREQUAL "")
-        foreach(LIBRARY_DIR IN LISTS FPRIME_LIBRARY_LOCATIONS)
-            list(APPEND _PLATFORM_GLOBS "${LIBRARY_DIR}/cmake/platform/${FPRIME_PLATFORM}.cmake")
-        endforeach()
-    endif()
-    # ---- END BACKWARDS COMPATIBILITY (library locations) ----
-
-    list(APPEND _PLATFORM_GLOBS
         "${FPRIME_FRAMEWORK_PATH}/cmake/platform/${FPRIME_PLATFORM}.cmake"
     )
 
