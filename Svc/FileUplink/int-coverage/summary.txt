@@ -1,0 +1,17 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../TestDeploymentsProject
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+/home/runner/work/fprime/fprime/Svc/FileUplink/File.cpp
+                                              25      21    84%   25,41,48,53
+/home/runner/work/fprime/fprime/Svc/FileUplink/FileUplink.cpp
+                                             135     102    75%   47-49,59-61,70,83-88,111-112,134,141-142,147,161,167,175-179,183,188,190-192,195,205
+/home/runner/work/fprime/fprime/Svc/FileUplink/FileUplink.hpp
+                                              21      17    81%   97-100
+/home/runner/work/fprime/fprime/Svc/FileUplink/Warnings.cpp
+                                              29       9    31%   28-31,33-36,38-41,43-46,48-51
+------------------------------------------------------------------------------
+TOTAL                                        210     149    71%
+------------------------------------------------------------------------------

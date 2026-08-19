@@ -1,0 +1,23 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../TestDeploymentsProject
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+/home/runner/work/fprime/fprime/Fw/FilePacket/CancelPacket.cpp
+                                              14       0     0%   18-20,22-23,26-29,31-32,34-35,38
+/home/runner/work/fprime/fprime/Fw/FilePacket/DataPacket.cpp
+                                              41      12    29%   18,22-26,28-30,33-36,43,48,52,65-66,70-72,75-77,80-82,85,87
+/home/runner/work/fprime/fprime/Fw/FilePacket/EndPacket.cpp
+                                              34      10    29%   20-23,25-26,29-32,34-36,48,52,58-59,63-65,68-70,73
+/home/runner/work/fprime/fprime/Fw/FilePacket/FilePacket.cpp
+                                              88      31    35%   48-50,53-56,58-61,63-66,68-71,73-87,91-103,115,128-136
+/home/runner/work/fprime/fprime/Fw/FilePacket/Header.cpp
+                                              22       8    36%   18-21,33,42-43,46-48,51-53,56
+/home/runner/work/fprime/fprime/Fw/FilePacket/PathName.cpp
+                                              25       8    32%   21-25,27-28,36,46,55,57,59-60,66,68-69,73
+/home/runner/work/fprime/fprime/Fw/FilePacket/StartPacket.cpp
+                                              42      10    23%   18,21-25,27-29,32-35,44,52,60,65,71-72,75,77-78,83,85-86,91,93-94,99,101-102,106
+------------------------------------------------------------------------------
+TOTAL                                        266      79    29%
+------------------------------------------------------------------------------

@@ -1,0 +1,13 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../TestDeploymentsProject
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+/home/runner/work/fprime/fprime/Svc/FatalHandler/FatalHandlerComponentCommonImpl.cpp
+                                               3       3   100%
+/home/runner/work/fprime/fprime/Svc/FatalHandler/FatalHandlerComponentLinuxImpl.cpp
+                                               6       0     0%   26,28-32
+------------------------------------------------------------------------------
+TOTAL                                          9       3    33%
+------------------------------------------------------------------------------

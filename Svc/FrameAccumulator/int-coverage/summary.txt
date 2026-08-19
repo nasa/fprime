@@ -1,0 +1,17 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ../../TestDeploymentsProject
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+/home/runner/work/fprime/fprime/Svc/FrameAccumulator/FrameAccumulator.cpp
+                                              89      78    87%   123,125-126,129,153,157,159-161,164,166
+/home/runner/work/fprime/fprime/Svc/FrameAccumulator/FrameDetector.hpp
+                                               1       0     0%   24
+/home/runner/work/fprime/fprime/Svc/FrameAccumulator/FrameDetector/CcsdsTcFrameDetector.cpp
+                                              44      38    86%   30,50-51,57,78,90
+/home/runner/work/fprime/fprime/Svc/FrameAccumulator/FrameDetector/FprimeFrameDetector.cpp
+                                              53       0     0%   12,14,16-17,29-30,35-37,39-41,43-45,48-50,59,66,68,74,76-77,80-82,87-91,93-94,96-98,101-102,110,113-119,121,124,128,131-133
+------------------------------------------------------------------------------
+TOTAL                                        187     116    62%
+------------------------------------------------------------------------------
