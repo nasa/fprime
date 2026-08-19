@@ -10,6 +10,7 @@ exclude_docs: |
   Autocoders/
   ci/
   googletest/
+  AGENTS.md
 
 theme:
   name: material # enables the material theme, DO NOT CHANGE
