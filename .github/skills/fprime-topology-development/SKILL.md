@@ -15,8 +15,9 @@ description: >-
 
 Covers everything between "a component exists" and "a deployment runs".
 Most work here extends an existing topology rather than creating one
-from scratch. Component-level work belongs to `fprime-component-development`; CMake
-and build-cache mechanics belong to `fprime-cmake-build-system`.
+from scratch. Component-level work belongs to
+`fprime-component-development`; CMake and build-cache mechanics belong
+to `fprime-cmake-build-system`.
 
 Canonical references:
 [building the topology](../../../docs/user-manual/framework/building-topology.md),
@@ -56,10 +57,9 @@ instance's own events, commands, channels) — see the header comment in
 [`instances.fpp`](../../../TestDeploymentsProject/Ref/Top/instances.fpp).
 Subtopologies offset from a configurable `BASE_ID` constant.
 
-Priorities: rate groups highest, faster rate groups above slower,
-managers above workers —
-[rate groups](../../../docs/user-manual/design-patterns/rate-group.md),
-[manager/worker](../../../docs/user-manual/design-patterns/manager-worker.md).
+Thread priorities, stack sizes and affinities are project- and
+platform-specific; take them from the project's own conventions rather
+than from a generic default.
 
 ## 3 — Connections
 
@@ -78,6 +78,14 @@ than bare integers.
 parallel arrays to be connected at identical indices; FPP errors when
 they are not. See
 [common port patterns](../../../docs/user-manual/design-patterns/common-port-patterns.md).
+
+**Rate group scheduling** — a timer drives
+`rateGroupDriverComp.CycleIn`; each `CycleOut[<group>]` drives one
+`ActiveRateGroup.CycleIn`, whose `RateGroupMemberOut[<slot>]` ports call
+each member's `schedIn`-style port synchronously, in slot order. Rates
+come from the `DividerSet` passed to `RateGroupDriver::configure` in the
+topology `.cpp`. See
+[rate groups](../../../docs/user-manual/design-patterns/rate-group.md).
 
 **Unconnected output ports assert when invoked.** A port that is
 optional by design must be guarded with
