@@ -89,7 +89,7 @@ Choose the operating system you are using to install F Prime:
 
    **Example Commands:** Assuming download of LLVM-22.1.8-Linux-X64.tar.xz
     ```bash
-    tar -xzf LLVM-22.1.8-Linux-X64.tar.xz
+    tar -xf LLVM-22.1.8-Linux-X64.tar.xz
     export PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
     export LLVM_TOOLS_PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
     ```
