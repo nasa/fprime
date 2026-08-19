@@ -64,11 +64,12 @@ Choose the operating system you are using to install F Prime:
     >[!TIP]
     > On newer macOS systems you may need to clear the quarantine flag on the download.
 
+   **Example Commands:** Assuming download of `LLVM-22.1.8-macOS-ARM64.tar.xz`
     ```bash
-    xattr -d com.apple.quarantine LLVM-*-macOS-ARM64.tar.xz
-    tar -xf LLVM-*-macOS-*.tar.xz
-    export PATH=`pwd`/LLVM-*-macOS-ARM64"/bin:${PATH}"
-    export LLVM_TOOLS_PATH=`pwd`/LLVM-*-macOS-ARM64"/bin:${PATH}"
+    xattr -d com.apple.quarantine LLVM-22.1.8-macOS-ARM64.tar.xz
+    tar -xf LLVM-22.1.8-macOS-ARM64.tar.xz
+    export PATH="`pwd`/LLVM-22.1.8-macOS-ARM64/bin:${PATH}"
+    export LLVM_TOOLS_PATH="`pwd`/LLVM-22.1.8-macOS-ARM64/bin:${PATH}"
     ```
 
 === "Ubuntu 20.04 / 22.04 / Generic Linux"
@@ -86,10 +87,11 @@ Choose the operating system you are using to install F Prime:
     may be downloaded and extracted anywhere; point your PATH and LLVM_TOOLS_PATH to the extracted
     folder.
 
+   **Example Commands:** Assuming download of LLVM-22.1.8-Linux-X64.tar.xz
     ```bash
-    tar -xzf LLVM-*.tar.xz
-    export PATH=`pwd`/LLVM-*"/bin:${PATH}"
-    export LLVM_TOOLS_PATH=`pwd`/LLVM-*"/bin:${PATH}"
+    tar -xzf LLVM-22.1.8-Linux-X64.tar.xz
+    export PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
+    export LLVM_TOOLS_PATH="`pwd`/LLVM-22.1.8-Linux-X64/bin:${PATH}"
     ```
 
 To verify the tools are available, run:
