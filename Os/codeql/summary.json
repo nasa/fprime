@@ -8,5 +8,5 @@
   "worst": null,
   "tier": "platinum",
   "dismissed": 1,
-  "label": "CodeQL Security"
+  "label": "Static Analysis (Security) [CodeQL]"
 }

@@ -3,7 +3,7 @@
   "ref": "devel",
   "ref_type": "branch",
   "commit": "793cef2ce1f35ba5873fe1eaefb5b316c9121dc9",
-  "generated_at": "2026-08-19T00:51:39Z",
+  "generated_at": "2026-08-19T00:56:30Z",
   "thresholds": {
     "platinum": 95.0,
     "gold": 90.0,
@@ -46,7 +46,7 @@
       "worst": "medium",
       "tier": "bronze",
       "dismissed": 7,
-      "label": "CodeQL Security",
+      "label": "Static Analysis (Security) [CodeQL]",
       "report": "codeql/index.html"
     },
     "codeql-jpl": {
@@ -105,7 +105,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "CFDP/Checksum/codeql/index.html"
         },
         "codeql-jpl": {
@@ -172,7 +172,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "CFDP/Checksum/GTest/codeql/index.html"
         },
         "codeql-jpl": {
@@ -251,7 +251,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/AsyncByteStreamBufferAdapter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -330,7 +330,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/ByteStreamBufferAdapter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -409,7 +409,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/Ip/codeql/index.html"
         },
         "codeql-jpl": {
@@ -476,7 +476,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/LinuxGpioDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -543,7 +543,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/LinuxI2cDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -610,7 +610,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/LinuxSpiDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -677,7 +677,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/LinuxUartDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -744,7 +744,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/Ports/DataTypes/codeql/index.html"
         },
         "codeql-jpl": {
@@ -823,7 +823,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/TcpClient/codeql/index.html"
         },
         "codeql-jpl": {
@@ -902,7 +902,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/TcpServer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -981,7 +981,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Drv/Udp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1048,7 +1048,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/array/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1115,7 +1115,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/component/active/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1182,7 +1182,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/component/empty/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1249,7 +1249,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/component/passive/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1316,7 +1316,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/component/queued/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1383,7 +1383,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/dp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1450,7 +1450,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/enum/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1517,7 +1517,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/sizeof/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1584,7 +1584,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/external_instance/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1651,7 +1651,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal/choice/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1718,7 +1718,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal/harness/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1785,7 +1785,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal/initial/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1852,7 +1852,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal/state/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1919,7 +1919,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal_instance/choice/codeql/index.html"
         },
         "codeql-jpl": {
@@ -1986,7 +1986,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal_instance/initial/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2053,7 +2053,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/state_machine/internal_instance/state/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2120,7 +2120,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/struct/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2187,7 +2187,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/async/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2254,7 +2254,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/components/Comp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2321,7 +2321,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/components/Framework/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2388,7 +2388,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/components/Receiver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2455,7 +2455,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/components/Sender/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2522,7 +2522,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/guarded/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2589,7 +2589,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/main/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2656,7 +2656,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/special_ports/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2723,7 +2723,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/sync/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2790,7 +2790,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/top_ports/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2857,7 +2857,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "FppTestProject/FppTest/topology/types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -2936,7 +2936,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Buffer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3015,7 +3015,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Cmd/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3082,7 +3082,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Com/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3149,7 +3149,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Comp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3228,7 +3228,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/DataStructures/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3307,7 +3307,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Dp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3386,7 +3386,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/FilePacket/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3453,7 +3453,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/FilePacket/GTest/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3520,7 +3520,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Fpy/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3599,7 +3599,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Log/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3678,7 +3678,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Logger/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3745,7 +3745,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Obj/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3812,7 +3812,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Port/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3879,7 +3879,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Prm/codeql/index.html"
         },
         "codeql-jpl": {
@@ -3958,7 +3958,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/SerializableFile/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4025,7 +4025,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Sm/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4092,7 +4092,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Test/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4171,7 +4171,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Time/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4250,7 +4250,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Tlm/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4329,7 +4329,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4396,7 +4396,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Fw/Types/GTest/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4475,7 +4475,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 1,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4542,7 +4542,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Darwin/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4621,7 +4621,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Generic/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4700,7 +4700,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Generic/Types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4767,7 +4767,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Models/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4846,7 +4846,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Os/Posix/codeql/index.html"
         },
         "codeql-jpl": {
@@ -4925,7 +4925,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ActivePhaser/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5004,7 +5004,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 1,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ActiveRateGroup/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5083,7 +5083,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ActiveTextLogger/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5162,7 +5162,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/AssertFatalAdapter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5241,7 +5241,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/BufferAccumulator/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5320,7 +5320,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/BufferLogger/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5399,7 +5399,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/BufferManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5478,7 +5478,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/BufferRepeater/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5557,7 +5557,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/AosDeframer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5636,7 +5636,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/AosFramer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5715,7 +5715,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/ApidManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5794,7 +5794,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/CcsdsSdlsDeframer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5873,7 +5873,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/CcsdsSdlsFramer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -5952,7 +5952,7 @@
           "worst": "medium",
           "tier": "bronze",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/CfdpManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6031,7 +6031,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/CfdpManager/Types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6110,7 +6110,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/ClearTextDecryptor/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6189,7 +6189,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/ClearTextEncryptor/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6268,7 +6268,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/SdlsFileKeyManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6347,7 +6347,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/SdlsSaRouter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6426,7 +6426,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/SpacePacketDeframer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6505,7 +6505,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/SpacePacketFramer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6584,7 +6584,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/TcDeframer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6663,7 +6663,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/TestUtils/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6742,7 +6742,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/TmFramer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6809,7 +6809,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Ccsds/Types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6888,7 +6888,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ChronoTime/codeql/index.html"
         },
         "codeql-jpl": {
@@ -6967,7 +6967,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/CmdDispatcher/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7046,7 +7046,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/CmdSequencer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7125,7 +7125,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/CmdSplitter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7204,7 +7204,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComAggregator/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7283,7 +7283,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComLogger/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7362,7 +7362,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComQueue/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7441,7 +7441,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComRetry/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7520,7 +7520,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComSplitter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7599,7 +7599,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/ComStub/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7678,7 +7678,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 1,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/DpCatalog/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7757,7 +7757,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/DpCompressProc/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7836,7 +7836,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/DpManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7915,7 +7915,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/DpWriter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -7994,7 +7994,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/DpZLibCompressor/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8073,7 +8073,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/EventManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8140,7 +8140,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FatalHandler/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8219,7 +8219,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FileDispatcher/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8298,7 +8298,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FileDownlink/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8377,7 +8377,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FileManager/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8456,7 +8456,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FileUplink/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8535,7 +8535,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FileWorker/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8614,7 +8614,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FprimeDeframer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8693,7 +8693,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FprimeFramer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8772,7 +8772,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FprimeRouter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8851,7 +8851,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 2,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FpySequencer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -8930,7 +8930,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/FrameAccumulator/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9009,7 +9009,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/GenericHub/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9088,7 +9088,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Health/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9167,7 +9167,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/LinuxTimer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9246,7 +9246,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/OsTime/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9325,7 +9325,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PassThroughRouter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9404,7 +9404,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PassiveConsoleTextLogger/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9483,7 +9483,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 1,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PassiveRateGroup/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9562,7 +9562,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PolyDb/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9641,7 +9641,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PosixTime/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9720,7 +9720,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/PrmDb/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9799,7 +9799,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/RateGroupDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9878,7 +9878,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/SeqDispatcher/codeql/index.html"
         },
         "codeql-jpl": {
@@ -9957,7 +9957,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/StaticMemory/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10024,7 +10024,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/CdhCore/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10091,7 +10091,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/ComCcsds/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10158,7 +10158,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/ComCcsdsSdls/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10225,7 +10225,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/ComFprime/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10292,7 +10292,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/ComLoggerTee/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10359,7 +10359,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/DataProducts/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10426,7 +10426,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/DpCompression/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10493,7 +10493,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/FileHandling/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10560,7 +10560,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/FileHandlingCfdp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10627,7 +10627,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Subtopologies/FileHandlingCfdp/FileHandlingCfdpConfig/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10706,7 +10706,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/SystemResources/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10785,7 +10785,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/TlmChan/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10864,7 +10864,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/TlmPacketizer/codeql/index.html"
         },
         "codeql-jpl": {
@@ -10943,7 +10943,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Types/EventSeverityFilter/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11022,7 +11022,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Svc/Version/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11089,7 +11089,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/BlockDriver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11156,7 +11156,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/DpDemo/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11223,7 +11223,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/PingReceiver/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11290,7 +11290,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/RecvBuffApp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11357,7 +11357,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/SendBuffApp/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11424,7 +11424,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/SignalGen/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11491,7 +11491,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/Top/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11558,7 +11558,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "TestDeploymentsProject/Ref/TypeDemo/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11637,7 +11637,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Utils/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11716,7 +11716,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Utils/Hash/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11795,7 +11795,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "Utils/Types/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11862,7 +11862,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/TestConfigDeployment/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11929,7 +11929,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/TestDeployment/TestBuildAutocoder/codeql/index.html"
         },
         "codeql-jpl": {
@@ -11996,7 +11996,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/TestDeployment/TestHeaderAutocoder/codeql/index.html"
         },
         "codeql-jpl": {
@@ -12063,7 +12063,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/TestDeployment/TestLinkDepends/codeql/index.html"
         },
         "codeql-jpl": {
@@ -12130,7 +12130,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/TestDeployment/TestRelative/codeql/index.html"
         },
         "codeql-jpl": {
@@ -12197,7 +12197,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/test-fprime-library/TestLibrary/TestComponent/codeql/index.html"
         },
         "codeql-jpl": {
@@ -12264,7 +12264,7 @@
           "worst": null,
           "tier": "platinum",
           "dismissed": 0,
-          "label": "CodeQL Security",
+          "label": "Static Analysis (Security) [CodeQL]",
           "report": "cmake/test/data/test-fprime-library2/TestLibrary2/TestComponent/codeql/index.html"
         },
         "codeql-jpl": {

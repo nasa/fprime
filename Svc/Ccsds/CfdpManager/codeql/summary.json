@@ -8,5 +8,5 @@
   "worst": "medium",
   "tier": "bronze",
   "dismissed": 0,
-  "label": "CodeQL Security"
+  "label": "Static Analysis (Security) [CodeQL]"
 }
