@@ -95,7 +95,9 @@ relevant one instead of improvising:
 
 Pull-request review is performed by the multi-agent flow in
 [`.github/agents/`](.github/agents/), entered through
-`review-orchestrator.agent.md`.
+`review-orchestrator.agent.md`. Development work (components,
+topologies, build system) is entered through
+`fprime-development.agent.md`, which sequences the skills above.
 
 ## Contributing
 
