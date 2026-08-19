@@ -2,10 +2,17 @@
 #
 # Dispatches every baseline-branch publisher (UT coverage, integration
 # coverage, component checklist, and both CodeQL scans) on the ref selected
-# in the "Run workflow" dropdown.  Each publisher is idempotent and shares
-# the baseline-publish-<ref> concurrency group, so the fan-out runs in
-# parallel and the publish steps serialize; the site is complete and
-# consistent once every dispatched run finishes.
+# in the "Run workflow" dropdown, then watches each quick publisher to
+# completion before dispatching the next.
+#
+# The publishers serialize on the shared baseline-publish-<ref> concurrency
+# group, and GitHub keeps at most ONE pending job per concurrency group:
+# any older waiting job is canceled by a newer waiting request.  Fanning
+# out everything at once therefore cancels whichever publishers queue
+# third or later.  Instead the CodeQL scans (hours of instrumented build
+# before their publish jobs ever reach the group) are dispatched up front,
+# and the three quick publishers run strictly one after another, so no
+# more than two jobs ever contend for the group.
 #
 # GITHUB_TOKEN may create workflow_dispatch events (it is an exception to
 # the no-recursive-workflows rule), so no PAT is required.
@@ -23,10 +30,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  fan-out:
+  regenerate:
     name: "Dispatch all baseline publishers"
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 180
     steps:
       - name: Dispatch publishers on this ref
         env:
@@ -35,12 +42,40 @@ jobs:
           REF: ${{ github.ref_name }}
         run: |
           set -eu
-          for workflow in coverage-update.yml \
-                          int-coverage-update.yml \
-                          component-checks.yml \
-                          codeql-jpl-standard.yml \
-                          codeql-security-scan.yml; do
+          # Dispatch a workflow on $REF and print the new run's id.
+          dispatch() {
+            local workflow="$1" cutoff run_id
+            cutoff="$(date --utc +%Y-%m-%dT%H:%M:%SZ)"
+            gh workflow run "${workflow}" --repo "${REPO}" --ref "${REF}" > /dev/null
+            # The run appears asynchronously; poll for a run created after
+            # the dispatch.
+            for _ in $(seq 30); do
+              sleep 5
+              run_id="$(gh run list --repo "${REPO}" --workflow "${workflow}" \
+                          --branch "${REF}" --event workflow_dispatch \
+                          --created ">=${cutoff}" --limit 1 \
+                          --json databaseId --jq '.[0].databaseId // empty')"
+              [ -n "${run_id}" ] && { echo "${run_id}"; return 0; }
+            done
+            echo "Could not find dispatched run for ${workflow}" >&2
+            return 1
+          }
+
+          # CodeQL scans first: hours of build before their publish jobs
+          # reach the baseline-publish group, so they never contend with
+          # the quick publishers below.
+          for workflow in codeql-jpl-standard.yml codeql-security-scan.yml; do
             echo "Dispatching ${workflow} on ${REF}"
-            gh workflow run "${workflow}" --repo "${REPO}" --ref "${REF}"
+            dispatch "${workflow}" > /dev/null
           done
-          echo "All publishers dispatched; monitor them in the Actions tab." >> "${GITHUB_STEP_SUMMARY}"
+
+          # Quick publishers strictly one at a time so the concurrency
+          # group never holds more than one waiting job.
+          for workflow in coverage-update.yml component-checks.yml int-coverage-update.yml; do
+            echo "Dispatching ${workflow} on ${REF}"
+            run_id="$(dispatch "${workflow}")"
+            echo "Waiting for run ${run_id} (${workflow})"
+            gh run watch "${run_id}" --repo "${REPO}" --interval 30 --exit-status
+          done
+
+          echo "All publishers dispatched; CodeQL runs are still in flight — monitor them in the Actions tab." >> "${GITHUB_STEP_SUMMARY}"
