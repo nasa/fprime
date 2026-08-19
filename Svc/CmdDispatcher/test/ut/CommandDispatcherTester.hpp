@@ -31,6 +31,17 @@ class CommandDispatcherTester : public CommandDispatcherGTestBase {
 
     void registerBuiltinCommands();
 
+    void setSequenceNumber(U32 sequenceNumber) { this->m_impl.m_seq = sequenceNumber; }
+
+    U32 getSequenceNumber() const { return this->m_impl.m_seq; }
+
+    U32 allocateSequenceNumber() { return this->m_impl.allocateSequenceNumber(); }
+
+    bool trackSequenceNumber(U32 sequenceNumber) {
+        CommandDispatcherImpl::SequenceTrackerEntry entry = {};
+        return this->m_impl.m_sequenceTracker.insert(sequenceNumber, entry) == Fw::Success::SUCCESS;
+    }
+
   private:
     Svc::CommandDispatcherImpl& m_impl;
 

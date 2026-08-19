@@ -5,6 +5,8 @@
  *      Author: tcanham
  */
 
+#include <limits>
+
 #include <gtest/gtest.h>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Fw/Test/UnitTest.hpp>
@@ -225,6 +227,25 @@ TEST(CmdDispTestOffNominal, CommandQueueOverflow) {
     connectPorts(impl, tester);
 
     tester.runCommandQueueOverflow();
+}
+
+TEST(CmdDispTestOffNominal, SequenceNumberWrapSkipsTrackedIds) {
+    TEST_CASE(102.2.6, "Sequence Number Wraparound");
+    COMMENT("Verify sequence number allocation skips IDs that are still tracked across U32 wraparound.");
+
+    Svc::CommandDispatcherImpl impl("CmdDispImpl");
+    impl.init(10, 0);
+
+    Svc::CommandDispatcherTester tester(impl);
+    tester.init();
+
+    const U32 maxSequenceNumber = std::numeric_limits<U32>::max();
+    ASSERT_TRUE(tester.trackSequenceNumber(maxSequenceNumber));
+    ASSERT_TRUE(tester.trackSequenceNumber(0));
+    tester.setSequenceNumber(maxSequenceNumber);
+
+    EXPECT_EQ(1U, tester.allocateSequenceNumber());
+    EXPECT_EQ(2U, tester.getSequenceNumber());
 }
 
 #ifndef TGT_OS_TYPE_VXWORKS

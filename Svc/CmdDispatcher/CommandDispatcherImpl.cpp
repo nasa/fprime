@@ -23,6 +23,24 @@ CommandDispatcherImpl::CommandDispatcherImpl(const char* name)
 
 CommandDispatcherImpl::~CommandDispatcherImpl() {}
 
+U32 CommandDispatcherImpl::allocateSequenceNumber() {
+    SequenceTrackerEntry trackedCmd;
+    const FwSizeType numTrackedCommands = this->m_sequenceTracker.getSize();
+
+    // At most numTrackedCommands keys can collide. If all of them do, the next
+    // key is necessarily free because the tracker holds fewer than 2^32 keys.
+    for (FwSizeType i = 0; i < numTrackedCommands; ++i) {
+        if (this->m_sequenceTracker.find(this->m_seq, trackedCmd) != Fw::Success::SUCCESS) {
+            break;
+        }
+        ++this->m_seq;
+    }
+
+    const U32 sequenceNumber = this->m_seq;
+    ++this->m_seq;
+    return sequenceNumber;
+}
+
 void CommandDispatcherImpl::compCmdReg_handler(FwIndexType portNum, FwOpcodeType opCode) {
     FwIndexType existingPort;
     if (this->m_entryTable.find(opCode, existingPort) == Fw::Success::SUCCESS) {
@@ -85,6 +103,8 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
     FwIndexType entryPort;
     Fw::Success findStatus = this->m_entryTable.find(cmdPkt.getOpCode(), entryPort);
     if (findStatus == Fw::Success::SUCCESS and this->isConnected_compCmdSend_OutputPort(entryPort)) {
+        const U32 sequenceNumber = this->allocateSequenceNumber();
+
         // register command in command tracker only if response port is connect
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             SequenceTrackerEntry pendingCmd;
@@ -92,7 +112,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             pendingCmd.context = context;
             pendingCmd.callerPort = portNum;
 
-            const Fw::Success pendingInsertStatus = this->m_sequenceTracker.insert(this->m_seq, pendingCmd);
+            const Fw::Success pendingInsertStatus = this->m_sequenceTracker.insert(sequenceNumber, pendingCmd);
 
             // if we couldn't find a slot to track the command, quit
             if (pendingInsertStatus != Fw::Success::SUCCESS) {
@@ -104,7 +124,7 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
             }
         }  // end if status port connected
         // pass arguments to argument buffer
-        this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), this->m_seq, cmdPkt.getArgBuffer());
+        this->compCmdSend_out(entryPort, cmdPkt.getOpCode(), sequenceNumber, cmdPkt.getArgBuffer());
         // log dispatched command
         this->log_COMMAND_OpCodeDispatched(CmdDispatcherCfg::getEventOpcode(cmdPkt.getOpCode()), entryPort);
 
@@ -117,10 +137,9 @@ void CommandDispatcherImpl::seqCmdBuff_handler(FwIndexType portNum, Fw::ComBuffe
         if (this->isConnected_seqCmdStatus_OutputPort(portNum)) {
             this->seqCmdStatus_out(portNum, cmdPkt.getOpCode(), context, Fw::CmdResponse::INVALID_OPCODE);
         }
+        // Preserve the existing behavior of consuming a sequence number for an invalid opcode.
+        ++this->m_seq;
     }
-
-    // increment sequence number
-    this->m_seq++;
 }
 
 void CommandDispatcherImpl ::run_handler(FwIndexType portNum, U32 context) {
