@@ -145,6 +145,13 @@ class CommandDispatcherImpl final : public CommandDispatcherComponentBase {
     //!  \param context call value defined by user
     void seqCmdBuff_overflowHook(FwIndexType portNum, Fw::ComBuffer& data, U32 context) override;
 
+    //! \brief Select an unused command sequence number and advance m_seq
+    //!
+    //! Search the active sequence tracker starting at m_seq. This avoids reusing
+    //! a sequence number that is still associated with an outstanding command
+    //! after the U32 sequence counter wraps.
+    U32 allocateSequenceNumber();
+
     //! \brief map from opcode to output port index
     //!
     //! Maps each registered command opcode to the output port index of the
