@@ -9,8 +9,7 @@ edit_uri: edit/devel/ # for "Edit Source" button (see content.action.edit)
 exclude_docs: |
   Autocoders/
   ci/
-  googletest/
-  AGENTS.md
+  googletest
 
 theme:
   name: material # enables the material theme, DO NOT CHANGE
