@@ -1,20 +1,21 @@
 ---
-name: fprime-topology-assembly
+name: fprime-topology-development
 description: >-
-  Assemble F Prime component instances into a deployment topology: FPP
-  instance definitions, base IDs, queue/stack/priority, connection
-  graphs, rate group scheduling, phased initialization, subtopologies,
-  and wiring a new component into an existing deployment. Use whenever
+  Develop and evolve an F Prime deployment topology: FPP instance
+  definitions, base IDs, queue/stack/priority, connection graphs, rate
+  group scheduling, phased initialization, subtopologies, and wiring a
+  new or changed component into an existing deployment. Use whenever
   a task touches a `Top/` directory, `instances.fpp`, `topology.fpp`,
   a `*TopologyDefs.hpp`, or a subtopology. Keywords: F Prime, topology,
   deployment, instance, base id, connections, rate group, subtopology,
   phases, ping entries.
 ---
 
-# Skill: F Prime Topology Assembly
+# Skill: F Prime Topology Development
 
 Covers everything between "a component exists" and "a deployment runs".
-Component-level work belongs to `fprime-component-development`; CMake
+Most work here extends an existing topology rather than creating one
+from scratch. Component-level work belongs to `fprime-component-development`; CMake
 and build-cache mechanics belong to `fprime-cmake-build-system`.
 
 Canonical references:
