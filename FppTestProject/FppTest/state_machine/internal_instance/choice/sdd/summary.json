@@ -1,9 +1,39 @@
 {
   "schema": 1,
   "artifact": "sdd",
-  "generated_at": "2026-08-19T00:51:39Z",
+  "generated_at": "2026-08-19T21:27:37Z",
   "ref": "devel",
-  "commit": "793cef2ce1f35ba5873fe1eaefb5b316c9121dc9",
+  "commit": "375024dea1ea4fd35212d61867949ded3c7da9d9",
   "tier": "bronze",
-  "has_sdd": false
+  "has_sdd": false,
+  "doxygen": [
+    {
+      "name": "FppTest::SmInstanceChoice::BasicTester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_basic_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::BasicU32Tester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_basic_u32_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::ChoiceToChoiceTester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_choice_to_choice_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::ChoiceToStateTester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_choice_to_state_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::InputPairU16U32Tester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_input_pair_u16_u32_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::SequenceTester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_sequence_tester.html"
+    },
+    {
+      "name": "FppTest::SmInstanceChoice::SequenceU32Tester",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_fpp_test_1_1_sm_instance_choice_1_1_sequence_u32_tester.html"
+    }
+  ]
 }

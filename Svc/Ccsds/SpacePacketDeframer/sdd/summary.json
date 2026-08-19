@@ -1,9 +1,9 @@
 {
   "schema": 1,
   "artifact": "sdd",
-  "generated_at": "2026-08-19T00:51:39Z",
+  "generated_at": "2026-08-19T21:27:37Z",
   "ref": "devel",
-  "commit": "793cef2ce1f35ba5873fe1eaefb5b316c9121dc9",
+  "commit": "375024dea1ea4fd35212d61867949ded3c7da9d9",
   "tier": "bronze",
   "has_sdd": true,
   "sections": 4,
@@ -16,5 +16,12 @@
   "declared_kinds": [
     "events",
     "ports"
+  ],
+  "rendered_url": "https://fprime.jpl.nasa.gov/devel/Svc/Ccsds/SpacePacketDeframer/docs/sdd/",
+  "doxygen": [
+    {
+      "name": "Svc::Ccsds::SpacePacketDeframer",
+      "url": "https://fprime.jpl.nasa.gov/devel/docs/reference/api/cpp/html/class_svc_1_1_ccsds_1_1_space_packet_deframer.html"
+    }
   ]
 }
