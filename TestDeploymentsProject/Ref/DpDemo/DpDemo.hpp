@@ -74,8 +74,6 @@ class DpDemo final : public DpDemoComponentBase {
     Fw::DpCfg::ProcType dpProc;
     DpContainer dpContainer;
     bool dpInProgress;
-    FwOpcodeType pendingOpCode = 0;
-    U32 pendingCmdSeq = 0;
 };
 
 }  // namespace Ref

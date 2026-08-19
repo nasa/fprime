@@ -246,6 +246,7 @@ class DpCatalog final : public DpCatalogComponentBase {
 
     Fw::FileNameString m_directories[DP_MAX_DIRECTORIES];  //!< List of supplied DP directories
     FwSizeType m_numDirectories = 0;                       //!< number of supplied directories
+    Fw::String m_fileList[DP_MAX_FILES];                   //!< working array of files/directory
 
     Fw::FileNameString m_stateFile;                //!< file to store transmit state
     DpDstateFileEntry* m_stateFileData = nullptr;  //!< DP state loaded from file

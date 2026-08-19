@@ -32,7 +32,7 @@ class LogPacket : public ComPacket {
     LogBuffer& getLogBuffer();
 
   protected:
-    FwEventIdType m_id;     // !< Event id
+    FwEventIdType m_id;     // !< Channel id
     Fw::Time m_timeTag;     // !< time tag
     LogBuffer m_logBuffer;  // !< serialized argument data
 };

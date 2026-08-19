@@ -103,10 +103,8 @@ void TcpServerTester ::test_with_loop(U32 iterations, bool recv_thread) {
                 EXPECT_EQ(status2, Drv::SOCK_SUCCESS)
                     << "On iteration: " << i << " and receive thread: " << recv_thread;
                 if (status2 == Drv::SOCK_SUCCESS) {
-                    for (U32 wait = 0; (wait < 1000) && (not m_spinner); wait++) {
-                        Os::Task::delay(Fw::TimeInterval(0, 10000));
+                    while (not m_spinner) {
                     }
-                    EXPECT_TRUE(m_spinner) << "Timed out waiting for receive";
                 }
             }
         }

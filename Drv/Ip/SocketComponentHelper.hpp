@@ -156,22 +156,22 @@ class SocketComponentHelper {
     bool runningReconnect();
 
     /**
-     * \brief stop the socket read task and shut down the associated socket.
+     * \brief stop the socket read task and close the associated socket.
      *
-     * Called to stop the socket read and reconnect tasks and shut down the client socket. Stopping before start is
-     * permitted but only shuts down the client socket.
+     * Called to stop the socket read task. It is an error to call this before the thread has been started using the
+     * startSocketTask call. This will stop the read task and close the client socket.
      */
     void stop();
 
     void stopReconnect();
 
     /**
-     * \brief joins the stopping read and reconnect tasks to wait for them to close
+     * \brief joins to the stopping read task to wait for it to close
      *
-     * Called to join with the read and reconnect tasks. This will block and return after both tasks have been stopped
-     * with a call to the `stop` method.
-     *
-     * \return Os::Task::Status of the read task, or of the reconnect task when the read task joined cleanly
+     * Called to join with the read socket task. This will block and return after the task has been stopped with a call
+     * to the stopSocketTask method.
+     * \param value_ptr: a pointer to fill with data. Passed to the Os::Task::join call. NULL to ignore.
+     * \return: Os::Task::Status passed back from the Os::Task::join call.
      */
     Os::Task::Status join();
 

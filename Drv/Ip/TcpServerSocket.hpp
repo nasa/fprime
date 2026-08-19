@@ -43,11 +43,12 @@ class TcpServerSocket : public IpSocket {
     SocketIpStatus startup(SocketDescriptor& socketDescriptor);
 
     /**
-     * \brief shut down and close the server socket created by the `startup` call
+     * \brief close the server socket created by the `startup` call
      *
-     * Calls shutdown, then close, on the server socket.
+     * Calls the close function on the server socket. No shutdown is performed on the server socket, as that is left to
+     * the individual client sockets.
      *
-     * \param socketDescriptor: descriptor of socket to terminate
+     * \param socketDescriptor:  descriptor to close
      */
     void terminate(const SocketDescriptor& socketDescriptor);
 

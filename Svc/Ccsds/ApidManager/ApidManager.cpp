@@ -27,7 +27,8 @@ U16 ApidManager ::validateApidSeqCountIn_handler(FwIndexType portNum, const ComC
         // Likely a packet was dropped or out of order
         this->log_WARNING_LO_UnexpectedSequenceCount(receivedSeqCount, expectedSequenceCount);
         // Sync onboard count to what was received so counting can keep going. Insert cannot fail:
-        // getAndIncrementSeqCount above inserted the APID already (asserting on failure)
+        // getAndIncrementSeqCount above inserted the APID already, we would have returned early
+        // due to SEQUENCE_COUNT_ERROR
         const Fw::Success insertStatus = m_apidSequences.insert(apid, this->calculateNextSeqCount(receivedSeqCount));
         FW_ASSERT(insertStatus == Fw::Success::SUCCESS, static_cast<FwAssertArgType>(apid));
     }

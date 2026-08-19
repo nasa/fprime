@@ -32,10 +32,11 @@ HashBuffer& HashBuffer::operator=(const HashBuffer& other) {
 }
 
 bool HashBuffer::operator==(const HashBuffer& other) const {
-    if (this->getSize() != other.getSize()) {
+    if ((this->getSize() == other.getSize()) &&
+        (memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) != 0)) {
         return false;
     }
-    return memcmp(this->getBuffAddr(), other.getBuffAddr(), static_cast<size_t>(this->getSize())) == 0;
+    return true;
 }
 
 bool HashBuffer::operator!=(const HashBuffer& other) const {

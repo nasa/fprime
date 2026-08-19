@@ -64,7 +64,7 @@ not "this comment has a suggestion block".
 **No defaulting to `could fix`** when a fix is unavailable — severity
 drives the tag.
 
-Decision tree and worked examples live in `.github/skills/triage-classifier/SKILL.md`.
+Decision tree and worked examples live in `skills/triage-classifier.skill.md`.
 
 ---
 
@@ -173,7 +173,7 @@ posted and the aggregator handles surfaces emission as an error case
 
 ## 3. "Introduced by this PR"
 
-Lives in `.github/skills/pr-diff-scoping/SKILL.md`. Summary:
+Lives in `skills/pr-diff-scoping.skill.md`. Summary:
 
 1. Offending line is added or modified in the PR diff → introduced.
 2. Offending line is unchanged, but a new caller added by the PR widens
@@ -193,7 +193,7 @@ in each agent's `.agent.md`):
    `**must fix**`, `**suggestion**`, or `**could fix**`. Never silently
    downgrade or drop (see §8, Priority 1).
 2. **Append a maintainer ping** at the end of the comment body, sourced
-   from `.github/skills/maintainer-lookup/SKILL.md`:
+   from `skills/maintainer-lookup.skill.md`:
 
    ```
    cc @<maintainer1> @<maintainer2> — low-confidence finding, please confirm.
@@ -268,7 +268,7 @@ site-key = sha256(file_path + "|" + anchor)
 ```
 
 `file_path` and `anchor` are computed exactly as for the finding-key
-(§7 / `.github/skills/re-review-state/SKILL.md` §2). Two comments with the
+(§7 / `skills/re-review-state.skill.md` §2). Two comments with the
 same site-key are anchored to the same spot; whether they are the
 same *issue* is decided by the concurrence rule below. Footers that
 carry a site-key use the `v2` marker (§9); `v1` footers without a
@@ -314,7 +314,7 @@ they track their finding on the linked canonical thread instead.
 
 When an agent runs on a PR whose head has new commits since the
 agent's prior run, it executes phases A–D in order. Mechanics live in
-`.github/skills/re-review-state/SKILL.md`.
+`skills/re-review-state.skill.md`.
 
 ### Phase A — Inventory prior comments
 
@@ -611,7 +611,7 @@ attribute is the de-dup key on later runs.
 Inline review comments are posted through the GitHub Pull Request
 Review API. Mechanics, the suggestion-block syntax, the GraphQL
 mutations (`resolveReviewThread`, `unresolveReviewThread`), and the
-`TOKEN` env var live in `.github/skills/post-inline-review/SKILL.md`.
+`TOKEN` env var live in `skills/post-inline-review.skill.md`.
 
 Each reviewer submits a single PR review (event: `COMMENT`) whose
 body is the hidden metadata block from §2 and whose inline comments
@@ -668,7 +668,7 @@ is the whole point.
 1. **Reply once** on the thread using the disagreement-escalation
    reply shape (§9). One reply, no further back-and-forth.
 2. **Tag the code owner / maintainer** via
-   `.github/skills/maintainer-lookup/SKILL.md` (same 4-step lookup as §4).
+   `skills/maintainer-lookup.skill.md` (same 4-step lookup as §4).
 3. **Do not resolve the thread.** Leave it open for the maintainer.
 4. **Increment `disagreements escalated`** in the per-agent review's
    `since_last_run` metadata (§7 phase D).

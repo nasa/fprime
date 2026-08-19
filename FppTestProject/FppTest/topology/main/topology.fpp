@@ -5,7 +5,7 @@ module FppTest {
     instance receiver2
   }
 
-  deployment topology FppTest {
+  topology FppTest {
 
     instance Sync
     instance Guarded

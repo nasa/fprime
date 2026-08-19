@@ -1,16 +1,6 @@
 ---
 name: fprime-cpp-design
-description: >-
-  Authoritative C/C++ design rules and idioms for F Prime flight
-  software. Use this skill in two directions — as a *developer-side*
-  reference when writing or modifying F Prime C++ code (what idioms to
-  follow, what features to avoid, which F Prime types to prefer), and
-  as a *reviewer-side* reference for finding-class names and severity
-  hints when flagging C/C++ design violations. Trigger on any work
-  that touches F Prime C/C++ source: component implementations,
-  drivers, services, framework types, OSAL code, or unit-test
-  infrastructure. Keywords: F Prime, C++14, FW_ASSERT, Fw::Buffer,
-  Fw::String, JPL coding standard, dynamic memory, RTTI, exceptions.
+description: Authoritative C/C++ design rules and idioms for F Prime flight software. Use this skill in two directions — as a *developer-side* reference when writing or modifying F Prime C++ code (what idioms to follow, what features to avoid, which F Prime types to prefer), and as a *reviewer-side* reference for finding-class names and severity hints when flagging C/C++ design violations. Trigger on any work that touches F Prime C/C++ source: component implementations, drivers, services, framework types, OSAL code, or unit-test infrastructure. Keywords: F Prime, C++14, FW_ASSERT, Fw::Buffer, Fw::String, JPL coding standard, dynamic memory, RTTI, exceptions.
 ---
 
 # Skill: F Prime C/C++ design rules
@@ -22,7 +12,7 @@ flight software is held to. Used in two directions:
   modifying F Prime C++ code.
 - **Reviewer-side.** §2 gives the finding-class name to use per
   rule; §3 gives severity hints. Combine with
-  `.github/skills/triage-classifier/SKILL.md`.
+  `_shared/skills/triage-classifier.skill.md`.
 
 External references in §4 are authoritative for their specific
 clauses; this skill summarizes the rules the agents enforce. Where
@@ -97,9 +87,9 @@ guaranteed by construction. It is **not** input validation. Never
 `FW_ASSERT` on a value reachable from:
 
 - A ground command argument (see
-  `.github/skills/fprime-ground-input-tracing/SKILL.md`).
+  `_shared/skills/fprime-ground-input-tracing.skill.md`).
 - A hardware input — packet, register read, port from a driver (see
-  `.github/skills/fprime-hardware-input-tracing/SKILL.md`).
+  `_shared/skills/fprime-hardware-input-tracing.skill.md`).
 - Any off-device data crossing a hub / bridge / driver boundary.
 
 Validate untrusted inputs and return the error through the
@@ -496,14 +486,14 @@ linked in §4 is authoritative. F Prime adopts it where applicable.
 Finding-class names are stable strings: they appear in the inline
 comment HTML footer (`finding-key` hash inputs). Renaming a class
 breaks the re-review state mechanism
-(`.github/skills/re-review-state/SKILL.md`) — coordinate any rename
+(`_shared/skills/re-review-state.skill.md`) — coordinate any rename
 across all agents referencing it.
 
 ---
 
 ## 3. Triage hints
 
-The triage classifier in `.github/skills/triage-classifier/SKILL.md`
+The triage classifier in `_shared/skills/triage-classifier.skill.md`
 is authoritative; this section narrows the decision per cluster.
 
 - **Memory & lifetime (CPP-1, 2, 17, 19, 20):** default `**must
@@ -543,7 +533,7 @@ is authoritative; this section narrows the decision per cluster.
     has no provable upper bound and is not a program main loop.
 
 **Preexisting violations.** Any violation the PR did not introduce
-or widen (per `.github/skills/pr-diff-scoping/SKILL.md`) is
+or widen (per `_shared/skills/pr-diff-scoping.skill.md`) is
 `**future work**`, never `**must fix**`.
 
 ---
