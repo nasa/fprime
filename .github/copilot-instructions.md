@@ -1,5 +1,9 @@
 # F Prime Copilot Instructions
 
+General repository guidance — layout, build and test commands, coding
+conventions, and available skills — is in
+[`AGENTS.md`](../AGENTS.md) at the repository root.
+
 When reviewing a pull request, invoke the F Prime multi-agent PR
 review flow at
 [`.github/agents/review-orchestrator.agent.md`](agents/review-orchestrator.agent.md).
