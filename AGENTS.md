@@ -87,6 +87,9 @@ relevant one instead of improvising:
   `fprime-component-design-fpp`, `fprime-component-implementation`,
   `fprime-component-unit-test`, `fprime-component-integration-test`.
 - Writing unit tests: `fprime-unit-testing`.
+- Driving development to convergence through local test-and-review
+  iterations: `fprime-iterative-development` (requires explicit user
+  approval before use).
 - C/C++ design rules: `fprime-cpp-design`.
 - Tracing untrusted inputs: `fprime-ground-input-tracing`,
   `fprime-hardware-input-tracing`.
